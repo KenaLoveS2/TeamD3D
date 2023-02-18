@@ -169,6 +169,9 @@
     <Filter Include="01.Utility\02.GameObject\UI\Node">
       <UniqueIdentifier>{30697cc0-e2cd-42e4-bef9-2459ba42aabd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\12. FSM">
+      <UniqueIdentifier>{9f9b6a3c-5610-4721-a49f-0c96411151b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -395,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_Node.h">
       <Filter>01.Utility\02.GameObject\UI\Node</Filter>
+    </ClInclude>      
+    <ClInclude Include="..\public\FSMComponent.h">
+      <Filter>01.Utility\12. FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -598,6 +604,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Node.cpp">
       <Filter>01.Utility\02.GameObject\UI\Node</Filter>
+    </ClCompile>      
+    <ClCompile Include="..\private\FSMComponent.cpp">
+      <Filter>01.Utility\12. FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
