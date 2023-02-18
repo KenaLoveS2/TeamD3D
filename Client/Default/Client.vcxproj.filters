@@ -73,8 +73,14 @@
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\Manager">
+    <Filter Include="02.GameObjects\UI\00. Manager">
       <UniqueIdentifier>{6def5edd-d47a-4163-b3f1-4f2ae72746d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\01. Canvas">
+      <UniqueIdentifier>{11f71599-47bd-4ec9-9fec-24c21c06cc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Node">
+      <UniqueIdentifier>{70750803-19e8-4e16-a8dd-9957e9939a0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,7 +157,7 @@
       <Filter>96.StringManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Manager.h">
-      <Filter>02.GameObjects\UI\Manager</Filter>
+      <Filter>02.GameObjects\UI\00. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -213,7 +219,7 @@
       <Filter>96.StringManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Manager.cpp">
-      <Filter>02.GameObjects\UI\Manager</Filter>
+      <Filter>02.GameObjects\UI\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
