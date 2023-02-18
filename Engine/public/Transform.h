@@ -60,6 +60,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual void	Imgui_RenderProperty() override;
 
 public:
 	void Go_Straight(_float fTimeDelta, class CNavigation* pNaviCom = nullptr);

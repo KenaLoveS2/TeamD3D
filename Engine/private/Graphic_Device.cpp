@@ -63,9 +63,6 @@ HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 	/* 백버퍼를 초기화하낟.  */
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
-	
-
-
  	return S_OK;
 }
 
@@ -79,6 +76,45 @@ HRESULT CGraphic_Device::Clear_DepthStencil_View()
 	return S_OK;
 }
 
+HRESULT CGraphic_Device::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate)
+{
+	if (!bNeedUpdate)
+	{
+		m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pDepthStencilView);
+		return S_OK;
+	}
+
+	if (m_pBackBufferRTV)
+		Safe_Release(m_pBackBufferRTV);
+	if (m_pDepthStencilView)
+		Safe_Release(m_pDepthStencilView);
+
+	m_pSwapChain->ResizeBuffers(0, iWinCX, iWinCY, DXGI_FORMAT_UNKNOWN, 0);
+
+	if (FAILED(Ready_BackBufferRenderTargetView()))
+		return E_FAIL;
+
+	if (FAILED(Ready_DepthStencilRenderTargetView(iWinCX, iWinCY)))
+		return E_FAIL;
+
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pDepthStencilView);
+
+	D3D11_VIEWPORT			ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = (float)iWinCX;
+	ViewPortDesc.Height = (float)iWinCY;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
+
+	m_pDeviceContext->RSSetViewports(1, &ViewPortDesc);
+
+	m_pSwapChain->SetFullscreenState(bIsFullScreen, nullptr);
+
+	return S_OK;
+}
+
 HRESULT CGraphic_Device::Present()
 {
 	if (nullptr == m_pSwapChain)
@@ -86,7 +122,6 @@ HRESULT CGraphic_Device::Present()
 
 	return m_pSwapChain->Present(0, 0);	
 }
-
 
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMode, _uint iWinCX, _uint iWinCY)
 {
@@ -121,13 +156,15 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMo
 	if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
 		return E_FAIL;
 
+	if (FAILED(pFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER)))
+		return E_FAIL;
+
 	Safe_Release(pFactory);
 	Safe_Release(pAdapter);
 	Safe_Release(pDevice);
 
 	return S_OK;
 }
-
 
 HRESULT CGraphic_Device::Ready_BackBufferRenderTargetView()
 {
@@ -173,12 +210,6 @@ HRESULT CGraphic_Device::Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint 
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
 		return E_FAIL;
-
-	/* RenderTarget */
-	/* ShaderResource */
-	/* DepthStencil */
-
-	
 
 	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pDepthStencilView)))
 		return E_FAIL;	

@@ -141,7 +141,6 @@ HRESULT CPlayer::Render()
 	//}
 
 	//m_pNavigationCom->Render();
-
 #endif
 
 	return S_OK;
@@ -352,5 +351,5 @@ void CPlayer::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
+	Safe_Release(m_pFSM);
 }

@@ -15,6 +15,7 @@ public:
 	HRESULT Ready_Graphic_Device(HWND hWnd, GRAPHIC_DESC::WINMODE WinMode, _uint iWinCX, _uint iWinCY, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppDeviceContextOut);
 	HRESULT Clear_BackBuffer_View(_float4 vClearColor);
 	HRESULT Clear_DepthStencil_View();
+	HRESULT Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate);
 	HRESULT Present();
 private:	
 
