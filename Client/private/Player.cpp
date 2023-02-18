@@ -348,6 +348,7 @@ void CPlayer::Free()
 
 	m_PlayerParts.clear();
 
+	Safe_Release(m_pFSM);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
