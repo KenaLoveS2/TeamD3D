@@ -160,6 +160,15 @@
     <Filter Include="01.Utility\11.ImGui\Librarys">
       <UniqueIdentifier>{01d38041-c0f6-497e-bc17-9d2fc8ceaade}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.GameObject\UI">
+      <UniqueIdentifier>{a678a93f-8f68-4887-ac4c-1795bc9e38b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObject\UI\Canvas">
+      <UniqueIdentifier>{4ffc9be7-f8b2-466f-b488-9e97e2d6db55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObject\UI\Node">
+      <UniqueIdentifier>{30697cc0-e2cd-42e4-bef9-2459ba42aabd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -378,6 +387,15 @@
     <ClInclude Include="..\public\ImGui\ImGradient.h">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI.h">
+      <Filter>01.Utility\02.GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Canvas.h">
+      <Filter>01.Utility\02.GameObject\UI\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Node.h">
+      <Filter>01.Utility\02.GameObject\UI\Node</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -571,6 +589,15 @@
     </ClCompile>
     <ClCompile Include="..\public\ImGui\imgui.cpp">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI.cpp">
+      <Filter>01.Utility\02.GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Canvas.cpp">
+      <Filter>01.Utility\02.GameObject\UI\Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Node.cpp">
+      <Filter>01.Utility\02.GameObject\UI\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

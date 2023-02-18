@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\String_Manager.h" />
     <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\public\UI_Manager.h" />
     <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\String_Manager.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\private\UI_Manager.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
