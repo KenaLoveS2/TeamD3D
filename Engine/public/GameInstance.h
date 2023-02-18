@@ -1,0 +1,129 @@
+#pragma once
+
+/* 싱글톤.  */
+/* 클라이언트와 엔진의 소통을 위해 만들어진 클래스. */
+
+#include "Base.h"
+#include "Input_Device.h"
+#include "Component_Manager.h"
+#include "PipeLine.h"
+#include "Sound_Manager.h"
+#include "Utile.h"
+
+BEGIN(Engine)
+
+class ENGINE_DLL CGameInstance final : public CBase
+{
+	DECLARE_SINGLETON(CGameInstance);
+private:
+	CGameInstance();
+	virtual ~CGameInstance() = default;
+
+public:
+	static _uint Get_StaticLevelIndex() {
+		return m_iStaticLevelIndex;
+	}
+
+public: /* For.GameInstance */	
+	static const _tchar*			m_pPrototypeTransformTag;
+
+public: /* For.GameInstance */
+	HRESULT Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
+	void Tick_Engine(_float fTimeDelta);
+	void Clear_Level(_uint iLevelIndex);
+
+public: /* For.Graphic_Device */
+	HRESULT Clear_Graphic_Device(const _float4* pColor);
+	HRESULT Present();
+
+public: /* For.Input_Device */
+	_byte		Get_DIKeyState(_ubyte byKeyID);
+	_byte		Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID);
+	_long		Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMoveState);
+
+public: /* For.Level_Manager */
+	HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);	
+	HRESULT Render_Level();
+
+public: /* For.Object_Manager */
+	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
+	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
+	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, void* pArg = nullptr);
+	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+	
+public: /* For.Component_Manager */
+	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
+	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
+
+public: /* For.PipeLine */
+	_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState) ;
+	_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState) ;
+	_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState) ;
+	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	_float4 Get_CamPosition();
+
+public: /* For.Timer_Manager */ 
+	_float		Get_TimeDelta(const _tchar* pTimerTag);
+	HRESULT		Ready_Timer(const _tchar* pTimerTag);
+	void		Update_Timer(const _tchar* pTimerTag);
+
+public: /* For.Light_Manager */ 
+	const LIGHTDESC* Get_LightDesc(_uint iIndex);
+	HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc, class CLight** ppOut = nullptr);
+	void Clear();
+
+public: /* For.Font_Manager */
+	HRESULT Add_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontTag, const _tchar* pFontFilePath);
+	HRESULT Render_Font(const _tchar* pFontTag, const _tchar* pText, const _float2& vPos, _float fRadian, _float2 vScale, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f));
+
+public: /* For.Frustum */
+	_bool isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
+	_bool isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
+
+public: /* For.Target_Manager */
+	ID3D11ShaderResourceView* Get_DepthTargetSRV();
+
+public: /* For.Sound_Manager */
+	_int Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
+	void Stop_Sound(_uint iManualChannelIndex);
+	void Set_Volume(_uint iManualChannelIndex, _float fVolume);
+	void Set_MasterVolume(_float fVolume);
+	void Set_SoundDesc(const _tchar *pSoundKey, CSound::SOUND_DESC& SoundDesc);
+	_bool Is_StopSound(_uint iManualChannelIndex);
+	HRESULT Copy_Sound(_tchar* pOriginSoundKey, _tchar* pCopySoundKeyOut);
+	void Stop_All();
+	
+public: // for imgui manager
+	void Render_ImGui();
+	void Render_Update_ImGui();
+	void Add_ImguiTabObject(class CImguiObject* ImguiObject);
+	void Add_ImguiWindowObject(class CImguiObject* ImguiObject);
+	void Clear_ImguiObjects();
+
+private:
+	static _uint					m_iStaticLevelIndex;
+	HWND							m_hClientWnd = NULL;
+
+private:	
+	class CGraphic_Device*			m_pGraphic_Device = nullptr;
+	class CInput_Device*			m_pInput_Device = nullptr;
+	class CLevel_Manager*			m_pLevel_Manager = nullptr;
+	class CObject_Manager*			m_pObject_Manager = nullptr;
+	class CComponent_Manager*		m_pComponent_Manager = nullptr;
+	class CPipeLine*				m_pPipeLine = nullptr;
+	class CTimer_Manager*			m_pTimer_Manager = nullptr;
+	class CLight_Manager*			m_pLight_Manager = nullptr;
+	class CFont_Manager*			m_pFont_Manager = nullptr;
+	class CFrustum*					m_pFrustum = nullptr;
+	class CTarget_Manager*			m_pTarget_Manager = nullptr;
+	class CSound_Manager*			m_pSound_Manager = nullptr;
+	class CImgui_Manager*			m_pImgui_Manager = nullptr;
+
+public:
+	static void Release_Engine();
+
+public:
+	virtual void Free() override;
+};
+
+END
