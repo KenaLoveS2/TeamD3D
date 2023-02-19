@@ -39,6 +39,8 @@ private:
 	CNavigation*			m_pNavigationCom = nullptr;
 	CFSMComponent*			m_pFSM = nullptr;
 
+	_int					m_iAnimationIndex = 0;
+
 private:
 	vector<CGameObject*>	m_PlayerParts;
 

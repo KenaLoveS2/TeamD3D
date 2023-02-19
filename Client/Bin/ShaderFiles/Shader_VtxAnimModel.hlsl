@@ -5,7 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 /* 1. 모델의 전체의 뼈를 받아온다. */
 /* 2. 모델 중, 현재 그릴려고 하는 메시에 뼈를 받아온다. */
-matrix			g_BoneMatrices[128];
+matrix			g_BoneMatrices[800];
 
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
