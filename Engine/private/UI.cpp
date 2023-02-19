@@ -2,15 +2,18 @@
 #include "Shader.h"
 #include "Renderer.h"
 #include "VIBuffer_Rect.h"
+#include "Texture.h"
 
 CUI::CUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
+	, m_pParent(nullptr)
 {
 }
 
 CUI::CUI(const CUI & rhs)
 	: CGameObject(rhs)
 	, m_pParent(nullptr)
+	, m_bActive(false)
 {
 }
 
@@ -22,6 +25,9 @@ HRESULT CUI::Initialize_Prototype()
 		return E_FAIL;
 	}
 
+	for (_uint i = 0; i < TEXTURE_END; ++i)
+		m_pTextureCom[i] = nullptr;
+
 	return S_OK;
 }
 
@@ -32,6 +38,9 @@ HRESULT CUI::Initialize(void * pArg)
 		MSG_BOX("Failed To Initialize Clone : CUI");
 		return E_FAIL;
 	}
+
+	for (_uint i = 0; i < TEXTURE_END; ++i)
+		m_pTextureCom[i] = nullptr;
 
 	//ZeroMemory(&m_tDesc, sizeof UIDESC);
 
@@ -88,6 +97,9 @@ void CUI::Free()
 	__super::Free();
 
 	Safe_Release(m_pParent);
+
+	for (_uint i = 0; i < TEXTURE_END; ++i)
+		Safe_Release(m_pTextureCom[i]);
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

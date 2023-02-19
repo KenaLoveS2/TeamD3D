@@ -2,7 +2,7 @@
 #include "UI.h"
 
 BEGIN(Engine)
-class CUI_Canvas abstract : public CUI
+class ENGINE_DLL CUI_Canvas abstract : public CUI
 {
 public:
 	CUI_Canvas(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);

@@ -6,7 +6,7 @@ BEGIN(Engine)
 /* delegate(위임) 방식으로 구현한 함수객체. */
 /* UI에 delegator을 통해 접근하도록 할 것이다. */
 template <typename... Args>
-class CDelegator
+class ENGINE_DLL CDelegator
 {
 	using CallBack = std::function<void(Args ...)>;
 

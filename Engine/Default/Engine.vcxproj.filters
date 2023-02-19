@@ -133,9 +133,6 @@
     <Filter Include="01.Utility\07.Fonts\Manager">
       <UniqueIdentifier>{0430ef1e-8964-48e9-95aa-da00c1f3d032}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\08.Frustum">
-      <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{5f31b866-d974-45b7-813f-40177f6a2f9f}</UniqueIdentifier>
     </Filter>
@@ -166,14 +163,20 @@
     <Filter Include="01.Utility\12. FSM">
       <UniqueIdentifier>{9f9b6a3c-5610-4721-a49f-0c96411151b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObject\UI\01. Canvas">
+    <Filter Include="01.Utility\02.GameObject\UI\01. Delegator">
+      <UniqueIdentifier>{635271cf-dc4f-43e4-8101-a0b4cfea9617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObject\UI\02. Canvas">
       <UniqueIdentifier>{4ffc9be7-f8b2-466f-b488-9e97e2d6db55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObject\UI\02. Node">
+    <Filter Include="01.Utility\02.GameObject\UI\03. Node">
       <UniqueIdentifier>{30697cc0-e2cd-42e4-bef9-2459ba42aabd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObject\UI\00. Delegator">
-      <UniqueIdentifier>{635271cf-dc4f-43e4-8101-a0b4cfea9617}</UniqueIdentifier>
+    <Filter Include="01.Utility\02.GameObject\UI\00. Manager">
+      <UniqueIdentifier>{22d98a48-7ac0-4e36-9012-e4b797f89beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.RenderTargets\08.Frustum">
+      <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +316,7 @@
       <Filter>01.Utility\07.Fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
-      <Filter>01.Utility\08.Frustum</Filter>
+      <Filter>01.Utility\09.RenderTargets\08.Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\public\QuadTree.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
@@ -397,16 +400,19 @@
       <Filter>01.Utility\02.GameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Canvas.h">
-      <Filter>01.Utility\02.GameObject\UI\01. Canvas</Filter>
+      <Filter>01.Utility\02.GameObject\UI\02. Canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Node.h">
-      <Filter>01.Utility\02.GameObject\UI\02. Node</Filter>
+      <Filter>01.Utility\02.GameObject\UI\03. Node</Filter>
     </ClInclude>
     <ClInclude Include="..\public\FSMComponent.h">
       <Filter>01.Utility\12. FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Delegator.h">
-      <Filter>01.Utility\02.GameObject\UI\00. Delegator</Filter>
+      <Filter>01.Utility\02.GameObject\UI\01. Delegator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Manager.h">
+      <Filter>01.Utility\02.GameObject\UI\00. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -534,7 +540,7 @@
       <Filter>01.Utility\07.Fonts</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
-      <Filter>01.Utility\08.Frustum</Filter>
+      <Filter>01.Utility\09.RenderTargets\08.Frustum</Filter>
     </ClCompile>
     <ClCompile Include="..\private\QuadTree.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
@@ -606,13 +612,16 @@
       <Filter>01.Utility\02.GameObject\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Canvas.cpp">
-      <Filter>01.Utility\02.GameObject\UI\01. Canvas</Filter>
+      <Filter>01.Utility\02.GameObject\UI\02. Canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Node.cpp">
-      <Filter>01.Utility\02.GameObject\UI\02. Node</Filter>
+      <Filter>01.Utility\02.GameObject\UI\03. Node</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FSMComponent.cpp">
       <Filter>01.Utility\12. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Manager.cpp">
+      <Filter>01.Utility\02.GameObject\UI\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

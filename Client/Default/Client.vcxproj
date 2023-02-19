@@ -193,10 +193,11 @@
     <ClInclude Include="..\public\UI_CanvasSkillWindow.h" />
     <ClInclude Include="..\public\UI_CanvasSubtitle.h" />
     <ClInclude Include="..\public\UI_CavasInv.h" />
-    <ClInclude Include="..\public\UI_Manager.h" />
+    <ClInclude Include="..\public\UI_ClientManager.h" />
     <ClInclude Include="..\public\UI_NodeMonHP.h" />
     <ClInclude Include="..\public\UI_NodePlayerHP.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
+    <ClInclude Include="..\public\Imgui_UIEditor.h" />
     <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -226,10 +227,11 @@
     <ClCompile Include="..\private\UI_CanvasSkillWindow.cpp" />
     <ClCompile Include="..\private\UI_CanvasSubtitle.cpp" />
     <ClCompile Include="..\private\UI_CavasInv.cpp" />
-    <ClCompile Include="..\private\UI_Manager.cpp" />
+    <ClCompile Include="..\private\UI_ClientManager.cpp" />
     <ClCompile Include="..\private\UI_NodeMonHP.cpp" />
     <ClCompile Include="..\private\UI_NodePlayerHP.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
+    <ClCompile Include="..\private\Imgui_UIEditor.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -88,12 +88,27 @@ void CTransform::Imgui_RenderProperty()
 
 		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 
+
+		/******* Docking *******/
+		static _bool right{ false }, left{ false }, top{ false }, bottom{ false };
+		ImGui::Checkbox("right", &right);
+		ImGui::Checkbox("left", &left);
+		ImGui::Checkbox("top", &top);
+		ImGui::Checkbox("bottom", &bottom);
+
 		ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m_WorldMatrix), matrixTranslation, matrixRotation, matrixScale);
 		ImGui::InputFloat3("Translate", matrixTranslation);
 		ImGui::InputFloat3("Rotate", matrixRotation);
 		ImGui::InputFloat3("Scale", matrixScale);
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
 
+		if (left)
+		{
+
+		}
+		/******* ~Docking *******/
+
+
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
 			if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))

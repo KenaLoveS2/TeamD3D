@@ -2,7 +2,7 @@
 #include "UI.h"
 
 BEGIN(Engine)
-class CUI_Node abstract : public CUI
+class ENGINE_DLL CUI_Node abstract : public CUI
 {
 public:
 	CUI_Node(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);

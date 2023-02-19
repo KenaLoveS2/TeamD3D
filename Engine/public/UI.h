@@ -5,15 +5,15 @@ BEGIN(Engine)
 class CShader;
 class CRenderer;
 class CVIBuffer_Rect;
-class CUI abstract : public CGameObject
+class CTexture;
+class ENGINE_DLL CUI abstract : public CGameObject
 {
 public:
+	enum	TEXTURE_TYPE { TEXTURE_DIFFUSE, TEXTURE_MASK, TEXTURE_END };
 	typedef struct tagUIDesc
 	{
-		_float				fPosX;
-		_float				fPosY;
-		_float				fSizeX;
-		_float				fSizeY;
+		_float3				vPos;
+		_float2				vSize;
 		_float4x4			ViewMatrix;
 		_float4x4			ProjMatrix;
 	} UIDESC;
@@ -44,10 +44,12 @@ protected:
 	CShader*			m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
+	CTexture*			m_pTextureCom[TEXTURE_END] = { nullptr, };
 
 protected:
 	UIDESC				m_tDesc;
 	CUI*				m_pParent;
+	_bool				m_bActive;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
