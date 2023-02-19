@@ -19,8 +19,9 @@ HRESULT CUI_Manager::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pC
 	return S_OK;
 }
 
-HRESULT CUI_Manager::Ready_Proto_Component()
+HRESULT CUI_Manager::Ready_Proto_TextureComponent()
 {
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* For. LifeBar */

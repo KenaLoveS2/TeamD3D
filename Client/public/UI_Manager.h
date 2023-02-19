@@ -21,7 +21,7 @@ public:
 	//HRESULT			Render();
 
 public: /* Client 제공 함수 */
-	HRESULT			Ready_Proto_Component();
+	HRESULT			Ready_Proto_TextureComponent();
 	HRESULT			Ready_Proto_GameObject();
 	HRESULT			Clone_GameObject();
 
