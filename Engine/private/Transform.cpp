@@ -90,6 +90,13 @@ void CTransform::Imgui_RenderProperty()
 
 
 		/******* Docking *******/
+
+		_uint numViewport = 1;
+		D3D11_VIEWPORT	viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+		//D3D11_VIEWPORT	viewportsInfo[] = {D3D11_VIEWPORT };
+		m_pContext->RSGetViewports(&numViewport, &viewport);
+
 		static _bool right{ false }, left{ false }, top{ false }, bottom{ false };
 		ImGui::Checkbox("right", &right);
 		ImGui::Checkbox("left", &left);
@@ -97,18 +104,30 @@ void CTransform::Imgui_RenderProperty()
 		ImGui::Checkbox("bottom", &bottom);
 
 		ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m_WorldMatrix), matrixTranslation, matrixRotation, matrixScale);
+		if (left)
+			matrixTranslation[0] += viewport.Width * 0.5f;
+		if (right)
+			matrixTranslation[0] -= viewport.Width * 0.5f;
+		if (top)
+			matrixTranslation[1] += viewport.Width * 0.5f;
+		if (bottom)
+			matrixTranslation[1] -= viewport.Width * 0.5f;
+
 		ImGui::InputFloat3("Translate", matrixTranslation);
 		ImGui::InputFloat3("Rotate", matrixRotation);
 		ImGui::InputFloat3("Scale", matrixScale);
-
 		if (left)
-		{
-
-		}
+			matrixTranslation[0] -= viewport.Width * 0.5f;
+		if (right)
+			matrixTranslation[0] += viewport.Width * 0.5f;
+		if (top)
+			matrixTranslation[1] -= viewport.Width * 0.5f;
+		if (bottom)
+			matrixTranslation[1] += viewport.Width * 0.5f;
+	
 		/******* ~Docking *******/
-
-
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
+
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
 			if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
