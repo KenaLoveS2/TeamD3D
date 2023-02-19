@@ -23,6 +23,7 @@ public:
 	static _uint Get_StaticLevelIndex() {
 		return m_iStaticLevelIndex;
 	}
+	HWND GetHWND() { return m_hClientWnd; }
 
 public: /* For.GameInstance */	
 	static const _tchar*			m_pPrototypeTransformTag;
@@ -35,6 +36,7 @@ public: /* For.GameInstance */
 public: /* For.Graphic_Device */
 	HRESULT Clear_Graphic_Device(const _float4* pColor);
 	HRESULT Present();
+	HRESULT	Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate);
 
 public: /* For.Input_Device */
 	_byte		Get_DIKeyState(_ubyte byKeyID);
@@ -50,17 +52,20 @@ public: /* For.Object_Manager */
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, void* pArg = nullptr);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
-	
+	void	Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
+	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+
+
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
 
 public: /* For.PipeLine */
-	_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState) ;
-	_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState) ;
-	_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState) ;
-	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	_float4 Get_CamPosition();
+	_matrix		Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState) ;
+	_float4x4	Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState) ;
+	_matrix		Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState) ;
+	void		Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	_float4		Get_CamPosition();
 
 public: /* For.Timer_Manager */ 
 	_float		Get_TimeDelta(const _tchar* pTimerTag);
@@ -96,8 +101,7 @@ public: /* For.Sound_Manager */
 public: // for imgui manager
 	void Render_ImGui();
 	void Render_Update_ImGui();
-	void Add_ImguiTabObject(class CImguiObject* ImguiObject);
-	void Add_ImguiWindowObject(class CImguiObject* ImguiObject);
+	void Add_ImguiObject(class CImguiObject* pImguiObject);
 	void Clear_ImguiObjects();
 
 private:

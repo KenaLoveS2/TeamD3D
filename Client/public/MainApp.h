@@ -32,12 +32,12 @@ private:
 	HRESULT Ready_Prototype_Component();
 	HRESULT Ready_Prototype_GameObject();
 	HRESULT Ready_Gara();
-	
 
 public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
 	HRESULT Render();
+	HRESULT Resize_BackBuffer();
 
 	static CMainApp* Create();
 	virtual void Free() override;	
