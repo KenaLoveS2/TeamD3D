@@ -131,7 +131,6 @@ HRESULT CPlayer::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
@@ -194,7 +193,7 @@ HRESULT CPlayer::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Kena"), TEXT("Com_Model"),	
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"), TEXT("Com_Model"),	
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

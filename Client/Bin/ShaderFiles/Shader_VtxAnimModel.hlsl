@@ -2,15 +2,14 @@
 #include "Shader_Client_Defines.h"
 
 /***********Constant Buffers***********/
-//matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_BoneMatrices[128];
+matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
 /**************************************/
 
-Texture2D		g_DiffuseTexture;
-Texture2D		g_NormalTexture;
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
 
 struct VS_IN
 {

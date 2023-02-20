@@ -15,16 +15,15 @@ vector			g_vCamPosition;
 vector			g_vMtrlAmbient = (vector)1.f;
 vector			g_vMtrlSpecular = (vector)1.f;
 
-Texture2D		g_Texture; /* 디버그용텍스쳐*/
-Texture2D		g_NormalTexture; 
-Texture2D		g_DepthTexture;
+Texture2D<float4>		g_Texture; /* 디버그용텍스쳐*/
 
+Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_DepthTexture;
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_ShadeTexture;
+Texture2D<float4>		g_SpecularTexture;
 
-Texture2D		g_DiffuseTexture;
-Texture2D		g_ShadeTexture;
-Texture2D		g_SpecularTexture;
-
-float g_fFar = 30.f;
+float g_fFar = 300.f; // 카메라의 FAR
 
 sampler LinearSampler = sampler_state
 {

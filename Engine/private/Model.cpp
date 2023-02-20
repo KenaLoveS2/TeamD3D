@@ -156,8 +156,6 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 
 HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName, _uint iPassIndex)
 {
-
-
 	if (nullptr != m_Meshes[iMeshIndex])
 	{
 		if (nullptr != pBoneConstantName)
@@ -170,11 +168,9 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 		}		
 
 		pShader->Begin(iPassIndex);
-
 		m_Meshes[iMeshIndex]->Render();
 	}
 		
-
 	return S_OK;
 }
 
