@@ -8,14 +8,25 @@ class CChannel final : public CBase
 {
 private:
 	CChannel();
+	CChannel(const CChannel& rhs);
 	virtual ~CChannel() = default;
 
 public:
-	HRESULT Initialize(aiNodeAnim* pAIChannel, class CModel* pModel);
+	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
+	HRESULT Initialize(void* pArg);
+	
 	void Update_TransformMatrix(_double PlayTime);
+	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio);
+	void Additive_TransformMatrix(_double PlayTime, _float fAdditiveRadio);
+
 	void Reset_KeyFrameIndex() {
 		m_iCurrentKeyFrameIndex = 0;
 	}
+	const char* Get_Name() const {
+		return m_szName;
+	}
+
+	HRESULT SetUp_BonePtr(CModel* pModel);
 
 private:
 	char			m_szName[MAX_PATH] = "";
@@ -27,8 +38,11 @@ private:
 	_uint				m_iCurrentKeyFrameIndex = 0;
 
 public:
-	static CChannel* Create(aiNodeAnim* pAIChannel, class CModel* pModel);
+	static CChannel* Create(HANDLE hFile, class CModel* pModel);
+	CChannel* Clone(void* pArg = nullptr);
 	virtual void Free() override;
+
+
 };
 
 END

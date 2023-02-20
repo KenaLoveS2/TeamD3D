@@ -18,6 +18,9 @@ public:
 	void Render_Imgui();
 	void Render_Update_ImGui();
 
+public:
+	void Render_Tab();
+	void Render_Window();
 	void ImGui_DockSpace();
 
 	// imgui object를 새로운 window로 추가한다.
@@ -30,7 +33,8 @@ private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
 
-	vector<CImguiObject*> m_vecObj;
+	vector<CImguiObject*> m_vecTab;
+	vector<CImguiObject*> m_vecWin;
 
 	ImGuiWindowFlags m_iWindowFlags = ImGuiWindowFlags_MenuBar;
 	ImGuiTabBarFlags m_iTabBarFlags = ImGuiTabBarFlags_None;

@@ -8,6 +8,9 @@
 #include "Target_Manager.h"
 #include "Frustum.h"
 #include "Imgui_Manager.h"
+#include "String_Manager.h"
+#include "Camera_Manager.h"
+#include "PostFX.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -28,6 +31,9 @@ CGameInstance::CGameInstance()
 	, m_pTarget_Manager(CTarget_Manager::GetInstance())
 	, m_pSound_Manager(CSound_Manager::GetInstance())
 	, m_pImgui_Manager(CImgui_Manager::GetInstance())
+	, m_pString_Manager(CString_Manager::GetInstance())
+	, m_pCamera_Manager(CCamera_Manager::GetInstance())
+	, m_pPostFX(CPostFX::GetInstance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
@@ -42,6 +48,17 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pSound_Manager);
 	Safe_AddRef(m_pImgui_Manager);	
+	Safe_AddRef(m_pString_Manager);
+	Safe_AddRef(m_pCamera_Manager);
+	Safe_AddRef(m_pPostFX);
+}
+
+_uint CGameInstance::Get_CurLevelIndex()
+{
+	if (m_pLevel_Manager != nullptr)
+		return m_pLevel_Manager->Get_CurrentLevelIndex();
+
+	return 0;
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
@@ -59,6 +76,10 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
 	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
+
+	/* HDR 초기화 */
+	if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
+		return E_FAIL;
 
 	/* 입력 디바이스 초기화. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
@@ -92,6 +113,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		return E_FAIL;
 
 	m_hClientWnd = GraphicDesc.hWnd;
+	
+	m_pString_Manager->Initalize(iNumLevels);
 
 	return S_OK;
 }
@@ -107,25 +130,29 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pImgui_Manager->Tick_Imgui();
 
 	m_pObject_Manager->Tick(fTimeDelta);
+	m_pCamera_Manager->Tick(fTimeDelta);
 	m_pLevel_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
+	m_pSound_Manager->Tick(fTimeDelta);
+
 	m_pFrustum->Transform_ToWorldSpace();
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
+	m_pCamera_Manager->Late_Tick(fTimeDelta);
 	m_pLevel_Manager->Late_Tick(fTimeDelta);
 
-	m_pSound_Manager->Tick(fTimeDelta);
+	
 }
 
-void CGameInstance::Clear_Level(_uint iLevelIndex)
+void CGameInstance::Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag)
 {
 	if (nullptr == m_pObject_Manager)		
 		return;
 
 	m_pObject_Manager->Clear(iLevelIndex);
-
+	bCamreaClearFlag && m_pCamera_Manager->Clear();
 }
 
 HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
@@ -155,7 +182,10 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	if (m_pGraphic_Device == nullptr)
 		return E_FAIL;
 
-	return m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate);
+	if (FAILED(m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
@@ -214,20 +244,21 @@ HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject *
 	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
 }
 
-HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg)
-{
-	if (nullptr == m_pObject_Manager)
-		return E_FAIL;
-
-	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg);
-}
-
 CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);	
+}
+
+HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg, CGameObject** ppObj)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg, ppObj);
+
 }
 
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
@@ -461,11 +492,48 @@ void CGameInstance::Clear_ImguiObjects()
 	m_pImgui_Manager->Clear_ImguiObjects();
 }
 
+HRESULT CGameInstance::Add_String(_uint iLevelIndex, _tchar * pStr)
+{
+	if (m_pString_Manager == nullptr) return E_FAIL;
+	return m_pString_Manager->Add_String(iLevelIndex, pStr);
+}
+
+HRESULT CGameInstance::Add_String(_tchar * pStr)
+{
+	if (m_pString_Manager == nullptr) return E_FAIL;
+	return m_pString_Manager->Add_String(pStr);
+}
+
+_tchar* CGameInstance::Find_String(_uint iLevelIndex, _tchar * pStr)
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Find_String(iLevelIndex, pStr);
+}
+
+HRESULT CGameInstance::Add_Camera(const _tchar * pCameraTag, CCamera * pCamrea, _bool bWorkFlag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Add_Camera(pCameraTag, pCamrea, bWorkFlag);
+}
+
+HRESULT CGameInstance::Work_Camera(const _tchar * pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Work_Camera(pCameraTag);
+}
+
+CCamera * CGameInstance::Find_Camera(const _tchar * pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Find_Camera(pCameraTag);
+}
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();
+	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
+	CCamera_Manager::GetInstance()->DestroyInstance();
 	CComponent_Manager::GetInstance()->DestroyInstance();
 	CLevel_Manager::GetInstance()->DestroyInstance();
 	CInput_Device::GetInstance()->DestroyInstance();
@@ -477,11 +545,15 @@ void CGameInstance::Release_Engine()
 	CGraphic_Device::GetInstance()->DestroyInstance();
 	CTimer_Manager::GetInstance()->DestroyInstance();
 	CSound_Manager::GetInstance()->DestroyInstance();
+	CString_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pCamera_Manager);	
+	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pImgui_Manager);
+	Safe_Release(m_pPostFX);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pFrustum);

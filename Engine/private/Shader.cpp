@@ -21,7 +21,6 @@ CShader::CShader(const CShader & rhs)
 
 HRESULT CShader::Initialize_Prototype(const _tchar * pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, const _uint iNumElements)
 {
-	
 	m_wstrFilePath = pShaderFilePath;
 	m_pElements = pElements;
 	m_iNumElements = iNumElements;
@@ -75,6 +74,9 @@ HRESULT CShader::Begin(_uint iPassIndex)
 		iPassIndex >= m_iNumPasses)
 		return E_FAIL;
 
+	m_iCurrentPassIndex = iPassIndex;
+
+	// Technique는 무조건 한개만 가질수 있음 현재
 	ID3DX11EffectTechnique*	pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
 		return E_FAIL;
@@ -96,6 +98,7 @@ HRESULT CShader::Set_RawValue(const char* pConstantName, const void* pData, _uin
 		return E_FAIL;
 
 	ID3DX11EffectVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName);
+
 	if (nullptr == pVariable)
 		return E_FAIL;
 
@@ -108,6 +111,7 @@ HRESULT CShader::Set_Matrix(const char * pConstantName, const _float4x4* pMatrix
 		return E_FAIL;
 
 	ID3DX11EffectMatrixVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName)->AsMatrix();
+
 	if (nullptr == pVariable)
 		return E_FAIL;
 
@@ -120,6 +124,7 @@ HRESULT CShader::Set_MatrixArray(const char * pConstantName, const _float4x4 * p
 		return E_FAIL;
 
 	ID3DX11EffectMatrixVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName)->AsMatrix();
+
 	if (nullptr == pVariable)
 		return E_FAIL;
 
@@ -150,6 +155,12 @@ HRESULT CShader::Set_ShaderResourceView(const char * pConstantName, ID3D11Shader
 	return pVariable->SetResource(pSRV);	
 }
 
+void CShader::Imgui_RenderProperty()
+{
+	ImGui::Begin("SHADER DEBUG");
+	ImGui::Text("Current PassIndex : %d" , m_iCurrentPassIndex);
+	ImGui::End();
+}
 
 CShader * CShader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, const _uint iNumElements)
 {
