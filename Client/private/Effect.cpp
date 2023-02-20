@@ -135,7 +135,7 @@ CEffect * CEffect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CEffect");
+		MSG_BOX("Failed to Created : CEffect_EBase");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -147,7 +147,7 @@ CGameObject * CEffect::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CEffect");
+		MSG_BOX("Failed to Cloned : CEffect_EBase");
 		Safe_Release(pInstance);
 	}
 	return pInstance;

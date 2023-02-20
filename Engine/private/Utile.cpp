@@ -88,3 +88,10 @@ _float CUtile::Get_RandomFloat(_float fMinValue, _float fMaxValue)
 
 	return (f * (fMaxValue - fMinValue)) + fMinValue;
 }
+
+_float3 CUtile::Get_RandomVector(const _float3 & fMinValue, const _float3 & fMaxValue)
+{
+	return _float3(Get_RandomFloat(fMinValue.x, fMaxValue.x),
+				   Get_RandomFloat(fMinValue.y, fMaxValue.y),
+				   Get_RandomFloat(fMinValue.z, fMaxValue.z));
+}
