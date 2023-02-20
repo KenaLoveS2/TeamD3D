@@ -169,6 +169,9 @@
     <Filter Include="01.Utility\02.GameObject\Camera\Manager">
       <UniqueIdentifier>{b2e34ede-e0b2-4e46-85db-8187773c6296}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\13. HDR">
+      <UniqueIdentifier>{92ebf895-8cf3-465f-8c4c-d85174d60dfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -396,6 +399,9 @@
     <ClInclude Include="..\public\Camera_Manager.h">
       <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PostFX.h">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -598,6 +604,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostFX.cpp">
+      <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

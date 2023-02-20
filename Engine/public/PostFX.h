@@ -20,7 +20,13 @@ public:
 
 private:
 	void	DownScale(ID3D11ShaderResourceView* pHDRSRV);
+	void	Bloom();
+	void	Blur(ID3D11ShaderResourceView* pInput, ID3D11UnorderedAccessView* pOutput);
+
 	void	FinalPass(ID3D11ShaderResourceView* pHDRSRV);
+
+	static  void	SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
+	HRESULT CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -50,6 +56,11 @@ private:
 	ID3D11Buffer*				m_pAvgLumBuffer = nullptr;
 	ID3D11UnorderedAccessView*	m_pAvgLumUAV = nullptr;
 	ID3D11ShaderResourceView*	m_pAvgLumSRV = nullptr;
+
+	// Previous average luminance for adaptation
+	ID3D11Buffer* m_pPrevAvgLumBuffer = nullptr;
+	ID3D11UnorderedAccessView* m_pPrevAvgLumUAV = nullptr;
+	ID3D11ShaderResourceView* m_pPrevAvgLumSRV = nullptr;
 
 	_uint						m_iWidth = 0;
 	_uint						m_iHeight = 0;
