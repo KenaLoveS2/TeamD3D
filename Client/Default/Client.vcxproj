@@ -175,9 +175,11 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\public\Effect.h" />
+    <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\ForkLift.h" />
+    <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -208,9 +210,11 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
+    <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\ForkLift.cpp" />
+    <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
@@ -248,9 +252,6 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />

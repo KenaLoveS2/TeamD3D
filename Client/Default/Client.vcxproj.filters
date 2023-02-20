@@ -217,6 +217,12 @@
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
+    <ClInclude Include="..\public\Imgui_Effect.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Base.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -306,6 +312,12 @@
     <ClCompile Include="..\private\Imgui_UIEditor.cpp">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Imgui_Effect.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Base.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -340,15 +352,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
