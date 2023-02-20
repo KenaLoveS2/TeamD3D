@@ -21,11 +21,16 @@ private:
 	HRESULT	Ready_TextureList();
 	HRESULT Ready_CanvasProtoList();
 	HRESULT Ready_CloneCanvasList();
+	HRESULT Ready_NodeProtoList();
+	HRESULT Ready_CloneNodeList();
+
 
 private:
 	vector<string>			m_vecTextureTag;
 	vector<string>			m_vecCanvasProtoTag;
 	vector<CUI_Canvas*>		m_vecCanvas;
+	vector<string>			m_vecNodeProtoTag;
+	vector<CUI_Node*>		m_vecNode;
 	vector<string>			m_vecRenderPass;
 	
 	CUI_Canvas*				m_pCanvas;

@@ -21,6 +21,23 @@ CUI::CUI(const CUI & rhs)
 {
 	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
 	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
+
+	XMStoreFloat4x4(&m_matParentInit, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_matLocal, XMMatrixIdentity());
+
+}
+
+_fmatrix CUI::Get_WorldMatrix()
+{
+	return m_pTransformCom->Get_WorldMatrix();
+}
+
+void CUI::Set_Parent(CUI* pUI)
+{
+	m_pParent = pUI;
+	Safe_AddRef(m_pParent);
+
+	XMStoreFloat4x4(&m_matParentInit, m_pParent->Get_WorldMatrix());
 }
 
 HRESULT CUI::Set_Texture(TEXTURE_TYPE eType, wstring textureComTag)

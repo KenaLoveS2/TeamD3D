@@ -25,10 +25,8 @@ protected:
 
 
 public:
-	void				Set_Parent(CUI* pUI) {
-		m_pParent = pUI;
-		Safe_AddRef(m_pParent);
-	}
+	_fmatrix			Get_WorldMatrix();
+	void				Set_Parent(CUI* pUI);
 	HRESULT				Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
 	void				Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
 
@@ -53,6 +51,10 @@ protected:
 	_bool				m_bActive;
 	_uint				m_iRenderPass;
 	wstring				m_TextureComTag[TEXTURE_END];
+
+	/* For. Node (mostly) */
+	_float4x4			m_matParentInit;
+	_float4x4			m_matLocal;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;

@@ -124,11 +124,20 @@ void CTransform::Imgui_RenderProperty()
 
 
 		/* Before Input */
-		_float fRatio = matrixScale[0] / matrixScale[1];
+		static const _float fRatio = matrixScale[1] / matrixScale[0];
+		/* Scale Ratio(base on Width) */
+		static _bool isKeepRatio{ false };
+		ImGui::Checkbox(" : Keep Original Ratio", &isKeepRatio);
 
 		ImGui::InputFloat3("Translate", matrixTranslation);
 		ImGui::InputFloat3("Rotate", matrixRotation);
-		ImGui::InputFloat3("Scale", matrixScale);
+		if (ImGui::InputFloat3("Scale", matrixScale))
+		{
+			if (isKeepRatio)
+			{
+				matrixScale[1] = fRatio * matrixScale[0];
+			}
+		}
 
 		/******* Docking *******/
 		if (left)
@@ -140,14 +149,6 @@ void CTransform::Imgui_RenderProperty()
 		else if (bottom)
 			matrixTranslation[1] -= viewport.Height * 0.5f;	
 		/******* ~Docking *******/
-
-		/* Scale Ratio(base on Width) */
-		static _bool isKeepRatio{ false };
-		ImGui::Checkbox(" : Keep Original Ratio", &isKeepRatio);
-		if (isKeepRatio)
-		{
-			matrixScale[1] = fRatio * matrixScale[1];
-		}
 
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
 

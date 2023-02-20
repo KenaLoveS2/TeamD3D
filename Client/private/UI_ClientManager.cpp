@@ -6,6 +6,8 @@
 #include "UI_CanvasHUD.h"
 
 /* Node */
+#include "UI_NodeHUDHPBar.h"
+#include "UI_NodeHUDHP.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -40,21 +42,35 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	/* For. HUD */
+	/* HUD Frame */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDFrame"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDFrame.png")))))
+		return E_FAIL;
+	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDFrame");
+
+	/* Bar */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarBG.png")))))
+		return E_FAIL;
+	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBar");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarMask"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarMask.png")))))
+		return E_FAIL;
+	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarMask");
+	
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarNoise.png")))))
+		return E_FAIL;
+	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarNoise");
+
+
+	/* RingBar */
+	/* PipGuage */
+
 	/* RotActionIcon */
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionCarry"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/T_ArrowAmmo_ProgressMask.png")))))
-		return E_FAIL;
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_RotActionCarry");
 
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionCloud"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/T_ArrowAmmo_ProgressGradient.png")))))
-		return E_FAIL; 
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_RotActionCloud");
-
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionNormal"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/T_RotAction_Icon.png")))))
-		return E_FAIL;
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_RotActionNormal");
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -70,6 +86,15 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	m_vecCanvasProtoTag.push_back(TEXT("Prototype_GameObject_UI_Canvas_HUD"));
 
+	/* HP Bar */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HP"), CUI_NodeHUDHP::Create(pDevice, pContext))))
+		return E_FAIL;
+	m_vecNodeProtoTag.push_back(TEXT("Prototype_GameObject_UI_Node_HP"));
+
+	/* HP Guage */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HPBar"), CUI_NodeHUDHPBar::Create(pDevice, pContext))))
+		return E_FAIL;
+	m_vecNodeProtoTag.push_back(TEXT("Prototype_GameObject_UI_Node_HPBar"));
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -106,4 +131,5 @@ void CUI_ClientManager::Free()
 {
 	m_vecTextureProtoTag.clear();
 	m_vecCanvasProtoTag.clear();
+	m_vecNodeProtoTag.clear();
 }

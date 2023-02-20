@@ -44,6 +44,18 @@ HRESULT CImgui_UIEditor::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_NodeProtoList()))
+	{
+		MSG_BOX("Failed To Ready NodeProto List : Imgui_UIEditor");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_CloneNodeList()))
+	{
+		MSG_BOX("Failed To Ready NodeClone List : Imgui_UIEditor");
+		return E_FAIL;
+	}
+
 	m_szFreeRenderName = "UI Editor";
 
 	return S_OK;
@@ -62,6 +74,12 @@ bool	CanvasTexture_Getter(void* data, int index, const char** output)
 	return true;
 }
 bool	RenderPass_Getter(void* data, int index, const char** output)
+{
+	vector<string>*	 pVec = (vector<string>*)data;
+	*output = (*pVec)[index].c_str();
+	return true;
+}
+bool	NodeProto_Getter(void* data, int index, const char** output)
 {
 	vector<string>*	 pVec = (vector<string>*)data;
 	*output = (*pVec)[index].c_str();
@@ -146,6 +164,16 @@ void CImgui_UIEditor::Imgui_FreeRender()
 		/* Translation */
 		m_pCanvas->Imgui_RenderProperty();
 
+		/* Node Setting */
+		if (CollapsingHeader("Nodes"))
+		{
+			static int selected_Node = 0;
+			_uint iNumNodes = (_uint)m_vecNodeProtoTag.size();
+			if (ListBox(" : Node Type", &selected_Node, NodeProto_Getter, &m_vecNodeProtoTag, iNumNodes, 5))
+			{
+			}
+		}
+
  	Exit:
  		End();
 	}
@@ -207,6 +235,37 @@ HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
 	return S_OK;
 }
 
+HRESULT CImgui_UIEditor::Ready_NodeProtoList()
+{
+	const vector<wstring>* pTags = CUI_ClientManager::GetInstance()->Get_NodeProtoTag();
+	wstring tag = L"Prototype_GameObject_UI_";
+	size_t tagLength = tag.length();
+	size_t length = 0;
+
+	for (auto wstr : *pTags)
+	{
+		length = wstr.length() - tagLength;
+		wstr = wstr.substr(tagLength, length);
+		string str;
+		str.assign(wstr.begin(), wstr.end());
+		m_vecNodeProtoTag.push_back(str);
+	}
+
+	return S_OK;
+}
+
+HRESULT CImgui_UIEditor::Ready_CloneNodeList()
+{
+	/* Initialize */
+	for (auto wstr : m_vecNodeProtoTag)
+		m_vecNode.push_back(nullptr);
+
+	/* Todo : File Load */
+	/* To Maintain the sequence of the ProtoTags, push_back m_vecCanvas before Dealing with Real Layer */
+
+	return S_OK;
+}
+
 CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)
 {
 	CImgui_UIEditor*	pInstance = new CImgui_UIEditor(pDevice, pContext);
@@ -223,6 +282,11 @@ void CImgui_UIEditor::Free()
 	__super::Free();
 
 	m_vecTextureTag.clear();
+	
 	m_vecCanvasProtoTag.clear();
+	m_vecCanvas.clear();
+	m_vecNodeProtoTag.clear();
+	m_vecNode.clear();
+
 	m_vecRenderPass.clear();
 }

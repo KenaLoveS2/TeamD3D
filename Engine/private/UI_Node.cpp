@@ -35,6 +35,15 @@ void CUI_Node::Tick(_float fTimeDelta)
 void CUI_Node::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	/* Calculate with Parent(Canvas) WorldMatrix (Scale, Translation) */
+	if (m_pParent != nullptr)
+	{
+		_matrix matParent = m_pParent->Get_WorldMatrix();
+		
+
+
+	}
 }
 
 HRESULT CUI_Node::Render()
