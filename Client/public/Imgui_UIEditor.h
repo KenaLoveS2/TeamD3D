@@ -23,13 +23,13 @@ private:
 	HRESULT Ready_CloneCanvasList();
 
 private:
-	vector<string>			m_vecTextureTag;
-	vector<string>			m_vecCanvasProtoTag;
+	vector<string>					m_vecTextureTag;
+	vector<string>					m_vecCanvasProtoTag;
 	vector<CUI_Canvas*>		m_vecCanvas;
-	vector<string>			m_vecRenderPass;
+	vector<string>					m_vecRenderPass;
 	
-	CUI_Canvas*				m_pCanvas;
-	CUI_Node*				m_pNode;
+	CUI_Canvas*						m_pCanvas;
+	CUI_Node*						m_pNode;
 
 public:
 	static	CImgui_UIEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);

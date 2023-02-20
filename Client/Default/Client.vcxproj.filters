@@ -112,6 +112,21 @@
     <Filter Include="02.GameObjects\UI\01. Tool">
       <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Enviroment">
+      <UniqueIdentifier>{a71ce5fd-215f-4bf4-9292-9e4b74f5b239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Enviroment\Chap1_Cave">
+      <UniqueIdentifier>{45e147e5-4068-4bb0-896e-43a570b784ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Enviroment\Chap2_Forest">
+      <UniqueIdentifier>{beefb780-3c50-4aec-88ad-6ab3aa803f8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\03.MapTool">
+      <UniqueIdentifier>{7bd953d0-b4c6-4f8c-8648-fc98931eeae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Enviroment\Tool">
+      <UniqueIdentifier>{b871de7e-216b-48d4-9120-3380629f6008}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -223,6 +238,13 @@
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_MapTool.h">
+      <Filter>01.Levels\03.MapTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cave_Rock.h">
+      <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -318,6 +340,13 @@
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Level_MapTool.cpp">
+      <Filter>01.Levels\03.MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cave_Rock.cpp">
+      <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

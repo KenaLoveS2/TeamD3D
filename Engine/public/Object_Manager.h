@@ -17,6 +17,7 @@ private:
 
 public:
 	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex);
+	map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects() { return m_Prototypes; }
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);

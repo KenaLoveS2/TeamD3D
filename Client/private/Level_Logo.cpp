@@ -36,8 +36,13 @@ void CLevel_Logo::Late_Tick(_float fTimeDelta)
 		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 
+#ifdef FOR_MAPTOOL
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_MAPTOOL))))
+			return;
+#else
 		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY))))
 			return;
+#endif
 
 		Safe_Release(pGameInstance);
 
