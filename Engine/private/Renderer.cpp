@@ -57,16 +57,16 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	//if(m_pLevel_Manager != nullptr)
-	//{
-	//	if(m_pLevel_Manager->Get_bOpenLevel())
-	//	{
-	//		if (FAILED(Render_StaticShadow()))
-	//			return E_FAIL;
-	//	}
-	//}
-	//if (FAILED(Render_Shadow()))
-	//	return E_FAIL;
+	if(m_pLevel_Manager != nullptr)
+	{
+		if(m_pLevel_Manager->Get_bOpenLevel())
+		{
+			if (FAILED(Render_StaticShadow()))
+				return E_FAIL;
+		}
+	}
+	if (FAILED(Render_Shadow()))
+		return E_FAIL;
 
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
@@ -454,12 +454,12 @@ HRESULT CRenderer::Render_AlphaBlend()
 
 HRESULT CRenderer::Render_HDR()
 {
-	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
-	CRenderTarget* pLDR2 = m_pTarget_Manager->Get_Target(L"Target_LDR2");
-	pLDR1->Clear();
-	pLDR2->Clear();
+	//CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
+	//CRenderTarget* pLDR2 = m_pTarget_Manager->Get_Target(L"Target_LDR2");
+	//pLDR1->Clear();
+	//pLDR2->Clear();
 
-	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
+	//CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
 	return S_OK;
 }
 
