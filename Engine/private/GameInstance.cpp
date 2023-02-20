@@ -271,6 +271,12 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
+map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
+{
+	assert(nullptr != m_pObject_Manager&& "CGameInstance::Get_ProtoTypeObjects()");
+	return m_pObject_Manager->Get_ProtoTypeObjects();
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -285,6 +291,13 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar * pP
 		return nullptr;
 
 	return m_pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
+}
+
+map<const _tchar*, class CComponent*>* CGameInstance::Get_ComponentProtoType()
+{
+	assert(nullptr != m_pComponent_Manager && "CGameInstance::Get_ComponentProtoType()");
+
+	return m_pComponent_Manager->Get_ComponentProtoType();
 }
 
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
