@@ -13,11 +13,7 @@
 #include "Effect_Point_Instancing.h"
 #include "Kena.h"
 #include "Kena_MainOutfit.h"
-
-
-#ifdef FOR_MAPTOOL
 #include "Cave_Rock.h"
-#endif
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -375,9 +371,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	lstrcpy(m_szLoadingText, TEXT("객체원형을 생성중입니다. "));
 
 	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-		CCave_Rock::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
+	//	CCave_Rock::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
 

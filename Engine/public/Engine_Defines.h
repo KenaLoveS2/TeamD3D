@@ -53,6 +53,7 @@ using namespace nlohmann;
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"
 #include "Engine_Struct.h"
+#include "Engine_Enum.h"
 
 #ifdef _DEBUG
 

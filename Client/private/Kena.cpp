@@ -46,6 +46,8 @@ void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	for (auto& pPart : m_vecPart)
@@ -55,6 +57,13 @@ void CKena::Tick(_float fTimeDelta)
 void CKena::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
+		m_iAnimationIndex++;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
+		m_iAnimationIndex--;
+
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
 
 	if (m_pRendererCom != nullptr)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);

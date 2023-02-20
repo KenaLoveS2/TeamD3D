@@ -457,6 +457,9 @@
     <ClInclude Include="..\public\Json\json_fwd.hpp">
       <Filter>01.Utility\14. Json</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Engine_Enum.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
