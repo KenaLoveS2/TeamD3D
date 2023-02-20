@@ -68,6 +68,10 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 
+	void Go_AxisY(_float fTimeDelta);
+	void Go_AxisNegY(_float fTimeDelta);
+	void Speed_Boost(_bool bKeyState, _float fValue);
+
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _float fTimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
@@ -84,7 +88,8 @@ public:
 	
 private:	
 	_float4x4				m_WorldMatrix;
-	TRANSFORMDESC			m_TransformDesc;
+	TRANSFORMDESC	m_TransformDesc;
+	_float					m_fInitSpeed = 0.f;
 
 
 public:
