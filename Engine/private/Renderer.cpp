@@ -47,21 +47,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
-
-	/* 셰이드 타겟을 바인딩 하고, 
-	셰이드 타겟에다가 명암을 그릴수 있도로 ㄱ처리를 한다. */
-	/* 명암을 그리기위해서는 빛의 정보와 노멀의 정보가 필요하다. */
-	/*노멀벡터의 경우 노멀 렌더타겟으로부터 얻어온다. 
-	빛의 정보의 경우 라이트객체로부터 얻어온다. */
-	/* 셰이드타겟을 가득 채우고 그려줄 수있는 정점버퍼를 그린다. 이용하는 셰이더에게 노멀타겟과 빛 정보를 전역변수로 
-	던져서 연산할 수 있도록 하겠다. */
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
-
-	/* 디퓨즈타겟(색상) * 셰이드타겟(명암)을 곱하여 최종적으로 백버퍼에 그려내는 작업을 수행한다. */
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
-	
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_AlphaBlend()))
@@ -131,8 +120,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
-
-
+	
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
@@ -158,8 +146,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 300.0f, 300.f, 200.f, 200.f)))
 		return E_FAIL;
 #endif
-
-
+	
 	return S_OK;
 }
 
@@ -234,12 +221,6 @@ HRESULT CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
-
-	/* 직교행렬  */
-	/*transpose()
-	XMMatrixInverse();
-	float3x3*/
-	/*XMMatrixTranspose();*/
 
 	CPipeLine*		pPipeLine = GET_INSTANCE(CPipeLine);	
 

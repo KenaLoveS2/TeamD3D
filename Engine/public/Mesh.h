@@ -20,15 +20,14 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype(CModel::TYPE eType, aiMesh* pAIMesh, class CModel* pModel);
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	void SetUp_MeshBones(class CModel* pModel);
+	HRESULT SetUp_BonePtr(CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
 private:
-	aiMesh*				m_pAIMesh = nullptr;
 	CModel::TYPE		m_eType;
 	/* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
 	_uint				m_iMaterialIndex = 0;
@@ -37,14 +36,18 @@ private:
 	_uint					m_iNumBones = 0;
 	vector<class CBone*>	m_Bones;
 
+	string* m_pBoneNames = nullptr;
+	VTXMODEL* m_pNonAnimVertices = nullptr;
+
 private:
-	HRESULT Ready_VertexBuffer_NonAnimModel(aiMesh* pAIMesh, class CModel* pModel);
-	HRESULT Ready_VertexBuffer_AnimModel(aiMesh* pAIMesh, class CModel* pModel);
+	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
+	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 
 public:
-	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, aiMesh* pAIMesh, class CModel* pModel);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel);
 	virtual CComponent* Clone(void* pArg = nullptr) override;
 	virtual void Free();
+	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
 };
 
 END

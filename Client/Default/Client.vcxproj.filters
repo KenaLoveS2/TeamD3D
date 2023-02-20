@@ -67,12 +67,6 @@
     <Filter Include="02.GameObjects\Effect\Effect">
       <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96.StringManager">
-      <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="95. Tool">
-      <UniqueIdentifier>{fd4879a2-bbb4-4458-8e8d-e8f5ffcffd64}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -144,15 +138,6 @@
     <ClInclude Include="..\public\Effect.h">
       <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\String_Manager.h">
-      <Filter>96.StringManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Base.h">
-      <Filter>02.GameObjects\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Imgui_Effect.h">
-      <Filter>95. Tool</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -208,15 +193,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
       <Filter>02.GameObjects\Effect\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\String_Manager.cpp">
-      <Filter>96.StringManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Base.cpp">
-      <Filter>02.GameObjects\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Imgui_Effect.cpp">
-      <Filter>95. Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
