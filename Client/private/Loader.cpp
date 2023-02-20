@@ -11,6 +11,8 @@
 #include "Sky.h"
 #include "Effect_Rect_Instancing.h"
 #include "Effect_Point_Instancing.h"
+#include "Kena.h"
+#include "Kena_MainOutfit.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -169,22 +171,18 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.mdat", PivotMatrix))))
+		return E_FAIL;
+
 	if (FAILED(LoadNonAnimModel(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_Fiona */
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Fiona/Fiona.fbx", PivotMatrix))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Model_Kena */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Kena/Kena_Body.fbx", PivotMatrix))))
-		return E_FAIL;
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Kena_Body.mdat", PivotMatrix))))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Kena/Outfit//MainOutfit/Kena_MainOutfit.fbx", PivotMatrix))))
-		return E_FAIL;
+	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
@@ -249,6 +247,14 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
+		CKena::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
+		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_ForkLift */

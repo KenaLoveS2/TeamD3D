@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\VIBuffer_Rect_Instancing.h"
 
 CVIBuffer_Rect_Instancing::CVIBuffer_Rect_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\UI_Canvas.h"
 
 CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

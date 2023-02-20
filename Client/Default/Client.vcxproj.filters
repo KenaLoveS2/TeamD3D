@@ -238,6 +238,9 @@
     <ClInclude Include="..\Public\Kena_Parts.h">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Kena.h">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -338,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Kena_Parts.cpp">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

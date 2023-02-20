@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\EnviromentObj.h"
 #include "GameInstance.h"
 #include "Utile.h"

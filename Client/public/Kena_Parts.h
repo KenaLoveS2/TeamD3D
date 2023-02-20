@@ -20,7 +20,7 @@ public:
 
 	typedef struct tagKenaParts : public CGameObject::GAMEOBJECTDESC
 	{
-		class CPlayer*		pPlayer = nullptr;
+		class CKena*			pPlayer = nullptr;
 		KENAPARTS_TYPE	eType = KENAPARTS_END;
 	} KENAPARTS_DESC;
 
@@ -43,7 +43,7 @@ protected:
 	CModel*				m_pModelCom = nullptr;
 
 protected:
-	class CPlayer*		m_pPlayer = nullptr;
+	class CKena*			m_pPlayer = nullptr;
 	KENAPARTS_DESC	m_tPartsInfo;
 
 protected:

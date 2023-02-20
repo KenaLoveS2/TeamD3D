@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Model.h"
 #include "Mesh.h"
 #include "Texture.h"
