@@ -80,7 +80,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensitivity);
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_T))
+	if (pGameInstance->Key_Down(DIK_T))
 	{
 		if (m_bFix)
 			m_bFix = false;
