@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "Timer_Manager.h"
-
 
 IMPLEMENT_SINGLETON(CTimer_Manager)
 

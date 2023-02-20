@@ -47,32 +47,46 @@ BEGIN(Engine)
 
 	public: /* For.Input_Device */
 		_byte Get_DIKeyState(_ubyte byKeyID);
-		_byte Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID);
-		_long Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMoveState);
+		_byte Get_DIMouseState(MOUSEKEYSTATE byMouseID);
+		_long Get_DIMouseMove(MOUSEMOVESTATE eMoveState);
+		_float		Get_KeyChargeTime(_ubyte byKeyID);
+		_bool		Mouse_Down(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Up(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_DoubleClick(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Pressing(MOUSEKEYSTATE MouseButton);
+		_bool		Key_Pressing(_ubyte byKeyID);
+		_bool		Key_Down(_ubyte byKeyID);
+		_bool		Key_DoubleDown(_ubyte byKeyID);
+		_bool		Key_Up(_ubyte byKeyID);
+		_bool		Key_Charge(_ubyte byKeyID, _float fTime);
+		void		Reset_EveryKey(_float fTimeDelta);
 
 	public: /* For.Level_Manager */
 		HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);
 		HRESULT Render_Level();
 
 	public: /* For.Object_Manager */
-		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag,
-		                                   _uint iIndex = 0);
+		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
+		class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
+
 		HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
-		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
-		                         void* pArg = nullptr, CGameObject** ppObj = nullptr);
+		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
+								void* pArg = nullptr, CGameObject** ppObj = nullptr);
+
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
-
+		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
-
+		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 	public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
 		_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
+		_float4x4 Get_TransformFloat4x4_Inverse(CPipeLine::TRANSFORMSTATE eState);
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 		_float4 Get_CamPosition();
 

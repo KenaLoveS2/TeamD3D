@@ -58,8 +58,26 @@
     <Filter Include="02.GameObjects\Effect">
       <UniqueIdentifier>{5b189f8f-a055-4bd7-ab58-9ab1e12c2df5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Rect_Instance">
+      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Point_Instance">
+      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Effect">
+      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="96.StringManager">
       <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Outfit">
+      <UniqueIdentifier>{61f53bdc-7604-49d1-82e9-57d503830bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents">
+      <UniqueIdentifier>{12458085-ac27-41ad-a5a7-a0f8450b80bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents\Kena_Parts">
+      <UniqueIdentifier>{abc75d1f-28fb-4536-9fda-986b69c775ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
@@ -103,23 +121,11 @@
     <Filter Include="02.GameObjects\UI\01. Tool">
       <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Tool">
-      <UniqueIdentifier>{55de550d-bfe7-48fb-a75f-a6a0dcc9dfaa}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Envrioment">
+      <UniqueIdentifier>{fb1c8ae7-2f83-49c2-8d0d-0f80606e3836}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Obj">
-      <UniqueIdentifier>{f58cfd9e-547c-4899-87aa-1b3aa3566486}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Obj\Rect_Instance">
-      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Obj\Point_Instance">
-      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Obj\Effect">
-      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\ShaderFiles">
-      <UniqueIdentifier>{234c5145-7253-4b7a-9033-77e827d438a3}</UniqueIdentifier>
+    <Filter Include="01.Levels\03. MapTool">
+      <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -184,13 +190,13 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Point_Instancing.h">
-      <Filter>02.GameObjects\Effect\Obj\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Point_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Rect_Instancing.h">
-      <Filter>02.GameObjects\Effect\Obj\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Rect_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect.h">
-      <Filter>02.GameObjects\Effect\Obj\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasHUD.h">
       <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
@@ -227,11 +233,30 @@
     </ClInclude>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\Imgui_Effect.h">
-      <Filter>02.GameObjects\Effect\Tool</Filter>
+      <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Base.h">
-      <Filter>02.GameObjects\Effect\Obj</Filter>
+      <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Kena_MainOutfit.h">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_Parts.h">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena.h">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cave_Rock.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_MapTool.h">
+      <Filter>01.Levels\03. MapTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -280,13 +305,13 @@
       <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Obj\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Point_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Obj\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Rect_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
-      <Filter>02.GameObjects\Effect\Obj\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasHUD.cpp">
       <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
@@ -322,11 +347,30 @@
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Imgui_Effect.cpp">
-      <Filter>02.GameObjects\Effect\Tool</Filter>
+      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Base.cpp">
-      <Filter>02.GameObjects\Effect\Obj</Filter>
+      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_Parts.cpp">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cave_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_MapTool.cpp">
+      <Filter>01.Levels\03. MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -362,9 +406,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
-      <Filter>02.GameObjects\Effect\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Object_Manager.h"
 #include "Layer.h"
 #include "GameObject.h"
@@ -10,7 +11,7 @@ CObject_Manager::CObject_Manager()
 {
 }
 
-CComponent * CObject_Manager::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, _uint iIndex)
+CComponent * CObject_Manager::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, const _tchar * pCloneObjectTag)
 {
 	if (iLevelIndex >= m_iNumLevels)
 		return nullptr;
@@ -20,7 +21,20 @@ CComponent * CObject_Manager::Get_ComponentPtr(_uint iLevelIndex, const _tchar *
 	if (nullptr == pLayer)
 		return nullptr;
 
-	return pLayer->Get_ComponentPtr(pComponentTag, iIndex);	
+	return pLayer->Get_ComponentPtr(pComponentTag, pCloneObjectTag);
+}
+
+CGameObject* CObject_Manager::Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return nullptr;
+
+	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_GameObjectPtr(pCloneObjectTag);
 }
 
 HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
@@ -58,7 +72,7 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg, CGameObject** ppOut)
+HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
 {
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
@@ -74,13 +88,13 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 		if (nullptr == pLayer)
 			return E_FAIL;
 
-		if (FAILED(pLayer->Add_GameObject(pGameObject)))
+		if (FAILED(pLayer->Add_GameObject(pCloneObjectTag, pGameObject)))
 			return E_FAIL;
 
 		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
 	}
 	else
-		pLayer->Add_GameObject(pGameObject);
+		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
 
 	if (ppOut)
 	{
@@ -92,11 +106,11 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 
 CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
 {
-	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
+	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
 		return nullptr;
 
-	CGameObject*		pGameObject = pPrototype->Clone(pArg);
+	CGameObject* pGameObject = pPrototype->Clone(pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
 
@@ -162,8 +176,6 @@ void CObject_Manager::Free()
 		Safe_Release(Pair.second);
 
 	m_Prototypes.clear();
-
-	
 }
 
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
@@ -177,7 +189,6 @@ void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSele
 		{
 			for (auto& ProtoPair : m_Prototypes)
 			{
-				
 				const bool bSelected = (szSelectedProto != nullptr) && (0 == lstrcmp(ProtoPair.first, szSelectedProto));
 				if (bSelected)
 					ImGui::SetItemDefaultFocus();
@@ -215,12 +226,14 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 			{
 				if (ImGui::BeginListBox("##"))
 				{
-					for (auto& obj : Pair.second->GetGameObjects())
+					CGameObject *pObj = nullptr;
+					for (auto& Pair : Pair.second->GetGameObjects())
 					{
-						if (obj != nullptr)
-							CUtile::WideCharToChar((obj->Get_ObjectName()), szobjectTag);
+						pObj = Pair.second;
+						if (pObj != nullptr)
+							CUtile::WideCharToChar((pObj->Get_ObjectName()), szobjectTag);
 
-						const bool bSelected = pSelectedObject == obj;
+						const bool bSelected = pSelectedObject == pObj;
 						if (bSelected)
 						{
 							ImGui::SetItemDefaultFocus();
@@ -228,11 +241,11 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 						}
 
 						char szAddressName[256];
-						sprintf_s(szAddressName, "%s[%p]", typeid(*obj).name(), obj);
+						sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
 
 						if (ImGui::Selectable(szAddressName, bSelected))
 						{
-							pSelectedObject = obj;
+							pSelectedObject = pObj;
 							bFound = true;
 						}
 

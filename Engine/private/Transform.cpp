@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "..\public\Transform.h"
-
 #include "Shader.h"
 #include "Navigation.h"
 #include "GameInstance.h"
@@ -56,6 +56,8 @@ HRESULT CTransform::Initialize(void * pArg)
 {
 	if (nullptr != pArg)
 		memcpy(&m_TransformDesc, pArg, sizeof(TRANSFORMDESC));
+
+	m_fInitSpeed = m_TransformDesc.fSpeedPerSec;
 
 	return S_OK;
 }
@@ -247,6 +249,34 @@ void CTransform::Go_Right(_float fTimeDelta)
 	vPosition += XMVector3Normalize(vRight) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
 
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+}
+
+void CTransform::Go_AxisY(_float fTimeDelta)
+{
+	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
+	vPos += XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+
+	Set_State(CTransform::STATE_TRANSLATION, vPos);
+}
+
+void CTransform::Go_AxisNegY(_float fTimeDelta)
+{
+	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
+	vPos -= XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+
+	Set_State(CTransform::STATE_TRANSLATION, vPos);
+}
+
+void CTransform::Speed_Boost(_bool bKeyState, _float fValue)
+{
+	if (bKeyState)
+		m_TransformDesc.fSpeedPerSec = m_fInitSpeed * fValue;
+	else
+		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
 }
 
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)

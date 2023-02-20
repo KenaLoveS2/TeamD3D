@@ -187,6 +187,12 @@
     <Filter Include="01.Utility\08.Frustum">
       <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Default">
+      <UniqueIdentifier>{d0ac0723-89d4-4377-87cd-9923ff18a755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14. Json">
+      <UniqueIdentifier>{29563d4c-8ecf-4d87-8e7d-bce5fa8457ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -438,6 +444,22 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Utilty.h">
       <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bone_Instacing.h" />
+    <ClInclude Include="..\public\EnviromentObj.h" />
+    <ClInclude Include="..\public\Mesh_Instancing.h" />
+    <ClInclude Include="..\public\Model_Instancing.h" />
+    <ClInclude Include="stdafx.h">
+      <Filter>97. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Json\json.hpp">
+      <Filter>01.Utility\14. Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Json\json_fwd.hpp">
+      <Filter>01.Utility\14. Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Engine_Enum.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -656,6 +678,13 @@
     <ClCompile Include="..\private\PostFX.cpp">
       <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Bone_Instacing.cpp" />
+    <ClCompile Include="..\private\EnviromentObj.cpp" />
+    <ClCompile Include="..\private\Mesh_Instancing.cpp" />
+    <ClCompile Include="..\private\Model_Instancing.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <Filter>97. Default</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -664,5 +693,10 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>01.Utility\03.Components\01.Renderer</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\public\Json\ReadMe.txt">
+      <Filter>01.Utility\14. Json</Filter>
+    </Text>
   </ItemGroup>
 </Project>
