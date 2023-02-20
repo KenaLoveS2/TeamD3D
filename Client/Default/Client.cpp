@@ -9,16 +9,16 @@
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
-HWND	g_hWnd;
-HINSTANCE g_hInst;                                // 현재 인스턴스입니다.
+HWND	  g_hWnd;
+HINSTANCE g_hInst;                              // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-bool		g_bFrmaeLimit = true;
-bool		g_bFullScreen = false;
-bool		g_bNeedResizeSwapChain = false;
-unsigned int g_iWinSizeX = 1280;
-unsigned int g_iWinSizeY = 720;
+bool			g_bFrmaeLimit = true;
+bool			g_bFullScreen = false;
+bool			g_bNeedResizeSwapChain = false;
+unsigned int	g_iWinSizeX = 1600;
+unsigned int	g_iWinSizeY = 900;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -106,13 +106,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	Safe_Release(pMainApp);
   
     return (int) msg.wParam;
 }
-
-
 
 //
 //  함수: MyRegisterClass()
@@ -133,7 +130,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CLIENT));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_CLIENT);
+    wcex.lpszMenuName   = NULL;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 

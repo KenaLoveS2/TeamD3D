@@ -7,15 +7,18 @@
 #include "Shader.h"
 #include "PipeLine.h"
 #include "PostFX.h"
-
+#include "GameInstance.h"
+#include "Level_Manager.h"
 
 CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 	, m_pTarget_Manager(CTarget_Manager::GetInstance())
 	, m_pLight_Manager(CLight_Manager::GetInstance())
+	, m_pLevel_Manager(CLevel_Manager::GetInstance())
 {
 	Safe_AddRef(m_pLight_Manager);
 	Safe_AddRef(m_pTarget_Manager);
+	Safe_AddRef(m_pLevel_Manager);
 }
 
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
@@ -31,6 +34,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 	return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CRenderer::Add_DebugRenderGroup(CComponent * pComponent)
 {
 	if (nullptr == pComponent)
@@ -42,6 +46,7 @@ HRESULT CRenderer::Add_DebugRenderGroup(CComponent * pComponent)
 	
 	return S_OK;
 }
+#endif
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
@@ -50,6 +55,18 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+
+	//if(m_pLevel_Manager != nullptr)
+	//{
+	//	if(m_pLevel_Manager->Get_bOpenLevel())
+	//	{
+	//		if (FAILED(Render_StaticShadow()))
+	//			return E_FAIL;
+	//	}
+	//}
+	//if (FAILED(Render_Shadow()))
+	//	return E_FAIL;
+
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
@@ -75,10 +92,18 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
 
-	if (nullptr != m_pTarget_Manager)
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	if (pGameInstance->Get_DIKeyState(DIK_F8))
+	{
+		m_bDebugRender = !m_bDebugRender;
+	}
+	RELEASE_INSTANCE(CGameInstance)
+
+	if (nullptr != m_pTarget_Manager && m_bDebugRender)
 	{
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_Shadow"));
 	}
 #endif
 
@@ -96,8 +121,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	_uint			iNumViewports = 1;
 
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-
-	/* ·»ÅÍÅ¸°ÙµéÀ» »ı¼ºÇÏ³®. */
 
 	/* For.Target_Diffuse */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
@@ -117,6 +140,20 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	/* For.Target_Specular */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
+	/* For.Target_Shadow */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shadow"), 16000, 9000, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Get_Target(TEXT("Target_Shadow"))->Ready_DepthStencilRenderTargetView(16000, 9000, DXGI_FORMAT_D24_UNORM_S8_UINT)))
+		return E_FAIL;
+
+	/* For.Static_Shadow */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Static_Shadow"), 16000, 9000, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Get_Target(TEXT("Target_Static_Shadow"))->Ready_DepthStencilRenderTargetView(16000, 9000, DXGI_FORMAT_D24_UNORM_S8_UINT)))
 		return E_FAIL;
 
 	/* For.Target_HDR */
@@ -143,6 +180,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 
+	/* For.MRT_Shadow*/
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Static_Shadow"))))
+		return E_FAIL;
+
 	// HDR ÅØ½ºÃÄ ·»´õ¸µ¿ë
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
@@ -160,16 +203,21 @@ HRESULT CRenderer::Initialize_Prototype()
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
 #ifdef _DEBUG
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 100.0f, 100.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 100.0f, 100.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), 100.0f, 300.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), 100.0f, 200.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 100.0f, 500.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 100.0f, 300.f, 100.f, 100.f)))
 		return E_FAIL;
 
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 300.0f, 100.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 200.0f, 100.f, 100.f, 100.f)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 300.0f, 300.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 200.0f, 200.f, 100.f, 100.f)))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 300.0f, 100.f, 100.f, 100.f)))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Static_Shadow"), 300.0f, 200.f, 100.f, 100.f)))
 		return E_FAIL;
 #endif
 	
@@ -195,6 +243,60 @@ HRESULT CRenderer::Render_Priority()
 	}
 
 	m_RenderObjects[RENDER_PRIORITY].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_StaticShadow()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	/* Shadow */
+	if (FAILED(m_pTarget_Manager->Begin_ShadowMRT(m_pContext, TEXT("Target_Static_Shadow"))))
+		return E_FAIL;
+
+	if (!m_RenderObjects[RENDER_STATICSHADOW].empty())
+	{
+		for (auto& pGameObject : m_RenderObjects[RENDER_STATICSHADOW])
+		{
+			if (nullptr != pGameObject)
+				pGameObject->RenderShadow();
+
+			Safe_Release(pGameObject);
+		}
+
+		m_RenderObjects[RENDER_STATICSHADOW].clear();
+		m_pLevel_Manager->Set_bOpenLevel(false);
+	}
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("Target_Static_Shadow"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Shadow()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	/* Shadow */
+	if (FAILED(m_pTarget_Manager->Begin_ShadowMRT(m_pContext, TEXT("Target_Shadow"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_SHADOW])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->RenderShadow();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_SHADOW].clear();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("Target_Shadow"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -285,6 +387,30 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
 		return E_FAIL;
+
+	/* For. Shadow */
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shadow")))))
+		return E_FAIL;
+	//if (FAILED(m_pShader->Set_ShaderResourceView("g_StaticShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Static_Shadow")))))
+	//	return E_FAIL;
+
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance)
+
+	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	//if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+	//	return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
 
 	m_pShader->Begin(3);
 	m_pVIBuffer->Render();
@@ -407,4 +533,5 @@ void CRenderer::Free()
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
+	Safe_Release(m_pLevel_Manager);
 }

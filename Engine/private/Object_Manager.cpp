@@ -175,8 +175,6 @@ void CObject_Manager::Free()
 		Safe_Release(Pair.second);
 
 	m_Prototypes.clear();
-
-	
 }
 
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
@@ -190,7 +188,6 @@ void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSele
 		{
 			for (auto& ProtoPair : m_Prototypes)
 			{
-				
 				const bool bSelected = (szSelectedProto != nullptr) && (0 == lstrcmp(ProtoPair.first, szSelectedProto));
 				if (bSelected)
 					ImGui::SetItemDefaultFocus();
