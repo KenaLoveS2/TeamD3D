@@ -1,8 +1,8 @@
-#include "..\public\Imgui_Manager.h"
+#include "../public/Imgui_Manager.h"
 #include "Graphic_Device.h"
-#include "ImGui\ImGuiFileDialog.h"
+#include "ImGui/ImGuiFileDialog.h"
 #include "ImguiObject.h"
-#include "ImGui\ImGuizmo.h"
+#include "ImGui/ImGuizmo.h"
 
 IMPLEMENT_SINGLETON(CImgui_Manager)
 
@@ -14,12 +14,14 @@ void CImgui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;		// Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-																//io.ConfigViewportsNoAutoMerge = true;
+	ImGuiIO& io = ImGui::GetIO();
+	
+	(void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+	//io.ConfigViewportsNoAutoMerge = true;
 	io.ConfigViewportsNoTaskBarIcon = true;
 
 	ImGui::StyleColorsDark();
@@ -101,9 +103,9 @@ void CImgui_Manager::Render_Imgui()
 
 void CImgui_Manager::ImGui_DockSpace()
 {
-	ImGuiWindowFlags			WindowFlag = ImGuiWindowFlags_NoDocking;
+	ImGuiWindowFlags WindowFlag = ImGuiWindowFlags_NoDocking;
 
-	const ImGuiViewport*	Viewport = ImGui::GetMainViewport();
+	const ImGuiViewport* Viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(Viewport->WorkPos);
 	ImGui::SetNextWindowSize(Viewport->WorkSize);
 	ImGui::SetNextWindowViewport(Viewport->ID);
@@ -112,21 +114,22 @@ void CImgui_Manager::ImGui_DockSpace()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-	WindowFlag |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	WindowFlag |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove;
 	WindowFlag |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 	WindowFlag |= ImGuiDockNodeFlags_PassthruCentralNode;
 	WindowFlag |= ImGuiWindowFlags_NoBackground;
 
-	_bool	bIsShow = true;
+	_bool bIsShow = true;
 
 	ImGui::Begin("DockSpace", &bIsShow, WindowFlag);
 	ImGui::PopStyleVar(1);
 	ImGui::PopStyleVar(2);
 
-	ImGuiIO&	io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
-		ImGuiID	DockSpaceID = ImGui::GetID("DockSpace");
+		ImGuiID DockSpaceID = ImGui::GetID("DockSpace");
 		ImGuiDockNodeFlags Flag = ImGuiDockNodeFlags_PassthruCentralNode;
 		ImGui::DockSpace(DockSpaceID, ImVec2(0.f, 0.f), Flag);
 	}

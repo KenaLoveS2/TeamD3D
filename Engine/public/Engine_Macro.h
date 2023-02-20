@@ -3,6 +3,12 @@
 #define EPSILON 0.0001
 #define FLOAT_EQ(x,v) (((v - EPSILON) < x) && (x <( v + EPSILON)))
 
+// debug모드에서만 체크할 경우 사용
+#define Assert(expression) assert(expression)
+#define AssertMsg(expression, message) Assert((expression) && (message))
+
+#define FAILED_CHECK(_hr) if(((HRESULT)(_hr)) < 0){__debugbreak();}
+
 #define D3DCOLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 

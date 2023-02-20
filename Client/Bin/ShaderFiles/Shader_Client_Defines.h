@@ -1,3 +1,7 @@
+#ifndef __SHADER_CLIENT_DEFINES__
+#define __SHADER_CLIENT_DEFINES__
+
+#include "Shader_Client_Utilty.h"
 
 sampler LinearSampler = sampler_state
 {
@@ -13,7 +17,6 @@ sampler PointSampler = sampler_state
 	AddressV = wrap;
 };
 
-
 RasterizerState RS_Default
 {
 	FillMode = Solid;
@@ -27,7 +30,6 @@ RasterizerState RS_Wireframe
 	CullMode = Back;
 	FrontCounterClockwise = false;
 };
-
 
 RasterizerState RS_CW
 {
@@ -78,3 +80,5 @@ BlendState BS_One
 	DestBlend = ONE;
 	BlendOp = Add;
 };
+
+#endif

@@ -26,7 +26,6 @@ public:
 	HRESULT Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4* pClearColor);
 	HRESULT Clear();
 
-
 #ifdef _DEBUG
 
 public:

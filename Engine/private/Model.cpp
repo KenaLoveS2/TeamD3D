@@ -274,19 +274,17 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 	{
 		if (nullptr != pBoneConstantName)
 		{
-			_float4x4		BoneMatrices[128];
+			_float4x4		BoneMatrices[800];
 
 			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 			
-			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 128);
+			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
 		}		
 
 		pShader->Begin(iPassIndex);
-
 		m_Meshes[iMeshIndex]->Render();
 	}
 		
-
 	return S_OK;
 }
 

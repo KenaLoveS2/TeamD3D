@@ -133,6 +133,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_RuinM_R_AO */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_04_E_R_Ao.png")))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("버퍼를 로딩중입니다. "));
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -159,29 +164,13 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	
-	/* For.Prototype_Component_Model_ForkLift */	
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_Sword*/
-	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Sword"),
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
-		return E_FAIL;
-		
-	/* For.Prototype_Component_Model_Fiona */
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Fiona/Fiona.mdat"), PivotMatrix))))
-		return E_FAIL;
-
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", 
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Kena/Kena_Body.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	if (FAILED(LoadNonAnimModel(LEVEL_GAMEPLAY)))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
 	/* For.Prototype_Component_Collider_AABB*/
@@ -282,10 +271,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
 		CEffect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-	
-	LoadNonAnimModel(LEVEL_GAMEPLAY);
-
 
 	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
 
