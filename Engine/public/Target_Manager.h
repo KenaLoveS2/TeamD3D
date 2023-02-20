@@ -14,6 +14,7 @@ public:
 
 public:
 	ID3D11ShaderResourceView* Get_SRV(const _tchar* pTargetTag);
+	class CRenderTarget*	  Get_Target(const _tchar* pTargetTag);
 
 public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

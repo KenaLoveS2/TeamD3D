@@ -1,10 +1,12 @@
 #include "..\public\Renderer.h"
 #include "GameObject.h"
 #include "Target_Manager.h"
+#include "RenderTarget.h"
 #include "Light_Manager.h"
 #include "VIBuffer_Rect.h"
 #include "Shader.h"
 #include "PipeLine.h"
+#include "PostFX.h"
 
 
 CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -43,6 +45,9 @@ HRESULT CRenderer::Add_DebugRenderGroup(CComponent * pComponent)
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
+	//if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_HDR"))))
+	//	return E_FAIL;
+
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
@@ -55,6 +60,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_AlphaBlend()))
 		return E_FAIL;
+
+	//if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
+	//	return E_FAIL;
+
+	if (FAILED(Render_HDR()))
+		return E_FAIL;
+
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -107,6 +119,16 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
+	/* For.Target_HDR */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_HDR"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.8f, 0.8f, 0.8f, 0.f))))
+		return E_FAIL;
+
+	/* For.Target_LDR */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR1"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+		return E_FAIL;
+
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -120,7 +142,11 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
-	
+
+	// HDR 텍스쳐 렌더링용
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
+		return E_FAIL;
+
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
@@ -296,6 +322,17 @@ HRESULT CRenderer::Render_AlphaBlend()
 
 	m_RenderObjects[RENDER_ALPHABLEND].clear();
 
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_HDR()
+{
+	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
+	CRenderTarget* pLDR2 = m_pTarget_Manager->Get_Target(L"Target_LDR2");
+	pLDR1->Clear();
+	pLDR2->Clear();
+
+	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
 	return S_OK;
 }
 
