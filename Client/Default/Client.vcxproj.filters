@@ -67,9 +67,6 @@
     <Filter Include="02.GameObjects\Effect\Effect">
       <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96.StringManager">
-      <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -141,12 +138,6 @@
     <ClInclude Include="..\public\Effect.h">
       <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\String_Manager.h">
-      <Filter>96.StringManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h">
-      <Filter>97.ShaderFiles</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -202,9 +193,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
       <Filter>02.GameObjects\Effect\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\String_Manager.cpp">
-      <Filter>96.StringManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

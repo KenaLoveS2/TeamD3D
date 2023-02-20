@@ -163,8 +163,11 @@
     <Filter Include="01.Utility\12. FSM">
       <UniqueIdentifier>{9f9b6a3c-5610-4721-a49f-0c96411151b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\13. HDR">
-      <UniqueIdentifier>{113100bb-731b-41e9-996c-a52ce2234df8}</UniqueIdentifier>
+    <Filter Include="01.Utility\98.String_Manager">
+      <UniqueIdentifier>{2987e26f-8ab8-42b0-b72a-2ffa6fc04262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObject\Camera\Manager">
+      <UniqueIdentifier>{b2e34ede-e0b2-4e46-85db-8187773c6296}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -387,8 +390,11 @@
     <ClInclude Include="..\public\FSMComponent.h">
       <Filter>01.Utility\12. FSM</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PostFX.h">
-      <Filter>01.Utility\13. HDR</Filter>
+    <ClInclude Include="..\public\String_Manager.h">
+      <Filter>01.Utility\98.String_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Manager.h">
+      <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -587,8 +593,11 @@
     <ClCompile Include="..\private\FSMComponent.cpp">
       <Filter>01.Utility\12. FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PostFX.cpp">
-      <Filter>01.Utility\13. HDR</Filter>
+    <ClCompile Include="..\private\String_Manager.cpp">
+      <Filter>01.Utility\98.String_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Manager.cpp">
+      <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

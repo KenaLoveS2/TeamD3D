@@ -84,6 +84,8 @@ HRESULT CLoader::Loading_ForLogo()
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	
+
 	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
 
 	m_isFinished = true;	
@@ -115,6 +117,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 		return E_FAIL;
 
+
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
@@ -128,11 +131,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_Explosion */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_RuinM_R_AO */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/SM_RuinPlatform04/T_Ruin_Platform_04_E_R_Ao.png")))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("버퍼를 로딩중입니다. "));
@@ -164,26 +162,25 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Model_ForkLift */	
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/SM_RuinPlatform04/SM_RuinPlatform04.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sword*/
 	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Sword"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/ForkLift/ForkLift.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
 		return E_FAIL;
-
-	
+		
 	/* For.Prototype_Component_Model_Fiona */
 	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Fiona/Fiona.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Fiona/Fiona.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", 
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Kena/Kena_Body.fbx", PivotMatrix))))
-	//	return E_FAIL;
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", 
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Kena/Kena_Body.mdat"), PivotMatrix))))
+		return E_FAIL;
 
 
 	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
@@ -287,7 +284,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	
-
+	LoadNonAnimModel(LEVEL_GAMEPLAY);
 
 
 	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
@@ -320,4 +317,66 @@ void CLoader::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);	
+}
+
+HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	char FindPath[MAX_PATH] = "../Bin/Resources/NonAnim/*.*";
+	char FilePath[MAX_PATH] = "../Bin/Resources/NonAnim/";
+
+	_tchar WideFilePath[MAX_PATH] = L"";
+
+	_finddata_t FindData;
+	intptr_t handle = _findfirst(FindPath, &FindData);
+	if (handle == -1) return E_FAIL;
+
+	char szFullPath[MAX_PATH] = "";
+	char szFileName[MAX_PATH] = "";
+	char szExt[MAX_PATH] = "";
+
+	const _tchar *pPrototype = L"Prototype_Component_Model_";
+	int iPrototyeLengh = lstrlen(pPrototype);
+
+	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+
+	int iResult = 0;
+	while (iResult != -1)
+	{
+		strcpy_s(szFullPath, FilePath);
+		strcat_s(szFullPath, FindData.name);
+
+		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
+		if (!strcmp(szExt, ".mdat"))
+		{
+			int iFileNameLen = (int)strlen(szFileName) + 1;
+			_tchar* pFileName = new _tchar[iFileNameLen];
+			ZeroMemory(pFileName, sizeof(_tchar) * iFileNameLen);
+
+			int iTagLen = iPrototyeLengh + iFileNameLen;
+			_tchar* pPrototypeTag = new _tchar[iTagLen];
+			ZeroMemory(pPrototypeTag, iTagLen);
+			lstrcat(pPrototypeTag, pPrototype);
+
+			MultiByteToWideChar(CP_ACP, 0, szFullPath, strlen(szFullPath) + 1, WideFilePath, strlen(szFullPath) + 1);
+			MultiByteToWideChar(CP_ACP, 0, szFileName, iFileNameLen, pFileName, iFileNameLen);
+			lstrcat(pPrototypeTag, pFileName);
+
+			if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, pPrototypeTag,
+				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
+				return E_FAIL;
+
+			Safe_Delete_Array(pFileName);
+			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
+		}
+
+		iResult = _findnext(handle, &FindData);
+	}
+
+	_findclose(handle);
+	Safe_Release(pGameInstance);
+
+	return S_OK;
 }

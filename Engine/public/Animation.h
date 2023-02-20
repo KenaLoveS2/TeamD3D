@@ -8,11 +8,22 @@ class CAnimation final : public CBase
 {
 public:
 	CAnimation();
+	CAnimation(const CAnimation& rhs);
 	virtual ~CAnimation() = default;
 
 public:
-	HRESULT Initialize(aiAnimation* pAIAnimation, class CModel* pModel);
+	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
+	HRESULT Initialize(void* pArg);
+
 	void Update_Bones(_float fTimeDelta);
+	void Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
+	void Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
+
+	_bool IsFinished() { return m_isFinished; }
+	_bool IsLooping() { return m_isLooping; }
+	const char* Get_Name() const {
+		return m_szName;
+	}
 
 private:
 	char								m_szName[MAX_PATH];
@@ -32,8 +43,11 @@ private:
 	vector<class CChannel*>				m_Channels;
 
 public:
-	static CAnimation* Create(aiAnimation* pAIAnimation, class CModel* pModel);
+	static CAnimation* Create(HANDLE hFile, class CModel* pModel);
+	CAnimation* Clone(void *pArg = nullptr);
 	virtual void Free() override;
+	HRESULT SetUp_ChannelsBonePtr(CModel* pModel);
+	
 };
 
 END
