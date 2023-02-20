@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "..\public\VIBuffer_Point_Instancing.h"
 
 CVIBuffer_Point_Instancing::CVIBuffer_Point_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

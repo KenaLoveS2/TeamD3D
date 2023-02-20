@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Renderer.h"
 #include "GameObject.h"
 #include "Target_Manager.h"

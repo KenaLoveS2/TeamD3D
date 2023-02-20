@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "..\public\Transform.h"
-
 #include "Shader.h"
 #include "Navigation.h"
 #include "GameInstance.h"

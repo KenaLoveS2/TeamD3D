@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Cell.h"
 #include "VIBuffer_Cell.h"
 #include "Shader.h"

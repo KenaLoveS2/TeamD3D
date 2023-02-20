@@ -1,0 +1,71 @@
+#include "stdafx.h"
+#include "..\public\Kena_Parts.h"
+#include "GameInstance.h"
+
+CKena_Parts::CKena_Parts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	: CGameObject(pDevice, pContext)
+{
+	ZeroMemory(&m_tPartsInfo, sizeof(KENAPARTS_DESC));
+}
+
+CKena_Parts::CKena_Parts(const CKena_Parts & rhs)
+	: CGameObject(rhs)
+	, m_tPartsInfo(rhs.m_tPartsInfo)
+{
+}
+
+HRESULT CKena_Parts::Initialize_Prototype()
+{
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CKena_Parts::Initialize(void * pArg)
+{
+	if (pArg != nullptr)
+	{
+		KENAPARTS_DESC	tKenaPartsDesc;
+		memcpy(&tKenaPartsDesc, pArg, sizeof(KENAPARTS_DESC));
+
+		m_tPartsInfo.pPlayer = tKenaPartsDesc.pPlayer;
+		m_tPartsInfo.eType = tKenaPartsDesc.eType;
+
+		FAILED_CHECK_RETURN(__super::Initialize(&tKenaPartsDesc), E_FAIL);
+	}
+	else
+		FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
+
+	return S_OK;
+}
+
+void CKena_Parts::Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+}
+
+void CKena_Parts::Late_Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+}
+
+HRESULT CKena_Parts::Render()
+{
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+
+	return S_OK;
+}
+
+void CKena_Parts::Imgui_RenderProperty()
+{
+	__super::Imgui_RenderProperty();
+}
+
+void CKena_Parts::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModelCom);
+}

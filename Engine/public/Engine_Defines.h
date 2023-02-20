@@ -45,6 +45,10 @@ using namespace SimpleMath;
 #include <algorithm>
 using namespace std;
 
+#include <Json/json_fwd.hpp>
+using Json = nlohmann::json;
+using namespace nlohmann;
+
 #include "Engine_Macro.h"
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"

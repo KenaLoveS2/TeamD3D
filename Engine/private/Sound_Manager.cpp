@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Sound_Manager.h"
 
 IMPLEMENT_SINGLETON(CSound_Manager)
