@@ -35,6 +35,8 @@ HRESULT CPostFX::Initilaize(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 	m_iHeight = static_cast<_uint>(ViewportDesc.Height);
 	m_iDownScaleGroups = static_cast<_uint>(ceil(static_cast<_float>(m_iWidth * m_iHeight / 16) / 1024.f));
 
+	
+
 	return S_OK;
 }
 
