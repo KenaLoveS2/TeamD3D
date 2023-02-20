@@ -175,14 +175,17 @@
     <Filter Include="01.Utility\02.GameObject\UI\00. Manager">
       <UniqueIdentifier>{22d98a48-7ac0-4e36-9012-e4b797f89beb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\09.RenderTargets\08.Frustum">
-      <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
-    </Filter>      
     <Filter Include="01.Utility\98.String_Manager">
       <UniqueIdentifier>{2987e26f-8ab8-42b0-b72a-2ffa6fc04262}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\02.GameObject\Camera\Manager">
       <UniqueIdentifier>{b2e34ede-e0b2-4e46-85db-8187773c6296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13. HDR">
+      <UniqueIdentifier>{92ebf895-8cf3-465f-8c4c-d85174d60dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\08.Frustum">
+      <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -322,7 +325,7 @@
       <Filter>01.Utility\07.Fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
-      <Filter>01.Utility\09.RenderTargets\08.Frustum</Filter>
+      <Filter>01.Utility\08.Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\public\QuadTree.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
@@ -419,12 +422,21 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_Manager.h">
       <Filter>01.Utility\02.GameObject\UI\00. Manager</Filter>
-    </ClInclude>      
+    </ClInclude>
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01.Utility\98.String_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera_Manager.h">
       <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PostFX.h">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Defines.h">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Utilty.h">
+      <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -552,7 +564,7 @@
       <Filter>01.Utility\07.Fonts</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
-      <Filter>01.Utility\09.RenderTargets\08.Frustum</Filter>
+      <Filter>01.Utility\08.Frustum</Filter>
     </ClCompile>
     <ClCompile Include="..\private\QuadTree.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
@@ -634,12 +646,15 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Manager.cpp">
       <Filter>01.Utility\02.GameObject\UI\00. Manager</Filter>
-    </ClCompile>      
+    </ClCompile>
     <ClCompile Include="..\private\String_Manager.cpp">
       <Filter>01.Utility\98.String_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostFX.cpp">
+      <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

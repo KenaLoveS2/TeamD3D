@@ -104,21 +104,17 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	/* ÅºÁ¨Æ®½ºÆäÀÌ½º */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-	vNormal.rgb += fRoughness;
 
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 
 	vNormal = normalize(mul(vNormal, WorldMatrix));
-
-	vDiffuse.rgb += fEmissive;
-	vDiffuse.a += fAmbientOcclusion;
 
 	Out.vDiffuse = vDiffuse;
 
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, fEmissive, fRoughness);
 	
 	return Out;
 }
