@@ -47,8 +47,19 @@ BEGIN(Engine)
 
 	public: /* For.Input_Device */
 		_byte Get_DIKeyState(_ubyte byKeyID);
-		_byte Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID);
-		_long Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMoveState);
+		_byte Get_DIMouseState(MOUSEKEYSTATE byMouseID);
+		_long Get_DIMouseMove(MOUSEMOVESTATE eMoveState);
+		_float		Get_KeyChargeTime(_ubyte byKeyID);
+		_bool		Mouse_Down(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Up(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_DoubleClick(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Pressing(MOUSEKEYSTATE MouseButton);
+		_bool		Key_Pressing(_ubyte byKeyID);
+		_bool		Key_Down(_ubyte byKeyID);
+		_bool		Key_DoubleDown(_ubyte byKeyID);
+		_bool		Key_Up(_ubyte byKeyID);
+		_bool		Key_Charge(_ubyte byKeyID, _float fTime);
+		void		Reset_EveryKey(_float fTimeDelta);
 
 	public: /* For.Level_Manager */
 		HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);
@@ -65,12 +76,12 @@ BEGIN(Engine)
 
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
-
+		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
-
+		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 	public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
