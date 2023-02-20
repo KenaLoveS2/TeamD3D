@@ -7,6 +7,7 @@ BEGIN(Engine)
 class CShader;
 class CRenderer;
 class CModel;
+class CTexture;
 END
 
 BEGIN(Client)
@@ -29,6 +30,7 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
+	CTexture*				m_pE_R_AoTexCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();

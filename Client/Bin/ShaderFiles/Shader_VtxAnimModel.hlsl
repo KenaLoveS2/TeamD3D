@@ -1,15 +1,16 @@
 
 #include "Shader_Client_Defines.h"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+/***********Constant Buffers***********/
+//matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_BoneMatrices[128];
+matrix g_WorldMatrix;
+matrix g_ViewMatrix;
+matrix g_ProjMatrix;
+/**************************************/
 
-/* 1. 모델의 전체의 뼈를 받아온다. */
-/* 2. 모델 중, 현재 그릴려고 하는 메시에 뼈를 받아온다. */
-matrix			g_BoneMatrices[128];
-
-texture2D		g_DiffuseTexture;
-texture2D		g_NormalTexture;
-
+Texture2D		g_DiffuseTexture;
+Texture2D		g_NormalTexture;
 
 struct VS_IN
 {
@@ -35,7 +36,6 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
-
 
 	matrix		matWV, matWVP;
 

@@ -3,8 +3,8 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D		g_Texture;
-texture2D		g_DepthTexture;
+Texture2D		g_Texture;
+Texture2D		g_DepthTexture;
 
 /* 샘플링 해오는 함수 */
 /* dx9 : tex2D(DefaultSampler, In.vTexUV);*/

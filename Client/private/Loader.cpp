@@ -84,8 +84,6 @@ HRESULT CLoader::Loading_ForLogo()
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	
-
 	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
 
 	m_isFinished = true;	
@@ -117,7 +115,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 		return E_FAIL;
 
-
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
@@ -131,6 +128,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_Explosion */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_RuinM_R_AO */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/SM_RuinPlatform04/T_Ruin_Platform_04_E_R_Ao.png")))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("버퍼를 로딩중입니다. "));
@@ -162,7 +164,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Model_ForkLift */	
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/ForkLift/ForkLift.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/SM_RuinPlatform04/SM_RuinPlatform04.fbx", PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sword*/

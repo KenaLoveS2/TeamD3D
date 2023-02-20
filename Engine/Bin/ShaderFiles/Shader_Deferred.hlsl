@@ -15,13 +15,14 @@ vector			g_vCamPosition;
 vector			g_vMtrlAmbient = (vector)1.f;
 vector			g_vMtrlSpecular = (vector)1.f;
 
-texture2D		g_Texture; /* 디버그용텍스쳐*/
-texture2D		g_NormalTexture; 
-texture2D		g_DepthTexture;
+Texture2D		g_Texture; /* 디버그용텍스쳐*/
+Texture2D		g_NormalTexture; 
+Texture2D		g_DepthTexture;
 
-texture2D		g_DiffuseTexture;
-texture2D		g_ShadeTexture;
-texture2D		g_SpecularTexture;
+
+Texture2D		g_DiffuseTexture;
+Texture2D		g_ShadeTexture;
+Texture2D		g_SpecularTexture;
 
 float g_fFar = 30.f;
 
@@ -38,7 +39,6 @@ sampler PointSampler = sampler_state
 	AddressU = wrap;
 	AddressV = wrap;
 };
-
 
 struct VS_IN
 {
@@ -75,7 +75,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-
 	float4		vColor : SV_TARGET0;
 };
 
@@ -88,13 +87,11 @@ PS_OUT PS_MAIN_DEBUG(PS_IN In)
 	return Out;
 }
 
-
 struct PS_OUT_LIGHT
 {
 	float4		vShade : SV_TARGET0;	
 	float4		vSpecular : SV_TARGET1;
 };
-
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
@@ -186,13 +183,12 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	return Out;
 }
 
-
 PS_OUT PS_MAIN_BLEND(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse  = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vShade	  = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
 	Out.vColor = vDiffuse * vShade + vSpecular;
@@ -202,7 +198,6 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	return Out;
 }
-
 
 RasterizerState RS_Default
 {
@@ -217,7 +212,6 @@ RasterizerState RS_Wireframe
 	CullMode = Back;
 	FrontCounterClockwise = false;
 };
-
 
 RasterizerState RS_CW
 {
@@ -241,16 +235,6 @@ DepthStencilState DS_ZEnable_ZWriteEnable_FALSE
 BlendState BS_Default
 {
 	BlendEnable[0] = false;
-
-
-	//bool BlendEnable;
-	//D3D11_BLEND SrcBlend;
-	//D3D11_BLEND DestBlend;
-	//D3D11_BLEND_OP BlendOp;
-	//D3D11_BLEND SrcBlendAlpha;
-	//D3D11_BLEND DestBlendAlpha;
-	//D3D11_BLEND_OP BlendOpAlpha;
-	//UINT8 RenderTargetWriteMask;
 };
 
 BlendState BS_AlphaBlend
@@ -269,7 +253,6 @@ BlendState BS_One
 	DestBlend = ONE;
 	BlendOp = Add;
 };
-
 
 technique11 DefaultTechnique
 {
@@ -324,5 +307,4 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_BLEND();
 	}
-
 }

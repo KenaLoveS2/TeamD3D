@@ -144,6 +144,9 @@
     <ClInclude Include="..\Public\String_Manager.h">
       <Filter>96.StringManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

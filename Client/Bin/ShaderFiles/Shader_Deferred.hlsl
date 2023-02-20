@@ -15,13 +15,14 @@ vector			g_vCamPosition;
 vector			g_vMtrlAmbient = (vector)1.f;
 vector			g_vMtrlSpecular = (vector)1.f;
 
-texture2D		g_Texture; /* 디버그용텍스쳐*/
-texture2D		g_NormalTexture; 
-texture2D		g_DepthTexture;
+Texture2D		g_Texture; /* 디버그용텍스쳐*/
+Texture2D		g_NormalTexture; 
+Texture2D		g_DepthTexture;
 
-texture2D		g_DiffuseTexture;
-texture2D		g_ShadeTexture;
-texture2D		g_SpecularTexture;
+
+Texture2D		g_DiffuseTexture;
+Texture2D		g_ShadeTexture;
+Texture2D		g_SpecularTexture;
 
 float g_fFar = 30.f;
 
@@ -38,7 +39,6 @@ sampler PointSampler = sampler_state
 	AddressU = wrap;
 	AddressV = wrap;
 };
-
 
 struct VS_IN
 {

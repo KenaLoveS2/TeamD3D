@@ -30,7 +30,7 @@ HRESULT CForkLift::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(4.f, 2.5f, 7.f, 1.f));
 
 	return S_OK;
 }
@@ -65,7 +65,7 @@ HRESULT CForkLift::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");		
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
-
+		m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i);
 	}
 
@@ -89,6 +89,11 @@ HRESULT CForkLift::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
+	/* For.Com_E_R_AO */
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"), TEXT("Com_E_R_AO"),
+		(CComponent**)&m_pE_R_AoTexCom)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -107,29 +112,13 @@ HRESULT CForkLift::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-
 	/* For.Lights */
 	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
 	if (nullptr == pLightDesc)
 		return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-	//	return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
-
-	
-
-
 
 	return S_OK;
 }
@@ -165,5 +154,5 @@ void CForkLift::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
+	Safe_Release(m_pE_R_AoTexCom);
 }
