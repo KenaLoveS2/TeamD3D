@@ -18,7 +18,7 @@ private:
 public:
 	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
 	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag);
-	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex);
+	
 	map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects() { return m_Prototypes; }
 
 public:
@@ -26,7 +26,8 @@ public:
 	HRESULT Clear(_uint iLevelIndex);
 public:
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag, 
+	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+		const _tchar* pCloneObjectTag, 
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 

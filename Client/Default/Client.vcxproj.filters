@@ -121,6 +121,9 @@
     <Filter Include="02.GameObjects\UI\01. Tool">
       <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment">
+      <UniqueIdentifier>{fb1c8ae7-2f83-49c2-8d0d-0f80606e3836}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -241,6 +244,15 @@
     <ClInclude Include="..\Public\Kena.h">
       <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cave_Rock.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_MapTool.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -344,6 +356,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Kena.cpp">
       <Filter>02.GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cave_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_MapTool.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

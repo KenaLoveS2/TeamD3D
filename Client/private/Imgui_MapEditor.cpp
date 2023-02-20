@@ -109,8 +109,13 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 		lstrcpy(EnviromentDesc.szModelTag, m_strModelName.c_str());
 		//EnviromentDesc.szTextureTag = TEXT("");		// 나중에 채워
 
+		wstring CloneTag = m_strProtoName + L"Clone";
 
-		if (FAILED(pGameInstace->Clone_GameObject(LEVEL_MAPTOOL, TEXT("Layer_Enviroment"), m_strProtoName.c_str(),&EnviromentDesc)))
+
+		if (FAILED(pGameInstace->Clone_GameObject(LEVEL_MAPTOOL, 
+			TEXT("Layer_Enviroment"), 
+			m_strProtoName.c_str(),
+			CloneTag.c_str(), &EnviromentDesc)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 	}
