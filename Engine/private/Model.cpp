@@ -56,12 +56,14 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
-HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath)
+HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath, _uint iNumMaterials)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	HANDLE hFile = CreateFile(pModelFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE) return E_FAIL;
+
+	_uint iMaterialIndex = 0;
 
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -89,9 +91,9 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 				ModelMatrial.pTexture[j] = nullptr;
 			
 			// 수동 매터리얼 텍스처 입력 이상할 수도 있음 확인 필요
-			if (pMaterialPath)
+			if (pMaterialPath && iNumMaterials)
 			{
-				wstring* pPath = (wstring*)pMaterialPath;
+				wstring* pPath = (wstring*)&pMaterialPath[iMaterialIndex];
 				pPath += j;
 
 				if (*pPath != TEXT(""))
@@ -104,6 +106,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			}
 		}
 
+		iMaterialIndex++;
 		m_Materials.push_back(ModelMatrial);
 	}
 
@@ -288,10 +291,10 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 	return S_OK;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath)
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath, _uint iNumMaterials)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pMaterialPath)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pMaterialPath, iNumMaterials)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
@@ -336,3 +339,20 @@ void CModel::Free()
 		Safe_Release(pMesh);
 	m_Meshes.clear();
 }
+
+HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath)
+{
+	if (iMaterialIndex >= m_Materials.size()) return E_FAIL;
+	
+	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, pTexturePath);
+	if (pTexture == nullptr) return E_FAIL;
+
+	if (m_Materials[iMaterialIndex].pTexture[eType]) { 
+		Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);
+	}
+
+	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
+
+	return S_OK;
+}
+
