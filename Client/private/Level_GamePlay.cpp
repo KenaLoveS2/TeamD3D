@@ -5,7 +5,6 @@
 #include "Camera_Dynamic.h"
 
 #include "Imgui_PropertyEditor.h"
-#include "Imgui_Effect.h"
 #include "Imgui_UIEditor.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -25,9 +24,6 @@ HRESULT CLevel_GamePlay::Initialize()
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		p_game_instance->Clear_ImguiObjects();
 		p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
-
-		// EffectTool Test
-		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
 		

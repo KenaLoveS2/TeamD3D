@@ -69,7 +69,9 @@ bool	RenderPass_Getter(void* data, int index, const char** output)
 }
 void CImgui_UIEditor::Imgui_FreeRender()
 {
-	if (Begin("UI Editor"))
+	m_szFreeRenderName = "UI Editor";
+
+	//if (Begin("UI Editor"))
 	{
 		Text("<Canvas>");
 		
@@ -146,10 +148,8 @@ void CImgui_UIEditor::Imgui_FreeRender()
 		/* Translation */
 		m_pCanvas->Imgui_RenderProperty();
 
-
-
-	Exit:
-		End();
+ 	Exit:
+ 		End();
 	}
 }
 

@@ -39,11 +39,9 @@ public:
 	*/
 	virtual void Imgui_RenderMenu() {}
 
-	void Imgui_StartWindow();
-	void Imgui_Menu_OpenWindow();
-
 	const char* GetTabName() const { return m_szTabname; }
 	const char* GetWindowName() const { return m_szWindowName; }
+	const char* GetFreeRenderName() const { return m_szFreeRenderName; }
 	_bool IsWindowOpened() const { return m_bOpenWindow; }
 
 	virtual void Free() override;
@@ -55,6 +53,7 @@ protected:
 	// 탭과 윈도우 이름을 초기화해야 사용가능
 	const char* m_szTabname = "##";
 	const char* m_szWindowName = "##";
+	const char* m_szFreeRenderName = "##";
 
 	_bool m_bOpenWindow = false;
 	ImGuiWindowFlags m_ImguiWindowFlags = 0;
