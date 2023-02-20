@@ -297,6 +297,13 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar * pP
 	return m_pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 }
 
+map<const _tchar*, class CComponent*>* CGameInstance::Get_ComponentProtoType()
+{
+	assert(nullptr != m_pComponent_Manager && "CGameInstance::Get_ComponentProtoType()");
+
+	return m_pComponent_Manager->Get_ComponentProtoType();
+}
+
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)

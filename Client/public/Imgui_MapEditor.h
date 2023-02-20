@@ -27,12 +27,13 @@ private:
 	HRESULT	Ready_For_MapString();
 
 	void			Imgui_SelectOption();
-
+	void			Imgui_CreateEnviromentObj();
 
 
 private: /*For_Tool*/
 	string		m_strChapter[MAX_CHATERNUM];
-
+	wstring		m_strProtoName = TEXT("");
+	wstring		m_strModelName = TEXT("");
 
 private:	/*Use_Data*/
 	_int	m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);

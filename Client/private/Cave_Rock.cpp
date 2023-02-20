@@ -78,7 +78,7 @@ HRESULT CCave_Rock::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Model_AnimalStatues_01_OwlStatue"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_MAPTOOL, m_EnviromentDesc.szModelTag, TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

@@ -175,13 +175,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", 
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.mdat"), PivotMatrix))))
 		return E_FAIL;
-
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
-		return E_FAIL;
-
-
 	if (FAILED(LoadNonAnimModel(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 

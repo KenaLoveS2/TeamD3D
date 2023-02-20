@@ -68,7 +68,7 @@ BEGIN(Engine)
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
-
+		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 	public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);

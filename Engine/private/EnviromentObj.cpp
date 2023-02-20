@@ -21,18 +21,21 @@ HRESULT CEnviromentObj::Initialize_Prototype()
 
 HRESULT CEnviromentObj::Initialize(void * pArg)
 {
-	ZeroMemory(&m_Desc, sizeof(DESC));
+	ZeroMemory(&m_EnviromentDesc, sizeof(m_EnviromentDesc));
+
 	if (pArg) 
 	{		
-		memcpy(&m_Desc, pArg, sizeof(DESC));
+		memcpy(&m_EnviromentDesc, pArg, sizeof(ENVIROMENT_DESC));
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
 	else
 	{
-		m_Desc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
-		m_Desc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
 
-	if (FAILED(__super::Initialize(&m_Desc.ObjectDesc))) return E_FAIL;
+	if (FAILED(__super::Initialize(&m_EnviromentDesc.ObjectDesc))) return E_FAIL;
 
 
 	HRESULT SetUp_Component();

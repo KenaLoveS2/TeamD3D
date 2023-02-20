@@ -67,9 +67,6 @@
     <Filter Include="02.GameObjects\Effect\Effect">
       <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96.StringManager">
-      <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
     </Filter>
@@ -244,7 +241,9 @@
     <ClInclude Include="..\Public\Cave_Rock.h">
       <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h" />
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Enviroment\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -346,7 +345,9 @@
     <ClCompile Include="..\Private\Cave_Rock.cpp">
       <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Enviroment\Tool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
