@@ -10,6 +10,8 @@
 #include "Sound_Manager.h"
 #include "Utile.h"
 
+#define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
+
 BEGIN(Engine)
 
 class ENGINE_DLL CGameInstance final : public CBase
@@ -18,12 +20,13 @@ class ENGINE_DLL CGameInstance final : public CBase
 private:
 	CGameInstance();
 	virtual ~CGameInstance() = default;
-
+	
 public:
 	static _uint Get_StaticLevelIndex() {
 		return m_iStaticLevelIndex;
 	}
 	HWND GetHWND() { return m_hClientWnd; }
+	_float GetTimeDelta() { return m_fTimeDelta; }
 
 public: /* For.GameInstance */	
 	static const _tchar*			m_pPrototypeTransformTag;
@@ -116,6 +119,7 @@ public: // for Camera manager
 private:
 	static _uint					m_iStaticLevelIndex;
 	HWND							m_hClientWnd = NULL;
+	_float							m_fTimeDelta = 0.f;
 
 private:	
 	class CGraphic_Device*			m_pGraphic_Device = nullptr;
@@ -133,6 +137,7 @@ private:
 	class CImgui_Manager*			m_pImgui_Manager = nullptr;
 	class CString_Manager*			m_pString_Manager = nullptr;
 	class CCamera_Manager*			m_pCamera_Manager = nullptr;
+	class CPostFX*					m_pPostFX = nullptr;
 
 public:
 	static void Release_Engine();

@@ -183,9 +183,6 @@
     <ClInclude Include="..\public\Effect.h">
       <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\String_Manager.h">
-      <Filter>96.StringManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_CanvasHUD.h">
       <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
     </ClInclude>
@@ -219,6 +216,7 @@
     <ClInclude Include="..\public\Imgui_UIEditor.h">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -274,9 +272,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
       <Filter>02.GameObjects\Effect\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\String_Manager.cpp">
-      <Filter>96.StringManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasHUD.cpp">
       <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
@@ -345,6 +340,15 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

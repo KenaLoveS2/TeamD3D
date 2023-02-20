@@ -7,7 +7,7 @@ CPostFX::CPostFX()
 {
 }
 
-HRESULT CPostFX::Initilaize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+HRESULT CPostFX::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	if (m_pDevice == nullptr)
 	{
@@ -305,9 +305,9 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 		// Normalize the adaptation time with the frame time (all in seconds)
 		// Never use a value higher or equal to 1 since that means no adaptation at all (keeps the old value)
 
-		//fAdaptationNorm = min(m_fAdaptation < 0.0001f ? 1.0f : (_float)TIME_DELTA / m_fAdaptation, 0.9999f);
+		fAdaptationNorm = min(m_fAdaptation < 0.0001f ? 1.0f : (_float)TIMEDELTA / m_fAdaptation, 0.9999f);
 	}
-
+	
 	// Constants
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	m_pContext->Map(m_pDownScaleCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -358,24 +358,183 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	Safe_Release(pDepthStencilView);
 }
 
-void CPostFX::SetParameter(_float fMiddleGrey, _float fWhite)
+void CPostFX::Imgui_Render()
 {
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	ImGui::Checkbox("HDR On", &m_bOn);
+
+	static _float2 middleGreyMinMax{ 0.f, 20.f };
+	ImGui::InputFloat2("MiddleGreyMinMax", (float*)&middleGreyMinMax);
+	ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, middleGreyMinMax.x, middleGreyMinMax.y);
+
+	static _float2 whiteMinMax{ 0.f, 5.f };
+	ImGui::InputFloat2("WhiteMinMax", (float*)&whiteMinMax);
+	ImGui::SliderFloat("White", &m_fWhite, whiteMinMax.x, whiteMinMax.y);
+
+	static _float2 adaptationMinMax{ 0.f, 10.f };
+	ImGui::InputFloat2("adaptationMinMax", (float*)&adaptationMinMax);
+	ImGui::SliderFloat("Adaptation", &m_fAdaptation, adaptationMinMax.x, adaptationMinMax.y);
+
+	static _float2 BloomThresholdMinMax{ 0.f, 2.5f };
+	ImGui::InputFloat2("BoomThresholdMinMax", (float*)&BloomThresholdMinMax);
+	ImGui::SliderFloat("BoomThreshold", &m_fBloomThreshold, BloomThresholdMinMax.x, BloomThresholdMinMax.y);
+
+	static _float2 BloomScaleMinMax{ 0.f, 2.f };
+	ImGui::InputFloat2("BloomScaleMinMax", (float*)&BloomScaleMinMax);
+	ImGui::SliderFloat("BloomScale", &m_fBloomScale, BloomScaleMinMax.x, BloomScaleMinMax.y);
 }
 
 void CPostFX::DownScale(ID3D11ShaderResourceView * pHDRSRV)
 {
+	// Output
+	ID3D11UnorderedAccessView* arrUAVs[2] = { m_pDownScale1DUAV, m_pDownScaleUAV };
+	m_pContext->CSSetUnorderedAccessViews(0, 2, arrUAVs, NULL);
+
+	// Input
+	ID3D11ShaderResourceView* arrViews[2] = { pHDRSRV, NULL };
+	m_pContext->CSSetShaderResources(0, 1, arrViews);
+
+	// Shader
+	m_pContext->CSSetShader(m_pDownScaleFirstPassCS, NULL, 0);
+
+	// Execute the downscales first pass with enough groups to cover the entire full res HDR buffer
+	m_pContext->Dispatch(m_iDownScaleGroups, 1, 1);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Second pass - reduce to a single pixel
+
+	// Outoput
+	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+	arrUAVs[0] = m_pAvgLumUAV;
+	m_pContext->CSSetUnorderedAccessViews(0, 2, arrUAVs, NULL);
+
+	// Input
+	arrViews[0] = m_pDownScale1DSRV;
+	arrViews[1] = m_pPrevAvgLumSRV;
+	m_pContext->CSSetShaderResources(0, 2, arrViews);
+
+	// Shader
+	m_pContext->CSSetShader(m_pDownScaleSecondPassCS, NULL, 0);
+
+	// Excute with a single group - this group has enough threads to process all the pixels
+	m_pContext->Dispatch(1, 1, 1);
+
+	// Cleanup
+	m_pContext->CSSetShader(NULL, NULL, 0);
+	ZeroMemory(arrViews, sizeof(arrViews));
+	m_pContext->CSSetShaderResources(0, 2, arrViews);
+	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+	m_pContext->CSSetUnorderedAccessViews(0, 2, arrUAVs, (UINT*)(&arrUAVs));
 }
 
 void CPostFX::Bloom()
 {
+	// Input
+	ID3D11ShaderResourceView* arrViews[2] = { m_pDownScaleSRV, m_pAvgLumSRV };
+	m_pContext->CSSetShaderResources(0, 2, arrViews);
+
+	// Output
+	ID3D11UnorderedAccessView* arrUAVs[1] = { m_pTempUAV[0] };
+	m_pContext->CSSetUnorderedAccessViews(0, 1, arrUAVs, NULL);
+
+	// Shader
+	m_pContext->CSSetShader(m_pBloomRevealCS, NULL, 0);
+
+	// Execute the downscales first pass with enough groups to cover the entire full res HDR buffer
+	m_pContext->Dispatch(m_iDownScaleGroups, 1, 1);
+
+	// Cleanup
+	m_pContext->CSSetShader(NULL, NULL, 0);
+	ZeroMemory(arrViews, sizeof(arrViews));
+	m_pContext->CSSetShaderResources(0, 2, arrViews);
+	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+	m_pContext->CSSetUnorderedAccessViews(0, 1, arrUAVs, NULL);
 }
 
 void CPostFX::Blur(ID3D11ShaderResourceView * pInput, ID3D11UnorderedAccessView * pOutput)
 {
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Second pass - horizontal gaussian filter
+
+	// Output
+	ID3D11UnorderedAccessView* arrUAVs[1] = { m_pTempUAV[1] };
+	m_pContext->CSSetUnorderedAccessViews(0, 1, arrUAVs, NULL);
+
+	// Input
+	ID3D11ShaderResourceView* arrViews[1] = { pInput };
+	m_pContext->CSSetShaderResources(0, 1, arrViews);
+
+	// Shader
+	m_pContext->CSSetShader(m_HorizontalBlurCS, NULL, 0);
+
+	// Execute the horizontal filter
+	m_pContext->Dispatch((UINT)ceil((m_iWidth / 4.0f) / (128.0f - 12.0f)), (UINT)ceil(m_iHeight / 4.0f), 1);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// First pass - vertical gaussian filter
+
+	// Output
+	arrUAVs[0] = pOutput;
+	m_pContext->CSSetUnorderedAccessViews(0, 1, arrUAVs, NULL);
+
+	// Input
+	arrViews[0] = m_pTempSRV[1];
+	m_pContext->CSSetShaderResources(0, 1, arrViews);
+
+	// Shader
+	m_pContext->CSSetShader(m_VerticalBlurCS, NULL, 0);
+
+	// Execute the vertical filter
+	m_pContext->Dispatch((UINT)ceil(m_iWidth / 4.0f), (UINT)ceil((m_iHeight / 4.0f) / (128.0f - 12.0f)), 1);
+
+	// Cleanup
+	m_pContext->CSSetShader(NULL, NULL, 0);
+	ZeroMemory(arrViews, sizeof(arrViews));
+	m_pContext->CSSetShaderResources(0, 1, arrViews);
+	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+	m_pContext->CSSetUnorderedAccessViews(0, 1, arrUAVs, NULL);
 }
 
 void CPostFX::FinalPass(ID3D11ShaderResourceView * pHDRSRV)
 {
+	ID3D11ShaderResourceView* arrViews[3] = { pHDRSRV, m_pAvgLumSRV, m_pBloomSRV };
+	m_pContext->PSSetShaderResources(0, 3, arrViews);
+
+	// Constants
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	m_pContext->Map(m_pFinalPassCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	TFinalPassCB* pFinalPass = (TFinalPassCB*)MappedResource.pData;
+	pFinalPass->fMiddleGrey = m_fMiddleGrey;
+	pFinalPass->fLumWhiteSqr = m_fWhite;
+	pFinalPass->fLumWhiteSqr *= pFinalPass->fMiddleGrey; // Scale by the middle grey value
+	pFinalPass->fLumWhiteSqr *= pFinalPass->fLumWhiteSqr; // Square
+	pFinalPass->fBloomScale = m_fBloomScale;
+	m_pContext->Unmap(m_pFinalPassCB, 0);
+	ID3D11Buffer* arrConstBuffers[1] = { m_pFinalPassCB };
+	m_pContext->PSSetConstantBuffers(0, 1, arrConstBuffers);
+
+	m_pContext->IASetInputLayout(NULL);
+	m_pContext->IASetVertexBuffers(0, 0, NULL, NULL, NULL);
+	m_pContext->IASetIndexBuffer(NULL, DXGI_FORMAT_UNKNOWN, 0);
+	m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	ID3D11SamplerState* arrSamplers[2] = { m_pSampPoint, m_pSampLinear };
+	m_pContext->PSSetSamplers(0, 2, arrSamplers);
+
+	// Set the shaders
+	m_pContext->VSSetShader(m_pFullScreenQuadVS, NULL, 0);
+	m_pContext->PSSetShader(m_pFinalPassPS, NULL, 0);
+
+	m_pContext->Draw(4, 0);
+
+	// Cleanup
+	ZeroMemory(arrViews, sizeof(arrViews));
+	m_pContext->PSSetShaderResources(0, 3, arrViews);
+	ZeroMemory(arrConstBuffers, sizeof(arrConstBuffers));
+	m_pContext->PSSetConstantBuffers(0, 1, arrConstBuffers);
+	m_pContext->VSSetShader(NULL, NULL, 0);
+	m_pContext->PSSetShader(NULL, NULL, 0);
 }
 
 void CPostFX::SetDebugName(ID3D11DeviceChild * pObj, const char * pName)

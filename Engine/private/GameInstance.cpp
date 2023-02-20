@@ -10,6 +10,7 @@
 #include "Imgui_Manager.h"
 #include "String_Manager.h"
 #include "Camera_Manager.h"
+#include "PostFX.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -32,6 +33,7 @@ CGameInstance::CGameInstance()
 	, m_pImgui_Manager(CImgui_Manager::GetInstance())
 	, m_pString_Manager(CString_Manager::GetInstance())
 	, m_pCamera_Manager(CCamera_Manager::GetInstance())
+	, m_pPostFX(CPostFX::GetInstance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
@@ -48,6 +50,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pImgui_Manager);	
 	Safe_AddRef(m_pString_Manager);
 	Safe_AddRef(m_pCamera_Manager);
+	Safe_AddRef(m_pPostFX);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
@@ -65,6 +68,10 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
 	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
+
+	/* HDR 초기화 */
+	if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
+		return E_FAIL;
 
 	/* 입력 디바이스 초기화. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
@@ -167,7 +174,10 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	if (m_pGraphic_Device == nullptr)
 		return E_FAIL;
 
-	return m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate);
+	if (FAILED(m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
@@ -513,6 +523,7 @@ void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();
+	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CCamera_Manager::GetInstance()->DestroyInstance();
 	CComponent_Manager::GetInstance()->DestroyInstance();
@@ -534,6 +545,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pCamera_Manager);	
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pImgui_Manager);
+	Safe_Release(m_pPostFX);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pFrustum);
