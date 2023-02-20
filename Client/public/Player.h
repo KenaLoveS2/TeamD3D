@@ -9,6 +9,7 @@ class CShader;
 class CCollider;
 class CRenderer;
 class CNavigation;
+class CFSMComponent;
 END
 
 BEGIN(Client)
@@ -36,6 +37,9 @@ private:
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 
 	CNavigation*			m_pNavigationCom = nullptr;
+	CFSMComponent*			m_pFSM = nullptr;
+
+	_int					m_iAnimationIndex = 0;
 
 private:
 	vector<CGameObject*>	m_PlayerParts;
@@ -45,6 +49,7 @@ private:
 
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	void	SetUp_FSM();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

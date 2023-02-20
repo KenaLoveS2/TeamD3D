@@ -4,6 +4,8 @@
 #include "ImGui\imgui.h"
 #include "ImGui\imgui_impl_win32.h"
 #include "ImGui\imgui_impl_dx11.h"
+#include "ImGui\ImGuizmo.h"
+#include "ImGui\ImGuiFileDialog.h"
 
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
@@ -36,7 +38,6 @@
 using namespace DirectX;
 
 #include <DirectXTK\SimpleMath.h>
-// #include <DirectXTK\SimpleMath.inl>
 
 using namespace SimpleMath;
 

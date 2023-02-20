@@ -58,6 +58,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
+	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
+
 	/* 입력 디바이스 초기화. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
 		return E_FAIL;
@@ -89,8 +91,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pSound_Manager->Reserve_Manager(GraphicDesc.pSoundFileTag, GraphicDesc.iNumManualSounds)))
 		return E_FAIL;
 
-	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
-	
 	m_hClientWnd = GraphicDesc.hWnd;
 
 	return S_OK;
@@ -148,6 +148,14 @@ HRESULT CGameInstance::Present()
 		return E_FAIL;
 
 	return m_pGraphic_Device->Present();
+}
+
+HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate)
+{
+	if (m_pGraphic_Device == nullptr)
+		return E_FAIL;
+
+	return m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate);
 }
 
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
@@ -220,6 +228,20 @@ CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void
 		return nullptr;
 
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);	
+}
+
+void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
+{
+	if (nullptr == m_pObject_Manager)
+		return;
+	m_pObject_Manager->Imgui_ProtoViewer(iLevel, szSelectedProto);
+}
+
+void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject)
+{
+	if (nullptr == m_pObject_Manager)
+		return;
+	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
@@ -413,26 +435,24 @@ void CGameInstance::Stop_All()
 
 void CGameInstance::Render_ImGui()
 {
-	if (m_pImgui_Manager == nullptr) return;
+	if (nullptr == m_pImgui_Manager)
+		return;
+
 	m_pImgui_Manager->Render_Imgui();
 }
 
 void CGameInstance::Render_Update_ImGui()
 {
-	if (m_pImgui_Manager == nullptr) return;
+	if (nullptr == m_pImgui_Manager)
+		return;
+
 	m_pImgui_Manager->Render_Update_ImGui();
 }
 
-void CGameInstance::Add_ImguiTabObject(CImguiObject * ImguiObject)
+void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject)
 {
 	if (m_pImgui_Manager == nullptr) return;
-	m_pImgui_Manager->Add_ImguiTabObject(ImguiObject);
-}
-
-void CGameInstance::Add_ImguiWindowObject(CImguiObject * ImguiObject)
-{
-	if (m_pImgui_Manager == nullptr) return;
-	m_pImgui_Manager->Add_ImguiWindowObject(ImguiObject);
+	m_pImgui_Manager->Add_ImguiObject(pImguiObject);
 }
 
 void CGameInstance::Clear_ImguiObjects()

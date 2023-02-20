@@ -29,5 +29,13 @@ public:
 		Sour = Dest;
 		Dest = Temp;
 	}
+
+	template<typename T> static void Saturate(T& Value, T Min, T Max)
+	{
+		if (Value < Min)
+			Value = Min;
+		if (Value > Max)
+			Value = Max;
+	}
 };
 END

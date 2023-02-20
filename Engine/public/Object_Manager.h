@@ -45,7 +45,9 @@ private:
 public:
 	virtual void Free() override;
 
-	void   Imgui_ProtoViewer(OUT const _tchar*& szSelectedProto);
+	// 모든 원본 Object를 Imgui로 출력한다.
+	// 선택한 원본의 이름을 szSelectedProto로 돌려준다.
+	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 
 	// iLevel에 있는 모든 사본 Object를 Layer별로 Imgui로 출력한다.
 	// 선택한 Object는 pSelectedObject로 돌려준다.

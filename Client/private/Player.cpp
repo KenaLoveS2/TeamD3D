@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Weapon.h"
 #include "Bone.h"
+#include "FSMComponent.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -38,10 +39,12 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
-	if (FAILED(Ready_Parts()))
-		return E_FAIL;
+	//if (FAILED(Ready_Parts()))
+//		return E_FAIL;
 
 	m_pModelCom->Set_AnimIndex(3);	
+
+	//SetUp_FSM();
 
 	return S_OK;
 }
@@ -49,6 +52,8 @@ HRESULT CPlayer::Initialize(void * pArg)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	//m_pFSM->Tick(fTimeDelta);
 
 	if (GetKeyState(VK_DOWN) & 0x8000)
 	{
@@ -73,15 +78,17 @@ void CPlayer::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Set_AnimIndex(3);
 
+	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
-	for (_uint i = 0; i < m_PlayerParts.size(); ++i)
+	/*for (_uint i = 0; i < m_PlayerParts.size(); ++i)
 	{
 		m_PlayerParts[i]->Tick(fTimeDelta);
-	}
+	}*/
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+	//for (_uint i = 0; i < COLLTYPE_END; ++i)
+	//	m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 
 }
 
@@ -89,22 +96,29 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	for (_uint i = 0; i < m_PlayerParts.size(); ++i)
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_UP))
+		m_iAnimationIndex++;
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_DOWN))
+		m_iAnimationIndex--;
+
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
+
+	/*for (_uint i = 0; i < m_PlayerParts.size(); ++i)
 	{
 		m_PlayerParts[i]->Late_Tick(fTimeDelta);
-	}
+	}*/
 
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);		
 
 		
-		for (auto& pCollider : m_pColliderCom)
-		{
-			m_pRendererCom->Add_DebugRenderGroup(pCollider);
-		}
+// 		for (auto& pCollider : m_pColliderCom)
+// 		{
+// 			m_pRendererCom->Add_DebugRenderGroup(pCollider);
+// 		}
 
-		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+		//m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
 		
 	}
 }
@@ -136,7 +150,6 @@ HRESULT CPlayer::Render()
 	//}
 
 	//m_pNavigationCom->Render();
-
 #endif
 
 	return S_OK;
@@ -181,7 +194,7 @@ HRESULT CPlayer::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"), TEXT("Com_Model"),	
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Kena"), TEXT("Com_Model"),	
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -224,10 +237,7 @@ HRESULT CPlayer::SetUp_Components()
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
 		(CComponent**)&m_pNavigationCom, &NaviDesc)))
 		return E_FAIL;
-
-
 	
-
 	return S_OK;
 }
 
@@ -245,7 +255,6 @@ HRESULT CPlayer::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
 
 	/* For.Lights */
 	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
@@ -265,13 +274,51 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	
-
-
-
 	return S_OK;
 }
+
+void CPlayer::SetUp_FSM()
+{
+	m_pFSM = CFSMComponentBuilder()
+		.InitState("IDLE")
+		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		// 단발성인 경우 여기서 나는 리셋 애니메이션을 해줬음
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 여기서 애니메이션 인터벌 체크를 통해서 프레임 중간중간 이벤트 쏠수 있게 만들었었음
+	})
+		.OnExit([this]
+	{
+		// 나같은 경우 여기서 카메라를 다른 것을 쓸것인지 지금 다시 데미지를 입어도 되는 상황인지
+		// 상태이상을 여기서 해체해주었음
+	})
+		.AddTransition("IDLE to WALK", "WALK")
+		.Predicator([this]()
+	{
+		// 보통 여기서 animfinishchecker 함수같은 거 만들어줘서 상태를 변경해주었음
+		return true;// bool 함수를 넣어줘야함
+	})
+		.AddState("WALK")
+		.OnStart([this]()
+	{
+		// 단발성인 경우 여기서 나는 리셋 애니메이션을 해줬음
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 여기서 애니메이션 인터벌 체크를 통해서 프레임 중간중간 이벤트 쏠수 있게 만들었었음
+	})
+		.OnExit([this]
+	{
+		// 나같은 경우 여기서 카메라를 다른 것을 쓸것인지 지금 다시 데미지를 입어도 되는 상황인지
+		// 상태이상을 여기서 해체해주었음
+	})
+		.Build();
+}
+
 
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
@@ -313,5 +360,5 @@ void CPlayer::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
+	Safe_Release(m_pFSM);
 }

@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
 
+#include "Imgui_PropertyEditor.h"
+
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -18,6 +20,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
+	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		p_game_instance->Clear_ImguiObjects();
+		p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
+	RELEASE_INSTANCE(CGameInstance)
+		
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
@@ -39,7 +46,6 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-		
 }
 
 void CLevel_GamePlay::Late_Tick(_float fTimeDelta)
@@ -88,7 +94,6 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_POINT;
@@ -102,7 +107,6 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
-
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -147,7 +151,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"), &CameraDesc)))
 		return E_FAIL;
 
@@ -172,14 +175,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-
 	for (_uint i = 0; i < 10; ++i)
 	{
 		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Monster"))))
 			return E_FAIL;
 	}
-
-
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -222,7 +222,5 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
-
-
 }
 
