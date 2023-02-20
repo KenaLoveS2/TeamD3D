@@ -162,24 +162,24 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Model_ForkLift */	
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/ForkLift/ForkLift.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sword*/
 	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Sword"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/ForkLift/ForkLift.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.mdat"), PivotMatrix))))
 		return E_FAIL;
-
-	
+		
 	/* For.Prototype_Component_Model_Fiona */
 	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Fiona/Fiona.fbx", PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Fiona/Fiona.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Kena/Kena_Body.fbx", PivotMatrix))))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", 
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Kena/Kena_Body.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 
@@ -318,6 +318,7 @@ void CLoader::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);	
 }
+
 HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
