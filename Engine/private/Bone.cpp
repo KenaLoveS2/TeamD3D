@@ -1,27 +1,44 @@
 #include "..\public\Bone.h"
 
-
-
 CBone::CBone()
 {
 }
 
-HRESULT CBone::Initialize(aiNode * pAINode, CBone* pParent)
+CBone::CBone(const CBone& rhs)
 {
-	strcpy_s(m_szName, pAINode->mName.data);
+	strcpy_s(m_szName, rhs.m_szName);
+	m_OffsetMatrix = rhs.m_OffsetMatrix;
+	m_TransformMatrix = rhs.m_TransformMatrix;
+	m_CombindTransformMatrix = rhs.m_CombindTransformMatrix;
 
-	XMStoreFloat4x4(&m_OffsetMatrix, XMMatrixIdentity());
+	m_pParent = nullptr;
+	strcpy_s(m_szParentName, rhs.m_szParentName);
+}
 
-	memcpy(&m_TransformMatrix, &pAINode->mTransformation, sizeof(_float4x4));
+HRESULT CBone::Initialize_Prototype(HANDLE hFile)
+{
+	_ulong dwByte = 0;
+	_uint iLen = 0;
+	ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
+	ReadFile(hFile, m_szName, iLen + 1, &dwByte, nullptr);
+	ReadFile(hFile, &m_OffsetMatrix, sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &m_TransformMatrix, sizeof(_float4x4), &dwByte, nullptr);
 
-	XMStoreFloat4x4(&m_TransformMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_TransformMatrix)));
+	_bool bParentFlag = false;
+	ReadFile(hFile, &bParentFlag, sizeof(_bool), &dwByte, nullptr);
+	if (bParentFlag)
+	{
+		ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, m_szParentName, iLen + 1, &dwByte, nullptr);
+	}
 
-	XMStoreFloat4x4(&m_CombindTransformMatrix, XMMatrixIdentity());
+	m_pParent = nullptr;
 
-	m_pParent = pParent;
+	return S_OK;
+}
 
-	Safe_AddRef(m_pParent);
-
+HRESULT CBone::Initialize(void* pArg)
+{
 	return S_OK;
 }
 
@@ -36,13 +53,24 @@ void CBone::Compute_CombindTransformationMatrix()
 
 }
 
-CBone * CBone::Create(aiNode * pAINode, CBone* pParent)
+CBone * CBone::Create(HANDLE hFile)
 {
-	CBone*		pInstance = new CBone();
+	CBone* pInstance = new CBone();
 
-	if (FAILED(pInstance->Initialize(pAINode, pParent)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile)))
 	{
 		MSG_BOX("Failed to Created : CBone");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CBone * CBone::Clone(void * pArg)
+{
+	CBone* pInstance = new CBone(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CBone");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -51,5 +79,15 @@ CBone * CBone::Create(aiNode * pAINode, CBone* pParent)
 void CBone::Free()
 {
 	Safe_Release(m_pParent);
-	
+}
+
+HRESULT CBone::SetParent(CBone* pParent)
+{
+	if (m_pParent)
+		return E_FAIL;
+
+	m_pParent = pParent;
+	Safe_AddRef(m_pParent);
+
+	return S_OK;
 }
