@@ -5,6 +5,7 @@
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 {
+	ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
@@ -57,46 +58,39 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::SetUp_Components()
+HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt)
 {
-	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
-		return E_FAIL;
+	CTexture*	pTextureCom = nullptr;
+	
+	/* For.DiffuseTexture */
+	if (iDTextureComCnt != 0)
+	{
+		m_iDTextureComCnt = m_iTotalDTextureComCnt + iDTextureComCnt;
 
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+		for (_uint i = m_iTotalDTextureComCnt; i < m_iDTextureComCnt; ++i)
+		{
+			m_strDTextureComTag = L"Com_DTexture_";
+			m_strDTextureComTag += to_wstring(i);
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strDTextureComTag.c_str(), (CComponent**)&m_pDTextureCom[i], this)))
+				return E_FAIL;
+		}
+		m_iTotalDTextureComCnt = m_iDTextureComCnt;
+	}
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	/* For.Mask Texture */
+	if (iMTextureComCnt != 0)
+	{
+		m_iMTextureComCnt = m_iTotalMTextureComCnt + iMTextureComCnt;
 
-	return S_OK;
-}
-
-HRESULT CEffect_Base::SetUp_ShaderResources()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-		
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-
+		for (_uint i = m_iTotalMTextureComCnt; i < m_iMTextureComCnt; ++i)
+		{
+			m_strMTextureComTag = L"Com_MTexture_";
+			m_strMTextureComTag += to_wstring(i);
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strMTextureComTag.c_str(), (CComponent**)&m_pMTextureCom[i], this)))
+				return E_FAIL;
+		}
+		m_iTotalMTextureComCnt = m_iMTextureComCnt;
+	}
 	return S_OK;
 }
 
@@ -104,7 +98,32 @@ void CEffect_Base::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
+	if(m_isCloned)
+	{
+		// Shader, Renderer Release
+		Safe_Release(m_pShaderCom);
+		Safe_Release(m_pRendererCom);
+
+		// Texture
+ 		if (nullptr != m_pDTextureCom)
+ 		{
+ 			// Diffuse Release
+ 			for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+ 				Safe_Release(m_pDTextureCom[i]);
+ 		}
+ 
+ 		if (nullptr != m_pMTextureCom)
+ 		{
+ 			// Mask Release
+ 			for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+ 				Safe_Release(m_pMTextureCom[i]);
+ 		}
+
+		// VIBuffer Release
+		if (nullptr != m_pVIBufferCom)
+			Safe_Release(m_pVIBufferCom);
+
+		if (nullptr != m_pVIInstancingBufferCom)
+			Safe_Release(m_pVIInstancingBufferCom);
+	}
 }

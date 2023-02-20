@@ -117,15 +117,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 		return E_FAIL;
 
-
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Snow */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Snow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Explosion */
@@ -136,6 +130,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_RuinM_R_AO */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_04_E_R_Ao.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("버퍼를 로딩중입니다. "));
@@ -186,8 +185,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-
-
 	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩중입니다. "));
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
@@ -207,6 +204,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Shader_VtxCubeTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxCubeTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxEffectTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxRectInstance */

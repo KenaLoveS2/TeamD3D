@@ -6,6 +6,8 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CVIBuffer_Rect;
+class CVIBuffer_Point_Instancing;
 END
 
 BEGIN(Client)
@@ -50,25 +52,43 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
+	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) { 
+		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
+	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
+
+public:
 	virtual HRESULT      Initialize_Prototype() override;
 	virtual HRESULT		 Initialize(void* pArg) override;
 	virtual void		 Tick(_float fTimeDelta) override;
 	virtual void		 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		 Render() override;
 
+public:
+	HRESULT				 Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+
 protected:
-	CShader*			  m_pShaderCom = nullptr;
-	CRenderer*			  m_pRendererCom = nullptr;
-	CTexture*			  m_pTextureCom = nullptr;
-						  
+	CShader*				    m_pShaderCom = nullptr;
+	CRenderer*				    m_pRendererCom = nullptr;
+	CVIBuffer_Rect*			    m_pVIBufferCom = nullptr;
+	CVIBuffer_Point_Instancing*	m_pVIInstancingBufferCom = nullptr;
+
+	CTexture*					m_pDTextureCom[10] = { nullptr };
+	CTexture*					m_pMTextureCom[10] = { nullptr };
+	wstring						m_strDTextureComTag = L"";
+	wstring						m_strMTextureComTag = L"";
+
+	/* Texture Setting */
+	_uint	m_iTextureLevel = 1000;
+
+	_uint	m_iTotalDTextureComCnt = 0;
+	_uint	m_iTotalMTextureComCnt = 0;
+
+	_uint	m_iDTextureComCnt = 0;
+	_uint	m_iMTextureComCnt = 0;
+	/* ~Texture Setting */
+
+protected:
 	EFFECTDESC			  m_eEFfectDesc;
-
-//  VIBuffer는 각자 클래스에서 정의
-//	CVIBuffer_Rect*		  m_pVIBufferCom = nullptr;	
-
-private:
-	HRESULT				  SetUp_Components();
-	HRESULT				  SetUp_ShaderResources();
 
 public:
 	virtual void          Free() override;

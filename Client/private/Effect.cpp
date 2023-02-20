@@ -4,12 +4,12 @@
 
 
 CEffect::CEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: CGameObject(pDevice, pContext)
+	: CEffect_Base(pDevice, pContext)
 {
 }
 
 CEffect::CEffect(const CEffect & rhs)
-	: CGameObject(rhs)
+	: CEffect_Base(rhs)
 {
 }
 
@@ -26,7 +26,7 @@ HRESULT CEffect::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));	
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
@@ -35,26 +35,17 @@ HRESULT CEffect::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 3.f, rand() % 10, 1.f));
-
 	return S_OK;
 }
 
 void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_fFrame += 90.0f * fTimeDelta;
-
-	if (m_fFrame >= 90.0f)
-		m_fFrame = 0.f;
-
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);	
-
 	__super::Compute_CamDistance();
 
 	if(nullptr != m_pRendererCom)
@@ -70,7 +61,6 @@ HRESULT CEffect::Render()
 		return E_FAIL;
 
 	m_pShaderCom->Begin(1);
-
 	m_pVIBufferCom->Render();
 
 	return S_OK;
@@ -84,20 +74,38 @@ HRESULT CEffect::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	/***********
+	*  TEXTURE *
+	************/
+	m_iTotalDTextureComCnt = 1;
+	m_iTotalMTextureComCnt = 1;
+
+	/* For.DiffuseTexture */
+	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+	{
+		m_strDTextureComTag = L"Com_DTexture_";
+		m_strDTextureComTag += to_wstring(i);
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strDTextureComTag.c_str(), (CComponent**)&m_pDTextureCom[i], this)))
+			return E_FAIL;
+	}
+
+	/* For.MaskTexture */
+	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+	{
+		m_strMTextureComTag = L"Com_MTexture_";
+		m_strMTextureComTag += to_wstring(i);
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strMTextureComTag.c_str(), (CComponent**)&m_pMTextureCom[i], this)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -119,12 +127,17 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
 		return E_FAIL;
+	
+	// MaxCnt == 10
+	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_eEFfectDesc.fFrame)))
+			return E_FAIL;
+
+	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_eEFfectDesc.fMaskFrame)))
+			return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
-
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -135,7 +148,7 @@ CEffect * CEffect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CEffect_EBase");
+		MSG_BOX("Failed to Created : CEffect");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -147,7 +160,7 @@ CGameObject * CEffect::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CEffect_EBase");
+		MSG_BOX("Failed to Cloned : CEffect");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -156,10 +169,4 @@ CGameObject * CEffect::Clone(void * pArg)
 void CEffect::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-
 }
