@@ -41,7 +41,7 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 		//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
 
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
 
 	return S_OK;
@@ -75,6 +75,11 @@ HRESULT CUI_CanvasHUD::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CUI_CanvasHUD::Imgui_RenderProperty()
+{
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CUI_CanvasHUD::SetUp_Components()

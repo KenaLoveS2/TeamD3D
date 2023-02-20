@@ -22,8 +22,6 @@ private:
 	HRESULT Ready_CanvasProtoList();
 	HRESULT Ready_CloneCanvasList();
 
-
-
 private:
 	vector<string>			m_vecTextureTag;
 	vector<string>			m_vecCanvasProtoTag;

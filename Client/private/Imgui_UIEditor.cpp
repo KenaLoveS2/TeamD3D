@@ -54,13 +54,19 @@ bool	CanvasProto_Getter(void* data, int index, const char** output)
 	*output = (*pVec)[index].c_str();
 	return true;
 }
+bool	CanvasDiffuse_Getter(void* data, int index, const char** output)
+{
+	vector<string>*	 pVec = (vector<string>*)data;
+	*output = (*pVec)[index].c_str();
+	return true;
+}
 void CImgui_UIEditor::Imgui_FreeRender()
 {
 	if (Begin("UI Editor"))
 	{
 		Text("<Canvas>");
 		
-		/* Canvas Type */
+		/**** Canvas Type *****************************/
 		static int selected_canvasType = 0;
 		_uint iNumItems = (_uint)m_vecCanvasProtoTag.size();
 		if (ListBox(" : Type", &selected_canvasType, CanvasProto_Getter, &m_vecCanvasProtoTag, iNumItems, iNumItems))
@@ -83,12 +89,25 @@ void CImgui_UIEditor::Imgui_FreeRender()
 			else
 				m_pCanvas = m_vecCanvas[selected_canvasType];
 		}
-
+		/**** ~Canvas Type *****************************/
 
 		if (m_pCanvas == nullptr)
 			goto Exit;
 
-		m_pCanvas->Imgui_RenderComponentProperties();
+		/* Translation */
+		m_pCanvas->Imgui_RenderProperty();
+
+		/* Image */
+		if (CollapsingHeader("Image"))
+		{
+			static int selected_Diffuse = 0;
+			_uint iNumTextures = (_uint)m_vecTextureTag.size();
+			if (ListBox(" : Diffuse", &selected_Diffuse, CanvasDiffuse_Getter, &m_vecTextureTag, iNumTextures, 5))
+			{
+
+			}
+		}
+
 
 
 	Exit:
