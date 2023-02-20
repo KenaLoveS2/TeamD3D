@@ -53,6 +53,14 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pPostFX);
 }
 
+_uint CGameInstance::Get_CurLevelIndex()
+{
+	if (m_pLevel_Manager != nullptr)
+		return m_pLevel_Manager->Get_CurrentLevelIndex();
+
+	return 0;
+}
+
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
 {
 	if (nullptr == m_pGraphic_Device || 
