@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\GameInstance.h"
 #include "Graphic_Device.h"
 #include "Level_Manager.h"
@@ -142,8 +143,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
 	m_pLevel_Manager->Late_Tick(fTimeDelta);
-
-	
 }
 
 void CGameInstance::Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag)
@@ -228,37 +227,34 @@ HRESULT CGameInstance::Render_Level()
 	return m_pLevel_Manager->Render();
 }
 
-CComponent * CGameInstance::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, _uint iIndex)
+CComponent * CGameInstance::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag, const _tchar * pComponentTag)
 {
-	if (nullptr == m_pObject_Manager)
-		return nullptr;
+	if (nullptr == m_pObject_Manager) return nullptr;
+	return m_pObject_Manager->Get_ComponentPtr(iLevelIndex, pLayerTag, pCloneObjectTag, pComponentTag);
+}
 
-	return m_pObject_Manager->Get_ComponentPtr(iLevelIndex, pLayerTag, pComponentTag, iIndex);
+CGameObject * CGameInstance::Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)
+{
+	if (nullptr == m_pObject_Manager) return nullptr;
+	return m_pObject_Manager->Get_GameObjectPtr(iLevelIndex, pLayerTag, pCloneObjectTag);
 }
 
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
-	if (nullptr == m_pObject_Manager)
-		return E_FAIL;
-
+	if (nullptr == m_pObject_Manager) return E_FAIL;
 	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
 }
 
 CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
 {
-	if (nullptr == m_pObject_Manager)
-		return nullptr;
-
+	if (nullptr == m_pObject_Manager) return nullptr;
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);	
 }
 
-HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg, CGameObject** ppObj)
+HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppObj)
 {
-	if (nullptr == m_pObject_Manager)
-		return E_FAIL;
-
-	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg, ppObj);
-
+	if (nullptr == m_pObject_Manager) return E_FAIL;
+	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pCloneObjectTag, pArg, ppObj);
 }
 
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)

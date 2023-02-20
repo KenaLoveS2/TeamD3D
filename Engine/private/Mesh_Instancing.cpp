@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Mesh_Instancing.h"
 #include "Model_Instancing.h"
 #include "Bone_Instacing.h"

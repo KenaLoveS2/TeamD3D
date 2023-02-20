@@ -55,12 +55,14 @@ BEGIN(Engine)
 		HRESULT Render_Level();
 
 	public: /* For.Object_Manager */
-		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag,
-		                                   _uint iIndex = 0);
+		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
+		class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
+
 		HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
-		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
-		                         void* pArg = nullptr, CGameObject** ppObj = nullptr);
+		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
+								void* pArg = nullptr, CGameObject** ppObj = nullptr);
+
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();

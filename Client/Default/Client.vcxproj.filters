@@ -67,6 +67,18 @@
     <Filter Include="02.GameObjects\Effect\Effect">
       <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.StringManager">
+      <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Outfit">
+      <UniqueIdentifier>{61f53bdc-7604-49d1-82e9-57d503830bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents">
+      <UniqueIdentifier>{12458085-ac27-41ad-a5a7-a0f8450b80bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents\Kena_Parts">
+      <UniqueIdentifier>{abc75d1f-28fb-4536-9fda-986b69c775ab}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
     </Filter>
@@ -108,21 +120,6 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\01. Tool">
       <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Enviroment">
-      <UniqueIdentifier>{a71ce5fd-215f-4bf4-9292-9e4b74f5b239}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Enviroment\Chap1_Cave">
-      <UniqueIdentifier>{45e147e5-4068-4bb0-896e-43a570b784ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Enviroment\Chap2_Forest">
-      <UniqueIdentifier>{beefb780-3c50-4aec-88ad-6ab3aa803f8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Levels\03.MapTool">
-      <UniqueIdentifier>{7bd953d0-b4c6-4f8c-8648-fc98931eeae6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Enviroment\Tool">
-      <UniqueIdentifier>{b871de7e-216b-48d4-9120-3380629f6008}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -235,14 +232,14 @@
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_MapTool.h">
-      <Filter>01.Levels\03.MapTool</Filter>
+    <ClInclude Include="..\Public\Kena_MainOutfit.h">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Cave_Rock.h">
-      <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
+    <ClInclude Include="..\Public\Kena_Parts.h">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Enviroment\Tool</Filter>
+    <ClInclude Include="..\Public\Kena.h">
+      <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -339,14 +336,14 @@
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_MapTool.cpp">
-      <Filter>01.Levels\03.MapTool</Filter>
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Cave_Rock.cpp">
-      <Filter>02.GameObjects\Enviroment\Chap1_Cave</Filter>
+    <ClCompile Include="..\Private\Kena_Parts.cpp">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Enviroment\Tool</Filter>
+    <ClCompile Include="..\Private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

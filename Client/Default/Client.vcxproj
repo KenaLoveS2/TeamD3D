@@ -180,6 +180,9 @@
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\ForkLift.h" />
+    <ClInclude Include="..\Public\Kena.h" />
+    <ClInclude Include="..\Public\Kena_MainOutfit.h" />
+    <ClInclude Include="..\Public\Kena_Parts.h" />
     <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
@@ -218,6 +221,9 @@
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\ForkLift.cpp" />
+    <ClCompile Include="..\Private\Kena.cpp" />
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
+    <ClCompile Include="..\Private\Kena_Parts.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />

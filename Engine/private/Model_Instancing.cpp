@@ -1,16 +1,12 @@
+#include "stdafx.h"
 #include "Model_Instancing.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Transform.h"
-
-
 #include "Bone_Instacing.h"
 #include "Mesh_Instancing.h"
-
 #include "Utile.h"
 #include <string>
-
-
 #include "GameInstance.h"
 
 

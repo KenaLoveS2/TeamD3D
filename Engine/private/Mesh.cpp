@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Mesh.h"
 #include "Model.h"
 #include "Bone.h"

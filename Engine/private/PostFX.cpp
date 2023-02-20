@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\PostFX.h"
 #include "GameInstance.h"
 
