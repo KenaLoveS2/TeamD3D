@@ -44,7 +44,7 @@ HRESULT CImgui_UIEditor::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-
+	m_szFreeRenderName = "UI Editor";
 
 	return S_OK;
 }
@@ -69,7 +69,7 @@ bool	RenderPass_Getter(void* data, int index, const char** output)
 }
 void CImgui_UIEditor::Imgui_FreeRender()
 {
-	if (Begin("UI Editor"))
+	//if (Begin("UI Editor"))
 	{
 		Text("<Canvas>");
 		
@@ -86,7 +86,7 @@ void CImgui_UIEditor::Imgui_FreeRender()
 					CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 					wstring wstr = (*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].c_str();
-					if (FAILED(pGameInstance->Clone_GameObject(CGameInstance::Get_StaticLevelIndex(), L"Layer_Canvas",
+					if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_Canvas",
 						(*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].c_str(), nullptr, (CGameObject**)&m_pCanvas)))
 						MSG_BOX("Failed To Clone Canvas : UIEditor");
 
@@ -146,10 +146,8 @@ void CImgui_UIEditor::Imgui_FreeRender()
 		/* Translation */
 		m_pCanvas->Imgui_RenderProperty();
 
-
-
-	Exit:
-		End();
+ 	Exit:
+ 		End();
 	}
 }
 
@@ -227,7 +225,4 @@ void CImgui_UIEditor::Free()
 	m_vecTextureTag.clear();
 	m_vecCanvasProtoTag.clear();
 	m_vecRenderPass.clear();
-
-	for (auto canv : m_vecCanvas)
-		Safe_Release(canv);
 }

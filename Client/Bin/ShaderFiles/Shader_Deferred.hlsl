@@ -1,3 +1,4 @@
+#include "Shader_Engine_Defines.h"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_ProjMatrixInv, g_ViewMatrixInv;
@@ -24,20 +25,6 @@ Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
 
 float g_fFar = 300.f; // 카메라의 FAR
-
-sampler LinearSampler = sampler_state
-{
-	filter = min_mag_mip_linear;
-	AddressU = wrap;
-	AddressV = wrap;
-};
-
-sampler PointSampler = sampler_state
-{
-	filter = min_mag_mip_Point;
-	AddressU = wrap;
-	AddressV = wrap;
-};
 
 struct VS_IN
 {
@@ -188,70 +175,17 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	vector		vDiffuse  = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vShade	  = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor = vDiffuse * vShade + vSpecular;
+	// vDepth.b 는 Emissive Color를 계산됩니다.
+	Out.vColor = CalcHDRColor(vDiffuse, vDepth.b) * vShade + vSpecular;
 
 	if (0.0f == Out.vColor.a)
 		discard;
 
 	return Out;
 }
-
-RasterizerState RS_Default
-{
-	FillMode = Solid;
-	CullMode = Back;
-	FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Wireframe
-{
-	FillMode = wireframe;
-	CullMode = Back;
-	FrontCounterClockwise = false;
-};
-
-RasterizerState RS_CW
-{
-	CullMode = Front;
-	FrontCounterClockwise = false;
-};
-
-DepthStencilState DS_Default
-{
-	DepthEnable = true;
-	DepthWriteMask = all;
-	DepthFunc = less_equal;
-};
-
-DepthStencilState DS_ZEnable_ZWriteEnable_FALSE
-{
-	DepthEnable = false;
-	DepthWriteMask = zero;
-};
-
-BlendState BS_Default
-{
-	BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-	BlendEnable[0] = true;
-	SrcBlend = SRC_ALPHA;
-	DestBlend = INV_SRC_ALPHA;
-	BlendOp = Add;
-};
-
-BlendState BS_One
-{
-	BlendEnable[0] = true;
-	BlendEnable[1] = true;
-	SrcBlend = ONE;
-	DestBlend = ONE;
-	BlendOp = Add;
-};
 
 technique11 DefaultTechnique
 {

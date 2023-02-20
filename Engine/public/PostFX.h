@@ -11,18 +11,27 @@ private:
 	virtual	~CPostFX() = default;
 
 public:
-	HRESULT Initilaize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void	Clear();
 
 	// Entry Point for Post Processing
 	void	PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTargetView* pLDRRTV);
-	void	SetParameter(_float fMiddleGrey, _float fWhite);
+	_bool	IsPostFXOn() const { return m_bOn; }
+	void	Imgui_Render();
 
 private:
 	void	DownScale(ID3D11ShaderResourceView* pHDRSRV);
+	void	Bloom();
+	void	Blur(ID3D11ShaderResourceView* pInput, ID3D11UnorderedAccessView* pOutput);
+
 	void	FinalPass(ID3D11ShaderResourceView* pHDRSRV);
 
+	static  void	SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
+	HRESULT CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
+
 private:
+	_bool					m_bOn = false;
+
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
 
@@ -51,11 +60,16 @@ private:
 	ID3D11UnorderedAccessView*	m_pAvgLumUAV = nullptr;
 	ID3D11ShaderResourceView*	m_pAvgLumSRV = nullptr;
 
+	// Previous average luminance for adaptation
+	ID3D11Buffer* m_pPrevAvgLumBuffer = nullptr;
+	ID3D11UnorderedAccessView* m_pPrevAvgLumUAV = nullptr;
+	ID3D11ShaderResourceView* m_pPrevAvgLumSRV = nullptr;
+
 	_uint						m_iWidth = 0;
 	_uint						m_iHeight = 0;
 	_uint						m_iDownScaleGroups = 0;
-	_float						m_fMiddleGrey = 0.f;
-	_float						m_fWhite = 0.f;
+	_float						m_fMiddleGrey = 0.0025f;
+	_float						m_fWhite = 1.5f;
 	_float						m_fAdaptation = 0.f;
 	_float						m_fBloomThreshold = 0.f;
 	_float						m_fBloomScale = 0.f;
