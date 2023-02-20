@@ -85,7 +85,7 @@ public:
 	void Set_AnimIndex(_uint iAnimIndex);
 
 public:	
-	HRESULT Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath);
+	HRESULT Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath, _uint iNumMaterials);
 	virtual HRESULT Initialize(void* pArg);
 
 public:
@@ -119,7 +119,7 @@ public:
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath = nullptr);
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath = nullptr, _uint iNumMaterials = 0);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 
@@ -127,6 +127,8 @@ public:
 	HRESULT SetUp_BonesParentPtr();
 	HRESULT SetUp_ClonedAnimations();
 	HRESULT SetUp_ClonedMeshes();
+
+	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath);
 };
 
 END
