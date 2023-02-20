@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Font_Manager.h"
 #include "CustomFont.h"
 

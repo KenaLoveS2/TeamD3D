@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "../public/Imgui_Manager.h"
 #include "Graphic_Device.h"
 #include "ImGui/ImGuiFileDialog.h"

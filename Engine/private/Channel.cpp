@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Channel.h"
 #include "Model.h"
 #include "Bone.h"

@@ -70,6 +70,15 @@
     <Filter Include="96.StringManager">
       <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Outfit">
+      <UniqueIdentifier>{61f53bdc-7604-49d1-82e9-57d503830bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents">
+      <UniqueIdentifier>{12458085-ac27-41ad-a5a7-a0f8450b80bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents\Kena_Parts">
+      <UniqueIdentifier>{abc75d1f-28fb-4536-9fda-986b69c775ab}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
     </Filter>
@@ -223,6 +232,15 @@
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Kena_MainOutfit.h">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_Parts.h">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena.h">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -317,6 +335,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_Parts.cpp">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

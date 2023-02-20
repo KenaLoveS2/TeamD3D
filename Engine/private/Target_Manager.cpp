@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Target_Manager.h"
 #include "RenderTarget.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Light.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"

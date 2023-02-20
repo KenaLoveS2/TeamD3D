@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Camera_Manager.h"
 #include "Camera.h"
 
