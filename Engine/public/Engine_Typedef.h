@@ -6,7 +6,7 @@ namespace Engine
 	typedef		unsigned char			_ubyte;
 
 	typedef		wchar_t					_tchar;
-
+	
 	typedef		signed short			_short;
 	typedef		unsigned short			_ushort;
 
