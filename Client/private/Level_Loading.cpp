@@ -6,6 +6,10 @@
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
 
+#ifdef _DEBUG
+#include "Level_MapTool.h"
+#endif
+
 CLevel_Loading::CLevel_Loading(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -59,6 +63,11 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 			case LEVEL_GAMEPLAY:
 				pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
 				break;
+		
+			case LEVEL_MAPTOOL:
+				pLevel = CLevel_MapTool::Create(m_pDevice, m_pContext);
+				break;
+
 			}
 
 			if (nullptr == pLevel)

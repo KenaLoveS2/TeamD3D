@@ -42,7 +42,7 @@ protected:
 	_bool					m_isCloned = { false };
 	_float					m_fCamDistance = { 0.0 };	
 
-	_tchar m_szName[64] = { 0, };
+	const _tchar*					m_szName = TEXT("");
 
 protected:
 	/* 객체들이 사용해야 할 컴포넌트들을 보관한다. */
@@ -59,7 +59,7 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
-	_tchar* Get_ObjectName() { return m_szName; }
+	const _tchar* Get_ObjectName() { return m_szName; }
 
 public: /* imgui */
 		// 이 오브젝트가 가지고 있는 component의 Imgui_RenderProtpery함수를 실행하는 함수.
