@@ -12,45 +12,42 @@ HRESULT CLayer::Initialize()
 
 void CLayer::Tick(_float fTimeDelta)
 {
-	for (auto& pGameObject : m_GameObjects)
+	for (auto& Pair : m_GameObjects)
 	{
-		if (nullptr != pGameObject)
-			pGameObject->Tick(fTimeDelta);
-	}
-		
+		Pair.second ? Pair.second->Tick(fTimeDelta) : 0;
+	}	
 }
 
 void CLayer::Late_Tick(_float fTimeDelta)
 {
-	for (auto& pGameObject : m_GameObjects)
+	for (auto& Pair : m_GameObjects)
 	{
-		if (nullptr != pGameObject)
-			pGameObject->Late_Tick(fTimeDelta);
+		Pair.second ? Pair.second->Late_Tick(fTimeDelta) : 0;
 	}
 }
 
-CComponent * CLayer::Get_ComponentPtr(const _tchar * pComponentTag, _uint iIndex)
-{
-	if (iIndex >= m_GameObjects.size())
-		return nullptr;
+CComponent * CLayer::Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar * pComponentTag)
+{	
+	CGameObject* pObject = Find_GameObject(pCloneObjectTag);
+	if (pObject == nullptr) return nullptr;
 
-	auto	iter = m_GameObjects.begin();
-
-	for (_uint i = 0; i < iIndex; ++i)
-		++iter;
-
-	if (iter == m_GameObjects.end())
-		return nullptr;
-
-	return (*iter)->Find_Component(pComponentTag);
+	return pObject->Find_Component(pComponentTag);
 }
 
-HRESULT CLayer::Add_GameObject(CGameObject * pGameObject)
+CGameObject * CLayer::Get_GameObjectPtr(const _tchar* pCloneObjectTag)
+{
+	CGameObject* pObject = Find_GameObject(pCloneObjectTag);
+	if (pObject == nullptr) return nullptr;
+
+	return pObject;
+}
+
+HRESULT CLayer::Add_GameObject(const _tchar* pCloneObjectTag, CGameObject * pGameObject)
 {
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	m_GameObjects.push_back(pGameObject);
+	m_GameObjects.emplace(pCloneObjectTag, pGameObject);
 
 	return S_OK;
 }
@@ -69,8 +66,18 @@ CLayer * CLayer::Create()
 
 void CLayer::Free()
 {
-	for (auto& pGameObject : m_GameObjects)
-		Safe_Release(pGameObject);
+	for (auto& Pair : m_GameObjects)
+		Safe_Release(Pair.second);
 
 	m_GameObjects.clear();
+}
+
+CGameObject* CLayer::Find_GameObject(const _tchar * pCloneObjectTag)
+{
+	auto	Pair = find_if(m_GameObjects.begin(), m_GameObjects.end(), CTag_Finder(pCloneObjectTag));
+
+	if (Pair == m_GameObjects.end())
+		return nullptr;
+
+	return Pair->second;
 }

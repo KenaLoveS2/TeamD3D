@@ -204,7 +204,7 @@ void CMonster::Collision_ToPlayer()
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_GAMEPLAY, TEXT("Layer_Player"), TEXT("Com_OBB"));
+	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_GAMEPLAY, TEXT("Layer_Player"), TEXT("Clone_Player"), TEXT("Com_OBB"));
 	if (nullptr == pTargetCollider)
 		return;
 
