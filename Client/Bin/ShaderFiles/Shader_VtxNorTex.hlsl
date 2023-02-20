@@ -1,21 +1,16 @@
 #include "Shader_Client_Defines.h"
 
+/**********Constant Buffer***********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-/* 재질정보 */
-texture2D		g_DiffuseTexture[2];
-
-/* 지형 셰이딩 */
-texture2D		g_BrushTexture;
 vector			g_vBrushPos;
 float			g_fBrushRange = 5.f;
-texture2D		g_FilterTexture;
+/*************************************/
+/* 재질정보 */
+Texture2D<float4>		g_DiffuseTexture[2];
 
-
-
-/* 샘플링 해오는 함수 */
-/* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
-/* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */
+/* 지형 셰이딩 */
+Texture2D<float4>		g_BrushTexture;
+Texture2D<float4>		g_FilterTexture;
 
 struct VS_IN
 {
@@ -23,7 +18,6 @@ struct VS_IN
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 };
-
 
 struct VS_OUT
 {
@@ -43,9 +37,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-	/* 벡터와 행렬의 곱을수행한다. + w나누기를 수행한다. */
-	// XMMatrixTranformCoord();
-
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
 
@@ -55,7 +46,6 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	return Out;
 }
-
 
 struct PS_IN
 {
@@ -74,8 +64,6 @@ struct PS_OUT
 	float4		vDepth : SV_TARGET2;	
 };
 
-
-
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -84,7 +72,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector		vDestDiffuse = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV * 30.f);
 	vector		vFilter = g_FilterTexture.Sample(LinearSampler, In.vTexUV);
 
-	/*vector		*/
 	vector		vBrush = (vector)0.f;
 
 	if (g_vBrushPos.x - g_fBrushRange <= In.vWorldPos.x && In.vWorldPos.x < g_vBrushPos.x + g_fBrushRange && 

@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
@@ -185,7 +186,6 @@
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Sky.h" />
-    <ClInclude Include="..\Public\String_Manager.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasMonHP.h" />
@@ -219,7 +219,6 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
-    <ClCompile Include="..\Private\String_Manager.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasMonHP.cpp" />

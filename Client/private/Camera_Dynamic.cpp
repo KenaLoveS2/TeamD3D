@@ -17,7 +17,7 @@ HRESULT CCamera_Dynamic::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -36,12 +36,12 @@ HRESULT CCamera_Dynamic::Initialize(void * pArg)
 		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
-	
+
 	if (FAILED(CCamera::Initialize(&CameraDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -51,7 +51,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	if (GetKeyState('W') & 0x8000)
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
-	}	
+	}
 
 	if (GetKeyState('S') & 0x8000)
 	{
@@ -131,14 +131,13 @@ HRESULT CCamera_Dynamic::Render()
 
 HRESULT CCamera_Dynamic::SetUp_Components()
 {
-	
 	return S_OK;
 }
 
 
 CCamera_Dynamic * CCamera_Dynamic::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
- 	CCamera_Dynamic*		pInstance = new CCamera_Dynamic(pDevice, pContext);
+	CCamera_Dynamic*		pInstance = new CCamera_Dynamic(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{

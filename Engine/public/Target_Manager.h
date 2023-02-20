@@ -38,8 +38,6 @@ private:
 	map<const _tchar*, list<class CRenderTarget*>>			m_MRTs;
 	typedef map<const _tchar*, list<class CRenderTarget*>>	MRTS;
 
-
-
 private:
 	ID3D11RenderTargetView*				m_pBackBufferView = nullptr;
 	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
