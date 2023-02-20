@@ -27,7 +27,7 @@ private:
 	HRESULT SetUp_Components();
 
 private:
-	_bool		m_bFix;
+	_bool		m_bFix; 
 	_float		m_fMouseSensitivity;
 
 public:

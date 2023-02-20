@@ -226,20 +226,21 @@ HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject *
 	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
 }
 
-HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg)
-{
-	if (nullptr == m_pObject_Manager)
-		return E_FAIL;
-
-	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg);
-}
-
 CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);	
+}
+
+HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, void * pArg, CGameObject** ppObj)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg, ppObj);
+
 }
 
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
