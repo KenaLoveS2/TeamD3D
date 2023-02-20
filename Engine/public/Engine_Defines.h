@@ -4,6 +4,8 @@
 #include "ImGui\imgui.h"
 #include "ImGui\imgui_impl_win32.h"
 #include "ImGui\imgui_impl_dx11.h"
+#include "ImGui\ImGuizmo.h"
+#include "ImGui\ImGuiFileDialog.h"
 
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
@@ -23,9 +25,6 @@
 #include <DirectXTK/SpriteBatch.h>
 #include <DirectXTK/SpriteFont.h>
 
-#include <assimp/scene.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
 #include <d3dcompiler.h>
 #include <TypeInfo.h>
 #include <DirectXCollision.h>
@@ -36,7 +35,6 @@
 using namespace DirectX;
 
 #include <DirectXTK\SimpleMath.h>
-// #include <DirectXTK\SimpleMath.inl>
 
 using namespace SimpleMath;
 

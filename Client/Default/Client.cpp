@@ -14,7 +14,13 @@ HINSTANCE g_hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-bool g_bFrmaeLimit = true;
+bool		g_bFrmaeLimit = true;
+bool		g_bFullScreen = false;
+bool		g_bNeedResizeSwapChain = false;
+unsigned int g_iWinSizeX = 1280;
+unsigned int g_iWinSizeY = 720;
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -66,6 +72,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	_double			TimerAcc = 0.0;
 	_double			FrameTime = 1.0 / 60.0;
+
 	while (true)
 	{
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -79,21 +86,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				DispatchMessage(&msg);
 			}
 		}
-
-		pGameInstance->Update_Timer(TEXT("Timer_Default"));
-
-		TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-
-		if (TimerAcc > FrameTime || !g_bFrmaeLimit)
+		else
 		{
-			pGameInstance->Update_Timer(TEXT("Timer_60"));
+			pGameInstance->Update_Timer(TEXT("Timer_Default"));
 
-			pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
-			pMainApp->Render();
+			TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-			TimerAcc = 0.0;
+			if (TimerAcc > FrameTime || !g_bFrmaeLimit)
+			{
+				pGameInstance->Update_Timer(TEXT("Timer_60"));
+
+				pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+				pMainApp->Render();
+				pMainApp->Resize_BackBuffer();
+
+				TimerAcc = 0.0;
+			}
 		}
-	
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -177,40 +186,82 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
-    {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // 메뉴 선택을 구문 분석합니다.
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+
+	switch (message)
+	{
+	case WM_COMMAND:
+	{
+		int wmId = LOWORD(wParam);
+		// 메뉴 선택을 구문 분석합니다.
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+			DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+	}
+	break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hWnd, &ps);
+		// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+		EndPaint(hWnd, &ps);
+	}
+	break;
+	case WM_SIZE:
+	{
+		if (wParam != SIZE_MINIMIZED && !g_bFullScreen)
+		{
+			RECT	rt;
+			GetClientRect(hWnd, &rt);
+			g_iWinSizeX = rt.right - rt.left;
+			g_iWinSizeY = rt.bottom - rt.top;
+		}
+		g_bNeedResizeSwapChain = true;
+		break;
+	}
+	case WM_SYSKEYDOWN:
+	{
+		if (wParam == VK_RETURN && GetAsyncKeyState(VK_MENU))
+		{
+			if (!g_bFullScreen)
+			{
+				RECT	rt;
+				GetClientRect(hWnd, &rt);
+				g_iWinSizeX = rt.right - rt.left;
+				g_iWinSizeY = rt.bottom - rt.top;
+			}
+			g_bFullScreen = !g_bFullScreen;
+			g_bNeedResizeSwapChain = true;
+			return 0;
+		}
+		break;
+	}
+
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			DestroyWindow(g_hWnd);
+			break;
+		}
+		break;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
 }
 
 // 정보 대화 상자의 메시지 처리기입니다.

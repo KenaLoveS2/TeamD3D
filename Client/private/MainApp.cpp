@@ -5,26 +5,12 @@
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
 
+#include "UI_ClientManager.h"
+
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
 {
 	Safe_AddRef(m_pGameInstance);
-
-	///* RasterizerState : D3D11_RASTERIZER_DESC*/
-	///*m_pGraphic_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);*/
-	///*m_pGraphic_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);*/	
-	//m_pContext->RSSetState();
-
-	///* DepthStencilState */
-	///*m_pGraphic_Device->SetRenderState(D3DRS_ZENABLE, TRUE);*/
-	///*m_pGraphic_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);*/
-	//m_pContext->OMSetDepthStencilState();
-
-	///* BlendState */
-	///*m_pGraphic_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);*/
-	///*m_pGraphic_Device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);*/
-	/*m_pContext->OMSetBlendState();*/
-
 }
 
 HRESULT CMainApp::Initialize()
@@ -44,9 +30,6 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iNumManualSounds = 10;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Gara()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Component()))
@@ -80,17 +63,20 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance || nullptr == m_pRenderer) return E_FAIL;
 
 	m_pGameInstance->Render_ImGui();
+
 	m_pGameInstance->Clear_Graphic_Device(&_float4(0.0f, 0.f, 1.f, 1.f));	
 
 	m_pRenderer->Draw_RenderGroup();
+
 	m_pGameInstance->Render_Update_ImGui();
+
 	m_pGameInstance->Render_Level();
 
 #ifdef _DEBUG
 	++m_iNumCallDraw;
 	if (m_TimeAcc >= 1.f)
 	{
-		wsprintf(m_szFPS, TEXT("에프피에스 : %d"), m_iNumCallDraw);
+		wsprintf(m_szFPS, TEXT("FPS : %d"), m_iNumCallDraw);
 		m_iNumCallDraw = 0;
 		m_TimeAcc = 0.f;
 	}
@@ -98,6 +84,29 @@ HRESULT CMainApp::Render()
 #endif
 
 	m_pGameInstance->Present();
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Resize_BackBuffer()
+{
+	GRAPHIC_DESC	tGraphicDesc;
+	ZeroMemory(&tGraphicDesc, sizeof(GRAPHIC_DESC));
+
+	tGraphicDesc.hWnd = g_hWnd;
+	if (!g_bFullScreen)
+	{
+		tGraphicDesc.iViewportSizeX = g_iWinSizeX;
+		tGraphicDesc.iViewportSizeY = g_iWinSizeY;
+	}
+	else
+	{
+		tGraphicDesc.iViewportSizeX = GetSystemMetrics(SM_CXSCREEN);
+		tGraphicDesc.iViewportSizeY = GetSystemMetrics(SM_CYSCREEN);
+	}
+
+	if (FAILED(m_pGameInstance->Update_SwapChain(tGraphicDesc.hWnd, tGraphicDesc.iViewportSizeX, tGraphicDesc.iViewportSizeY, g_bFullScreen, g_bNeedResizeSwapChain)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -134,7 +143,6 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-
 	Safe_AddRef(m_pRenderer);
 
 	return S_OK;
@@ -150,6 +158,13 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+	/* UI_Manager */
+	if (FAILED(CUI_ClientManager::GetInstance()->Ready_UIs(m_pDevice, m_pContext)))
+	{
+		MSG_BOX("Failed To Ready UI_TOOL : MainApp");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -201,15 +216,13 @@ HRESULT CMainApp::Ready_Gara()
 
 	m_pContext->Unmap(pTexture2D, 0);
 
-
 	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"))))
 		return E_FAIL;
 
 	Safe_Delete_Array(pPixel);
 
 	Safe_Release(pTexture2D);
-
-
+	
 	_ulong		dwByte = 0;
 	HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
@@ -260,11 +273,13 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	m_pGameInstance->Clear_ImguiObjects();
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 
+	CUI_ClientManager::GetInstance()->Release();
 	CGameInstance::Release_Engine();
 }
 

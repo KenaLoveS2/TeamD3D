@@ -30,7 +30,6 @@ public:
 	virtual void Free() override;
 
 	list<class CGameObject*>& GetGameObjects() { return m_GameObjects; }
-
 };
 
 END

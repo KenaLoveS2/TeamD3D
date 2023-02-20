@@ -1,11 +1,13 @@
 #include "Shader_Client_Defines.h"
 
+/**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
+/**********************************/
 
-texture2D		g_DiffuseTexture;
-texture2D		g_NormalTexture;
-
+Texture2D<float4>		g_DiffuseTexture;
+Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_ERAOTexture;
 
 struct VS_IN
 {
@@ -13,7 +15,6 @@ struct VS_IN
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float3		vTangent : TANGENT;
-	
 };
 
 struct VS_OUT
@@ -25,7 +26,6 @@ struct VS_OUT
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
-
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -46,11 +46,9 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
-
 VS_OUT VS_MAIN_SOCKET(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
-
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
@@ -92,8 +90,15 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
 	if (0.1f > vDiffuse.a)
 		discard;
+
+	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	float		fEmissive = vERAO.r;
+	float		fRoughness = vERAO.g;
+	float		fAmbientOcclusion = vERAO.a;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
@@ -103,15 +108,14 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 
 	vNormal = normalize(mul(vNormal, WorldMatrix));
-	
+
 	Out.vDiffuse = vDiffuse;
 
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
-
-
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, fEmissive, fRoughness);
+	
 	return Out;
 }
 

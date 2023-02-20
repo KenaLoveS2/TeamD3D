@@ -20,6 +20,16 @@ ID3D11ShaderResourceView * CTarget_Manager::Get_SRV(const _tchar * pTargetTag)
 	return pRenderTarget->Get_SRV();	
 }
 
+CRenderTarget * CTarget_Manager::Get_Target(const _tchar * pTargetTag)
+{
+	CRenderTarget*		pRenderTarget = Find_RenderTarget(pTargetTag);
+
+	if (nullptr == pRenderTarget)
+		return nullptr;
+
+	return pRenderTarget;
+}
+
 HRESULT CTarget_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 #ifdef _DEBUG

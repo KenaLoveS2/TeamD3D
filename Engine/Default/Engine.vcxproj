@@ -113,7 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc140-mtd.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
@@ -122,6 +122,10 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd /d $(SolutionDir)
+call Copy.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -159,7 +163,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc140-mt.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
@@ -174,10 +178,14 @@ call Copy.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Defines.h" />
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Utilty.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\public\Base.h" />
     <ClInclude Include="..\public\Bone.h" />
+    <ClInclude Include="..\public\Bone_Instacing.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\Channel.h" />
     <ClInclude Include="..\public\Collider.h" />
@@ -185,11 +193,13 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Component_Manager.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\public\DebugDraw.h" />
+    <ClInclude Include="..\public\Delegator.h" />
     <ClInclude Include="..\public\Engine_Defines.h" />
     <ClInclude Include="..\public\Engine_Function.h" />
     <ClInclude Include="..\public\Engine_Macro.h" />
     <ClInclude Include="..\public\Engine_Struct.h" />
     <ClInclude Include="..\public\Engine_Typedef.h" />
+    <ClInclude Include="..\public\EnviromentObj.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\FSMComponent.h" />
@@ -223,21 +233,29 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Light.h" />
     <ClInclude Include="..\public\Light_Manager.h" />
     <ClInclude Include="..\public\Mesh.h" />
+    <ClInclude Include="..\public\Mesh_Instancing.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\public\Model_Instancing.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
+    <ClInclude Include="..\public\PostFX.h" />
     <ClInclude Include="..\public\QuadTree.h" />
     <ClInclude Include="..\public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\public\Sound.h" />
     <ClInclude Include="..\public\Sound_Manager.h" />
+    <ClInclude Include="..\public\String_Manager.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\public\Timer.h" />
     <ClInclude Include="..\public\Timer_Manager.h" />
     <ClInclude Include="..\public\Transform.h" />
+    <ClInclude Include="..\public\UI.h" />
+    <ClInclude Include="..\public\UI_Canvas.h" />
+    <ClInclude Include="..\public\UI_Manager.h" />
+    <ClInclude Include="..\public\UI_Node.h" />
     <ClInclude Include="..\public\Utile.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
     <ClInclude Include="..\public\VIBuffer_Cell.h" />
@@ -252,7 +270,9 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\private\Base.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
+    <ClCompile Include="..\private\Bone_Instacing.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
@@ -260,6 +280,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Component_Manager.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\private\DebugDraw.cpp" />
+    <ClCompile Include="..\private\EnviromentObj.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\FSMComponent.cpp" />
@@ -276,21 +297,29 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Light.cpp" />
     <ClCompile Include="..\private\Light_Manager.cpp" />
     <ClCompile Include="..\private\Mesh.cpp" />
+    <ClCompile Include="..\private\Mesh_Instancing.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\private\Model_Instancing.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
+    <ClCompile Include="..\private\PostFX.cpp" />
     <ClCompile Include="..\private\QuadTree.cpp" />
     <ClCompile Include="..\private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\private\Sound.cpp" />
     <ClCompile Include="..\private\Sound_Manager.cpp" />
+    <ClCompile Include="..\private\String_Manager.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\private\Timer.cpp" />
     <ClCompile Include="..\private\Timer_Manager.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
+    <ClCompile Include="..\private\UI.cpp" />
+    <ClCompile Include="..\private\UI_Canvas.cpp" />
+    <ClCompile Include="..\private\UI_Manager.cpp" />
+    <ClCompile Include="..\private\UI_Node.cpp" />
     <ClCompile Include="..\private\Utile.cpp" />
     <ClCompile Include="..\private\VIBuffer.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cell.cpp" />

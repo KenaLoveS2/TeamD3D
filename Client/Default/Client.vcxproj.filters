@@ -70,6 +70,48 @@
     <Filter Include="96.StringManager">
       <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI">
+      <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\00. ClientManager">
+      <UniqueIdentifier>{6def5edd-d47a-4163-b3f1-4f2ae72746d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas">
+      <UniqueIdentifier>{11f71599-47bd-4ec9-9fec-24c21c06cc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\HUD">
+      <UniqueIdentifier>{3a10fc7b-5f35-420a-ba5c-cd78bb41e765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\SkillButton">
+      <UniqueIdentifier>{3b50b0be-388f-46de-9bf9-61df9b19f44c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\Subtitle">
+      <UniqueIdentifier>{d533c51b-c2de-46fd-ac48-52d29f373b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\MonsterHP">
+      <UniqueIdentifier>{a8801df1-816c-485a-87e8-028f41c1ef4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\Inventory">
+      <UniqueIdentifier>{f85400af-5d17-4194-ac99-80f765740962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas\SkillWindow">
+      <UniqueIdentifier>{fd385cae-7e16-4e37-96fc-26b2069a0ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. Node">
+      <UniqueIdentifier>{70750803-19e8-4e16-a8dd-9957e9939a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. Node\PlayerHP">
+      <UniqueIdentifier>{853f955f-3565-49f1-a238-f42311f39d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. Node\MonsterHP">
+      <UniqueIdentifier>{f1019113-ba92-4691-a4c7-e574d21c0e20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. Node\Quest">
+      <UniqueIdentifier>{429cecc2-98ac-41e2-9094-2447a8a94ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\01. Tool">
+      <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -141,8 +183,45 @@
     <ClInclude Include="..\public\Effect.h">
       <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\String_Manager.h">
-      <Filter>96.StringManager</Filter>
+    <ClInclude Include="..\public\UI_CanvasHUD.h">
+      <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasSkillBtn.h">
+      <Filter>02.GameObjects\UI\02. Canvas\SkillButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasSubtitle.h">
+      <Filter>02.GameObjects\UI\02. Canvas\Subtitle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasMonHP.h">
+      <Filter>02.GameObjects\UI\02. Canvas\MonsterHP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CavasInv.h">
+      <Filter>02.GameObjects\UI\02. Canvas\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodePlayerHP.h">
+      <Filter>02.GameObjects\UI\03. Node\PlayerHP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeMonHP.h">
+      <Filter>02.GameObjects\UI\03. Node\MonsterHP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuest.h">
+      <Filter>02.GameObjects\UI\03. Node\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasSkillWindow.h">
+      <Filter>02.GameObjects\UI\02. Canvas\SkillWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_ClientManager.h">
+      <Filter>02.GameObjects\UI\00. ClientManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_UIEditor.h">
+      <Filter>02.GameObjects\UI\01. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
+    <ClInclude Include="..\public\Imgui_Effect.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Base.h">
+      <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,8 +279,44 @@
     <ClCompile Include="..\private\Effect.cpp">
       <Filter>02.GameObjects\Effect\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\String_Manager.cpp">
-      <Filter>96.StringManager</Filter>
+    <ClCompile Include="..\private\UI_CanvasHUD.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasSkillBtn.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\SkillButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasSubtitle.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\Subtitle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasMonHP.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\MonsterHP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CavasInv.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodePlayerHP.cpp">
+      <Filter>02.GameObjects\UI\03. Node\PlayerHP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeMonHP.cpp">
+      <Filter>02.GameObjects\UI\03. Node\MonsterHP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuest.cpp">
+      <Filter>02.GameObjects\UI\03. Node\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasSkillWindow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas\SkillWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_ClientManager.cpp">
+      <Filter>02.GameObjects\UI\00. ClientManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_UIEditor.cpp">
+      <Filter>02.GameObjects\UI\01. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_Effect.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Base.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -39,12 +39,12 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
-	if (FAILED(Ready_Parts()))
-		return E_FAIL;
+	//if (FAILED(Ready_Parts()))
+//		return E_FAIL;
 
 	m_pModelCom->Set_AnimIndex(3);	
 
-	SetUp_FSM();
+	//SetUp_FSM();
 
 	return S_OK;
 }
@@ -53,7 +53,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pFSM->Tick(fTimeDelta);
+	//m_pFSM->Tick(fTimeDelta);
 
 	if (GetKeyState(VK_DOWN) & 0x8000)
 	{
@@ -78,15 +78,17 @@ void CPlayer::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Set_AnimIndex(3);
 
+	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
-	for (_uint i = 0; i < m_PlayerParts.size(); ++i)
+	/*for (_uint i = 0; i < m_PlayerParts.size(); ++i)
 	{
 		m_PlayerParts[i]->Tick(fTimeDelta);
-	}
+	}*/
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+	//for (_uint i = 0; i < COLLTYPE_END; ++i)
+	//	m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 
 }
 
@@ -94,22 +96,29 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	for (_uint i = 0; i < m_PlayerParts.size(); ++i)
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_UP))
+		m_iAnimationIndex++;
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_DOWN))
+		m_iAnimationIndex--;
+
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
+
+	/*for (_uint i = 0; i < m_PlayerParts.size(); ++i)
 	{
 		m_PlayerParts[i]->Late_Tick(fTimeDelta);
-	}
+	}*/
 
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);		
 
 		
-		for (auto& pCollider : m_pColliderCom)
-		{
-			m_pRendererCom->Add_DebugRenderGroup(pCollider);
-		}
+// 		for (auto& pCollider : m_pColliderCom)
+// 		{
+// 			m_pRendererCom->Add_DebugRenderGroup(pCollider);
+// 		}
 
-		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+		//m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
 		
 	}
 }
@@ -121,7 +130,6 @@ HRESULT CPlayer::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -141,7 +149,6 @@ HRESULT CPlayer::Render()
 	//}
 
 	//m_pNavigationCom->Render();
-
 #endif
 
 	return S_OK;
@@ -186,7 +193,7 @@ HRESULT CPlayer::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"), TEXT("Com_Model"),	
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Kena"), TEXT("Com_Model"),	
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -353,5 +360,5 @@ void CPlayer::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
+	Safe_Release(m_pFSM);
 }

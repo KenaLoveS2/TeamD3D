@@ -14,6 +14,7 @@ public:
 
 public:
 	ID3D11ShaderResourceView* Get_SRV(const _tchar* pTargetTag);
+	class CRenderTarget*	  Get_Target(const _tchar* pTargetTag);
 
 public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -37,8 +38,6 @@ private:
 	/* 동시에 장치에 바인딩 되어야할 렌더타겟들. 최대 여덟개 */
 	map<const _tchar*, list<class CRenderTarget*>>			m_MRTs;
 	typedef map<const _tchar*, list<class CRenderTarget*>>	MRTS;
-
-
 
 private:
 	ID3D11RenderTargetView*				m_pBackBufferView = nullptr;

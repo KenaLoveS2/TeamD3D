@@ -20,7 +20,8 @@ public:
 	static _tchar* Create_String(_tchar *pText);
 	static char* Create_String(char *pText);
 
-	static _float Get_RandomFloat(_float fMinValue, _float fMaxValue);
+	static _float  Get_RandomFloat(_float fMinValue, _float fMaxValue);
+	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)
@@ -28,6 +29,14 @@ public:
 		T Temp = Sour;
 		Sour = Dest;
 		Dest = Temp;
+	}
+
+	template<typename T> static void Saturate(T& Value, T Min, T Max)
+	{
+		if (Value < Min)
+			Value = Min;
+		if (Value > Max)
+			Value = Max;
 	}
 };
 END
