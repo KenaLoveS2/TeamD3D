@@ -256,6 +256,7 @@
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -369,6 +370,7 @@
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

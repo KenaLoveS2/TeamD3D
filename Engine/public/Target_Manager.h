@@ -22,9 +22,10 @@ public:
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 
 	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
-	HRESULT Begin_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 	HRESULT End_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 
+	HRESULT Begin_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+	HRESULT End_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 
 #ifdef _DEBUG
 public:

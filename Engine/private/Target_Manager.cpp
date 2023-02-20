@@ -150,7 +150,7 @@ HRESULT CTarget_Manager::Begin_ShadowMRT(ID3D11DeviceContext * pContext, const _
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::End_MRT(ID3D11DeviceContext * pContext, const _tchar * pMRTTag)
+HRESULT CTarget_Manager::End_ShadowMRT(ID3D11DeviceContext * pContext, const _tchar * pMRTTag)
 {
 	pContext->OMSetRenderTargets(1, &m_pBackBufferView, m_pDepthStencilView);
 
@@ -158,6 +158,16 @@ HRESULT CTarget_Manager::End_MRT(ID3D11DeviceContext * pContext, const _tchar * 
 	Safe_Release(m_pDepthStencilView);
 
 	pContext->RSSetViewports(1, &m_OriginViewPort);
+
+	return S_OK;
+}
+
+HRESULT CTarget_Manager::End_MRT(ID3D11DeviceContext * pContext, const _tchar * pMRTTag)
+{
+	pContext->OMSetRenderTargets(1, &m_pBackBufferView, m_pDepthStencilView);
+
+	Safe_Release(m_pBackBufferView);
+	Safe_Release(m_pDepthStencilView);
 
 	return S_OK;
 }

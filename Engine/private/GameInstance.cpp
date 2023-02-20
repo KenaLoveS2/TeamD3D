@@ -79,8 +79,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
 
 	/* HDR 초기화 */
-	//if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
-	//	return E_FAIL;
+	if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
+		return E_FAIL;
 
 	/* 입력 디바이스 초기화. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
