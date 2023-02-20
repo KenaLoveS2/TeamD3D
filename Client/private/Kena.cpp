@@ -66,7 +66,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
 
 	if (m_pRendererCom != nullptr)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
@@ -84,7 +84,14 @@ HRESULT CKena::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		if (i == 4)	// Eye Render
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		else if (i == 0)	// EyeShadow Rneder
+			continue;//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+		//else if (i == 6)
+		//	continue;
+		else
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
 
 	return S_OK;
@@ -92,6 +99,7 @@ HRESULT CKena::Render()
 
 void CKena::Imgui_RenderProperty()
 {
+	
 }
 
 HRESULT CKena::Ready_Parts()

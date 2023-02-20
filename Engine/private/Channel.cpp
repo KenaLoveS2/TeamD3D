@@ -52,6 +52,15 @@ HRESULT CChannel::SetUp_BonePtr(CModel* pModel)
 	return S_OK;
 }
 
+HRESULT CChannel::Synchronization_BonePtr(CModel * pModel)
+{
+	m_pBone = pModel->Get_BonePtr(m_szName);
+	if (m_pBone == nullptr) return S_FALSE;
+
+	Safe_AddRef(m_pBone);
+	return S_OK;
+}
+
 /* 현재 애니메이션이 재생된 시간을 얻어온다. PlayTime */
 void CChannel::Update_TransformMatrix(_double PlayTime)
 {

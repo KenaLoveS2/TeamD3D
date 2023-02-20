@@ -60,6 +60,7 @@ public:
 	class CBone* Get_BonePtr(const char* pBoneName);
 
 public:
+	HRESULT	Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
 	void Set_AnimIndex(_uint iAnimIndex);
 
 public:	

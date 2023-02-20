@@ -22,6 +22,9 @@ private:
 	virtual ~CKena() = default;
 
 public:
+	const _int&			Get_AnimationIndex() const { return m_iAnimationIndex; }
+
+public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;

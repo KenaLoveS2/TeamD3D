@@ -12,6 +12,12 @@ private:
 	virtual ~CChannel() = default;
 
 public:
+	void		Set_ChannelName(const string& strRootNodeName) {
+		ZeroMemory(m_szName, MAX_PATH);
+		strcpy_s(m_szName, strRootNodeName.c_str());
+	}
+
+public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT Initialize(void* pArg);
 	
@@ -27,6 +33,7 @@ public:
 	}
 
 	HRESULT SetUp_BonePtr(CModel* pModel);
+	HRESULT Synchronization_BonePtr(CModel* pModel);
 
 private:
 	char			m_szName[MAX_PATH] = "";
