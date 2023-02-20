@@ -62,7 +62,7 @@ HRESULT CTransform::Initialize(void * pArg)
 
 void CTransform::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("Transform!"))
+	if (ImGui::CollapsingHeader("Transform"))
 	{
 		ImGuizmo::BeginFrame();
 		ImGui::InputFloat("SpeedPerSec", &m_TransformDesc.fSpeedPerSec);

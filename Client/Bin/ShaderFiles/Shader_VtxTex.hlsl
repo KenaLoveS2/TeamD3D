@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
 texture2D		g_DepthTexture;
+texture2D		g_MaskTexture;
 
 /* 샘플링 해오는 함수 */
 /* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
@@ -84,9 +85,23 @@ PS_OUT PS_MAIN_EFFECT(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_MASKMAP(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse	= g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector vMask	= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	vDiffuse.a = vMask.r;
+
+	Out.vColor = vDiffuse;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
-	pass Rect
+	pass Rect // 0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -99,7 +114,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Effect
+	pass Effect // 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -110,5 +125,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_EFFECT();
+	}
+
+	pass DiffuseAlphaBlend // 2
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass MaskMap // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASKMAP();
 	}
 }

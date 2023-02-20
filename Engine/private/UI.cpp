@@ -3,10 +3,13 @@
 #include "Renderer.h"
 #include "VIBuffer_Rect.h"
 #include "Texture.h"
+#include "GameInstance.h"
 
 CUI::CUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
 	, m_pParent(nullptr)
+	, m_bActive(false)
+	, m_iRenderPass(0)
 {
 }
 
@@ -14,7 +17,37 @@ CUI::CUI(const CUI & rhs)
 	: CGameObject(rhs)
 	, m_pParent(nullptr)
 	, m_bActive(false)
+	, m_iRenderPass(0)
 {
+	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
+	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
+}
+
+HRESULT CUI::Set_Texture(TEXTURE_TYPE eType, wstring textureComTag)
+{
+	if (nullptr == m_pTextureCom[eType])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureComTag.c_str(), m_TextureComTag[eType].c_str(),
+			(CComponent**)&m_pTextureCom[eType])))
+			return E_FAIL;
+	}
+	else
+	{
+		/* release previous texture */
+		auto iter = find_if(m_Components.begin(), m_Components.end(), CTag_Finder(m_TextureComTag[eType].c_str()));
+		if (m_Components.end() == iter)
+			return E_FAIL;
+		Safe_Release(m_pTextureCom[eType]);
+		Safe_Release(m_pTextureCom[eType]);
+		m_Components.erase(iter);
+
+		/* add new texture */
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureComTag.c_str(), m_TextureComTag[eType].c_str(),
+			(CComponent**)&m_pTextureCom[eType])))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 HRESULT CUI::Initialize_Prototype()

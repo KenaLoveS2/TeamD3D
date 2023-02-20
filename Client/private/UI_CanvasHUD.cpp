@@ -62,6 +62,10 @@ void CUI_CanvasHUD::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasHUD::Render()
 {
+	/* ÅØ½ºÃ³ */
+	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
+		return E_FAIL;
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -71,7 +75,7 @@ HRESULT CUI_CanvasHUD::Render()
 		return E_FAIL;
 	}
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
 	return S_OK;
@@ -97,9 +101,9 @@ HRESULT CUI_CanvasHUD::SetUp_Components()
 		return E_FAIL;
 
 	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionCarry"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom[0])))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionCarry"), TEXT("Com_Texture"),
+	//	(CComponent**)&m_pTextureCom[0])))
+	//	return E_FAIL;
 
 	/* Todo : Load FileData */
 
@@ -119,8 +123,18 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom[0]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
-		return E_FAIL;
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+			return E_FAIL;
+	}
+
 
 	//for (_uint i = 0; i < TEXTURE_END; ++i)
 	//{

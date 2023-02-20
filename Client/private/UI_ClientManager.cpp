@@ -47,7 +47,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_RotActionCarry");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotActionCloud"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/T_RotAction_Cloud.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/T_ArrowAmmo_ProgressGradient.png")))))
 		return E_FAIL; 
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_RotActionCloud");
 

@@ -29,7 +29,8 @@ public:
 		m_pParent = pUI;
 		Safe_AddRef(m_pParent);
 	}
-
+	HRESULT				Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
+	void				Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -50,6 +51,8 @@ protected:
 	UIDESC				m_tDesc;
 	CUI*				m_pParent;
 	_bool				m_bActive;
+	_uint				m_iRenderPass;
+	wstring				m_TextureComTag[TEXTURE_END];
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
