@@ -31,7 +31,7 @@ public: /* For.GameInstance */
 public: /* For.GameInstance */
 	HRESULT Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
 	void Tick_Engine(_float fTimeDelta);
-	void Clear_Level(_uint iLevelIndex);
+	void Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag = false);
 
 public: /* For.Graphic_Device */
 	HRESULT Clear_Graphic_Device(const _float4* pColor);
@@ -104,6 +104,15 @@ public: // for imgui manager
 	void Add_ImguiObject(class CImguiObject* pImguiObject);
 	void Clear_ImguiObjects();
 
+public: // for String manager
+	HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);
+	HRESULT Add_String(_tchar * pStr);
+	_tchar* Find_String(_uint iLevelIndex, _tchar* pStr);
+
+public: // for Camera manager
+	HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+	HRESULT Work_Camera(const _tchar* pCameraTag);
+	class CCamera* Find_Camera(const _tchar* pCameraTag);
 private:
 	static _uint					m_iStaticLevelIndex;
 	HWND							m_hClientWnd = NULL;
@@ -122,6 +131,8 @@ private:
 	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CSound_Manager*			m_pSound_Manager = nullptr;
 	class CImgui_Manager*			m_pImgui_Manager = nullptr;
+	class CString_Manager*			m_pString_Manager = nullptr;
+	class CCamera_Manager*			m_pCamera_Manager = nullptr;
 
 public:
 	static void Release_Engine();

@@ -6,28 +6,42 @@ CAnimation::CAnimation()
 {
 }
 
-HRESULT CAnimation::Initialize(aiAnimation * pAIAnimation, CModel* pModel)
+CAnimation::CAnimation(const CAnimation& rhs)
+	: m_isLooping(true)
 {
-	strcpy_s(m_szName, pAIAnimation->mName.data);
+	strcpy_s(m_szName, rhs.m_szName);
+	m_Duration = rhs.m_Duration;
+	m_TickPerSecond = rhs.m_TickPerSecond;
 
-	m_Duration = pAIAnimation->mDuration;
+	m_iNumChannels = rhs.m_iNumChannels;
+	for (_uint i = 0; i < m_iNumChannels; i++)
+		m_Channels.push_back(rhs.m_Channels[i]->Clone());
+}
 
-	m_TickPerSecond = pAIAnimation->mTicksPerSecond;
+HRESULT CAnimation::Initialize_Prototype(HANDLE hFile, CModel* pModel)
+{
+	_ulong dwByte = 0;
+	_uint iLen = 0;
+	ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
+	ReadFile(hFile, m_szName, iLen + 1, &dwByte, nullptr);
+	ReadFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
 
-	/* 이 애니메이션 구동하는데 필요한 뼈대의 갯수다.  */
-	m_iNumChannels = pAIAnimation->mNumChannels;
-
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	ReadFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
+	for (_uint i = 0; i < m_iNumChannels; i++)
 	{
-		aiNodeAnim*		pAINodeAnim = pAIAnimation->mChannels[i];
-
-		CChannel*		pChannel = CChannel::Create(pAINodeAnim, pModel);
+		CChannel* pChannel = CChannel::Create(hFile, pModel);
 		if (nullptr == pChannel)
 			return E_FAIL;
 
 		m_Channels.push_back(pChannel);
 	}
 
+	return S_OK;
+}
+
+HRESULT CAnimation::Initialize(void* pArg)
+{
 	return S_OK;
 }
 
@@ -57,16 +71,70 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 
 	if (true == m_isFinished)
 		m_isFinished = false;
-
 }
 
-CAnimation * CAnimation::Create(aiAnimation * pAIAnimation, CModel* pModel)
+void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
+{
+	if (true == m_isFinished && false == m_isLooping)
+	{
+		return;
+	}
+
+	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	if (m_PlayTime >= m_Duration)
+	{
+		m_PlayTime = 0.0;
+		m_isFinished = true;
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
+		m_Channels[i]->Blend_TransformMatrix(m_PlayTime, fBlendRatio);
+	}
+
+	if (true == m_isFinished)
+		m_isFinished = false;
+}
+
+void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
+{
+	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	if (m_PlayTime >= m_Duration)
+	{
+		m_PlayTime = 0.0;
+		m_isFinished = true;
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fRatio);
+		m_Channels[i]->Reset_KeyFrameIndex();
+	}
+}
+
+CAnimation * CAnimation::Create(HANDLE hFile, CModel* pModel)
 {
 	CAnimation*		pInstance = new CAnimation();
 
-	if (FAILED(pInstance->Initialize(pAIAnimation, pModel)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel)))
 	{
 		MSG_BOX("Failed to Created : CAnimation");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CAnimation* CAnimation::Clone(void *pArg)
+{
+	CAnimation* pInstance = new CAnimation(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CAnimation");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -79,4 +147,16 @@ void CAnimation::Free()
 
 	m_Channels.clear();
 }
+
+HRESULT CAnimation::SetUp_ChannelsBonePtr(CModel* pModel)
+{
+	for (_uint i = 0; i < m_iNumChannels; i++)
+	{
+		if (FAILED(m_Channels[i]->SetUp_BonePtr(pModel)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 
