@@ -6,6 +6,7 @@
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_Effect.h"
+#include "Imgui_UIEditor.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -27,6 +28,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 		// EffectTool Test
 		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
 		
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))

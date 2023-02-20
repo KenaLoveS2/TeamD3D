@@ -62,7 +62,7 @@ HRESULT CTransform::Initialize(void * pArg)
 
 void CTransform::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("Transform!"))
+	if (ImGui::CollapsingHeader("Transform"))
 	{
 		ImGuizmo::BeginFrame();
 		ImGui::InputFloat("SpeedPerSec", &m_TransformDesc.fSpeedPerSec);
@@ -88,10 +88,67 @@ void CTransform::Imgui_RenderProperty()
 
 		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 
+
+		/******* Docking *******/
+
+		_uint numViewport = 1;
+		D3D11_VIEWPORT	viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+		//D3D11_VIEWPORT	viewportsInfo[] = {D3D11_VIEWPORT };
+		m_pContext->RSGetViewports(&numViewport, &viewport);
+
+
 		ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m_WorldMatrix), matrixTranslation, matrixRotation, matrixScale);
+
+		/******* Docking *******/
+		/* For the objects relative to screen. (ex.UI)") */
+		ImGui::Separator();
+		ImGui::Text("* Docking");
+		static _bool right{ false }, left{ false }, top{ false }, bottom{ false };
+		ImGui::Checkbox("right", &right); ImGui::SameLine();
+		ImGui::Checkbox("left", &left); ImGui::SameLine();
+		ImGui::Text(" / "); ImGui::SameLine();
+		ImGui::Checkbox("top", &top); ImGui::SameLine();
+		ImGui::Checkbox("bottom", &bottom);
+		ImGui::Separator();
+
+		if (left)
+			matrixTranslation[0] += viewport.Width * 0.5f;
+		else if (right)
+			matrixTranslation[0] -= viewport.Width * 0.5f;
+		if (top)
+			matrixTranslation[1] -= viewport.Height * 0.5f;
+		else if (bottom)
+			matrixTranslation[1] += viewport.Height * 0.5f;
+		/******* ~Docking *******/
+
+
+		/* Before Input */
+		_float fRatio = matrixScale[0] / matrixScale[1];
+
 		ImGui::InputFloat3("Translate", matrixTranslation);
 		ImGui::InputFloat3("Rotate", matrixRotation);
 		ImGui::InputFloat3("Scale", matrixScale);
+
+		/******* Docking *******/
+		if (left)
+			matrixTranslation[0] -= viewport.Width * 0.5f;
+		else if (right)
+			matrixTranslation[0] += viewport.Width * 0.5f;
+		if (top)
+			matrixTranslation[1] += viewport.Height * 0.5f;
+		else if (bottom)
+			matrixTranslation[1] -= viewport.Height * 0.5f;	
+		/******* ~Docking *******/
+
+		/* Scale Ratio(base on Width) */
+		static _bool isKeepRatio{ false };
+		ImGui::Checkbox(" : Keep Original Ratio", &isKeepRatio);
+		if (isKeepRatio)
+		{
+			matrixScale[1] = fRatio * matrixScale[1];
+		}
+
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
 
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)

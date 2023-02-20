@@ -5,6 +5,8 @@
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
 
+#include "UI_ClientManager.h"
+
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -156,6 +158,14 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+	/* UI_Manager */
+	if (FAILED(CUI_ClientManager::GetInstance()->Ready_UIs(m_pDevice, m_pContext)))
+	{
+		MSG_BOX("Failed To Ready UI_TOOL : MainApp");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -269,6 +279,7 @@ void CMainApp::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 
+	CUI_ClientManager::GetInstance()->Release();
 	CGameInstance::Release_Engine();
 }
 
