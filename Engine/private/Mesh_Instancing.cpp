@@ -161,13 +161,10 @@ HRESULT CMeshInstancing::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CMeshInstancing::Tick(_double TimeDelta)
-{
-	
+HRESULT CMeshInstancing::Tick(_float fTimeDelta)
+{	
 	return S_OK;
 }
-
-
 
 HRESULT CMeshInstancing::Render()
 {
@@ -191,7 +188,7 @@ HRESULT CMeshInstancing::Render()
 		0,
 	};
 
-	CONTEXT_LOCK;
+	// CONTEXT_LOCK;
 	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pVertexBuffers, iStrides, iOffsets);
 
 	/* 인덱스버퍼를 장치에 바인딩한다.(단일로 바인딩한다.)  */
@@ -206,7 +203,7 @@ HRESULT CMeshInstancing::Render()
 
 void CMeshInstancing::Map_UnMapViBuffer(_uint iNumInstance)
 {
-	CONTEXT_LOCK;
+	// CONTEXT_LOCK;
 	m_iNumInstance = iNumInstance;
 	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
 	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;

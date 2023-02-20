@@ -22,7 +22,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(class CModel_Instancing* pModel, HANDLE hFile, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(_double TimeDelta);
+	virtual HRESULT Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 
 	void	Map_UnMapViBuffer(_uint iNumInstance);

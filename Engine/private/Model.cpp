@@ -342,7 +342,7 @@ void CModel::Free()
 
 HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath)
 {
-	if (iMaterialIndex >= m_Materials.size()) return;
+	if (iMaterialIndex >= m_Materials.size()) return E_FAIL;
 	
 	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, pTexturePath);
 	if (pTexture == nullptr) return E_FAIL;
@@ -352,5 +352,7 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar
 	}
 
 	m_Materials[iMaterialIndex].pTexture[eType] = pTexture;
+
+	return S_OK;
 }
 
