@@ -86,24 +86,7 @@ void CUI_NodeHUDHP::Imgui_RenderProperty()
 {
 	// m_pTransformCom->Imgui_RenderProperty();
 
-	if (ImGui::CollapsingHeader("Local Transform"))
-	{
-		static float position[3] = { 0, };
-		static float scale[3] = { 1, };
-		
-		_float4x4 matWorldParent;
-		XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
 
-		float fRatioX = matWorldParent._11 / m_matParentInit._11;
-		float fRatioY = matWorldParent._22 / m_matParentInit._22;
-
-		ImGui::SliderFloat3("position", position, -(_float)g_iWinSizeX, (_float)g_iWinSizeX);
-		ImGui::SliderFloat3("scale", scale, 0.f, 100.f);
-
-
-
-
-	}
 
 }
 

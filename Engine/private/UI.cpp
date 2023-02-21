@@ -36,7 +36,7 @@ _fmatrix CUI::Get_WorldMatrix()
 void CUI::Set_Parent(CUI* pUI)
 {
 	m_pParent = pUI;
-	Safe_AddRef(m_pParent);
+	//Safe_AddRef(m_pParent);
 
 	XMStoreFloat4x4(&m_matParentInit, m_pParent->Get_WorldMatrix());
 }
@@ -147,7 +147,7 @@ void CUI::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pParent);
+	//Safe_Release(m_pParent);
 
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 		Safe_Release(m_pTextureCom[i]);

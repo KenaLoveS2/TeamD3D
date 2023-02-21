@@ -17,13 +17,12 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 	
-	virtual void			Imgui_RenderProperty();
+
 
 private:
 	HRESULT			Ready_Nodes();
 	HRESULT			SetUp_Components();
 	HRESULT			SetUp_ShaderResources();
-
 
 public:
 	static	CUI_CanvasHUD*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -91,26 +91,27 @@ HRESULT CUI_CanvasHUD::Render()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::Imgui_RenderProperty()
-{
-	m_pTransformCom->Imgui_RenderProperty();
-}
 
 HRESULT CUI_CanvasHUD::Ready_Nodes()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI* pUI = nullptr;
-	pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_UI",
-		L"Prototype_GameObject_UI_Node_HPBar", nullptr, (CGameObject**)&pUI);
-	if (FAILED(Add_ChildUI(pUI)))
-		return E_FAIL;
+	string str;
 
-	pUI = nullptr;
 	pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_UI",
-		L"Prototype_GameObject_UI_Node_HP", nullptr, (CGameObject**)&pUI);
-	if (FAILED(Add_ChildUI(pUI)))
+		L"Prototype_GameObject_UI_Node_HPBar", L"UI_Node_PlayerHPBar", nullptr, (CGameObject**)&pUI);
+	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
+	str = "PlayerHPBar";
+	m_vecNodeCloneTag.push_back(str);
+
+	//pUI = nullptr;
+	//pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_UI",
+	//	L"Prototype_GameObject_UI_Node_HP", L"UI_Node_PlayerHP", nullptr, (CGameObject**)&pUI);
+	//if (FAILED(Add_ChildUI(pUI)))
+	//	return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
