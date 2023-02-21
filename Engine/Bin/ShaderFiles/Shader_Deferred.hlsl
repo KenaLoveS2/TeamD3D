@@ -89,11 +89,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * g_fFar;
 
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
+	// ambient texture가 들어간다면?
 	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
 	Out.vShade.a = 1.f;
 
@@ -131,7 +132,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * g_fFar;
 
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
