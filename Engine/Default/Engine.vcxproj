@@ -199,6 +199,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Engine_Struct.h" />
     <ClInclude Include="..\public\Engine_Typedef.h" />
     <ClInclude Include="..\public\EnviromentObj.h" />
+    <ClInclude Include="..\public\Enviroment_Manager.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\FSMComponent.h" />
@@ -287,6 +288,7 @@ call Copy.bat</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\EnviromentObj.cpp" />
+    <ClCompile Include="..\private\Enviroment_Manager.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\FSMComponent.cpp" />

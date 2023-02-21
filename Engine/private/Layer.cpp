@@ -90,3 +90,17 @@ CGameObject* CLayer::Find_GameObject(const _tchar * pCloneObjectTag)
 
 	return Pair->second;
 }
+
+HRESULT CLayer::Delete_GameObject(const _tchar * pCloneObjectTag)
+{
+	auto Pair = find_if(m_GameObjects.begin(), m_GameObjects.end(), CTag_Finder(pCloneObjectTag));
+
+	if (Pair == m_GameObjects.end()) return E_FAIL;
+
+	CGameObject* pBackup = Pair->second;
+	m_GameObjects.erase(Pair);
+	
+	Safe_Release(pBackup);
+
+	return S_OK;
+}

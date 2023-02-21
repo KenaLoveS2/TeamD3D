@@ -196,6 +196,12 @@
     <Filter Include="01.Utility\13. HDR\ImGui">
       <UniqueIdentifier>{b19ae218-130d-4c7f-a90a-dd3762310496}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.GameObject\Enviroment">
+      <UniqueIdentifier>{bc82d143-37bb-4d7f-8fce-7fdb464dc684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObject\Enviroment\Manager">
+      <UniqueIdentifier>{fa2a7213-2b6c-42db-98e9-d8ae95c129d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -448,7 +454,6 @@
       <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bone_Instacing.h" />
-    <ClInclude Include="..\public\EnviromentObj.h" />
     <ClInclude Include="..\public\Mesh_Instancing.h" />
     <ClInclude Include="..\public\Model_Instancing.h" />
     <ClInclude Include="stdafx.h">
@@ -465,6 +470,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Imgui_ShaderEditor.h">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnviromentObj.h">
+      <Filter>01.Utility\02.GameObject\Enviroment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Enviroment_Manager.h">
+      <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -685,7 +696,6 @@
       <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bone_Instacing.cpp" />
-    <ClCompile Include="..\private\EnviromentObj.cpp" />
     <ClCompile Include="..\private\Mesh_Instancing.cpp" />
     <ClCompile Include="..\private\Model_Instancing.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -693,6 +703,12 @@
     </ClCompile>
     <ClCompile Include="..\public\Imgui_ShaderEditor.cpp">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnviromentObj.cpp">
+      <Filter>01.Utility\02.GameObject\Enviroment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Enviroment_Manager.cpp">
+      <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

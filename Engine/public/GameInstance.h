@@ -85,6 +85,9 @@ BEGIN(Engine)
 		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
 		_uint Get_NumCopyPrototypes();
 
+
+		HRESULT Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag);
+
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);

@@ -31,6 +31,8 @@ public:
 
 	GAMEOBJECTS& GetGameObjects() { return m_GameObjects; }
 	CGameObject* Find_GameObject(const _tchar * pCloneObjectTag);
+
+	HRESULT Delete_GameObject(const _tchar * pCloneObjectTag);
 };
 
 END
