@@ -29,9 +29,9 @@ public:
 		BLENDSTATE        eBlendType = BLENDSTATE_DEFAULT;
 
 		// Diffuse Frame ( Cur Texture Idx )
-		_float		fFrame = 0.0f;
+		_float		fFrame[10] = { 0.0f };
 		// Mask Frame ( Cur Texture Idx )
-		_float		fMaskFrame = 0.0f;
+		_float		fMaskFrame[10] = { 0.0f };
 
 		// if ( eTextureType == TEX_SPRITE )
 		_float	fWidthFrame = 0.0f, fHeightFrame = 0.0f;
@@ -62,6 +62,11 @@ public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) { 
 		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
 	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
+
+public:
+	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
+	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
+
 
 public:
 	virtual HRESULT      Initialize_Prototype() override;

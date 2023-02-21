@@ -130,11 +130,11 @@ HRESULT CEffect::SetUp_ShaderResources()
 	
 	// MaxCnt == 10
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
-		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_eEFfectDesc.fFrame)))
+		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_uint)m_eEFfectDesc.fFrame[i])))
 			return E_FAIL;
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
-		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_eEFfectDesc.fMaskFrame)))
+		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", (_uint)m_eEFfectDesc.fMaskFrame[i])))
 			return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

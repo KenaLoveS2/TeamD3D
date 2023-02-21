@@ -13,6 +13,10 @@ protected:
 	virtual ~CTexture() = default;
 
 public:
+	_uint							Get_TextureIdx() { return m_iNumTextures; }
+	ID3D11ShaderResourceView*		Get_Texture(_uint iTextureIdx = 0) const { return m_pTextures[iTextureIdx]; }
+
+public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures);
 	virtual HRESULT Initialize(void* pArg) override;
 
