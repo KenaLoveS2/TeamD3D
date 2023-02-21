@@ -49,7 +49,7 @@ protected:
 	const _tchar*					m_szCloneObjectTag = TEXT("");
 
 protected:
-	/* ��ü���� ����ؾ� �� ������Ʈ���� �����Ѵ�. */
+	/* ��ü���� ����ؾ�?�� ������Ʈ���� �����Ѵ�. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
 	class CTransform*									m_pTransformCom = nullptr;
