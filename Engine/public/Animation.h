@@ -47,6 +47,7 @@ public:
 	CAnimation* Clone(void *pArg = nullptr);
 	virtual void Free() override;
 	HRESULT SetUp_ChannelsBonePtr(CModel* pModel);
+	HRESULT Synchronization_ChannelsBonePtr(CModel* pModel, const string& strRootNodeName);
 	
 };
 

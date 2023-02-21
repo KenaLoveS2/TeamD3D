@@ -1,8 +1,13 @@
 #include "stdafx.h"
 #include "..\public\Imgui_MapEditor.h"
 #include "GameInstance.h"
-#include "EnviromentObj.h"
 #include "Layer.h"
+#include "Utile.h"
+
+#include "Json/json.hpp"
+#include <fstream>
+
+#include "EnviromentObj.h"
 
 
 CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -28,6 +33,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 	{
 		Imgui_SelectOption();
 		Imgui_CreateEnviromentObj();
+		Imgui_Save_Load_Json();
 	}
 	ImGui::End();
 }
@@ -121,6 +127,150 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
+}
+
+
+void CImgui_MapEditor::Imgui_Save_Load_Json()
+{
+	if (ImGui::Button("Save"))
+	{
+		Imgui_Save_Func();
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button("Load"))
+	{
+		Imgui_Load_Func();
+	}
+}
+
+void CImgui_MapEditor::Imgui_Save_Func()
+{
+	//ofstream	file("../Bin/Data/EnviromentObj_Json/Chil.json");
+	//Json		jTest;
+	//int a = 27;
+	//string str = "choi";
+	//_float4x4	matWorld;
+	//matWorld.m[0][0] = 0.f;
+	//matWorld.m[0][1] = 0.f;
+	//matWorld.m[0][2] = 0.f;
+	//matWorld.m[0][3] = 0.f;
+	//matWorld.m[1][0] = 0.f;
+	//matWorld.m[1][1] = 0.f;
+	//matWorld.m[1][2] = 0.f;
+	//matWorld.m[1][3] = 0.f;
+	//matWorld.m[2][0] = 0.f;
+	//matWorld.m[2][1] = 0.f;
+	//matWorld.m[2][2] = 0.f;
+	//matWorld.m[2][3] = 0.f;
+	//matWorld.m[3][0] = 0.f;
+	//matWorld.m[3][1] = 0.f;
+	//matWorld.m[3][2] = 0.f;
+	//matWorld.m[3][3] = 0.f;
+	//jTest["Age"] = a;
+	//jTest["Name"] = str;
+	//float	fElement = 0.f;
+	//for (int i = 0; i < 16; ++i)
+	//{
+	//	fElement = 0.f;
+	//	memcpy(&fElement, (float*)&matWorld + i , sizeof(float));
+	//	jTest["Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
+	//}
+	//
+	//Json	jChild;
+	//jChild["Math"] = "A";
+	//jChild["English"] = "A";
+	//jTest["Grade"].push_back(jChild);
+	//file << jTest;
+	//file.close();
+
+	ofstream	file("../Bin/Data/EnviromentObj_Json/EnviroMent.json");
+	Json	jEnviromentObjList;
+
+	CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
+	
+	_float4x4	fWroldMatrix;
+	_float		fElement = 0.f;
+	char*		szLayerTag = "LayerEnviroment";
+	char*		szProtoObjTag = "";
+	char*		szModelTag = "";
+	char*		szTextureTag = "";
+	
+	jEnviromentObjList["0_LayerTag"] = szLayerTag;
+	
+	for (auto& pObject : pGameInstace->Find_Layer(LEVEL_MAPTOOL, L"Layer_Enviroment")->GetGameObjects())
+	{
+		if(dynamic_cast<CEnviromentObj*>(pObject.second) == nullptr)
+			continue;
+
+		Json jChild;
+		CEnviromentObj::ENVIROMENT_DESC Desc;
+		ZeroMemory(&Desc, sizeof(Desc));
+		memcpy(&Desc, &static_cast<CEnviromentObj*>(pObject.second)->Get_EnviromentDesc(), sizeof(Desc));
+
+		szProtoObjTag =CUtile::WideCharToChar(Desc.szProtoObjTag);
+		szModelTag = CUtile::WideCharToChar(Desc.szModelTag);
+		szTextureTag = CUtile::WideCharToChar(Desc.szTextureTag);
+
+		jChild["0_ProtoTag"] = szProtoObjTag;
+		jChild["1_ModelTag"] = szModelTag;
+		jChild["2_TextureTag"] = szTextureTag;
+
+		CTransform* pTransform = static_cast<CTransform*>(pObject.second->Find_Component(L"Com_Transform"));
+		assert(pTransform != nullptr && "CImgui_MapEditor::Imgui_Save_Func()");
+		XMStoreFloat4x4(&fWroldMatrix, pTransform->Get_WorldMatrix());
+
+		for (int i = 0; i < 16; ++i)
+		{
+			fElement = 0.f;
+			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
+			jChild["3_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
+		}
+
+		jEnviromentObjList["1_Data"].push_back(jChild);
+		Safe_Delete_Array(szProtoObjTag);
+		Safe_Delete_Array(szModelTag);
+		Safe_Delete_Array(szTextureTag);
+	}
+
+
+	file << jEnviromentObjList;
+	file.close();
+	MSG_BOX("Save_jEnviromentObjList");
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CImgui_MapEditor::Imgui_Load_Func()
+{
+	ifstream		file("../Bin/Data/EnviromentObj_Json/EnviroMent.json");
+	Json	jLoadEnviromentObjList;
+
+	file >> jLoadEnviromentObjList;
+	file.close();
+
+
+	_float4x4	fWroldMatrix;
+	string		szLayerTag = "";
+	string		szProtoObjTag = "";
+	string		szModelTag = "";
+	string		szTextureTag = "";
+	
+	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
+
+	for (auto jLoadChild : jLoadEnviromentObjList["1_Data"])
+	{
+		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
+		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
+		jLoadChild["2_TextureTag"].get_to<string>(szTextureTag);
+		float	fElement = 0.f;
+		int k = 0;
+		for (float fElement : jLoadChild["3_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
+			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
+	}
+
+	_bool b = false;
+
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

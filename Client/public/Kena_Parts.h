@@ -15,7 +15,7 @@ class CKena_Parts abstract : public CGameObject
 {
 public:
 	typedef enum KenaPartsType {
-		KENAPARTS_OUTFIT, KENAPARTS_WEAPON, KENAPARTS_ROT, KENAPARTS_END
+		KENAPARTS_OUTFIT, KENAPARTS_STAFF, KENAPARTS_ROT, KENAPARTS_END
 	} KENAPARTS_TYPE;
 
 	typedef struct tagKenaParts : public CGameObject::GAMEOBJECTDESC

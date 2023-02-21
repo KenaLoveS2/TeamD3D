@@ -18,7 +18,7 @@ struct VS_IN
 	float2		vTexUV : TEXCOORD0;
 	float3		vTangent : TANGENT;
 
-	/* ÇöÀç Á¤Á¡¿¡°Ô °öÇØÁ®¾ßÇÒ »Àµé(ÃÖ´ë 4°³)ÀÇ Çà·ÄÀ» ¸¸µç´Ù. */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ö´ï¿½ 4ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½. */
 	uint4		vBlendIndex : BLENDINDEX;
 	float4		vBlendWeight : BLENDWEIGHT;
 };
@@ -41,7 +41,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-	/* Á¤Á¡ÀÇ Weight.x + y + z + w = 1.f */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Weight.x + y + z + w = 1.f */
 
 	float			fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
@@ -73,7 +73,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : ¸ðµç Á¤º¸°¡ °áÁ¤µÈ ÇÈ¼¿ÀÌ´Ù. AND 0¹øÂ° ·»´õÅ¸°Ù¿¡ ±×¸®±âÀ§ÇÑ »ö»óÀÌ´Ù. */
+	/*SV_TARGET0 : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½Ì´ï¿½. AND 0ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ù¿ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. */
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
@@ -94,6 +94,25 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2		vTexUV = In.vTexUV;
+	vTexUV.x -= 0.345f;
+	vTexUV.y -= 0.38f;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(EyeSampler, vTexUV*3.4f);
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -101,6 +120,32 @@ technique11 DefaultTechnique
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Kena_Eye
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_KENA_EYE();
+	}
+
+	pass Kena_EyeLash
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

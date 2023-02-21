@@ -32,6 +32,9 @@ protected:
 	virtual ~CEnviromentObj() = default;
 
 public:
+	ENVIROMENT_DESC		Get_EnviromentDesc()const { return m_EnviromentDesc; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 	virtual void Tick(_float fTimeDelta);

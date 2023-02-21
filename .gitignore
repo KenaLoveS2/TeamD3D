@@ -42,6 +42,10 @@ ipch/
 *.VC.db
 *.suo
 
+/combase.pdb
+/D3DCompiler_47.pdb
+/OneCoreUAPCommonProxyStub.pdb
+
 /Client/Bin/*
 # preserve shader folder
 !/Client/Bin/ShaderFiles/
