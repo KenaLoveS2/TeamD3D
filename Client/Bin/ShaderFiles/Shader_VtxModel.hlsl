@@ -97,9 +97,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fEmissive = vERAO.r;
-	float		fRoughness = vERAO.g;
-	float		fAmbientOcclusion = vERAO.a;
+	float			fEmissive = vERAO.r;
+	float			fRoughness = vERAO.g;
+	float			fAmbientOcclusion = vERAO.b;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
