@@ -60,7 +60,7 @@ void CBackGround::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);	
 
 	if(nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBackGround::Render()

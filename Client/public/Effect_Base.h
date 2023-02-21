@@ -6,9 +6,12 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CVIBuffer_Rect;
+class CVIBuffer_Point_Instancing;
 END
 
 BEGIN(Client)
+#define  MAX_TEXTURECNT 5
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -27,9 +30,9 @@ public:
 		BLENDSTATE        eBlendType = BLENDSTATE_DEFAULT;
 
 		// Diffuse Frame ( Cur Texture Idx )
-		_float		fFrame = 0.0f;
+		_float		fFrame[MAX_TEXTURECNT] = { 0.0f };
 		// Mask Frame ( Cur Texture Idx )
-		_float		fMaskFrame = 0.0f;
+		_float		fMaskFrame[MAX_TEXTURECNT] = { 0.0f };
 
 		// if ( eTextureType == TEX_SPRITE )
 		_float	fWidthFrame = 0.0f, fHeightFrame = 0.0f;
@@ -40,7 +43,14 @@ public:
 		_vector	vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		_vector	vScale;
 
-		_bool		IsTrigger = false;
+		// Time 
+		_float  fTimeDelta = 0.0f;
+
+		// Billboard 적용
+		_bool	IsBillboard = false;
+
+		// Trigger 적용
+		_bool	IsTrigger = false;
 
 	}EFFECTDESC;
 
@@ -50,25 +60,53 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
+	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) { 
+		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
+	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
+
+	void				 Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
+	void				 Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
+
+public:
+	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
+	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
+
+public:
+	void				  BillBoardSetting(_float3 vScale);
+
+public:
 	virtual HRESULT      Initialize_Prototype() override;
 	virtual HRESULT		 Initialize(void* pArg) override;
 	virtual void		 Tick(_float fTimeDelta) override;
 	virtual void		 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		 Render() override;
 
+public:
+	HRESULT				 Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+
 protected:
-	CShader*			  m_pShaderCom = nullptr;
-	CRenderer*			  m_pRendererCom = nullptr;
-	CTexture*			  m_pTextureCom = nullptr;
-						  
+	CShader*				    m_pShaderCom = nullptr;
+	CRenderer*				    m_pRendererCom = nullptr;
+	CVIBuffer_Rect*			    m_pVIBufferCom = nullptr;
+	CVIBuffer_Point_Instancing*	m_pVIInstancingBufferCom = nullptr;
+
+	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
+	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
+	wstring						m_strDTextureComTag = L"";
+	wstring						m_strMTextureComTag = L"";
+
+	/* Texture Setting */
+	_uint	m_iTextureLevel = 1000;
+
+	_uint	m_iTotalDTextureComCnt = 0;
+	_uint	m_iTotalMTextureComCnt = 0;
+
+	_uint	m_iDTextureComCnt = 0;
+	_uint	m_iMTextureComCnt = 0;
+	/* ~Texture Setting */
+
+protected:
 	EFFECTDESC			  m_eEFfectDesc;
-
-//  VIBuffer는 각자 클래스에서 정의
-//	CVIBuffer_Rect*		  m_pVIBufferCom = nullptr;	
-
-private:
-	HRESULT				  SetUp_Components();
-	HRESULT				  SetUp_ShaderResources();
 
 public:
 	virtual void          Free() override;

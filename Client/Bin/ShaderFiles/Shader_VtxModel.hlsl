@@ -108,19 +108,17 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
+	// 이렇게 한장을 로드해서 Emissive, Roughness, AmbientOcclusion으로 나누게 됨.
 	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-
-	float			fEmissive = vERAO.r;
-	float			fRoughness = vERAO.g;
-	float			fAmbientOcclusion = vERAO.b;
+	float			fEmissive				  =		vERAO.r; 
+	float			fRoughness			  =		vERAO.g;
+	float			fAmbientOcclusion =		vERAO.b;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* 탄젠트스페이스 */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	Out.vDiffuse = vDiffuse;

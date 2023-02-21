@@ -1,15 +1,37 @@
 #include "stdafx.h"
 #include "..\public\Effect_Base.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 {
+	ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	: CGameObject(rhs)
 {
+}
+
+void CEffect_Base::BillBoardSetting(_float3 vScale)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+	CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+	RELEASE_INSTANCE(CGameInstance);
+
+	_float3 cameraPosition, cameraUp, cameraForward;
+	_float4 rotateAxis, objectForward;
+
+	XMStoreFloat3(&cameraPosition, pTargetTransform->Get_State(CTransform::STATE_TRANSLATION));
+	XMStoreFloat3(&cameraUp, pTargetTransform->Get_State(CTransform::STATE_UP));
+	XMStoreFloat3(&cameraForward, pTargetTransform->Get_State(CTransform::STATE_LOOK));
+
+	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
+	m_pTransformCom->Set_WorldMatrix(worldmatrix);
+	m_pTransformCom->Set_Scaled(vScale);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype()
@@ -57,46 +79,46 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::SetUp_Components()
+HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt)
 {
-	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
-		return E_FAIL;
+	CTexture*	pTextureCom = nullptr;
+	
+	/* For.DiffuseTexture */
+	if (iDTextureComCnt != 0)
+	{
+		m_iDTextureComCnt = m_iTotalDTextureComCnt + iDTextureComCnt;
 
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+		for (_uint i = m_iTotalDTextureComCnt; i < m_iDTextureComCnt; ++i)
+		{
+			_tchar szDTexture[64] = L"";
+			wsprintf(szDTexture, L"Com_DTexture_%d", i);
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+			_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
+			CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-	return S_OK;
-}
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+				return E_FAIL;
+		}
+		m_iTotalDTextureComCnt = m_iDTextureComCnt;
+	}
 
-HRESULT CEffect_Base::SetUp_ShaderResources()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-		
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	/* For.Mask Texture */
+	if (iMTextureComCnt != 0)
+	{
+		m_iMTextureComCnt = m_iTotalMTextureComCnt + iMTextureComCnt;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		for (_uint i = m_iTotalMTextureComCnt; i < m_iMTextureComCnt; ++i)
+		{
+			_tchar szMTexture[64] = L"";
+			wsprintf(szMTexture, L"Com_MTexture_%d", i);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-
+			_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
+			CGameInstance::GetInstance()->Add_String(szMTextureComTag);
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+				return E_FAIL;
+		}
+		m_iTotalMTextureComCnt = m_iMTextureComCnt;
+	}
 	return S_OK;
 }
 
@@ -104,7 +126,32 @@ void CEffect_Base::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
+	if(m_isCloned)
+	{
+		// Shader, Renderer Release
+		Safe_Release(m_pShaderCom);
+		Safe_Release(m_pRendererCom);
+
+		// Texture
+ 		if (nullptr != m_pDTextureCom)
+ 		{
+ 			// Diffuse Release
+ 			for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+ 				Safe_Release(m_pDTextureCom[i]);
+ 		}
+ 
+ 		if (nullptr != m_pMTextureCom)
+ 		{
+ 			// Mask Release
+ 			for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+ 				Safe_Release(m_pMTextureCom[i]);
+ 		}
+
+		// VIBuffer Release
+		if (nullptr != m_pVIBufferCom)
+			Safe_Release(m_pVIBufferCom);
+
+		if (nullptr != m_pVIInstancingBufferCom)
+			Safe_Release(m_pVIInstancingBufferCom);
+	}
 }

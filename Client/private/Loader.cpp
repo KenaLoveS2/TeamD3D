@@ -67,7 +67,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* �ε��� �ϱ����� �߰����� �帧�� ����� (Thread).*/
+	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread).*/
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -75,7 +75,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-/* �ΰ��� ���� ������ �����Ѵ�. */
+/* 로고를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -114,7 +114,7 @@ HRESULT CLoader::Loading_ForLogo()
 	return S_OK;
 }
 
-/* �����÷��̸� ���� ������ �����Ѵ�. */
+/* 게임플레이를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -136,15 +136,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 		return E_FAIL;
 
-
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Snow */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Snow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Explosion */
@@ -155,6 +149,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_RuinM_R_AO */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_04_E_R_Ao.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
@@ -237,6 +236,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Shader_VtxCubeTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxCubeTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxEffectTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxRectInstance */

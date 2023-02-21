@@ -82,10 +82,10 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Key_Down(DIK_T))
 	{
-		if (m_bFix)
-			m_bFix = false;
-		else
-			m_bFix = true;
+// 		if (m_bFix)
+// 			m_bFix = false;
+// 		else
+// 			m_bFix = true;
 	}
 
 	if (true == m_bFix)
