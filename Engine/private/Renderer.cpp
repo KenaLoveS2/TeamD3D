@@ -124,6 +124,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	m_pShader_PostProcess = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_PostProcessVFX.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements);
+	if (m_pShader_PostProcess == nullptr)
+		return E_FAIL;
+
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
@@ -205,21 +209,6 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Priority()
-{
-	for (auto& pGameObject : m_RenderObjects[RENDER_PRIORITY])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_PRIORITY].clear();
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Draw_RenderGroup()
 {
 	if (FAILED(Render_Shadow()))
@@ -233,7 +222,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 	{
 		if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
-
 		if (FAILED(Render_Priority()))
 			return E_FAIL;
 		if (FAILED(Render_Blend()))
@@ -242,11 +230,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
-	
 		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 			return E_FAIL;
-	
 		if (FAILED(Render_HDR()))
+			return E_FAIL;
+		if (FAILED(Render_PostProcess()))
 			return E_FAIL;
 	}
 	else
@@ -283,6 +271,21 @@ HRESULT CRenderer::Draw_RenderGroup()
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
 		}
 #endif
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Priority()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_PRIORITY])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_PRIORITY].clear();
 
 	return S_OK;
 }
@@ -425,6 +428,15 @@ HRESULT CRenderer::Render_Blend()
 	{
 		if (FAILED(m_pShader->Set_RawValue("g_fFar", pInst->Get_CameraFar(), sizeof(float))))
 			return E_FAIL;
+
+		const float fWidth = static_cast<float>(m_iShadowWidth);
+		const float fHeight = static_cast<float>(m_iShadowHeight);
+
+		if (FAILED(m_pShader->Set_RawValue("g_fTexcelSizeX", &fWidth, sizeof(float))))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Set_RawValue("g_fTexcelSizeY", &fHeight, sizeof(float))))
+			return E_FAIL;
 	}
 
 	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
@@ -488,6 +500,36 @@ HRESULT CRenderer::Render_HDR()
 	pLDR2->Clear();
 
 	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_PostProcess()
+{
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	CRenderTarget* pLDRSour = m_pTarget_Manager->Get_Target(L"Target_LDR1");
+	CRenderTarget* pLDRDest = m_pTarget_Manager->Get_Target(L"Target_LDR2");
+	ID3D11RenderTargetView*	pBackBufferView = nullptr;
+	ID3D11DepthStencilView*		pDepthStencilView = nullptr;
+	m_pContext->OMGetRenderTargets(1, &pBackBufferView, &pDepthStencilView);
+	m_pContext->GSSetShader(nullptr, nullptr, 0);
+	
+	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
+	Safe_Release(pBackBufferView);
+	Safe_Release(pDepthStencilView);
+
+	// LDR to Backbuffer
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV())))
+		return E_FAIL;
+
+	m_pShader_PostProcess->Begin(0);
+	m_pVIBuffer->Render();
+
 	return S_OK;
 }
 
@@ -558,6 +600,7 @@ void CRenderer::Free()
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pShader_PostProcess);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
