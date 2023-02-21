@@ -315,10 +315,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Texture..."));
 	
 
-	lstrcpy(m_szLoadingText, TEXT("모델을 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Model..."));
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -326,7 +326,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Coll.."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
@@ -340,7 +346,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader... "));
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
@@ -371,17 +377,15 @@ HRESULT CLoader::Loading_ForMapTool()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("네비게이션정보생성중"));
 
-
-	lstrcpy(m_szLoadingText, TEXT("객체원형을 생성중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_ GameObjects ..."));
 
 	/* For.Prototype_GameObject_Cave_Rock */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-	//	CCave_Rock::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
+		CCave_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_End. "));
 
 	m_isFinished = true;
 

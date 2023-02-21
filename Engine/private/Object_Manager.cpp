@@ -72,7 +72,8 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
+HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, 
+	const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
 {
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
@@ -95,6 +96,10 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	}
 	else
 		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	/*Set_CloneTag*/
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_CloneTag(pCloneObjectTag);
 
 	if (ppOut)
 	{
@@ -243,7 +248,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 					{
 						pObj = Pair.second;
 						if (pObj != nullptr)
-							CUtile::WideCharToChar((pObj->Get_ObjectName()), szobjectTag);
+							CUtile::WideCharToChar((pObj->Get_ObjectCloneName()), szobjectTag);
 
 						const bool bSelected = pSelectedObject == pObj;
 						if (bSelected)

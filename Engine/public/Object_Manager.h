@@ -20,7 +20,7 @@ public:
 	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag);
 	
 	map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects() { return m_Prototypes; }
-
+	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	HRESULT Clear(_uint iLevelIndex);
@@ -49,7 +49,7 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
-	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+
 
 public:
 	virtual void Free() override;

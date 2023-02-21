@@ -1,7 +1,7 @@
 #pragma once
 
-/* ½Ì±ÛÅæ.  */
-/* Å¬¶óÀÌ¾ðÆ®¿Í ¿£ÁøÀÇ ¼ÒÅëÀ» À§ÇØ ¸¸µé¾îÁø Å¬·¡½º. */
+/* ï¿½Ì±ï¿½ï¿½ï¿½.  */
+/* Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½. */
 
 #include "Base.h"
 #include "Input_Device.h"
@@ -78,6 +78,7 @@ BEGIN(Engine)
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
 		void SwitchOnOff_Shadow(_bool bSwitch);
+		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
