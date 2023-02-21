@@ -63,11 +63,11 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 			case LEVEL_GAMEPLAY:
 				pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
 				break;
-		
+#ifdef _DEBUG
 			case LEVEL_MAPTOOL:
 				pLevel = CLevel_MapTool::Create(m_pDevice, m_pContext);
 				break;
-
+#endif
 			}
 
 			if (nullptr == pLevel)
