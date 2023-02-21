@@ -1,8 +1,9 @@
 #pragma once
 #include "Base.h"
+#include "Camera.h"
 
 BEGIN(Engine)
-class CCamera_Manager final : public CBase
+	class CCamera_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CCamera_Manager)
 private:
@@ -18,7 +19,11 @@ public:
 	HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 	HRESULT Work_Camera(const _tchar* pCameraTag);
 	class CCamera* Find_Camera(const _tchar* pCameraTag);
-	
+
+
+public:
+	_float* Get_CameraFar();
+
 	virtual void Free() override;
 
 	void Tick(_float fTimeDelta);
