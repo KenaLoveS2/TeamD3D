@@ -77,12 +77,14 @@ BEGIN(Engine)
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
+		void SwitchOnOff_Shadow(_bool bSwitch);
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
 		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
-	public: /* For.PipeLine */
+
+public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
 		_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);

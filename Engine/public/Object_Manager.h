@@ -34,6 +34,8 @@ public:
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
+	void		SwitchOnOff_Shadow(_bool bSwitch);
+
 private: /* 원형객체들을ㅇ 모아놓는다. */
 	map<const _tchar*, class CGameObject*>			m_Prototypes;
 	typedef map<const _tchar*, class CGameObject*>	PROTOTYPES;
@@ -42,6 +44,8 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	map<const _tchar*, class CLayer*>*			m_pLayers = nullptr;
 	typedef map<const _tchar*, class CLayer*>	LAYERS;
 	_uint										m_iNumLevels = 0;
+
+	_bool									m_bShadow = true;
 
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);

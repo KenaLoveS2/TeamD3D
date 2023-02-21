@@ -20,7 +20,6 @@ public:
 public:
 	class CComponent* Find_Component(const _tchar* pComponentTag);
 
-
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CGameObject(const CGameObject& rhs);
@@ -38,18 +37,19 @@ public:
 	virtual HRESULT RenderShadow();
 
 protected:
-	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = { nullptr };
-	_bool					m_isCloned = { false };
-	_float					m_fCamDistance = { 0.0 };	
+	_bool							m_isCloned = { false };
+	_float							m_fCamDistance = { 0.0 };	
+	_bool							m_bShadow = true;
 
-	const _tchar*					m_szName = TEXT("");
+	const _tchar*				m_szName = TEXT("");
 
 protected:
 	/* 객체들이 사용해야 할 컴포넌트들을 보관한다. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
-	class CTransform*								m_pTransformCom = nullptr;
+	class CTransform*									m_pTransformCom = nullptr;
 
 protected:	
 	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
@@ -61,6 +61,7 @@ public:
 	virtual void Free() override;
 
 	const _tchar* Get_ObjectName() { return m_szName; }
+	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
 		// 이 오브젝트가 가지고 있는 component의 Imgui_RenderProtpery함수를 실행하는 함수.

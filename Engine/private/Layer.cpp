@@ -27,6 +27,14 @@ void CLayer::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (auto& Pair : m_GameObjects)
+	{
+		Pair.second ? Pair.second->SwitchOnOff_Shadow(bSwitch) : 0;
+	}
+}
+
 CComponent * CLayer::Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar * pComponentTag)
 {	
 	CGameObject* pObject = Find_GameObject(pCloneObjectTag);

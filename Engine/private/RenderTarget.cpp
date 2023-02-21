@@ -13,6 +13,8 @@ CRenderTarget::CRenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 
 HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4 * pClearColor)
 {
+	m_ePixelFormat = ePixelFormat;
+
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -43,48 +45,52 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixe
 
 	m_vClearColor = *pClearColor;
 
-	ZeroMemory(&m_ViewPort, sizeof(D3D11_VIEWPORT));
-	m_ViewPort.TopLeftX = 0.f;
-	m_ViewPort.TopLeftY = 0.f;
-	m_ViewPort.Width = static_cast<float>(iWidth);
-	m_ViewPort.Height = static_cast<float>(iHeight);
-	m_ViewPort.MinDepth = 0.f;
-	m_ViewPort.MaxDepth = 1.f;
-
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Ready_DepthStencilRenderTargetView(_uint iWidth, _uint iHeight, DXGI_FORMAT eFormat)
+HRESULT CRenderTarget::Resize(_uint iWidth, _uint iHeight)
 {
-	if (m_pDevice == nullptr)
-		return E_FAIL;
+#ifdef _DEBUG
+	m_WorldMatrix._11 = m_vSize.x;
+	m_WorldMatrix._22 = m_vSize.y;
+	m_WorldMatrix._41 = m_vPos.x - iWidth * 0.5f;
+	m_WorldMatrix._42 = -m_vPos.y + iHeight * 0.5f;
+#endif
 
-	ID3D11Texture2D*		pDepthStencilTexture = nullptr;
+	if (m_bResizable == false)
+		return S_OK;
 
-	D3D11_TEXTURE2D_DESC	TextureDesc;
+	if (m_pTexture2D != nullptr)
+		Safe_Release(m_pTexture2D);
+
+	if (m_pRTV != nullptr)
+		Safe_Release(m_pRTV);
+
+	if (m_pSRV != nullptr)
+		Safe_Release(m_pSRV);
+
+	D3D11_TEXTURE2D_DESC		TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
 	TextureDesc.Width = iWidth;
 	TextureDesc.Height = iHeight;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = eFormat;
+	TextureDesc.Format = m_ePixelFormat;
 
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
 
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
-		return E_FAIL;
+	FAILED_CHECK(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D));
 
-	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pDepthStencilView)))
-		return E_FAIL;
+	FAILED_CHECK(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV));
 
-	Safe_Release(pDepthStencilTexture);
+	FAILED_CHECK(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV));
 
 	return S_OK;
 }
@@ -109,10 +115,14 @@ HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float f
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 
-	m_WorldMatrix._11 = fSizeX;
-	m_WorldMatrix._22 = fSizeY;
-	m_WorldMatrix._41 = fX - ViewportDesc.Width * 0.5f;
-	m_WorldMatrix._42 = -fY + ViewportDesc.Height * 0.5f;
+	m_vPos.x = fX;
+	m_vPos.y = fY;
+	m_vSize.x = fSizeX;
+	m_vSize.y = fSizeY;
+	m_WorldMatrix._11 = m_vSize.x;
+	m_WorldMatrix._22 = m_vSize.y;
+	m_WorldMatrix._41 = m_vPos.x - ViewportDesc.Width * 0.5f;
+	m_WorldMatrix._42 = -m_vPos.y + ViewportDesc.Height * 0.5f;
 
 	return S_OK;
 }
@@ -141,8 +151,6 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 void CRenderTarget::Free()
 {
-	Safe_Release(m_pDepthStencilView);
-
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 

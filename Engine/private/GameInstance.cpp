@@ -186,6 +186,9 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	if (FAILED(m_pGraphic_Device->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate)))
 		return E_FAIL;
 
+	if (FAILED(m_pTarget_Manager->Resize(m_pGraphic_Device->GetContext())))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -354,6 +357,13 @@ map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 {
 	assert(nullptr != m_pObject_Manager&& "CGameInstance::Get_ProtoTypeObjects()");
 	return m_pObject_Manager->Get_ProtoTypeObjects();
+}
+
+void CGameInstance::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	if (nullptr == m_pObject_Manager)
+		return;
+	m_pObject_Manager->SwitchOnOff_Shadow(bSwitch);
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
