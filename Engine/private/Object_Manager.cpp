@@ -302,10 +302,10 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 							bFound = true;
 						}
 
-						char szAddressName[256];
-						sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
+						//char szAddressName[256];
+						////sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
 
-						if (ImGui::Selectable(szAddressName, bSelected))
+						if (ImGui::Selectable(szobjectTag, bSelected))
 						{
 							pSelectedObject = pObj;
 							bFound = true;
