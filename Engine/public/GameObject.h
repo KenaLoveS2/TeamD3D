@@ -18,8 +18,9 @@ public:
 	}
 
 public:
-	class CComponent* Find_Component(const _tchar* pComponentTag);
-
+	class CComponent*	Find_Component(const _tchar* pComponentTag);
+	const _tchar*			Get_ObjectCloneName() { return m_szCloneObjectTag; }
+	void							Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
 
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -43,7 +44,7 @@ protected:
 	_bool					m_isCloned = { false };
 	_float					m_fCamDistance = { 0.0 };	
 
-	const _tchar*					m_szName = TEXT("");
+	const _tchar*					m_szCloneObjectTag = TEXT("");
 
 protected:
 	/* 객체들이 사용해야 할 컴포넌트들을 보관한다. */
@@ -60,7 +61,6 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
-	const _tchar* Get_ObjectName() { return m_szName; }
 
 public: /* imgui */
 		// 이 오브젝트가 가지고 있는 component의 Imgui_RenderProtpery함수를 실행하는 함수.
