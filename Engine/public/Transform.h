@@ -66,8 +66,8 @@ public:
 	void Scaling(STATE eState, _float fScale); /* fScale배수로 늘린다. */
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual void	Imgui_RenderProperty() override;
 
 public:
@@ -102,7 +102,7 @@ private:
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
 	void Set_OnTerrain(class CVIBuffer_Terrain* pTerrainBuffer, _float fPlusValue);

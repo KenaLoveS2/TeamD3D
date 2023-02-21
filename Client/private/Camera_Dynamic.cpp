@@ -72,7 +72,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
 	{
-		/* Ä«¸Þ¶ó È¸Àü */
+		/* Ä«ï¿½Þ¶ï¿½ È¸ï¿½ï¿½ */
 		long	MouseMove = 0;
 		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensitivity);
@@ -80,39 +80,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * m_fMouseSensitivity);
 	}
 
-	if (pGameInstance->Key_Down(DIK_T))
-	{
-// 		if (m_bFix)
-// 			m_bFix = false;
-// 		else
-// 			m_bFix = true;
-	}
-
-	if (true == m_bFix)
-	{
-		/* ¸¶¿ì½º È­¸é °¡¿îµ¥ °íÁ¤*/
-		POINT pt{ (_long)g_iWinSizeX >> 1, (_long)g_iWinSizeY >> 1 };
-		ClientToScreen(g_hWnd, &pt);
-		SetCursorPos(pt.x, pt.y);
-	}
 	RELEASE_INSTANCE(CGameInstance);
-
-
-	//CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	//_long			MouseMove = 0;
-
-	//if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMS_X))
-	//{
-	//	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
-	//}
-
-	//if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMS_Y))
-	//{
-	//	m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
-	//}
-
-	//RELEASE_INSTANCE(CGameInstance);
 
 	__super::Tick(fTimeDelta);
 }

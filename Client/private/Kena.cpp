@@ -14,6 +14,11 @@ CKena::CKena(const CKena & rhs)
 {
 }
 
+const _double & CKena::Get_AnimationPlayTime()
+{
+	return m_pModelCom->Get_PlayTime();
+}
+
 HRESULT CKena::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -48,10 +53,10 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
-
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -102,6 +107,18 @@ void CKena::Imgui_RenderProperty()
 	
 }
 
+void CKena::ImGui_AnimationProperty()
+{
+	m_pModelCom->Imgui_RenderProperty();
+	//m_pStateMachine->Imgui_RenderProperty();
+}
+
+void CKena::Update_Child()
+{
+	for (auto& pPart : m_vecPart)
+		pPart->Model_Synchronization();
+}
+
 HRESULT CKena::Ready_Parts()
 {
 	CKena_Parts*	pPart = nullptr;
@@ -115,10 +132,11 @@ HRESULT CKena::Ready_Parts()
 	PartDesc.pPlayer = this;
 	PartDesc.eType = CKena_Parts::KENAPARTS_STAFF;
 
-	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Staff", &PartDesc));
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Staff", L"Kena_Staff", &PartDesc));
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
+	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
 
 	/* MainOutfit */
 	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
@@ -126,10 +144,11 @@ HRESULT CKena::Ready_Parts()
 	PartDesc.pPlayer = this;
 	PartDesc.eType = CKena_Parts::KENAPARTS_OUTFIT;
 
-	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_MainOutfit", &PartDesc));
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_MainOutfit", L"Kena_MainOutfit", &PartDesc));
 	NULL_CHECK_RETURN(pPart, E_FAIL);
 
 	m_vecPart.push_back(pPart);
+	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -142,7 +161,7 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
@@ -150,14 +169,14 @@ HRESULT CKena::SetUp_Components()
 	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
 
 	CNavigation::NAVIDESC		NaviDesc;
 	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
 	NaviDesc.iCurrentIndex = 0;
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
 
 	return S_OK;
 }

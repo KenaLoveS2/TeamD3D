@@ -130,6 +130,12 @@
     <Filter Include="02.GameObjects\Effect\Tool">
       <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95. Tool">
+      <UniqueIdentifier>{963a3bc8-daf7-423c-98f4-b558da61a187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\Animation">
+      <UniqueIdentifier>{fa94e753-45df-404e-a906-ab3c378a6ead}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -256,6 +262,9 @@
     <ClInclude Include="..\Public\Kena_Staff.h">
       <Filter>02.GameObjects\Player\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Tool_Animation.h">
+      <Filter>95. Tool\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -363,6 +372,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Kena_Staff.cpp">
       <Filter>02.GameObjects\Player\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool_Animation.cpp">
+      <Filter>95. Tool\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

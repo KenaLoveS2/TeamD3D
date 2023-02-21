@@ -34,13 +34,13 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar * pPro
 	return S_OK;
 }
 
-CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void * pArg)
+CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void * pArg, CGameObject * pOwner)
 {
 	CComponent*		pPrototype = Find_Prototype(iLevelIndex, pPrototypeTag);
 	if (nullptr == pPrototype)
 		return nullptr;
 
-	CComponent*		pComponent = pPrototype->Clone(pArg);
+	CComponent*		pComponent = pPrototype->Clone(pArg, pOwner);
 	if (nullptr == pComponent)
 		return nullptr;
 

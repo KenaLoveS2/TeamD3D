@@ -16,8 +16,69 @@ CBone::CBone(const CBone& rhs)
 	strcpy_s(m_szParentName, rhs.m_szParentName);
 }
 
+HRESULT CBone::Save_Bone(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = strlen(m_szName) + 1;
+	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	WriteFile(hFile, &m_OffsetMatrix, sizeof(_float4x4), &dwByte, nullptr);
+	WriteFile(hFile, &m_TransformMatrix, sizeof(_float4x4), &dwByte, nullptr);
+
+	_bool bParentFlag = m_pParent != nullptr;
+	WriteFile(hFile, &bParentFlag, sizeof(_bool), &dwByte, nullptr);
+	if (bParentFlag)
+	{
+		iNameLength = strlen(m_pParent->m_szName);
+		WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, m_pParent->m_szName, iNameLength + 1, &dwByte, nullptr);
+	}
+
+	return S_OK;
+}
+
+HRESULT CBone::Save_BoneName(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = strlen(m_szName) + 1;
+	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	return S_OK;
+}
+
+HRESULT CBone::Load_Bone(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = 0;
+	ReadFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+
+	char*			pName = new char[iNameLength];
+	ReadFile(hFile, pName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	strcpy_s(m_szName, pName);
+
+	Safe_Delete_Array(pName);
+
+	ReadFile(hFile, &m_OffsetMatrix, sizeof(_float4x4), &dwByte, nullptr);
+	ReadFile(hFile, &m_TransformMatrix, sizeof(_float4x4), &dwByte, nullptr);
+
+	_bool bParentFlag = false;
+	ReadFile(hFile, &bParentFlag, sizeof(_bool), &dwByte, nullptr);
+	if (bParentFlag)
+	{
+		ReadFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+		ReadFile(hFile, m_szParentName, iNameLength + 1, &dwByte, nullptr);
+	}
+
+	m_pParent = nullptr;
+
+	return S_OK;
+}
+
 HRESULT CBone::Initialize_Prototype(HANDLE hFile)
 {
+	if (hFile == nullptr)
+		return S_OK;
+
 	_ulong dwByte = 0;
 	_uint iLen = 0;
 	ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);

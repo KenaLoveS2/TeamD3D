@@ -64,8 +64,10 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar * pNavigationDataFilePath
 	return S_OK;
 }
 
-HRESULT CNavigation::Initialize(void * pArg)
+HRESULT CNavigation::Initialize(void * pArg, CGameObject* pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	if (nullptr != pArg)
 	{
 		memcpy(&m_NaviDesc, pArg, sizeof(NAVIDESC));
@@ -190,11 +192,11 @@ CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * 
 	return pInstance;
 }
 
-CComponent * CNavigation::Clone(void * pArg)
+CComponent * CNavigation::Clone(void * pArg, CGameObject * pOwner)
 {
 	CNavigation*		pInstance = new CNavigation(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Created : CNavigation");
 		Safe_Release(pInstance);

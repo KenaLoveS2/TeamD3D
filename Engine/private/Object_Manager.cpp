@@ -43,6 +43,8 @@ HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototy
 		return E_FAIL;
 
 	m_pLayers = new LAYERS[iNumLevels];
+	m_mapAnimModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
+
 	m_iNumLevels = iNumLevels;
 	
 	m_iNumCopyPrototypes = iNumCopyPrototypes;	
@@ -64,6 +66,11 @@ HRESULT CObject_Manager::Clear(_uint iLevelIndex)
 		Safe_Release(Pair.second);
 
 	m_pLayers[iLevelIndex].clear();
+
+ 	for (auto& Pair : m_mapAnimModel[iLevelIndex])
+ 		Safe_Release(Pair.second);
+ 
+ 	m_mapAnimModel[iLevelIndex].clear();
 
 	return S_OK;
 }
@@ -123,7 +130,7 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	return S_OK;
 }
 
-CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
+CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg)
 {
 	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
@@ -133,7 +140,41 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, vo
 	if (nullptr == pGameObject)
 		return nullptr;
 
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_Name(pCloneObjectTag);
+
 	return pGameObject;	
+}
+
+HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject ** ppOut)
+{
+	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
+	NULL_CHECK_RETURN(pPrototype, E_FAIL);
+
+	CGameObject*		pGameObject = pPrototype->Clone(pArg);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+
+	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(pCloneObjectTag, pGameObject), E_FAIL);
+
+		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	m_mapAnimModel[iLevelIndex].emplace(pCloneObjectTag, pGameObject);
+	Safe_AddRef(pGameObject);
+
+	if (ppOut)
+		*ppOut = pGameObject;
+
+	return S_OK;
 }
 
 HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag, CGameObject * pGameObject)
@@ -152,6 +193,19 @@ HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * 
 	}
 	else
 		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	return S_OK;
+}
+
+HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameObject)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+
+	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_Name(), pGameObject);
+	Safe_AddRef(pGameObject);
 
 	return S_OK;
 }
@@ -214,6 +268,10 @@ void CObject_Manager::Free()
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
+		for (auto& Pair : m_mapAnimModel[i])
+			Safe_Release(Pair.second);
+		m_mapAnimModel[i].clear();
+
 		for (auto& Pair : m_pLayers[i])
 			Safe_Release(Pair.second);
 
@@ -221,6 +279,7 @@ void CObject_Manager::Free()
 	}
 
 	Safe_Delete_Array(m_pLayers);
+	Safe_Delete_Array(m_mapAnimModel);
 	
 
 	for (auto& Pair : m_Prototypes)
