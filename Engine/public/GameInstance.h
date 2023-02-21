@@ -1,7 +1,7 @@
 #pragma once
 
-/* ½Ì±ÛÅæ.  */
-/* Å¬¶óÀÌ¾ðÆ®¿Í ¿£ÁøÀÇ ¼ÒÅëÀ» À§ÇØ ¸¸µé¾îÁø Å¬·¡½º. */
+/* ï¿½Ì±ï¿½ï¿½ï¿½.  */
+/* Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?Å¬ï¿½ï¿½ï¿½ï¿½. */
 
 #include "Base.h"
 #include "Input_Device.h"
@@ -78,18 +78,27 @@ BEGIN(Engine)
 			const _tchar* pCloneObjectTag,
 			void* pArg = nullptr, CGameObject** ppOut = nullptr);
 		HRESULT		Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
+		HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+		void SwitchOnOff_Shadow(_bool bSwitch);
+		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
-		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
-		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
+		map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
+
+		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
+		_uint Get_NumCopyPrototypes();
+
+
+		HRESULT Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag);
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
-	public: /* For.PipeLine */
+
+public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
 		_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
@@ -146,6 +155,8 @@ BEGIN(Engine)
 		HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
+		_float*		Get_CameraFar();
+
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;

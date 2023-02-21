@@ -124,9 +124,8 @@ float Remap(float In, float2 InMinMax, float2 OutMinMax)
 float4 CalcHDRColor(float4 vColor, float fIntensity)
 {
 	float4 vSatColor = saturate(vColor);
-	float4 vHDRColor = vSatColor * pow(2.f, fIntensity);
+	float4 vHDRColor = vSatColor * pow(2.2f, fIntensity);
 	vHDRColor.a = vSatColor.a;
-
 	return vHDRColor;
 }
 

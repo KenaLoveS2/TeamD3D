@@ -20,7 +20,8 @@ public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
-	
+	void	SwitchOnOff_Shadow(_bool bSwitch);
+
 private:
 	map <const _tchar*, class CGameObject*> m_GameObjects;	
 	typedef map<const _tchar*, class CGameObject*>	GAMEOBJECTS;
@@ -30,8 +31,9 @@ public:
 	virtual void Free() override;
 
 	GAMEOBJECTS& GetGameObjects() { return m_GameObjects; }
-
 	CGameObject* Find_GameObject(const _tchar * pCloneObjectTag);
+
+	HRESULT Delete_GameObject(const _tchar * pCloneObjectTag);
 };
 
 END

@@ -37,7 +37,7 @@ CGameObject* CObject_Manager::Get_GameObjectPtr(_uint iLevelIndex, const _tchar 
 	return pLayer->Get_GameObjectPtr(pCloneObjectTag);
 }
 
-HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
+HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes)
 {
 	if (nullptr != m_pLayers)
 		return E_FAIL;
@@ -46,6 +46,13 @@ HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
 	m_mapAnimModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
+	
+	m_iNumCopyPrototypes = iNumCopyPrototypes;	
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		PROTOTYPES Prototypes;
+		m_CopyPrototypes.push_back(Prototypes);
+	}
 
 	return S_OK;
 }
@@ -75,10 +82,20 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 
 	m_Prototypes.emplace(pPrototypeTag, pPrototype);
 	
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		_tchar* pTag = CUtile::Create_String(pPrototypeTag);
+		m_CopyTagList.push_back(pTag);
+		
+		CGameObject* pGameObject = pPrototype->Clone();
+		m_CopyPrototypes[i].emplace(pTag, pGameObject);
+	}
+
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
+HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, 
+	const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
 {
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
@@ -91,8 +108,7 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
-		if (nullptr == pLayer)
-			return E_FAIL;
+		if (nullptr == pLayer) return E_FAIL;
 
 		if (FAILED(pLayer->Add_GameObject(pCloneObjectTag, pGameObject)))
 			return E_FAIL;
@@ -101,6 +117,10 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	}
 	else
 		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	/*Set_CloneTag*/
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_CloneTag(pCloneObjectTag);
 
 	if (ppOut)
 	{
@@ -135,24 +155,35 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 
 	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	NULL_CHECK_RETURN(pLayer, E_FAIL);
 
-	if (nullptr == pLayer)
-	{
-		pLayer = CLayer::Create();
-		NULL_CHECK_RETURN(pLayer, E_FAIL);
-
-		FAILED_CHECK_RETURN(pLayer->Add_GameObject(pCloneObjectTag, pGameObject), E_FAIL);
-
-		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
-	}
-	else
-		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(pCloneObjectTag, pGameObject), E_FAIL);
 
 	m_mapAnimModel[iLevelIndex].emplace(pCloneObjectTag, pGameObject);
 	Safe_AddRef(pGameObject);
 
 	if (ppOut)
 		*ppOut = pGameObject;
+
+	return S_OK;
+}
+
+HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag, CGameObject * pGameObject)
+{	
+	CLayer*	pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		if (nullptr == pLayer) return E_FAIL;
+
+		if (FAILED(pLayer->Add_GameObject(pCloneObjectTag, pGameObject)))
+			return E_FAIL;
+
+		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
 
 	return S_OK;
 }
@@ -190,6 +221,18 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 		{
 			if (nullptr != Pair.second)
 				Pair.second->Late_Tick(fTimeDelta);
+		}
+	}
+}
+
+void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			if (nullptr != Pair.second)
+				Pair.second->SwitchOnOff_Shadow(bSwitch);
 		}
 	}
 }
@@ -234,6 +277,17 @@ void CObject_Manager::Free()
 		Safe_Release(Pair.second);
 
 	m_Prototypes.clear();
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		for (auto& Pair : m_CopyPrototypes[i])
+		{
+			Safe_Release(Pair.second);
+		}
+	}
+
+	for (auto& iter : m_CopyTagList)
+		Safe_Delete_Array(iter);
+	
 }
 
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
@@ -263,8 +317,8 @@ void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSele
 		}
 	}
 }
-
-void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject)
+				
+void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelectedObject)
 {
 	bool bFound = false;
 
@@ -289,7 +343,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 					{
 						pObj = Pair.second;
 						if (pObj != nullptr)
-							CUtile::WideCharToChar((pObj->Get_ObjectName()), szobjectTag);
+							CUtile::WideCharToChar((pObj->Get_ObjectCloneName()), szobjectTag);
 
 						const bool bSelected = pSelectedObject == pObj;
 						if (bSelected)
@@ -298,10 +352,10 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 							bFound = true;
 						}
 
-						char szAddressName[256];
-						sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
+						//char szAddressName[256];
+						////sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
 
-						if (ImGui::Selectable(szAddressName, bSelected))
+						if (ImGui::Selectable(szobjectTag, bSelected))
 						{
 							pSelectedObject = pObj;
 							bFound = true;
@@ -315,6 +369,17 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 		}
 		ImGui::TreePop();
 	}
+
 	if (bFound == false)
 		pSelectedObject = nullptr;
+}
+
+HRESULT CObject_Manager::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)
+{	
+	CLayer*	pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	if (pLayer == nullptr) return E_FAIL;
+	
+	pLayer->Delete_GameObject(pCloneObjectTag);
+
+	return S_OK;
 }

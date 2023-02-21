@@ -19,6 +19,7 @@
 
 /* Objects */
 #include "Cave_Rock.h"
+#include "ForkLift.h"
 
 /* UI */
 #include "BackGround.h"
@@ -66,7 +67,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* �ε��� �ϱ����� �߰����� �帧�� ����� (Thread).*/
+	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread).*/
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -74,7 +75,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-/* �ΰ��� ���� ������ �����Ѵ�. */
+/* 로고를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -113,7 +114,7 @@ HRESULT CLoader::Loading_ForLogo()
 	return S_OK;
 }
 
-/* �����÷��̸� ���� ������ �����Ѵ�. */
+/* 게임플레이를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -135,15 +136,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 		return E_FAIL;
 
-
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Snow */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Snow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Explosion */
@@ -154,6 +149,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_RuinM_R_AO */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_04_E_R_Ao.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
@@ -200,7 +200,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Kena_Body.mdat", PivotMatrix))))
 	//	return E_FAIL;
-
 	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -216,7 +215,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
@@ -240,6 +238,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxEffectTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Shader_VtxRectInstance */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxRectInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstance.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
@@ -258,6 +261,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
+
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -279,6 +283,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ForkLift*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
+		CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Effect_Rect_Instancing */
@@ -310,24 +319,30 @@ HRESULT CLoader::Loading_ForMapTool()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Texture..."));
 	
 
-	lstrcpy(m_szLoadingText, TEXT("모델을 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Model..."));
 
-	_matrix			PivotMatrix = XMMatrixIdentity();
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
-		return E_FAIL;
+	//_matrix			PivotMatrix = XMMatrixIdentity();
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
+	//	return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
-		return E_FAIL;
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
+	//	return E_FAIL;
 
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_MapOne",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/MapOne/MapOne.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	
+	LoadNonAnimModel(LEVEL_MAPTOOL);
 
-	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading Coll.."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
@@ -341,7 +356,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader... "));
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
@@ -372,17 +387,15 @@ HRESULT CLoader::Loading_ForMapTool()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("네비게이션정보생성중"));
 
-
-	lstrcpy(m_szLoadingText, TEXT("객체원형을 생성중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_ GameObjects ..."));
 
 	/* For.Prototype_GameObject_Cave_Rock */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-	//	CCave_Rock::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
+		CCave_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_End. "));
 
 	m_isFinished = true;
 

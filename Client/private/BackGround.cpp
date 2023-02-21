@@ -16,7 +16,7 @@ HRESULT CBackGround::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -60,7 +60,7 @@ void CBackGround::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);	
 
 	if(nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBackGround::Render()

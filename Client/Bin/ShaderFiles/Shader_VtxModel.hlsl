@@ -3,6 +3,7 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
+float				g_fFar = 300.f;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
@@ -94,19 +95,17 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
+	// 이렇게 한장을 로드해서 Emissive, Roughness, AmbientOcclusion으로 나누게 됨.
 	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-
-	float		fEmissive = vERAO.r;
-	float		fRoughness = vERAO.g;
-	float		fAmbientOcclusion = vERAO.a;
+	float			fEmissive				  =		vERAO.r; 
+	float			fRoughness			  =		vERAO.g;
+	float			fAmbientOcclusion =		vERAO.b;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* 탄젠트스페이스 */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	Out.vDiffuse = vDiffuse;
@@ -114,7 +113,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, fEmissive, fRoughness);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, fEmissive, fRoughness);
 	
 	return Out;
 }
@@ -160,7 +159,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
 
-	Out.vLightDepth.r = In.vProjPos.w / 300.f;
+	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
 
 	Out.vLightDepth.a = 1.f;
 

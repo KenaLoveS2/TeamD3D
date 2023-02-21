@@ -2,14 +2,17 @@
 #include "..\public\EnviromentObj.h"
 #include "GameInstance.h"
 #include "Utile.h"
+#include "Enviroment_Manager.h"
 
 CEnviromentObj::CEnviromentObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
+	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
 {
 }
 
 CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 	: CGameObject(rhs)
+	, m_pEnviroment_Manager(rhs.m_pEnviroment_Manager)
 {	
 }
 
@@ -53,6 +56,8 @@ void CEnviromentObj::Tick(_float fTimeDelta)
 void CEnviromentObj::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
 }
 
 HRESULT CEnviromentObj::Render()

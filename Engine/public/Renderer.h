@@ -2,8 +2,8 @@
 
 #include "Component.h"
 
-/* È­¸é¿¡ ±×·Á¾ßÇÒ °´Ã¼µéÀ» ±×¸®´Â ¼ø¼­´ë·Î Á¤¸®º¸°üÇÑ´Ù. */
-/* º¸°üÇÏ°í ÀÖ´Â ¼ø¼­´ë·Î °´Ã¼µéÀÇ µå·Î¿ìÄÝ(·»´õÇÔ¼ö¸¦ È£ÃâÇÑ´Ù)À» ¼öÇàÇÑ´Ù. */
+/* È­ï¿½é¿¡ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ñ´ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 
 BEGIN(Engine)
 
@@ -12,7 +12,6 @@ class ENGINE_DLL CRenderer final : public CComponent
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_STATICSHADOW,
 		RENDER_SHADOW,
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
@@ -27,6 +26,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
+	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
@@ -47,16 +47,19 @@ private:
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 	
 private:
-	class CTarget_Manager*				m_pTarget_Manager = nullptr;
+	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CLight_Manager*				m_pLight_Manager = nullptr;
-	class CLevel_Manager*				m_pLevel_Manager = nullptr;
+	class CLevel_Manager*			m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
-	class CShader*						m_pShader = nullptr;
-	_float4x4							m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-	
+	class CShader*							m_pShader = nullptr;
+	class CShader*							m_pShader_PostProcess = nullptr;
+	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
+
+	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
+
 private:
 	HRESULT Render_Priority();
-	HRESULT Render_StaticShadow();
 	HRESULT Render_Shadow();
 	HRESULT Render_NonAlphaBlend();
 	HRESULT Render_LightAcc();
@@ -64,6 +67,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_AlphaBlend();
 	HRESULT Render_HDR();
+	HRESULT Render_PostProcess();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG

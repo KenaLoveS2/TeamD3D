@@ -27,6 +27,14 @@ void CLayer::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (auto& Pair : m_GameObjects)
+	{
+		Pair.second ? Pair.second->SwitchOnOff_Shadow(bSwitch) : 0;
+	}
+}
+
 CComponent * CLayer::Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar * pComponentTag)
 {	
 	CGameObject* pObject = Find_GameObject(pCloneObjectTag);
@@ -48,7 +56,7 @@ HRESULT CLayer::Add_GameObject(const _tchar* pCloneObjectTag, CGameObject * pGam
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	m_GameObjects.emplace(pCloneObjectTag, pGameObject);
+  	m_GameObjects.emplace(pCloneObjectTag, pGameObject);
 
 	return S_OK;
 }
@@ -81,4 +89,18 @@ CGameObject* CLayer::Find_GameObject(const _tchar * pCloneObjectTag)
 		return nullptr;
 
 	return Pair->second;
+}
+
+HRESULT CLayer::Delete_GameObject(const _tchar * pCloneObjectTag)
+{
+	auto Pair = find_if(m_GameObjects.begin(), m_GameObjects.end(), CTag_Finder(pCloneObjectTag));
+
+	if (Pair == m_GameObjects.end()) return E_FAIL;
+
+	CGameObject* pBackup = Pair->second;
+	m_GameObjects.erase(Pair);
+	
+	Safe_Release(pBackup);
+
+	return S_OK;
 }

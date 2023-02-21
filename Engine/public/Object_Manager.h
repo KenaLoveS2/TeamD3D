@@ -1,13 +1,11 @@
 #pragma once
-
 #include "Base.h"
 
-/* °ÔÀÓ³»¿¡ ÇÊ¿äÇÑ °´Ã¼µéÀ» ³» ±âÁØ(CLayer)¿¡ µû¶ó ³ª´©¾î º¸°üÇÑ´Ù. */
-/* °´Ã¼µéÀ» ³ª´©¾î ÀúÀåÇÏ°í ÀÖ´Â CLayerµéÀ» º¸°üÇÏ´Â Å¬·¡½ºÀÌ´Ù. */
-/* ¸ðµç °´Ã¼µéÀÇ °»½Å(Tick, Late_Tick)À» ´ã´çÇÑ´Ù. */
+/* ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(CLayer)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
+/* ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ CLayerï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. */
+/* ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Tick, Late_Tick)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 
 BEGIN(Engine)
-
 class CObject_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CObject_Manager);
@@ -25,8 +23,9 @@ public:
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
 
 public:
-	HRESULT					Reserve_Manager(_uint iNumLevels);
-	HRESULT					Clear(_uint iLevelIndex);
+	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
+	HRESULT Clear(_uint iLevelIndex);
+
 public:
 	HRESULT					Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT					Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
@@ -37,15 +36,18 @@ public:
 		const _tchar* pCloneObjectTag,
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	HRESULT					Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
+	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
-private: /* ¿øÇü°´Ã¼µéÀ»¤· ¸ð¾Æ³õ´Â´Ù. */
+	void		SwitchOnOff_Shadow(_bool bSwitch);
+
+private: /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ³ï¿½ï¿½Â´ï¿½. */
 	map<const _tchar*, class CGameObject*>			m_Prototypes;
 	typedef map<const _tchar*, class CGameObject*>	PROTOTYPES;
-
-private: /* »çº»°´Ã¼µéÀ» º¸°üÇÏ±âÀ§ÇÑ ÄÁÅ×ÀÌ³Ê. */
+	
+private: /* ï¿½çº»ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½. */
 	map<const _tchar*, class CLayer*>*			m_pLayers = nullptr;
 	typedef map<const _tchar*, class CLayer*>	LAYERS;
 	_uint										m_iNumLevels = 0;
@@ -54,20 +56,31 @@ private:	/* Animation Objects, For Animation Tool */
 	map<const _tchar*, class CGameObject*>*	m_mapAnimModel = nullptr;
 
 private:
+	_bool									m_bShadow = true;
+	_uint m_iNumCopyPrototypes = 0;
+	vector<PROTOTYPES> m_CopyPrototypes;
+	list<_tchar*> m_CopyTagList;
+
+private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
 
 
-public:
+public:	
 	virtual void Free() override;
 
-	// ¸ðµç ¿øº» Object¸¦ Imgui·Î Ãâ·ÂÇÑ´Ù.
-	// ¼±ÅÃÇÑ ¿øº»ÀÇ ÀÌ¸§À» szSelectedProto·Î µ¹·ÁÁØ´Ù.
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Objectï¿½ï¿½ Imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ szSelectedProtoï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 
-	// iLevel¿¡ ÀÖ´Â ¸ðµç »çº» Object¸¦ Layerº°·Î Imgui·Î Ãâ·ÂÇÑ´Ù.
-	// ¼±ÅÃÇÑ Object´Â pSelectedObject·Î µ¹·ÁÁØ´Ù.
-	// ÇØ´ç Object°¡ ¾ø°Å³ª »ç¶óÁö¸é nullptr·Î µ¹·ÁÁØ´Ù.
-	void   Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelectedObject);
-};
+	// iLevelï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ ï¿½çº» Objectï¿½ï¿½ Layerï¿½ï¿½ï¿½ï¿½ Imguiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Objectï¿½ï¿½ pSelectedObjectï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
+	// ï¿½Ø´ï¿½ Objectï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ nullptrï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
+	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
 
+public:	
+	vector<PROTOTYPES>& Get_CopyPrototypes() { return m_CopyPrototypes; }
+	_uint Get_NumCopyPrototypes() { return m_iNumCopyPrototypes; }
+		
+	HRESULT Delete_Object(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
+};
 END

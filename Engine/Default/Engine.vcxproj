@@ -199,6 +199,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Engine_Struct.h" />
     <ClInclude Include="..\public\Engine_Typedef.h" />
     <ClInclude Include="..\public\EnviromentObj.h" />
+    <ClInclude Include="..\public\Enviroment_Manager.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\FSMComponent.h" />
@@ -225,6 +226,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\ImGui\ImZoomSlider.h" />
     <ClInclude Include="..\public\Imgui_Manager.h" />
     <ClInclude Include="..\public\Imgui_PropertyEditor.h" />
+    <ClInclude Include="..\public\Imgui_ShaderEditor.h" />
     <ClInclude Include="..\public\Input_Device.h" />
     <ClInclude Include="..\public\Json\json.hpp" />
     <ClInclude Include="..\public\Json\json_fwd.hpp" />
@@ -286,6 +288,7 @@ call Copy.bat</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\EnviromentObj.cpp" />
+    <ClCompile Include="..\private\Enviroment_Manager.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\FSMComponent.cpp" />
@@ -295,6 +298,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\ImguiObject.cpp" />
     <ClCompile Include="..\private\Imgui_Manager.cpp" />
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp" />
+    <ClCompile Include="..\private\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="..\private\Input_Device.cpp" />
     <ClCompile Include="..\private\Layer.cpp" />
     <ClCompile Include="..\private\Level.cpp" />
@@ -401,6 +405,7 @@ call Copy.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\public\Json\ReadMe.txt" />
