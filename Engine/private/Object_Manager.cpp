@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Object_Manager.h"
 #include "Layer.h"
 #include "GameObject.h"
@@ -86,7 +87,8 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
+HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, 
+	const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppOut)
 {
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
@@ -108,6 +110,10 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	}
 	else
 		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	/*Set_CloneTag*/
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_CloneTag(pCloneObjectTag);
 
 	if (ppOut)
 	{
@@ -174,6 +180,18 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			if (nullptr != Pair.second)
+				Pair.second->SwitchOnOff_Shadow(bSwitch);
+		}
+	}
+}
+
 CGameObject * CObject_Manager::Find_Prototype(const _tchar * pPrototypeTag)
 {
 	auto	iter = find_if(m_Prototypes.begin(), m_Prototypes.end(), CTag_Finder(pPrototypeTag));
@@ -209,17 +227,17 @@ void CObject_Manager::Free()
 		Safe_Release(Pair.second);
 
 	m_Prototypes.clear();
-
 	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
 	{
 		for (auto& Pair : m_CopyPrototypes[i])
 		{
 			Safe_Release(Pair.second);
-		}	
+		}
 	}
 
-	for (auto& iter : m_CopyTagList)	
+	for (auto& iter : m_CopyTagList)
 		Safe_Delete_Array(iter);
+	
 }
 
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
@@ -233,7 +251,6 @@ void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSele
 		{
 			for (auto& ProtoPair : m_Prototypes)
 			{
-				
 				const bool bSelected = (szSelectedProto != nullptr) && (0 == lstrcmp(ProtoPair.first, szSelectedProto));
 				if (bSelected)
 					ImGui::SetItemDefaultFocus();
@@ -276,7 +293,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 					{
 						pObj = Pair.second;
 						if (pObj != nullptr)
-							CUtile::WideCharToChar((pObj->Get_ObjectName()), szobjectTag);
+							CUtile::WideCharToChar((pObj->Get_ObjectCloneName()), szobjectTag);
 
 						const bool bSelected = pSelectedObject == pObj;
 						if (bSelected)
@@ -302,6 +319,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 		}
 		ImGui::TreePop();
 	}
+
 	if (bFound == false)
 		pSelectedObject = nullptr;
 }

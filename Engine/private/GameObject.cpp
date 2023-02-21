@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\GameObject.h"
 #include "GameInstance.h"
 #include "PipeLine.h"
@@ -55,6 +56,10 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
+HRESULT CGameObject::RenderShadow()
+{
+	return S_OK;
+}
 
 HRESULT CGameObject::Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppOut, void * pArg)
 {

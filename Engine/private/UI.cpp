@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\UI.h"
 #include "Shader.h"
 #include "Renderer.h"

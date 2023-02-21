@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Level_Manager.h"
 #include "Level.h"
 #include "GameInstance.h"
@@ -23,6 +24,7 @@ HRESULT CLevel_Manager::Open_Level(_uint iLevelIndex, CLevel * pNewLevel)
 
 	m_pCurrentLevel = pNewLevel;
 	m_iLevelIndex = iLevelIndex;
+	m_bOpenLevel = true;
 
 	Safe_Release(pGameInstance);
 

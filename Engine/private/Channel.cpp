@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Channel.h"
 #include "Model.h"
 #include "Bone.h"
@@ -46,6 +47,15 @@ HRESULT CChannel::SetUp_BonePtr(CModel* pModel)
 {
 	m_pBone = pModel->Get_BonePtr(m_szName);
 	if (m_pBone == nullptr) return E_FAIL;
+
+	Safe_AddRef(m_pBone);
+	return S_OK;
+}
+
+HRESULT CChannel::Synchronization_BonePtr(CModel * pModel)
+{
+	m_pBone = pModel->Get_BonePtr(m_szName);
+	if (m_pBone == nullptr) return S_FALSE;
 
 	Safe_AddRef(m_pBone);
 	return S_OK;

@@ -16,19 +16,24 @@ private:
 public:
 	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
 	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag);
-
+	
+	map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects() { return m_Prototypes; }
+	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
 	HRESULT Clear(_uint iLevelIndex);
 public:
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag, 
+	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+		const _tchar* pCloneObjectTag, 
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 	
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
+
+	void		SwitchOnOff_Shadow(_bool bSwitch);
 
 private: /* 원형객체들을ㅇ 모아놓는다. */
 	map<const _tchar*, class CGameObject*>			m_Prototypes;
@@ -39,6 +44,8 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	typedef map<const _tchar*, class CLayer*>	LAYERS;
 	_uint										m_iNumLevels = 0;
 
+	_bool									m_bShadow = true;
+
 private:
 	_uint m_iNumCopyPrototypes = 0;
 	vector<PROTOTYPES> m_CopyPrototypes;
@@ -46,7 +53,7 @@ private:
 
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
-	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+
 
 public:	
 	virtual void Free() override;

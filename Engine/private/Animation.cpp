@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Animation.h"
 #include "Channel.h"
 
@@ -155,6 +156,27 @@ HRESULT CAnimation::SetUp_ChannelsBonePtr(CModel* pModel)
 		if (FAILED(m_Channels[i]->SetUp_BonePtr(pModel)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CAnimation::Synchronization_ChannelsBonePtr(CModel * pModel, const string & strRootNodeName)
+{
+	for (auto iter = m_Channels.begin(); iter != m_Channels.end();)
+	{
+		if (iter == m_Channels.begin())
+			(*iter)->Set_ChannelName(strRootNodeName);
+
+		if ((*iter)->Synchronization_BonePtr(pModel) == S_FALSE)
+		{
+			Safe_Release(*iter);
+			iter = m_Channels.erase(iter);
+		}
+		else
+			++iter;
+	}
+
+	m_iNumChannels = m_Channels.size();
 
 	return S_OK;
 }

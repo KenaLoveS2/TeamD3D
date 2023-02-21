@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
 
+#include "Imgui_ShaderEditor.h"
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_UIEditor.h"
 
@@ -21,10 +22,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance);
-	p_game_instance->Clear_ImguiObjects();
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
+	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		p_game_instance->Clear_ImguiObjects();
+	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
 		
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -95,15 +97,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 		
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Clone_Terrain"))))
 		return E_FAIL;
-	
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Clone_Terrain"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Player"), TEXT("Clone_Player"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), TEXT("Clone_ForkLift"))))
-		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -147,7 +140,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
-	
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -155,6 +151,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Player"))))
+	//	return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena")))
+		return E_FAIL;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena_MainOutfit"))))
+	//	return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), L"ForkLift_Test")))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -329,10 +337,10 @@ void CLevel_GamePlay::Free()
 	/*
 	for (_uint i = 0; i < THREAD_COUNT; i++)
 	{
-		Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pLayerTag);
-		Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pPrototypeTag);
-		Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pCloneTag);
-		Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc);
+	Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pLayerTag);
+	Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pPrototypeTag);
+	Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc->pCloneTag);
+	Safe_Delete_Array(m_ThreadData[i].pCloneObjectDesc);
 	}
 	*/
 }

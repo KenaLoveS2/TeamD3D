@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\PostFX.h"
 #include "GameInstance.h"
 
@@ -360,8 +361,6 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 
 void CPostFX::Imgui_Render()
 {
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
 	ImGui::Checkbox("HDR On", &m_bOn);
 
 	static _float2 middleGreyMinMax{ 0.f, 20.f };

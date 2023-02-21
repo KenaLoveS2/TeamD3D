@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "../public/Imgui_Manager.h"
 #include "Graphic_Device.h"
 #include "ImGui/ImGuiFileDialog.h"
@@ -105,54 +106,34 @@ void CImgui_Manager::Render_Tab()
 
 void CImgui_Manager::ImGui_DockSpace()
 {
-	static bool opt_fullscreen = true;
-	static bool opt_padding = false;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+	ImGuiWindowFlags			WindowFlag = ImGuiWindowFlags_NoDocking;
 
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+	const ImGuiViewport*	Viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(Viewport->WorkPos);
+	ImGui::SetNextWindowSize(Viewport->WorkSize);
+	ImGui::SetNextWindowViewport(Viewport->ID);
+	ImGui::SetNextWindowBgAlpha(0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-	if (opt_fullscreen)
-	{
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->WorkPos);
-		ImGui::SetNextWindowSize(viewport->WorkSize);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::SetNextWindowBgAlpha(0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	WindowFlag |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	WindowFlag |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	WindowFlag |= ImGuiDockNodeFlags_PassthruCentralNode;
+	WindowFlag |= ImGuiWindowFlags_NoBackground;
 
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		window_flags |= ImGuiDockNodeFlags_PassthruCentralNode;
-	}
-	else
-	{
-		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-	}
+	_bool	bIsShow = true;
 
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-		window_flags |= ImGuiWindowFlags_NoBackground;
+	ImGui::Begin("DockSpace", &bIsShow, WindowFlag);
+	ImGui::PopStyleVar(1);
+	ImGui::PopStyleVar(2);
 
-	if (!opt_padding)
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-	bool IsShow = true;
-
-	ImGui::Begin("DockSpace Demo", &IsShow, window_flags);
-	ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 0.3f; // 윈도우 알파 값
-
-	if (!opt_padding)
-		ImGui::PopStyleVar();
-
-	if (opt_fullscreen)
-		ImGui::PopStyleVar(2);
-
-	ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO&	io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
-		ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		ImGuiID	DockSpaceID = ImGui::GetID("DockSpace");
+		ImGuiDockNodeFlags Flag = ImGuiDockNodeFlags_PassthruCentralNode;
+		ImGui::DockSpace(DockSpaceID, ImVec2(0.f, 0.f), Flag);
 	}
 }
 

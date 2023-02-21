@@ -21,11 +21,9 @@ CImgui_UIEditor::CImgui_UIEditor(ID3D11Device * pDevice, ID3D11DeviceContext * p
 
 HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
-
 	m_pCanvas = nullptr;
 	m_pNode = nullptr;
-
-
+	
 	if (FAILED(Ready_TextureList()))
 	{
 		MSG_BOX("Failed To Ready Texture List : Imgui_UIEditor");
@@ -140,7 +138,6 @@ void CImgui_UIEditor::Imgui_FreeRender()
 			{
 				m_pCanvas->Set_RenderPass(selected_Pass);
 			}
-
 		}
 
 		/* Translation */

@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
+#include "LightCamera.h"
 
 #include "UI_ClientManager.h"
 
@@ -159,6 +160,10 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_LightCamera */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LightCamera"),
+		CLightCamera::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* UI_Manager */
 	if (FAILED(CUI_ClientManager::GetInstance()->Ready_UIs(m_pDevice, m_pContext)))

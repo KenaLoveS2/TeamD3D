@@ -36,7 +36,6 @@ private:
 	THREAD_DATA m_ThreadData[THREAD_COUNT];
 	CRITICAL_SECTION m_Critical_Section;
 
-
 private:
 	CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CLevel_GamePlay() = default;

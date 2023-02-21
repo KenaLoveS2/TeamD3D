@@ -17,8 +17,8 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 bool		g_bFrmaeLimit = true;
 bool		g_bFullScreen = false;
 bool		g_bNeedResizeSwapChain = false;
-unsigned int g_iWinSizeX = 1280;
-unsigned int g_iWinSizeY = 720;
+unsigned int g_iWinSizeX = 1600;
+unsigned int g_iWinSizeY = 900;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -249,9 +249,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		switch (wParam)
 		{
-		case VK_ESCAPE:
+		/*case VK_ESCAPE:
 			DestroyWindow(g_hWnd);
-			break;
+			break;*/
 		}
 		break;
 

@@ -47,6 +47,14 @@ public:
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
+	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
+		m_WorldMatrix = fWorldMatrix;
+	}
+	void	Set_WorldMatrix(_fmatrix WorldMatrix){
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+
+
 	void Set_State(STATE eState, _fvector vState) {
 		_float4		vTmp;
 		XMStoreFloat4(&vTmp, vState);
@@ -68,6 +76,10 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 
+	void Go_AxisY(_float fTimeDelta);
+	void Go_AxisNegY(_float fTimeDelta);
+	void Speed_Boost(_bool bKeyState, _float fValue);
+
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _float fTimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
@@ -84,7 +96,8 @@ public:
 	
 private:	
 	_float4x4				m_WorldMatrix;
-	TRANSFORMDESC			m_TransformDesc;
+	TRANSFORMDESC	m_TransformDesc;
+	_float					m_fInitSpeed = 0.f;
 
 
 public:

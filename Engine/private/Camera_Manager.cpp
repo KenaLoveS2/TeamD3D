@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Camera_Manager.h"
 #include "Camera.h"
 
@@ -38,6 +39,13 @@ CCamera* CCamera_Manager::Find_Camera(const _tchar * pCameraTag)
 		return nullptr;
 
 	return Pair->second;
+}
+
+_float* CCamera_Manager::Get_CameraFar()
+{
+	if (m_pWorkCamera == nullptr)		return nullptr;
+
+	return m_pWorkCamera->Get_Far();
 }
 
 void CCamera_Manager::Free()

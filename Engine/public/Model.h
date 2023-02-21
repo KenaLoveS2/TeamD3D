@@ -29,28 +29,6 @@ public:
 		wstring strPath_AMBIENT_OCCLUSION	; // aiTextureType_AMBIENT_OCCLUSION = 17,
 		wstring strPath_UNKNOWN				; // aiTextureType_UNKNOWN = 18,
 
-		/*
-		= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			= TEXT("")
-			*/
-
 		tagMaterialPath::tagMaterialPath()
 		{
 			wstring *p = (wstring*)this;
@@ -82,6 +60,7 @@ public:
 	class CBone* Get_BonePtr(const char* pBoneName);
 
 public:
+	HRESULT	Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
 	void Set_AnimIndex(_uint iAnimIndex);
 
 public:	

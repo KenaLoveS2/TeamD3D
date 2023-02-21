@@ -31,7 +31,6 @@ private:
 
 private:
 	_uint						m_iNumPasses = 0;
-	wstring m_wstrFilePath;
 	const D3D11_INPUT_ELEMENT_DESC* m_pElements; 
 	_uint m_iNumElements;
 

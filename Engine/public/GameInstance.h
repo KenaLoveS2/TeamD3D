@@ -1,7 +1,7 @@
 #pragma once
 
-/* ½Ì±ÛÅæ.  */
-/* Å¬¶óÀÌ¾ðÆ®¿Í ¿£ÁøÀÇ ¼ÒÅëÀ» À§ÇØ ¸¸µé¾îÁø Å¬·¡½º. */
+/* ï¿½Ì±ï¿½ï¿½ï¿½.  */
+/* Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?Å¬ï¿½ï¿½ï¿½ï¿½. */
 
 #include "Base.h"
 #include "Input_Device.h"
@@ -47,8 +47,19 @@ BEGIN(Engine)
 
 	public: /* For.Input_Device */
 		_byte Get_DIKeyState(_ubyte byKeyID);
-		_byte Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID);
-		_long Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMoveState);
+		_byte Get_DIMouseState(MOUSEKEYSTATE byMouseID);
+		_long Get_DIMouseMove(MOUSEMOVESTATE eMoveState);
+		_float		Get_KeyChargeTime(_ubyte byKeyID);
+		_bool		Mouse_Down(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Up(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_DoubleClick(MOUSEKEYSTATE MouseButton);
+		_bool		Mouse_Pressing(MOUSEKEYSTATE MouseButton);
+		_bool		Key_Pressing(_ubyte byKeyID);
+		_bool		Key_Down(_ubyte byKeyID);
+		_bool		Key_DoubleDown(_ubyte byKeyID);
+		_bool		Key_Up(_ubyte byKeyID);
+		_bool		Key_Charge(_ubyte byKeyID, _float fTime);
+		void		Reset_EveryKey(_float fTimeDelta);
 
 	public: /* For.Level_Manager */
 		HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);
@@ -63,21 +74,24 @@ BEGIN(Engine)
 		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
 								void* pArg = nullptr, CGameObject** ppObj = nullptr);
 		HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+		void SwitchOnOff_Shadow(_bool bSwitch);
+		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 
-		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
-		_uint Get_NumCopyPrototypes();
+
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
+		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 
-	public: /* For.PipeLine */
+public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
 		_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
+		_float4x4 Get_TransformFloat4x4_Inverse(CPipeLine::TRANSFORMSTATE eState);
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 		_float4 Get_CamPosition();
 
@@ -130,6 +144,8 @@ BEGIN(Engine)
 		HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
+		_float*		Get_CameraFar();
+
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;

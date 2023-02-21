@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "String_Manager.h"
 
 IMPLEMENT_SINGLETON(CString_Manager)

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\Layer.h"
 #include "GameObject.h"
 
@@ -23,6 +24,14 @@ void CLayer::Late_Tick(_float fTimeDelta)
 	for (auto& Pair : m_GameObjects)
 	{
 		Pair.second ? Pair.second->Late_Tick(fTimeDelta) : 0;
+	}
+}
+
+void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (auto& Pair : m_GameObjects)
+	{
+		Pair.second ? Pair.second->SwitchOnOff_Shadow(bSwitch) : 0;
 	}
 }
 
