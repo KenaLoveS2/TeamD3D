@@ -25,15 +25,16 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 	wstring		strDefault = L"Prototype_GameObject_";
 	static char szEffectTag[64] = "";
-// 	_tchar*   	szEffectTotalTag = L"";
+	static _int iCreateRectCnt = 0;
 
 	static _int  iSelectEffectType = 0;
 	static _int  iCreateCnt = 1;
 	static _bool bIsCreate = false;
 
+	_tchar*		 szEffectCloneTag = L"";
+
 	// 1. Texture Type Select
-	const char* szEffectType[] = { " ~SELECT_EFFECT TYPE~ ",
-		" EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
+	const char* szEffectType[] = { " ~SELECT_EFFECT TYPE~ ", " EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
 	ImGui::BulletText("EffectType : "); ImGui::Combo("##EffectType", &iSelectEffectType, szEffectType, IM_ARRAYSIZE(szEffectType));
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
@@ -44,30 +45,40 @@ void CImgui_Effect::Imgui_RenderWindow()
 		bIsCreate = false;
 		break;
 
-	case EFFECT_PLANE : 
+	case EFFECT_PLANE:
 		ImGui::NewLine();
 		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
 		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectTag, 64); ImGui::SameLine();
-		
+
 		if (ImGui::Button("Confirm"))
 		{
 			wstring	strEffectTag(szEffectTag, &szEffectTag[64]);
 			strDefault = strDefault + strEffectTag;
 
-			if(m_bIsEffectLayer[EFFECT_PLANE-1] == false)
+			if (FAILED(pGameInstance->Add_Prototype(strDefault.c_str(), CEffect::Create(m_pDevice, m_pContext))))
 			{
-				if (FAILED(pGameInstance->Add_Prototype(strDefault.c_str(), CEffect::Create(m_pDevice, m_pContext))))
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			for (_int i = 0; i < iCreateCnt; ++i)
+			{
+				_tchar   szDefault[64] = L"";
+				wsprintf(szDefault, L"Effect_Plane_%d", iCreateRectCnt);
+
+				_tchar* szEffectCloneTag = CUtile::Create_String(szDefault);
+				pGameInstance->Add_String(szEffectCloneTag);
+
+				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", strDefault.c_str(), szEffectCloneTag)))
 				{
 					RELEASE_INSTANCE(CGameInstance);
 					return;
 				}
-				m_bIsEffectLayer[EFFECT_PLANE-1] = true;
+				iCreateRectCnt++;
 			}
 
-			for (_int i = 0; i < iCreateCnt; ++i)
-				pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", strDefault.c_str(), L"Effect_Plane");
-
 			bIsCreate = true;
+			m_bIsRectLayer = true;
 		}
 
 		ImGui::Separator();
@@ -75,14 +86,13 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 		if (bIsCreate == true)
 			CreateEffect_Plane();
-
 		break;
 
 	case EFFECT_PARTICLE:
 		ImGui::NewLine();
 		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
 		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectTag, 64); ImGui::SameLine();
-		
+
 		if (ImGui::Button("Confirm"))
 		{
 		}
@@ -97,7 +107,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::NewLine();
 		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
 		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectTag, 64); ImGui::SameLine();
-		
+
 		if (ImGui::Button("Confirm"))
 		{
 		}
@@ -130,15 +140,15 @@ void CImgui_Effect::Set_ColorValue(OUT _float4& vColor)
 
 	static _float4 color = _float4(vColor.x / 255.0f, vColor.y / 255.0f, vColor.z / 255.0f, vColor.w / 255.0f);
 
- 	ImGui::ColorPicker4("CurColor##4", (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
- 	ImGui::ColorEdit4("Diffuse##2f", (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
+	ImGui::ColorPicker4("CurColor##4", (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##2f", (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
 
 	vColor = _float4(color.x, color.y, color.z, color.w);
 }
 
 void CImgui_Effect::CreateEffect_Plane()
 {
-	if (m_bIsEffectLayer[EFFECT_PLANE-1] == false)
+	if (m_bIsRectLayer == false)
 		return;
 
 	static _int iTextureRender = 0;
@@ -190,7 +200,7 @@ void CImgui_Effect::CreateEffect_Plane()
 	if (ImGui::RadioButton("BlendType_OneEffect", &iBlendType, 2))
 		m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 	ImGui::Separator();
-	
+
 	ImGui::BulletText("fVector : ");	 ImGui::InputFloat4("##fVector", (_float*)&fVector);
 	m_eEffectDesc.vScale = XMVectorSet(fVector.x, fVector.y, fVector.z, fVector.w);
 
@@ -234,7 +244,7 @@ void CImgui_Effect::CreateEffect_Plane()
 void CImgui_Effect::CreateEffect_Particle()
 {
 	ImGui::BulletText("CreateEffect_Particle");
-	
+
 }
 
 void CImgui_Effect::CreateEffect_Mesh()

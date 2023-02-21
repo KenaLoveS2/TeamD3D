@@ -26,8 +26,8 @@ public:
 private:
 	CEffect_Base* m_pEffect = nullptr;
 	CEffect_Base::EFFECTDESC m_eEffectDesc;
+
 	_bool m_bIsRectLayer = false;
-	
 	_bool m_bIsEffectLayer[EFFECT_MESH] = { false, false,false };
 
 public:
