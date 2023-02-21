@@ -1,11 +1,1 @@
-{
-  "0_LayerTag": "LayerEnviroment",
-  "1_Data": [
-    {
-      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
-      "1_ModelTag": "Prototype_Component_Model_AnimalStatues_01_OwlStatue",
-      "2_TextureTag": "",
-      "3_CloneTag": "Test_Tt",   
-      "4_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]
-    }
-  ]}
+{"0_LayerTag":"Layer_Enviroment","1_Data":[{"0_ProtoTag":"Prototype_GameObject_Cave_Rock","1_ModelTag":"Prototype_Component_Model_AnimalStatues_01_OwlStatue","2_TextureTag":"","3_CloneTag":"Test_One","4_Transform State":[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0]},{"0_ProtoTag":"Prototype_GameObject_Cave_Rock","1_ModelTag":"Prototype_Component_Model_GodRock","2_TextureTag":"","3_CloneTag":"Test_Two","4_Transform State":[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,9.493986129760742,0.0,0.0,1.0]}]}

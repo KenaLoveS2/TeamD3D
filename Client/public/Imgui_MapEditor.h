@@ -31,15 +31,15 @@ private:
 	void			Imgui_CreateEnviromentObj();
 	void			Imgui_Save_Load_Json();
 	void			Imgui_Save_Func();
-	void			Imgui_Load_Func();
+	HRESULT			Imgui_Load_Func();
 
 
 private: /*For_Tool*/
 	string		m_strChapter[MAX_CHATERNUM];
 	wstring		m_wstrProtoName  = TEXT("");
 	wstring		m_wstrModelName = TEXT("");
-	char		m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
-	wstring		m_wstrCloneName  = TEXT("");
+	wstring		m_wstrTexturelName = TEXT("");
+	char			m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
 private:	/*Use_Data*/
 	_int	m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
