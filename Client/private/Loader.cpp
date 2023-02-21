@@ -324,17 +324,23 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading_Model..."));
 
-	_matrix			PivotMatrix = XMMatrixIdentity();
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
-		return E_FAIL;
+	//_matrix			PivotMatrix = XMMatrixIdentity();
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
+	//	return E_FAIL;
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
-		return E_FAIL;
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
+	//	return E_FAIL;
 
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_MapOne",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/MapOne/MapOne.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	
+	LoadNonAnimModel(LEVEL_MAPTOOL);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Coll.."));
 	/* For.Prototype_Component_Collider_AABB*/
