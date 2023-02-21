@@ -80,7 +80,10 @@ BEGIN(Engine)
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 
+		map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
 
+		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
+		_uint Get_NumCopyPrototypes();
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);

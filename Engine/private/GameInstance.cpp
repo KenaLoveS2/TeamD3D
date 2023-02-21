@@ -361,7 +361,7 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 
 map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 {
-	assert(nullptr != m_pObject_Manager&& "CGameInstance::Get_ProtoTypeObjects()");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Get_ProtoTypeObjects()");
 	return m_pObject_Manager->Get_ProtoTypeObjects();
 }
 
@@ -378,26 +378,9 @@ CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
 	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
 }
 
-
 vector<map<const _tchar*, class CGameObject*>>& CGameInstance::Get_CopyPrototypes()
 {	
 	if (m_pObject_Manager == nullptr) { 
-		vector<map<const _tchar*, class CGameObject*>> Dummy;
-		return Dummy;
-	}
-
-	return m_pObject_Manager->Get_CopyPrototypes();
-}
-
-_uint CGameInstance::Get_NumCopyPrototypes()
-{
-	if (m_pObject_Manager == nullptr) return 0;
-	return m_pObject_Manager->Get_NumCopyPrototypes();
-}
-
-vector<map<const _tchar*, class CGameObject*>>& CGameInstance::Get_CopyPrototypes()
-{
-	if (m_pObject_Manager == nullptr) {
 		vector<map<const _tchar*, class CGameObject*>> Dummy;
 		return Dummy;
 	}

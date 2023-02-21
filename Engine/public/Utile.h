@@ -19,8 +19,8 @@ public:
 
 	static  _tchar* StringToWideChar(string str);
 
-	static _tchar* Create_String(_tchar *pText);
-	static char* Create_String(char *pText);
+	static _tchar* Create_String(const _tchar *pText);
+	static char* Create_String(const char *pText);
 
 	static _float  Get_RandomFloat(_float fMinValue, _float fMaxValue);
 	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);

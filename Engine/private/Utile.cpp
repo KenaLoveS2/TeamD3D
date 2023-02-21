@@ -63,7 +63,9 @@ _tchar * CUtile::StringToWideChar(string str)
 	wchar_t* t = new wchar_t[origsize];
 	mbstowcs_s(&convertedChars, t, origsize, str.c_str(), _TRUNCATE);
 	return (_tchar*)t;
-}_tchar* CUtile::Create_String(_tchar *pText)
+}
+
+_tchar* CUtile::Create_String(const _tchar *pText)
 {
 	_int iSize = wcslen(pText) + 1;
 
