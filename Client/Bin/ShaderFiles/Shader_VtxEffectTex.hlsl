@@ -65,109 +65,100 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (g_iTotalDTextureComCnt == 1)
 	{
 		vector albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-
 		if (albedo.a < 0.1f)
 			discard;
-
 		Out.vColor = albedo;
 	}
-	else if (g_iTotalDTextureComCnt == 2)
+	if (g_iTotalDTextureComCnt == 2)
 	{
-		vector albedo[2];
-		albedo[0] = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-		albedo[1] = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
+		//float4 albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		//float4 albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
 
-		for (int i = 0; i < g_iTotalDTextureComCnt; ++i)
-		{
-			if (albedo[i].a < 0.1f)
-				discard;
-		}
-
-		Out.vColor = albedo[0] * albedo[1] * 2.0f;
+		//float  FinalAlpha = (albedo.a * g_vColor.a);
+		//float3 emissive = ((albedo.rgb * g_vColor.rgb) + albedo1.rgb)*FinalAlpha;
+		//float3 finalColor = emissive;
+		//Out.vColor = float4(finalColor, FinalAlpha);
+		//float4 vmixcolor = mix(albedo, albedo1);
 	}
-	else if (g_iTotalDTextureComCnt == 3)
+	if (g_iTotalDTextureComCnt == 3)
 	{
-		vector albedo[3];
-		albedo[0] = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-		albedo[1] = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
-		albedo[2] = g_DiffuseTexture[2].Sample(LinearSampler, In.vTexUV);
+		vector albedo0 = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		vector albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
+		vector albedo2 = g_DiffuseTexture[2].Sample(LinearSampler, In.vTexUV);
 
-		for (int i = 0; i < g_iTotalDTextureComCnt; ++i)
-		{
-			if (albedo[i].a < 0.1f)
-				discard;
-		}
-
-		Out.vColor = albedo[0] * albedo[1] * albedo[2] * 2.0f;
+		Out.vColor = albedo0;
+			//Out.vColor = albedo0 * albedo1* albedo2 + albedo0 * (1.f - albedo1 *albedo2);
 	}
 
 	/////////
 
-	if (g_iTotalMTextureComCnt == 1)
-	{
-		vector vMaskTex = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+	//if (g_iTotalMTextureComCnt == 1)
+	//{
+	//	vector vMaskTex = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
 
-		if (g_BlendType == 2)
-			Out.vColor = Out.vColor * vMaskTex *  g_vColor;
-		else
-			Out.vColor = Out.vColor * vMaskTex + (1.0f - g_vColor);
-	}
-	else if (g_iTotalMTextureComCnt == 2)
-	{
-		vector vMaskTex[2];
-		vMaskTex[0] = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
-		vMaskTex[1] = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
+	//	if (g_BlendType == 2)
+	//		Out.vColor = Out.vColor * vMaskTex * g_vColor;
+	//	else
+	//		Out.vColor = (Out.vColor * vMaskTex) * g_vColor + (Out.vColor * vMaskTex) * (1.f - g_vColor);
 
-		vector masktex = vMaskTex[0] * vMaskTex[1] * 2.0f;
-		if (g_BlendType == 2)
-			Out.vColor = Out.vColor * masktex * g_vColor;
-		else
-			Out.vColor = Out.vColor * masktex + (1.0f - g_vColor);
-	}
-	else if (g_iTotalMTextureComCnt == 3)
-	{
-		vector vMaskTex[3];
-		vMaskTex[0] = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
-		vMaskTex[1] = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
-		vMaskTex[2] = g_MaskTexture[2].Sample(LinearSampler, In.vTexUV);
+	//}
+	//else if (g_iTotalMTextureComCnt == 2)
+	//{
+	//	vector maskTex0 = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+	//	vector maskTex1 = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
+	//	//	Out.vColor = Out.vColor * masktex * g_vColor;
+	//	vector masktex = maskTex0 * maskTex1;
 
-		vector masktex = vMaskTex[0] * vMaskTex[1] * vMaskTex[2] * 2.0f;
-		if (g_BlendType == 2)
-			Out.vColor = Out.vColor * masktex * g_vColor;
-		else
-			Out.vColor = Out.vColor * masktex + (1.0f - g_vColor);
-	}
+	//	//if (g_BlendType == 2)
+	//	//	Out.vColor = Out.vColor;
+	//	//else
+	//	//	Out.vColor = (Out.vColor * masktex) * g_vColor + (Out.vColor * masktex) * (1.f - g_vColor);
+	//}
+	//else if (g_iTotalMTextureComCnt == 3)
+	//{
+	//	vector vMaskTex[3];
+	//	vMaskTex[0] = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+	//	vMaskTex[1] = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
+	//	vMaskTex[2] = g_MaskTexture[2].Sample(LinearSampler, In.vTexUV);
+
+	//	vector masktex = vMaskTex[0] * vMaskTex[1] * vMaskTex[2];
+	//	if (g_BlendType == 2)
+	//		Out.vColor = Out.vColor * masktex * g_vColor;
+	//	else
+	//		Out.vColor = (Out.vColor * masktex) * g_vColor + (Out.vColor * masktex) * (1.f - g_vColor);
+	//}
+
 
 	////
-	if (g_BlendType == 0) // Single
-	{
-		float2		vTexUV;
-		vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-		vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	//if (g_TextureRenderType == 0) // Single
+	//{
+	//	float2		vTexUV;
+	//	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	//	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-		vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	//	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-		float		fOldViewZ = vDepthDesc.y * 300.f;
-		float		fViewZ = In.vProjPos.w;
+	//	float		fOldViewZ = vDepthDesc.y * 300.f;
+	//	float		fViewZ = In.vProjPos.w;
 
-		Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
-	}
-	else // Sprite
-	{
-		In.vTexUV.x = In.vTexUV.x * g_WidthFrame / g_SeparateWidth;
-		In.vTexUV.y = In.vTexUV.y + g_HeightFrame / g_SeparateHeight;
+	//	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	//}
+	//else // Sprite
+	//{
+	//	In.vTexUV.x = In.vTexUV.x * g_WidthFrame / g_SeparateWidth;
+	//	In.vTexUV.y = In.vTexUV.y + g_HeightFrame / g_SeparateHeight;
 
-		float2		vTexUV;
-		vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-		vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	//	float2		vTexUV;
+	//	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	//	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-		vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	//	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-		float		fOldViewZ = vDepthDesc.y * 300.f;
-		float		fViewZ = In.vProjPos.w;
+	//	float		fOldViewZ = vDepthDesc.y * 300.f;
+	//	float		fViewZ = In.vProjPos.w;
 
-		Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
-	}
+	//	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	//}
 
 	return Out;
 }

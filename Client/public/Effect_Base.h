@@ -41,7 +41,7 @@ public:
 		
 		// Color & Scale
 		_vector	vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		_vector	vScale;
+		_vector	vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// Time 
 		_float  fTimeDelta = 0.0f;

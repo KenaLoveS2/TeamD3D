@@ -43,8 +43,35 @@ void CEffect::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.IsBillboard == true)
-		__super::BillBoardSetting(m_eEFfectDesc.vScale);
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+			m_fTimeDelta = 0.0;
+
+			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			{
+				if (m_eEFfectDesc.fTimeDelta < 1.f)
+					m_eEFfectDesc.fHeightFrame++;
+				else
+					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+				m_eEFfectDesc.fWidthFrame = 0.f;
+
+				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					m_eEFfectDesc.fHeightFrame = 0.f;
+			}
+		}
+	}
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -54,8 +81,6 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if(nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()
@@ -166,13 +191,18 @@ HRESULT CEffect::SetUp_ShaderResources()
 		return E_FAIL;
 
 	// MaxCnt == 10
+
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+	{
 		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_uint)m_eEFfectDesc.fFrame[i])))
 			return E_FAIL;
+	}
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+	{
 		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", (_uint)m_eEFfectDesc.fMaskFrame[i])))
 			return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 

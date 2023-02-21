@@ -435,6 +435,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 		{
 			if (IsBillboard == true)
 				m_eEffectDesc.IsBillboard = true;
+			else
+				m_eEffectDesc.IsBillboard = false;
 
 			pEffect->Set_EffectDesc(m_eEffectDesc);
 		}
