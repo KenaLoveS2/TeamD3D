@@ -298,6 +298,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\ImguiObject.cpp" />
     <ClCompile Include="..\private\Imgui_Manager.cpp" />
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp" />
+    <ClCompile Include="..\private\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="..\private\Input_Device.cpp" />
     <ClCompile Include="..\private\Layer.cpp" />
     <ClCompile Include="..\private\Level.cpp" />
@@ -396,7 +397,6 @@ call Copy.bat</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\public\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -405,6 +405,7 @@ call Copy.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\public\Json\ReadMe.txt" />

@@ -15,9 +15,9 @@ public:
 	void	Clear();
 
 	// Entry Point for Post Processing
-	void	PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTargetView* pLDRRTV);
+	void		PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTargetView* pLDRRTV);
 	_bool	IsPostFXOn() const { return m_bOn; }
-	void	Imgui_Render();
+	void		Imgui_Render();
 
 private:
 	void	DownScale(ID3D11ShaderResourceView* pHDRSRV);
@@ -65,14 +65,14 @@ private:
 	ID3D11UnorderedAccessView* m_pPrevAvgLumUAV = nullptr;
 	ID3D11ShaderResourceView* m_pPrevAvgLumSRV = nullptr;
 
-	_uint						m_iWidth = 0;
-	_uint						m_iHeight = 0;
-	_uint						m_iDownScaleGroups = 0;
-	_float						m_fMiddleGrey = 0.0025f;
-	_float						m_fWhite = 1.5f;
+	_uint							m_iWidth = 0;
+	_uint							m_iHeight = 0;
+	_uint							m_iDownScaleGroups = 0;
+	_float						m_fMiddleGrey = 10.f;
+	_float						m_fWhite = 3.f;
 	_float						m_fAdaptation = 0.f;
-	_float						m_fBloomThreshold = 0.f;
-	_float						m_fBloomScale = 0.f;
+	_float						m_fBloomThreshold = 1.f;
+	_float						m_fBloomScale = 0.5f;
 
 	typedef struct
 	{

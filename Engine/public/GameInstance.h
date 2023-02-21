@@ -70,7 +70,7 @@ BEGIN(Engine)
 		class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
 
 		HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+		class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
 								void* pArg = nullptr, CGameObject** ppObj = nullptr);
 		HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
