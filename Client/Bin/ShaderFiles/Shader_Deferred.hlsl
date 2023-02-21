@@ -15,7 +15,7 @@ vector			g_vLightSpecular;
 vector			g_vCamPosition;
 
 vector			g_vMtrlAmbient = (vector)1.f;
-vector			g_vMtrlSpecular = (vector)1.f;
+vector			g_vMtrlSpecular = (vector)0.2f;
 
 float				g_fTexcelSizeX = 8000.f;
 float				g_fTexcelSizeY = 4500.f;
@@ -94,7 +94,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
-	// ambient texture가 들어간다면?
 	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
 	Out.vShade.a = 1.f;
 
@@ -119,7 +118,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar);
-
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -167,7 +165,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar) * fAtt;
-
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -205,7 +202,6 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	// 월드 상
 	vPosition = mul(vPosition, g_ViewMatrixInv);
-
 	vPosition = mul(vPosition, g_LightViewMatrix);
 
 	vector	vUVPos = mul(vPosition, g_LightProjMatrix);
