@@ -691,7 +691,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>97. Default</Filter>
     </ClCompile>
-    <ClCompile Include="..\public\Imgui_ShaderEditor.cpp">
+    <ClCompile Include="..\private\Imgui_ShaderEditor.cpp">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -701,6 +701,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>01.Utility\03.Components\01.Renderer</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl">
+      <Filter>01.Utility\13. HDR</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

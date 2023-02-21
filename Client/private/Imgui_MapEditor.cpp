@@ -94,7 +94,7 @@ void CImgui_MapEditor::Imgui_SelectOption()
 #pragma endregion ~생성시 사용되는 모델 이름
 
 #pragma region 생성시 사용되는 클론 이름짓기
-	ImGui::InputText("Clone_Tag ", m_strCloneTag, CLONE_TAG_BUFF_SIZE);
+	ImGui::InputText("Clone_Tag ", m_strCloneTag ,CLONE_TAG_BUFF_SIZE);
 	
 #pragma endregion ~생성시 사용되는 모델 이름
 
@@ -122,13 +122,14 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 		lstrcpy(EnviromentDesc.szProtoObjTag, m_wstrProtoName.c_str());
 		lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
 		//EnviromentDesc.szTextureTag = TEXT("");		// 나중에 채워
-		
-		m_wstrCloneName = CUtile::CharToWideChar(m_strCloneTag);
+		string			strCloneTag = m_strCloneTag;
+		_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(pCloneName);
 
 		if (FAILED(pGameInstace->Clone_GameObject(LEVEL_MAPTOOL, 
 			TEXT("Layer_Enviroment"), 
-			m_wstrProtoName.c_str(),
-			m_wstrCloneName.c_str(), &EnviromentDesc)))
+			EnviromentDesc.szProtoObjTag,
+			pCloneName, &EnviromentDesc)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 	}
 
@@ -197,11 +198,11 @@ void CImgui_MapEditor::Imgui_Save_Func()
 	
 	_float4x4	fWroldMatrix;
 	_float		fElement = 0.f;
-	char*		szLayerTag = "LayerEnviroment";
+	char*		szLayerTag = "Layer_Enviroment";
 	char*		szProtoObjTag = "";
 	char*		szModelTag = "";
 	char*		szTextureTag = "";
-	string		szCloneTag = "";
+	char*		szCloneTag = "";
 
 	jEnviromentObjList["0_LayerTag"] = szLayerTag;
 	
@@ -211,7 +212,6 @@ void CImgui_MapEditor::Imgui_Save_Func()
 			continue;
 
 		Json jChild;
-		m_wstrCloneName = const_cast<_tchar*>(pObject.second->Get_ObjectCloneName());
 		
 		CEnviromentObj::ENVIROMENT_DESC Desc;
 		ZeroMemory(&Desc, sizeof(Desc));
@@ -220,7 +220,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		szProtoObjTag =CUtile::WideCharToChar(Desc.szProtoObjTag);
 		szModelTag = CUtile::WideCharToChar(Desc.szModelTag);
 		szTextureTag = CUtile::WideCharToChar(Desc.szTextureTag);
-		szCloneTag.assign(m_wstrCloneName.begin(),m_wstrCloneName.end());
+		szCloneTag = CUtile::WideCharToChar(const_cast<_tchar*>(pObject.second->Get_ObjectCloneName()));
 
 		jChild["0_ProtoTag"] = szProtoObjTag;
 		jChild["1_ModelTag"] = szModelTag;
@@ -242,6 +242,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		Safe_Delete_Array(szProtoObjTag);
 		Safe_Delete_Array(szModelTag);
 		Safe_Delete_Array(szTextureTag);
+		Safe_Delete_Array(szCloneTag);
 	}
 
 
@@ -252,40 +253,74 @@ void CImgui_MapEditor::Imgui_Save_Func()
 	RELEASE_INSTANCE(CGameInstance);
 }
 
-void CImgui_MapEditor::Imgui_Load_Func()
+HRESULT CImgui_MapEditor::Imgui_Load_Func()
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
+	CGameObject*	pLoadObject = nullptr;
 	ifstream		file("../Bin/Data/EnviromentObj_Json/EnviroMent.json");
 	Json	jLoadEnviromentObjList;
 
 	file >> jLoadEnviromentObjList;
 	file.close();
 
-
 	_float4x4	fWroldMatrix;
+	_tchar*		wszLayerTag = L"";
 	string		szLayerTag = "";
 	string		szProtoObjTag = "";
 	string		szModelTag = "";
 	string		szTextureTag = "";
-	
+
+	string		szCloneTag = "";
+	_tchar*		wszCloneTag = L"";
+
 	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
+	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
+	pGameInstance->Add_String(wszLayerTag);
+
 
 	for (auto jLoadChild : jLoadEnviromentObjList["1_Data"])
 	{
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
 		jLoadChild["2_TextureTag"].get_to<string>(szTextureTag);
-		
+		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		float	fElement = 0.f;
 		int k = 0;
 	
-		for (float fElement : jLoadChild["3_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
+		for (float fElement : jLoadChild["4_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
+
+		ZeroMemory(&EnviromentDesc,sizeof(EnviromentDesc));
+		m_wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
+		m_wstrModelName.assign(szModelTag.begin(), szModelTag.end());
+		m_wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
+		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
+		pGameInstance->Add_String(wszCloneTag);
+
+		lstrcpy(EnviromentDesc.szProtoObjTag , m_wstrProtoName.c_str());
+		lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
+		lstrcpy(EnviromentDesc.szTextureTag, m_wstrTexturelName.c_str());
+
+		
+
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL,
+			wszLayerTag,
+			EnviromentDesc.szProtoObjTag,
+			wszCloneTag, &EnviromentDesc, &pLoadObject)))
+			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
+
+		assert(pLoadObject != nullptr && "pLoadObject Issue");
+		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
+
 	}
 
-	_bool b = false;
+	
+	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

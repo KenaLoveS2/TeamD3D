@@ -134,3 +134,8 @@ void CGameObject::Imgui_RenderComponentProperties()
 		com.second->Imgui_RenderProperty();
 	}
 }
+
+void CGameObject::Set_Position(_float4& vPosition)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));
+}

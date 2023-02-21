@@ -52,6 +52,7 @@ private:
 	class CLevel_Manager*			m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
 	class CShader*							m_pShader = nullptr;
+	class CShader*							m_pShader_PostProcess = nullptr;
 	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
 
@@ -66,6 +67,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_AlphaBlend();
 	HRESULT Render_HDR();
+	HRESULT Render_PostProcess();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
