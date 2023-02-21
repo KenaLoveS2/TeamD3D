@@ -42,7 +42,14 @@ public:
 		_vector	vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		_vector	vScale;
 
-		_bool		IsTrigger = false;
+		// Time 
+		_float  fTimeDelta = 0.0f;
+
+		// Billboard 적용
+		_bool	IsBillboard = false;
+
+		// Trigger 적용
+		_bool	IsTrigger = false;
 
 	}EFFECTDESC;
 

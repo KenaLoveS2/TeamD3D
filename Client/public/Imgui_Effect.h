@@ -15,13 +15,20 @@ public:
 	virtual void    Imgui_RenderWindow() override;
 
 public:
+	void	LayerEffects_ListBox();
+	void	Set_ColorValue(OUT _float4& vColor);
+
+public:
 	void	CreateEffect_Plane();
 	void	CreateEffect_Particle();
 	void	CreateEffect_Mesh();
 
 private:
-//	CEffect_Base* m_pEffect = nullptr;
+	CEffect_Base* m_pEffect = nullptr;
 	CEffect_Base::EFFECTDESC m_eEffectDesc;
+	_bool m_bIsRectLayer = false;
+	
+	_bool m_bIsEffectLayer[EFFECT_MESH] = { false, false,false };
 
 public:
 	static CImgui_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);

@@ -127,6 +127,9 @@
     <Filter Include="01.Levels\03. MapTool">
       <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Tool">
+      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -231,10 +234,6 @@
     <ClInclude Include="..\public\Imgui_UIEditor.h">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
-    <ClInclude Include="..\public\Imgui_Effect.h">
-      <Filter>02.GameObjects\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
@@ -257,6 +256,12 @@
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LightCamera.h" />
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_Effect.h">
+      <Filter>02.GameObjects\Effect\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -346,9 +351,6 @@
     <ClCompile Include="..\private\Imgui_UIEditor.cpp">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Imgui_Effect.cpp">
-      <Filter>02.GameObjects\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
@@ -371,6 +373,9 @@
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LightCamera.cpp" />
+    <ClCompile Include="..\private\Imgui_Effect.cpp">
+      <Filter>02.GameObjects\Effect\Tool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
