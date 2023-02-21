@@ -94,7 +94,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-	if (pGameInstance->Get_DIKeyState(DIK_F8))
+	if (pGameInstance->Get_DIKeyState(DIK_F8) & 0x8000)
 	{
 		m_bDebugRender = !m_bDebugRender;
 	}
@@ -204,21 +204,24 @@ HRESULT CRenderer::Initialize_Prototype()
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
 #ifdef _DEBUG
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 50.f, 50.f, 100.f, 100.f)))
+
+	_float fSizeX = 200.f, fSizeY = 200.f;
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), fSizeX * 0.5f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), 50.0f, 150.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), fSizeX * 0.5f, (fSizeY * 0.5f) + fSizeY , fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 50.0f, 250.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), fSizeX * 0.5f, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
 		return E_FAIL;
 
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 150.0f, 50.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 150.0f, 150.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 250.0f, 50.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), (fSizeX * 0.5f) + (fSizeX * 2.f) , fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Static_Shadow"), 250.0f, 150.f, 100.f, 100.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Static_Shadow"), (fSizeX * 0.5f) + (fSizeX * 2.f), (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
 #endif
@@ -399,6 +402,12 @@ HRESULT CRenderer::Render_Blend()
 	//	return E_FAIL;
 
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance)
+
+	if(pInst->Get_CameraFar() != nullptr)
+	{
+		if (FAILED(m_pShader->Set_RawValue("g_fFar", pInst->Get_CameraFar(), sizeof(float))))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
