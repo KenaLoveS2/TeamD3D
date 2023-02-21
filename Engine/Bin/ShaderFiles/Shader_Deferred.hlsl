@@ -17,6 +17,9 @@ vector			g_vCamPosition;
 vector			g_vMtrlAmbient = (vector)1.f;
 vector			g_vMtrlSpecular = (vector)1.f;
 
+float				g_fTexcelSizeX = 8000.f;
+float				g_fTexcelSizeY = 4500.f;
+
 Texture2D<float4>		g_Texture; /* 디버그용텍스쳐*/
 
 Texture2D<float4>		g_NormalTexture;
@@ -175,13 +178,15 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	vector		vDiffuse  = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vShade	  = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
 	// vDepth.b 는 Emissive Color를 계산됩니다.
-	Out.vColor = CalcHDRColor(vDiffuse, vDepth.b) * vShade + vSpecular;
+	Out.vColor = CalcHDRColor(vDiffuse, vDepthDesc.b) * vShade + vSpecular;
 
-	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	if (Out.vColor.a == 0.0f)
+		discard;
+
 	float		fViewZ = vDepthDesc.y * g_fFar;
 
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
@@ -208,13 +213,26 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
 	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
 
+	float2 TexcelSize = float2(g_fTexcelSizeX, g_fTexcelSizeY);
+	float fShadowRate = 0.f;
+
 	vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
 
-	if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
-		Out.vColor *= 0.6f;
+	for (int y = -1; y <= 1; ++y)
+	{
+		for (int x = -1; x <= 1; ++x)
+		{
+			float2 offset = float2(x, y) * TexcelSize;
+			vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
+			if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
+				fShadowRate += 1.f;
+		}
+	}
 
-	if (Out.vColor.a == 0.0f)
-		discard;
+	fShadowRate /= 9.f;
+	fShadowRate *= 0.3f;
+
+	Out.vColor *= (1.f - fShadowRate);
 
 	return Out;
 }

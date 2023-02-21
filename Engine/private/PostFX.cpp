@@ -6,10 +6,12 @@ IMPLEMENT_SINGLETON(CPostFX)
 
 CPostFX::CPostFX()
 {
+	m_bOn = true;
 }
 
 HRESULT CPostFX::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
+	Clear();
 	if (m_pDevice == nullptr)
 	{
 		m_pDevice = pDevice;
@@ -365,23 +367,23 @@ void CPostFX::Imgui_Render()
 
 	static _float2 middleGreyMinMax{ 0.f, 20.f };
 	ImGui::InputFloat2("MiddleGreyMinMax", (float*)&middleGreyMinMax);
-	ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, middleGreyMinMax.x, middleGreyMinMax.y);
+	ImGui::DragFloat("MiddleGrey", &m_fMiddleGrey, 0.01f, middleGreyMinMax.x, middleGreyMinMax.y);
 
 	static _float2 whiteMinMax{ 0.f, 5.f };
 	ImGui::InputFloat2("WhiteMinMax", (float*)&whiteMinMax);
-	ImGui::SliderFloat("White", &m_fWhite, whiteMinMax.x, whiteMinMax.y);
+	ImGui::DragFloat("White", &m_fWhite, 0.01f, whiteMinMax.x, whiteMinMax.y);
 
 	static _float2 adaptationMinMax{ 0.f, 10.f };
 	ImGui::InputFloat2("adaptationMinMax", (float*)&adaptationMinMax);
-	ImGui::SliderFloat("Adaptation", &m_fAdaptation, adaptationMinMax.x, adaptationMinMax.y);
+	ImGui::DragFloat("Adaptation", &m_fAdaptation, 0.01f, adaptationMinMax.x, adaptationMinMax.y);
 
 	static _float2 BloomThresholdMinMax{ 0.f, 2.5f };
 	ImGui::InputFloat2("BoomThresholdMinMax", (float*)&BloomThresholdMinMax);
-	ImGui::SliderFloat("BoomThreshold", &m_fBloomThreshold, BloomThresholdMinMax.x, BloomThresholdMinMax.y);
+	ImGui::DragFloat("BoomThreshold", &m_fBloomThreshold, 0.01f, BloomThresholdMinMax.x, BloomThresholdMinMax.y);
 
 	static _float2 BloomScaleMinMax{ 0.f, 2.f };
 	ImGui::InputFloat2("BloomScaleMinMax", (float*)&BloomScaleMinMax);
-	ImGui::SliderFloat("BloomScale", &m_fBloomScale, BloomScaleMinMax.x, BloomScaleMinMax.y);
+	ImGui::DragFloat("BloomScale", &m_fBloomScale, 0.01f, BloomScaleMinMax.x, BloomScaleMinMax.y);
 }
 
 void CPostFX::DownScale(ID3D11ShaderResourceView * pHDRSRV)

@@ -7,7 +7,7 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrmaeLimit;
 
-#define FOR_MAPTOOL
+//#define FOR_MAPTOOL
 
 namespace Client
 {
@@ -25,6 +25,3 @@ extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
 
 using namespace Client;
-
-
-
