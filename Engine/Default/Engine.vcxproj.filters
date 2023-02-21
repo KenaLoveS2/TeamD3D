@@ -466,6 +466,9 @@
     <ClInclude Include="..\public\Imgui_ShaderEditor.h">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui\Imgui_stdlib.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -693,6 +696,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Imgui_ShaderEditor.cpp">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

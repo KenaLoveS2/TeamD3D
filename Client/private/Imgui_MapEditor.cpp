@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "Utile.h"
 
+
 #include "Json/json.hpp"
 #include <fstream>
 
@@ -52,88 +53,140 @@ void CImgui_MapEditor::Imgui_SelectOption()
 
 #pragma region 생성시 사용되는 프로토 타입
 	if (ImGui::CollapsingHeader("ProtoType"))
-	{	
+	{
+		static string FindProtoObjectlTag = "";		// ! == No Find
+		ImGui::InputText("Find_ProtoObjectlTag", &FindProtoObjectlTag);
+
 		if (ImGui::BeginListBox("#GameObject_Proto#"))
 		{
 			const bool bObjectSelected = false;
 			for (auto& ProtoPair : CGameInstance::GetInstance()->Get_ProtoTypeObjects())
 			{
-				if(dynamic_cast<CEnviromentObj*>(ProtoPair.second) ==nullptr )
+				if (dynamic_cast<CEnviromentObj*>(ProtoPair.second) == nullptr)
 					continue;
 
 				char szViewName[512], szProtoName[256];
-				CUtile::WideCharToChar(ProtoPair.first, szProtoName);
-				sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
-				if (ImGui::Selectable(szViewName, bObjectSelected))
-					m_wstrProtoName = ProtoPair.first;			// 리스트 박스를 누르면 현재 프로토 타입 이름을 가져옴
+
+				if (FindProtoObjectlTag != "")
+				{
+					wstring  Temp = ProtoPair.first;
+					string str = CUtile::WstringToString(Temp);
+
+					if (str.find(FindProtoObjectlTag, 20) != std::string::npos)
+					{
+						CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+
+						if (ImGui::Selectable(szViewName, bObjectSelected))
+							m_wstrModelName = ProtoPair.first;
+					}
+				}
+				else
+				{
+
+					CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+					sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+					if (ImGui::Selectable(szViewName, bObjectSelected))
+						m_wstrProtoName = ProtoPair.first;			// 리스트 박스를 누르면 현재 프로토 타입 이름을 가져옴
+				}
+
 			}
 			ImGui::EndListBox();
 		}
 	}
 #pragma endregion ~생성시 사용되는 프로토 타입
-	
+
 #pragma region 생성시 사용되는 모델 이름
 	if (ImGui::CollapsingHeader("Model_Proto"))
 	{
+		static string FindModelTag = "";		// ! == No Find
+		ImGui::InputText("Find_Model_Tag", &FindModelTag);
+
 		if (ImGui::BeginListBox("#Model_Proto#"))
 		{
+			char szViewName[512], szProtoName[256];
 			const bool bModelSelected = false;
 			for (auto& ProtoPair : CGameInstance::GetInstance()->Get_ComponentProtoType()[CGameInstance::GetInstance()->Get_CurLevelIndex()])
 			{
-				if(dynamic_cast<CModel*>(ProtoPair.second) == nullptr)
-						continue;
-				char szViewName[512], szProtoName[256];
-				CUtile::WideCharToChar(ProtoPair.first, szProtoName);
-				sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
-				if (ImGui::Selectable(szViewName, bModelSelected))
-					m_wstrModelName = ProtoPair.first;			// 리스트 박스를 누르면 현재 모델프로토 타입 이름을 가져옴
+				if (dynamic_cast<CModel*>(ProtoPair.second) == nullptr)
+					continue;
+				if (FindModelTag != "")
+				{
+					wstring  Temp = ProtoPair.first;
+					string str = CUtile::WstringToString(Temp);
+
+					if (str.find(FindModelTag, 25) != std::string::npos)
+					{
+						CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+
+						if (ImGui::Selectable(szViewName, bModelSelected))
+							m_wstrModelName = ProtoPair.first;
+					}
+				}
+				else
+				{
+					CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+					sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+					if (ImGui::Selectable(szViewName, bModelSelected))
+						m_wstrModelName = ProtoPair.first;			// 리스트 박스를 누르면 현재 모델프로토 타입 이름을 가져옴
+				}
+
+
 			}
 			ImGui::EndListBox();
 		}
 	}
 #pragma endregion ~생성시 사용되는 모델 이름
 
+
 #pragma region 생성시 사용되는 클론 이름짓기
-	ImGui::InputText("Clone_Tag ", m_strCloneTag ,CLONE_TAG_BUFF_SIZE);
-	
+	if (ImGui::CollapsingHeader("Create_Clone_Tag"))
+		ImGui::InputText("Clone_Tag ", m_strCloneTag, CLONE_TAG_BUFF_SIZE);
+
 #pragma endregion ~생성시 사용되는 모델 이름
 
 
 
 #pragma region		선택된 오브젝트들 보여주기
-	char szSelctedObject_Name[256], szSelctedModel_Name[256];
-	CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
-	CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
+	if (ImGui::CollapsingHeader("Selcted_Object_Data"))
+	{
+		char szSelctedObject_Name[256], szSelctedModel_Name[256];
+		CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
+		CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
 
-	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
-	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
-	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
-
+		ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
+		ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
+		ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
+	}
 #pragma endregion ~선택된 오브젝트들 보여주기
 }
 
 void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 {
-	CGameInstance *pGameInstace = GET_INSTANCE(CGameInstance);
-
-	if (ImGui::Button("Create_EnviromentObj"))
+	if (ImGui::CollapsingHeader("Create_Object"))
 	{
-		CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
-		lstrcpy(EnviromentDesc.szProtoObjTag, m_wstrProtoName.c_str());
-		lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
-		//EnviromentDesc.szTextureTag = TEXT("");		// 나중에 채워
-		string			strCloneTag = m_strCloneTag;
-		_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
-		CGameInstance::GetInstance()->Add_String(pCloneName);
+		CGameInstance *pGameInstace = GET_INSTANCE(CGameInstance);
 
-		if (FAILED(pGameInstace->Clone_GameObject(LEVEL_MAPTOOL, 
-			TEXT("Layer_Enviroment"), 
-			EnviromentDesc.szProtoObjTag,
-			pCloneName, &EnviromentDesc)))
-			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
+		if (ImGui::Button("Create_EnviromentObj"))
+		{
+			CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
+			lstrcpy(EnviromentDesc.szProtoObjTag, m_wstrProtoName.c_str());
+			lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
+			//EnviromentDesc.szTextureTag = TEXT("");		// 나중에 채워
+			string			strCloneTag = m_strCloneTag;
+			_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
+			CGameInstance::GetInstance()->Add_String(pCloneName);
+
+			if (FAILED(pGameInstace->Clone_GameObject(LEVEL_MAPTOOL,
+				TEXT("Layer_Enviroment"),
+				EnviromentDesc.szProtoObjTag,
+				pCloneName, &EnviromentDesc)))
+				assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
+		}
+
+		RELEASE_INSTANCE(CGameInstance);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 
@@ -149,6 +202,10 @@ void CImgui_MapEditor::Imgui_Save_Load_Json()
 	{
 		Imgui_Load_Func();
 	}
+}
+
+void CImgui_MapEditor::Imgui_ModelProtoFinder()
+{
 }
 
 void CImgui_MapEditor::Imgui_Save_Func()
@@ -195,7 +252,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 	Json	jEnviromentObjList;
 
 	CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
-	
+
 	_float4x4	fWroldMatrix;
 	_float		fElement = 0.f;
 	char*		szLayerTag = "Layer_Enviroment";
@@ -205,19 +262,19 @@ void CImgui_MapEditor::Imgui_Save_Func()
 	char*		szCloneTag = "";
 
 	jEnviromentObjList["0_LayerTag"] = szLayerTag;
-	
+
 	for (auto& pObject : pGameInstace->Find_Layer(LEVEL_MAPTOOL, L"Layer_Enviroment")->GetGameObjects())
 	{
-		if(dynamic_cast<CEnviromentObj*>(pObject.second) == nullptr)
+		if (dynamic_cast<CEnviromentObj*>(pObject.second) == nullptr)
 			continue;
 
 		Json jChild;
-		
+
 		CEnviromentObj::ENVIROMENT_DESC Desc;
 		ZeroMemory(&Desc, sizeof(Desc));
 		memcpy(&Desc, &static_cast<CEnviromentObj*>(pObject.second)->Get_EnviromentDesc(), sizeof(Desc));
 
-		szProtoObjTag =CUtile::WideCharToChar(Desc.szProtoObjTag);
+		szProtoObjTag = CUtile::WideCharToChar(Desc.szProtoObjTag);
 		szModelTag = CUtile::WideCharToChar(Desc.szModelTag);
 		szTextureTag = CUtile::WideCharToChar(Desc.szTextureTag);
 		szCloneTag = CUtile::WideCharToChar(const_cast<_tchar*>(pObject.second->Get_ObjectCloneName()));
@@ -287,20 +344,20 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		float	fElement = 0.f;
 		int k = 0;
-	
+
 		for (float fElement : jLoadChild["4_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
 
-		ZeroMemory(&EnviromentDesc,sizeof(EnviromentDesc));
+		ZeroMemory(&EnviromentDesc, sizeof(EnviromentDesc));
 		m_wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		m_wstrModelName.assign(szModelTag.begin(), szModelTag.end());
 		m_wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
 		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
 		pGameInstance->Add_String(wszCloneTag);
 
-		lstrcpy(EnviromentDesc.szProtoObjTag , m_wstrProtoName.c_str());
+		lstrcpy(EnviromentDesc.szProtoObjTag, m_wstrProtoName.c_str());
 		lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
 		lstrcpy(EnviromentDesc.szTextureTag, m_wstrTexturelName.c_str());
 
@@ -315,7 +372,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 
 	}
 
-	
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

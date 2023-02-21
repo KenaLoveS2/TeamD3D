@@ -18,6 +18,8 @@ public:
 	static void WideCharToChar(const _tchar* pWideStr, char* pOut);
 
 	static  _tchar* StringToWideChar(string str);
+	static  string	  WstringToString(wstring wstr);
+
 
 	static _tchar* Create_String(const _tchar *pText);
 	static char* Create_String(const char *pText);

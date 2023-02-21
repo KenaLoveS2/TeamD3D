@@ -43,6 +43,7 @@ private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 
+
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel);
 	virtual CComponent* Clone(void* pArg = nullptr) override;

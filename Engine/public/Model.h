@@ -6,7 +6,6 @@ class ENGINE_DLL CModel final : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
-
 	typedef struct tagMaterialPath
 	{
 		wstring strPath_NONE				; // aiTextureType_NONE = 0,
@@ -108,6 +107,8 @@ public:
 	HRESULT SetUp_ClonedMeshes();
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath);
+
+
 };
 
 END

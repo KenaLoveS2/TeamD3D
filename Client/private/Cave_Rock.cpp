@@ -34,11 +34,23 @@ HRESULT CCave_Rock::Initialize(void * pArg)
 void CCave_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (ImGui::Button(("WireFrame_Render")))
+	{
+		m_iShaderOption = 3;
+	}
+	if (ImGui::Button(("Default_Render")))
+	{
+		m_iShaderOption = 0;
+	}
+
 }
 
 void CCave_Rock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -60,7 +72,7 @@ HRESULT CCave_Rock::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i);
+		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
 	}
 	return S_OK;
 }
