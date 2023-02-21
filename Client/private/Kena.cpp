@@ -108,6 +108,19 @@ HRESULT CKena::Ready_Parts()
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CKena_Parts::KENAPARTS_DESC	PartDesc;
+
+	/* Staff */
+	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
+
+	PartDesc.pPlayer = this;
+	PartDesc.eType = CKena_Parts::KENAPARTS_STAFF;
+
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Staff", &PartDesc));
+	NULL_CHECK_RETURN(pPart, E_FAIL);
+
+	m_vecPart.push_back(pPart);
+
+	/* MainOutfit */
 	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
 
 	PartDesc.pPlayer = this;

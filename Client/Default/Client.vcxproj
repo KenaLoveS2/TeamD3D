@@ -185,6 +185,7 @@
     <ClInclude Include="..\Public\Kena_Parts.h" />
     <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
+    <ClInclude Include="..\Public\Kena_Staff.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="..\Private\Kena_Parts.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
+    <ClCompile Include="..\Private\Kena_Staff.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />

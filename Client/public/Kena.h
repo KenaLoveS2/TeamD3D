@@ -46,6 +46,8 @@ private:
 private:
 	_int					m_iAnimationIndex = 0;
 
+	_bool					m_bAttack = false;
+
 private:
 	HRESULT				Ready_Parts();
 	HRESULT				SetUp_Components();

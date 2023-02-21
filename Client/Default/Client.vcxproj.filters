@@ -127,6 +127,12 @@
     <Filter Include="01.Levels\03. MapTool">
       <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon\Staff">
+      <UniqueIdentifier>{0606fa25-c25e-4e7b-a249-a0ea5cbb0185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Outfit\MainOutfit">
+      <UniqueIdentifier>{826068a4-3634-4bde-b6c1-dfcbfc1dfe97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -238,9 +244,6 @@
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Kena_MainOutfit.h">
-      <Filter>02.GameObjects\Player\Outfit</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Kena_Parts.h">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClInclude>
@@ -255,6 +258,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_MainOutfit.h">
+      <Filter>02.GameObjects\Player\Outfit\MainOutfit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_Staff.h">
+      <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -351,9 +360,6 @@
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
-      <Filter>02.GameObjects\Player\Outfit</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Kena_Parts.cpp">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClCompile>
@@ -368,6 +374,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
+      <Filter>02.GameObjects\Player\Outfit\MainOutfit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_Staff.cpp">
+      <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
