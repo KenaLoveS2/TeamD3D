@@ -19,7 +19,7 @@ public:
 	void	Set_ColorValue(OUT _float4& vColor);
 
 public:
-	void	CreateEffect_Plane(_int iSelectObject);
+	void	CreateEffect_Plane(_int& iSelectObject);
 	void	CreateEffect_Particle(_int iSelectObject);
 	void	CreateEffect_Mesh(_int iSelectObject);
 

@@ -4,12 +4,17 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_DepthTexture;
-texture2D		g_DiffuseTexture[10];
-texture2D		g_MaskTexture[10];
+texture2D		g_DiffuseTexture[5];
+texture2D		g_MaskTexture[5];
 
-/* 샘플링 해오는 함수 */
-/* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
-/* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */
+// Type
+int		g_TextureRenderType, g_BlendType;
+
+int		g_SeparateWidth, g_SeparateHeight;
+uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+
+float   g_WidthFrame, g_HeightFrame;
+float4  g_vColor;
 
 struct VS_IN
 {
@@ -28,7 +33,6 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-
 	matrix		matWV, matWVP;
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
@@ -36,7 +40,6 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
-
 	Out.vProjPos = Out.vPosition;
 
 	return Out;
@@ -59,49 +62,119 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-	
-	return Out;
-}
+	if (g_iTotalDTextureComCnt == 1)
+	{
+		vector albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
 
-PS_OUT PS_MAIN_EFFECT(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
+		if (albedo.a < 0.1f)
+			discard;
 
-	Out.vColor = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		Out.vColor = albedo;
+	}
+	else if (g_iTotalDTextureComCnt == 2)
+	{
+		vector albedo[2];
+		albedo[0] = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		albedo[1] = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
 
-	float2		vTexUV; 
+		for (int i = 0; i < g_iTotalDTextureComCnt; ++i)
+		{
+			if (albedo[i].a < 0.1f)
+				discard;
+		}
 
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+		Out.vColor = albedo[0] * albedo[1] * 2.0f;
+	}
+	else if (g_iTotalDTextureComCnt == 3)
+	{
+		vector albedo[3];
+		albedo[0] = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		albedo[1] = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
+		albedo[2] = g_DiffuseTexture[2].Sample(LinearSampler, In.vTexUV);
 
-	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+		for (int i = 0; i < g_iTotalDTextureComCnt; ++i)
+		{
+			if (albedo[i].a < 0.1f)
+				discard;
+		}
 
-	float		fOldViewZ = vDepthDesc.y * 300.f;
-	float		fViewZ = In.vProjPos.w;
+		Out.vColor = albedo[0] * albedo[1] * albedo[2] * 2.0f;
+	}
 
-	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	/////////
 
-	return Out;
-}
+	if (g_iTotalMTextureComCnt == 1)
+	{
+		vector vMaskTex = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
 
-PS_OUT PS_MAIN_MASKMAP(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
+		if (g_BlendType == 2)
+			Out.vColor = Out.vColor * vMaskTex *  g_vColor;
+		else
+			Out.vColor = Out.vColor * vMaskTex + (1.0f - g_vColor);
+	}
+	else if (g_iTotalMTextureComCnt == 2)
+	{
+		vector vMaskTex[2];
+		vMaskTex[0] = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+		vMaskTex[1] = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
 
-	vector vDiffuse	= g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-	vector vMask	= g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+		vector masktex = vMaskTex[0] * vMaskTex[1] * 2.0f;
+		if (g_BlendType == 2)
+			Out.vColor = Out.vColor * masktex * g_vColor;
+		else
+			Out.vColor = Out.vColor * masktex + (1.0f - g_vColor);
+	}
+	else if (g_iTotalMTextureComCnt == 3)
+	{
+		vector vMaskTex[3];
+		vMaskTex[0] = g_MaskTexture[0].Sample(LinearSampler, In.vTexUV);
+		vMaskTex[1] = g_MaskTexture[1].Sample(LinearSampler, In.vTexUV);
+		vMaskTex[2] = g_MaskTexture[2].Sample(LinearSampler, In.vTexUV);
 
-	vDiffuse.a = vMask.r;
+		vector masktex = vMaskTex[0] * vMaskTex[1] * vMaskTex[2] * 2.0f;
+		if (g_BlendType == 2)
+			Out.vColor = Out.vColor * masktex * g_vColor;
+		else
+			Out.vColor = Out.vColor * masktex + (1.0f - g_vColor);
+	}
 
-	Out.vColor = vDiffuse;
+	////
+	if (g_BlendType == 0) // Single
+	{
+		float2		vTexUV;
+		vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+		vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+		vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+
+		float		fOldViewZ = vDepthDesc.y * 300.f;
+		float		fViewZ = In.vProjPos.w;
+
+		Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	}
+	else // Sprite
+	{
+		In.vTexUV.x = In.vTexUV.x * g_WidthFrame / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame / g_SeparateHeight;
+
+		float2		vTexUV;
+		vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+		vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+		vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+
+		float		fOldViewZ = vDepthDesc.y * 300.f;
+		float		fViewZ = In.vProjPos.w;
+
+		Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	}
 
 	return Out;
 }
 
 technique11 DefaultTechnique
 {
-	pass Rect // 0
+	pass Effect_Dafalut // 0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -113,21 +186,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-
-	pass Effect // 1
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_EFFECT();
-	}
-
-	pass DiffuseAlphaBlend // 2
+	pass Effect_Alpha // 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -140,16 +199,17 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass MaskMap // 3
+	pass Effect_Black // 2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_One, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_MASKMAP();
+		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
 }

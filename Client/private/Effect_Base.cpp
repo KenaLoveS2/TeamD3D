@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect_Base.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -11,6 +12,26 @@ CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContex
 CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	: CGameObject(rhs)
 {
+}
+
+void CEffect_Base::BillBoardSetting(_float3 vScale)
+{
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	//CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+	//CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+	//RELEASE_INSTANCE(CGameInstance);
+
+	//_float3 cameraPosition, cameraUp, cameraForward;
+	//_float4 rotateAxis, objectForward;
+
+	//XMStoreFloat3(&cameraPosition, pTargetTransform->Get_State(CTransform::STATE_TRANSLATION));
+	//XMStoreFloat3(&cameraUp, pTargetTransform->Get_State(CTransform::STATE_UP));
+	//XMStoreFloat3(&cameraForward, pTargetTransform->Get_State(CTransform::STATE_LOOK));
+
+	//_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
+	//
+	//m_pTransformCom->Set_Scaled(vScale);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype()
@@ -69,9 +90,13 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 
 		for (_uint i = m_iTotalDTextureComCnt; i < m_iDTextureComCnt; ++i)
 		{
-			m_strDTextureComTag = L"Com_DTexture_";
-			m_strDTextureComTag += to_wstring(i);
-			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strDTextureComTag.c_str(), (CComponent**)&m_pDTextureCom[i], this)))
+			_tchar szDTexture[64] = L"";
+			wsprintf(szDTexture, L"Com_DTexture_%d", i);
+
+			_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
+			CGameInstance::GetInstance()->Add_String(szDTextureComTag);
+
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 				return E_FAIL;
 		}
 		m_iTotalDTextureComCnt = m_iDTextureComCnt;
@@ -84,9 +109,12 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 
 		for (_uint i = m_iTotalMTextureComCnt; i < m_iMTextureComCnt; ++i)
 		{
-			m_strMTextureComTag = L"Com_MTexture_";
-			m_strMTextureComTag += to_wstring(i);
-			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strMTextureComTag.c_str(), (CComponent**)&m_pMTextureCom[i], this)))
+			_tchar szMTexture[64] = L"";
+			wsprintf(szMTexture, L"Com_MTexture_%d", i);
+
+			_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
+			CGameInstance::GetInstance()->Add_String(szMTextureComTag);
+			if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 				return E_FAIL;
 		}
 		m_iTotalMTextureComCnt = m_iMTextureComCnt;

@@ -16,6 +16,8 @@ public:
 	_float Get_CamDistance() const {
 		return m_fCamDistance;
 	}
+public:
+	CTransform* Get_TransformCom() { return m_pTransformCom; }
 
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);

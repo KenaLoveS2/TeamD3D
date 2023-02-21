@@ -41,6 +41,10 @@ HRESULT CEffect::Initialize(void * pArg)
 void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_eEFfectDesc.IsBillboard == true)
+		__super::BillBoardSetting(m_eEFfectDesc.vScale);
+
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -60,7 +64,13 @@ HRESULT CEffect::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(1);
+	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
+	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
+	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
+
 	m_pVIBufferCom->Render();
 
 	return S_OK;
@@ -128,6 +138,31 @@ HRESULT CEffect::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
 		return E_FAIL;
 	
+	/* Texture Total Cnt */	
+	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof _uint)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint)))
+		return E_FAIL;
+
+	/* TEX_SPRITE */
+	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int))))
+			return E_FAIL;
+	}	
+	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
+		return E_FAIL;
+
 	// MaxCnt == 10
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_uint)m_eEFfectDesc.fFrame[i])))
