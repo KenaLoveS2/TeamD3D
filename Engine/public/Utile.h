@@ -17,6 +17,7 @@ public:
 	static void CharToWideChar(const char* pCharStr, _tchar* pOut);
 	static void WideCharToChar(const _tchar* pWideStr, char* pOut);
 	
+	static  _tchar* StringToWideChar(string str);
 
 	static _tchar* Create_String(_tchar *pText);
 	static char* Create_String(char *pText);
