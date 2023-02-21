@@ -73,12 +73,17 @@ BEGIN(Engine)
 		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
 								void* pArg = nullptr, CGameObject** ppObj = nullptr);
+		HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+		void SwitchOnOff_Shadow(_bool bSwitch);
+		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
-		map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects();
-		void SwitchOnOff_Shadow(_bool bSwitch);
-		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+
+		map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
+
+		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
+		_uint Get_NumCopyPrototypes();
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);

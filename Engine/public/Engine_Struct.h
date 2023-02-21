@@ -12,6 +12,8 @@ namespace Engine
 
 		const char* pSoundFileTag;
 		unsigned int iNumManualSounds;
+
+		unsigned int iNumCopyPrototypes;
 	}GRAPHIC_DESC;
 
 	typedef struct tagModelMaterial
