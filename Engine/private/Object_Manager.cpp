@@ -36,14 +36,20 @@ CGameObject* CObject_Manager::Get_GameObjectPtr(_uint iLevelIndex, const _tchar 
 	return pLayer->Get_GameObjectPtr(pCloneObjectTag);
 }
 
-HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
+HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes)
 {
 	if (nullptr != m_pLayers)
 		return E_FAIL;
 
 	m_pLayers = new LAYERS[iNumLevels];
-
 	m_iNumLevels = iNumLevels;
+	
+	m_iNumCopyPrototypes = iNumCopyPrototypes;	
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		PROTOTYPES Prototypes;
+		m_CopyPrototypes.push_back(Prototypes);
+	}
 
 	return S_OK;
 }
@@ -68,6 +74,15 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 
 	m_Prototypes.emplace(pPrototypeTag, pPrototype);
 	
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		_tchar* pTag = CUtile::Create_String(pPrototypeTag);
+		m_CopyTagList.push_back(pTag);
+		
+		CGameObject* pGameObject = pPrototype->Clone();
+		m_CopyPrototypes[i].emplace(pTag, pGameObject);
+	}
+
 	return S_OK;
 }
 
@@ -84,8 +99,7 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
-		if (nullptr == pLayer)
-			return E_FAIL;
+		if (nullptr == pLayer) return E_FAIL;
 
 		if (FAILED(pLayer->Add_GameObject(pCloneObjectTag, pGameObject)))
 			return E_FAIL;
@@ -114,6 +128,26 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, vo
 		return nullptr;
 
 	return pGameObject;	
+}
+
+HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag, CGameObject * pGameObject)
+{	
+	CLayer*	pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		if (nullptr == pLayer) return E_FAIL;
+
+		if (FAILED(pLayer->Add_GameObject(pCloneObjectTag, pGameObject)))
+			return E_FAIL;
+
+		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
+
+	return S_OK;
 }
 
 void CObject_Manager::Tick(_float fTimeDelta)
@@ -176,7 +210,16 @@ void CObject_Manager::Free()
 
 	m_Prototypes.clear();
 
-	
+	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
+	{
+		for (auto& Pair : m_CopyPrototypes[i])
+		{
+			Safe_Release(Pair.second);
+		}	
+	}
+
+	for (auto& iter : m_CopyTagList)	
+		Safe_Delete_Array(iter);
 }
 
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)

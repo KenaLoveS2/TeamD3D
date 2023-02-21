@@ -55,7 +55,7 @@ void CUtile::WideCharToChar(const _tchar * pWideStr, char * pOut)
 	::WideCharToMultiByte(CP_ACP, 0, pWideStr, slength, pOut, len, 0, 0);
 }
 
-_tchar* CUtile::Create_String(_tchar *pText)
+_tchar* CUtile::Create_String(const _tchar *pText)
 {
 	_int iSize = wcslen(pText) + 1;
 
@@ -67,7 +67,7 @@ _tchar* CUtile::Create_String(_tchar *pText)
 	return pString;
 }
 
-char* CUtile::Create_String(char * pText)
+char* CUtile::Create_String(const char * pText)
 {
 	_int iSize = strlen(pText) + 1;
 

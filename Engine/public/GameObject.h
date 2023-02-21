@@ -67,5 +67,7 @@ public: /* imgui */
 
 	// 이 오브젝트에서 보여줄 데이터를 imgui로 작성한다.
 	virtual void Imgui_RenderProperty() {}
+
+	void Set_Position(_float4& vPosition);
 };
 END

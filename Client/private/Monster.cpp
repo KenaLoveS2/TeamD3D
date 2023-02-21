@@ -193,10 +193,6 @@ HRESULT CMonster::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	
-
-
-
 	return S_OK;
 }
 

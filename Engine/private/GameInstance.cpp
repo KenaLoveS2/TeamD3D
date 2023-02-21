@@ -86,7 +86,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		return E_FAIL;
 	
 	/* +1개로 예약하는 이유 : 엔진에서 Level_Static을 추가로 제공하기 위해서. */
-	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels + 1)))
+	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels + 1, GraphicDesc.iNumCopyPrototypes)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels + 1)))
@@ -256,6 +256,12 @@ HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayer
 	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pCloneObjectTag, pArg, ppObj);
 }
 
+HRESULT CGameInstance::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag, CGameObject * pGameObject)
+{
+	if (nullptr == m_pObject_Manager) return E_FAIL;
+	return m_pObject_Manager->Add_ClonedGameObject(iLevelIndex, pLayerTag, pCloneObjectTag, pGameObject);
+}
+
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
 {
 	if (nullptr == m_pObject_Manager)
@@ -268,6 +274,22 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	if (nullptr == m_pObject_Manager)
 		return;
 	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
+}
+
+vector<map<const _tchar*, class CGameObject*>>& CGameInstance::Get_CopyPrototypes()
+{	
+	if (m_pObject_Manager == nullptr) { 
+		vector<map<const _tchar*, class CGameObject*>> Dummy;
+		return Dummy;
+	}
+
+	return m_pObject_Manager->Get_CopyPrototypes();
+}
+
+_uint CGameInstance::Get_NumCopyPrototypes()
+{
+	if (m_pObject_Manager == nullptr) return 0;
+	return m_pObject_Manager->Get_NumCopyPrototypes();
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
