@@ -1,19 +1,32 @@
 #include "stdafx.h"
 #include "..\public\Loader.h"
 #include "GameInstance.h"
-#include "BackGround.h"
-#include "Terrain.h"
-#include "Player.h"
-#include "ForkLift.h"
-#include "Monster.h"
-#include "Weapon.h"
-#include "Effect.h"
+
+/* SkyBox */
 #include "Sky.h"
+
+/* Terrain */
+#include "Terrain.h"
+
+/* Player */
+#include "Kena.h"
+#include "Kena_Staff.h"
+#include "Kena_MainOutfit.h"
+
+/* NPCs */
+
+/* Enemies*/
+
+/* Objects */
+#include "Cave_Rock.h"
+
+/* UI */
+#include "BackGround.h"
+
+/* Effects */
+#include "Effect.h"
 #include "Effect_Rect_Instancing.h"
 #include "Effect_Point_Instancing.h"
-#include "Kena.h"
-#include "Kena_MainOutfit.h"
-#include "Cave_Rock.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -174,6 +187,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.mdat", PivotMatrix))))
+		return E_FAIL;
+
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.mdat", PivotMatrix))))
 		return E_FAIL;
 
@@ -248,31 +264,16 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
 		CKena::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
+		CKena_Staff::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
 		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_ForkLift */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Monster */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),
-		CMonster::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Weapon */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Weapon"),
-		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Sky */
@@ -309,10 +310,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Texture..."));
 	
 
-	lstrcpy(m_szLoadingText, TEXT("모델을 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_Model..."));
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -320,7 +321,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Coll.."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
@@ -334,7 +341,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader... "));
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
@@ -365,17 +372,15 @@ HRESULT CLoader::Loading_ForMapTool()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("네비게이션정보생성중"));
 
-
-	lstrcpy(m_szLoadingText, TEXT("객체원형을 생성중입니다. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_ GameObjects ..."));
 
 	/* For.Prototype_GameObject_Cave_Rock */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-	//	CCave_Rock::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
+		CCave_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("로딩끝. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading_End. "));
 
 	m_isFinished = true;
 

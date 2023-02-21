@@ -212,6 +212,29 @@ HRESULT CModel::SetUp_ClonedMeshes()
 	return S_OK;
 }
 
+HRESULT CModel::Animation_Synchronization(CModel * pModelCom, const string & strRootNodeName)
+{
+	NULL_CHECK_RETURN(pModelCom, E_FAIL);
+
+	if (m_eType == TYPE_NONANIM)
+		m_eType = TYPE_ANIM;
+	else
+	{
+		for (auto& pAnimation : m_Animations)
+			Safe_Release(pAnimation);
+
+		m_Animations.clear();
+	}
+
+	for (auto& pAnimation : pModelCom->m_Animations)
+		m_Animations.push_back((CAnimation*)pAnimation->Clone());
+
+	for (auto pAnimation : m_Animations)
+		FAILED_CHECK_RETURN(pAnimation->Synchronization_ChannelsBonePtr(this, strRootNodeName), E_FAIL);
+
+	return S_OK;
+}
+
 void CModel::Set_AnimIndex(_uint iAnimIndex)
 {
 	m_iCurrentAnimIndex = iAnimIndex;

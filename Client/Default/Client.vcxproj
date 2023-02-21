@@ -185,6 +185,7 @@
     <ClInclude Include="..\Public\Kena_Parts.h" />
     <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
+    <ClInclude Include="..\Public\Kena_Staff.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -192,8 +193,6 @@
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
-    <ClInclude Include="..\public\Monster.h" />
-    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
@@ -211,7 +210,6 @@
     <ClInclude Include="..\public\UI_NodeHUDRot.h" />
     <ClInclude Include="..\public\UI_NodeHUDShield.h" />
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
-    <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -231,6 +229,7 @@
     <ClCompile Include="..\Private\Kena_Parts.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
+    <ClCompile Include="..\Private\Kena_Staff.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
@@ -238,8 +237,6 @@
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
-    <ClCompile Include="..\private\Monster.cpp" />
-    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
@@ -257,7 +254,6 @@
     <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
-    <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
