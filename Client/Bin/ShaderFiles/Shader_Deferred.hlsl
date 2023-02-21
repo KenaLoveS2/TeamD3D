@@ -24,10 +24,7 @@ Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
-
 Texture2D<float4>		g_ShadowTexture;
-
-
 
 struct VS_IN
 {

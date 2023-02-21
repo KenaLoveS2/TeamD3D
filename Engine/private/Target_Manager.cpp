@@ -22,6 +22,16 @@ ID3D11ShaderResourceView * CTarget_Manager::Get_SRV(const _tchar * pTargetTag)
 	return pRenderTarget->Get_SRV();	
 }
 
+ID3D11RenderTargetView * CTarget_Manager::Get_RTV(const _tchar * pTargetTag)
+{
+	CRenderTarget*		pRenderTarget = Find_RenderTarget(pTargetTag);
+
+	if (nullptr == pRenderTarget)
+		return nullptr;
+
+	return pRenderTarget->Get_RTV();
+}
+
 CRenderTarget * CTarget_Manager::Get_Target(const _tchar * pTargetTag)
 {
 	CRenderTarget*		pRenderTarget = Find_RenderTarget(pTargetTag);
@@ -122,42 +132,29 @@ HRESULT CTarget_Manager::Begin_MRT(ID3D11DeviceContext * pContext, const _tchar 
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_ShadowMRT(ID3D11DeviceContext * pContext, const _tchar * pMRTTag)
+HRESULT CTarget_Manager::Begin_MRTwithDepthStencil(ID3D11DeviceContext * pContext, const _tchar * pMRTTag,
+	ID3D11DepthStencilView* pDepthStencilView, _bool bClear)
 {
-	CRenderTarget*		pRenderTarget = Find_RenderTarget(pMRTTag);
+	list<CRenderTarget*>*		pMRTList = Find_MRT(pMRTTag);
 
-	ID3D11ShaderResourceView*		pSRVs[128] = { nullptr };
+	if (nullptr == pMRTList)
+		return E_FAIL;
 
-	pContext->PSSetShaderResources(0, 128, pSRVs);
-
-	ID3D11RenderTargetView*		pRTV;
-
-	pRenderTarget->Clear();
-	pRTV = pRenderTarget->Get_RTV();
-
-	/* 기존에 바인딩되어있던(백버퍼 + 깊이스텐실버퍼)를 얻어온다. */
 	pContext->OMGetRenderTargets(1, &m_pBackBufferView, &m_pDepthStencilView);
 
-	_uint iNumViewports = 1;
-	pContext->RSGetViewports(&iNumViewports, &m_OriginViewPort);
+	ID3D11RenderTargetView*		pRTVs[8] = { nullptr };
 
-	pContext->OMSetRenderTargets(1, &pRTV, pRenderTarget->GetDepthStencilView());
+	_uint			iNumViews = 0;
 
-	pContext->ClearDepthStencilView(pRenderTarget->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	for (auto& pRTV : *pMRTList)
+	{
+		if (bClear)
+			pRTV->Clear();
 
-	pContext->RSSetViewports(1, &pRenderTarget->GetViewPortDesc());
+		pRTVs[iNumViews++] = pRTV->Get_RTV();
+	}
 
-	return S_OK;
-}
-
-HRESULT CTarget_Manager::End_ShadowMRT(ID3D11DeviceContext * pContext, const _tchar * pMRTTag)
-{
-	pContext->OMSetRenderTargets(1, &m_pBackBufferView, m_pDepthStencilView);
-
-	Safe_Release(m_pBackBufferView);
-	Safe_Release(m_pDepthStencilView);
-
-	pContext->RSSetViewports(1, &m_OriginViewPort);
+	pContext->OMSetRenderTargets(iNumViews, pRTVs, pDepthStencilView);
 
 	return S_OK;
 }
@@ -171,6 +168,39 @@ HRESULT CTarget_Manager::End_MRT(ID3D11DeviceContext * pContext, const _tchar * 
 
 	return S_OK;
 }
+
+HRESULT CTarget_Manager::Resize(ID3D11DeviceContext * pContext)
+{
+	D3D11_VIEWPORT		ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+
+	_uint		iNumViewport = 1;
+
+	pContext->RSGetViewports(&iNumViewport, &ViewPortDesc);
+
+	for (auto& Pair : m_RenderTargets)
+	{
+		if (FAILED(Pair.second->Resize((_uint)ViewPortDesc.Width, (_uint)ViewPortDesc.Height)))
+			return E_FAIL;
+	}
+
+#ifdef _DEBUG
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewPortDesc.Width, ViewPortDesc.Height, 0.f, 1.f));
+#endif // _DEBUG
+
+	return S_OK;
+}
+
+void CTarget_Manager::CopyRenderTarget(ID3D11DeviceContext * pContext, const _tchar * pDstTag, const _tchar * pSrcTag)
+{
+	auto pDst = Find_RenderTarget(pDstTag);
+	auto pSrc = Find_RenderTarget(pSrcTag);
+	Assert(pDst != nullptr);
+	Assert(pDst != nullptr);
+
+	pContext->CopyResource(pDst->Get_Tex2D(), pSrc->Get_Tex2D());
+}
+
 #ifdef _DEBUG
 
 HRESULT CTarget_Manager::Ready_Debug(const _tchar * pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)

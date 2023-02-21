@@ -19,8 +19,8 @@ public:
 
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);
-	const _tchar*			Get_ObjectCloneName() { return m_szCloneObjectTag; }
-	void							Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
+	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
 
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -39,18 +39,20 @@ public:
 	virtual HRESULT RenderShadow();
 
 protected:
-	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = { nullptr };
-	_bool					m_isCloned = { false };
-	_float					m_fCamDistance = { 0.0 };	
+	_bool							m_isCloned = { false };
+	_float							m_fCamDistance = { 0.0 };	
+	_bool							m_bShadow = true;
 
+	const _tchar*				m_szName = TEXT("");
 	const _tchar*					m_szCloneObjectTag = TEXT("");
 
 protected:
-	/* °´Ã¼µéÀÌ »ç¿ëÇØ¾ß ÇÒ ÄÄÆ÷³ÍÆ®µéÀ» º¸°üÇÑ´Ù. */
+	/* ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¾ï¿?ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
-	class CTransform*								m_pTransformCom = nullptr;
+	class CTransform*									m_pTransformCom = nullptr;
 
 protected:	
 	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
@@ -61,12 +63,14 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
+	const _tchar* Get_ObjectName() { return m_szName; }
+	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
-		// ÀÌ ¿ÀºêÁ§Æ®°¡ °¡Áö°í ÀÖ´Â componentÀÇ Imgui_RenderProtperyÇÔ¼ö¸¦ ½ÇÇàÇÏ´Â ÇÔ¼ö.
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ componentï¿½ï¿½ Imgui_RenderProtperyï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½.
 	void Imgui_RenderComponentProperties();
 
-	// ÀÌ ¿ÀºêÁ§Æ®¿¡¼­ º¸¿©ÁÙ µ¥ÀÌÅÍ¸¦ imgui·Î ÀÛ¼ºÇÑ´Ù.
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ imguiï¿½ï¿½ ï¿½Û¼ï¿½ï¿½Ñ´ï¿½.
 	virtual void Imgui_RenderProperty() {}
 };
 END
