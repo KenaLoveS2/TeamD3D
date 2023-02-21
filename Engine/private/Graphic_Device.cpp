@@ -33,8 +33,7 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHIC_DESC::WINMODE W
 		return E_FAIL;
 
 	/* 장치에 바인드해놓을 렌더타겟들과 뎁스스텐실뷰를 셋팅한다. */
-	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, 
-		m_pDepthStencilView);		
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pDepthStencilView);		
 	
 	D3D11_VIEWPORT			ViewPortDesc;
 	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
@@ -61,7 +60,6 @@ HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 	if (nullptr == m_pDeviceContext)
 		return E_FAIL;
 
-	/* 백버퍼를 초기화하낟.  */
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
  	return S_OK;
@@ -87,6 +85,7 @@ HRESULT CGraphic_Device::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY,
 
 	if (m_pBackBufferRTV)
 		Safe_Release(m_pBackBufferRTV);
+
 	if (m_pDepthStencilView)
 		Safe_Release(m_pDepthStencilView);
 
@@ -121,44 +120,62 @@ HRESULT CGraphic_Device::Present()
 	if (nullptr == m_pSwapChain)
 		return E_FAIL;
 
-	return m_pSwapChain->Present(0, 0);	
+	static _bool	bStandByMode = false;
+	HRESULT		hr;
+
+	if (bStandByMode)
+	{
+		hr = m_pSwapChain->Present(0, DXGI_PRESENT_TEST);
+
+		if (hr == DXGI_STATUS_OCCLUDED)
+			return DXGI_STATUS_OCCLUDED;
+
+		bStandByMode = false;
+	}
+
+	hr = m_pSwapChain->Present(0, 0);
+
+	if (hr == DXGI_STATUS_OCCLUDED)
+		bStandByMode = true;
+
+	return hr;
 }
 
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMode, _uint iWinCX, _uint iWinCY)
 {
-	IDXGIDevice*			pDevice = nullptr;
+	IDXGIDevice*         pDevice = nullptr;
 	m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
 
-	IDXGIAdapter*			pAdapter = nullptr;
+	IDXGIAdapter*         pAdapter = nullptr;
 	pDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&pAdapter);
 
-	IDXGIFactory*			pFactory = nullptr;
+	IDXGIFactory*         pFactory = nullptr;
 	pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
 
-	DXGI_SWAP_CHAIN_DESC		SwapChain;
+	DXGI_SWAP_CHAIN_DESC      SwapChain;
 	ZeroMemory(&SwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
-			
+
 	SwapChain.BufferDesc.Width = iWinCX;
 	SwapChain.BufferDesc.Height = iWinCY;
-	SwapChain.BufferDesc.RefreshRate.Numerator = 60;
+	SwapChain.BufferDesc.RefreshRate.Numerator = 0;
 	SwapChain.BufferDesc.RefreshRate.Denominator = 1;
 	SwapChain.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
+	SwapChain.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	SwapChain.SampleDesc.Quality = 0;
 	SwapChain.SampleDesc.Count = 1;
 	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChain.BufferCount = 1;
-	SwapChain.OutputWindow = hWnd;	
+	SwapChain.OutputWindow = hWnd;
 	SwapChain.Windowed = eWinMode;
 	SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
 		return E_FAIL;
 
-	if (FAILED(pFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(pFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER), E_FAIL);
 
 	Safe_Release(pFactory);
 	Safe_Release(pAdapter);

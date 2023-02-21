@@ -265,6 +265,7 @@
     <ClInclude Include="..\Public\Kena_Staff.h">
       <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -381,6 +382,7 @@
     <ClCompile Include="..\Private\Kena_Staff.cpp">
       <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

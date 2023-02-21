@@ -25,6 +25,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 private:
 	CShader*				m_pShaderCom = nullptr;
@@ -35,6 +36,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUP_ShadowShaderResources();
 
 public:
 	static CForkLift* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

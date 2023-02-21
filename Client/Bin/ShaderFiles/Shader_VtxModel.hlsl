@@ -119,6 +119,54 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+struct VS_IN_SHADOW
+{
+	float3	vPosition : POSITION;
+};
+
+struct VS_OUT_SHADOW
+{
+	float4	vPosition : SV_POSITION;
+	float4	vProjPos  : TEXCOORD0;
+};
+
+VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN_SHADOW In)
+{
+	VS_OUT_SHADOW		Out = (VS_OUT_SHADOW)0;
+
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_WorldMatrix, g_ViewMatrix);
+	matWVP = mul(matWV, g_ProjMatrix);
+
+	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vProjPos = Out.vPosition;
+
+	return Out;
+}
+
+struct PS_IN_SHADOW
+{
+	float4			vPosition : SV_POSITION;
+	float4			vProjPos : TEXCOORD0;
+};
+
+struct PS_OUT_SHADOW
+{
+	vector			vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	Out.vLightDepth.r = In.vProjPos.w / 300.f;
+
+	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -145,5 +193,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
 }
