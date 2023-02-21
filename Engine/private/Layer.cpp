@@ -56,7 +56,7 @@ HRESULT CLayer::Add_GameObject(const _tchar* pCloneObjectTag, CGameObject * pGam
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	m_GameObjects.emplace(pCloneObjectTag, pGameObject);
+  	m_GameObjects.emplace(pCloneObjectTag, pGameObject);
 
 	return S_OK;
 }
