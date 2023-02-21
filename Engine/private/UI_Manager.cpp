@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\UI_Manager.h"
 
 IMPLEMENT_SINGLETON(CUI_Manager)

@@ -20,14 +20,17 @@ public:
 	void Late_Tick(_float fTimeDelta);
 	HRESULT Render();
 
+public:
+	void  Set_bOpenLevel(_bool bOpen) { m_bOpenLevel = bOpen; }
+	_bool Get_bOpenLevel() { return m_bOpenLevel; }
+	_uint Get_CurrentLevelIndex() { return m_iLevelIndex; }
+
 private:
 	class CLevel*				m_pCurrentLevel = nullptr;
 	_uint						m_iLevelIndex = 0;
-
+	_bool						m_bOpenLevel = false;
 public:
 	virtual void Free() override;
-
-	_uint Get_CurrentLevelIndex() { return m_iLevelIndex; }
 };
 
 END

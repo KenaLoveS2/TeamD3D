@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "Bone_Instacing.h"
-
 #include "Model_Instancing.h"
 
 CBone_Instacing::CBone_Instacing()

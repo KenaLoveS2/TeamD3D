@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\QuadTree.h"
 #include "Frustum.h"
 #include "PipeLine.h"

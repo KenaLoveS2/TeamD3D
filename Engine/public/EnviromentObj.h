@@ -5,17 +5,19 @@ BEGIN(Engine)
 class ENGINE_DLL CEnviromentObj : public CGameObject
 {
 public:
+	enum  CHAPTER {
+		CHAPTER_ONE_CAVE, CHAPTER_TWO_FOREST,			CHAPTER_END};
+
 	typedef struct tagEnviromnetObjectDesc
 	{	
 		CGameObject::GAMEOBJECTDESC ObjectDesc;
-
-		// 채워!!
-
-
-	} DESC;
+		_tchar			szProtoObjTag[MAX_PATH]  =  TEXT("");
+		_tchar			szModelTag[MAX_PATH] =  TEXT("");
+		_tchar			szTextureTag[MAX_PATH] =   TEXT("");
+	} ENVIROMENT_DESC;		/*wstring 이  있는 애들은 zeromemory를 쓰지마라*/
 
 protected:
-	DESC m_Desc;
+	ENVIROMENT_DESC m_EnviromentDesc;
 
 	/*
 	CModel* m_pModelCom = nullptr;
@@ -37,7 +39,7 @@ public:
 	virtual HRESULT Render();
 
 public:		
-	virtual CEnviromentObj* Clone(void* pArg) { return nullptr; };
+	virtual CGameObject* Clone(void* pArg) { return nullptr; };
 	virtual void Free() override;
 };
 END

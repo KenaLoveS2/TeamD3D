@@ -2,6 +2,7 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_ProjMatrixInv, g_ViewMatrixInv;
+matrix			g_LightViewMatrix, g_LightProjMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
@@ -23,6 +24,8 @@ Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
+
+Texture2D<float4>		g_ShadowTexture;
 
 float g_fFar = 300.f; // 카메라의 FAR
 
@@ -181,7 +184,39 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	// vDepth.b 는 Emissive Color를 계산됩니다.
 	Out.vColor = CalcHDRColor(vDiffuse, vDepth.b) * vShade + vSpecular;
 
-	if (0.0f == Out.vColor.a)
+	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	float		fViewZ = vDepthDesc.y * 300.f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
+	vector		vPosition;
+	vPosition.x = In.vTexUV.x * 2.f - 1.f;
+	vPosition.y = In.vTexUV.y * -2.f + 1.f;
+	vPosition.z = vDepthDesc.x; /* 0 ~ 1 */
+	vPosition.w = 1.0f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+	vPosition *= fViewZ;
+
+	// 뷰 상
+	vPosition = mul(vPosition, g_ProjMatrixInv);
+
+	// 월드 상
+	vPosition = mul(vPosition, g_ViewMatrixInv);
+
+	vPosition = mul(vPosition, g_LightViewMatrix);
+
+	vector	vUVPos = mul(vPosition, g_LightProjMatrix);
+	float2	vNewUV;
+
+	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
+
+	vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
+
+	if (vPosition.z - 0.1f > vShadowDesc.r * 300.f)
+		Out.vColor *= 0.6f;
+
+	if (Out.vColor.a == 0.0f)
 		discard;
 
 	return Out;

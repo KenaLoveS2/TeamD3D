@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\RenderTarget.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
@@ -42,6 +43,49 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixe
 
 	m_vClearColor = *pClearColor;
 
+	ZeroMemory(&m_ViewPort, sizeof(D3D11_VIEWPORT));
+	m_ViewPort.TopLeftX = 0.f;
+	m_ViewPort.TopLeftY = 0.f;
+	m_ViewPort.Width = static_cast<float>(iWidth);
+	m_ViewPort.Height = static_cast<float>(iHeight);
+	m_ViewPort.MinDepth = 0.f;
+	m_ViewPort.MaxDepth = 1.f;
+
+	return S_OK;
+}
+
+HRESULT CRenderTarget::Ready_DepthStencilRenderTargetView(_uint iWidth, _uint iHeight, DXGI_FORMAT eFormat)
+{
+	if (m_pDevice == nullptr)
+		return E_FAIL;
+
+	ID3D11Texture2D*		pDepthStencilTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = iWidth;
+	TextureDesc.Height = iHeight;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = eFormat;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pDepthStencilView)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
 	return S_OK;
 }
 
@@ -70,7 +114,6 @@ HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float f
 	m_WorldMatrix._41 = fX - ViewportDesc.Width * 0.5f;
 	m_WorldMatrix._42 = -fY + ViewportDesc.Height * 0.5f;
 
-
 	return S_OK;
 }
 
@@ -98,10 +141,8 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 void CRenderTarget::Free()
 {
+	Safe_Release(m_pDepthStencilView);
 
-	/*if(m_vClearColor.y == 0.f)
-		SaveDDSTextureToFile(m_pContext, m_pTexture2D, TEXT("../Bin/Test.dds"));
-*/
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 

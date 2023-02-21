@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "..\public\ImguiObject.h"
 
 CImguiObject::CImguiObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

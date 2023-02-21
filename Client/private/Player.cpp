@@ -80,7 +80,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta);
 
 	/*for (_uint i = 0; i < m_PlayerParts.size(); ++i)
 	{
@@ -355,6 +355,7 @@ void CPlayer::Free()
 
 	m_PlayerParts.clear();
 
+	Safe_Release(m_pFSM);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

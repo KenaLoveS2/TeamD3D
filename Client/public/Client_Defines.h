@@ -7,9 +7,11 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrmaeLimit;
 
+//#define FOR_MAPTOOL
+
 namespace Client
 {
-	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END };
+	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL,  LEVEL_END };
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{
