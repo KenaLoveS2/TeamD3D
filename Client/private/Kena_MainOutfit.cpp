@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Kena_MainOutfit.h"
 #include "GameInstance.h"
+#include "Kena.h"
 
 CKena_MainOutfit::CKena_MainOutfit(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CKena_Parts(pDevice, pContext)
@@ -25,12 +26,19 @@ HRESULT CKena_MainOutfit::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
+	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
+	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Kena_Clothing.ao");
+
 	return S_OK;
 }
 
 void CKena_MainOutfit::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
@@ -47,13 +55,13 @@ HRESULT CKena_MainOutfit::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResource(), E_FAIL);
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i);
+
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
 
 	return S_OK;
@@ -68,7 +76,7 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
 

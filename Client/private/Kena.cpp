@@ -46,6 +46,8 @@ void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	for (auto& pPart : m_vecPart)
@@ -56,8 +58,15 @@ void CKena::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
+		m_iAnimationIndex++;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
+		m_iAnimationIndex--;
+
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
+
 	if (m_pRendererCom != nullptr)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
@@ -75,7 +84,14 @@ HRESULT CKena::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		if (i == 4)	// Eye Render
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		else if (i == 0)	// EyeShadow Rneder
+			continue;//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+		//else if (i == 6)
+		//	continue;
+		else
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
 
 	return S_OK;
@@ -83,6 +99,7 @@ HRESULT CKena::Render()
 
 void CKena::Imgui_RenderProperty()
 {
+	
 }
 
 HRESULT CKena::Ready_Parts()
@@ -91,6 +108,19 @@ HRESULT CKena::Ready_Parts()
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CKena_Parts::KENAPARTS_DESC	PartDesc;
+
+	/* Staff */
+	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
+
+	PartDesc.pPlayer = this;
+	PartDesc.eType = CKena_Parts::KENAPARTS_STAFF;
+
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Staff", &PartDesc));
+	NULL_CHECK_RETURN(pPart, E_FAIL);
+
+	m_vecPart.push_back(pPart);
+
+	/* MainOutfit */
 	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
 
 	PartDesc.pPlayer = this;

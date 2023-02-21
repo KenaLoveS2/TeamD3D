@@ -24,6 +24,9 @@ public:
 	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 	HRESULT End_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 
+	HRESULT Begin_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+	HRESULT End_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+
 #ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
@@ -42,7 +45,7 @@ private:
 private:
 	ID3D11RenderTargetView*				m_pBackBufferView = nullptr;
 	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
-
+	D3D11_VIEWPORT						m_OriginViewPort;
 
 #ifdef _DEBUG
 private:

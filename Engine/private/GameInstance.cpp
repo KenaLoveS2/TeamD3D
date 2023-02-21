@@ -143,6 +143,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
 	m_pLevel_Manager->Late_Tick(fTimeDelta);
+
+	m_pInput_Device->Reset_EveryKey(fTimeDelta);
 }
 
 void CGameInstance::Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag)
@@ -195,7 +197,7 @@ _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
 	return m_pInput_Device->Get_DIKeyState(byKeyID);
 }
 
-_byte CGameInstance::Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID)
+_byte CGameInstance::Get_DIMouseState(MOUSEKEYSTATE byMouseID)
 {
 	if (nullptr == m_pInput_Device)
 		return 0;
@@ -203,12 +205,89 @@ _byte CGameInstance::Get_DIMouseState(CInput_Device::MOUSEKEYSTATE byMouseID)
 	return m_pInput_Device->Get_DIMouseState(byMouseID);
 }
 
-_long CGameInstance::Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMoveState)
+_long CGameInstance::Get_DIMouseMove(MOUSEMOVESTATE eMoveState)
 {
 	if (nullptr == m_pInput_Device)
 		return 0;
 
 	return m_pInput_Device->Get_DIMouseMove(eMoveState);
+}
+
+_float CGameInstance::Get_KeyChargeTime(_ubyte byKeyID)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, 0.f);
+
+	return m_pInput_Device->Get_KeyChargeTime(byKeyID);
+}
+
+_bool CGameInstance::Mouse_Down(MOUSEKEYSTATE MouseButton)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Mouse_Down(MouseButton);
+}
+
+_bool CGameInstance::Mouse_Up(MOUSEKEYSTATE MouseButton)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Mouse_Up(MouseButton);
+}
+
+_bool CGameInstance::Mouse_DoubleClick(MOUSEKEYSTATE MouseButton)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Mouse_DoubleClick(MouseButton);
+}
+
+_bool CGameInstance::Mouse_Pressing(MOUSEKEYSTATE MouseButton)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Mouse_Pressing(MouseButton);
+}
+
+_bool CGameInstance::Key_Pressing(_ubyte byKeyID)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Key_Pressing(byKeyID);
+}
+
+_bool CGameInstance::Key_Down(_ubyte byKeyID)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Key_Down(byKeyID);
+}
+
+_bool CGameInstance::Key_DoubleDown(_ubyte byKeyID)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Key_DoubleDown(byKeyID);
+}
+
+_bool CGameInstance::Key_Up(_ubyte byKeyID)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Key_Up(byKeyID);
+}
+
+_bool CGameInstance::Key_Charge(_ubyte byKeyID, _float fTime)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, false);
+
+	return m_pInput_Device->Key_Charge(byKeyID, fTime);
+}
+
+void CGameInstance::Reset_EveryKey(_float fTimeDelta)
+{
+	NULL_CHECK_RETURN(m_pInput_Device, );
+
+	return m_pInput_Device->Reset_EveryKey(fTimeDelta);
 }
 
 HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel * pNewLevel)
@@ -328,6 +407,14 @@ _matrix CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eSt
 		return XMMatrixIdentity();
 
 	return m_pPipeLine->Get_TransformMatrix_Inverse(eState);
+}
+
+_float4x4 CGameInstance::Get_TransformFloat4x4_Inverse(CPipeLine::TRANSFORMSTATE eState)
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_TransformFloat4x4_Inverse(eState);
 }
 
 void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
