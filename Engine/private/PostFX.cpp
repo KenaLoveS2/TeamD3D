@@ -6,6 +6,7 @@ IMPLEMENT_SINGLETON(CPostFX)
 
 CPostFX::CPostFX()
 {
+	m_bOn = true;
 }
 
 HRESULT CPostFX::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -295,7 +296,9 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
 
 	float fAdaptationNorm;
+
 	static bool s_bFirstTime = true;
+
 	if (s_bFirstTime)
 	{
 		// On the first frame we want to fully adapt the new value so use 0
@@ -306,7 +309,6 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	{
 		// Normalize the adaptation time with the frame time (all in seconds)
 		// Never use a value higher or equal to 1 since that means no adaptation at all (keeps the old value)
-
 		fAdaptationNorm = min(m_fAdaptation < 0.0001f ? 1.0f : (_float)TIMEDELTA / m_fAdaptation, 0.9999f);
 	}
 	

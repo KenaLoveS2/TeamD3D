@@ -48,7 +48,9 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+#ifdef _DEBUG
 		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+#endif
 	}
 }
 
