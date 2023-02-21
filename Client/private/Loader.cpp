@@ -321,6 +321,12 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+
 	lstrcpy(m_szLoadingText, TEXT("콜라이더를 로딩중입니다. "));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),

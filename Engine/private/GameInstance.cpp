@@ -356,6 +356,12 @@ map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 	return m_pObject_Manager->Get_ProtoTypeObjects();
 }
 
+CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
+{
+	assert(nullptr != m_pObject_Manager&& "CGameInstance::Find_Layer");
+	return m_pObject_Manager->Find_Layer(iLevelIndex,pLayerTag);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)

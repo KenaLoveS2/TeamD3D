@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 class CEnviromentObj;
+class CTransform;
 END
 
 #define		MAX_CHATERNUM			2
@@ -28,6 +29,9 @@ private:
 
 	void			Imgui_SelectOption();
 	void			Imgui_CreateEnviromentObj();
+	void			Imgui_Save_Load_Json();
+	void			Imgui_Save_Func();
+	void			Imgui_Load_Func();
 
 
 private: /*For_Tool*/
