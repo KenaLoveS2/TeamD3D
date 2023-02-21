@@ -54,6 +54,8 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if(nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()

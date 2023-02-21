@@ -16,22 +16,22 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 
 void CEffect_Base::BillBoardSetting(_float3 vScale)
 {
-	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
-	//CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
-	//RELEASE_INSTANCE(CGameInstance);
+	CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+	CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+	RELEASE_INSTANCE(CGameInstance);
 
-	//_float3 cameraPosition, cameraUp, cameraForward;
-	//_float4 rotateAxis, objectForward;
+	_float3 cameraPosition, cameraUp, cameraForward;
+	_float4 rotateAxis, objectForward;
 
-	//XMStoreFloat3(&cameraPosition, pTargetTransform->Get_State(CTransform::STATE_TRANSLATION));
-	//XMStoreFloat3(&cameraUp, pTargetTransform->Get_State(CTransform::STATE_UP));
-	//XMStoreFloat3(&cameraForward, pTargetTransform->Get_State(CTransform::STATE_LOOK));
+	XMStoreFloat3(&cameraPosition, pTargetTransform->Get_State(CTransform::STATE_TRANSLATION));
+	XMStoreFloat3(&cameraUp, pTargetTransform->Get_State(CTransform::STATE_UP));
+	XMStoreFloat3(&cameraForward, pTargetTransform->Get_State(CTransform::STATE_LOOK));
 
-	//_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
-	//
-	//m_pTransformCom->Set_Scaled(vScale);
+	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
+	m_pTransformCom->Set_WorldMatrix(worldmatrix);
+	m_pTransformCom->Set_Scaled(vScale);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype()
