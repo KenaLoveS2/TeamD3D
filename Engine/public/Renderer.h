@@ -47,12 +47,12 @@ private:
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 	
 private:
-	class CTarget_Manager*				m_pTarget_Manager = nullptr;
+	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CLight_Manager*				m_pLight_Manager = nullptr;
-	class CLevel_Manager*				m_pLevel_Manager = nullptr;
+	class CLevel_Manager*			m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
-	class CShader*						m_pShader = nullptr;
-	_float4x4							m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	class CShader*							m_pShader = nullptr;
+	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 	
 private:
 	HRESULT Render_Priority();

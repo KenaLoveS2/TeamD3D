@@ -3,6 +3,7 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
+float				g_fFar = 300.f;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
@@ -114,7 +115,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, fEmissive, fRoughness);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, fEmissive, fRoughness);
 	
 	return Out;
 }

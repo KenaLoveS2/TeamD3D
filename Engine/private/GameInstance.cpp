@@ -623,6 +623,13 @@ CCamera * CGameInstance::Find_Camera(const _tchar * pCameraTag)
 	if (m_pCamera_Manager == nullptr) return nullptr;
 	return m_pCamera_Manager->Find_Camera(pCameraTag);
 }
+
+_float* CGameInstance::Get_CameraFar()
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Get_CameraFar();
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
