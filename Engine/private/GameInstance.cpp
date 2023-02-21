@@ -191,8 +191,11 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 		if (FAILED(m_pTarget_Manager->Resize(m_pGraphic_Device->GetContext())))
 			return E_FAIL;
 
-		if (FAILED(m_pPostFX->Initialize(m_pGraphic_Device->GetDevice(), m_pGraphic_Device->GetContext())))
-			return E_FAIL;
+		if(m_pPostFX->IsPostFXOn())
+		{
+			if (FAILED(m_pPostFX->Initialize(m_pGraphic_Device->GetDevice(), m_pGraphic_Device->GetContext())))
+				return E_FAIL;
+		}
 	}
 
 	return S_OK;

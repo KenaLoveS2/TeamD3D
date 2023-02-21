@@ -6,7 +6,6 @@ IMPLEMENT_SINGLETON(CPostFX)
 
 CPostFX::CPostFX()
 {
-	m_bOn = true;
 }
 
 HRESULT CPostFX::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

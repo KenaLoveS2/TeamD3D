@@ -68,11 +68,11 @@ private:
 	_uint							m_iWidth = 0;
 	_uint							m_iHeight = 0;
 	_uint							m_iDownScaleGroups = 0;
-	_float						m_fMiddleGrey = 0.0025f;
-	_float						m_fWhite = 1.5f;
+	_float						m_fMiddleGrey = 10.f;
+	_float						m_fWhite = 3.f;
 	_float						m_fAdaptation = 0.f;
-	_float						m_fBloomThreshold = 0.f;
-	_float						m_fBloomScale = 0.f;
+	_float						m_fBloomThreshold = 1.f;
+	_float						m_fBloomScale = 0.5f;
 
 	typedef struct
 	{

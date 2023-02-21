@@ -234,6 +234,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
+		if (FAILED(Render_PostProcess()))
+			return E_FAIL;
 	}
 	else
 	{
@@ -246,9 +248,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
 	}
-
-	if (FAILED(Render_PostProcess()))
-		return E_FAIL;
 
 	if (FAILED(Render_UI()))
 		return E_FAIL;
