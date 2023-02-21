@@ -17,7 +17,7 @@ CMesh::CMesh(const CMesh & rhs)
 	, m_pAnimVertices(rhs.m_pAnimVertices)
 	, m_pIndices(rhs.m_pIndices)
 {
-	if (rhs.m_Bones.size())
+	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
 		m_pBoneNames = new string[rhs.m_iNumBones];
 		for (_uint i = 0; i < rhs.m_iNumBones; i++)

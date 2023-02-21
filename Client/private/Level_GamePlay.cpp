@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Level_GamePlay.h"
-
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
-
 #include "Imgui_ShaderEditor.h"
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_UIEditor.h"

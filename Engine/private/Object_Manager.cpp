@@ -155,9 +155,18 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 
 	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
 
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(pCloneObjectTag, pGameObject), E_FAIL);
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(pCloneObjectTag, pGameObject), E_FAIL);
+
+		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pCloneObjectTag, pGameObject);
 
 	m_mapAnimModel[iLevelIndex].emplace(pCloneObjectTag, pGameObject);
 	Safe_AddRef(pGameObject);
