@@ -82,14 +82,6 @@ HRESULT CUI_NodeHUDHP::Render()
 	return S_OK;
 }
 
-void CUI_NodeHUDHP::Imgui_RenderProperty()
-{
-	// m_pTransformCom->Imgui_RenderProperty();
-
-
-
-}
-
 HRESULT CUI_NodeHUDHP::SetUp_Components()
 {
 	/* Renderer */

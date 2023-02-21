@@ -23,6 +23,12 @@ HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_InformationList()))
+	{
+		MSG_BOX("Failed To Ready_InformationList : UI_ClientManager");
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_Proto_GameObject(pDevice, pContext)))
 	{
 		MSG_BOX("Failed To Ready_Proto_GameObject : UI_ClientManager");
@@ -47,22 +53,26 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDFrame"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDFrame.png")))))
 		return E_FAIL;
+	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDFrame");
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDFrame");
 
 	/* Bar */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarBG.png")))))
 		return E_FAIL;
+	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBar");
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBar");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarMask"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarMask.png")))))
 		return E_FAIL;
+	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBarMask");
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarMask");
 	
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarNoise.png")))))
 		return E_FAIL;
+	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBarNoise");
 	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarNoise");
 
 
@@ -74,6 +84,21 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CUI_ClientManager::Ready_InformationList()
+{
+	/* For. Save List for UI */
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	/* RenderPass List */
+	pGameInstance->Add_UIString(L"RenderPass", "Default");
+	pGameInstance->Add_UIString(L"RenderPass", "x(Effect)");
+	pGameInstance->Add_UIString(L"RenderPass", "DiffuseAlphaBlend");
+	pGameInstance->Add_UIString(L"RenderPass", "MaskMap");
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

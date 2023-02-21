@@ -612,6 +612,36 @@ _tchar* CGameInstance::Find_String(_uint iLevelIndex, _tchar * pStr)
 	return m_pString_Manager->Find_String(iLevelIndex, pStr);
 }
 
+void CGameInstance::Add_UITextureTag(wstring wstr)
+{
+	if (m_pString_Manager == nullptr) return;
+	return m_pString_Manager->Add_UITextureTag(wstr);
+}
+
+vector<wstring>* CGameInstance::Get_UITextureProtoTagsPtr()
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UITextureProtoTagsPtr();
+}
+
+vector<string>* CGameInstance::Get_UITextureNamesPtr()
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UITextureNamesPtr();
+}
+
+void CGameInstance::Add_UIString(_tchar * tag, string str)
+{
+	if (m_pString_Manager == nullptr) return;
+	return m_pString_Manager->Add_UIString(tag, str);
+}
+
+vector<string>* CGameInstance::Get_UIString(_tchar * tag)
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UIString(tag);
+}
+
 HRESULT CGameInstance::Add_Camera(const _tchar * pCameraTag, CCamera * pCamrea, _bool bWorkFlag)
 {
 	if (m_pCamera_Manager == nullptr) return E_FAIL;

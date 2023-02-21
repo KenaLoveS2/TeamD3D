@@ -51,7 +51,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
+	/*SV_TARGET0 : 모든 정보가 결정된 픽셀w이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
 	float4		vColor : SV_TARGET0;
 };
 

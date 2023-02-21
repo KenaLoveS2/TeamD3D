@@ -35,7 +35,7 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 	m_bActive = true;
 	m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
 	m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
-	m_pTransformCom->Set_Scaled(_float3(m_tDesc.vSize.x, m_tDesc.vSize.y, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(400.f, 24.f, 1.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
 		XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
@@ -43,6 +43,7 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
+	XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 
 	return S_OK;
 
@@ -96,6 +97,12 @@ HRESULT CUI_NodeHUDHPBar::SetUp_Components()
 	/* VIBuffer_Rect */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
+
+	/* Texture */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"), TEXT("Com_DiffuseTexture"),
+		(CComponent**)&m_pTextureCom[0])))
+		return E_FAIL;
+
 
 	return S_OK;
 }
