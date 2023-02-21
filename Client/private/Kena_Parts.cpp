@@ -30,6 +30,7 @@ HRESULT CKena_Parts::Initialize(void * pArg)
 
 		m_tPartsInfo.pPlayer = tKenaPartsDesc.pPlayer;
 		m_tPartsInfo.eType = tKenaPartsDesc.eType;
+		m_pPlayer = m_tPartsInfo.pPlayer;
 
 		FAILED_CHECK_RETURN(__super::Initialize(&tKenaPartsDesc), E_FAIL);
 	}

@@ -10,8 +10,10 @@ CShader::CShader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CShader::CShader(const CShader & rhs)
 	: CComponent(rhs)
 	, m_pEffect(rhs.m_pEffect)
-	, m_InputLayouts(rhs.m_InputLayouts)	
+	, m_InputLayouts(rhs.m_InputLayouts)
 	, m_iNumPasses(rhs.m_iNumPasses)
+	, m_pElements(rhs.m_pElements)
+	, m_iNumElements(rhs.m_iNumElements)
 {
 	Safe_AddRef(m_pEffect);
 
@@ -42,6 +44,7 @@ HRESULT CShader::Initialize_Prototype(const _tchar * pShaderFilePath, const D3D1
 	D3DX11_TECHNIQUE_DESC	TechniqueDesc;
 	pTechnique->GetDesc(&TechniqueDesc);
 
+	m_wstrFilePath = pShaderFilePath;
 	m_iNumPasses = TechniqueDesc.Passes;
 
 	for (_uint i = 0; i < m_iNumPasses; ++i)
@@ -158,9 +161,10 @@ HRESULT CShader::Set_ShaderResourceView(const char * pConstantName, ID3D11Shader
 
 void CShader::Imgui_RenderProperty()
 {
-	ImGui::Begin("SHADER DEBUG");
 	ImGui::Text("Current PassIndex : %d" , m_iCurrentPassIndex);
-	ImGui::End();
+
+	if (ImGui::Button("ReCompile"))
+		ReCompile();
 }
 
 CShader * CShader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, const _uint iNumElements)

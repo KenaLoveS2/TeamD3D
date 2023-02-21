@@ -29,6 +29,7 @@ protected:
 
 protected:
 	_bool						m_isCloned = false;
+	wstring					m_wstrFilePath = L"";
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;
