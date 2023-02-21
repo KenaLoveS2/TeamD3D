@@ -122,6 +122,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 void CGameInstance::Tick_Engine(_float fTimeDelta)
 {
+	m_fTimeDelta = fTimeDelta;
+
 	if (nullptr == m_pInput_Device || nullptr == m_pLevel_Manager || nullptr == m_pObject_Manager)
 		return;
 	
@@ -190,12 +192,6 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	{
 		if (FAILED(m_pTarget_Manager->Resize(m_pGraphic_Device->GetContext())))
 			return E_FAIL;
-
-		if(m_pPostFX->IsPostFXOn())
-		{
-			if (FAILED(m_pPostFX->Initialize(m_pGraphic_Device->GetDevice(), m_pGraphic_Device->GetContext())))
-				return E_FAIL;
-		}
 	}
 
 	return S_OK;

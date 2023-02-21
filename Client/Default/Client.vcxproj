@@ -262,6 +262,9 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />

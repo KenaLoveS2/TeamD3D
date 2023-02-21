@@ -403,5 +403,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
       <Filter>02.GameObjects\Effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
