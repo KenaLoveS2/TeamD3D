@@ -399,6 +399,12 @@ _uint CGameInstance::Get_NumCopyPrototypes()
 	return m_pObject_Manager->Get_NumCopyPrototypes();
 }
 
+HRESULT CGameInstance::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)
+{
+	if (m_pObject_Manager == nullptr) return E_FAIL;
+	return m_pObject_Manager->Delete_Object(iLevelIndex, pLayerTag, pCloneObjectTag);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)

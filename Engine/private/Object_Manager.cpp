@@ -267,8 +267,8 @@ void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSele
 		}
 	}
 }
-
-void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject)
+				
+void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelectedObject)
 {
 	bool bFound = false;
 
@@ -322,4 +322,14 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 
 	if (bFound == false)
 		pSelectedObject = nullptr;
+}
+
+HRESULT CObject_Manager::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)
+{	
+	CLayer*	pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	if (pLayer == nullptr) return E_FAIL;
+	
+	pLayer->Delete_GameObject(pCloneObjectTag);
+
+	return S_OK;
 }

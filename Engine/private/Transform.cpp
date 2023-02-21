@@ -409,3 +409,75 @@ _float CTransform::HeightOnTerrain(_fvector vPos, _float3* pTerrainVtxPos, _uint
 	// ax + by + cz + d = 0; // by = -ax - cz - d // y = (-ax - cz - d) / b
 	return (-vPlaneFloat.x * vPosFloat.x - vPlaneFloat.z * vPosFloat.z - vPlaneFloat.w) / vPlaneFloat.y;
 }
+
+_float CTransform::Calc_Distance_XYZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);	
+
+	return XMVectorGetX(XMVector3Length(vPos - vTargetPos));
+}
+
+_float CTransform::Calc_Distance_XZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.y = vPos.y;
+	
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XYZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.y = vPos.y;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+
+

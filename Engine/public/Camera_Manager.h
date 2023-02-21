@@ -31,5 +31,7 @@ public:
 	HRESULT Render();
 
 	HRESULT Clear();
+
+	class CCamera* Get_WorkCameraPtr() { return m_pWorkCamera; }
 };
 END

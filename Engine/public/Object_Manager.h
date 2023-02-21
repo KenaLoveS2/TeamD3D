@@ -65,10 +65,12 @@ public:
 	// iLevel에 있는 모든 사본 Object를 Layer별로 Imgui로 출력한다.
 	// 선택한 Object는 pSelectedObject로 돌려준다.
 	// 해당 Object가 없거나 사라지면 nullptr로 돌려준다.
-	void Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelectedObject);
+	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
 
 public:	
 	vector<PROTOTYPES>& Get_CopyPrototypes() { return m_CopyPrototypes; }
 	_uint Get_NumCopyPrototypes() { return m_iNumCopyPrototypes; }
+		
+	HRESULT Delete_Object(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
 };
 END

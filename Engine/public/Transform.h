@@ -107,6 +107,16 @@ public:
 
 	void Set_OnTerrain(class CVIBuffer_Terrain* pTerrainBuffer, _float fPlusValue);
 	_float HeightOnTerrain(_fvector vPos, _float3* pTerrainVtxPos, _uint iNumVerticesX, _uint iNumVerticesZ);
+
+	_float Calc_Distance_XYZ(_float4 &vTargetPos);	
+	_float Calc_Distance_XZ(_float4 &vTargetPos);
+	_float Calc_Distance_XY(_float4 &vTargetPos);
+	_float Calc_Distance_YZ(_float4 &vTargetPos);
+	
+	_float Calc_Distance_XYZ(CTransform* pTransform);
+	_float Calc_Distance_XZ(CTransform* pTransform);	
+	_float Calc_Distance_XY(CTransform* pTransform);
+	_float Calc_Distance_YZ(CTransform* pTransform);
 };
 
 
