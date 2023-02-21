@@ -49,8 +49,10 @@ HRESULT CCollider::Initialize_Prototype(TYPE eType)
 	return S_OK;
 }
 
-HRESULT CCollider::Initialize(void * pArg)
+HRESULT CCollider::Initialize(void * pArg, CGameObject * pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	COLLIDERDESC		ColliderDesc;
 	memcpy(&ColliderDesc, pArg, sizeof(COLLIDERDESC));	
 
@@ -365,11 +367,11 @@ CCollider * CCollider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pCon
 	return pInstance;
 }
 
-CComponent * CCollider::Clone(void * pArg)
+CComponent * CCollider::Clone(void * pArg, CGameObject * pOwner)
 {
 	CCollider*		pInstance = new CCollider(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Created : CCollider");
 		Safe_Release(pInstance);

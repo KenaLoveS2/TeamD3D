@@ -21,7 +21,7 @@ HRESULT CVIBuffer_Instancing::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Instancing::Initialize(void * pArg)
+HRESULT CVIBuffer_Instancing::Initialize(void * pArg, CGameObject * pOwner)
 {
 	return S_OK;
 }

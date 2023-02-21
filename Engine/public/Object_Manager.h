@@ -16,20 +16,27 @@ private:
 	virtual ~CObject_Manager() = default;
 
 public:
-	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
-	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag);
+	class CComponent*		Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
+	class CGameObject*		Get_GameObjectPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar* pCloneObjectTag);
 	
 	map<const _tchar*, class CGameObject*>&		Get_ProtoTypeObjects() { return m_Prototypes; }
-	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	class CLayer*				Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+
+	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
+
 public:
-	HRESULT Reserve_Manager(_uint iNumLevels);
-	HRESULT Clear(_uint iLevelIndex);
+	HRESULT					Reserve_Manager(_uint iNumLevels);
+	HRESULT					Clear(_uint iLevelIndex);
 public:
-	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+	HRESULT					Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
+	HRESULT					Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
 		const _tchar* pCloneObjectTag, 
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
-	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+	CGameObject*			Clone_GameObject(const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag, void* pArg = nullptr);
+	HRESULT					Clone_AnimObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+		const _tchar* pCloneObjectTag,
+		void* pArg = nullptr, CGameObject** ppOut = nullptr);
+	HRESULT					Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
 
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
@@ -42,6 +49,9 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	map<const _tchar*, class CLayer*>*			m_pLayers = nullptr;
 	typedef map<const _tchar*, class CLayer*>	LAYERS;
 	_uint										m_iNumLevels = 0;
+
+private:	/* Animation Objects, For Animation Tool */
+	map<const _tchar*, class CGameObject*>*	m_mapAnimModel = nullptr;
 
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);

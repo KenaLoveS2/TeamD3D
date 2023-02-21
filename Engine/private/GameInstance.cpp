@@ -318,22 +318,43 @@ CGameObject * CGameInstance::Get_GameObjectPtr(_uint iLevelIndex, const _tchar *
 	return m_pObject_Manager->Get_GameObjectPtr(iLevelIndex, pLayerTag, pCloneObjectTag);
 }
 
+map<const _tchar*, class CGameObject*>* CGameInstance::Get_AnimObjects(_uint iLevelIndex)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, nullptr);
+
+	return m_pObject_Manager->Get_AnimObjects(iLevelIndex);
+}
+
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObject_Manager) return E_FAIL;
 	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
 }
 
-CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
+CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg)
 {
 	if (nullptr == m_pObject_Manager) return nullptr;
-	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);	
+	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pCloneObjectTag, pArg);
 }
 
 HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject** ppObj)
 {
 	if (nullptr == m_pObject_Manager) return E_FAIL;
 	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pCloneObjectTag, pArg, ppObj);
+}
+
+HRESULT CGameInstance::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pPrototypeTag, const _tchar * pCloneObjectTag, void * pArg, CGameObject ** ppOut)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, E_FAIL);
+
+	return m_pObject_Manager->Clone_AnimObject(iLevelIndex, pLayerTag, pPrototypeTag, pCloneObjectTag, pArg, ppOut);
+}
+
+HRESULT CGameInstance::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameObject)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, E_FAIL);
+
+	return m_pObject_Manager->Add_AnimObject(iLevelIndex, pGameObject);
 }
 
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
@@ -370,12 +391,12 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototyp
 	return m_pComponent_Manager->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype);	
 }
 
-CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void * pArg)
+CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void * pArg, CGameObject * pOwner)
 {
 	if (nullptr == m_pComponent_Manager)
 		return nullptr;
 
-	return m_pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
+	return m_pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg, pOwner);
 }
 
 map<const _tchar*, class CComponent*>* CGameInstance::Get_ComponentProtoType()

@@ -13,12 +13,12 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype(const _float3* pPoints);
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 
 
 public:
 	static CVIBuffer_Cell* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _float3* pPoints);
-	virtual CComponent* Clone(void* pArg = nullptr);
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	virtual void Free() override;
 
 };

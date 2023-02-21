@@ -28,7 +28,7 @@ public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 	
-	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
+	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	map<const _tchar*, class CComponent*>*		Get_ComponentProtoType() { return m_pPrototypes; }
 
 private:

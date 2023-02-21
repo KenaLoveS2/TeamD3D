@@ -226,9 +226,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CRenderer::Initialize(void * pArg)
+HRESULT CRenderer::Initialize(void * pArg, CGameObject * pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -506,7 +506,7 @@ CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pCon
 	return pInstance;
 }
 
-CRenderer * CRenderer::Clone(void * pArg)
+CRenderer * CRenderer::Clone(void * pArg, CGameObject * pOwner)
 {
 	AddRef();
 

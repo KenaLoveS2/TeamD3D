@@ -37,6 +37,9 @@ public:
 	virtual HRESULT		Render() override;
 	virtual void			Imgui_RenderProperty() override;
 
+public:
+	void					Model_Synchronization();
+
 protected:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;

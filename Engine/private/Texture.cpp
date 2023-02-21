@@ -53,8 +53,10 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	return S_OK;
 }
 
-HRESULT CTexture::Initialize(void * pArg)
+HRESULT CTexture::Initialize(void * pArg, CGameObject * pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	return S_OK;
 }
 
@@ -86,11 +88,11 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 	return pInstance;
 }
 
-CComponent * CTexture::Clone(void * pArg)
+CComponent * CTexture::Clone(void * pArg, CGameObject * pOwner)
 {
 	CTexture*		pInstance = new CTexture(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CTexture");
 		Safe_Release(pInstance);

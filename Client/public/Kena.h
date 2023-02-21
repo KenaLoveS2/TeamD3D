@@ -22,7 +22,7 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	const _int&			Get_AnimationIndex() const { return m_iAnimationIndex; }
+	const _double&		Get_AnimationPlayTime();
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -31,6 +31,8 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
+	virtual void			Update_Child() override;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -44,8 +46,6 @@ private:
 	vector<class CKena_Parts*>	m_vecPart;
 
 private:
-	_int					m_iAnimationIndex = 0;
-
 	_bool					m_bAttack = false;
 
 private:

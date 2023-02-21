@@ -195,6 +195,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\public\Tool_Animation.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasMonHP.h" />
     <ClInclude Include="..\public\UI_CanvasSkillBtn.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\private\Tool_Animation.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasMonHP.cpp" />
     <ClCompile Include="..\private\UI_CanvasSkillBtn.cpp" />

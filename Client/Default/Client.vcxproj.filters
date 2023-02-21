@@ -130,6 +130,12 @@
     <Filter Include="02.GameObjects\Player\Outfit\MainOutfit">
       <UniqueIdentifier>{826068a4-3634-4bde-b6c1-dfcbfc1dfe97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95. Tool">
+      <UniqueIdentifier>{c89e15d1-a040-4683-b74e-329d9ef29d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\Animation">
+      <UniqueIdentifier>{aff2e929-8df3-452b-a96c-4ef48af06348}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -254,6 +260,9 @@
       <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LightCamera.h" />
+    <ClInclude Include="..\public\Tool_Animation.h">
+      <Filter>95. Tool\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -362,6 +371,9 @@
       <Filter>02.GameObjects\Player\Weapon\Staff</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LightCamera.cpp" />
+    <ClCompile Include="..\private\Tool_Animation.cpp">
+      <Filter>95. Tool\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -68,11 +68,16 @@ BEGIN(Engine)
 	public: /* For.Object_Manager */
 		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
 		class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
+		map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex);
 
 		HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag = nullptr, void* pArg = nullptr);
 		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
 								void* pArg = nullptr, CGameObject** ppObj = nullptr);
+		HRESULT		Clone_AnimObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+			const _tchar* pCloneObjectTag,
+			void* pArg = nullptr, CGameObject** ppOut = nullptr);
+		HRESULT		Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
 
 		void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 		void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
@@ -82,7 +87,7 @@ BEGIN(Engine)
 
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
-		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
+		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 	public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);

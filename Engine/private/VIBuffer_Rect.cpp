@@ -100,9 +100,9 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect::Initialize(void * pArg)
+HRESULT CVIBuffer_Rect::Initialize(void * pArg, CGameObject * pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -123,11 +123,11 @@ CVIBuffer_Rect * CVIBuffer_Rect::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Rect::Clone(void * pArg)
+CComponent * CVIBuffer_Rect::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Rect*		pInstance = new CVIBuffer_Rect(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Rect");
 		Safe_Release(pInstance);

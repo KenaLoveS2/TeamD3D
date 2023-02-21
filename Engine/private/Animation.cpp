@@ -19,8 +19,67 @@ CAnimation::CAnimation(const CAnimation& rhs)
 		m_Channels.push_back(rhs.m_Channels[i]->Clone());
 }
 
+HRESULT CAnimation::Save_Animation(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = strlen(m_szName) + 1;
+	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	WriteFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
+	WriteFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& pChannel : m_Channels)
+	{
+		if (FAILED(pChannel->Save_Channel(hFile, dwByte)))
+		{
+			MSG_BOX("Failed to Save : Channel");
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = 0;
+	ReadFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+
+	char*			pName = new char[iNameLength];
+	ReadFile(hFile, pName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	strcpy_s(m_szName, pName);
+
+	Safe_Delete_Array(pName);
+
+	ReadFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
+
+	ReadFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
+	m_Channels.reserve(m_iNumChannels);
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		CChannel*		pChannel = CChannel::Create(nullptr, m_pModel);
+		NULL_CHECK_RETURN(pChannel, E_FAIL);
+		FAILED_CHECK_RETURN(pChannel->Load_Channel(hFile, dwByte), E_FAIL);
+
+		m_Channels.push_back(pChannel);
+	}
+
+	return S_OK;
+}
+
 HRESULT CAnimation::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
+	m_pModel = pModel;
+
+	if (hFile == nullptr)
+		return S_OK;
+
 	_ulong dwByte = 0;
 	_uint iLen = 0;
 	ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
@@ -48,19 +107,18 @@ HRESULT CAnimation::Initialize(void* pArg)
 
 void CAnimation::Update_Bones(_float fTimeDelta)
 {
-	if (true == m_isFinished &&
-		false == m_isLooping)
+	if (true == m_isFinished)
 	{
-		return;
+		if (m_isLooping)
+			m_isFinished = false;
+		else
+			return;
 	}
 
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	if (m_PlayTime >= m_Duration)
-	{
-		m_PlayTime = 0.0;
 		m_isFinished = true;
-	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
@@ -70,24 +128,24 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
 	}
 
-	if (true == m_isFinished)
-		m_isFinished = false;
+	if (m_isFinished && m_isLooping)
+		m_PlayTime = 0.0;
 }
 
 void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 {
-	if (true == m_isFinished && false == m_isLooping)
+	if (true == m_isFinished)
 	{
-		return;
+		if (m_isLooping)
+			m_isFinished = false;
+		else
+			return;
 	}
 
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	if (m_PlayTime >= m_Duration)
-	{
-		m_PlayTime = 0.0;
 		m_isFinished = true;
-	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
@@ -96,9 +154,6 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 
 		m_Channels[i]->Blend_TransformMatrix(m_PlayTime, fBlendRatio);
 	}
-
-	if (true == m_isFinished)
-		m_isFinished = false;
 }
 
 void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
@@ -116,6 +171,15 @@ void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fRatio);
 		m_Channels[i]->Reset_KeyFrameIndex();
 	}
+}
+
+void CAnimation::Reset_Animation()
+{
+	for (auto& pChannel : m_Channels)
+		pChannel->Reset_KeyFrameIndex();
+
+	m_PlayTime = 0.0;
+	m_isFinished = false;
 }
 
 CAnimation * CAnimation::Create(HANDLE hFile, CModel* pModel)
