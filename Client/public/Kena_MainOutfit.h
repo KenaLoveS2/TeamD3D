@@ -10,7 +10,7 @@ private:
 	CKena_MainOutfit(const CKena_MainOutfit& rhs);
 	virtual ~CKena_MainOutfit() = default;
 
-private:
+public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;

@@ -1,0 +1,11 @@
+{
+  "0_LayerTag": "LayerEnviroment",
+  "1_Data": [
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_AnimalStatues_01_OwlStatue",
+      "2_TextureTag": "",
+      "3_CloneTag": "Test_Tt",   
+      "4_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]
+    }
+  ]}

@@ -5,10 +5,11 @@
 
 BEGIN(Engine)
 class CEnviromentObj;
+class CTransform;
 END
 
 #define		MAX_CHATERNUM			2
-
+#define		CLONE_TAG_BUFF_SIZE			64
 
 
 
@@ -28,12 +29,17 @@ private:
 
 	void			Imgui_SelectOption();
 	void			Imgui_CreateEnviromentObj();
+	void			Imgui_Save_Load_Json();
+	void			Imgui_Save_Func();
+	void			Imgui_Load_Func();
 
 
 private: /*For_Tool*/
 	string		m_strChapter[MAX_CHATERNUM];
-	wstring		m_strProtoName = TEXT("");
-	wstring		m_strModelName = TEXT("");
+	wstring		m_wstrProtoName  = TEXT("");
+	wstring		m_wstrModelName = TEXT("");
+	char		m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
+	wstring		m_wstrCloneName  = TEXT("");
 
 private:	/*Use_Data*/
 	_int	m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
