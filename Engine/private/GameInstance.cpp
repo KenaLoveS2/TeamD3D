@@ -86,8 +86,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
 		return E_FAIL;
 	
-	/* +1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Level_Staticï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½. */
-	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels + 1)))
+	/* +1°³·Î ¿¹¾àÇÏ´Â ÀÌÀ¯ : ¿£Áø¿¡¼­ Level_StaticÀ» Ãß°¡·Î Á¦°øÇÏ±â À§ÇØ¼­. */
+	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels + 1, GraphicDesc.iNumCopyPrototypes)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels + 1)))
@@ -339,6 +339,12 @@ HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const _tchar * pLayer
 	return m_pObject_Manager->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pCloneObjectTag, pArg, ppObj);
 }
 
+HRESULT CGameInstance::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag, CGameObject * pGameObject)
+{
+	if (nullptr == m_pObject_Manager) return E_FAIL;
+	return m_pObject_Manager->Add_ClonedGameObject(iLevelIndex, pLayerTag, pCloneObjectTag, pGameObject);
+}
+
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
 {
 	if (nullptr == m_pObject_Manager)
@@ -355,7 +361,7 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 
 map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 {
-	assert(nullptr != m_pObject_Manager&& "CGameInstance::Get_ProtoTypeObjects()");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Get_ProtoTypeObjects()");
 	return m_pObject_Manager->Get_ProtoTypeObjects();
 }
 
@@ -369,7 +375,23 @@ void CGameInstance::SwitchOnOff_Shadow(_bool bSwitch)
 CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
 {
 	assert(nullptr != m_pObject_Manager&& "CGameInstance::Find_Layer");
-	return m_pObject_Manager->Find_Layer(iLevelIndex,pLayerTag);
+	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
+}
+
+vector<map<const _tchar*, class CGameObject*>>& CGameInstance::Get_CopyPrototypes()
+{	
+	if (m_pObject_Manager == nullptr) { 
+		vector<map<const _tchar*, class CGameObject*>> Dummy;
+		return Dummy;
+	}
+
+	return m_pObject_Manager->Get_CopyPrototypes();
+}
+
+_uint CGameInstance::Get_NumCopyPrototypes()
+{
+	if (m_pObject_Manager == nullptr) return 0;
+	return m_pObject_Manager->Get_NumCopyPrototypes();
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)

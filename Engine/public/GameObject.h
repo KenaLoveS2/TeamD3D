@@ -72,5 +72,7 @@ public: /* imgui */
 
 	// �� ������Ʈ���� ������ �����͸� imgui�� �ۼ��Ѵ�.
 	virtual void Imgui_RenderProperty() {}
+
+	void Set_Position(_float4& vPosition);
 };
 END
