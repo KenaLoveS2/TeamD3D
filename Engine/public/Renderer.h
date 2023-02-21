@@ -12,7 +12,6 @@ class ENGINE_DLL CRenderer final : public CComponent
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_STATICSHADOW,
 		RENDER_SHADOW,
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
@@ -27,6 +26,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
@@ -47,16 +47,18 @@ private:
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 	
 private:
-	class CTarget_Manager*				m_pTarget_Manager = nullptr;
+	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CLight_Manager*				m_pLight_Manager = nullptr;
-	class CLevel_Manager*				m_pLevel_Manager = nullptr;
+	class CLevel_Manager*			m_pLevel_Manager = nullptr;
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
-	class CShader*						m_pShader = nullptr;
-	_float4x4							m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-	
+	class CShader*							m_pShader = nullptr;
+	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
+
+	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
+
 private:
 	HRESULT Render_Priority();
-	HRESULT Render_StaticShadow();
 	HRESULT Render_Shadow();
 	HRESULT Render_NonAlphaBlend();
 	HRESULT Render_LightAcc();

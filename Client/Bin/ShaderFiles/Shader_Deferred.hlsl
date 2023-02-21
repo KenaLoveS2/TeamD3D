@@ -6,8 +6,8 @@ matrix			g_LightViewMatrix, g_LightProjMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
-float			g_fLightRange;
-
+float				g_fLightRange;
+float				g_fFar = 300.f; // 카메라의 FAR
 vector			g_vLightDiffuse;
 vector			g_vLightAmbient;
 vector			g_vLightSpecular;
@@ -24,10 +24,7 @@ Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
-
 Texture2D<float4>		g_ShadowTexture;
-
-float g_fFar = 300.f; // 카메라의 FAR
 
 struct VS_IN
 {
@@ -185,7 +182,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	Out.vColor = CalcHDRColor(vDiffuse, vDepth.b) * vShade + vSpecular;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * g_fFar;
 
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
 	vector		vPosition;
@@ -213,7 +210,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
 
-	if (vPosition.z - 0.1f > vShadowDesc.r * 300.f)
+	if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
 		Out.vColor *= 0.6f;
 
 	if (Out.vColor.a == 0.0f)

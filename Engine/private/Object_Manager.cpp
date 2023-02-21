@@ -146,6 +146,18 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
+{
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			if (nullptr != Pair.second)
+				Pair.second->SwitchOnOff_Shadow(bSwitch);
+		}
+	}
+}
+
 CGameObject * CObject_Manager::Find_Prototype(const _tchar * pPrototypeTag)
 {
 	auto	iter = find_if(m_Prototypes.begin(), m_Prototypes.end(), CTag_Finder(pPrototypeTag));
@@ -262,6 +274,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedOb
 		}
 		ImGui::TreePop();
 	}
+
 	if (bFound == false)
 		pSelectedObject = nullptr;
 }

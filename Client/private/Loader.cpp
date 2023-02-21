@@ -19,6 +19,7 @@
 
 /* Objects */
 #include "Cave_Rock.h"
+#include "ForkLift.h"
 
 /* UI */
 #include "BackGround.h"
@@ -200,7 +201,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Kena_Body.mdat", PivotMatrix))))
 	//	return E_FAIL;
-
 	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -216,7 +216,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
@@ -258,6 +257,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
+
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -279,6 +279,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ForkLift*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
+		CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Effect_Rect_Instancing */
