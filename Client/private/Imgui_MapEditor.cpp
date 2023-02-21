@@ -304,8 +304,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		lstrcpy(EnviromentDesc.szModelTag, m_wstrModelName.c_str());
 		lstrcpy(EnviromentDesc.szTextureTag, m_wstrTexturelName.c_str());
 
-		
-
 		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL,
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag,
