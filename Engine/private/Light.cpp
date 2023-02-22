@@ -47,6 +47,8 @@ HRESULT CLight::Render(CVIBuffer_Rect * pVIBuffer, CShader * pShader)
 		return E_FAIL;
 	if (FAILED(pShader->Set_RawValue("g_vLightSpecular", &m_LightDesc.vSpecular, sizeof(_float4))))
 		return E_FAIL;
+	if (FAILED(pShader->Set_RawValue("g_vLightEmissive", &m_LightDesc.vEmissive, sizeof(_float4))))
+		return E_FAIL;
 
 	pShader->Begin(iPassIndex);
 
@@ -134,6 +136,14 @@ _float4 CLight::Set_Spectular(_float4 & vColor)
 {
 	_float4 vOldColor = m_LightDesc.vSpecular;
 	m_LightDesc.vSpecular = vColor;
+
+	return vOldColor;
+}
+
+_float4 CLight::Set_Emissive(_float4 & vColor)
+{
+	_float4 vOldColor = m_LightDesc.vEmissive;
+	m_LightDesc.vEmissive = vColor;
 
 	return vOldColor;
 }

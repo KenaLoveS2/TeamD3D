@@ -29,9 +29,8 @@ public:
 
 private:
 	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CTexture*				m_pE_R_AoTexCom = nullptr;
+	CRenderer*			m_pRendererCom = nullptr;
+	CModel*				m_pModelCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();
