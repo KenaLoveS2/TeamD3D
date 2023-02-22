@@ -130,17 +130,17 @@
     <Filter Include="01.Levels\03. MapTool">
       <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Tool">
+      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
+    </Filter>
     <Filter Include="95. Tool">
       <UniqueIdentifier>{963a3bc8-daf7-423c-98f4-b558da61a187}</UniqueIdentifier>
     </Filter>
     <Filter Include="95. Tool\Animation">
       <UniqueIdentifier>{fa94e753-45df-404e-a906-ab3c378a6ead}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Tool\Effect">
-      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Effect">
-      <UniqueIdentifier>{44c5b360-3a26-4254-a699-aa53f330f0e2}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Envrioment\Components">
+      <UniqueIdentifier>{76b5df7f-4b61-4e84-b945-76aceba1330d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -264,9 +264,6 @@
     <ClInclude Include="..\Public\Cave_Rock.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
@@ -275,13 +272,22 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Imgui_Effect.h">
-      <Filter>95. Tool\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Kena_Staff.h">
       <Filter>02.GameObjects\Player\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interaction_Com.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -390,21 +396,27 @@
     <ClCompile Include="..\Private\Cave_Rock.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp">
-      <Filter>95. Tool\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Kena_Staff.cpp">
       <Filter>02.GameObjects\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Com.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +454,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
+      <Filter>02.GameObjects\Effect</Filter>
+    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -450,9 +465,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
-      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

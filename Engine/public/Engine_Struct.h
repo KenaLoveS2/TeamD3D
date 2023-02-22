@@ -14,6 +14,8 @@ namespace Engine
 		unsigned int iNumManualSounds;
 
 		unsigned int iNumCopyPrototypes;
+
+
 	}GRAPHIC_DESC;
 
 	typedef struct tagModelMaterial

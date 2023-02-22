@@ -12,6 +12,8 @@
 #include "String_Manager.h"
 #include "Camera_Manager.h"
 #include "PostFX.h"
+#include "Enviroment_Manager.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -35,7 +37,9 @@ CGameInstance::CGameInstance()
 	, m_pString_Manager(CString_Manager::GetInstance())
 	, m_pCamera_Manager(CCamera_Manager::GetInstance())
 	, m_pPostFX(CPostFX::GetInstance())
+	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
 {
+	Safe_AddRef(m_pEnviroment_Manager);
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -107,6 +111,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	
 	m_pString_Manager->Initalize(iNumLevels);
 
+	m_pEnviroment_Manager->Reserve_Manager();
+
 	return S_OK;
 }
 
@@ -130,6 +136,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pSound_Manager->Tick(fTimeDelta);
 
 	m_pFrustum->Transform_ToWorldSpace();
+	m_pEnviroment_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
@@ -525,6 +532,19 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pLight_Manager->Add_Light(pDevice, pContext, LightDesc, ppOut);
 }
 
+
+void CGameInstance::Enviroment_Clear()
+{
+	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Enviroment_Clear");
+	m_pEnviroment_Manager->Clear();
+}
+
+void CGameInstance::Add_Room(CEnviroment_Manager::ROOM_DESC & RoomDesc)
+{
+	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Add_Room");
+	m_pEnviroment_Manager->Add_Room(RoomDesc);
+}
+
 void CGameInstance::Clear()
 {
 	if (m_pLight_Manager == nullptr) return;
@@ -738,10 +758,12 @@ void CGameInstance::Release_Engine()
 	CTimer_Manager::GetInstance()->DestroyInstance();
 	CSound_Manager::GetInstance()->DestroyInstance();
 	CString_Manager::GetInstance()->DestroyInstance();
+	CEnviroment_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pEnviroment_Manager);
 	Safe_Release(m_pCamera_Manager);	
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pImgui_Manager);

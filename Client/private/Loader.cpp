@@ -29,6 +29,10 @@
 #include "Effect_Rect_Instancing.h"
 #include "Effect_Point_Instancing.h"
 
+/* Components*/
+#include "ControlMove.h"
+#include "Interaction_Com.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -354,6 +358,16 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_Component_Collider_SPHERE*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_SPHERE"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+	
+	/*map_Object Compoents */
+	/* For.Prototype_Component_ControlMove*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_ControlMove"),
+		CControlMove::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_Component_Interaction_Com*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Interaction_Com"),
+		CInteraction_Com::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));

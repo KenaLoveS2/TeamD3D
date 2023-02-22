@@ -76,9 +76,8 @@ public:
 	const _tchar* Get_ObjectName() { return m_szName; }
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
-public: 
-	/* imgui */
-	void Imgui_RenderComponentProperties();
+public: /* imgui */
+	 void Imgui_RenderComponentProperties();
 
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}

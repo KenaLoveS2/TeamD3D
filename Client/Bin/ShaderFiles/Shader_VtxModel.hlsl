@@ -68,6 +68,19 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	return Out;
 }
 
+/*Lod*/
+struct Hull_IN
+{
+	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	float3		vTangent : TANGENT;
+};
+
+
+
+
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -168,7 +181,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 
 technique11 DefaultTechnique
 {
-	pass Default
+	pass Default		//0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -181,7 +194,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket
+	pass Socket//1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -194,7 +207,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Shadow
+	pass Shadow//2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -205,4 +218,20 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
+
+	
+	pass WireFrame//3
+	{
+		SetRasterizerState(RS_Wireframe);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		//HullShader = compile  hu_5_0 ;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
 }
