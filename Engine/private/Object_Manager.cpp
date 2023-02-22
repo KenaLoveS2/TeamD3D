@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "..\public\Object_Manager.h"
+
+#include "GameInstance.h"
 #include "Layer.h"
 #include "GameObject.h"
 #include "Imgui_Manager.h"
 #include "Utile.h"
+
+#include "EnviromentObj.h"
 
 IMPLEMENT_SINGLETON(CObject_Manager)
 
@@ -363,16 +367,11 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 							ImGui::SetItemDefaultFocus();
 							bFound = true;
 						}
-
-						//char szAddressName[256];
-						////sprintf_s(szAddressName, "%s[%p]", typeid(*pObj).name(), pObj);
-
 						if (ImGui::Selectable(szobjectTag, bSelected))
 						{
 							pSelectedObject = pObj;
 							bFound = true;
 						}
-
 					}
 					ImGui::EndListBox();
 				}
@@ -384,6 +383,22 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 
 	if (bFound == false)
 		pSelectedObject = nullptr;
+}
+
+void CObject_Manager::Imgui_DeleteComponent(CGameObject * pSelectedObject)
+{
+	if (nullptr==pSelectedObject )
+		return;
+
+	ImGui::InputText("Com_Tag", &m_strComponentTag);
+	
+	if (ImGui::Button("Delete_Component"))
+	{
+		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
+		CGameInstance::GetInstance()->Add_String(pComponentTag);
+		pSelectedObject->Delete_Component(pComponentTag);
+	}
+
 }
 
 HRESULT CObject_Manager::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)

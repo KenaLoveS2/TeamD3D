@@ -20,7 +20,13 @@ public:
 private:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 
-
+	HRESULT Ready_For_LevelName();
+private: /*For. Imgui*/
+	void		  ChoseLevel();
+	void		  ChangeScene(_uint iLevel);
+private:
+	vector<string>	arrLevel;
+	_int					iLevelIndex = -1;
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

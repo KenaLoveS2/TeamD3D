@@ -538,6 +538,12 @@ HRESULT CRenderer::Render_PostProcess()
 
 HRESULT CRenderer::Render_UI()
 {
+	///* Sorting */
+	//for (auto& pGameObject : m_RenderObjects[RENDER_UI])
+	//{
+	// list.sort();
+	//}
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
 	{
 		pGameObject && pGameObject->Render();
@@ -587,12 +593,12 @@ CRenderer * CRenderer::Clone(void * pArg, CGameObject * pOwner)
 void CRenderer::Free()
 {
 	__super::Free();
-
+#ifdef _DEBUG
 	for (auto& pComponent : m_DebugObject)
 		Safe_Release(pComponent);
 
 	m_DebugObject.clear();
-
+#endif
 	for (_uint i = 0; i < RENDER_END; ++i)
 	{
 		for (auto& pGameObject : m_RenderObjects[i])

@@ -12,7 +12,7 @@ extern bool g_bFrmaeLimit;
 
 namespace Client
 {
-	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL,  LEVEL_END };
+	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_END };
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{

@@ -20,25 +20,25 @@ class CImgui_MapEditor  final : public CImguiObject
 private:
 	CImgui_MapEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	
-
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);
 	virtual void Imgui_FreeRender();
 
+public:
+	static				void					Load_MapObjects(_uint iLevel);
+	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
 private:
 	void			Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void			Imgui_CreateEnviromentObj();
 	void			Imgui_Save_Load_Json();
 
-	void			Imgui_WireRender();
-
-
-
 private:		/*Logic*/
 	void					Imgui_Save_Func();
 	HRESULT			Imgui_Load_Func();
-	void					Imgui_AddComponent_Option(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
+	void					Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
 	void					Imgui_Create_Option_Reset();
+	
+
 
 
 private: /*For_Tool*/
@@ -49,6 +49,11 @@ private: /*For_Tool*/
 	char			m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
 	_bool		m_bWireFrame = false;
+	string      m_strFileName = "";
+	_bool		m_bSaveWrite = false;
+
+	//char		szSaveFileName[MAX_PATH] = "";
+	//char		szSaveFileName[MAX_PATH]
 
 private:	/*Use_Data*/
 	_int			m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
@@ -56,6 +61,8 @@ private:	/*Use_Data*/
 	array<_bool, CEnviromentObj::COMPONENTS_END>	m_bComOptions;
 
 	
+
+
 
 public:
 	static	CImgui_MapEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);

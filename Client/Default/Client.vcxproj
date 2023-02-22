@@ -188,10 +188,12 @@
     <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
     <ClInclude Include="..\Public\Kena_Staff.h" />
+    <ClInclude Include="..\Public\Level_EffectTest.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\Public\Level_MapTool.h" />
+    <ClInclude Include="..\Public\Level_TestPlay.h" />
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
@@ -235,10 +237,12 @@
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\Private\Kena_Staff.cpp" />
+    <ClCompile Include="..\Private\Level_EffectTest.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Level_MapTool.cpp" />
+    <ClCompile Include="..\Private\Level_TestPlay.cpp" />
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />

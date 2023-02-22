@@ -11,9 +11,8 @@ private:
 	vector<vector<_tchar*>> m_LevelModelTags;
 
 private: /* Only For UI */
-	vector<wstring> m_vecUITextureProtoTag;
-	vector<string> m_vecUITextureName;
-	map<_tchar*, vector<string>> m_mapUIStrings;
+	map<_uint, vector<string>>		m_mapUIString;
+	map<_uint, vector<wstring>>		m_mapUIWString;
 	 	
 private:
 	CString_Manager();
@@ -28,11 +27,10 @@ public:
 	_tchar* Find_String(_uint iLevelIndex, _tchar* pStr);
 
 	/* Only For UI */
-	void				Add_UITextureTag(wstring wstr);
-	vector<wstring>*	Get_UITextureProtoTagsPtr() { return &m_vecUITextureProtoTag; }
-	vector<string>*		Get_UITextureNamesPtr() { return &m_vecUITextureName; }
-	void				Add_UIString(_tchar* tag, string str);
-	vector<string>*		Get_UIString(_tchar* tag);
+	void				Add_UIString(_uint iKey, string str);
+	vector<string>*		Get_UIString(_uint iKey);
+	void				Add_UIWString(_uint iKey, wstring str);
+	vector<wstring>*	Get_UIWString(_uint iKey);
 
 
 };

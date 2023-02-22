@@ -5,6 +5,7 @@
 #include "PipeLine.h"
 #include "Sound_Manager.h"
 #include "Utile.h"
+#include "UI_Manager.h"
 #include "Enviroment_Manager.h"
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
@@ -81,6 +82,7 @@ public: /* For.Object_Manager */
 
 	void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
 
 	map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
 
@@ -148,11 +150,10 @@ public: /* For.PipeLine */
 		HRESULT Add_String(_tchar* pStr);
 		_tchar* Find_String(_uint iLevelIndex, _tchar* pStr);
 		/* Only For UI */
-		void				Add_UITextureTag(wstring wstr);
-		vector<wstring>*	Get_UITextureProtoTagsPtr();
-		vector<string>*		Get_UITextureNamesPtr();
-		void				Add_UIString(_tchar* tag, string str);
-		vector<string>*		Get_UIString(_tchar* tag);
+		void				Add_UIString(_uint iKey, string str);
+		vector<string>*		Get_UIString(_uint iKey);
+		void				Add_UIWString(_uint iKey, wstring str);
+		vector<wstring>*	Get_UIWString(_uint iKey);
 
 
 	public: // for Camera manager

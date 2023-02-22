@@ -57,16 +57,20 @@ private:
 	vector<PROTOTYPES> m_CopyPrototypes;
 	list<_tchar*> m_CopyTagList;
 
+private: /*For.Imgui*/
+	string							m_strComponentTag = "";
+	
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
 
-
 public:	
 	virtual void Free() override;
-
+	
+public: /*For.Imgui*/
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
-
+	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
+	
 public:	
 	vector<PROTOTYPES>& Get_CopyPrototypes() { return m_CopyPrototypes; }
 	_uint Get_NumCopyPrototypes() { return m_iNumCopyPrototypes; }

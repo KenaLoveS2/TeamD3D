@@ -77,7 +77,7 @@ public:
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
-	 void Imgui_RenderComponentProperties();
+	virtual  void Imgui_RenderComponentProperties();
 
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
