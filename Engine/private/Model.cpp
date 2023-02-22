@@ -9,6 +9,9 @@
 #include "Json/json.hpp"
 #include <fstream>
 
+#include "PipeLine.h"
+#include "Transform.h"
+
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -241,7 +244,7 @@ void CModel::Imgui_RenderProperty()
 
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 		{
-			_uint	iTagLength = strlen(m_Animations[i]->Get_Name()) + 1;
+			_uint	iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
 			ppAnimationTag[i] = new char[iTagLength];
 			sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
 		}
@@ -274,7 +277,7 @@ void CModel::Imgui_RenderProperty()
 				Safe_Delete_Array(ppAnimationTag);
 
 				auto	iter = m_Animations.begin();
-				for (_uint i = 0; i < iSelectAnimation; ++i)
+				for (_int i = 0; i < iSelectAnimation; ++i)
 					++iter;
 
 				Safe_Release(m_Animations[iSelectAnimation]);
@@ -795,4 +798,6 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar
 
 	return S_OK;
 }
+
+
 

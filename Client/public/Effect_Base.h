@@ -22,7 +22,7 @@ public:
 		enum EFFECTTYPE  { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
 		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
-		enum BLENDSTATE  { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_END };
+		enum BLENDSTATE { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_END };
 
 		EFFECTTYPE        eEffectType = EFFECT_PLANE;
 		TEXTURERENDERTYPE eTextureRenderType = TEX_ONE;
@@ -41,7 +41,7 @@ public:
 		
 		// Color & Scale
 		_vector	vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		_vector	vScale;
+		_vector	vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// Time 
 		_float  fTimeDelta = 0.0f;
@@ -82,7 +82,7 @@ public:
 	virtual HRESULT		 Render() override;
 
 public:
-	HRESULT				 Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
 protected:
 	CShader*				    m_pShaderCom = nullptr;
@@ -92,17 +92,10 @@ protected:
 
 	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
 	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
-	wstring						m_strDTextureComTag = L"";
-	wstring						m_strMTextureComTag = L"";
 
 	/* Texture Setting */
-	_uint	m_iTextureLevel = 1000;
-
 	_uint	m_iTotalDTextureComCnt = 0;
 	_uint	m_iTotalMTextureComCnt = 0;
-
-	_uint	m_iDTextureComCnt = 0;
-	_uint	m_iMTextureComCnt = 0;
 	/* ~Texture Setting */
 
 protected:

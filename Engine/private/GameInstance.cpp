@@ -12,6 +12,8 @@
 #include "String_Manager.h"
 #include "Camera_Manager.h"
 #include "PostFX.h"
+#include "Enviroment_Manager.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -35,7 +37,9 @@ CGameInstance::CGameInstance()
 	, m_pString_Manager(CString_Manager::GetInstance())
 	, m_pCamera_Manager(CCamera_Manager::GetInstance())
 	, m_pPostFX(CPostFX::GetInstance())
+	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
 {
+	Safe_AddRef(m_pEnviroment_Manager);
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -70,7 +74,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
-	/* �׷��� ����̽�?�ʱ�ȭ. */
 	if (FAILED(m_pGraphic_Device->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWindowMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
@@ -78,29 +81,20 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	m_pImgui_Manager->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
 
-	/* HDR �ʱ�ȭ */
 	if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
 		return E_FAIL;
 
-	/* �Է� ����̽�?�ʱ�ȭ. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
 		return E_FAIL;
 	
-	/* +1���� �����ϴ� ���� : �������� Level_Static�� �߰��� �����ϱ� ���ؼ�. */
 	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels + 1, GraphicDesc.iNumCopyPrototypes)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
-	/* �������� �����ϴ� ����ƽ������ �ε����� �������ش�. */
-	/* Ŭ���̾�Ʈ �����ڰ� ����ƽ ������ ������Ʈ ������ �߰��ϰ����?���?����ƽ�����ε����� 
-	Ŭ������Ʈ�� �����ֱ� ���ؼ�. */
 	m_iStaticLevelIndex = iNumLevels;
 
-	/* �������� �����ϴ� CGameObject�� ��ӹ޴�?��ü���� �⺻������ CTransform������Ʈ�� �⺻���� ������ �ְ� ������ֱ�����?
-	������ �� �ִ� CTransform�� ������ü�� �����Ѵ�. */
-	/* ���� �� ������ �����ϴ� ��ƾ CGameObject�� Initialize�Լ����� ������ ����Ѵ�? */
 	if (FAILED(m_pComponent_Manager->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
 		return E_FAIL;
 
@@ -117,6 +111,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	
 	m_pString_Manager->Initalize(iNumLevels);
 
+	m_pEnviroment_Manager->Reserve_Manager();
+
 	return S_OK;
 }
 
@@ -127,7 +123,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (nullptr == m_pInput_Device || nullptr == m_pLevel_Manager || nullptr == m_pObject_Manager)
 		return;
 	
-	/* �Է���ġ�� ���¸� ���Ź޾ƿ´�. */
 	m_pInput_Device->Invalidate_Input_Device();
 
 	m_pImgui_Manager->Tick_Imgui();
@@ -141,6 +136,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pSound_Manager->Tick(fTimeDelta);
 
 	m_pFrustum->Transform_ToWorldSpace();
+	m_pEnviroment_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
@@ -536,6 +532,19 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pLight_Manager->Add_Light(pDevice, pContext, LightDesc, ppOut);
 }
 
+
+void CGameInstance::Enviroment_Clear()
+{
+	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Enviroment_Clear");
+	m_pEnviroment_Manager->Clear();
+}
+
+void CGameInstance::Add_Room(CEnviroment_Manager::ROOM_DESC & RoomDesc)
+{
+	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Add_Room");
+	m_pEnviroment_Manager->Add_Room(RoomDesc);
+}
+
 void CGameInstance::Clear()
 {
 	if (m_pLight_Manager == nullptr) return;
@@ -749,10 +758,12 @@ void CGameInstance::Release_Engine()
 	CTimer_Manager::GetInstance()->DestroyInstance();
 	CSound_Manager::GetInstance()->DestroyInstance();
 	CString_Manager::GetInstance()->DestroyInstance();
+	CEnviroment_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pEnviroment_Manager);
 	Safe_Release(m_pCamera_Manager);	
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pImgui_Manager);

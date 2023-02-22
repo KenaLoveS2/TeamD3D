@@ -139,6 +139,9 @@
     <Filter Include="95. Tool\Animation">
       <UniqueIdentifier>{fa94e753-45df-404e-a906-ab3c378a6ead}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Components">
+      <UniqueIdentifier>{76b5df7f-4b61-4e84-b945-76aceba1330d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -261,9 +264,6 @@
     <ClInclude Include="..\Public\Cave_Rock.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
@@ -279,6 +279,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interaction_Com.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -387,9 +396,6 @@
     <ClCompile Include="..\Private\Cave_Rock.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
@@ -402,6 +408,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Com.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

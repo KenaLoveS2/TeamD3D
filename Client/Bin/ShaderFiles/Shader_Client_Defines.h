@@ -63,7 +63,7 @@ BlendState BS_Default
 {
 	BlendEnable[0] = false;
 
-	
+
 //bool BlendEnable;
 //D3D11_BLEND SrcBlend;
 //D3D11_BLEND DestBlend;
@@ -87,6 +87,16 @@ BlendState BS_One
 	BlendEnable[0] = true;
 	SrcBlend = ONE;
 	DestBlend = ONE;
+	BlendOp = Add;
+};
+
+BlendState BS_Mix
+{
+	BlendEnable[0] = true;
+	SrcBlend = SRC_COLOR;
+	SrcBlendAlpha = SRC_ALPHA;
+	DestBlend = DEST_COLOR;
+	DestBlendAlpha = ONE;
 	BlendOp = Add;
 };
 
