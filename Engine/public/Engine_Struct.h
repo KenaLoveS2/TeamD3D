@@ -42,7 +42,6 @@ namespace Engine
 		XMFLOAT4			vDiffuse;
 		XMFLOAT4			vAmbient;
 		XMFLOAT4			vSpecular;
-		XMFLOAT4			vEmissive;
 	} LIGHTDESC;	
 
 	typedef struct tagKeyframe

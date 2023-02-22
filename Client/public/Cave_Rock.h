@@ -28,7 +28,6 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModelCom = nullptr;
-	//CTexture*				m_pE_R_AoTexCom = nullptr;
 
 	class CInteraction_Com*			m_pInteractionCom = nullptr;	 
 	class CControlMove*				m_pControlMoveCom = nullptr;

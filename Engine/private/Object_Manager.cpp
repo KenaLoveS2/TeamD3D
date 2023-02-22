@@ -171,6 +171,9 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 	m_mapAnimModel[iLevelIndex].emplace(pCloneObjectTag, pGameObject);
 	Safe_AddRef(pGameObject);
 
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_CloneTag(pCloneObjectTag);
+
 	if (ppOut)
 		*ppOut = pGameObject;
 
