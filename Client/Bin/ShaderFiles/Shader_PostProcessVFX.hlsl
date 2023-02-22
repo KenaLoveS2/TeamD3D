@@ -3,9 +3,9 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D<float4>		g_LDRTexture;
+
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_DepthTexture;
-
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
