@@ -72,7 +72,6 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
 	{
-		/* ī�޶� ȸ�� */
 		long	MouseMove = 0;
 		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensitivity);

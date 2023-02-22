@@ -1,8 +1,4 @@
 #pragma once
-
-/* �̱���.  */
-/* Ŭ���̾�Ʈ�� ������ ������ ���� �������?Ŭ����. */
-
 #include "Base.h"
 #include "Input_Device.h"
 #include "Component_Manager.h"

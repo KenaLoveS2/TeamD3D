@@ -18,7 +18,7 @@ CBone::CBone(const CBone& rhs)
 
 HRESULT CBone::Save_Bone(HANDLE & hFile, DWORD & dwByte)
 {
-	_uint			iNameLength = strlen(m_szName) + 1;
+	_uint			iNameLength = _uint(strlen(m_szName)) + 1;
 	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 
@@ -29,7 +29,7 @@ HRESULT CBone::Save_Bone(HANDLE & hFile, DWORD & dwByte)
 	WriteFile(hFile, &bParentFlag, sizeof(_bool), &dwByte, nullptr);
 	if (bParentFlag)
 	{
-		iNameLength = strlen(m_pParent->m_szName);
+		iNameLength = _uint(strlen(m_pParent->m_szName));
 		WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
 		WriteFile(hFile, m_pParent->m_szName, iNameLength + 1, &dwByte, nullptr);
 	}
@@ -39,7 +39,7 @@ HRESULT CBone::Save_Bone(HANDLE & hFile, DWORD & dwByte)
 
 HRESULT CBone::Save_BoneName(HANDLE & hFile, DWORD & dwByte)
 {
-	_uint			iNameLength = strlen(m_szName) + 1;
+	_uint			iNameLength = _uint(strlen(m_szName)) + 1;
 	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 

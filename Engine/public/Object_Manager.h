@@ -1,10 +1,6 @@
 #pragma once
 #include "Base.h"
 
-/* ���ӳ��� �ʿ��� ��ü���� �� ����(CLayer)�� ���� ������ �����Ѵ�. */
-/* ��ü���� ������ �����ϰ� �ִ� CLayer���� �����ϴ� Ŭ�����̴�. */
-/* ��� ��ü���� ����(Tick, Late_Tick)�� ����Ѵ�. */
-
 BEGIN(Engine)
 class CObject_Manager final : public CBase
 {
@@ -43,11 +39,11 @@ public:
 
 	void		SwitchOnOff_Shadow(_bool bSwitch);
 
-private: /* ������ü������ ��Ƴ��´�. */
+private:	/* Prototypes */
 	map<const _tchar*, class CGameObject*>			m_Prototypes;
 	typedef map<const _tchar*, class CGameObject*>	PROTOTYPES;
 	
-private: /* �纻��ü���� �����ϱ����� �����̳�. */
+private:	/* Clone Objects */
 	map<const _tchar*, class CLayer*>*			m_pLayers = nullptr;
 	typedef map<const _tchar*, class CLayer*>	LAYERS;
 	_uint										m_iNumLevels = 0;
@@ -68,13 +64,7 @@ private:
 public:	
 	virtual void Free() override;
 
-	// ��� ���� Object�� Imgui�� ����Ѵ�.
-	// ������ ������ �̸��� szSelectedProto�� �����ش�.
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
-
-	// iLevel�� �ִ� ��� �纻 Object�� Layer���� Imgui�� ����Ѵ�.
-	// ������ Object�� pSelectedObject�� �����ش�.
-	// �ش� Object�� ���ų� ������� nullptr�� �����ش�.
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
 
 public:	
