@@ -30,6 +30,13 @@ private:
 	CModel*				m_pModelCom = nullptr;
 	//CTexture*				m_pE_R_AoTexCom = nullptr;
 
+	class CInteraction_Com*			m_pInteractionCom = nullptr;	 
+	class CControlMove*				m_pControlMoveCom = nullptr;
+
+public:
+	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex,const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

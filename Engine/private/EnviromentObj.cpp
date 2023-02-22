@@ -25,11 +25,16 @@ HRESULT CEnviromentObj::Initialize_Prototype()
 
 HRESULT CEnviromentObj::Initialize(void * pArg)
 {
-	ZeroMemory(&m_EnviromentDesc, sizeof(m_EnviromentDesc));
 
 	if (pArg) 
 	{		
-		memcpy(&m_EnviromentDesc, pArg, sizeof(ENVIROMENT_DESC));
+		ENVIROMENT_DESC* Desc = reinterpret_cast<ENVIROMENT_DESC*>(pArg);
+
+		m_EnviromentDesc.szProtoObjTag = Desc->szProtoObjTag;
+		m_EnviromentDesc.szModelTag = Desc->szModelTag;
+		m_EnviromentDesc.szTextureTag = Desc->szTextureTag;
+		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
+
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
@@ -67,7 +72,52 @@ HRESULT CEnviromentObj::Render()
 	return S_OK;
 }
 
+HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+{
+	return S_OK;
+}
+
+//void CEnviromentObj::Imgui_RenderComponentProperties()
+//{
+//	__super::Imgui_RenderComponentProperties();
+//
+//	for (const auto& com : m_AdditionalComponent)
+//	{
+//		ImGui::Separator();
+//		char szName[128];
+//		CUtile::WideCharToChar(com.first, szName);
+//
+//		ImGui::Text("%s", szName);
+//		com.second->Imgui_RenderProperty();
+//	}
+//
+//}
+//
+//HRESULT CEnviromentObj::Add_AdditionalComponent(const _tchar * pComTag, CComponent * pComponent)
+//{
+//	CComponent* pAfterAddCom = Find_AdditionalCom(pComTag);
+//	assert(pAfterAddCom == nullptr && "CEnviromentObj::Add_AdditionalComponent"); // must nullptr !!!
+//
+//	m_AdditionalComponent.emplace(pComTag, pComponent);
+//
+//	return S_OK;
+//}
+//
+//CComponent * CEnviromentObj::Find_AdditionalCom(const _tchar * pComTag)
+//{
+//	auto &Pair = find_if(m_AdditionalComponent.begin(), m_AdditionalComponent.end(), CTag_Finder(pComTag));
+//
+//	if (Pair == m_AdditionalComponent.end())
+//		return nullptr;
+//
+//	return Pair->second;
+//}
+
 void CEnviromentObj::Free()
 {
 	__super::Free();
+	
+	//for (auto &pAddCom : m_AdditionalComponent)
+	//	Safe_Release(pAddCom.second);
+	//m_AdditionalComponent.clear();
 }

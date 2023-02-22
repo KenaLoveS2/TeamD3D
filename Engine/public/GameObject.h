@@ -77,7 +77,7 @@ public:
 
 public: /* imgui */
 		// �� ������Ʈ�� ������ �ִ� component�� Imgui_RenderProtpery�Լ��� �����ϴ� �Լ�.
-	void Imgui_RenderComponentProperties();
+	 void Imgui_RenderComponentProperties();
 
 	// �� ������Ʈ���� ������ �����͸� imgui�� �ۼ��Ѵ�.
 	virtual void Imgui_RenderProperty() {}

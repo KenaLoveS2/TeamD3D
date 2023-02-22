@@ -265,6 +265,8 @@
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h" />
+    <ClInclude Include="..\Public\Interaction_Com.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -376,6 +378,8 @@
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp" />
+    <ClCompile Include="..\Private\Interaction_Com.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

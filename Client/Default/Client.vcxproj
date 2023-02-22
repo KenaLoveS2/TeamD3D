@@ -175,11 +175,13 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Cave_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
+    <ClInclude Include="..\Public\ControlMove.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\ForkLift.h" />
+    <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
     <ClInclude Include="..\Public\Kena_MainOutfit.h" />
     <ClInclude Include="..\Public\Kena_Parts.h" />
@@ -216,11 +218,13 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Cave_Rock.cpp" />
+    <ClCompile Include="..\Private\ControlMove.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\ForkLift.cpp" />
+    <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
     <ClCompile Include="..\Private\Kena_Parts.cpp" />

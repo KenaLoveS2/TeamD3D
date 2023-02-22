@@ -4,6 +4,7 @@
 #include "EnviromentObj.h"
 
 BEGIN(Engine)
+class CGameInstance;
 class CEnviromentObj;
 class CTransform;
 END
@@ -18,25 +19,26 @@ class CImgui_MapEditor  final : public CImguiObject
 {
 private:
 	CImgui_MapEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	enum COMPONENTS_OPTION {
-		COMPONENTS_WALL, COMPONENTS_INTERACTION, COMPONENTS_END
-	};
-
+	
 
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);
 	virtual void Imgui_FreeRender();
 
 private:
-	HRESULT	Ready_For_MapString();
-
-	void			Imgui_SelectOption();
+	void			Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void			Imgui_CreateEnviromentObj();
 	void			Imgui_Save_Load_Json();
-	void			Imgui_ModelProtoFinder();
-	
-	void			Imgui_Save_Func();
+
+	void			Imgui_WireRender();
+
+
+
+private:		/*Logic*/
+	void					Imgui_Save_Func();
 	HRESULT			Imgui_Load_Func();
+	void					Imgui_AddComponent_Option(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
+	void					Imgui_Create_Option_Reset();
 
 
 private: /*For_Tool*/
@@ -46,11 +48,12 @@ private: /*For_Tool*/
 	wstring		m_wstrTexturelName = TEXT("");
 	char			m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
-
+	_bool		m_bWireFrame = false;
 
 private:	/*Use_Data*/
 	_int			m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
-	array<_bool, COMPONENTS_END>	m_bComponets;
+	_int			m_iCreateObjRoom_Option = 0;
+	array<_bool, CEnviromentObj::COMPONENTS_END>	m_bComOptions;
 
 	
 
