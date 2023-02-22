@@ -67,7 +67,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread).*/
+	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread). */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -319,10 +319,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading_Texture..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	
 
-	lstrcpy(m_szLoadingText, TEXT("Loading_Model..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
 	//_matrix			PivotMatrix = XMMatrixIdentity();
 	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -342,7 +342,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	
 	LoadNonAnimModel(LEVEL_MAPTOOL);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading Coll.."));
+	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
@@ -356,7 +356,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("Loading Shader... "));
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
@@ -388,14 +388,14 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 
-	lstrcpy(m_szLoadingText, TEXT("Loading_ GameObjects ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
 
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
 		CCave_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	lstrcpy(m_szLoadingText, TEXT("Loading_End. "));
+	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;
 
@@ -468,7 +468,7 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 			ZeroMemory(pPrototypeTag, iTagLen);
 			lstrcat(pPrototypeTag, pPrototype);
 
-			MultiByteToWideChar(CP_ACP, 0, szFullPath, strlen(szFullPath) + 1, WideFilePath, strlen(szFullPath) + 1);
+			MultiByteToWideChar(CP_ACP, 0, szFullPath, _int(strlen(szFullPath)) + 1, WideFilePath, _int(strlen(szFullPath)) + 1);
 			MultiByteToWideChar(CP_ACP, 0, szFileName, iFileNameLen, pFileName, iFileNameLen);
 			lstrcat(pPrototypeTag, pFileName);
 

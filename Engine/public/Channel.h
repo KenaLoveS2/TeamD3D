@@ -23,9 +23,9 @@ public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT Initialize(void* pArg);
 	
-	void Update_TransformMatrix(_double PlayTime);
+	void Update_TransformMatrix(_float PlayTime);
 	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio);
-	void Additive_TransformMatrix(_double PlayTime, _float fAdditiveRadio);
+	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio);
 
 	void Reset_KeyFrameIndex() {
 		m_iCurrentKeyFrameIndex = 0;
