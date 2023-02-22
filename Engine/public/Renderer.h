@@ -40,9 +40,10 @@ private:
 	typedef list<class CGameObject*>	RENDEROBJECTS;
 
 private:
+#ifdef _DEBUG
 	list<class CComponent*>				m_DebugObject;
 	typedef list<class CComponent*>		DEBUGOBJECTS;
-	
+#endif
 private:
 	class CTarget_Manager*			m_pTarget_Manager = nullptr;
 	class CLight_Manager*				m_pLight_Manager = nullptr;

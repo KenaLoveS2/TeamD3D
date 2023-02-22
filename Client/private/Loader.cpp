@@ -55,6 +55,7 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_GAMEPLAY:
 		pLoader->Loading_ForGamePlay();
 		break;
+#ifdef _DEBUG
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
 		break;
@@ -64,7 +65,7 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-
+#endif
 	}
 	
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
