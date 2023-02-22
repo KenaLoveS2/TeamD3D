@@ -134,20 +134,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Effect // 1
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_EFFECT();
-	}
-
-	pass DiffuseAlphaBlend // 2
+	pass DiffuseAlphaBlend // 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -160,7 +147,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_AlphaBlend();
 	}
 
-	pass MaskMap // 3
+	pass MaskMap // 2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -173,11 +160,11 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_MASKMAP();
 	}
 
-	pass HPBar // 4
+	pass HPBar // 3
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

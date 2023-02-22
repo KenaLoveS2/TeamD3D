@@ -24,7 +24,14 @@ HRESULT CUI_NodeHUDHP::Initialize_Prototype()
 HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	{
+		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
+		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
+		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+			XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
+	}
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -34,17 +41,13 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-	m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
-	m_pTransformCom->Set_Scaled(_float3(24.f, 24.f, 1.f));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
+
 
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
-	XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
+	
 
 	return S_OK;
 }
@@ -97,7 +100,7 @@ HRESULT CUI_NodeHUDHP::SetUp_Components()
 		return E_FAIL;
 
 	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"), TEXT("Com_DiffuseTexture"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"), TEXT("Com_DiffuseTexture"),
 		(CComponent**)&m_pTextureCom[0])))
 		return E_FAIL;
 
@@ -110,6 +113,8 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))

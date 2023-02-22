@@ -23,7 +23,15 @@ HRESULT CUI_NodeHUDHPBar::Initialize_Prototype()
 HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	{
+		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
+		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
+		m_pTransformCom->Set_Scaled(_float3(400.f, 24.f, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+			XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
+
+	}
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -33,17 +41,11 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-	m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
-	m_pTransformCom->Set_Scaled(_float3(400.f, 24.f, 1.f));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
+	XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
-	XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 
 	return S_OK;
 

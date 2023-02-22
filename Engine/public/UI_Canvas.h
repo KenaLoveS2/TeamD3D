@@ -21,7 +21,7 @@ public:
 
 public:
 	virtual HRESULT					Save_Data() override;
-	virtual HRESULT					Load_Data() override;
+	virtual HRESULT					Load_Data(wstring fileName) override;
 
 public:
 	virtual		HRESULT	Add_Node(CUI* pUI)sealed;		/* 캔버스에 하위 UI(Node 또는 Canvas) 추가 */

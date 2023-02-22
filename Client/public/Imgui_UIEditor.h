@@ -18,16 +18,10 @@ public:
 	virtual void Imgui_FreeRender();
 
 private:
-	HRESULT	Ready_TextureList();
-	HRESULT Ready_CanvasProtoList();
 	HRESULT Ready_CloneCanvasList();
 
-
 private:
-	vector<string>					m_vecTextureTag;
-	vector<string>					m_vecCanvasProtoTag;
 	vector<CUI_Canvas*>				m_vecCanvas;
-	
 	CUI_Canvas*						m_pCanvas;
 
 public:

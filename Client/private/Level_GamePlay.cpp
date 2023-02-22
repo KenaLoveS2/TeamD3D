@@ -25,7 +25,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		p_game_instance->Clear_ImguiObjects();
 		p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice,m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+		//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
