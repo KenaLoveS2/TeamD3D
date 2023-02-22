@@ -47,6 +47,11 @@ public:
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
+	TRANSFORMDESC Get_TransformDesc() { return m_TransformDesc; }
+	void		  Set_TransformDesc(TRANSFORMDESC eTransformDesc) { 
+		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
+	}
+
 	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
 		m_WorldMatrix = fWorldMatrix;
 	}
