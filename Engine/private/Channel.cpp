@@ -17,7 +17,7 @@ CChannel::CChannel(const CChannel& rhs)
 
 HRESULT CChannel::Save_Channel(HANDLE & hFile, DWORD & dwByte)
 {
-	_uint			iNameLength = strlen(m_szName) + 1;
+	_uint			iNameLength = _uint(strlen(m_szName)) + 1;
 	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 
@@ -112,7 +112,7 @@ HRESULT CChannel::Synchronization_BonePtr(CModel * pModel)
 }
 
 /* 현재 애니메이션이 재생된 시간을 얻어온다. PlayTime */
-void CChannel::Update_TransformMatrix(_double PlayTime)
+void CChannel::Update_TransformMatrix(_float PlayTime)
 {
 	_vector			vScale;
 	_vector			vRotation;
@@ -135,8 +135,8 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 			++m_iCurrentKeyFrameIndex;
 		}
 
-		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) / 
-			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
+		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) / 
+			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
 
 		_vector			vSourScale, vDestScale;
 		_vector			vSourRotation, vDestRotation;
@@ -185,8 +185,8 @@ void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio)
 			++m_iCurrentKeyFrameIndex;
 		}
 
-		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
-			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
+		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
+			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
 
 		_vector			vSourScale, vDestScale;
 		_vector			vSourRotation, vDestRotation;
@@ -217,7 +217,7 @@ void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio)
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
 
-void CChannel::Additive_TransformMatrix(_double PlayTime, _float fAdditiveRadio)
+void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 {
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, m_pBone->Get_TransformMatrix());
@@ -241,8 +241,8 @@ void CChannel::Additive_TransformMatrix(_double PlayTime, _float fAdditiveRadio)
 			++m_iCurrentKeyFrameIndex;
 		}
 
-		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
-			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
+		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
+			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
 
 		_vector			vSourScale, vDestScale;
 		_vector			vSourRotation, vDestRotation;

@@ -2,9 +2,6 @@
 
 #include "Component.h"
 
-/* ȭ�鿡 �׷����� ��ü���� �׸��� ������� ���������Ѵ�. */
-/* �����ϰ� �ִ� ������� ��ü���� ��ο���(�����Լ��� ȣ���Ѵ�)�� �����Ѵ�. */
-
 BEGIN(Engine)
 
 class ENGINE_DLL CRenderer final : public CComponent
