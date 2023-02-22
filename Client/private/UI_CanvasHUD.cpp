@@ -24,8 +24,22 @@ HRESULT CUI_CanvasHUD::Initialize_Prototype()
 
 HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 {
+	/* Get a Texture Size, and Make an Initial Matrix */
+	XMStoreFloat4x4(&m_matInit, XMMatrixScaling(670.f, 200.f, 1.f));
+
 	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	{
+		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
+		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
+		m_pTransformCom->Set_Scaled(_float3(m_tDesc.vSize.x, m_tDesc.vSize.y, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(670.f, 200.f, 1.f));
+
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+			XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	}
+	/* Test */
+	m_bActive = true;
+
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -33,16 +47,6 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
-	m_tDesc.vSize	= { (_float)g_iWinSizeX, (_float)g_iWinSizeY};
-	m_tDesc.vPos	= { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
-//	m_pTransformCom->Set_Scaled(_float3(m_tDesc.vSize.x, m_tDesc.vSize.y, 1.f));
-	m_pTransformCom->Set_Scaled(_float3(670.f, 200.f, 1.f));
-
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(0.f, 0.f, 0.f, 1.f));
-		//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
 
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
@@ -60,14 +64,31 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 void CUI_CanvasHUD::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	for (auto node : m_vecNode)
+		node->Tick(fTimeDelta);
 }
 
 void CUI_CanvasHUD::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	m_bActive = true;
 	if (nullptr != m_pRendererCom && m_bActive)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+
+		/* Nodes added to RenderList After the canvas. */
+		/* So It can be guaranteed that Canvas Draw first */
+		for (auto node : m_vecNode)
+			node->Late_Tick(fTimeDelta);
+	}
+
+
+
+
+
+
 }
 
 HRESULT CUI_CanvasHUD::Render()
@@ -97,20 +118,24 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI* pUI = nullptr;
+	CUI::UIDESC tDesc;
 	string str;
+	wstring wstr;
 
-	pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_UI",
-		L"Prototype_GameObject_UI_Node_HPBar", L"UI_Node_PlayerHPBar", nullptr, (CGameObject**)&pUI);
+	str = "Node_HPBar";
+	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(지역변수) */
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar",&tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
-	str = "PlayerHPBar";
 	m_vecNodeCloneTag.push_back(str);
 
-	//pUI = nullptr;
-	//pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_UI",
-	//	L"Prototype_GameObject_UI_Node_HP", L"UI_Node_PlayerHP", nullptr, (CGameObject**)&pUI);
-	//if (FAILED(Add_ChildUI(pUI)))
-	//	return E_FAIL;
+
+	str = "Node_HP";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HP", L"Node_HP", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -147,6 +172,8 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))

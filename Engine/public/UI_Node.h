@@ -17,6 +17,8 @@ public:
 	virtual HRESULT			Render()						override;
 public:
 	virtual void			Imgui_RenderProperty();
+	virtual HRESULT			Save_Data();
+	virtual HRESULT			Load_Data(wstring fileName);
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

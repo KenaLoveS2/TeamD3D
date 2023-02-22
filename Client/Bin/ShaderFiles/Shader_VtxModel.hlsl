@@ -77,10 +77,6 @@ struct Hull_IN
 	float3		vTangent : TANGENT;
 };
 
-
-
-
-
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;

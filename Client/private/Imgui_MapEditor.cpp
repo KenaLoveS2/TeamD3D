@@ -144,26 +144,26 @@ void CImgui_MapEditor::Imgui_SelectOption()
 
 #pragma region		선택된 오브젝트들 보여주기
 
-		char szSelctedObject_Name[256], szSelctedModel_Name[256];
-		CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
-		CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
+	char szSelctedObject_Name[256], szSelctedModel_Name[256];
+	CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
+	CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
 
-		ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
-		ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
-		ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
-	
+	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
+	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
+	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
+
 #pragma endregion ~선택된 오브젝트들 보여주기
 }
 
-void CImgui_MapEditor::Imgui_AddComponent_Option(CGameInstance *pGameInstace , CGameObject* pGameObject)
+void CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront(CGameInstance *pGameInstace, CGameObject* pGameObject)
 {
-	assert(nullptr != pGameObject && "CImgui_MapEditor::Imgui_AddComponent_Option");
-	assert(nullptr != pGameInstace && "CImgui_MapEditor::Imgui_AddComponent_Option");
-
+	assert(nullptr != pGameObject && "CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront");
+	assert(nullptr != pGameInstace && "CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront");
+#pragma region  컴포넌트 옵션 불값 받아서 추가하기
 	if (true == m_bComOptions[CEnviromentObj::COMPONENTS_CONTROL_MOVE])
 	{
 		static_cast<CEnviromentObj*>(pGameObject)->
-			Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(),TEXT("Com_CtrlMove"), CEnviromentObj::COMPONENTS_CONTROL_MOVE);
+			Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), TEXT("Com_CtrlMove"), CEnviromentObj::COMPONENTS_CONTROL_MOVE);
 	}
 
 	if (true == m_bComOptions[CEnviromentObj::COMPONENTS_INTERACTION])
@@ -171,6 +171,22 @@ void CImgui_MapEditor::Imgui_AddComponent_Option(CGameInstance *pGameInstace , C
 		static_cast<CEnviromentObj*>(pGameObject)->
 			Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), TEXT("Com_Interaction"), CEnviromentObj::COMPONENTS_INTERACTION);
 	}
+#pragma endregion ~컴포넌트 옵션 불값 받아서 추가하기
+
+#pragma region 카메라 z 앞에서 pos 에서 생성하기
+	CTransform* pTransform = static_cast<CTransform*>(pGameObject->Find_Component(L"Com_Transform"));
+	assert(pTransform != nullptr && "CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront");
+
+	_float4 vCamPos = pGameInstace->Get_CamPosition();
+	_float4 vLook;
+
+	memcpy(&vLook, &pGameInstace->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW).m[2], sizeof(_float4));
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, XMLoadFloat4(&vCamPos) + XMVector3Normalize(XMLoadFloat4(&vLook)) * 30.f);
+
+	pTransform->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, 0, vPos.z, 1.f));
+#pragma endregion 카메라 z 앞에서 pos 에서 생성하기
 
 }
 
@@ -186,9 +202,9 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 		CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 		EnviromentDesc.szProtoObjTag = m_wstrProtoName;
 		EnviromentDesc.szModelTag = m_wstrModelName;
-		EnviromentDesc.szTextureTag = TEXT("");		
+		EnviromentDesc.szTextureTag = TEXT("");
 		EnviromentDesc.iRoomIndex = m_iCreateObjRoom_Option;
-		EnviromentDesc.eChapterType =  static_cast<CEnviromentObj::CHAPTER>(m_iChapterOption);
+		EnviromentDesc.eChapterType = static_cast<CEnviromentObj::CHAPTER>(m_iChapterOption);
 
 		string			strCloneTag = m_strCloneTag;
 		_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
@@ -199,7 +215,7 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 			EnviromentDesc.szProtoObjTag.c_str(),
 			pCloneName, &EnviromentDesc, &pCreateObject)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
-		Imgui_AddComponent_Option(pGameInstace,pCreateObject);
+		Imgui_AddComponentOption_CreateCamFront(pGameInstace, pCreateObject);
 		Imgui_Create_Option_Reset();
 		RELEASE_INSTANCE(CGameInstance);
 	}
@@ -208,10 +224,10 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 
 void CImgui_MapEditor::Imgui_Save_Load_Json()
 {
-	
+
 	ImGui::Checkbox("Write File ", &m_bSaveWrite);
 
-	if(m_bSaveWrite)
+	if (m_bSaveWrite)
 		ImGui::InputText("Save_Name : ", &m_strFileName);
 
 	if (ImGui::Button("Confirm_Save"))
@@ -281,7 +297,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 	string		szModelTag = "";
 	string		szTextureTag = "";
 	char*		szCloneTag;
-	
+
 	CEnviromentObj::ENVIROMENT_DESC SaveJson_Desc;
 	CEnviromentObj::ENVIROMENT_DESC SaveDataDesc;
 
@@ -295,7 +311,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		Json jChild;
 
 		SaveJson_Desc = static_cast<CEnviromentObj*>(pObject.second)->Get_EnviromentDesc();
-	
+
 		SaveDataDesc.szProtoObjTag = SaveJson_Desc.szProtoObjTag;
 		SaveDataDesc.szModelTag = SaveJson_Desc.szModelTag;
 		SaveDataDesc.szTextureTag = SaveJson_Desc.szTextureTag;
@@ -391,10 +407,10 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
-	
+
 		for (string strTag : jLoadChild["6_AddComTag"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
 			testStr.push_back(strTag);
-		
+
 		float	fElement = 0.f;
 		int k = 0;
 		for (float fElement : jLoadChild["7_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
@@ -408,11 +424,11 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
 		pGameInstance->Add_String(wszCloneTag);
 
-		EnviromentDesc.szProtoObjTag	= m_wstrProtoName;
-		EnviromentDesc.szModelTag		= m_wstrModelName;
-		EnviromentDesc.szTextureTag		= m_wstrTexturelName;
-		EnviromentDesc.iRoomIndex		=	iLoadRoomIndex;
-		EnviromentDesc.eChapterType		= CEnviromentObj::CHAPTER(iLoadChapterType);
+		EnviromentDesc.szProtoObjTag = m_wstrProtoName;
+		EnviromentDesc.szModelTag = m_wstrModelName;
+		EnviromentDesc.szTextureTag = m_wstrTexturelName;
+		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
+		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
@@ -424,8 +440,8 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, testStr);
 
-		szProtoObjTag = "";			szModelTag = "";			szTextureTag = ""; 		
-		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;		
+		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
+		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;
 		testStr.clear();
 	}
