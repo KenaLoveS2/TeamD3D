@@ -284,9 +284,15 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 			const _int  iTotalDTextureCnt = pEffect->Get_TotalDTextureCnt();
 			const _int  iTotalMTextureCnt = pEffect->Get_TotalMTextureCnt();
 
+			static _int iSelectTextureType = 0;
+			const char* szTextureType[] = { " ~SELECT_EFFECT TYPE~ ", " EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
+
 			if (ImGui::BeginTabItem("Set Item Texture"))
 			{
-				if (ImGui::BeginTabBar("##TextureImage", tab_bar_flags))
+				ImGui::BulletText("Texture Type : ");
+				ImGui::Combo("##EffectType", &iSelectTextureType, szTextureType, IM_ARRAYSIZE(szTextureType));
+
+				if (iSelectTextureType == 0)
 				{
 					if (ImGui::BeginTabItem("Diffuse_Texture"))
 					{
@@ -348,13 +354,15 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 							ImGui::EndTabItem();
 							return;
 						}
-
 						for (size_t i = 0; i < iTotalDTextureCnt; ++i)
 							Safe_Delete_Array(szDTextureType[i]);
 						Safe_Delete_Array(szDTextureType);
 
 						ImGui::EndTabItem();
 					}
+				}
+				else
+				{
 					if (ImGui::BeginTabItem("Mask_Texture"))
 					{
 						ImGui::BulletText("Add Texture : "); ImGui::SameLine();
@@ -425,11 +433,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 						Safe_Delete_Array(szMTextureType);
 						ImGui::EndTabItem();
 					}
-					ImGui::EndTabBar();
 				}
-				ImGui::EndTabItem();
 			}
-
 			ImGui::EndTabBar();
 		}
 
@@ -442,9 +447,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 
 			pEffect->Set_EffectDesc(m_eEffectDesc);
 		}
-
 		RELEASE_INSTANCE(CGameInstance);
-
 	}
 }
 

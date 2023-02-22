@@ -99,8 +99,8 @@ HRESULT CEffect::Render()
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
 	else
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
-	m_pVIBufferCom->Render();
 
+	m_pVIBufferCom->Render();
 	return S_OK;
 }
 
@@ -144,7 +144,6 @@ HRESULT CEffect::SetUp_Components()
 		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strMTextureComTag.c_str(), (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
-
 	return S_OK;
 }
 
@@ -195,13 +194,25 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
-		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_uint)m_eEFfectDesc.fFrame[i])))
+		m_strDTextureComTag = L"g_DTexture_";
+		m_strDTextureComTag += to_wstring(i);
+
+		char szDTexture[64] = "";
+		CUtile::WideCharToChar(m_strDTextureComTag.c_str(), szDTexture);
+
+		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i])))
 			return E_FAIL;
 	}
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
 	{
-		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", (_uint)m_eEFfectDesc.fMaskFrame[i])))
+		m_strMTextureComTag = L"g_MTexture_";
+		m_strMTextureComTag += to_wstring(i);
+
+		char szMTexture[64] = "";
+		CUtile::WideCharToChar(m_strMTextureComTag.c_str(), szMTexture);
+
+		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i])))
 			return E_FAIL;
 	}
 

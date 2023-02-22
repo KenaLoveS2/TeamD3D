@@ -4,8 +4,8 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_DepthTexture;
-texture2D		g_DiffuseTexture[5];
-texture2D		g_MaskTexture[5];
+texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
+texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
 // Type
 int		g_TextureRenderType, g_BlendType;
@@ -64,15 +64,15 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (g_iTotalDTextureComCnt == 1)
 	{
-		vector albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 		if (albedo.a < 0.1f)
 			discard;
 		Out.vColor = albedo;
 	}
 	if (g_iTotalDTextureComCnt == 2)
 	{
-		float4 albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-		float4 albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
+		float4 albedo  = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+		float4 albedo1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
 
 		Out.vColor = albedo * albedo1 * 2.0f;
 		Out.vColor = saturate(Out.vColor);
@@ -87,9 +87,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 	if (g_iTotalDTextureComCnt == 3)
 	{
-		vector albedo0 = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-		vector albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
-		vector albedo2 = g_DiffuseTexture[2].Sample(LinearSampler, In.vTexUV);
+		vector albedo0 = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+		vector albedo1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+		vector albedo2 = g_DTexture_2.Sample(LinearSampler, In.vTexUV);
 
 		Out.vColor = albedo0;
 			//Out.vColor = albedo0 * albedo1* albedo2 + albedo0 * (1.f - albedo1 *albedo2);
