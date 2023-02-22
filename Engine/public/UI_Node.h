@@ -15,6 +15,8 @@ public:
 	virtual void			Tick(_float fTimeDelta)			override;
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
+public:
+	virtual void			Imgui_RenderProperty();
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

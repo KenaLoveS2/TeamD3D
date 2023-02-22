@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\UI_Canvas.h"
+#include "GameInstance.h"
 
 CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI(pDevice, pContext)
@@ -44,13 +45,41 @@ HRESULT CUI_Canvas::Render()
 	return S_OK;
 }
 
-HRESULT CUI_Canvas::Add_ChildUI(CUI * pUI)
+bool	getter_ForCanvas(void* data, int index, const char** output)
+{
+	vector<string>*	 pVec = (vector<string>*)data;
+	*output = (*pVec)[index].c_str();
+	return true;
+}
+void CUI_Canvas::Imgui_RenderProperty()
+{
+	/* Translation Setting */
+	m_pTransformCom->Imgui_RenderProperty();
+
+	/* Texture Setting */
+	if (ImGui::CollapsingHeader("Texture"))
+		Imgui_RenderingSetting();
+
+	/* Node Setting */
+	if (ImGui::CollapsingHeader("Nodes"))
+	{
+		static int selected_Node = 0;
+		_uint iNumNodes = (_uint)m_vecNodeCloneTag.size();
+		ImGui::ListBox(" : Node", &selected_Node, getter_ForCanvas, &m_vecNodeCloneTag, iNumNodes, 5);
+
+		m_vecNode[selected_Node]->Imgui_RenderProperty();
+		
+	}
+
+}
+
+HRESULT CUI_Canvas::Add_Node(CUI * pUI)
 {
 	if (nullptr == pUI)
 		return E_FAIL;
 
-	m_vecChildUI.push_back(pUI);
-	Safe_AddRef(pUI);
+	m_vecNode.push_back(pUI);
+	// Safe_AddRef(pUI); 
 
 	pUI->Set_Parent(this);
 
@@ -61,6 +90,8 @@ void CUI_Canvas::Free()
 {
 	__super::Free();
 
-	for (auto &pChildUI : m_vecChildUI)
-		Safe_Release(pChildUI);
+	//for (auto &pChildUI : m_vecChildUI)
+	//	Safe_Release(pChildUI);
+	m_vecNodeCloneTag.clear();
+	m_vecNode.clear();
 }

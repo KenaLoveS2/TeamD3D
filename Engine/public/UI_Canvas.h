@@ -15,12 +15,16 @@ public:
 	virtual void			Tick(_float fTimeDelta)			override;
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
-
 public:
-	virtual		HRESULT	Add_ChildUI(CUI* pUI)sealed;		/* 캔버스에 하위 UI(Node 또는 Canvas) 추가 */
+	virtual void			Imgui_RenderProperty();
+public:
+	virtual		HRESULT	Add_Node(CUI* pUI)sealed;		/* 캔버스에 하위 UI(Node 또는 Canvas) 추가 */
 
 protected:
-	vector<CUI*>		m_vecChildUI;
+	vector<string>		m_vecNodeCloneTag;
+	vector<CUI*>		m_vecNode; 
+
+
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

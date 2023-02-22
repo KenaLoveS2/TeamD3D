@@ -150,6 +150,13 @@ public: /* For.PipeLine */
 		HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);
 		HRESULT Add_String(_tchar* pStr);
 		_tchar* Find_String(_uint iLevelIndex, _tchar* pStr);
+		/* Only For UI */
+		void				Add_UITextureTag(wstring wstr);
+		vector<wstring>*	Get_UITextureProtoTagsPtr();
+		vector<string>*		Get_UITextureNamesPtr();
+		void				Add_UIString(_tchar* tag, string str);
+		vector<string>*		Get_UIString(_tchar* tag);
+
 
 	public: // for Camera manager
 		HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
