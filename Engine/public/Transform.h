@@ -64,7 +64,6 @@ public:
 	void Set_Scaled(STATE eState, _float fScale); /* fScale값으로 길이를 변형한다. */
 	void Set_Scaled(_float3 vScale); /* fScale값으로 길이를 변형한다. */
 	void Scaling(STATE eState, _float fScale); /* fScale배수로 늘린다. */
-	void Set_WorldMatrix(_fmatrix matWorld) { XMStoreFloat4x4(&m_WorldMatrix, matWorld); }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
