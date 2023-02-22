@@ -79,7 +79,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread). */
+	/* Make additional flow for Loading(Thread). */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -87,7 +87,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-/* 로고를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -126,7 +125,6 @@ HRESULT CLoader::Loading_ForLogo()
 	return S_OK;
 }
 
-/* 게임플레이를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();

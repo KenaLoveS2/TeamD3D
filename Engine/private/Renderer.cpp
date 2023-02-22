@@ -548,6 +548,12 @@ HRESULT CRenderer::Render_PostProcess()
 
 HRESULT CRenderer::Render_UI()
 {
+	///* Sorting */
+	//for (auto& pGameObject : m_RenderObjects[RENDER_UI])
+	//{
+	// list.sort();
+	//}
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
 	{
 		pGameObject && pGameObject->Render();

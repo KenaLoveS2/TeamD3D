@@ -23,7 +23,7 @@ public:
 	void	SwitchOnOff_Shadow(_bool bSwitch);
 
 private:
-	map <const _tchar*, class CGameObject*> m_GameObjects;	
+	map <const _tchar*, class CGameObject*>			m_GameObjects;	
 	typedef map<const _tchar*, class CGameObject*>	GAMEOBJECTS;
 
 public:
