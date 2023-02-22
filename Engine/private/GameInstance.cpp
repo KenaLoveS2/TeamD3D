@@ -749,7 +749,6 @@ _float* CGameInstance::Get_CameraFar()
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
-	CImgui_Manager::GetInstance()->DestroyInstance();
 	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CCamera_Manager::GetInstance()->DestroyInstance();
@@ -766,6 +765,8 @@ void CGameInstance::Release_Engine()
 	CSound_Manager::GetInstance()->DestroyInstance();
 	CString_Manager::GetInstance()->DestroyInstance();
 	CEnviroment_Manager::GetInstance()->DestroyInstance();
+	CImgui_Manager::GetInstance()->DestroyInstance();
+
 }
 
 void CGameInstance::Free()

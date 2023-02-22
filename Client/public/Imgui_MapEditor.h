@@ -35,7 +35,7 @@ private:
 private:		/*Logic*/
 	void					Imgui_Save_Func();
 	HRESULT			Imgui_Load_Func();
-	void					Imgui_AddComponent_Option(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
+	void					Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
 	void					Imgui_Create_Option_Reset();
 	
 
