@@ -21,7 +21,7 @@ void CUtile::SetClientCursorPos(HWND hWnd, unsigned int iClientX, unsigned int i
 
 _tchar* CUtile::CharToWideChar(char* pCharStr)
 {
-	int iStrLen = (int)strlen(pCharStr) + 1;
+	_int iStrLen = (_int)strlen(pCharStr) + 1;
 	_tchar* pText = new _tchar[iStrLen];
 	ZeroMemory(pText, sizeof(_tchar) * iStrLen);
 
@@ -32,7 +32,7 @@ _tchar* CUtile::CharToWideChar(char* pCharStr)
 
 char* CUtile::WideCharToChar(_tchar * pWideStr)
 {	
-	int iStrLen = wcslen(pWideStr) + 1;
+	_int iStrLen = (_int)wcslen(pWideStr) + 1;
 	char* pText = new char[iStrLen];
 	ZeroMemory(pText, sizeof(char) * iStrLen);
 
@@ -43,7 +43,7 @@ char* CUtile::WideCharToChar(_tchar * pWideStr)
 
 void CUtile::CharToWideChar(const char * pCharStr, _tchar * pOut)
 {
-	int iStrLen = (int)strlen(pCharStr) + 1;
+	_int iStrLen = (_int)strlen(pCharStr) + 1;
 	MultiByteToWideChar(CP_ACP, 0, pCharStr, iStrLen, pOut, iStrLen);
 }
 
@@ -67,7 +67,7 @@ _tchar * CUtile::StringToWideChar(string str)
 
 _tchar* CUtile::Create_String(const _tchar *pText)
 {
-	_int iSize = wcslen(pText) + 1;
+	_int iSize = (_int)wcslen(pText) + 1;
 
 	_tchar* pString = new _tchar[iSize];
 	ZeroMemory(pString, sizeof(_tchar) * iSize);
@@ -79,7 +79,7 @@ _tchar* CUtile::Create_String(const _tchar *pText)
 
 char* CUtile::Create_String(const char * pText)
 {
-	_int iSize = strlen(pText) + 1;
+	_int iSize = (_int)strlen(pText) + 1;
 
 	char* pString = new char[iSize];
 	ZeroMemory(pString, sizeof(_tchar) * iSize);
