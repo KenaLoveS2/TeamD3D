@@ -8,6 +8,8 @@
 
 #include "UI_ClientManager.h"
 
+
+
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
 {
