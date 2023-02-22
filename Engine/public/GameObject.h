@@ -27,7 +27,7 @@ public:
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
-	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	void						Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
 
 	void				Delete_Component(const _tchar* pComponentTag);
 
