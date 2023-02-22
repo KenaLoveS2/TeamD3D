@@ -58,7 +58,6 @@ protected:
 	_int				m_iAnimationIndex = 0;
 
 protected:
-	/* ��ü���� ����ؾ�?�� ������Ʈ���� �����Ѵ�. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
 	class CTransform*									m_pTransformCom = nullptr;
@@ -76,10 +75,8 @@ public:
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
-		// �� ������Ʈ�� ������ �ִ� component�� Imgui_RenderProtpery�Լ��� �����ϴ� �Լ�.
 	void Imgui_RenderComponentProperties();
 
-	// �� ������Ʈ���� ������ �����͸� imgui�� �ۼ��Ѵ�.
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
 
