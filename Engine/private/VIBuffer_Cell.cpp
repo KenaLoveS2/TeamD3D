@@ -88,9 +88,9 @@ HRESULT CVIBuffer_Cell::Initialize_Prototype(const _float3* pPoints)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Cell::Initialize(void * pArg)
+HRESULT CVIBuffer_Cell::Initialize(void * pArg, CGameObject * pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -111,11 +111,11 @@ CVIBuffer_Cell * CVIBuffer_Cell::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Cell::Clone(void * pArg)
+CComponent * CVIBuffer_Cell::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Cell*		pInstance = new CVIBuffer_Cell(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Cell");
 		Safe_Release(pInstance);
@@ -127,5 +127,4 @@ CComponent * CVIBuffer_Cell::Clone(void * pArg)
 void CVIBuffer_Cell::Free()
 {
 	__super::Free();
-
 }

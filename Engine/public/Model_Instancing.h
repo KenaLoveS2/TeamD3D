@@ -27,7 +27,7 @@ public:
 
 public:
 	virtual HRESULT Initialize_Prototype(const char* pModelFilePath, _fmatrix PivotMatrix, HANDLE hFile);
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 
 public:
 	HRESULT Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
@@ -60,7 +60,7 @@ public:
 
 public:
 	static CModel_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const char* pModelFilePath, _fmatrix PivotMatrix, HANDLE hFile);
-	virtual CComponent* Clone(void* pArg) override;
+	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 };
 

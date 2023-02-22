@@ -15,10 +15,60 @@ CChannel::CChannel(const CChannel& rhs)
 	m_KeyFrames = rhs.m_KeyFrames;
 }
 
+HRESULT CChannel::Save_Channel(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = strlen(m_szName) + 1;
+	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	WriteFile(hFile, &m_iNumKeyframes, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& tKeyFrame : m_KeyFrames)
+		WriteFile(hFile, &tKeyFrame, sizeof(KEYFRAME), &dwByte, nullptr);
+
+	return S_OK;
+}
+
+HRESULT CChannel::Load_Channel(HANDLE & hFile, DWORD & dwByte)
+{
+	_uint			iNameLength = 0;
+	ReadFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
+
+	char*			pName = new char[iNameLength];
+	ReadFile(hFile, pName, sizeof(char) * iNameLength, &dwByte, nullptr);
+
+	strcpy_s(m_szName, pName);
+
+	m_pBone = m_pModel->Get_BonePtr(m_szName);
+	Safe_AddRef(m_pBone);
+
+	Safe_Delete_Array(pName);
+
+	ReadFile(hFile, &m_iNumKeyframes, sizeof(_uint), &dwByte, nullptr);
+	m_KeyFrames.reserve(m_iNumKeyframes);
+
+	for (_uint i = 0; i < m_iNumKeyframes; ++i)
+	{
+		KEYFRAME		tKeyFrame;
+		ZeroMemory(&tKeyFrame, sizeof(KEYFRAME));
+
+		ReadFile(hFile, &tKeyFrame, sizeof(KEYFRAME), &dwByte, nullptr);
+
+		m_KeyFrames.push_back(tKeyFrame);
+	}
+
+	return S_OK;
+}
+
 
 /* 특정애니메이션ㄴ에서 사용되는 뼈. */
 HRESULT CChannel::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
+	m_pModel = pModel;
+
+	if (hFile == nullptr)
+		return S_OK;
+
 	_ulong dwByte = 0;
 	_uint iLen = 0;
 	ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);

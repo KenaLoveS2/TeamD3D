@@ -35,7 +35,7 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType);
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 
 public:
 	void Update(_fmatrix TransformMatrix);
@@ -79,7 +79,7 @@ private:
 
 public:
 	static CCollider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType);
-	virtual CComponent* Clone(void* pArg = nullptr);
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	virtual void Free() override;
 };
 

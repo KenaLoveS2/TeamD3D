@@ -52,10 +52,12 @@ HRESULT CTransform::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CTransform::Initialize(void * pArg)
+HRESULT CTransform::Initialize(void * pArg, CGameObject* pOwner)
 {
 	if (nullptr != pArg)
 		memcpy(&m_TransformDesc, pArg, sizeof(TRANSFORMDESC));
+
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
 
 	m_fInitSpeed = m_TransformDesc.fSpeedPerSec;
 
@@ -126,11 +128,20 @@ void CTransform::Imgui_RenderProperty()
 
 
 		/* Before Input */
-		_float fRatio = matrixScale[0] / matrixScale[1];
+		static const _float fRatio = matrixScale[1] / matrixScale[0];
+		/* Scale Ratio(base on Width) */
+		static _bool isKeepRatio{ false };
+		ImGui::Checkbox(" : Keep Original Ratio", &isKeepRatio);
 
 		ImGui::InputFloat3("Translate", matrixTranslation);
 		ImGui::InputFloat3("Rotate", matrixRotation);
-		ImGui::InputFloat3("Scale", matrixScale);
+		if (ImGui::InputFloat3("Scale", matrixScale))
+		{
+			if (isKeepRatio)
+			{
+				matrixScale[1] = fRatio * matrixScale[0];
+			}
+		}
 
 		/******* Docking *******/
 		if (left)
@@ -142,14 +153,6 @@ void CTransform::Imgui_RenderProperty()
 		else if (bottom)
 			matrixTranslation[1] -= viewport.Height * 0.5f;	
 		/******* ~Docking *******/
-
-		/* Scale Ratio(base on Width) */
-		static _bool isKeepRatio{ false };
-		ImGui::Checkbox(" : Keep Original Ratio", &isKeepRatio);
-		if (isKeepRatio)
-		{
-			matrixScale[1] = fRatio * matrixScale[1];
-		}
 
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
 
@@ -354,11 +357,11 @@ CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pC
 	return pInstance;
 }
 
-CComponent * CTransform::Clone(void * pArg)
+CComponent * CTransform::Clone(void * pArg, CGameObject * pOwner)
 {
 	CTransform*		pInstance = new CTransform(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CTransform");
 		Safe_Release(pInstance);
@@ -409,3 +412,75 @@ _float CTransform::HeightOnTerrain(_fvector vPos, _float3* pTerrainVtxPos, _uint
 	// ax + by + cz + d = 0; // by = -ax - cz - d // y = (-ax - cz - d) / b
 	return (-vPlaneFloat.x * vPosFloat.x - vPlaneFloat.z * vPosFloat.z - vPlaneFloat.w) / vPlaneFloat.y;
 }
+
+_float CTransform::Calc_Distance_XYZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);	
+
+	return XMVectorGetX(XMVector3Length(vPos - vTargetPos));
+}
+
+_float CTransform::Calc_Distance_XZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.y = vPos.y;
+	
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(_float4 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XYZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.y = vPos.y;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(CTransform * pTransform)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = pTransform->Get_State(STATE_TRANSLATION);
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+
+

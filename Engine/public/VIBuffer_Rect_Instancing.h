@@ -13,7 +13,7 @@ public:
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
@@ -22,7 +22,7 @@ private:
 
 public:
 	static CVIBuffer_Rect_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iNumInstance = 1);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 };
 

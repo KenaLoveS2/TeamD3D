@@ -10,6 +10,8 @@ sampler LinearSampler = sampler_state
 	AddressV = wrap;
 };
 
+
+
 sampler PointSampler = sampler_state
 {
 	filter = min_mag_mip_Point;

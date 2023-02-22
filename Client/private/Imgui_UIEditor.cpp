@@ -22,8 +22,8 @@ CImgui_UIEditor::CImgui_UIEditor(ID3D11Device * pDevice, ID3D11DeviceContext * p
 HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
 	m_pCanvas = nullptr;
-	m_pNode = nullptr;
-	
+
+
 	if (FAILED(Ready_TextureList()))
 	{
 		MSG_BOX("Failed To Ready Texture List : Imgui_UIEditor");
@@ -65,6 +65,7 @@ bool	RenderPass_Getter(void* data, int index, const char** output)
 	*output = (*pVec)[index].c_str();
 	return true;
 }
+
 void CImgui_UIEditor::Imgui_FreeRender()
 {
 	//if (Begin("UI Editor"))
@@ -84,8 +85,16 @@ void CImgui_UIEditor::Imgui_FreeRender()
 					CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 					wstring wstr = (*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].c_str();
+					wstring tag = L"Prototype_GameObject_UI_";
+					size_t tagLength = tag.length();
+					size_t length = 0;
+					length = wstr.length() - tagLength;
+
+					wstring wstt = (*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].substr(tagLength, length).c_str();
+
 					if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_Canvas",
-						(*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].c_str(), nullptr, (CGameObject**)&m_pCanvas)))
+						(*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].c_str(), 
+						(*CUI_ClientManager::GetInstance()->Get_CanvasProtoTag())[selected_canvasType].substr(tagLength, length).c_str(), nullptr, (CGameObject**)&m_pCanvas)))
 						MSG_BOX("Failed To Clone Canvas : UIEditor");
 
 					if (m_pCanvas != nullptr)
@@ -101,47 +110,53 @@ void CImgui_UIEditor::Imgui_FreeRender()
 		if (m_pCanvas == nullptr)
 			goto Exit;
 
-		/* Texture */
-		if (CollapsingHeader("Texture"))
-		{
-			/* Diffuse */
-			static int selected_Diffuse = 0;
-			_uint iNumTextures = (_uint)m_vecTextureTag.size();
-			if (ListBox(" : Diffuse", &selected_Diffuse, CanvasTexture_Getter, &m_vecTextureTag, iNumTextures, 5))
-			{
-				wstring wstr = (*CUI_ClientManager::GetInstance()->Get_TextureProtoTag())[selected_Diffuse].c_str();
-				if (FAILED(m_pCanvas->Set_Texture(CUI::TEXTURE_DIFFUSE, wstr)))
-				{
-					MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
-				}
-			}
-
-			LINE;
-			
-			/* Mask */
-			static int selected_Mask = 0;
-			if (ListBox(" : Mask", &selected_Mask, CanvasTexture_Getter, &m_vecTextureTag, iNumTextures, 5))
-			{
-				wstring wstr = (*CUI_ClientManager::GetInstance()->Get_TextureProtoTag())[selected_Mask].c_str();
-				if (FAILED(m_pCanvas->Set_Texture(CUI::TEXTURE_MASK, wstr)))
-				{
-					MSG_BOX("Failed To Set Mask Texture : UIEditor");
-				}
-			}
-
-			LINE;
-
-			/* Shader Pass */ //RenderPass_Getter
-			static int selected_Pass = 0;
-			_uint iNumPass = (_uint)m_vecRenderPass.size();
-			if (ListBox(" : Shader Pass", &selected_Pass, RenderPass_Getter, &m_vecRenderPass, iNumPass, 5))
-			{
-				m_pCanvas->Set_RenderPass(selected_Pass);
-			}
-		}
-
-		/* Translation */
 		m_pCanvas->Imgui_RenderProperty();
+
+		///* Texture */
+		//if (CollapsingHeader("Texture"))
+		//{
+		//	/* Diffuse */
+		//	static int selected_Diffuse = 0;
+		//	_uint iNumTextures = (_uint)m_vecTextureTag.size();
+		//	if (ListBox(" : Diffuse", &selected_Diffuse, CanvasTexture_Getter, &m_vecTextureTag, iNumTextures, 5))
+		//	{
+		//		wstring wstr = (*CUI_ClientManager::GetInstance()->Get_TextureProtoTag())[selected_Diffuse].c_str();
+		//		if (FAILED(m_pCanvas->Set_Texture(CUI::TEXTURE_DIFFUSE, wstr)))
+		//		{
+		//			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
+		//		}
+		//	}
+
+		//	LINE;
+		//	
+		//	/* Mask */
+		//	static int selected_Mask = 0;
+		//	if (ListBox(" : Mask", &selected_Mask, CanvasTexture_Getter, &m_vecTextureTag, iNumTextures, 5))
+		//	{
+		//		wstring wstr = (*CUI_ClientManager::GetInstance()->Get_TextureProtoTag())[selected_Mask].c_str();
+		//		if (FAILED(m_pCanvas->Set_Texture(CUI::TEXTURE_MASK, wstr)))
+		//		{
+		//			MSG_BOX("Failed To Set Mask Texture : UIEditor");
+		//		}
+		//	}
+
+		//	LINE;
+
+		//	/* Shader Pass */ //RenderPass_Getter
+		//	static int selected_Pass = 0;
+		//	_uint iNumPass = (_uint)m_vecRenderPass.size();
+		//	if (ListBox(" : Shader Pass", &selected_Pass, RenderPass_Getter, &m_vecRenderPass, iNumPass, 5))
+		//	{
+		//		m_pCanvas->Set_RenderPass(selected_Pass);
+		//	}
+
+		//}
+
+		///* Translation */
+		//m_pCanvas->Imgui_RenderProperty();
+
+
+
 
  	Exit:
  		End();
@@ -163,12 +178,6 @@ HRESULT CImgui_UIEditor::Ready_TextureList()
 		str.assign(wstr.begin(), wstr.end());
 		m_vecTextureTag.push_back(str);
 	}
-
-	/* RenderPass List */
-	m_vecRenderPass.push_back("Default");
-	m_vecRenderPass.push_back("x(Effect)");
-	m_vecRenderPass.push_back("DiffuseAlphaBlend");
-	m_vecRenderPass.push_back("MaskMap");
 
 	return S_OK;
 }
@@ -220,6 +229,8 @@ void CImgui_UIEditor::Free()
 	__super::Free();
 
 	m_vecTextureTag.clear();
+	
 	m_vecCanvasProtoTag.clear();
-	m_vecRenderPass.clear();
+	m_vecCanvas.clear();
+
 }
