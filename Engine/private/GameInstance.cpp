@@ -74,7 +74,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
-	/* �׷��� ����̽�?�ʱ�ȭ. */
 	if (FAILED(m_pGraphic_Device->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWindowMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
@@ -124,7 +123,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (nullptr == m_pInput_Device || nullptr == m_pLevel_Manager || nullptr == m_pObject_Manager)
 		return;
 	
-	/* �Է���ġ�� ���¸� ���Ź޾ƿ´�. */
 	m_pInput_Device->Invalidate_Input_Device();
 
 	m_pImgui_Manager->Tick_Imgui();
@@ -685,6 +683,36 @@ _tchar* CGameInstance::Find_String(_uint iLevelIndex, _tchar * pStr)
 {
 	if (m_pString_Manager == nullptr) return nullptr;
 	return m_pString_Manager->Find_String(iLevelIndex, pStr);
+}
+
+void CGameInstance::Add_UITextureTag(wstring wstr)
+{
+	if (m_pString_Manager == nullptr) return;
+	return m_pString_Manager->Add_UITextureTag(wstr);
+}
+
+vector<wstring>* CGameInstance::Get_UITextureProtoTagsPtr()
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UITextureProtoTagsPtr();
+}
+
+vector<string>* CGameInstance::Get_UITextureNamesPtr()
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UITextureNamesPtr();
+}
+
+void CGameInstance::Add_UIString(_tchar * tag, string str)
+{
+	if (m_pString_Manager == nullptr) return;
+	return m_pString_Manager->Add_UIString(tag, str);
+}
+
+vector<string>* CGameInstance::Get_UIString(_tchar * tag)
+{
+	if (m_pString_Manager == nullptr) return nullptr;
+	return m_pString_Manager->Get_UIString(tag);
 }
 
 HRESULT CGameInstance::Add_Camera(const _tchar * pCameraTag, CCamera * pCamrea, _bool bWorkFlag)

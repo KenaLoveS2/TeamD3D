@@ -21,7 +21,7 @@ CAnimation::CAnimation(const CAnimation& rhs)
 
 HRESULT CAnimation::Save_Animation(HANDLE & hFile, DWORD & dwByte)
 {
-	_uint			iNameLength = strlen(m_szName) + 1;
+	_uint			iNameLength = _uint(strlen(m_szName)) + 1;
 	WriteFile(hFile, &iNameLength, sizeof(_uint), &dwByte, nullptr);
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 
@@ -125,7 +125,7 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		if (true == m_isFinished)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
+		m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
 	}
 
 	if (m_isFinished && m_isLooping)
@@ -152,7 +152,7 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 		if (true == m_isFinished)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		m_Channels[i]->Blend_TransformMatrix(m_PlayTime, fBlendRatio);
+		m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
 	}
 }
 
@@ -168,7 +168,7 @@ void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fRatio);
+		m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
 		m_Channels[i]->Reset_KeyFrameIndex();
 	}
 }
@@ -240,7 +240,7 @@ HRESULT CAnimation::Synchronization_ChannelsBonePtr(CModel * pModel, const strin
 			++iter;
 	}
 
-	m_iNumChannels = m_Channels.size();
+	m_iNumChannels = (_uint)m_Channels.size();
 
 	return S_OK;
 }

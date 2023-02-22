@@ -154,7 +154,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    g_hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   RECT		rcWindow = { 0, 0, g_iWinSizeX, g_iWinSizeY };
+   RECT		rcWindow = { 0, 0, (LONG)g_iWinSizeX, (LONG)g_iWinSizeY };
 
    AdjustWindowRect(&rcWindow, WS_OVERLAPPEDWINDOW, FALSE);
 
@@ -247,12 +247,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	case WM_KEYDOWN:
-		switch (wParam)
+		/*switch (wParam)
 		{
-		/*case VK_ESCAPE:
+		case VK_ESCAPE:
 			DestroyWindow(g_hWnd);
-			break;*/
-		}
+			break;
+		}*/
 		break;
 
 	case WM_DESTROY:

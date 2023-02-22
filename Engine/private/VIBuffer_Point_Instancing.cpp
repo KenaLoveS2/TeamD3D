@@ -107,7 +107,7 @@ HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
 		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);
 		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
 		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		pInstanceVertices[i].vPosition = _float4(rand() % 5, 3.0f, rand() % 5, 1.f);
+		pInstanceVertices[i].vPosition = _float4(_float(rand() % 5), 3.0f, _float(rand() % 5), 1.f);
 	}
 	
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -135,7 +135,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_float fTimeDelta)
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)	
 	{
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= m_pSpeeds[i] * fTimeDelta;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= _float(m_pSpeeds[i]) * fTimeDelta;
 
 		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < 0.f)
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 3.f;

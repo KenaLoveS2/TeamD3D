@@ -154,10 +154,8 @@ void CSound_Manager::Set_MasterVolume(_float fVolume)
 	fVolume = fVolume > 1.f ? 1.f : fVolume < 0.f ? 0.f : fVolume;
 	CSound::Set_MasterVolume(fVolume);
 
-	for (int i = 0; i < m_iNumManualChannels; i++)
-	{
+	for (_uint i = 0; i < m_iNumManualChannels; i++)
 		m_Channels[i].second ? m_Channels[i].second->UpdateUseVolume(m_Channels[i].first) : 0;
-	}
 }
 
 void CSound_Manager::Set_SoundDesc(const _tchar *pSoundKey, CSound::SOUND_DESC& SoundDesc)
