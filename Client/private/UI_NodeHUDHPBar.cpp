@@ -41,7 +41,6 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));

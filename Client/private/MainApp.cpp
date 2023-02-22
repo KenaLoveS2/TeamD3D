@@ -166,11 +166,11 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 		return E_FAIL;
 
 	/* UI_Manager */
-	//if (FAILED(CUI_ClientManager::GetInstance()->Ready_UIs(m_pDevice, m_pContext)))
-	//{
-	//	MSG_BOX("Failed To Ready UI_TOOL : MainApp");
-	//	return E_FAIL;
-	//}
+	if (FAILED(CUI_ClientManager::GetInstance()->Ready_UIs(m_pDevice, m_pContext)))
+	{
+		MSG_BOX("Failed To Ready UI_TOOL : MainApp");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -285,7 +285,7 @@ void CMainApp::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 
-	//CUI_ClientManager::GetInstance()->Release();
+	CUI_ClientManager::GetInstance()->Release();
 	CGameInstance::Release_Engine();
 }
 
