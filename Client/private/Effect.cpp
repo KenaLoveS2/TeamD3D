@@ -97,7 +97,8 @@ HRESULT CEffect::Render()
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
 	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
-
+	else
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
 	m_pVIBufferCom->Render();
 
 	return S_OK;

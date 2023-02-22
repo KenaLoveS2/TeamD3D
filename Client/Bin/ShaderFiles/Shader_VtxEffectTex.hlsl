@@ -71,14 +71,19 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 	if (g_iTotalDTextureComCnt == 2)
 	{
-		//float4 albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
-		//float4 albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
+		float4 albedo = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV);
+		float4 albedo1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV);
 
-		//float  FinalAlpha = (albedo.a * g_vColor.a);
+		Out.vColor = albedo * albedo1 * 2.0f;
+		Out.vColor = saturate(Out.vColor);
+		//float  finalAlpha = (albedo.a * g_vColor.a);
+		//float4 finalcolor = (albedo * finalAlpha) + (albedo1 * (1.f - finalAlpha));
+		//Out.vColor = finalcolor;
+
 		//float3 emissive = ((albedo.rgb * g_vColor.rgb) + albedo1.rgb)*FinalAlpha;
 		//float3 finalColor = emissive;
+
 		//Out.vColor = float4(finalColor, FinalAlpha);
-		//float4 vmixcolor = mix(albedo, albedo1);
 	}
 	if (g_iTotalDTextureComCnt == 3)
 	{
@@ -203,4 +208,17 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
+	pass Effect_Mix // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Mix, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+	
 }

@@ -265,6 +265,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ALPHA;
 				if (ImGui::RadioButton("BlendType_OneEffect", &iBlendType, 2))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
+				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
+					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
 				ImGui::Separator();
 
 				ImGui::BulletText("fVector : ");	 ImGui::InputFloat4("##fVector", (_float*)&fVector);
