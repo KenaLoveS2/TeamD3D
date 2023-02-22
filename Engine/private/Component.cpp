@@ -15,6 +15,7 @@ CComponent::CComponent(const CComponent & rhs)
 	, m_pContext(rhs.m_pContext)
 	, m_isCloned(true)
 	, m_wstrFilePath(rhs.m_wstrFilePath)
+	, m_pOwner(nullptr)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -25,8 +26,11 @@ HRESULT CComponent::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CComponent::Initialize(void * pArg)
+HRESULT CComponent::Initialize(void * pArg, CGameObject* pOwner)
 {
+	if (pOwner != nullptr)
+		m_pOwner = pOwner;
+
 	return S_OK;
 }
 

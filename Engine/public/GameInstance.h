@@ -1,7 +1,7 @@
 #pragma once
 
 /* �̱���.  */
-/* Ŭ���̾�Ʈ�� ������ ������ ���� �������?Ŭ����. */
+/* Ŭ���̾�Ʈ�� ������ ������ ���� �������?Ŭ����. */
 
 #include "Base.h"
 #include "Input_Device.h"
@@ -68,11 +68,16 @@ BEGIN(Engine)
 	public: /* For.Object_Manager */
 		class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
 		class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
+		map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex);
 
 		HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-		class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+		CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag = nullptr, void* pArg = nullptr);
 		HRESULT Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag, const _tchar * pCloneObjectTag, 
 								void* pArg = nullptr, CGameObject** ppObj = nullptr);
+		HRESULT		Clone_AnimObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,
+			const _tchar* pCloneObjectTag,
+			void* pArg = nullptr, CGameObject** ppOut = nullptr);
+		HRESULT		Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
 		HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 		void SwitchOnOff_Shadow(_bool bSwitch);
 		class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
@@ -85,9 +90,12 @@ BEGIN(Engine)
 		vector<map<const _tchar*, class CGameObject*>>& Get_CopyPrototypes();
 		_uint Get_NumCopyPrototypes();
 
+
+		HRESULT Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag);
+
 	public: /* For.Component_Manager */
 		HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
-		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr);
+		class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 		map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
 
 public: /* For.PipeLine */

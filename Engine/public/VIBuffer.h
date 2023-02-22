@@ -13,7 +13,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 	virtual HRESULT Render();
 		
 protected:
@@ -50,7 +50,7 @@ protected:
 
 
 public:
-	virtual CComponent* Clone(void* pArg = nullptr) = 0;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) = 0;
 	virtual void Free() override;
 
 };

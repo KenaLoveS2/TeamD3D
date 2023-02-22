@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Kena_Parts.h"
 #include "GameInstance.h"
+#include "Kena.h"
 
 CKena_Parts::CKena_Parts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -60,6 +61,12 @@ HRESULT CKena_Parts::Render()
 void CKena_Parts::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+}
+
+void CKena_Parts::Model_Synchronization()
+{
+	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+	m_pModelCom->Reset_Animation();
 }
 
 void CKena_Parts::Free()

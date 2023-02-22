@@ -13,7 +13,7 @@ public:
 
 public:
 	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 	virtual HRESULT Tick(_float fTimeDelta) = 0;
 	virtual HRESULT Render();
 	
@@ -25,7 +25,7 @@ protected:
 	ID3D11Buffer*				m_pInstanceBuffer = nullptr; /* 행렬 집합. */
 
 public:
-	virtual CComponent* Clone(void* pArg = nullptr) = 0;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) = 0;
 	virtual void Free() override;
 };
 

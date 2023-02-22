@@ -16,6 +16,11 @@ public:
 	_float Get_CamDistance() const {
 		return m_fCamDistance;
 	}
+	const _tchar*	Get_Name() const { return m_szName; }
+	const _int&		Get_AnimationIndex() const { return m_iAnimationIndex; }
+	void	Set_Name(const _tchar* pTag) { m_szName = pTag; }
+	void	Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
+
 public:
 	CTransform* Get_TransformCom() { return m_pTransformCom; }
 
@@ -39,6 +44,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual HRESULT RenderShadow();
+	virtual void		Update_Child() {}
 
 protected:
 	ID3D11Device*				m_pDevice = nullptr;
@@ -47,17 +53,18 @@ protected:
 	_float							m_fCamDistance = { 0.0 };	
 	_bool							m_bShadow = true;
 
-	const _tchar*				m_szName = TEXT("");
-	const _tchar*					m_szCloneObjectTag = TEXT("");
+	const _tchar*		m_szName = TEXT("");
+	const _tchar*		m_szCloneObjectTag = TEXT("");
+	_int				m_iAnimationIndex = 0;
 
 protected:
-	/* ��ü���� ����ؾ�?�� ������Ʈ���� �����Ѵ�. */
+	/* ��ü���� ����ؾ�?�� ������Ʈ���� �����Ѵ�. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
 	class CTransform*									m_pTransformCom = nullptr;
 
 protected:	
-	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
+	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr, CGameObject* pOwner = nullptr);
 
 	void Compute_CamDistance();
 
@@ -74,6 +81,7 @@ public: /* imgui */
 
 	// �� ������Ʈ���� ������ �����͸� imgui�� �ۼ��Ѵ�.
 	virtual void Imgui_RenderProperty() {}
+	virtual void ImGui_AnimationProperty() {}
 
 	void Set_Position(_float4& vPosition);
 };

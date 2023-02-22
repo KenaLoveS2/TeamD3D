@@ -121,7 +121,7 @@ HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Point_Instancing::Initialize(void * pArg)
+HRESULT CVIBuffer_Point_Instancing::Initialize(void * pArg, CGameObject * pOwner)
 {
 	return S_OK;
 }
@@ -193,11 +193,11 @@ CVIBuffer_Point_Instancing * CVIBuffer_Point_Instancing::Create(ID3D11Device * p
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Point_Instancing::Clone(void * pArg)
+CComponent * CVIBuffer_Point_Instancing::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Point_Instancing*		pInstance = new CVIBuffer_Point_Instancing(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Point_Instancing");
 		Safe_Release(pInstance);

@@ -15,16 +15,20 @@ private:
 	virtual ~CMesh() = default;
 
 public:
+	HRESULT		Save_Mesh(HANDLE& hFile, DWORD& dwByte);
+	HRESULT		Save_MeshBones(HANDLE& hFile, DWORD& dwByte);
+	HRESULT		Load_Mesh(HANDLE& hFile, DWORD& dwByte);
 	_uint Get_MaterialIndex() const {
 		return m_iMaterialIndex;
 	}
 
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
+	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
 private:
@@ -38,6 +42,8 @@ private:
 
 	string* m_pBoneNames = nullptr;
 	VTXMODEL* m_pNonAnimVertices = nullptr;
+	VTXANIMMODEL*		m_pAnimVertices = nullptr;
+	FACEINDICES32*			m_pIndices = nullptr;
 
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
@@ -46,7 +52,7 @@ private:
 
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
 };

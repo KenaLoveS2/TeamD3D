@@ -147,7 +147,7 @@ HRESULT CVIBuffer_Rect_Instancing::Initialize_Prototype(_uint iNumInstance)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect_Instancing::Initialize(void * pArg)
+HRESULT CVIBuffer_Rect_Instancing::Initialize(void * pArg, CGameObject * pOwner)
 {
 	return S_OK;
 }
@@ -219,11 +219,11 @@ CVIBuffer_Rect_Instancing * CVIBuffer_Rect_Instancing::Create(ID3D11Device * pDe
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Rect_Instancing::Clone(void * pArg)
+CComponent * CVIBuffer_Rect_Instancing::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Rect_Instancing*		pInstance = new CVIBuffer_Rect_Instancing(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Rect_Instancing");
 		Safe_Release(pInstance);

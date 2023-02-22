@@ -6,37 +6,6 @@ class ENGINE_DLL CModel final : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
-	typedef struct tagMaterialPath
-	{
-		wstring strPath_NONE				; // aiTextureType_NONE = 0,
-		wstring strPath_DIFFUSE				; // aiTextureType_DIFFUSE = 1,
-		wstring strPath_SPECULAR			; // aiTextureType_SPECULAR = 2,
-		wstring strPath_AMBIENT				; // aiTextureType_AMBIENT = 3,
-		wstring strPath_EMISSIVE			; // aiTextureType_EMISSIVE = 4,
-		wstring strPath_HEIGHT				; // aiTextureType_HEIGHT = 5,
-		wstring strPath_NORMALS				; // aiTextureType_NORMALS = 6,
-		wstring strPath_SHININESS			; // aiTextureType_SHININESS = 7,
-		wstring strPath_OPACITY				; // aiTextureType_OPACITY = 8,
-		wstring strPath_DISPLACEMENT		; // aiTextureType_DISPLACEMENT = 9,
-		wstring strPath_LIGHTMAP			; // aiTextureType_LIGHTMAP = 10,
-		wstring strPath_REFLECTION			; // aiTextureType_REFLECTION = 11,
-		wstring strPath_BASE_COLOR			; // aiTextureType_BASE_COLOR = 12,
-		wstring strPath_NORMAL_CAMERA		; // aiTextureType_NORMAL_CAMERA = 13,
-		wstring strPath_EMISSION_COLOR		; // aiTextureType_EMISSION_COLOR = 14,
-		wstring strPath_METALNESS			; // aiTextureType_METALNESS = 15,
-		wstring strPath_DIFFUSE_ROUGHNESS	; // aiTextureType_DIFFUSE_ROUGHNESS = 16,
-		wstring strPath_AMBIENT_OCCLUSION	; // aiTextureType_AMBIENT_OCCLUSION = 17,
-		wstring strPath_UNKNOWN				; // aiTextureType_UNKNOWN = 18,
-
-		tagMaterialPath::tagMaterialPath()
-		{
-			wstring *p = (wstring*)this;
-			for (_uint i = 0; i < AI_TEXTURE_TYPE_MAX; i++, p++) 
-				*p = TEXT("");
-		}
-
-	} MATERIAL_PATH;
-
 
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -57,22 +26,29 @@ public:
 	}
 
 	class CBone* Get_BonePtr(const char* pBoneName);
+	const _double&	Get_PlayTime();
+	void		Set_PlayTime(_double dPlayTime);
 
 public:
+	HRESULT	Save_Model(const wstring& wstrSaveFileDirectory);
 	HRESULT	Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
+	void		Reset_Animation();
 	void Set_AnimIndex(_uint iAnimIndex);
 
 public:	
-	HRESULT Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath, _uint iNumMaterials);
-	virtual HRESULT Initialize(void* pArg);
+	HRESULT Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
+	virtual void Imgui_RenderProperty() override;
 
 public:
 	void Play_Animation(_float fTimeDelta);
 	HRESULT Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
-public:
+private:
 	TYPE								m_eType = TYPE_END;
+	wstring							m_wstrModelFilePath = L"";
+	DWORD							m_dwBeginBoneData = 0;
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
 	_uint								m_iNumMeshes = 0;
@@ -95,10 +71,14 @@ public:
 	_float m_fBlendCurTime = 0.2f;
 	_uint m_iPreAnimIndex = 0;
 
+private:
+	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);
+	HRESULT			Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte);
+
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, MATERIAL_PATH* pMaterialPath = nullptr, _uint iNumMaterials = 0);
-	virtual CComponent* Clone(void* pArg) override;
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr);
+	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
 
@@ -107,8 +87,6 @@ public:
 	HRESULT SetUp_ClonedMeshes();
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath);
-
-
 };
 
 END

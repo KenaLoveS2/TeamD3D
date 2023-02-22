@@ -128,9 +128,9 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Cube::Initialize(void * pArg)
+HRESULT CVIBuffer_Cube::Initialize(void * pArg, CGameObject * pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -151,11 +151,11 @@ CVIBuffer_Cube * CVIBuffer_Cube::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Cube::Clone(void * pArg)
+CComponent * CVIBuffer_Cube::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Cube*		pInstance = new CVIBuffer_Cube(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Cube");
 		Safe_Release(pInstance);

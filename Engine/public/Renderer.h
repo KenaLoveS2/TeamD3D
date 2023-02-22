@@ -2,8 +2,8 @@
 
 #include "Component.h"
 
-/* È­¸é¿¡ ±×·Á¾ßÇÒ °´Ã¼µéÀ» ±×¸®´Â ¼ø¼­´ë·Î Á¤¸®º¸°üÇÑ´Ù. */
-/* º¸°üÇÏ°í ÀÖ´Â ¼ø¼­´ë·Î °´Ã¼µéÀÇ µå·Î¿ìÄÝ(·»´õÇÔ¼ö¸¦ È£ÃâÇÑ´Ù)À» ¼öÇàÇÑ´Ù. */
+/* È­ï¿½é¿¡ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ñ´ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 
 BEGIN(Engine)
 
@@ -25,7 +25,7 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
 
 public:
@@ -77,7 +77,7 @@ private:
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CRenderer* Clone(void* pArg = nullptr) override;
+	virtual CRenderer* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 };
 

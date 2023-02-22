@@ -157,8 +157,10 @@ HRESULT CMeshInstancing::Initialize_Prototype(CModel_Instancing* pModel, HANDLE 
 
 }
 
-HRESULT CMeshInstancing::Initialize(void * pArg)
+HRESULT CMeshInstancing::Initialize(void * pArg, CGameObject* pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	return S_OK;
 }
 
@@ -375,11 +377,11 @@ CMeshInstancing * CMeshInstancing::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 	return pInstance;
 }
 
-CComponent * CMeshInstancing::Clone(void * pArg)
+CComponent * CMeshInstancing::Clone(void * pArg, CGameObject * pOwner)
 {
 	CMeshInstancing*		pInstance = new CMeshInstancing(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CMeshInstancing");
 		Safe_Release(pInstance);

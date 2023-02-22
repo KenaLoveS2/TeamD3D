@@ -12,6 +12,9 @@ private:
 	virtual ~CBone() = default;
 
 public:
+	HRESULT			Save_Bone(HANDLE& hFile, DWORD& dwByte);
+	HRESULT			Save_BoneName(HANDLE& hFile, DWORD& dwByte);
+	HRESULT			Load_Bone(HANDLE& hFile, DWORD& dwByte);
 	const char* Get_Name() const { return m_szName; }
 	_matrix Get_CombindMatrix() { return XMLoadFloat4x4(&m_CombindTransformMatrix); }
 	void Set_OffsetMatrix(_float4x4 OffsetMatrix) { m_OffsetMatrix = OffsetMatrix; }
