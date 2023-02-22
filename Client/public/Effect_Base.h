@@ -67,9 +67,9 @@ public:
 		_bool	IsMovingPosition = false;
 
 		// Child // 
-		_int    iHaveChildCnt = 0;
+		/*_int    iHaveChildCnt = 0;
 		vector<class CEffect_Base*> vecChild;
-		class CTransform* pTransformCom = nullptr;
+		class CTransform* pTransformCom = nullptr;*/
 
 	}EFFECTDESC;
 

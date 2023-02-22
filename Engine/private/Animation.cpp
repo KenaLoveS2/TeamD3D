@@ -140,7 +140,7 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
 		if (ImGui::Button("Erase"))
 		{
 			auto	iter = m_mapEvent.begin();
-			for (_uint i = 0; i < iSelectEvent; ++i)
+			for (_int i = 0; i < iSelectEvent; ++i)
 				++iter;
 
 			m_mapEvent.erase(iter);
