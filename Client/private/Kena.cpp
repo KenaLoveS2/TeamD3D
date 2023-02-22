@@ -105,7 +105,7 @@ HRESULT CKena::Render()
 		//else if (i == 6)
 		//	continue;
 		else
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 	}
 
 	return S_OK;
