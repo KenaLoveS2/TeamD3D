@@ -71,7 +71,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
 
 	if (m_pRendererCom != nullptr)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
@@ -88,6 +88,15 @@ HRESULT CKena::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		/********************* For. Kena PostProcess By WJ*****************/
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+		//ex
+		//if(!sprint)
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
+		//else
+		//	m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSION_COLOR, "g_EmissiveTexture");
+		/******************************************************************/
 
 		if (i == 4)	// Eye Render
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
@@ -96,7 +105,7 @@ HRESULT CKena::Render()
 		//else if (i == 6)
 		//	continue;
 		else
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 	}
 
 	return S_OK;
@@ -162,6 +171,20 @@ HRESULT CKena::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	/********************* For. Kena PostProcess By WJ*****************/
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		// AO_R_M
+		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+		// EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+		// SPRINT_EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+	}
+	/******************************************************************/
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));

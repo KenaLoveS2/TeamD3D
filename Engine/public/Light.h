@@ -39,5 +39,6 @@ public:
 	_float4 Set_Diffuse(_float4& vColor);
 	_float4 Set_Ambient(_float4& vColor);
 	_float4 Set_Spectular(_float4& vColor);
+	_float4 Set_Emissive(_float4& vColor);
 };
 END

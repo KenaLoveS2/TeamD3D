@@ -11,11 +11,13 @@ float				g_fFar = 300.f; // 카메라의 FAR
 vector			g_vLightDiffuse;
 vector			g_vLightAmbient;
 vector			g_vLightSpecular;
+vector			g_vLightEmissive;
 
 vector			g_vCamPosition;
 
 vector			g_vMtrlAmbient = (vector)1.f;
-vector			g_vMtrlSpecular = (vector)0.2f;
+vector			g_vMtrlSpecular = (vector)1.f;
+vector			g_vMtrlEmissive = (vector)1.f;
 
 float				g_fTexcelSizeX = 8000.f;
 float				g_fTexcelSizeY = 4500.f;
@@ -25,8 +27,10 @@ Texture2D<float4>		g_Texture; /* 디버그용텍스쳐*/
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
+
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
+Texture2D<float4>		g_EmissiveTexture;
 Texture2D<float4>		g_ShadowTexture;
 
 struct VS_IN
@@ -80,6 +84,7 @@ struct PS_OUT_LIGHT
 {
 	float4		vShade : SV_TARGET0;	
 	float4		vSpecular : SV_TARGET1;
+	float4		vEmissive : SV_TARGET2;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -88,6 +93,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+
+	// E_R_AO 
+	// Ambient x == Emmisive, Ambient y == Roughness , Ambient z == Ambient Occlusion
+
+	// M_R_AO 
+	// Ambient x == Metalic, Ambient y == Roughness , Ambient z == Ambient Occlusion
 
 	float		fViewZ = vDepthDesc.y * g_fFar;
 
@@ -119,6 +130,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar);
 	Out.vSpecular.a = 0.f;
+
+	Out.vEmissive = g_vLightEmissive * g_vMtrlEmissive;
 
 	return Out;
 }
@@ -167,6 +180,8 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar) * fAtt;
 	Out.vSpecular.a = 0.f;
 
+	Out.vEmissive = g_vLightEmissive * g_vMtrlEmissive;
+
 	return Out;
 }
 
@@ -174,13 +189,13 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vDiffuse  = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vShade	  = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
-	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse		 = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vShade			 = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepthDesc	 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	vector		vSpecular		 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vEmissive		 = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
 
-	// vDepth.b 는 Emissive Color를 계산됩니다.
-	Out.vColor = CalcHDRColor(vDiffuse, vDepthDesc.b) * vShade + vSpecular;
+	Out.vColor = vDiffuse * vShade + vSpecular /*+ vEmissive*/;
 
 	if (Out.vColor.a == 0.0f)
 		discard;

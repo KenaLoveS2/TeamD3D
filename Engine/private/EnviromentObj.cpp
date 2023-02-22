@@ -94,7 +94,7 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 	else
 		m_str_Imgui_ComTag = "None";
 	
-	ImGui::Text( "Cur Option %s" , m_str_Imgui_ComTag.c_str());
+	ImGui::Text( "Cur Option : %s" , m_str_Imgui_ComTag.c_str());
 
 	if (ImGui::Button("Add Component") && m_str_Imgui_ComTag != "None")
 	{

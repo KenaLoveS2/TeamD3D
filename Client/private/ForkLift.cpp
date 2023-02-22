@@ -46,10 +46,7 @@ void CForkLift::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	
-	if(m_bShadow)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CForkLift::Render()
@@ -67,7 +64,7 @@ HRESULT CForkLift::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");		
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
-		m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i);
 	}
 
@@ -103,14 +100,14 @@ HRESULT CForkLift::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_SM_RuinPlatform04"), TEXT("Com_Model"),	
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_SM_RuinPlatform01"), TEXT("Com_Model"),	
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	/* For.Com_E_R_AO */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"), TEXT("Com_E_R_AO"),
-		(CComponent**)&m_pE_R_AoTexCom)))
-		return E_FAIL;
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_01_E_R_Ao.png"));
 
 	return S_OK;
 }
@@ -132,11 +129,6 @@ HRESULT CForkLift::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float))))
 		return E_FAIL;
 
-	/* For.Lights */
-	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
-		return E_FAIL;
-	
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -195,5 +187,4 @@ void CForkLift::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pE_R_AoTexCom);
 }
