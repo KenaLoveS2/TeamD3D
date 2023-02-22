@@ -40,6 +40,10 @@ public:
 protected:
 	void					Imgui_RenderingSetting();
 
+protected:
+	virtual HRESULT					Save_Data() { return S_OK; }
+	virtual HRESULT					Load_Data() { return S_OK; }
+
 
 
 protected:

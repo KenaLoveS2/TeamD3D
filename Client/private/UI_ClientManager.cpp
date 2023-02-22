@@ -97,6 +97,8 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(L"RenderPass", "x(Effect)");
 	pGameInstance->Add_UIString(L"RenderPass", "DiffuseAlphaBlend");
 	pGameInstance->Add_UIString(L"RenderPass", "MaskMap");
+	pGameInstance->Add_UIString(L"RenderPass", "HPBar");
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_Canvas.h"
 #include "GameInstance.h"
+#include "Json/json.hpp"
+#include <fstream>
 
 CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI(pDevice, pContext)
@@ -67,10 +69,23 @@ void CUI_Canvas::Imgui_RenderProperty()
 		_uint iNumNodes = (_uint)m_vecNodeCloneTag.size();
 		ImGui::ListBox(" : Node", &selected_Node, getter_ForCanvas, &m_vecNodeCloneTag, iNumNodes, 5);
 
-		m_vecNode[selected_Node]->Imgui_RenderProperty();
-		
+		m_vecNode[selected_Node]->Imgui_RenderProperty();	
 	}
 
+}
+
+HRESULT CUI_Canvas::Save_Data()
+{
+	Json	json;
+
+
+
+	return S_OK;
+}
+
+HRESULT CUI_Canvas::Load_Data()
+{
+	return S_OK;
 }
 
 HRESULT CUI_Canvas::Add_Node(CUI * pUI)
