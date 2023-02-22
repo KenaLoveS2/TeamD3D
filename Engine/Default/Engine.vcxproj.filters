@@ -477,6 +477,9 @@
     <ClInclude Include="..\public\Enviroment_Manager.h">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StateMachine.h">
+      <Filter>01.Utility\12. FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -709,6 +712,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Enviroment_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateMachine.cpp">
+      <Filter>01.Utility\12. FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

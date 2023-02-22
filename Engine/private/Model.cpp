@@ -236,6 +236,7 @@ void CModel::Imgui_RenderProperty()
 	if (ImGui::CollapsingHeader("Animations"))
 	{
 		static _int	iSelectAnimation = -1;
+		static _bool	bAddEvent = false;
 		CAnimation*	pAnimation = nullptr;
 		char**			ppAnimationTag = new char*[m_iNumAnimations];
 
@@ -256,6 +257,7 @@ void CModel::Imgui_RenderProperty()
 
 			if (ImGui::Button("Play"))
 			{
+				m_bPausePlay = false;
 				Set_AnimIndex(iSelectAnimation);
 				m_Animations[iSelectAnimation]->Reset_Animation();
 				m_pOwner->Set_AnimationIndex(iSelectAnimation);
@@ -353,12 +355,32 @@ void CModel::Imgui_RenderProperty()
 			ImGui::BulletText("Play Progress");
 			if (ImGui::SliderFloat("Set Progress", &fProgress, 0.f, 1.f))
 			{
+				bAddEvent = true;
+				m_bPausePlay = true;
 				m_pOwner->Update_Child();
 				pAnimation->Reset_Animation();
 				dPlayTime = (_double)fProgress * dDuration;
 			}
+			if (bAddEvent == true)
+			{
+				/*static	const char*	pSelectFunc = "";
+				if (ImGui::BeginCombo("Select Function", "Test"))
+				{
+					ImGui::Selectable(pSelectFunc, )
+					ImGui::EndCombo();
+				}*/
+				ImGui::Text(__FUNCTION__);
+				if (ImGui::Button("Add Event"))
+				{
+					bAddEvent = false;
+					//pAnimation->Add_Event(_float(dPlayTime), );
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Escape"))
+					bAddEvent = false;
+			}
 		}
-
+		
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 			Safe_Delete_Array(ppAnimationTag[i]);
 		Safe_Delete_Array(ppAnimationTag);
@@ -547,10 +569,28 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 	*/
 }
 
+HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
+{
+	if (iAnimIndex >= m_iNumAnimations)
+		return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_Animations[iAnimIndex]->Add_Event(fPlayTime, strFuncName), E_FAIL);
+
+	return S_OK;
+}
+
+void CModel::Call_Event(const string & strFuncName)
+{
+	m_pOwner->Call_EventFunction(strFuncName);
+}
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)
 		return;
+
+	if (m_bPausePlay == true)
+		fTimeDelta = 0.f;
 		
 	if (m_fBlendCurTime < m_fBlendDuration)
 	{

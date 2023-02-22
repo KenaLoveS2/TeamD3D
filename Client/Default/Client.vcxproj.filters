@@ -139,6 +139,9 @@
     <Filter Include="95. Tool\Animation">
       <UniqueIdentifier>{fa94e753-45df-404e-a906-ab3c378a6ead}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State">
+      <UniqueIdentifier>{02def6ec-05de-476c-956d-aafe372891dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -280,6 +283,12 @@
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Kena_State.h">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Player.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -402,6 +411,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_State.cpp">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Player.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

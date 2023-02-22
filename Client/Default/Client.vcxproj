@@ -173,6 +173,7 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
+    <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Cave_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\public\Effect.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="..\public\Imgui_Effect.h" />
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
     <ClInclude Include="..\Public\Kena_Staff.h" />
+    <ClInclude Include="..\Public\Kena_State.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -219,6 +221,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Cave_Rock.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
@@ -231,6 +234,7 @@
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\Private\Kena_Staff.cpp" />
+    <ClCompile Include="..\Private\Kena_State.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />

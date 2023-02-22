@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Animation.h"
 #include "Channel.h"
+#include "Model.h"
 
 CAnimation::CAnimation()
 	: m_isLooping(true)
@@ -9,6 +10,7 @@ CAnimation::CAnimation()
 
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_isLooping(true)
+	, m_pModel(rhs.m_pModel)
 {
 	strcpy_s(m_szName, rhs.m_szName);
 	m_Duration = rhs.m_Duration;
@@ -73,6 +75,16 @@ HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
+HRESULT CAnimation::Add_Event(_float fPlayTime, const string & strFuncName)
+{
+	if (fPlayTime > m_Duration)
+		return E_FAIL;
+
+	m_mapEvent.emplace(fPlayTime, strFuncName);
+
+	return S_OK;
+}
+
 HRESULT CAnimation::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
 	m_pModel = pModel;
@@ -115,7 +127,10 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 			return;
 	}
 
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -142,7 +157,10 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 			return;
 	}
 
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -158,7 +176,10 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 
 void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 {
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime);
 
 	if (m_PlayTime >= m_Duration)
 	{
@@ -180,6 +201,20 @@ void CAnimation::Reset_Animation()
 
 	m_PlayTime = 0.0;
 	m_isFinished = false;
+}
+
+void CAnimation::Call_Event(_float fLastPlayTime)
+{
+	if (m_mapEvent.empty() == true)
+		return;
+
+	NULL_CHECK_RETURN(m_pModel, );
+
+	for (auto& Pair : m_mapEvent)
+	{
+		if (fLastPlayTime <= Pair.first && Pair.first <= m_PlayTime)
+			m_pModel->Call_Event(Pair.second);
+	}
 }
 
 CAnimation * CAnimation::Create(HANDLE hFile, CModel* pModel)

@@ -38,7 +38,7 @@ public:
 	virtual void			Imgui_RenderProperty() override;
 
 public:
-	void					Model_Synchronization();
+	void					Model_Synchronization(_bool bPausePlay);
 
 protected:
 	CRenderer*			m_pRendererCom = nullptr;

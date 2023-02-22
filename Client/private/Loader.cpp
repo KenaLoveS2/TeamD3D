@@ -18,6 +18,7 @@
 /* Enemies*/
 
 /* Objects */
+#include "Camera_Player.h"
 #include "Cave_Rock.h"
 #include "ForkLift.h"
 
@@ -261,6 +262,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
+
+	/* For.Prototype_GameObject_Player_Camera */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
