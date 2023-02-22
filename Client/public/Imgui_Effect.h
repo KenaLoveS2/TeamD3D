@@ -17,6 +17,7 @@ public:
 public:
 	void	LayerEffects_ListBox(_bool& bIsCreate, _int& iSelectObject, _int& iSelectEffectType);
 	void	Set_ColorValue(OUT _float4& vColor);
+	void	Set_OptionWindow_Rect(class CEffect_Base* pEffect);
 
 public:
 	void	CreateEffect_Plane(_int& iSelectObject);

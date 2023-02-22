@@ -42,6 +42,9 @@ void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_eEFfectDesc.IsMovingPosition == true)
+		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
+
 	if (m_eEFfectDesc.IsBillboard == true)
 		BillBoardSetting(m_eEFfectDesc.vScale);
 	else
@@ -181,6 +184,9 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
+		return E_FAIL;
+
 	/* TEX_SPRITE */
 	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
 	{

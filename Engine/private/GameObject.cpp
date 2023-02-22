@@ -141,9 +141,9 @@ void CGameObject::Imgui_RenderComponentProperties()
 	for (const auto& com : m_Components)
 	{
 		ImGui::Separator();
-		//char szName[128];
-		//CUtile::WideCharToChar(com.first, szName);
-		//ImGui::Text("%s", szName);
+		char szName[128];
+		CUtile::WideCharToChar(com.first, szName);
+		ImGui::Text("%s", szName);
 		com.second->Imgui_RenderProperty();
 	}
 }

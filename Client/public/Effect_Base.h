@@ -45,12 +45,13 @@ public:
 
 		// Time 
 		_float  fTimeDelta = 0.0f;
+		_float  fPlayBbackTime = 0.0f;
 
-		// Billboard 적용
+		// Option // 
 		_bool	IsBillboard = false;
-
-		// Trigger 적용
+		_bool	IsMask = false;
 		_bool	IsTrigger = false;
+		_bool	IsMovingPosition = false;
 
 	}EFFECTDESC;
 

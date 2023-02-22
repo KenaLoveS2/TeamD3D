@@ -20,7 +20,7 @@ public:
 	const _int&		Get_AnimationIndex() const { return m_iAnimationIndex; }
 	void	Set_Name(const _tchar* pTag) { m_szName = pTag; }
 	void	Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
-
+	
 public:
 	CTransform* Get_TransformCom() { return m_pTransformCom; }
 
