@@ -6,7 +6,6 @@
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_UIEditor.h"
 #include "Tool_Animation.h"
-#include "Imgui_Effect.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -28,7 +27,6 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
