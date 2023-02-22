@@ -62,6 +62,15 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
+	if (g_TextureRenderType == 1) // Sprite
+	{
+		In.vTexUV.x = In.vTexUV.x * g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	}
+
 	// DTexture
 	if (g_iTotalDTextureComCnt == 1)
 	{
@@ -175,37 +184,18 @@ PS_OUT PS_MAIN(PS_IN In)
 			Out.vColor = (Out.vColor * maskTex) * g_vColor + (Out.vColor * maskTex) * (1.f - g_vColor);
 	}
 
-
 	////
-	//if (g_TextureRenderType == 0) // Single
-	//{
-	//	float2		vTexUV;
-	//	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	//	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-	//	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-	//	float		fOldViewZ = vDepthDesc.y * 300.f;
-	//	float		fViewZ = In.vProjPos.w;
+	float		fOldViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = In.vProjPos.w;
 
-	//	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
-	//}
-	//else // Sprite
-	//{
-	//	In.vTexUV.x = In.vTexUV.x * g_WidthFrame / g_SeparateWidth;
-	//	In.vTexUV.y = In.vTexUV.y + g_HeightFrame / g_SeparateHeight;
-
-	//	float2		vTexUV;
-	//	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	//	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
-
-	//	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
-
-	//	float		fOldViewZ = vDepthDesc.y * 300.f;
-	//	float		fViewZ = In.vProjPos.w;
-
-	//	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
-	//}
+	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	////
 
 	return Out;
 }

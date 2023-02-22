@@ -82,7 +82,7 @@ public:
 	virtual HRESULT		 Render() override;
 
 public:
-	HRESULT				 Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
 protected:
 	CShader*				    m_pShaderCom = nullptr;
@@ -92,17 +92,10 @@ protected:
 
 	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
 	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
-	wstring						m_strDTextureComTag = L"";
-	wstring						m_strMTextureComTag = L"";
 
 	/* Texture Setting */
-	_uint	m_iTextureLevel = 1000;
-
 	_uint	m_iTotalDTextureComCnt = 0;
 	_uint	m_iTotalMTextureComCnt = 0;
-
-	_uint	m_iDTextureComCnt = 0;
-	_uint	m_iMTextureComCnt = 0;
 	/* ~Texture Setting */
 
 protected:

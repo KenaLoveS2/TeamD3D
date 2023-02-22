@@ -307,18 +307,18 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				ImGui::Separator();
 				if (iSelectTextureType == 0)
 				{
-					ImGui::BulletText("Add Texture : "); ImGui::SameLine();
+					ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
 
 					ImGui::PushItemWidth(100);
-					ImGui::InputInt("##AddMTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
+					ImGui::InputInt("##EditDTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
 
 					if (iCreateCnt <= 1)
 						iCreateCnt = 1;
 					else if (iCreateCnt >= 5)
 						iCreateCnt = 5;
 
-					if (ImGui::Button("Add Texture Confirm"))
-						pEffect->Add_TextureComponent(iCreateCnt, 0);
+					if (ImGui::Button("Edit Texture Confirm"))
+						pEffect->Edit_TextureComponent(iCreateCnt, 0);
 
 					char** szDTextureType = new char*[iTotalDTextureCnt];
 					for (_int i = 0; i < iTotalDTextureCnt; ++i)
@@ -362,18 +362,18 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				}
 				else
 				{
-					ImGui::BulletText("Add Texture : "); ImGui::SameLine();
+					ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
 
 					ImGui::PushItemWidth(100);
-					ImGui::InputInt("##AddMTexture", (_int*)&iCreateCnt, 1, 4); ImGui::SameLine();
+					ImGui::InputInt("##EditMTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
 
 					if (iCreateCnt <= 1)
 						iCreateCnt = 1;
-					else if (iCreateCnt >= 4)
-						iCreateCnt = 4;
+					else if (iCreateCnt >= 5)
+						iCreateCnt = 5;
 
-					if (ImGui::Button("Add Texture Confirm"))
-						pEffect->Add_TextureComponent(0, iCreateCnt);
+					if (ImGui::Button("Edit Texture Confirm"))
+						pEffect->Edit_TextureComponent(0, iCreateCnt);
 
 					char** szMTextureType = new char*[iTotalMTextureCnt];
 					if (0 != iTotalMTextureCnt)

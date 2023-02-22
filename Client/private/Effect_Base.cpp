@@ -79,7 +79,7 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt)
+HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt)
 {
 	CTexture*	pTextureCom = nullptr;
 
@@ -95,20 +95,24 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 			_int iDeleteComponentCnt = m_iTotalDTextureComCnt - iDTextureComCnt;
 			for (_int i = 0; i < iDeleteComponentCnt; ++i)
 			{
+				m_iTotalDTextureComCnt--;
+
 				_tchar szDTexture[64] = L"";
-				wsprintf(szDTexture, L"Com_DTexture_%d", m_iTotalDTextureComCnt - 1);
+				wsprintf(szDTexture, L"Com_DTexture_%d", m_iTotalDTextureComCnt);
 
 				_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 				CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
 				Delete_Component(szDTextureComTag);
-				m_iTotalDTextureComCnt--;
+				Safe_Release(m_pDTextureCom[m_iTotalDTextureComCnt]);
 			}
 		}
 		else if(m_iTotalDTextureComCnt < iDTextureComCnt)// 현재 내 컴포넌트 카운트 보다 입력된 카운트가 클때 => 컴포넌트 추가 
 		{
 			for (_uint i = m_iTotalDTextureComCnt; i < iDTextureComCnt; ++i)
 			{
+				m_iTotalDTextureComCnt++;
+
 				_tchar szDTexture[64] = L"";
 				wsprintf(szDTexture, L"Com_DTexture_%d", i);
 
@@ -118,7 +122,6 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 				if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 					return E_FAIL;
 			}
-			m_iTotalDTextureComCnt = iDTextureComCnt;
 		}
 	}
 
@@ -133,22 +136,24 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 			_int iDeleteComponentCnt = m_iTotalMTextureComCnt - iMTextureComCnt;
 			for (_int i = 0; i < iDeleteComponentCnt; ++i)
 			{
+				m_iTotalMTextureComCnt--;
+
 				_tchar szMTexture[64] = L"";
-				wsprintf(szMTexture, L"Com_MTexture_%d", m_iTotalMTextureComCnt - i);
+				wsprintf(szMTexture, L"Com_MTexture_%d", m_iTotalMTextureComCnt);
 
 				_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 				CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
 				Delete_Component(szMTextureComTag);
+				Safe_Release(m_pMTextureCom[m_iTotalMTextureComCnt]);
 			}
-			m_iTotalMTextureComCnt = iDTextureComCnt;
 		}
 		else if (m_iTotalMTextureComCnt < iMTextureComCnt)
 		{
-			m_iMTextureComCnt = m_iTotalMTextureComCnt + iMTextureComCnt;
-
 			for (_uint i = m_iTotalMTextureComCnt; i < iMTextureComCnt; ++i)
 			{
+				m_iTotalDTextureComCnt++;
+
 				_tchar szMTexture[64] = L"";
 				wsprintf(szMTexture, L"Com_MTexture_%d", i);
 
@@ -157,7 +162,6 @@ HRESULT CEffect_Base::Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextur
 				if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 					return E_FAIL;
 			}
-			m_iTotalMTextureComCnt = iMTextureComCnt;
 		}
 	}
 	return S_OK;
