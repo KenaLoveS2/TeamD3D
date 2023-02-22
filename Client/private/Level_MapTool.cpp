@@ -28,8 +28,6 @@ HRESULT CLevel_MapTool::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
 
-
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 			return E_FAIL;
 
@@ -157,7 +155,6 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-
 }
 
 HRESULT CLevel_MapTool::Ready_Layer_Monster(const _tchar * pLayerTag)
