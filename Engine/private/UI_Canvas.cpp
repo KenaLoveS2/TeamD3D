@@ -53,42 +53,12 @@ bool	getter_ForCanvas(void* data, int index, const char** output)
 }
 void CUI_Canvas::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("Texture"))
-	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		vector<wstring>* pTags = pGameInstance->Get_UITextureProtoTagsPtr();
-		vector<string>* pNames = pGameInstance->Get_UITextureNamesPtr();
-		vector<string>* pPasses = pGameInstance->Get_UIString(L"RenderPass");
-		RELEASE_INSTANCE(CGameInstance);
-		_uint iNumTextures = (_uint)pTags->size();
-
-		/* Diffuse */
-		static int selected_Diffuse = 0;
-		if (ImGui::ListBox(" : Diffuse", &selected_Diffuse, getter_ForCanvas, pNames, iNumTextures, 5))
-		{
-			if (FAILED(Set_Texture(CUI::TEXTURE_DIFFUSE, (*pTags)[selected_Diffuse])))
-				MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
-		}
-
-		/* Mask */
-		static int selected_Mask = 0;
-		if (ImGui::ListBox(" : Mask", &selected_Mask, getter_ForCanvas, pNames, iNumTextures, 5))
-		{
-			if (FAILED(Set_Texture(CUI::TEXTURE_MASK, (*pTags)[selected_Mask])))
-				MSG_BOX("Failed To Set Mask Texture : UIEditor");
-		}
-
-		/* RenderPass */
-		static int selected_Pass = 0;
-		_uint iNumPasses = (_uint)pPasses->size();
-		if (ImGui::ListBox(" : RenderPass", &selected_Pass, getter_ForCanvas, pPasses, iNumPasses, 5))
-		{
-			Set_RenderPass(selected_Pass);
-		}
-	}
-
-
+	/* Translation Setting */
 	m_pTransformCom->Imgui_RenderProperty();
+
+	/* Texture Setting */
+	if (ImGui::CollapsingHeader("Texture"))
+		Imgui_RenderingSetting();
 
 	/* Node Setting */
 	if (ImGui::CollapsingHeader("Nodes"))

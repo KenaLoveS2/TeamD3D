@@ -37,6 +37,9 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+protected:
+	void					Imgui_RenderingSetting();
+
 
 
 protected:

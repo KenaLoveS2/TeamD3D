@@ -69,9 +69,9 @@ bool	Getter_forNode(void* data, int index, const char** output)
 }
 void CUI_Node::Imgui_RenderProperty()
 {
-
 	ImGui::Separator();
 
+	/* Translation Setting */
 	ImGui::Text("Local Matrix");
 	static float position[3] = { m_matLocal._41, m_matLocal._42, m_matLocal._43 };
 	static float scale[3] = { m_matLocal._11, m_matLocal._22, m_matLocal._33 };
@@ -87,40 +87,10 @@ void CUI_Node::Imgui_RenderProperty()
 	m_matLocal._11 = scale[0];
 	m_matLocal._22 = scale[1];
 	m_matLocal._33 = scale[2];
-
 	ImGui::Separator();
 
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	vector<wstring>* pTags = pGameInstance->Get_UITextureProtoTagsPtr();
-	vector<string>* pNames = pGameInstance->Get_UITextureNamesPtr();
-	vector<string>* pPasses = pGameInstance->Get_UIString(L"RenderPass");
-	RELEASE_INSTANCE(CGameInstance);
-	_uint iNumTextures = (_uint)pTags->size();
-
-	/* Diffuse */
-	static int selected_Diffuse = 0;
-	if (ImGui::ListBox(" : Diffuse", &selected_Diffuse, Getter_forNode, pNames, iNumTextures, 5))
-	{
-		if (FAILED(Set_Texture(CUI::TEXTURE_DIFFUSE, (*pTags)[selected_Diffuse])))
-			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
-	}
-
-	/* Mask */
-	static int selected_Mask = 0;
-	if (ImGui::ListBox(" : Mask", &selected_Mask, Getter_forNode, pNames, iNumTextures, 5))
-	{
-		if (FAILED(Set_Texture(CUI::TEXTURE_MASK, (*pTags)[selected_Mask])))
-			MSG_BOX("Failed To Set Mask Texture : UIEditor");
-	}
-
-	/* RenderPass */
-	static int selected_Pass = 0;
-	_uint iNumPasses = (_uint)pPasses->size();
-	if (ImGui::ListBox(" : RenderPass", &selected_Pass, Getter_forNode, pPasses, iNumPasses, 5))
-	{
-		Set_RenderPass(selected_Pass);
-	}
+	/* Rendering Setting */
+	Imgui_RenderingSetting();
 
 
 }
