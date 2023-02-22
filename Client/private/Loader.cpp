@@ -18,7 +18,6 @@
 /* Enemies*/
 
 /* Objects */
-#include "Camera_Player.h"
 #include "Cave_Rock.h"
 #include "ForkLift.h"
 
@@ -29,6 +28,10 @@
 #include "Effect.h"
 #include "Effect_Rect_Instancing.h"
 #include "Effect_Point_Instancing.h"
+
+/* Components*/
+#include "ControlMove.h"
+#include "Interaction_Com.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -52,9 +55,17 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_GAMEPLAY:
 		pLoader->Loading_ForGamePlay();
 		break;
+#ifdef _DEBUG
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
 		break;
+	case LEVEL_TESTPLAY:
+		pLoader->Loading_ForTestPlay();
+		break;
+	case LEVEL_EFFECT:
+		pLoader->Loading_ForTestEffect();
+		break;
+#endif
 	}
 	
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
@@ -68,7 +79,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread). */
+	/* Make additional flow for Loading(Thread). */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -76,7 +87,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-/* 로고를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -115,7 +125,6 @@ HRESULT CLoader::Loading_ForLogo()
 	return S_OK;
 }
 
-/* 게임플레이를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -145,16 +154,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_Explosion */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_RuinM_R_AO */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/T_Ruin_Platform_04_E_R_Ao.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Effect */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
@@ -239,11 +238,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxEffectTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Shader_VtxRectInstance */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxRectInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstance.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
@@ -262,11 +256,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
-
-	/* For.Prototype_GameObject_Player_Camera */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
-		CCamera_Player::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
@@ -327,26 +316,10 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	
-
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
-	//_matrix			PivotMatrix = XMMatrixIdentity();
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_AnimalStatues_01_OwlStatue",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/AnimalStatues_01_OwlStatue/AnimalStatues_01_OwlStatue.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_GodRock",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/GodRock/GodRock_01.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_MapOne",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/MapOne/MapOne.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	
-	LoadNonAnimModel(LEVEL_MAPTOOL);
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Ciff_Rock")))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
@@ -360,6 +333,16 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_Component_Collider_SPHERE*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_SPHERE"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+	
+	/*map_Object Compoents */
+	/* For.Prototype_Component_ControlMove*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_ControlMove"),
+		CControlMove::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_Component_Interaction_Com*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Interaction_Com"),
+		CInteraction_Com::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
@@ -410,6 +393,116 @@ HRESULT CLoader::Loading_ForMapTool()
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_ForTestPlay()
+{
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cave_Ciff_Rock")))
+		return E_FAIL;
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
+	/* For.Prototype_Component_Collider_AABB*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Collider_AABB"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+		return E_FAIL;
+	/* For.Prototype_Component_Collider_OBB*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Collider_OBB"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
+		return E_FAIL;
+	/* For.Prototype_Component_Collider_SPHERE*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+
+	/*map_Object Compoents */
+	/* For.Prototype_Component_ControlMove*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_ControlMove"),
+		CControlMove::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_Component_Interaction_Com*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Interaction_Com"),
+		CInteraction_Com::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
+	/* For.Prototype_Component_Shader_VtxNorTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxModel*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxAnimModel*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxCubeTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxCubeTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxRectInstance */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxRectInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstance.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPointInstance */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxPointInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+
+	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
+
+	/* For.Prototype_GameObject_Cave_Rock */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
+		CCave_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	lstrcpy(m_szLoadingText, TEXT("Loading End."));
+
+	m_isFinished = true;
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForTestEffect()
+{
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
+		return E_FAIL;
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
+	/* For.Prototype_Component_Shader_VtxEffectTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	lstrcpy(m_szLoadingText, TEXT("Loading End."));
+
+	m_isFinished = true;
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, LEVEL eNextLevelID)
 {
 	CLoader*		pInstance = new CLoader(pDevice, pContext);
@@ -440,6 +533,77 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 
 	char FindPath[MAX_PATH] = "../Bin/Resources/NonAnim/*.*";
 	char FilePath[MAX_PATH] = "../Bin/Resources/NonAnim/";
+
+	_tchar WideFilePath[MAX_PATH] = L"";
+
+	_finddata_t FindData;
+	intptr_t handle = _findfirst(FindPath, &FindData);
+	if (handle == -1) return E_FAIL;
+
+	char szFullPath[MAX_PATH] = "";
+	char szFileName[MAX_PATH] = "";
+	char szExt[MAX_PATH] = "";
+
+	const _tchar *pPrototype = L"Prototype_Component_Model_";
+	int iPrototyeLengh = lstrlen(pPrototype);
+
+	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+
+	int iResult = 0;
+	while (iResult != -1)
+	{
+		strcpy_s(szFullPath, FilePath);
+		strcat_s(szFullPath, FindData.name);
+
+		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
+		if (!strcmp(szExt, ".mdat"))
+		{
+			int iFileNameLen = (int)strlen(szFileName) + 1;
+			_tchar* pFileName = new _tchar[iFileNameLen];
+			ZeroMemory(pFileName, sizeof(_tchar) * iFileNameLen);
+
+			int iTagLen = iPrototyeLengh + iFileNameLen;
+			_tchar* pPrototypeTag = new _tchar[iTagLen];
+			ZeroMemory(pPrototypeTag, iTagLen);
+			lstrcat(pPrototypeTag, pPrototype);
+
+			MultiByteToWideChar(CP_ACP, 0, szFullPath, _int(strlen(szFullPath)) + 1, WideFilePath, _int(strlen(szFullPath)) + 1);
+			MultiByteToWideChar(CP_ACP, 0, szFileName, iFileNameLen, pFileName, iFileNameLen);
+			lstrcat(pPrototypeTag, pFileName);
+
+			if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, pPrototypeTag,
+				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
+				return E_FAIL;
+
+			Safe_Delete_Array(pFileName);
+			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
+		}
+
+		iResult = _findnext(handle, &FindData);
+	}
+
+	_findclose(handle);
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	//char FindPath[MAX_PATH] = "../Bin/Resources/NonAnim/*.*";
+	//char FilePath[MAX_PATH] = "../Bin/Resources/NonAnim/";
+
+	char FindPath[MAX_PATH] = "../Bin/Resources/NonAnim/";
+
+	strcat_s(FindPath, MAX_PATH, strFolderName.c_str());
+	strcat_s(FindPath, MAX_PATH, "/*.*");
+
+	char FilePath[MAX_PATH] = "../Bin/Resources/NonAnim/";
+	strcat_s(FilePath, MAX_PATH, strFolderName.c_str());
+	strcat_s(FilePath, MAX_PATH, "/");
 
 	_tchar WideFilePath[MAX_PATH] = L"";
 

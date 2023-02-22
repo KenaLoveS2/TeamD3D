@@ -12,6 +12,7 @@ public:
 	enum	TEXTURE_TYPE { TEXTURE_DIFFUSE, TEXTURE_MASK, TEXTURE_END };
 	typedef struct tagUIDesc
 	{
+		wstring				fileName; 
 		_float3				vPos;
 		_float2				vSize;
 		_float4x4			ViewMatrix;
@@ -26,9 +27,11 @@ protected:
 
 public:
 	_fmatrix			Get_WorldMatrix();
+	_fmatrix			Get_InitMatrix();
 	void				Set_Parent(CUI* pUI);
 	HRESULT				Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
 	void				Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
+	void				Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -39,6 +42,10 @@ public:
 
 protected:
 	void					Imgui_RenderingSetting();
+
+protected:
+	virtual HRESULT					Save_Data() { return S_OK; }
+	virtual HRESULT					Load_Data(wstring fileName) { return S_OK; }
 
 
 
@@ -56,8 +63,10 @@ protected:
 	wstring				m_TextureComTag[TEXTURE_END];
 
 	/* For. Node (mostly) */
+	_float4x4			m_matInit;
 	_float4x4			m_matParentInit;
 	_float4x4			m_matLocal;
+
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;

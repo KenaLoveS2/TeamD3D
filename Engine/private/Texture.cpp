@@ -103,9 +103,9 @@ CComponent * CTexture::Clone(void * pArg, CGameObject * pOwner)
 
 void CTexture::Free()
 {
-	__super::Free();
+ 	__super::Free();
 
-	for (_uint i = 0; i < m_iNumTextures; ++i)
+ 	for (_uint i = 0; i < m_iNumTextures; ++i)
 		Safe_Release(m_pTextures[i]);
 
 	if(false == m_isCloned)

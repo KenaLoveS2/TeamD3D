@@ -68,6 +68,15 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	return Out;
 }
 
+/*Lod*/
+struct Hull_IN
+{
+	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	float3		vTangent : TANGENT;
+};
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -81,9 +90,9 @@ struct PS_IN
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vDiffuse : SV_TARGET0;
+	float4		vDiffuse  : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
-	float4		vDepth : SV_TARGET2;
+	float4		vDepth   : SV_TARGET2;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -95,12 +104,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	// 이렇게 한장을 로드해서 Emissive, Roughness, AmbientOcclusion으로 나누게 됨.
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-	float			fEmissive				  =		vERAO.r; 
-	float			fRoughness			  =		vERAO.g;
-	float			fAmbientOcclusion =		vERAO.b;
-
+	vector		vERAO  = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* 탄젠트스페이스 */
@@ -108,13 +112,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = vDiffuse;
-
-	/* -1 ~ 1 => 0 ~ 1 */
+	Out.vDiffuse =	CalcHDRColor(vDiffuse, vERAO.r);
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, fEmissive, fRoughness);
-	
 	return Out;
 }
 
@@ -168,7 +169,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 
 technique11 DefaultTechnique
 {
-	pass Default
+	pass Default		//0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -181,7 +182,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket
+	pass Socket//1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -194,7 +195,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Shadow
+	pass Shadow//2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -205,4 +206,20 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
+
+	
+	pass WireFrame//3
+	{
+		SetRasterizerState(RS_Wireframe);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		//HullShader = compile  hu_5_0 ;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
 }

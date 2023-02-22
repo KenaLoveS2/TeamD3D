@@ -11,6 +11,9 @@
 #include "Function_Manager.h"
 #include "Utile.h"
 
+#include "PipeLine.h"
+#include "Transform.h"
+
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -848,4 +851,6 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar
 
 	return S_OK;
 }
+
+
 

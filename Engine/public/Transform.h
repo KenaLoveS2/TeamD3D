@@ -47,6 +47,11 @@ public:
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
+	TRANSFORMDESC Get_TransformDesc() { return m_TransformDesc; }
+	void		  Set_TransformDesc(TRANSFORMDESC eTransformDesc) { 
+		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
+	}
+
 	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
 		m_WorldMatrix = fWorldMatrix;
 	}
@@ -93,13 +98,10 @@ public:
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
-	
 private:	
 	_float4x4				m_WorldMatrix;
 	TRANSFORMDESC	m_TransformDesc;
 	_float					m_fInitSpeed = 0.f;
-
-
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;

@@ -136,6 +136,7 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	_float fSizeX = 200.f, fSizeY = 200.f;
 
+	// For. Model
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), fSizeX * 0.5f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Normal"), fSizeX * 0.5f, (fSizeY * 0.5f) + fSizeY , fSizeX, fSizeY)))
@@ -143,11 +144,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), fSizeX * 0.5f, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
 		return E_FAIL;
 
+	// For. Lighting
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
+	// For. Shadow
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
 
@@ -535,6 +538,12 @@ HRESULT CRenderer::Render_PostProcess()
 
 HRESULT CRenderer::Render_UI()
 {
+	///* Sorting */
+	//for (auto& pGameObject : m_RenderObjects[RENDER_UI])
+	//{
+	// list.sort();
+	//}
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
 	{
 		pGameObject && pGameObject->Render();
@@ -584,12 +593,12 @@ CRenderer * CRenderer::Clone(void * pArg, CGameObject * pOwner)
 void CRenderer::Free()
 {
 	__super::Free();
-
+#ifdef _DEBUG
 	for (auto& pComponent : m_DebugObject)
 		Safe_Release(pComponent);
 
 	m_DebugObject.clear();
-
+#endif
 	for (_uint i = 0; i < RENDER_END; ++i)
 	{
 		for (auto& pGameObject : m_RenderObjects[i])

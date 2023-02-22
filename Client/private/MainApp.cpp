@@ -282,11 +282,11 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	m_pGameInstance->Clear_ImguiObjects();
-	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 
+	Safe_Release(m_pGameInstance);
 	CUI_ClientManager::GetInstance()->Release();
 	CGameInstance::Release_Engine();
 }

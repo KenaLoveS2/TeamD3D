@@ -108,6 +108,21 @@ CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
 	return iter->second;
 }
 
+void CGameObject::Delete_Component(const _tchar * pComponentTag)
+{
+	for (auto& iter = m_Components.begin(); iter != m_Components.end();)
+	{
+		if (iter->second == Find_Component(pComponentTag))
+		{
+			Safe_Release(iter->second);
+			m_Components.erase(iter);
+			break;
+		}
+		else
+			iter++;
+	}
+}
+
 void CGameObject::Free()
 {
 	Safe_Release(m_pTransformCom);
@@ -128,7 +143,6 @@ void CGameObject::Imgui_RenderComponentProperties()
 		ImGui::Separator();
 		char szName[128];
 		CUtile::WideCharToChar(com.first, szName);
-
 		ImGui::Text("%s", szName);
 		com.second->Imgui_RenderProperty();
 	}

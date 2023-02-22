@@ -8,16 +8,20 @@ class CUI_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_Manager);
 
+	enum ENGINE_DLL WSTRING_KEY {
+		WSTRKEY_TEXTURE_PROTOTAG,
+		WSTRKEY_CANVAS_PROTOTAG, WSTRKEY_CANVAS_CLONETAG,
+		WSTRKEY_NODE_PROTOTAG, WSTRKEY_NODE_CLONETAG,
+		WSTRKEY_END
+	};
+	enum ENGINE_DLL STRING_KEY { STRKEY_TEXTURE_NAME, STRKEY_CANVAS_NAME, STRKEY_NODE_NAME, STRKEY_RENDERPASS, STRKEY_END };
+
 private:
 	CUI_Manager();
 	virtual ~CUI_Manager() = default;
 
 public:
 	HRESULT			Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	//void			Tick(_float fTimeDelta);
-	//void			Late_Tick(_float fTimeDelta);
-	//HRESULT		Render();
-
 
 
 public:	/* For. Imgui Tool */

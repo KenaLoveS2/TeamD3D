@@ -22,9 +22,10 @@ void CImgui_PropertyEditor::Imgui_RenderTab()
 	static const _tchar* test2 = L"";
 	m_pGameInstance->Imgui_ProtoViewer(CLevel_Manager::GetInstance()->Get_CurrentLevelIndex(), test2);
 	m_pGameInstance->Imgui_ObjectViewer(CLevel_Manager::GetInstance()->Get_CurrentLevelIndex(), m_pSelectedObject);
+	m_pGameInstance->Imgui_DeleteComponent(m_pSelectedObject);
 
 	// todo: 마우스 피킹으로 오브젝트 선택하는 기능 추가
-	// todo: 현재 사본 object를 구분할 이름이 없기 때문에 일단 class이름으로 해놓음. 아이디어 있는사람이 추가하기~
+	
 
 	if (m_pSelectedObject)
 	{

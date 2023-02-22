@@ -19,10 +19,10 @@ public:
 	typedef struct tagEffectDesc
 	{
 		// Effect Type = texture, texture_Particle , mesh
-		enum EFFECTTYPE  { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
+		enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
 		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
-		enum BLENDSTATE  { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_END };
+		enum BLENDSTATE { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_END };
 
 		EFFECTTYPE        eEffectType = EFFECT_PLANE;
 		TEXTURERENDERTYPE eTextureRenderType = TEX_ONE;
@@ -38,19 +38,38 @@ public:
 		_float	fWidthFrame = 0.0f, fHeightFrame = 0.0f;
 		_int	iSeparateWidth = 0, iSeparateHeight = 0;
 		_int	iWidthCnt = 0, iHeightCnt = 0;
-		
+
 		// Color & Scale
 		_vector	vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		_vector	vScale;
+		_vector	vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// Time 
 		_float  fTimeDelta = 0.0f;
+		_float  fPlayBbackTime = 0.0f;
 
-		// Billboard 적용
+		// Move Position // 
+		_float  fCreateRange = 1.0f;
+		_float  fRange = 0.0f;
+		_float  fAngle = 0.0f;
+		_float  fMoveDurationTime = 0.0f;
+		_bool   bStart = false;
+		_vector vInitPos = { 0.0f, 0.0f, 0.0f, 1.0f };
+		_vector vPixedDir = { 0.0f, 0.0f, 0.0f, 0.0f };
+		enum MOVEDIR { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, DIR_END };
+		enum ROTXYZ { ROT_X, ROT_Y, ROT_Z, ROT_END };
+		MOVEDIR eMoveDir = MOVE_FRONT;
+		ROTXYZ eRotation = ROT_Y;
+
+		// Option // 
 		_bool	IsBillboard = false;
-
-		// Trigger 적용
+		_bool	IsMask = false;
 		_bool	IsTrigger = false;
+		_bool	IsMovingPosition = false;
+
+		// Child // 
+		_int    iHaveChildCnt = 0;
+		vector<class CEffect_Base*> vecChild;
+		class CTransform* pTransformCom = nullptr;
 
 	}EFFECTDESC;
 
@@ -82,7 +101,7 @@ public:
 	virtual HRESULT		 Render() override;
 
 public:
-	HRESULT				 Add_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
 protected:
 	CShader*				    m_pShaderCom = nullptr;
@@ -92,17 +111,10 @@ protected:
 
 	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
 	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
-	wstring						m_strDTextureComTag = L"";
-	wstring						m_strMTextureComTag = L"";
 
 	/* Texture Setting */
-	_uint	m_iTextureLevel = 1000;
-
 	_uint	m_iTotalDTextureComCnt = 0;
 	_uint	m_iTotalMTextureComCnt = 0;
-
-	_uint	m_iDTextureComCnt = 0;
-	_uint	m_iMTextureComCnt = 0;
 	/* ~Texture Setting */
 
 protected:

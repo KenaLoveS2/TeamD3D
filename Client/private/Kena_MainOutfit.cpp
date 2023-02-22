@@ -38,7 +38,6 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -61,8 +60,34 @@ HRESULT CKena_MainOutfit::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		if (i == 0)
+		{
+			/********************* For. Kena PostProcess By WJ*****************/
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			// ex
+			//if(!sprint)
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
+			//else
+			//	m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_HEIGHT, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSION_COLOR, "g_EmissiveMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DISPLACEMENT, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE_ROUGHNESS, "g_SSSMaskTexture");
+			/******************************************************************/
+
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+		}
+		else	if(i==1 || i ==2)
+		{
+			/********************* For. Kena PostProcess By WJ*****************/
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
+			/******************************************************************/
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
+		}
+		else
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
 	}
 
 	return S_OK;
@@ -81,6 +106,33 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
 
+	/********************* For. Kena PostProcess By WJ*****************/
+	//For.Cloth
+	// AO_R_M
+	m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
+	// EMISSIVE
+	m_pModelCom->SetUp_Material(0, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE.png"));
+	// EMISSIVE_MASK
+	m_pModelCom->SetUp_Material(0, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE_MASK.png"));
+	// MASK
+	m_pModelCom->SetUp_Material(0, aiTextureType_DISPLACEMENT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_MASK.png"));
+	// SPRINT_EMISSIVE
+	m_pModelCom->SetUp_Material(0, aiTextureType_HEIGHT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
+	// SSS_MASK
+	m_pModelCom->SetUp_Material(0, aiTextureType_DIFFUSE_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+
+	// 1~2 For. props
+	for (_uint i = 1; i < 3; ++i)
+	{
+		// AO_R_M
+		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+		// EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+		// SPRINT_EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+	}
+	/******************************************************************/
+
 	return S_OK;
 }
 
@@ -91,6 +143,7 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
 }

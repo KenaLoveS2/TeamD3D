@@ -36,7 +36,7 @@ public:
 	virtual void Free() override;
 	void Tick(_float fTimeDelta);
 	
-	HRESULT Reserve_Manager(_uint iTickRoomCount);
+	HRESULT Reserve_Manager(_uint iTickRoomCount=10);
 	void Clear();
 
 	void Add_Room(ROOM_DESC& RoomDesc);

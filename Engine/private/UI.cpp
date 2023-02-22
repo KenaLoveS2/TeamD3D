@@ -23,6 +23,7 @@ CUI::CUI(const CUI & rhs)
 	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
 	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
 
+	XMStoreFloat4x4(&m_matInit, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matParentInit, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matLocal, XMMatrixIdentity());
 
@@ -33,12 +34,17 @@ _fmatrix CUI::Get_WorldMatrix()
 	return m_pTransformCom->Get_WorldMatrix();
 }
 
+_fmatrix CUI::Get_InitMatrix()
+{
+	return XMLoadFloat4x4(&m_matInit);
+}
+
 void CUI::Set_Parent(CUI* pUI)
 {
 	m_pParent = pUI;
 	//Safe_AddRef(m_pParent);
 
-	XMStoreFloat4x4(&m_matParentInit, m_pParent->Get_WorldMatrix());
+	XMStoreFloat4x4(&m_matParentInit, m_pParent->Get_InitMatrix());
 }
 
 HRESULT CUI::Set_Texture(TEXTURE_TYPE eType, wstring textureComTag)
@@ -152,10 +158,11 @@ bool	texture_getter(void* data, int index, const char** output)
 void CUI::Imgui_RenderingSetting()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	vector<wstring>* pTags = pGameInstance->Get_UITextureProtoTagsPtr();
-	vector<string>* pNames = pGameInstance->Get_UITextureNamesPtr();
-	vector<string>* pPasses = pGameInstance->Get_UIString(L"RenderPass");
+	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
+	vector<string>* pNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_TEXTURE_NAME);
+	vector<string>* pPasses = pGameInstance->Get_UIString(CUI_Manager::STRKEY_RENDERPASS);
 	RELEASE_INSTANCE(CGameInstance);
+
 	_uint iNumTextures = (_uint)pTags->size();
 
 	/* Diffuse */

@@ -102,6 +102,4 @@ CTool_Animation * CTool_Animation::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 void CTool_Animation::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pGameInstance);
 }

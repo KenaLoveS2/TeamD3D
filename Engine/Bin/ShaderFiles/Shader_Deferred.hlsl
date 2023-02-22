@@ -14,8 +14,8 @@ vector			g_vLightSpecular;
 
 vector			g_vCamPosition;
 
-vector			g_vMtrlAmbient = (vector)1.f;
-vector			g_vMtrlSpecular = (vector)0.2f;
+vector			g_vMtrlAmbient = (vector)1.f; 
+vector			g_vMtrlSpecular = (vector)0.3f;
 
 float				g_fTexcelSizeX = 8000.f;
 float				g_fTexcelSizeY = 4500.f;
@@ -174,13 +174,12 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vDiffuse  = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vShade	  = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
-	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse		 = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vShade			 = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepthDesc	 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	vector		vSpecular		 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	// vDepth.b 는 Emissive Color를 계산됩니다.
-	Out.vColor = CalcHDRColor(vDiffuse, vDepthDesc.b) * vShade + vSpecular;
+	Out.vColor = CalcHDRColor(vDiffuse, vDepthDesc.b) * vShade+ vSpecular;
 
 	if (Out.vColor.a == 0.0f)
 		discard;

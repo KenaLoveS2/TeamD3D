@@ -6,7 +6,6 @@
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_UIEditor.h"
 #include "Tool_Animation.h"
-#include "Imgui_Effect.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -28,7 +27,6 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
@@ -82,8 +80,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vDiffuse = _float4(5.f, 5.f, 5.f, 1.f);
+	LightDesc.vAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -120,7 +118,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 	CameraDesc.fFovy = XMConvertToRadians(60.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
+	CameraDesc.fNear = 0.02f;
 	CameraDesc.fFar = 300.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
@@ -135,7 +133,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 	CameraDesc.fFovy = XMConvertToRadians(40.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
+	CameraDesc.fNear = 0.02f;
 	CameraDesc.fFar = 300.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
@@ -169,8 +167,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena")))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), L"ForkLift_Test")))
-		return E_FAIL;
+ 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), L"ForkLift_Test")))
+ 	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

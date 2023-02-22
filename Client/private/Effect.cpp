@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect.h"
 #include "GameInstance.h"
-
+#include "Camera.h"
 
 CEffect::CEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -42,9 +42,63 @@ void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_eEFfectDesc.IsBillboard == true)
-		__super::BillBoardSetting(m_eEFfectDesc.vScale);
+	if (m_eEFfectDesc.IsMovingPosition == true )
+	{
+		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
+		if (m_eEFfectDesc.bStart == true && 
+			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
+		{
+			_vector vNormalLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
 
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationX(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+
+			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			vPos += vNormalLook * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}
+		else
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
+			m_eEFfectDesc.fPlayBbackTime = 0.0f;;
+		}
+	}
+
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+			m_fTimeDelta = 0.0;
+
+			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			{
+				if (m_eEFfectDesc.fTimeDelta < 1.f)
+					m_eEFfectDesc.fHeightFrame++;
+				else
+					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+				m_eEFfectDesc.fWidthFrame = 0.f;
+
+				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					m_eEFfectDesc.fHeightFrame = 0.f;
+			}
+		}
+	}
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -54,8 +108,6 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if(nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()
@@ -72,9 +124,10 @@ HRESULT CEffect::Render()
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
 	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
+	else
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
 
 	m_pVIBufferCom->Render();
-
 	return S_OK;
 }
 
@@ -86,7 +139,7 @@ HRESULT CEffect::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -104,21 +157,28 @@ HRESULT CEffect::SetUp_Components()
 	/* For.DiffuseTexture */
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
-		m_strDTextureComTag = L"Com_DTexture_";
-		m_strDTextureComTag += to_wstring(i);
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strDTextureComTag.c_str(), (CComponent**)&m_pDTextureCom[i], this)))
+		_tchar szDTexture[64] = L"";
+		wsprintf(szDTexture, L"Com_DTexture_%d", i);
+
+		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
+		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
+
+		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
 	/* For.MaskTexture */
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
 	{
-		m_strMTextureComTag = L"Com_MTexture_";
-		m_strMTextureComTag += to_wstring(i);
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), m_strMTextureComTag.c_str(), (CComponent**)&m_pMTextureCom[i], this)))
+		_tchar szMTexture[64] = L"";
+		wsprintf(szMTexture, L"Com_MTexture_%d", i);
+
+		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
+		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
+
+		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
-
 	return S_OK;
 }
 
@@ -146,6 +206,11 @@ HRESULT CEffect::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint)))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
+		return E_FAIL;
+
 	/* TEX_SPRITE */
 	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
 	{
@@ -160,19 +225,34 @@ HRESULT CEffect::SetUp_ShaderResources()
 	}	
 	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
 		return E_FAIL;
 
 	// MaxCnt == 10
+
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
-		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_uint)m_eEFfectDesc.fFrame[i])))
+	{
+		wstring strBindDTexture = L"g_DTexture_";
+		strBindDTexture += to_wstring(i);
+
+		char szDTexture[64] = "";
+		CUtile::WideCharToChar(strBindDTexture.c_str(), szDTexture);
+
+		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i])))
 			return E_FAIL;
+	}
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
-		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", (_uint)m_eEFfectDesc.fMaskFrame[i])))
+	{
+		wstring strBindMTexture = L"g_MTexture_";
+		strBindMTexture += to_wstring(i);
+
+		char szMTexture[64] = "";
+		CUtile::WideCharToChar(strBindMTexture.c_str(), szMTexture);
+
+		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i])))
 			return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 

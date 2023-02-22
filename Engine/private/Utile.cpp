@@ -65,6 +65,12 @@ _tchar * CUtile::StringToWideChar(string str)
 	return (_tchar*)t;
 }
 
+string CUtile::WstringToString(wstring wstr)
+{
+	string str;
+	return str.assign(wstr.begin(), wstr.end());
+}
+
 _tchar* CUtile::Create_String(const _tchar *pText)
 {
 	_int iSize = (_int)wcslen(pText) + 1;

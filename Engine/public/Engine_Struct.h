@@ -14,6 +14,8 @@ namespace Engine
 		unsigned int iNumManualSounds;
 
 		unsigned int iNumCopyPrototypes;
+
+
 	}GRAPHIC_DESC;
 
 	typedef struct tagModelMaterial
@@ -35,7 +37,7 @@ namespace Engine
 		/* 모든 정점(픽셀)이 받는 빛의 방향벡터가 다 다르게 표현되어야하기때문이다. */
 		/* 셰)이더내에서 빛의 방향벡터를 구해서 연산한다. */
 		XMFLOAT4			vPosition;
-		float				fRange;		
+		float						fRange;		
 
 		XMFLOAT4			vDiffuse;
 		XMFLOAT4			vAmbient;
@@ -139,8 +141,6 @@ namespace Engine
 		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXANIMMODEL_DECLARATION;
 
-
-
 	typedef struct tagVertexModel
 	{
 		XMFLOAT3		vPosition;
@@ -154,7 +154,6 @@ namespace Engine
 		static const unsigned int		iNumElements = 4;
 		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXMODEL_DECLARATION;
-
 
 	typedef struct tagVertexPositionNormalTexture
 	{

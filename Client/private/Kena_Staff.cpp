@@ -38,7 +38,6 @@ void CKena_Staff::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -64,8 +63,12 @@ HRESULT CKena_Staff::Render()
 			continue;
 
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		/********************* For. Kena PostProcess By WJ*****************/
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
+		/******************************************************************/
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
 	}
 
 	return S_OK;
@@ -73,6 +76,7 @@ HRESULT CKena_Staff::Render()
 
 void CKena_Staff::Imgui_RenderProperty()
 {
+	__super::Imgui_RenderProperty();
 }
 
 HRESULT CKena_Staff::SetUp_Components()
@@ -82,6 +86,19 @@ HRESULT CKena_Staff::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+
+	/********************* For. Kena PostProcess By WJ*****************/
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+	for(int i = 0; i<2; ++i)
+	{
+		// AO_R_M
+		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+		// EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+		// SPRINT_EMISSIVE
+		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+	}
+	/******************************************************************/
 
 	return S_OK;
 }
@@ -93,6 +110,7 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
 }
