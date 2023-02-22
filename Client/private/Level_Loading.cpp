@@ -8,6 +8,7 @@
 
 #ifdef _DEBUG
 #include "Level_MapTool.h"
+#include "Level_TestPlay.h"
 #endif
 
 CLevel_Loading::CLevel_Loading(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -66,6 +67,10 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 			case LEVEL_MAPTOOL:
 				pLevel = CLevel_MapTool::Create(m_pDevice, m_pContext);
+				break;
+
+			case LEVEL_TESTPLAY:
+				pLevel = CLevel_TestPlay::Create(m_pDevice, m_pContext);
 				break;
 #endif
 			}

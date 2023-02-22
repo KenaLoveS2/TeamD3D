@@ -36,6 +36,7 @@ public:
 	HRESULT Loading_ForLogo();
 	HRESULT Loading_ForGamePlay();
 	HRESULT Loading_ForMapTool();
+	HRESULT Loading_ForTestPlayl();
 private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
@@ -54,6 +55,7 @@ public:
 	virtual void Free() override;
 
 	HRESULT LoadNonAnimModel(_uint iLevelIndex);
+	HRESULT LoadNonAnimFolderModel(_uint iLevelIndex , string strFolderName);
 };
 
 END

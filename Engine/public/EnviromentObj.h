@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+#define MAX_COMPONENT_NUM 5
+
 BEGIN(Engine)
 class ENGINE_DLL CEnviromentObj : public CGameObject
 {
@@ -20,6 +22,7 @@ public:
 		wstring			szTextureTag =   TEXT("");
 		_uint				iRoomIndex = 0;
 		CHAPTER		eChapterType = CHAPTER_END;
+		_int				iCurLevel = 0;				//이건 툴에서만 일단.
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
@@ -41,6 +44,7 @@ public:
 	void Set_RenderActive(_bool bFlag) { m_bRenderActive = bFlag; }
 	_bool Get_RenderActive() { return m_bRenderActive; }
 
+	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -57,12 +61,18 @@ protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 
 protected:
-	ENVIROMENT_DESC m_EnviromentDesc;	
-	_bool m_bRenderActive = false;
+	ENVIROMENT_DESC					m_EnviromentDesc;	
+	vector<const _tchar*>				m_CurComponenteTag;
+
+	_bool										m_bRenderActive = false;
+	_uint											m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 
 
 private:/*For.ImguiTool*/
 	string										m_str_Imgui_ComTag = "";
 	_int											m_iImgui_ComponentOption = 0;
+	_bool										m_bWireFrame_Rendering = false;
+
+	
 
 public:		
 	virtual CGameObject* Clone(void* pArg) { return nullptr; };

@@ -25,6 +25,7 @@ HRESULT CEnviromentObj::Initialize_Prototype()
 
 HRESULT CEnviromentObj::Initialize(void * pArg)
 {
+	m_CurComponenteTag.reserve(5);
 
 	if (pArg) 
 	{		
@@ -34,6 +35,8 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		m_EnviromentDesc.szModelTag = Desc->szModelTag;
 		m_EnviromentDesc.szTextureTag = Desc->szTextureTag;
 		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
+		m_EnviromentDesc.eChapterType = Desc->eChapterType;
+		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
 
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
@@ -74,6 +77,8 @@ HRESULT CEnviromentObj::Render()
 
 HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
+	m_CurComponenteTag.push_back(pComTag);
+
 	return S_OK;
 }
 
@@ -109,6 +114,16 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 		
 		RELEASE_INSTANCE(CGameInstance);
 	}
+
+#pragma region 와이어프레임으로 그리기
+	ImGui::Checkbox("WireFrame_Render", &m_bWireFrame_Rendering);
+	if (m_bWireFrame_Rendering == true)
+		m_iShaderOption = 3;
+	else
+		m_iShaderOption = 0;
+
+#pragma endregion
+
 
 	__super::Imgui_RenderComponentProperties();
 }
