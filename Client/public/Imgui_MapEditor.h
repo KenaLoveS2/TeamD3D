@@ -16,9 +16,12 @@ END
 BEGIN(Client)
 class CImgui_MapEditor  final : public CImguiObject
 {
-
 private:
 	CImgui_MapEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	enum COMPONENTS_OPTION {
+		COMPONENTS_WALL, COMPONENTS_INTERACTION, COMPONENTS_END
+	};
+
 
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);
@@ -46,11 +49,10 @@ private: /*For_Tool*/
 
 
 private:	/*Use_Data*/
-	_int	m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
+	_int			m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
+	array<_bool, COMPONENTS_END>	m_bComponets;
 
-
-
-
+	
 
 public:
 	static	CImgui_MapEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);

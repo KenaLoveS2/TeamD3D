@@ -24,6 +24,7 @@ HRESULT CImgui_MapEditor::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
+	m_bComponets.fill(false);
 	return S_OK;
 }
 
@@ -146,7 +147,9 @@ void CImgui_MapEditor::Imgui_SelectOption()
 
 #pragma endregion ~생성시 사용되는 모델 이름
 
-
+	ImGui::Checkbox("Is_Have_Wall", &m_bComponets[COMPONENTS_WALL]);
+	ImGui::Checkbox("Is_Have_Interaction", &m_bComponets[COMPONENTS_INTERACTION]);
+	
 
 #pragma region		선택된 오브젝트들 보여주기
 	if (ImGui::CollapsingHeader("Selcted_Object_Data"))

@@ -44,6 +44,7 @@ using namespace SimpleMath;
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <array>
 using namespace std;
 
 #include <Json/json_fwd.hpp>
