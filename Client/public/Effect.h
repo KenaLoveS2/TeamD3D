@@ -22,6 +22,9 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
+private:
+	_float m_fTimeDelta = 0.0f;
+
 public:
 	static  CEffect*     Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
