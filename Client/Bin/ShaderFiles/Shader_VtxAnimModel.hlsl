@@ -12,6 +12,12 @@ float	   g_fFar = 300.f;
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
 
+Texture2D<float4>		g_AO_R_MTexture;
+Texture2D<float4>		g_EmissiveTexture;
+Texture2D<float4>		g_EmissiveMaskTexture;
+Texture2D<float4>		g_MaskTexture;
+Texture2D<float4>		g_SSSMaskTexture;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -85,6 +91,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuseMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
 	if (0.1f > vDiffuse.a)
 		discard;
 
