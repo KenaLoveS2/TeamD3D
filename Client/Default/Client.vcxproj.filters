@@ -292,7 +292,10 @@
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_TestPlay.h" />
+    <ClInclude Include="..\Public\Level_TestPlay.h">
+      <Filter>01.Levels\04. TestPlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_EffectTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -422,7 +425,10 @@
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_TestPlay.cpp" />
+    <ClCompile Include="..\Private\Level_TestPlay.cpp">
+      <Filter>01.Levels\04. TestPlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_EffectTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

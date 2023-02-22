@@ -74,7 +74,7 @@ HRESULT CLevel_Logo::Ready_For_LevelName()
 	arrLevel.push_back("LEVEL_GAMEPLAY");
 	arrLevel.push_back("LEVEL_MAPTOOL");
 	arrLevel.push_back("LEVEL_TESTPLAY");
-
+	arrLevel.push_back("LEVEL_TEST_EFFECT");
 	return S_OK;
 }
 
