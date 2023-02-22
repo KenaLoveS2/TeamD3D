@@ -81,6 +81,7 @@ public: /* For.Object_Manager */
 
 	void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
 
 	map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
 

@@ -51,17 +51,18 @@ public:
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
-
-private:
-	//class CComponent*	Find_AdditionalCom(const _tchar* pComTag);
+	virtual  void				Imgui_RenderComponentProperties()override;
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
-	//map<const _tchar*, class CComponent*>			m_AdditionalComponent;
 
 protected:
 	ENVIROMENT_DESC m_EnviromentDesc;	
 	_bool m_bRenderActive = false;
+
+private:/*For.ImguiTool*/
+	string										m_str_Imgui_ComTag = "";
+	_int											m_iImgui_ComponentOption = 0;
 
 public:		
 	virtual CGameObject* Clone(void* pArg) { return nullptr; };
