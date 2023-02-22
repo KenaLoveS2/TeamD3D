@@ -77,47 +77,44 @@ HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar 
 	return S_OK;
 }
 
-//void CEnviromentObj::Imgui_RenderComponentProperties()
-//{
-//	__super::Imgui_RenderComponentProperties();
-//
-//	for (const auto& com : m_AdditionalComponent)
-//	{
-//		ImGui::Separator();
-//		char szName[128];
-//		CUtile::WideCharToChar(com.first, szName);
-//
-//		ImGui::Text("%s", szName);
-//		com.second->Imgui_RenderProperty();
-//	}
-//
-//}
-//
-//HRESULT CEnviromentObj::Add_AdditionalComponent(const _tchar * pComTag, CComponent * pComponent)
-//{
-//	CComponent* pAfterAddCom = Find_AdditionalCom(pComTag);
-//	assert(pAfterAddCom == nullptr && "CEnviromentObj::Add_AdditionalComponent"); // must nullptr !!!
-//
-//	m_AdditionalComponent.emplace(pComTag, pComponent);
-//
-//	return S_OK;
-//}
-//
-//CComponent * CEnviromentObj::Find_AdditionalCom(const _tchar * pComTag)
-//{
-//	auto &Pair = find_if(m_AdditionalComponent.begin(), m_AdditionalComponent.end(), CTag_Finder(pComTag));
-//
-//	if (Pair == m_AdditionalComponent.end())
-//		return nullptr;
-//
-//	return Pair->second;
-//}
+void CEnviromentObj::Imgui_RenderComponentProperties()
+{
+	ImGui::InputInt(" Option : ", &m_iImgui_ComponentOption); 
+#pragma region 예외처리
+	if (m_iImgui_ComponentOption < 0)
+		m_iImgui_ComponentOption = 0;
+	else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
+		m_iImgui_ComponentOption = COMPONENTS_END;
+#pragma endregion
+
+	if (m_iImgui_ComponentOption == 0)
+		m_str_Imgui_ComTag = "Com_CtrlMove";
+	else if (m_iImgui_ComponentOption == 1)
+		m_str_Imgui_ComTag = "Com_Interaction";
+	else
+		m_str_Imgui_ComTag = "None";
+	
+	ImGui::Text( "Cur Option %s" , m_str_Imgui_ComTag.c_str());
+
+	if (ImGui::Button("Add Component") && m_str_Imgui_ComTag != "None")
+	{
+		if (COMPONENTS_END == m_iImgui_ComponentOption)
+			return;
+
+		CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
+		_tchar* pComTag = CUtile::StringToWideChar(m_str_Imgui_ComTag);
+		pGameInstace->Add_String(pComTag);
+		Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), pComTag,
+			static_cast<COMPONENTS_OPTION>(m_iImgui_ComponentOption));
+		
+		RELEASE_INSTANCE(CGameInstance);
+	}
+
+	__super::Imgui_RenderComponentProperties();
+}
 
 void CEnviromentObj::Free()
 {
 	__super::Free();
 	
-	//for (auto &pAddCom : m_AdditionalComponent)
-	//	Safe_Release(pAddCom.second);
-	//m_AdditionalComponent.clear();
 }

@@ -381,6 +381,13 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
+void CGameInstance::Imgui_DeleteComponent(CGameObject * pSelectedObject)
+{
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+
+	m_pObject_Manager->Imgui_DeleteComponent(pSelectedObject);
+}
+
 map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 {
 	assert(nullptr != m_pObject_Manager && "CGameInstance::Get_ProtoTypeObjects()");
