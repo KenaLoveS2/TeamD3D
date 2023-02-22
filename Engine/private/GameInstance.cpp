@@ -70,7 +70,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
-	/* �׷��� ����̽�?�ʱ�ȭ. */
+	/* �׷��� ����̽�?�ʱ�ȭ. */
 	if (FAILED(m_pGraphic_Device->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWindowMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
@@ -82,7 +82,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pPostFX->Initialize(*ppDeviceOut, *ppContextOut)))
 		return E_FAIL;
 
-	/* �Է� ����̽�?�ʱ�ȭ. */
+	/* �Է� ����̽�?�ʱ�ȭ. */
 	if (FAILED(m_pInput_Device->Ready_Input_Device(hInst, GraphicDesc.hWnd)))
 		return E_FAIL;
 	
@@ -94,13 +94,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		return E_FAIL;
 
 	/* �������� �����ϴ� ����ƽ������ �ε����� �������ش�. */
-	/* Ŭ���̾�Ʈ �����ڰ� ����ƽ ������ ������Ʈ ������ �߰��ϰ����?���?����ƽ�����ε����� 
+	/* Ŭ���̾�Ʈ �����ڰ� ����ƽ ������ ������Ʈ ������ �߰��ϰ����?���?����ƽ�����ε����� 
 	Ŭ������Ʈ�� �����ֱ� ���ؼ�. */
 	m_iStaticLevelIndex = iNumLevels;
 
-	/* �������� �����ϴ� CGameObject�� ��ӹ޴�?��ü���� �⺻������ CTransform������Ʈ�� �⺻���� ������ �ְ� ������ֱ�����?
+	/* �������� �����ϴ� CGameObject�� ��ӹ޴�?��ü���� �⺻������ CTransform������Ʈ�� �⺻���� ������ �ְ� ������ֱ�����?
 	������ �� �ִ� CTransform�� ������ü�� �����Ѵ�. */
-	/* ���� �� ������ �����ϴ� ��ƾ CGameObject�� Initialize�Լ����� ������ ����Ѵ�? */
+	/* ���� �� ������ �����ϴ� ��ƾ CGameObject�� Initialize�Լ����� ������ ����Ѵ�? */
 	if (FAILED(m_pComponent_Manager->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
 		return E_FAIL;
 
