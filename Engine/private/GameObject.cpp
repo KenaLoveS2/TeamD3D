@@ -61,7 +61,7 @@ HRESULT CGameObject::RenderShadow()
 	return S_OK;
 }
 
-HRESULT CGameObject::Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppOut, void * pArg)
+HRESULT CGameObject::Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppOut, void * pArg, CGameObject* pOwner)
 {
 	if (nullptr != Find_Component(pComponentTag))
 		return E_FAIL;
@@ -69,7 +69,7 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const _tchar * pPrototypeT
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	CComponent*	pComponent = pGameInstance->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
+	CComponent*	pComponent = pGameInstance->Clone_Component(iLevelIndex, pPrototypeTag, pArg, pOwner);
 	if (nullptr == pComponent)
 		return E_FAIL;
 
@@ -132,4 +132,9 @@ void CGameObject::Imgui_RenderComponentProperties()
 		ImGui::Text("%s", szName);
 		com.second->Imgui_RenderProperty();
 	}
+}
+
+void CGameObject::Set_Position(_float4& vPosition)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));
 }

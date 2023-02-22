@@ -27,14 +27,11 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 
-	/* 행렬을 바인딩하여 알아서(고정기능렌더링파이프라인) 정점의 변환에 사용되도록 처리. dx11:x*/
-	/* 필요하면 얻어오는 기능까지도. */
-	//m_pDevice->SetTransform();
-	//m_pDevice->GetTransform();
+	_float* Get_Far()  { return &m_CameraDesc.fFar; }
 
 private:
 	class CPipeLine*			m_pPipeLine = nullptr;
-	CAMERADESC					m_CameraDesc; 
+	CAMERADESC				m_CameraDesc; 
 
 public:		
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

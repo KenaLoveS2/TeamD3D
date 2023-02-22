@@ -21,7 +21,7 @@ public:
 
 public:
 	virtual HRESULT Initialize_Prototype(class CModel_Instancing* pModel, HANDLE hFile, _uint iNumInstance);
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 
@@ -53,7 +53,7 @@ private:
 
 public:
 	static CMeshInstancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, class CModel_Instancing* pModel, HANDLE hFile, _uint iNumInstance =1);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 };
 

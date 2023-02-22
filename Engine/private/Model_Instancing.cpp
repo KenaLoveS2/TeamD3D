@@ -83,8 +83,10 @@ HRESULT CModel_Instancing::Initialize_Prototype(const char * pModelFilePath, _fm
 	return S_OK;
 }
 
-HRESULT CModel_Instancing::Initialize(void * pArg)
+HRESULT CModel_Instancing::Initialize(void * pArg, CGameObject * pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	ZeroMemory(&m_ModelDesc, sizeof(m_ModelDesc));
 
 	if (nullptr != pArg)
@@ -314,11 +316,11 @@ CModel_Instancing * CModel_Instancing::Create(ID3D11Device * pDevice, ID3D11Devi
 	return pInstance;
 }
 
-CComponent * CModel_Instancing::Clone(void * pArg)
+CComponent * CModel_Instancing::Clone(void * pArg, CGameObject* pOwner)
 {
 	CModel_Instancing*		pInstance = new CModel_Instancing(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CModel_Instancing");
 		Safe_Release(pInstance);

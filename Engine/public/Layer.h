@@ -11,15 +11,17 @@ private:
 	virtual ~CLayer() = default;
 
 public:
-	class CComponent* Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
-	class CGameObject * Get_GameObjectPtr(const _tchar* pCloneObjectTag);
+	class CComponent*		Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
+	class CGameObject*		Get_GameObjectPtr(const _tchar* pCloneObjectTag);
+	map<const _tchar*, class CGameObject*>*	Get_CloneObjects() { return &m_GameObjects; }
 
 public:
 	HRESULT Add_GameObject(const _tchar* pCloneObjectTag, class CGameObject* pGameObject);
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
-	
+	void	SwitchOnOff_Shadow(_bool bSwitch);
+
 private:
 	map <const _tchar*, class CGameObject*> m_GameObjects;	
 	typedef map<const _tchar*, class CGameObject*>	GAMEOBJECTS;
@@ -29,8 +31,9 @@ public:
 	virtual void Free() override;
 
 	GAMEOBJECTS& GetGameObjects() { return m_GameObjects; }
-
 	CGameObject* Find_GameObject(const _tchar * pCloneObjectTag);
+
+	HRESULT Delete_GameObject(const _tchar * pCloneObjectTag);
 };
 
 END

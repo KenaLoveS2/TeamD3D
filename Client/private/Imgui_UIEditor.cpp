@@ -21,7 +21,6 @@ CImgui_UIEditor::CImgui_UIEditor(ID3D11Device * pDevice, ID3D11DeviceContext * p
 
 HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
-
 	m_pCanvas = nullptr;
 
 

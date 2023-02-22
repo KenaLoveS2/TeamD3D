@@ -47,6 +47,14 @@ public:
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
+	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
+		m_WorldMatrix = fWorldMatrix;
+	}
+	void	Set_WorldMatrix(_fmatrix WorldMatrix){
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+
+
 	void Set_State(STATE eState, _fvector vState) {
 		_float4		vTmp;
 		XMStoreFloat4(&vTmp, vState);
@@ -59,8 +67,8 @@ public:
 	void Set_WorldMatrix(_fmatrix matWorld) { XMStoreFloat4x4(&m_WorldMatrix, matWorld); }
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual void	Imgui_RenderProperty() override;
 
 public:
@@ -95,11 +103,21 @@ private:
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
 	void Set_OnTerrain(class CVIBuffer_Terrain* pTerrainBuffer, _float fPlusValue);
 	_float HeightOnTerrain(_fvector vPos, _float3* pTerrainVtxPos, _uint iNumVerticesX, _uint iNumVerticesZ);
+
+	_float Calc_Distance_XYZ(_float4 &vTargetPos);	
+	_float Calc_Distance_XZ(_float4 &vTargetPos);
+	_float Calc_Distance_XY(_float4 &vTargetPos);
+	_float Calc_Distance_YZ(_float4 &vTargetPos);
+	
+	_float Calc_Distance_XYZ(CTransform* pTransform);
+	_float Calc_Distance_XZ(CTransform* pTransform);	
+	_float Calc_Distance_XY(CTransform* pTransform);
+	_float Calc_Distance_YZ(CTransform* pTransform);
 };
 
 

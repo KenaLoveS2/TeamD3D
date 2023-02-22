@@ -3,10 +3,6 @@
 #include "Client_Defines.h"
 #include "Camera.h"
 
-BEGIN(Engine)
-
-END
-
 BEGIN(Client)
 
 class CCamera_Dynamic final : public CCamera

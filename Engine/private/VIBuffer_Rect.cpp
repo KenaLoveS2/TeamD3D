@@ -42,16 +42,16 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 	VTXTEX*			pVertices = new VTXTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXTEX));
 
-	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.5f);
+	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.0f);
 	pVertices[0].vTexUV = _float2(0.0f, 0.f);
 
-	pVertices[1].vPosition = _float3(0.5f, 0.5f, 0.5f);
+	pVertices[1].vPosition = _float3(0.5f, 0.5f, 0.0f);
 	pVertices[1].vTexUV = _float2(1.0f, 0.f);
 
-	pVertices[2].vPosition = _float3(0.5f, -0.5f, 0.5f);
+	pVertices[2].vPosition = _float3(0.5f, -0.5f, 0.0f);
 	pVertices[2].vTexUV = _float2(1.0f, 1.f);
 
-	pVertices[3].vPosition = _float3(-0.5f, -0.5f, 0.5f);
+	pVertices[3].vPosition = _float3(-0.5f, -0.5f, 0.0f);
 	pVertices[3].vTexUV = _float2(0.0f, 1.f);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -100,9 +100,9 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect::Initialize(void * pArg)
+HRESULT CVIBuffer_Rect::Initialize(void * pArg, CGameObject * pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -123,11 +123,11 @@ CVIBuffer_Rect * CVIBuffer_Rect::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Rect::Clone(void * pArg)
+CComponent * CVIBuffer_Rect::Clone(void * pArg, CGameObject * pOwner)
 {
 	CVIBuffer_Rect*		pInstance = new CVIBuffer_Rect(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Rect");
 		Safe_Release(pInstance);

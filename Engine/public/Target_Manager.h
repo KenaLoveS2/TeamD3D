@@ -13,8 +13,9 @@ public:
 	virtual ~CTarget_Manager() = default;
 
 public:
-	ID3D11ShaderResourceView* Get_SRV(const _tchar* pTargetTag);
-	class CRenderTarget*	  Get_Target(const _tchar* pTargetTag);
+	ID3D11ShaderResourceView*	 Get_SRV(const _tchar* pTargetTag);
+	ID3D11RenderTargetView*		 Get_RTV(const _tchar* pTargetTag);
+	class CRenderTarget*				 Get_Target(const _tchar* pTargetTag);
 
 public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -22,10 +23,12 @@ public:
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 
 	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+	HRESULT Begin_MRTwithDepthStencil(ID3D11DeviceContext* pContext, const _tchar* pMRTTag, 
+		ID3D11DepthStencilView* pDepthStencilView, _bool bClear = true);
 	HRESULT End_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
-
-	HRESULT Begin_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
-	HRESULT End_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+	
+	HRESULT Resize(ID3D11DeviceContext* pContext);
+	void			CopyRenderTarget(ID3D11DeviceContext * pContext, const _tchar* pDstTag, const _tchar* pSrcTag);
 
 #ifdef _DEBUG
 public:

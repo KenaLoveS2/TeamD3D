@@ -187,9 +187,9 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Terrain::Initialize(void * pArg)
+HRESULT CVIBuffer_Terrain::Initialize(void * pArg, CGameObject* pOwner)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
 	return S_OK;
@@ -278,11 +278,11 @@ CVIBuffer_Terrain * CVIBuffer_Terrain::Create(ID3D11Device * pDevice, ID3D11Devi
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Terrain::Clone(void * pArg)
+CComponent * CVIBuffer_Terrain::Clone(void * pArg, CGameObject* pOwner)
 {
 	CVIBuffer_Terrain*		pInstance = new CVIBuffer_Terrain(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{
 		MSG_BOX("Failed to Cloned : CVIBuffer_Terrain");
 		Safe_Release(pInstance);

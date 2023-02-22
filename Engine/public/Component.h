@@ -15,8 +15,12 @@ protected:
 	virtual ~CComponent() = default;
 
 public:
+	class CGameObject*		Get_Owner() const { return m_pOwner; }
+	const wstring&	Get_FilePath() const { return m_wstrFilePath; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 
 #ifdef _DEBUG
 public:
@@ -25,14 +29,16 @@ public:
 
 protected:
 	ID3D11Device*				m_pDevice = nullptr;
-	ID3D11DeviceContext*		m_pContext = nullptr;
+	ID3D11DeviceContext*	m_pContext = nullptr;
+
+	class CGameObject*		m_pOwner = nullptr;
 
 protected:
 	_bool						m_isCloned = false;
 	wstring					m_wstrFilePath = L"";
 
 public:
-	virtual CComponent* Clone(void* pArg = nullptr) = 0;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) = 0;
 	virtual void Free() override;
 	
 	// 이 오브젝트에서 보여줄 데이터를 imgui로 작성한다.

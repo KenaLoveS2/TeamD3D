@@ -28,7 +28,7 @@ HRESULT CForkLift::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(4.f, 2.5f, 7.f, 1.f));
 
@@ -46,10 +46,10 @@ void CForkLift::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
+	
+	if(m_bShadow)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 }
 
 HRESULT CForkLift::Render()
@@ -59,7 +59,6 @@ HRESULT CForkLift::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -130,6 +129,8 @@ HRESULT CForkLift::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float))))
+		return E_FAIL;
 
 	/* For.Lights */
 	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
@@ -154,6 +155,8 @@ HRESULT CForkLift::SetUP_ShadowShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)

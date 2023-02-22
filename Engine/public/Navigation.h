@@ -19,7 +19,7 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pNavigationDataFilePath);
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 
 public:
 	_bool isMove_OnNavigation(_fvector TargetPos); 
@@ -42,7 +42,7 @@ public:
 
 public:
 	static CNavigation* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pNavigationDataFilePath);
-	virtual CComponent* Clone(void* pArg) override;
+	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
 	HRESULT Set_IndexByCurrentPos(_fvector vPos);

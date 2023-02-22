@@ -12,6 +12,8 @@ private:
 	virtual ~CChannel() = default;
 
 public:
+	HRESULT	Save_Channel(HANDLE& hFile, DWORD& dwByte);
+	HRESULT	Load_Channel(HANDLE& hFile, DWORD& dwByte);
 	void		Set_ChannelName(const string& strRootNodeName) {
 		ZeroMemory(m_szName, MAX_PATH);
 		strcpy_s(m_szName, strRootNodeName.c_str());
@@ -36,6 +38,7 @@ public:
 	HRESULT Synchronization_BonePtr(CModel* pModel);
 
 private:
+	class CModel*		m_pModel = nullptr;
 	char			m_szName[MAX_PATH] = "";
 	class CBone*	m_pBone = nullptr;
 
