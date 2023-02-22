@@ -2,7 +2,9 @@
 #include "..\public\Kena.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+#include "Kena_State.h"
 #include "Kena_Parts.h"
+#include "Camera_Player.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -38,11 +40,19 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
+	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
+	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
+	m_pCamera->Set_Player(this, m_pTransformCom);
+
+	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom, m_pCamera);
+
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 
 	m_pModelCom->Set_AnimIndex(0);
+
+	Push_EventFunctions();
 
 	return S_OK;
 }
@@ -52,7 +62,7 @@ void CKena::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
-
+	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -129,14 +139,39 @@ void CKena::Imgui_RenderProperty()
 
 void CKena::ImGui_AnimationProperty()
 {
-	m_pModelCom->Imgui_RenderProperty();
-	//m_pStateMachine->Imgui_RenderProperty();
+	ImGui::BeginTabBar("Kena Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	if (ImGui::BeginTabItem("State"))
+	{
+		m_pStateMachine->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
 }
 
 void CKena::Update_Child()
 {
 	for (auto& pPart : m_vecPart)
-		pPart->Model_Synchronization();
+		pPart->Model_Synchronization(m_pModelCom->Get_PausePlay());
+}
+
+HRESULT CKena::Call_EventFunction(const string & strFuncName)
+{
+	int a = 0;
+
+	return S_OK;
+}
+
+void CKena::Push_EventFunctions()
+{
+	Test(true, 0.f);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -223,6 +258,8 @@ HRESULT CKena::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
 
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
+
 	return S_OK;
 }
 
@@ -241,6 +278,16 @@ HRESULT CKena::SetUp_ShaderResources()
 HRESULT CKena::SetUp_State()
 {
 	return S_OK;
+}
+
+void CKena::Test(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Test);
+		return;
+	}
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -278,6 +325,7 @@ void CKena::Free()
 	m_vecPart.clear();
 
 	Safe_Release(m_pStateMachine);
+	Safe_Release(m_pKenaState);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pRangeCol);
 	Safe_Release(m_pModelCom);

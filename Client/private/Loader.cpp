@@ -32,6 +32,7 @@
 /* Components*/
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Camera_Player.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -257,6 +258,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
 
+	/* For.Prototype_GameObject_Player_Camera */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -285,20 +291,20 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect_Rect_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),
-		CEffect_Rect_Instancing::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect_Rect_Instancing */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),
+	//	CEffect_Rect_Instancing::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect_Point_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point_Instancing"),
-		CEffect_Point_Instancing::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect_Point_Instancing */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point_Instancing"),
+	//	CEffect_Point_Instancing::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
-		CEffect::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
+	//	CEffect::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 

@@ -16,9 +16,7 @@ public:
 	_float Get_CamDistance() const {
 		return m_fCamDistance;
 	}
-	const _tchar*	Get_Name() const { return m_szName; }
 	const _int&		Get_AnimationIndex() const { return m_iAnimationIndex; }
-	void	Set_Name(const _tchar* pTag) { m_szName = pTag; }
 	void	Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
 
 public:
@@ -46,7 +44,11 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual HRESULT RenderShadow();
+
+	/* For Animation */
 	virtual void		Update_Child() {}
+	virtual HRESULT	Call_EventFunction(const string& strFuncName) { return S_OK; }
+	virtual void		Push_EventFunctions() {};
 
 protected:
 	ID3D11Device*				m_pDevice = nullptr;
@@ -55,7 +57,6 @@ protected:
 	_float							m_fCamDistance = { 0.0 };	
 	_bool							m_bShadow = true;
 
-	const _tchar*		m_szName = TEXT("");
 	const _tchar*		m_szCloneObjectTag = TEXT("");
 	_int				m_iAnimationIndex = 0;
 
@@ -73,7 +74,6 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
-	const _tchar* Get_ObjectName() { return m_szName; }
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */

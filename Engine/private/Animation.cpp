@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "..\public\Animation.h"
 #include "Channel.h"
+#include "Model.h"
+#include "Function_Manager.h"
+#include "Utile.h"
 
 CAnimation::CAnimation()
 	: m_isLooping(true)
@@ -9,6 +12,7 @@ CAnimation::CAnimation()
 
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_isLooping(true)
+	, m_pModel(rhs.m_pModel)
 {
 	strcpy_s(m_szName, rhs.m_szName);
 	m_Duration = rhs.m_Duration;
@@ -73,6 +77,16 @@ HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
+HRESULT CAnimation::Add_Event(_float fPlayTime, const string & strFuncName)
+{
+	if (fPlayTime > m_Duration)
+		return E_FAIL;
+
+	m_mapEvent.emplace(fPlayTime, strFuncName);
+
+	return S_OK;
+}
+
 HRESULT CAnimation::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
 	m_pModel = pModel;
@@ -105,6 +119,45 @@ HRESULT CAnimation::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
+{
+	_uint		iEventCnt = (_uint)m_mapEvent.size();
+	char**		ppEvents = new char*[iEventCnt];
+
+	string		strShowTag = "";
+	_uint		i = 0;
+	for (auto& Pair : m_mapEvent)
+	{
+		strShowTag = to_string(Pair.first) + " | " + Pair.second;
+		ppEvents[i] = new char[(_uint)strShowTag.length() + 1];
+		strcpy_s(ppEvents[i++], (_uint)strShowTag.length() + 1, strShowTag.c_str());
+	}
+
+	ImGui::ListBox("Events List", &iSelectEvent, ppEvents, iEventCnt);
+
+	if (iSelectEvent != -1)
+	{
+		if (ImGui::Button("Erase"))
+		{
+			auto	iter = m_mapEvent.begin();
+			for (_int i = 0; i < iSelectEvent; ++i)
+				++iter;
+
+			m_mapEvent.erase(iter);
+			iSelectEvent = -1;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Exit"))
+		{
+			iSelectEvent = -1;
+		}
+	}
+
+	for (_uint j = 0; j < iEventCnt; ++j)
+		Safe_Delete_Array(ppEvents[j]);
+	Safe_Delete_Array(ppEvents);
+}
+
 void CAnimation::Update_Bones(_float fTimeDelta)
 {
 	if (true == m_isFinished)
@@ -115,7 +168,10 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 			return;
 	}
 
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime, fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -142,7 +198,10 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 			return;
 	}
 
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime, fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -158,7 +217,10 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 
 void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 {
+	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	Call_Event(fLastPlayTime, fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 	{
@@ -180,6 +242,26 @@ void CAnimation::Reset_Animation()
 
 	m_PlayTime = 0.0;
 	m_isFinished = false;
+}
+
+void CAnimation::Call_Event(_float fLastPlayTime, _float fTimeDelta)
+{
+	if (m_mapEvent.empty() == true || fTimeDelta == 0.f)
+		return;
+
+	NULL_CHECK_RETURN(m_pModel, );
+
+	for (auto& Pair : m_mapEvent)
+	{
+		_tchar		wszFunctionTag[128] = L"";
+
+		if (fLastPlayTime <= Pair.first && Pair.first <= m_PlayTime)
+		{
+			wsprintf(wszFunctionTag, L"");
+			CUtile::CharToWideChar(Pair.second.c_str(), wszFunctionTag);
+			CFunction_Manager::GetInstance()->Call_Function((CBase*)m_pModel->Get_Owner(), wszFunctionTag, fTimeDelta);
+		}
+	}
 }
 
 CAnimation * CAnimation::Create(HANDLE hFile, CModel* pModel)

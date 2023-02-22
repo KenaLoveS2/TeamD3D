@@ -145,7 +145,7 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 		return nullptr;
 
 	if (pCloneObjectTag != nullptr)
-		pGameObject->Set_Name(pCloneObjectTag);
+		pGameObject->Set_CloneTag(pCloneObjectTag);
 
 	return pGameObject;	
 }
@@ -211,7 +211,7 @@ HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameOb
 
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 
-	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_Name(), pGameObject);
+	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_ObjectCloneName(), pGameObject);
 	Safe_AddRef(pGameObject);
 
 	return S_OK;

@@ -202,6 +202,18 @@
     <Filter Include="01.Utility\02.GameObject\Enviroment\Manager">
       <UniqueIdentifier>{fa2a7213-2b6c-42db-98e9-d8ae95c129d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97. EventFucn Manager">
+      <UniqueIdentifier>{e0a5d880-aa0a-447a-83ac-dad2b5e19877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Bone">
+      <UniqueIdentifier>{c7c46548-11a7-420a-a97c-5df7a7e00256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Mesh">
+      <UniqueIdentifier>{6806406e-b2b2-491a-81a9-e35c573c3128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Model">
+      <UniqueIdentifier>{a54d6a22-6302-4563-8fcd-eb64e69311df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -450,9 +462,6 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Utilty.h">
       <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Bone_Instacing.h" />
-    <ClInclude Include="..\public\Mesh_Instancing.h" />
-    <ClInclude Include="..\public\Model_Instancing.h" />
     <ClInclude Include="stdafx.h">
       <Filter>97. Default</Filter>
     </ClInclude>
@@ -474,8 +483,26 @@
     <ClInclude Include="..\public\Enviroment_Manager.h">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StateMachine.h">
+      <Filter>01.Utility\12. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Function_Manager.h">
+      <Filter>01.Utility\97. EventFucn Manager</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\GameObject.h">
       <Filter>01.Utility\02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\Imgui_stdlib.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bone_Instacing.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mesh_Instancing.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Model_Instancing.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -695,9 +722,6 @@
     <ClCompile Include="..\private\PostFX.cpp">
       <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Bone_Instacing.cpp" />
-    <ClCompile Include="..\private\Mesh_Instancing.cpp" />
-    <ClCompile Include="..\private\Model_Instancing.cpp" />
     <ClCompile Include="stdafx.cpp">
       <Filter>97. Default</Filter>
     </ClCompile>
@@ -709,6 +733,24 @@
     </ClCompile>
     <ClCompile Include="..\private\Enviroment_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateMachine.cpp">
+      <Filter>01.Utility\12. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Function_Manager.cpp">
+      <Filter>01.Utility\97. EventFucn Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bone_Instacing.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mesh_Instancing.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model_Instancing.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
