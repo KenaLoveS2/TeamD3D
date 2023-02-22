@@ -16,7 +16,6 @@ CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext *
 
 HRESULT CImgui_MapEditor::Initialize(void * pArg)
 {
-
 	m_bComOptions.fill(false);
 	return S_OK;
 }

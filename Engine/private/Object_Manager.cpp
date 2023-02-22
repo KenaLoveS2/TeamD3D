@@ -382,6 +382,51 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 		pSelectedObject = nullptr;
 }
 
+void CObject_Manager::Imgui_Push_Group(CGameObject * pSelectedObject)
+{
+	if (nullptr == pSelectedObject)
+		return;
+
+	if (ImGui::Button("Add Multi Group"))
+	{
+		Mulit_ObjectList.push_back(pSelectedObject);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear Multi Group"))
+		Mulit_ObjectList.clear();
+
+	ImGui::Separator();
+	
+	string str = "";
+	wstring pObjectClontTag = L"";
+	if (ImGui::BeginListBox("#MultiBox#"))
+	{
+		const bool bTestSelected = false;
+		for (auto& pAddObj : Mulit_ObjectList)
+		{
+			char szobjectTag[128];
+			CUtile::WideCharToChar(pAddObj->Get_ObjectCloneName(), szobjectTag);
+
+			if (ImGui::Selectable(szobjectTag, bTestSelected))
+			{
+				pObjectClontTag = pAddObj->Get_ObjectCloneName();
+			}
+		}
+		ImGui::EndListBox();
+	}
+
+	if (pObjectClontTag != L"")
+	{
+		Mulit_ObjectList.remove_if([&](CGameObject* pGameObject)->bool
+		{
+			if (!lstrcmp(pObjectClontTag.c_str(), pGameObject->Get_ObjectCloneName()))
+				return true;
+			return false;
+		});
+	}
+
+}
+
 void CObject_Manager::Imgui_DeleteComponent(CGameObject * pSelectedObject)
 {
 	if (nullptr==pSelectedObject )
@@ -395,7 +440,38 @@ void CObject_Manager::Imgui_DeleteComponent(CGameObject * pSelectedObject)
 		CGameInstance::GetInstance()->Add_String(pComponentTag);
 		pSelectedObject->Delete_Component(pComponentTag);
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("GroupObj_Delete_Component"))
+	{
+		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
+		CGameInstance::GetInstance()->Add_String(pComponentTag);
+	
+		for (auto &pObj : Mulit_ObjectList)
+			pObj->Delete_Component(pComponentTag);
+	}
 
+	Imgui_Add_For_EnviroMent_Component();
+}
+
+void CObject_Manager::Imgui_Add_For_EnviroMent_Component()
+{
+	static _int iOption = 0;
+	ImGui::InputInt("Component Option", &iOption);
+
+	if (ImGui::Button("GroupObj_Add_Component"))
+	{
+		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
+		CGameInstance::GetInstance()->Add_String(pComponentTag);
+
+		for (auto &plistObj : Mulit_ObjectList)
+		{
+			if (dynamic_cast<CEnviromentObj*>(plistObj) == nullptr)
+				continue;
+			
+			static_cast<CEnviromentObj*>(plistObj)->Add_AdditionalComponent(CGameInstance::GetInstance()->Get_CurLevelIndex(),
+					pComponentTag, (CEnviromentObj::COMPONENTS_OPTION)iOption);
+		}
+	}
 }
 
 HRESULT CObject_Manager::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag)

@@ -388,6 +388,12 @@ void CGameInstance::Imgui_DeleteComponent(CGameObject * pSelectedObject)
 	m_pObject_Manager->Imgui_DeleteComponent(pSelectedObject);
 }
 
+void CGameInstance::Imgui_Push_Group(CGameObject * pSelectedObject)
+{
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	m_pObject_Manager->Imgui_Push_Group(pSelectedObject);
+}
+
 map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 {
 	assert(nullptr != m_pObject_Manager && "CGameInstance::Get_ProtoTypeObjects()");
