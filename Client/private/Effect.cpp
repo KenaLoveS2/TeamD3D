@@ -194,11 +194,11 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
-		m_strDTextureComTag = L"g_DTexture_";
-		m_strDTextureComTag += to_wstring(i);
+		wstring strBindDTexture = L"g_DTexture_";
+		strBindDTexture += to_wstring(i);
 
 		char szDTexture[64] = "";
-		CUtile::WideCharToChar(m_strDTextureComTag.c_str(), szDTexture);
+		CUtile::WideCharToChar(strBindDTexture.c_str(), szDTexture);
 
 		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i])))
 			return E_FAIL;
@@ -206,11 +206,11 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
 	{
-		m_strMTextureComTag = L"g_MTexture_";
-		m_strMTextureComTag += to_wstring(i);
+		wstring strBindMTexture = L"g_MTexture_";
+		strBindMTexture += to_wstring(i);
 
 		char szMTexture[64] = "";
-		CUtile::WideCharToChar(m_strMTextureComTag.c_str(), szMTexture);
+		CUtile::WideCharToChar(strBindMTexture.c_str(), szMTexture);
 
 		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i])))
 			return E_FAIL;

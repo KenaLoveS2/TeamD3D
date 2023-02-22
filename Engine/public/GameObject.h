@@ -29,6 +29,8 @@ public:
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
 	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
 
+	void				Delete_Component(const _tchar* pComponentTag);
+
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CGameObject(const CGameObject& rhs);
@@ -58,7 +60,6 @@ protected:
 	_int				m_iAnimationIndex = 0;
 
 protected:
-	/* ��ü���� ����ؾ�?�� ������Ʈ���� �����Ѵ�. */
 	map<const _tchar*, class CComponent*>			m_Components;
 
 	class CTransform*									m_pTransformCom = nullptr;
@@ -75,11 +76,10 @@ public:
 	const _tchar* Get_ObjectName() { return m_szName; }
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
-public: /* imgui */
-		// �� ������Ʈ�� ������ �ִ� component�� Imgui_RenderProtpery�Լ��� �����ϴ� �Լ�.
+public: 
+	/* imgui */
 	void Imgui_RenderComponentProperties();
 
-	// �� ������Ʈ���� ������ �����͸� imgui�� �ۼ��Ѵ�.
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
 
