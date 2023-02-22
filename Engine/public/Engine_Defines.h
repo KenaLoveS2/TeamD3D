@@ -6,6 +6,7 @@
 #include "ImGui\imgui_impl_dx11.h"
 #include "ImGui\ImGuizmo.h"
 #include "ImGui\ImGuiFileDialog.h"
+#include "ImGui\Imgui_stdlib.h"
 
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
@@ -43,6 +44,7 @@ using namespace SimpleMath;
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <array>
 using namespace std;
 
 #include <Json/json_fwd.hpp>

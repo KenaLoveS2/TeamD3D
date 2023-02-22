@@ -265,6 +265,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ALPHA;
 				if (ImGui::RadioButton("BlendType_OneEffect", &iBlendType, 2))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
+				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
+					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
 				ImGui::Separator();
 
 				ImGui::BulletText("fVector : ");	 ImGui::InputFloat4("##fVector", (_float*)&fVector);
@@ -274,175 +276,159 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				ImGui::BulletText("vColor : "); Set_ColorValue(fColor);
 				m_eEffectDesc.vColor = XMVectorSet(fColor.x, fColor.y, fColor.z, fColor.w);
 
+				ImGui::SameLine();
+				if (pGameInstance->Key_Down(DIK_RETURN) || ImGui::Button("Set_Data"))
+				{
+					if (IsBillboard == true)
+						m_eEffectDesc.IsBillboard = true;
+					else
+						m_eEffectDesc.IsBillboard = false;
+
+					pEffect->Set_EffectDesc(m_eEffectDesc);
+				}
+
 				ImGui::EndTabItem();
 			}
-			static _int iCreateCnt = 1;
-			static _int iSelectDTexture = 0;
-			static _int iSelectMTexture = 0;
-			const _int  iTotalDTextureCnt = pEffect->Get_TotalDTextureCnt();
-			const _int  iTotalMTextureCnt = pEffect->Get_TotalMTextureCnt();
 
 			if (ImGui::BeginTabItem("Set Item Texture"))
 			{
-				if (ImGui::BeginTabBar("##TextureImage", tab_bar_flags))
+				static _int iCreateCnt = 1;
+				static _int iSelectDTexture = 0;
+				static _int iSelectMTexture = 0;
+				const _int  iTotalDTextureCnt = pEffect->Get_TotalDTextureCnt();
+				const _int  iTotalMTextureCnt = pEffect->Get_TotalMTextureCnt();
+
+				static _int iSelectTextureType = 0;
+
+				ImGui::BulletText("Texture Type : ");
+				ImGui::RadioButton("DiffuseTexture", &iSelectTextureType, 0); ImGui::SameLine();
+				ImGui::RadioButton("MAskTexture", &iSelectTextureType, 1);
+
+				ImGui::Separator();
+				if (iSelectTextureType == 0)
 				{
-					if (ImGui::BeginTabItem("Diffuse_Texture"))
+					ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
+
+					ImGui::PushItemWidth(100);
+					ImGui::InputInt("##EditDTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
+
+					if (iCreateCnt <= 1)
+						iCreateCnt = 1;
+					else if (iCreateCnt >= 5)
+						iCreateCnt = 5;
+
+					if (ImGui::Button("Edit Texture Confirm"))
+						pEffect->Edit_TextureComponent(iCreateCnt, 0);
+
+					char** szDTextureType = new char*[iTotalDTextureCnt];
+					for (_int i = 0; i < iTotalDTextureCnt; ++i)
 					{
-						ImGui::BulletText("Add Texture : "); ImGui::SameLine();
+						szDTextureType[i] = new char[64];
 
-						ImGui::PushItemWidth(100);
-						ImGui::InputInt("##AddMTexture", (_int*)&iCreateCnt, 1, 4); ImGui::SameLine();
+						_tchar   szDefault[64] = L"";
+						wsprintf(szDefault, L"Com_DTexture_%d", i);
 
-						if (iCreateCnt <= 1)
-							iCreateCnt = 1;
-						else if (iCreateCnt >= 4)
-							iCreateCnt = 4;
+						CUtile::WideCharToChar(szDefault, szDTextureType[i]);
+					}
+					ImGui::BulletText("DTexture : "); ImGui::SameLine();
+					ImGui::PushItemWidth(-FLT_MIN);
+					ImGui::Combo("##DTexture", &iSelectDTexture, szDTextureType, iTotalDTextureCnt);
 
-						if (ImGui::Button("Add Texture Confirm"))
-							pEffect->Add_TextureComponent(iCreateCnt, 0);
+					_tchar szDTexture[64] = L"";
+					CUtile::CharToWideChar(szDTextureType[iSelectDTexture], szDTexture);
+					CTexture*		pDiffuseTexture = (CTexture*)pEffect->Find_Component(szDTexture);
 
-						char** szDTextureType = new char*[iTotalDTextureCnt];
-						for (_int i = 0; i < iTotalDTextureCnt; ++i)
+					if (pDiffuseTexture != nullptr)
+					{
+						_float fFrame = pEffect->Get_EffectDesc().fFrame[iSelectDTexture];
+						ImGui::BulletText("DTexture _ %d / %d", (_uint)fFrame, pDiffuseTexture->Get_TextureIdx());
+						ImGui::Separator();
+
+						for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
 						{
-							szDTextureType[i] = new char[64];
+							if (i % 6)
+								ImGui::SameLine();
+
+							if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
+							{
+								m_eEffectDesc.fFrame[iSelectDTexture] = i * 1.0f;
+								pEffect->Set_EffectDescDTexture(iSelectDTexture, i * 1.0f);
+							}
+						}
+					}
+					for (size_t i = 0; i < iTotalDTextureCnt; ++i)
+						Safe_Delete_Array(szDTextureType[i]);
+					Safe_Delete_Array(szDTextureType);
+				}
+				else
+				{
+					ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
+
+					ImGui::PushItemWidth(100);
+					ImGui::InputInt("##EditMTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
+
+					if (iCreateCnt <= 1)
+						iCreateCnt = 1;
+					else if (iCreateCnt >= 5)
+						iCreateCnt = 5;
+
+					if (ImGui::Button("Edit Texture Confirm"))
+						pEffect->Edit_TextureComponent(0, iCreateCnt);
+
+					char** szMTextureType = new char*[iTotalMTextureCnt];
+					if (0 != iTotalMTextureCnt)
+					{
+						for (_int i = 0; i < iTotalMTextureCnt; ++i)
+						{
+							szMTextureType[i] = new char[64];
 
 							_tchar   szDefault[64] = L"";
-							wsprintf(szDefault, L"Com_DTexture_%d", i);
+							wsprintf(szDefault, L"Com_MTexture_%d", i);
 
-							CUtile::WideCharToChar(szDefault, szDTextureType[i]);
+							CUtile::WideCharToChar(szDefault, szMTextureType[i]);
 						}
-						ImGui::BulletText("DTexture : "); ImGui::SameLine();
+						ImGui::BulletText("MTexture : "); ImGui::SameLine();
 						ImGui::PushItemWidth(-FLT_MIN);
-						ImGui::Combo("##DTexture", &iSelectDTexture, szDTextureType, iTotalDTextureCnt);
-
-						_tchar szDTexture[64] = L"";
-						CUtile::CharToWideChar(szDTextureType[iSelectDTexture], szDTexture);
-						CTexture*		pDiffuseTexture = (CTexture*)pEffect->Find_Component(szDTexture);
-
-						if (pDiffuseTexture != nullptr)
-						{
-							_float fFrame = pEffect->Get_EffectDesc().fFrame[iSelectDTexture];
-							ImGui::BulletText("DTexture _ %d / %d", (_uint)fFrame, pDiffuseTexture->Get_TextureIdx());
-							ImGui::Separator();
-
-							for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
-							{
-								if (i % 6)
-									ImGui::SameLine();
-
-								if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
-								{
-									m_eEffectDesc.fFrame[iSelectDTexture] = i * 1.0f;
-									pEffect->Set_EffectDescDTexture(iSelectDTexture, i * 1.0f);
-								}
-							}
-						}
-						else
-						{
-							for (size_t i = 0; i < iTotalDTextureCnt; ++i)
-								Safe_Delete_Array(szDTextureType[i]);
-							Safe_Delete_Array(szDTextureType);
-
-							ImGui::EndTabItem();
-							return;
-						}
-
-						for (size_t i = 0; i < iTotalDTextureCnt; ++i)
-							Safe_Delete_Array(szDTextureType[i]);
-						Safe_Delete_Array(szDTextureType);
-
-						ImGui::EndTabItem();
+						ImGui::Combo("##MTexture", &iSelectMTexture, szMTextureType, iTotalMTextureCnt);
 					}
-					if (ImGui::BeginTabItem("Mask_Texture"))
+
+					_tchar szMTexture[64] = L"";
+					CUtile::CharToWideChar(szMTextureType[iSelectMTexture], szMTexture);
+					CTexture*		pDiffuseTexture = (CTexture*)pEffect->Find_Component(szMTexture);
+
+					if (pDiffuseTexture != nullptr)
 					{
-						ImGui::BulletText("Add Texture : "); ImGui::SameLine();
+						_float fMaskFrame = pEffect->Get_EffectDesc().fMaskFrame[iSelectMTexture];
 
-						ImGui::PushItemWidth(100);
-						ImGui::InputInt("##AddMTexture", (_int*)&iCreateCnt, 1, 4); ImGui::SameLine();
+						ImGui::BulletText("MTexture _ %d / %d", (_uint)fMaskFrame, pDiffuseTexture->Get_TextureIdx());
+						ImGui::Separator();
 
-						if (iCreateCnt <= 1)
-							iCreateCnt = 1;
-						else if (iCreateCnt >= 4)
-							iCreateCnt = 4;
-
-						if (ImGui::Button("Add Texture Confirm"))
-							pEffect->Add_TextureComponent(0, iCreateCnt);
-
-						char** szMTextureType = new char*[iTotalMTextureCnt];
-						if (0 != iTotalMTextureCnt)
+						for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
 						{
-							for (_int i = 0; i < iTotalMTextureCnt; ++i)
+							if (i % 6)
+								ImGui::SameLine();
+
+							if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
 							{
-								szMTextureType[i] = new char[64];
-
-								_tchar   szDefault[64] = L"";
-								wsprintf(szDefault, L"Com_MTexture_%d", i);
-
-								CUtile::WideCharToChar(szDefault, szMTextureType[i]);
-							}
-							ImGui::BulletText("MTexture : "); ImGui::SameLine();
-							ImGui::PushItemWidth(-FLT_MIN);
-							ImGui::Combo("##MTexture", &iSelectMTexture, szMTextureType, iTotalMTextureCnt);
-						}
-
-						_tchar szMTexture[64] = L"";
-						CUtile::CharToWideChar(szMTextureType[iSelectMTexture], szMTexture);
-						CTexture*		pDiffuseTexture = (CTexture*)pEffect->Find_Component(szMTexture);
-
-						if (pDiffuseTexture != nullptr)
-						{
-							_float fMaskFrame = pEffect->Get_EffectDesc().fMaskFrame[iSelectMTexture];
-
-							ImGui::BulletText("MTexture _ %d / %d", (_uint)fMaskFrame, pDiffuseTexture->Get_TextureIdx());
-							ImGui::Separator();
-
-							for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
-							{
-								if (i % 6)
-									ImGui::SameLine();
-
-								if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
-								{
-									m_eEffectDesc.fMaskFrame[iSelectMTexture] = i * 1.0f;
-									pEffect->Set_EffectDescMTexture(iSelectMTexture, i * 1.0f);
-								}
+								m_eEffectDesc.fMaskFrame[iSelectMTexture] = i * 1.0f;
+								pEffect->Set_EffectDescMTexture(iSelectMTexture, i * 1.0f);
 							}
 						}
-						else
-						{
-							for (size_t i = 0; i < iTotalDTextureCnt; ++i)
-								Safe_Delete_Array(szMTextureType[i]);
-							Safe_Delete_Array(szMTextureType);
-
-							ImGui::EndTabItem();
-							return;
-						}
-
-						for (size_t i = 0; i < iTotalMTextureCnt; ++i)
-							Safe_Delete_Array(szMTextureType[i]);
-						Safe_Delete_Array(szMTextureType);
-						ImGui::EndTabItem();
 					}
-					ImGui::EndTabBar();
+
+					for (size_t i = 0; i < iTotalMTextureCnt; ++i)
+						Safe_Delete_Array(szMTextureType[i]);
+					Safe_Delete_Array(szMTextureType);
 				}
 				ImGui::EndTabItem();
 			}
-
-			ImGui::EndTabBar();
 		}
-
-		if (ImGui::Button("Set_Data") || pGameInstance->Key_Down(DIK_RETURN))
-		{
-			if (IsBillboard == true)
-				m_eEffectDesc.IsBillboard = true;
-
-			pEffect->Set_EffectDesc(m_eEffectDesc);
-		}
-
-		RELEASE_INSTANCE(CGameInstance);
-
+		ImGui::EndTabBar();
 	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
+
 
 void CImgui_Effect::CreateEffect_Particle(_int iSelectObject)
 {

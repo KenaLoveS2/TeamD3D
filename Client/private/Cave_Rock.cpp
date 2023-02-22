@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\Cave_Rock.h"
 #include "GameInstance.h"
+#include "ControlMove.h"
+#include "Interaction_Com.h"
 
 CCave_Rock::CCave_Rock(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice,pContext)
@@ -28,6 +30,8 @@ HRESULT CCave_Rock::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_bRenderActive = true;
+
 	return S_OK;
 }
 
@@ -40,7 +44,8 @@ void CCave_Rock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_bRenderActive && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if(  m_pRendererCom )
+		 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CCave_Rock::Render()
@@ -59,8 +64,32 @@ HRESULT CCave_Rock::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i);
+		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
 	}
+	return S_OK;
+}
+
+HRESULT CCave_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+{
+	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
+
+	/* For.Com_CtrlMove */
+	if (eComponentOption == COMPONENTS_CONTROL_MOVE)
+	{
+		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_ControlMove"), pComTag,
+			(CComponent**)&m_pControlMoveCom)))
+			return E_FAIL;
+	}
+	/* For.Com_Interaction */
+	else if (eComponentOption == COMPONENTS_INTERACTION)
+	{
+		if (FAILED(__super::Add_Component(iLevelIndex, TEXT("Prototype_Component_Interaction_Com"), pComTag,
+			(CComponent**)&m_pInteractionCom)))
+			return E_FAIL;
+	}
+	else
+		return S_OK;
+
 	return S_OK;
 }
 
@@ -71,13 +100,15 @@ HRESULT CCave_Rock::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
+	/* For.Com_Shader */			
+	/*나중에  레벨 인덱스 수정해야됌*/
+	if (m_EnviromentDesc.iCurLevel == 0)
+		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_MAPTOOL, m_EnviromentDesc.szModelTag, TEXT("Com_Model"),
+	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -140,5 +171,7 @@ void CCave_Rock::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-	//Safe_Release(m_pE_R_AoTexCom);
+
+	Safe_Release(m_pControlMoveCom);
+	Safe_Release(m_pInteractionCom);
 }

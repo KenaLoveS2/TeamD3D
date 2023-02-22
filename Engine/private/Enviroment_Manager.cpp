@@ -10,7 +10,9 @@ CEnviroment_Manager::CEnviroment_Manager()
 
 void CEnviroment_Manager::Free()
 {
-
+	for (auto &pRoom : m_vecAllRooms)
+		Safe_Delete(pRoom);
+	m_vecAllRooms.clear();
 }
 
 void CEnviroment_Manager::Tick(_float fTimeDelta)
@@ -19,7 +21,7 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 
 	Clear();
 
-	for (auto &pRoom : m_vecAllRooms)
+	for (auto &pRoom : m_vecAllRooms)		// 플레이어와의 거리 계산
 	{
 		pRoom->fTargetDistance = m_pTargetTransform->Calc_Distance_XZ(pRoom->vCenterPosition);
 		if (pRoom->fTargetDistance < m_fAddContainerRange)

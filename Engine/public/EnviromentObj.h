@@ -1,33 +1,36 @@
 #pragma once
 #include "GameObject.h"
 
+#define MAX_COMPONENT_NUM 5
+
 BEGIN(Engine)
 class ENGINE_DLL CEnviromentObj : public CGameObject
 {
 public:
+	enum COMPONENTS_OPTION {
+		COMPONENTS_CONTROL_MOVE, COMPONENTS_INTERACTION, COMPONENTS_END
+	};
+
 	enum  CHAPTER {
-		CHAPTER_ONE_CAVE, CHAPTER_TWO_FOREST,			CHAPTER_END};
+		CHAPTER_ONE_CAVE, CHAPTER_TWO_FOREST,	CHAPTER_END};
 
 	typedef struct tagEnviromnetObjectDesc
 	{	
 		CGameObject::GAMEOBJECTDESC ObjectDesc;
-		_tchar			szProtoObjTag[MAX_PATH]  =  TEXT("");
-		_tchar			szModelTag[MAX_PATH] =  TEXT("");
-		_tchar			szTextureTag[MAX_PATH] =   TEXT("");
-		_uint			iRoomIndex = 0;
+		wstring			szProtoObjTag  =  TEXT("");
+		wstring			szModelTag =  TEXT("");
+		wstring			szTextureTag =   TEXT("");
+		_uint				iRoomIndex = 0;
+		CHAPTER		eChapterType = CHAPTER_END;
+		_int				iCurLevel = 0;				//이건 툴에서만 일단.
+		tagEnviromnetObjectDesc()
+		{
+			ObjectDesc.TransformDesc.fRotationPerSec = 0;
+			ObjectDesc.TransformDesc.fSpeedPerSec = 0;
+		}
+
 	} ENVIROMENT_DESC;		/*wstring 이  있는 애들은 zeromemory를 쓰지마라*/
 
-protected:
-	ENVIROMENT_DESC m_EnviromentDesc;
-	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
-	
-	/*
-	CModel* m_pModelCom = nullptr;
-	CTexture* m_pTextureCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CRenderer* m_pRendererCom = nullptr;
-	*/
-	_bool m_bRenderActive = false;
 
 protected:
 	CEnviromentObj(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,8 +38,13 @@ protected:
 	virtual ~CEnviromentObj() = default;
 
 public:
-	ENVIROMENT_DESC		Get_EnviromentDesc()const { return m_EnviromentDesc; }
+	ENVIROMENT_DESC	&	Get_EnviromentDesc() { return m_EnviromentDesc; }
+	_uint Get_RoomIndex() { return m_EnviromentDesc.iRoomIndex; }
+	void Set_RoomIndex(_uint iIndex) { m_EnviromentDesc.iRoomIndex = iIndex; }
+	void Set_RenderActive(_bool bFlag) { m_bRenderActive = bFlag; }
+	_bool Get_RenderActive() { return m_bRenderActive; }
 
+	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -44,14 +52,31 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 
+
+public:
+	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
+	virtual  void				Imgui_RenderComponentProperties()override;
+
+protected:
+	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
+
+protected:
+	ENVIROMENT_DESC					m_EnviromentDesc;	
+	vector<const _tchar*>				m_CurComponenteTag;
+
+	_bool										m_bRenderActive = false;
+	_uint											m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 
+
+private:/*For.ImguiTool*/
+	string										m_str_Imgui_ComTag = "";
+	_int											m_iImgui_ComponentOption = 0;
+	_bool										m_bWireFrame_Rendering = false;
+
+	
+
 public:		
 	virtual CGameObject* Clone(void* pArg) { return nullptr; };
 	virtual void Free() override;
 
-	_uint Get_RoomIndex() { return m_EnviromentDesc.iRoomIndex; }
-	void Set_RoomIndex(_uint iIndex) { m_EnviromentDesc.iRoomIndex = iIndex; }
-
-	void Set_RenderActive(_bool bFlag) { m_bRenderActive = bFlag; }
-	_bool Get_RenderActive() { return m_bRenderActive; }
 };
 END

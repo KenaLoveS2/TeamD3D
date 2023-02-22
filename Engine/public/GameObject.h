@@ -29,6 +29,8 @@ public:
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
 	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
 
+	void				Delete_Component(const _tchar* pComponentTag);
+
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CGameObject(const CGameObject& rhs);
@@ -75,7 +77,7 @@ public:
 	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
-	void Imgui_RenderComponentProperties();
+	virtual  void Imgui_RenderComponentProperties();
 
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}

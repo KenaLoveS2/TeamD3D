@@ -25,11 +25,19 @@ HRESULT CEnviromentObj::Initialize_Prototype()
 
 HRESULT CEnviromentObj::Initialize(void * pArg)
 {
-	ZeroMemory(&m_EnviromentDesc, sizeof(m_EnviromentDesc));
+	m_CurComponenteTag.reserve(5);
 
 	if (pArg) 
 	{		
-		memcpy(&m_EnviromentDesc, pArg, sizeof(ENVIROMENT_DESC));
+		ENVIROMENT_DESC* Desc = reinterpret_cast<ENVIROMENT_DESC*>(pArg);
+
+		m_EnviromentDesc.szProtoObjTag = Desc->szProtoObjTag;
+		m_EnviromentDesc.szModelTag = Desc->szModelTag;
+		m_EnviromentDesc.szTextureTag = Desc->szTextureTag;
+		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
+		m_EnviromentDesc.eChapterType = Desc->eChapterType;
+		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
+
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
@@ -67,7 +75,61 @@ HRESULT CEnviromentObj::Render()
 	return S_OK;
 }
 
+HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+{
+	m_CurComponenteTag.push_back(pComTag);
+
+	return S_OK;
+}
+
+void CEnviromentObj::Imgui_RenderComponentProperties()
+{
+	ImGui::InputInt(" Option : ", &m_iImgui_ComponentOption); 
+#pragma region 예외처리
+	if (m_iImgui_ComponentOption < 0)
+		m_iImgui_ComponentOption = 0;
+	else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
+		m_iImgui_ComponentOption = COMPONENTS_END;
+#pragma endregion
+
+	if (m_iImgui_ComponentOption == 0)
+		m_str_Imgui_ComTag = "Com_CtrlMove";
+	else if (m_iImgui_ComponentOption == 1)
+		m_str_Imgui_ComTag = "Com_Interaction";
+	else
+		m_str_Imgui_ComTag = "None";
+	
+	ImGui::Text( "Cur Option : %s" , m_str_Imgui_ComTag.c_str());
+
+	if (ImGui::Button("Add Component") && m_str_Imgui_ComTag != "None")
+	{
+		if (COMPONENTS_END == m_iImgui_ComponentOption)
+			return;
+
+		CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
+		_tchar* pComTag = CUtile::StringToWideChar(m_str_Imgui_ComTag);
+		pGameInstace->Add_String(pComTag);
+		Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), pComTag,
+			static_cast<COMPONENTS_OPTION>(m_iImgui_ComponentOption));
+		
+		RELEASE_INSTANCE(CGameInstance);
+	}
+
+#pragma region 와이어프레임으로 그리기
+	ImGui::Checkbox("WireFrame_Render", &m_bWireFrame_Rendering);
+	if (m_bWireFrame_Rendering == true)
+		m_iShaderOption = 3;
+	else
+		m_iShaderOption = 0;
+
+#pragma endregion
+
+
+	__super::Imgui_RenderComponentProperties();
+}
+
 void CEnviromentObj::Free()
 {
 	__super::Free();
+	
 }
