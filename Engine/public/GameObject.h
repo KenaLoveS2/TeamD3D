@@ -42,8 +42,11 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual HRESULT RenderShadow();
+
+	/* For Animation */
 	virtual void		Update_Child() {}
 	virtual HRESULT	Call_EventFunction(const string& strFuncName) { return S_OK; }
+	virtual void		Push_EventFunctions() {};
 
 protected:
 	ID3D11Device*				m_pDevice = nullptr;

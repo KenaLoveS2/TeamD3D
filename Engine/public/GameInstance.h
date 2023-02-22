@@ -5,6 +5,7 @@
 #include "PipeLine.h"
 #include "Sound_Manager.h"
 #include "Utile.h"
+#include "Function_Manager.h"
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
@@ -160,6 +161,15 @@ public: /* For.PipeLine */
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		_float*		Get_CameraFar();
 
+	public:		/* For Function Manager */
+		template<typename T>
+		HRESULT		Add_Function(T* pObj, const _tchar* pFuncName, void (T::*memFunc)(_bool, _float)) {
+			NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
+			return m_pFunction_Manager->Add_Function(pObj, pFuncName, memFunc);
+		};
+		HRESULT		Call_Function(CBase* pObj, const _tchar* pFuncName, _float fTimeDelta);
+
+
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;
@@ -182,6 +192,7 @@ public: /* For.PipeLine */
 		class CString_Manager* m_pString_Manager = nullptr;
 		class CCamera_Manager* m_pCamera_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
+		class CFunction_Manager*	m_pFunction_Manager = nullptr;
 
 	public:
 		static void Release_Engine();

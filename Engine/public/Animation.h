@@ -19,6 +19,7 @@ public:
 public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT Initialize(void* pArg);
+	void		ImGui_RenderEvents(_int& iSelectEvent);
 
 	void Update_Bones(_float fTimeDelta);
 	void Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
@@ -60,7 +61,7 @@ private:
 	map<_float, const string>		m_mapEvent;
 
 private:
-	void	Call_Event(_float fLastPlayTime);
+	void	Call_Event(_float fLastPlayTime, _float fTimeDelta);
 
 public:
 	static CAnimation* Create(HANDLE hFile, class CModel* pModel);

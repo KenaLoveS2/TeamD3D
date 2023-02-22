@@ -52,6 +52,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 	m_pModelCom->Set_AnimIndex(0);
 
+	Push_EventFunctions();
+
 	return S_OK;
 }
 
@@ -60,7 +62,7 @@ void CKena::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
-
+	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -147,6 +149,11 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 	return S_OK;
 }
 
+void CKena::Push_EventFunctions()
+{
+	Test(true, 0.f);
+}
+
 HRESULT CKena::Ready_Parts()
 {
 	CKena_Parts*	pPart = nullptr;
@@ -227,6 +234,16 @@ HRESULT CKena::SetUp_ShaderResources()
 HRESULT CKena::SetUp_State()
 {
 	return S_OK;
+}
+
+void CKena::Test(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Test);
+		return;
+	}
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

@@ -36,6 +36,7 @@ public:
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			Update_Child() override;
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
+	virtual void			Push_EventFunctions() override;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -59,6 +60,7 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
+	void					Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	static CKena*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

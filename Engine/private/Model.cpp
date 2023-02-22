@@ -8,6 +8,8 @@
 #include "GameObject.h"
 #include "Json/json.hpp"
 #include <fstream>
+#include "Function_Manager.h"
+#include "Utile.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -236,9 +238,12 @@ void CModel::Imgui_RenderProperty()
 	if (ImGui::CollapsingHeader("Animations"))
 	{
 		static _int	iSelectAnimation = -1;
+		static _int	iSelectFunction = -1;
+		static _int	iSelectEvent = -1;
 		static _bool	bAddEvent = false;
 		CAnimation*	pAnimation = nullptr;
 		char**			ppAnimationTag = new char*[m_iNumAnimations];
+		char**			ppFunctionTags = nullptr;
 
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 		{
@@ -363,22 +368,30 @@ void CModel::Imgui_RenderProperty()
 			}
 			if (bAddEvent == true)
 			{
-				/*static	const char*	pSelectFunc = "";
-				if (ImGui::BeginCombo("Select Function", "Test"))
+				_uint	iFuncCnt = 0;
+				CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTags);
+
+				ImGui::Combo("Select Function", &iSelectFunction, ppFunctionTags, iFuncCnt);
+				if (ImGui::Button("Add Event") && iSelectFunction > -1)
 				{
-					ImGui::Selectable(pSelectFunc, )
-					ImGui::EndCombo();
-				}*/
-				ImGui::Text(__FUNCTION__);
-				if (ImGui::Button("Add Event"))
-				{
-					bAddEvent = false;
-					//pAnimation->Add_Event(_float(dPlayTime), );
+					_tchar		wszFunctionTag[128] = L"";
+					CUtile::CharToWideChar(ppFunctionTags[iSelectFunction], wszFunctionTag);
+					pAnimation->Add_Event(_float(dPlayTime), string(ppFunctionTags[iSelectFunction]));
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Escape"))
+				{
 					bAddEvent = false;
+					iSelectFunction = -1;
+				}
+
+				for (_uint i = 0; i < iFuncCnt; ++i)
+					Safe_Delete_Array(ppFunctionTags[i]);
+				Safe_Delete_Array(ppFunctionTags);
 			}
+			ImGui::Separator();
+			ImGui::BulletText("Event");
+			pAnimation->ImGui_RenderEvents(iSelectEvent);
 		}
 		
 		for (_uint i = 0; i < m_iNumAnimations; ++i)

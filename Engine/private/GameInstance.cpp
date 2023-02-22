@@ -35,6 +35,7 @@ CGameInstance::CGameInstance()
 	, m_pString_Manager(CString_Manager::GetInstance())
 	, m_pCamera_Manager(CCamera_Manager::GetInstance())
 	, m_pPostFX(CPostFX::GetInstance())
+	, m_pFunction_Manager(CFunction_Manager::GetInstance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
@@ -52,6 +53,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pString_Manager);
 	Safe_AddRef(m_pCamera_Manager);
 	Safe_AddRef(m_pPostFX);
+	Safe_AddRef(m_pFunction_Manager);
 }
 
 _uint CGameInstance::Get_CurLevelIndex()
@@ -719,12 +721,20 @@ _float* CGameInstance::Get_CameraFar()
 	return m_pCamera_Manager->Get_CameraFar();
 }
 
+HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _float fTimeDelta)
+{
+	NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
+
+	return m_pFunction_Manager->Call_Function(pObj, pFuncName, fTimeDelta);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();
 	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
+	CFunction_Manager::GetInstance()->DestroyInstance();
 	CCamera_Manager::GetInstance()->DestroyInstance();
 	CComponent_Manager::GetInstance()->DestroyInstance();
 	CLevel_Manager::GetInstance()->DestroyInstance();
@@ -742,6 +752,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pFunction_Manager);
 	Safe_Release(m_pCamera_Manager);	
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pImgui_Manager);

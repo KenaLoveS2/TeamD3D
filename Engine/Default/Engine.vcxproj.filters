@@ -202,6 +202,9 @@
     <Filter Include="01.Utility\02.GameObject\Enviroment\Manager">
       <UniqueIdentifier>{fa2a7213-2b6c-42db-98e9-d8ae95c129d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97. EventFucn Manager">
+      <UniqueIdentifier>{e0a5d880-aa0a-447a-83ac-dad2b5e19877}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -480,6 +483,9 @@
     <ClInclude Include="..\public\StateMachine.h">
       <Filter>01.Utility\12. FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Function_Manager.h">
+      <Filter>01.Utility\97. EventFucn Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -715,6 +721,9 @@
     </ClCompile>
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>01.Utility\12. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Function_Manager.cpp">
+      <Filter>01.Utility\97. EventFucn Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
