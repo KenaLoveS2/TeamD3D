@@ -16,6 +16,7 @@ CMesh::CMesh(const CMesh & rhs)
 	, m_pNonAnimVertices(rhs.m_pNonAnimVertices)
 	, m_pAnimVertices(rhs.m_pAnimVertices)
 	, m_pIndices(rhs.m_pIndices)
+	, m_bLodMesh(rhs.m_bLodMesh)
 {
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
@@ -77,7 +78,7 @@ HRESULT CMesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	ReadFile(hFile, &m_iStride, sizeof(_uint), &dwByte, nullptr);
 
 	m_iNumVertexBuffers = 1;
-	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST; //D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST; //
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
 	m_iNumIndicesPerPrimitive = 3;
@@ -137,10 +138,11 @@ HRESULT CMesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel)
+HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod)
 {
 	if (hFile == nullptr)
 		return S_OK;
+	m_bLodMesh = bIsLod;
 
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -184,25 +186,48 @@ HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 #pragma endregion
 
 #pragma region INDEX_BUFFER
-	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	m_BufferDesc.StructureByteStride = 0;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
 
-	m_pIndices = new FACEINDICES32[m_iNumPrimitive];
-	ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
-	ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive, &dwByte, nullptr);
+	if (m_bLodMesh == true)
+	{
+		ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+		m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+		m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		m_BufferDesc.StructureByteStride = 0;
+		m_BufferDesc.MiscFlags = 0;
 
-	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
-	m_SubResourceData.pSysMem = m_pIndices;
+		m_pIndices = new FACEINDICES32[m_iNumPrimitive];
+		ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+		ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive, &dwByte, nullptr);
 
-	if (FAILED(__super::Create_IndexBuffer()))
-		return E_FAIL;
+		ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+		m_SubResourceData.pSysMem = m_pIndices;
+
+		if (FAILED(__super::Create_IndexBuffer()))
+			return E_FAIL;
+	}
+	else
+	{
+		ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+		m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+		m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		m_BufferDesc.StructureByteStride = 0;
+		m_BufferDesc.CPUAccessFlags = 0;
+		m_BufferDesc.MiscFlags = 0;
+
+		m_pIndices = new FACEINDICES32[m_iNumPrimitive];
+		ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+		ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive, &dwByte, nullptr);
+
+		ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+		m_SubResourceData.pSysMem = m_pIndices;
+
+		if (FAILED(__super::Create_IndexBuffer()))
+			return E_FAIL;
 #pragma endregion
-
+	}
 	return S_OK;
 }
 
@@ -274,6 +299,18 @@ HRESULT CMesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel * pModel)
 
 HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 {
+	if (m_bLodMesh == true)
+	{
+		m_iMaterialIndex;
+		m_iNumVertexBuffers = 1;
+		m_iNumVertices;
+		m_iNumPrimitive;
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 3;
+		//m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+	}
 	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
@@ -297,8 +334,6 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 		XMStoreFloat3(&pVertices[i].vTangent, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vTangent), PivotMatrix));
 	}
 
-
-
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
 
@@ -309,7 +344,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 	memcpy(m_pNonAnimVertices, pVertices, sizeof(VTXMODEL) * m_iNumVertices);
 
 	Safe_Delete_Array(pVertices);
-
+	
 	return S_OK;
 }
 
@@ -340,10 +375,10 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel* pModel)
 }
 
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel* pModel)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel* pModel, _bool bIsLod)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);

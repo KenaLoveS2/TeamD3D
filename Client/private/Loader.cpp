@@ -35,8 +35,7 @@
 #include "Camera_Player.h"
 
 /*Test LOD*/
-#include "TestTerrain.h"
-#include "TessBackGround.h"
+#include "LodObject.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -102,6 +101,10 @@ HRESULT CLoader::Loading_ForLogo()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/LoadingBG_%d.png"), 2))))
 		return E_FAIL;		
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_MediumWaves_H.png")))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
 	
@@ -341,9 +344,21 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
+	
 
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Ciff_Rock")))
+	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SM_CliffWall_Large0",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Cave_Ciff_Rock/SM_CliffWall_Large0.mdat"), PivotMatrix,nullptr,true))))
 		return E_FAIL;
+
+	 PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SM_CliffWall_Large0_T",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Cave_Ciff_Rock/SM_CliffWall_Large0.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Ciff_Rock")))
+	//	return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
@@ -364,15 +379,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_VIBuffer_Terrain_Tess */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_VIBuffer_Terrain_Tess"),
-		CVIBuffer_Terrain_Tess::Create(m_pDevice, m_pContext, 129, 129))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Rect_Tess */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_VIBuffer_Rect_Tess"),
-		CVIBuffer_Rect_Tess::Create(m_pDevice, m_pContext, D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST))))
-		return E_FAIL;
 
 	/*map_Object Compoents */
 	/* For.Prototype_Component_ControlMove*/
@@ -394,6 +400,12 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModel"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
 		return E_FAIL;
+	
+	/* For.Prototype_Component_Shader_VtxModel*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModelTess"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel_Tess.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
 
 	/* For.Prototype_Component_Shader_VtxAnimModel*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxAnimModel"),
@@ -415,18 +427,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxTestTess */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxTestTess"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTess.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxTessTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex_Tess.hlsl"), 
-			VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
 
@@ -434,14 +434,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
 		CCave_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-	/* For.Prototype_GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestTerrain"),
-		CTestTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TessBackGround"),
-		CTessBackGround::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Cave_Rock */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
+		CLodObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 

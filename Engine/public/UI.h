@@ -19,6 +19,33 @@ public:
 		_float4x4			ProjMatrix;
 	} UIDESC;
 
+	typedef struct tagSpriteAnimInfo
+	{
+		_int		iXFrames;
+		_int		iYFrames;
+		_int		iXFrameNow;
+		_int		iYFrameNow;
+		_float		fAnimTime;
+		_float		fAnimTimeAcc;
+		_bool		bLoop;
+		_bool		bFinished;
+	} SPRITEINFO;
+
+	typedef struct tagUVMoveInfo
+	{
+		_float2		vDelta;
+		_float		fDeltaTime;
+		_float		fDeltaTimeAcc;
+	}UVMOVE;
+
+	typedef struct tagDefaultRenderInfo
+	{
+		_float4		vColor;
+		_float		fAlpha;
+		_float		fDeltaTime;
+		_float		fDeltaTimeAcc;
+	}DEFAULTINFO;
+
 protected:
 	CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI(const CUI& rhs);
@@ -40,14 +67,13 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
-protected:
-	void					Imgui_RenderingSetting();
 
-protected:
+public:
 	virtual HRESULT					Save_Data() { return S_OK; }
 	virtual HRESULT					Load_Data(wstring fileName) { return S_OK; }
 
-
+protected:
+	void					Imgui_RenderingSetting();
 
 protected:
 	CShader*			m_pShaderCom = nullptr;
@@ -67,6 +93,8 @@ protected:
 	_float4x4			m_matParentInit;
 	_float4x4			m_matLocal;
 
+
+	SPRITEINFO			m_tSpriteInfo;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
