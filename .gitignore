@@ -50,6 +50,8 @@ ipch/
 # preserve shader folder
 !/Client/Bin/ShaderFiles/
 !/Client/Bin/Resources/
+/Client/Bin/Resources/Anim/Kena/Kena_Body.mdat
+/Client/Bin/Resources/Anim/Kena/Kena_Body.model
 !/Client/Bin/Data/
 !Client/Bin/assimp-vc140-mt.dll
 !Client/Bin/assimp-vc140-mtd.dll

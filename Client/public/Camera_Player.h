@@ -12,7 +12,7 @@ private:
 	virtual ~CCamera_Player() = default;
 
 public:
-	void					Set_Player(class CKena* pKena, CTransform* pTransform) { m_pKena = pKena; m_pKenaTransform = pTransform; }
+	void					Set_Player(class CKena* pKena, CTransform* pTransform) { m_pKena = pKena; m_pKenaTransform = pTransform; Initialize_Position(); }
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -21,14 +21,25 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 
+public:
+	void					Initialize_Position();
+
 private:
 	class CKena*			m_pKena = nullptr;
 	CTransform*			m_pKenaTransform = nullptr;
 	
-	_float					m_fDistanceFromTarget = 5.f;
+	_float					m_fDistanceFromTarget = 2.f;
 
+	_int					m_iInitMouseCursorCnt = 0;
+	_bool					m_bMouseFix = true;
+	_float					m_fCurMouseSensitivityX = 0.f;
+	_float					m_fCurMouseSensitivityY = 0.05f;
+	_float					m_fInitMouseSensitivity = 0.05f;
+	_long					m_LastMoveX = 0;
 	_long					m_MouseMoveX = 0;
 	_long					m_MouseMoveY = 0;
+	_float					m_fMouseMoveTimeX = 0.f;
+	_float					m_fVerticalAngle = 0.f;
 
 public:
 	static	CCamera_Player*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
