@@ -4,6 +4,9 @@
 #include "UI_NodeHUDHP.h"
 #include "UI_NodeHUDHPBar.h"
 
+/* Bind Object */
+#include "Kena.h"
+
 CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 {
@@ -63,6 +66,16 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 
 void CUI_CanvasHUD::Tick(_float fTimeDelta)
 {
+	if (!m_bBindFinished)
+	{
+		if (FAILED(Bind()))
+		{
+			MSG_BOX("Bind Failed");
+			return;
+		}
+
+	}
+
 	__super::Tick(fTimeDelta);
 
 	for (auto node : m_vecNode)
@@ -109,6 +122,26 @@ HRESULT CUI_CanvasHUD::Render()
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
+	return S_OK;
+}
+
+HRESULT CUI_CanvasHUD::Bind()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
+		L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return E_FAIL;
+	}
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::TestFunction);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	m_bBindFinished = true;
 	return S_OK;
 }
 
@@ -196,6 +229,11 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CUI_CanvasHUD::TestFunction(_int)
+{
+	MSG_BOX("Hey");
 }
 
 CUI_CanvasHUD * CUI_CanvasHUD::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
