@@ -380,6 +380,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				ImGui::Checkbox("Use Billboard", &m_eEffectDesc.IsBillboard);
 				ImGui::Checkbox("Use MaskTexture", &m_eEffectDesc.IsMask); ImGui::SameLine();
 				ImGui::Checkbox("Use MovingPosition", &m_eEffectDesc.IsMovingPosition);
+				ImGui::Checkbox("Use ChildSetting", &m_eEffectDesc.bUseChild);
 				if (m_eEffectDesc.IsMovingPosition)				Set_OptionWindow_Rect(pEffect);
 				ImGui::Separator();
 

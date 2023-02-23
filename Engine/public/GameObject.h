@@ -25,7 +25,10 @@ public:
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
-	void						Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	const _tchar*		Get_ProtoObjectName() { return m_szProtoObjectTag; }
+
+	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	void				Set_ProtoTag(const _tchar* pProtoObjectTag) { m_szProtoObjectTag = pProtoObjectTag; }
 
 	void				Delete_Component(const _tchar* pComponentTag);
 
@@ -47,17 +50,18 @@ public:
 
 	/* For Animation */
 	virtual void		Update_Child() {}
-	virtual HRESULT	Call_EventFunction(const string& strFuncName) { return S_OK; }
+	virtual HRESULT		Call_EventFunction(const string& strFuncName) { return S_OK; }
 	virtual void		Push_EventFunctions() {};
 
 protected:
-	ID3D11Device*				m_pDevice = nullptr;
+	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = { nullptr };
-	_bool							m_isCloned = { false };
-	_float							m_fCamDistance = { 0.0 };	
-	_bool							m_bShadow = true;
+	_bool					m_isCloned = { false };
+	_float					m_fCamDistance = { 0.0 };
+	_bool					m_bShadow = true;
 
 	const _tchar*		m_szCloneObjectTag = TEXT("");
+	const _tchar*		m_szProtoObjectTag = TEXT("");
 	_int				m_iAnimationIndex = 0;
 
 protected:

@@ -447,9 +447,6 @@
     <ClInclude Include="..\public\FSMComponent.h">
       <Filter>01.Utility\12. FSM</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Delegator.h">
-      <Filter>01.Utility\02.GameObject\UI\01. Delegator</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_Manager.h">
       <Filter>01.Utility\02.GameObject\UI\00. Manager</Filter>
     </ClInclude>
@@ -497,6 +494,10 @@
     </ClInclude>
     <ClInclude Include="..\public\GameObject.h">
       <Filter>01.Utility\02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\Imgui_stdlib.h" />
+    <ClInclude Include="..\public\Delegator.h">
+      <Filter>01.Utility\02.GameObject\UI\01. Delegator</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui\Imgui_stdlib.h">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
@@ -746,6 +747,7 @@
     <ClCompile Include="..\private\Enviroment_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>01.Utility\12. FSM</Filter>
     </ClCompile>
