@@ -38,6 +38,16 @@ HRESULT CCave_Rock::Initialize(void * pArg)
 void CCave_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (ImGui::Button("Shader MeshLod"))
+	{
+		m_iShaderOption = 4;
+	}
+	if (ImGui::Button("Shader MeshLodNone"))
+	{
+		m_iShaderOption = 0;
+	}
+
 }
 
 void CCave_Rock::Late_Tick(_float fTimeDelta)

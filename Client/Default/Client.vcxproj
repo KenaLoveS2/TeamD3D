@@ -201,6 +201,8 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\Public\TessBackGround.h" />
+    <ClInclude Include="..\Public\TestTerrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasMonHP.h" />
@@ -252,6 +254,8 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\Private\TessBackGround.cpp" />
+    <ClCompile Include="..\Private\TestTerrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasMonHP.cpp" />
@@ -294,7 +298,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTess.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Tess.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

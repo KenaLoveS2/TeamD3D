@@ -103,7 +103,10 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Cave_Rock"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TestTerrain"), TEXT("Clone_Terrain"))))
+		return E_FAIL;
+
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TessBackGround"), TEXT("Clone_Rect"))))
 		return E_FAIL;*/
 
 	RELEASE_INSTANCE(CGameInstance);
