@@ -99,6 +99,13 @@ void CEffect::Tick(_float fTimeDelta)
 			}
 		}
 	}
+
+	// Child Tick
+	if (m_iHaveChildCnt != 0)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Tick(fTimeDelta);
+	}
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -108,6 +115,13 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if(nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	// Child Late_Tick
+	if (m_iHaveChildCnt != 0)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CEffect::Render()

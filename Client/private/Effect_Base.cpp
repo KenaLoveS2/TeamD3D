@@ -198,5 +198,12 @@ void CEffect_Base::Free()
 
 		if (nullptr != m_pVIInstancingBufferCom)
 			Safe_Release(m_pVIInstancingBufferCom);
+
+		for (auto& pChild : m_vecChild)
+			Safe_Release(pChild);
+		m_vecChild.clear();
+
+		if (nullptr != m_pParentTransformCom)
+			Safe_Release(m_pParentTransformCom);
 	}
 }
