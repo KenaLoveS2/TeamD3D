@@ -99,35 +99,22 @@ HRESULT CUI::Initialize(void * pArg)
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 		m_pTextureCom[i] = nullptr;
 
-	//ZeroMemory(&m_tDesc, sizeof UIDESC);
-
-	//_uint numViewport = 1;
-	//D3D11_VIEWPORT	viewport;
-	//ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	//m_pContext->RSGetViewports(&numViewport, &viewport);
-	//_float fWinSizeX = viewport.Width;
-	//_float fWinSizeY = viewport.Height;
-	//XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	//XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH(fWinSizeX, fWinSizeY, 0.f, 1.f));
-
-	//if (pArg == nullptr)
+	//if (pArg != nullptr)
 	//{
-	//	m_tDesc.fSizeX = fWinSizeX;
-	//	m_tDesc.fSizeY = fWinSizeY;
-
-	//	m_tDesc.fPosX = m_tDesc.fSizeX * 0.5f;
-	//	m_tDesc.fPosY = m_tDesc.fSizeY * 0.5f;
-
-	//	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-	//		XMVectorSet(m_tDesc.fPosX - (_float)fWinSizeX * 0.5f, -m_tDesc.fPosY + (_float)fWinSizeY * 0.5f, 0.f, 1.f));
+	//	ZeroMemory(&m_tSpriteInfo, sizeof m_tSpriteInfo);
+	//	memcpy(&m_tSpriteInfo, pArg, sizeof m_tSpriteInfo);
 	//}
 	//else
-	//{
-	//	memcpy(&m_tDesc, pArg, sizeof UIDESC);
-	//	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-	//		XMVectorSet(m_tDesc.fPosX - (_float)fWinSizeX * 0.5f, -m_tDesc.fPosY + (_float)fWinSizeY * 0.5f, 0.f, 1.f));
-
-	//}
+	{
+		m_tSpriteInfo.iXFrames = 1;
+		m_tSpriteInfo.iYFrames = 1;
+		m_tSpriteInfo.iXFrameNow = 0;
+		m_tSpriteInfo.iYFrameNow = 0;
+		m_tSpriteInfo.fAnimTime = 0.f;
+		m_tSpriteInfo.fAnimTimeAcc = 0.f;
+		m_tSpriteInfo.bLoop = false;
+		m_tSpriteInfo.bFinished = false;
+	}
 
 	return S_OK;
 }
@@ -188,6 +175,36 @@ void CUI::Imgui_RenderingSetting()
 	{
 		Set_RenderPass(selected_Pass);
 	}
+
+	/* For Shader Variables (Depending on RenderPass. */
+	/* if it doesnt work, then it might be not related to the selected Renderpass. */
+	ImGui::Separator();
+	static int size[2];
+	size[0] = m_tSpriteInfo.iXFrames;
+	size[1] = m_tSpriteInfo.iYFrames;
+	if (ImGui::SliderInt("XFrames", &size[0], 1, 20))
+		m_tSpriteInfo.iXFrames = size[0];
+	if(ImGui::SliderInt("YFrames", &size[1], 1, 20))
+		m_tSpriteInfo.iYFrames = size[1];
+
+	static float fTime;
+	fTime = m_tSpriteInfo.fAnimTime;
+	if (ImGui::SliderFloat("Duration", &fTime, 0.f, 30.f))
+		m_tSpriteInfo.fAnimTime = fTime;
+
+	static bool bLoop;
+	bLoop = m_tSpriteInfo.bLoop;
+	if (ImGui::Checkbox("IsLoop", &bLoop))
+	{
+		m_tSpriteInfo.bLoop = bLoop;
+		m_tSpriteInfo.bFinished = false;
+		m_tSpriteInfo.fAnimTimeAcc = 0.f;
+		m_tSpriteInfo.iXFrameNow = 0;
+		m_tSpriteInfo.iYFrameNow = 0;
+
+	}
+
+	ImGui::Separator();
 }
 
 void CUI::Free()

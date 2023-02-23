@@ -111,6 +111,11 @@ HRESULT CUI_Canvas::Save_Data()
 	file << json;
 	file.close();
 
+	for (auto node : m_vecNode)
+		node->Save_Data();
+
+	MSG_BOX("Save Complete");
+
 	return S_OK;
 }
 

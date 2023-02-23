@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "Delegator.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -61,14 +62,14 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
-	void					Test(_bool bIsInit, _float fTimeDelta);
+	void				Test(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<_int>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_ID, _int>		m_PlayerDelegator;
 
 
 public:
-	static CKena*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 };

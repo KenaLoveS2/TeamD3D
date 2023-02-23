@@ -2,12 +2,11 @@
 #include "..\public\UI_ClientManager.h"
 #include "GameInstance.h"
 
-/* Canvas */
+/* CanvasHUD */
 #include "UI_CanvasHUD.h"
-
-/* Node */
 #include "UI_NodeHUDHPBar.h"
 #include "UI_NodeHUDHP.h"
+#include "UI_NodeHUDRot.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -71,10 +70,32 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarNoise");
 
+	/* RotActionIcon */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotCarry"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotCarry_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotCarry");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotCloud"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotCloud_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotCloud");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotHide"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotHide_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotHide");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotNeutral"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotNeutral_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotNeutral");
+
+
 	/* RingBar */
 	/* PipGuage */
 
-	/* RotActionIcon */
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -92,6 +113,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "DiffuseAlphaBlend");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskMap");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HPBar");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Sprite_AlphaBlend");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -116,6 +138,10 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HP");
 
+	/* RotIcon */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotIcon"), CUI_NodeHUDRot::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotIcon");
 
 
 	RELEASE_INSTANCE(CGameInstance);

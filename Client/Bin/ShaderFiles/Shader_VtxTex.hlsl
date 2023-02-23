@@ -7,9 +7,10 @@ texture2D		g_Texture;
 texture2D		g_DepthTexture;
 texture2D		g_MaskTexture;
 
-/* 샘플링 해오는 함수 */
-/* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
-/* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */
+int		g_XFrameNow = 0, g_YFrameNow = 0; /* Current Sprite frame */
+int		g_XFrames = 1, g_YFrames = 1; /* the number of sprites devided each side */
+
+float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;
 
 struct VS_IN
 {
@@ -119,6 +120,34 @@ PS_OUT PS_MAIN_HPBar(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_SPRITE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+	In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+	In.vTexUV.x = In.vTexUV.x / g_XFrames;
+	In.vTexUV.y = In.vTexUV.y / g_YFrames;
+
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_UVMOVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x += g_fSpeedX;
+	In.vTexUV.y += g_fSpeedY;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Rect // 0
@@ -171,5 +200,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HPBar();
+	}
+
+	pass AlphaBlendSprites // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SPRITE();
+	}
+
+	pass DefaultUVMove
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_UVMOVE();
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Client_Defines.h"
 #include "UI_Canvas.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Client)
 class CUI_CanvasHUD final : public CUI_Canvas
@@ -25,7 +26,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	TestFunction(_int);
+	void	TestFunction(CUI_ClientManager::UI_ID, _int);
 
 
 

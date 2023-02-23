@@ -170,6 +170,13 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_RotIcon";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotIcon", L"Node_RotIcon", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -231,7 +238,7 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::TestFunction(_int)
+void CUI_CanvasHUD::TestFunction(CUI_ClientManager::UI_ID, _int)
 {
 	MSG_BOX("Hey");
 }
