@@ -91,6 +91,10 @@ void CLight_Manager::Imgui_Render()
 				{
 					_float4 vDiffuseColor = pLight->Get_LightDesc()->vDiffuse;
 					Set_ColorValue(COLOR_DIFFUSE, (char*)&pLight->Get_LightDesc()->szLightName, vDiffuseColor);
+					vDiffuseColor.x *= 255.f;
+					vDiffuseColor.y *= 255.f;
+					vDiffuseColor.z *= 255.f;
+					vDiffuseColor.w *= 255.f;
 					pLight->Set_Diffuse(vDiffuseColor);
 				}
 
@@ -169,7 +173,7 @@ void CLight_Manager::Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& 
 	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
 	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+	static ImVec4 ref_color_v(0.f, 0.f, 0.f, 0.f);
 
 	char DiffColor[MAX_PATH] = { "DiffuseColor##4_" };
 	strcat_s(DiffColor, MAX_PATH, pLightTag);
@@ -189,23 +193,23 @@ void CLight_Manager::Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& 
 
 	if(eType == COLOR_DIFFUSE)
 	{
-		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(DiffColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(DColor, (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
+		_float4 color = _float4(vColor.x / 255.f, vColor.y / 255.f, vColor.z / 255.f, vColor.w / 255.f);
+		ImGui::ColorPicker4(DiffColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(DColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}
 	else if (eType == COLOR_AMBIENT)
 	{
-		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(AmColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(AColor, (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
+		_float4 color = _float4(vColor.x / 255.f, vColor.y / 255.f, vColor.z / 255.f, vColor.w / 255.f);
+		ImGui::ColorPicker4(AmColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(AColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}
 	else if (eType == COLOR_SPECULAR)
 	{
-		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(SpecColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(SColor, (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
+		_float4 color = _float4(vColor.x / 255.f, vColor.y / 255.f, vColor.z / 255.f, vColor.w / 255.f);
+		ImGui::ColorPicker4(SpecColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(SColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}	
 }

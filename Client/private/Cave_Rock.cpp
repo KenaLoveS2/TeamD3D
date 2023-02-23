@@ -152,7 +152,7 @@ CGameObject * CCave_Rock::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CForkLift");
+		MSG_BOX("Failed to Cloned : CCave_Rock");
 		Safe_Release(pInstance);
 	}
 	return pInstance;

@@ -39,6 +39,7 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
+	Imgui_RenderProperty();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -77,6 +78,9 @@ HRESULT CKena_Staff::Render()
 void CKena_Staff::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+	ImGui::Begin("Staff");
+	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
+	ImGui::End();
 }
 
 HRESULT CKena_Staff::SetUp_Components()
@@ -111,7 +115,7 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
 	return S_OK;
 }
 

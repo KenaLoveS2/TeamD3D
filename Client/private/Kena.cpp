@@ -43,7 +43,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
 	//m_pCamera->Set_Player(this, m_pTransformCom);
-	CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+	//CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom, m_pCamera);
 
@@ -109,18 +109,11 @@ HRESULT CKena::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		if (i == 1)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			// ex
-			//if(!sprint)
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			//else
-			//	m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_HEIGHT, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			/******************************************************************/
-
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else if (i == 4)	// Eye Render
@@ -142,7 +135,10 @@ HRESULT CKena::Render()
 
 void CKena::Imgui_RenderProperty()
 {
-	
+	__super::Imgui_RenderProperty();
+	ImGui::Begin("KenaMain");
+	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
+	ImGui::End();
 }
 
 void CKena::ImGui_AnimationProperty()
@@ -278,7 +274,7 @@ HRESULT CKena::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
 	return S_OK;
 }
 
