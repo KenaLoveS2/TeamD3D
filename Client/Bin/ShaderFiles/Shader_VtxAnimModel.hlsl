@@ -117,7 +117,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : ��� ������ ������ �ȼ��̴�. AND 0��° ����Ÿ�ٿ� �׸������� �����̴�. */
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
@@ -188,7 +187,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
 	float3		specular = vDiffuse.rgb * fMetalic;
-	float3		ambient = (float3)0.6f * fAmbientOcclusion;
+	float3		ambient = (float3)0.3f * fAmbientOcclusion;
 	float3		emissive = vEmissive.rgb;
 	float3		smoothness = 1 - fRoughness;
 
@@ -226,7 +225,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
 	float3		specular = vDiffuse.rgb * fMetalic;
-	float3		ambient = (float3)0.6f * fAmbientOcclusion;
+	float3		ambient = (float3)0.3f * fAmbientOcclusion;
 	float3		emissive = vEmissive.rgb * vEmissiveMask.rgb;
 	float3		smoothness = 1 - fRoughness;
 
