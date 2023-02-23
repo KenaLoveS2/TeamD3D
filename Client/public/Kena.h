@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Client_Defines.h"
+#include "Delegator.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -53,6 +54,10 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
+
+public:
+	Delegator<_int>		m_PlayerDelegator;
+
 
 public:
 	static CKena*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
