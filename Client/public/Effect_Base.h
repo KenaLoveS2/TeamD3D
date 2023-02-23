@@ -65,11 +65,12 @@ public:
 		_bool	IsMask = false;
 		_bool	IsTrigger = false;
 		_bool	IsMovingPosition = false;
+		_bool	bUseChild = false;
 
 		// Child // 
-		/*_int    iHaveChildCnt = 0;
-		vector<class CEffect_Base*> vecChild;
-		class CTransform* pTransformCom = nullptr;*/
+// 		_int    iHaveChildCnt = 0;
+// 		vector<class CEffect_Base*> vecChild;
+// 		class CTransform* pTransformCom = nullptr;
 
 	}EFFECTDESC;
 
@@ -116,6 +117,13 @@ protected:
 	_uint	m_iTotalDTextureComCnt = 0;
 	_uint	m_iTotalMTextureComCnt = 0;
 	/* ~Texture Setting */
+
+protected:
+	 /* Child */
+	_int    m_iHaveChildCnt = 0;
+	vector<class CEffect_Base*> m_vecChild;
+	class CTransform* m_pParentTransformCom = nullptr;
+	/* ~Child */
 
 protected:
 	EFFECTDESC			  m_eEFfectDesc;
