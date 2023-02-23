@@ -282,6 +282,23 @@ void CTransform::Speed_Boost(_bool bKeyState, _float fValue)
 		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
 }
 
+void CTransform::Speed_Down(_bool bKeyState, _float fValue)
+{
+	if (bKeyState)
+		m_TransformDesc.fSpeedPerSec = m_fInitSpeed / fValue;
+	else
+		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
+}
+
+void CTransform::Orbit(_fvector vTargetPos, _fvector vAxis, const _float & fDistance, _float fTimeDelta)
+{
+	if (fTimeDelta != 0.f)
+		Turn(vAxis, m_TransformDesc.fRotationPerSec * fTimeDelta);
+
+	Set_State(STATE_TRANSLATION, vTargetPos - XMVector3Normalize(Get_State(STATE_LOOK)) * fDistance);
+	LookAt(vTargetPos);
+}
+
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 {
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_TransformDesc.fRotationPerSec * fTimeDelta);
