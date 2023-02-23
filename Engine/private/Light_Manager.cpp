@@ -151,7 +151,7 @@ void CLight_Manager::Imgui_Render()
 			break;
 		}
 	}
-
+	
 	for (_uint i = 0; i < iSize; ++i)
 		Safe_Delete_Array(ppLightTag[i]);
 

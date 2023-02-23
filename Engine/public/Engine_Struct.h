@@ -20,7 +20,7 @@ namespace Engine
 
 	typedef struct tagModelMaterial
 	{
-		class CTexture*		pTexture[AI_TEXTURE_TYPE_MAX];
+		class CTexture*		pTexture[WJ_TEXTURE_TYPE_MAX];
 	}MODELMATERIAL;
 
 	typedef struct tagLightDesc

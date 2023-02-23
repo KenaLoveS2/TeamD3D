@@ -25,8 +25,6 @@ struct VS_IN
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float3		vTangent : TANGENT;
-
-	/* ���� �������� ���������� ����(�ִ� 4��)�� ����� �����. */
 	uint4			vBlendIndex : BLENDINDEX;
 	float4		vBlendWeight : BLENDWEIGHT;
 };
@@ -169,10 +167,9 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	float3 kD = (float3)1.0 - kS;
 	kD *= 1.0 - fMetalic;
 
-	float		fEmissive = vEmissive.b * 5.f;
+	float		fEmissive = vEmissive.b * 10.f;            
 
-	// 따로 설정이 필요할듯
-	//vDiffuse.rgb = (kD *	vDiffuse.rgb) * fAmbientOcclusion;
+	vDiffuse.rgb = vDiffuse.rgb * fAmbientOcclusion;
 
 	if (0.1f > vDiffuse.a)
 		discard;
@@ -192,6 +189,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	vector		vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vEmissiveMask = g_EmissiveMaskTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
@@ -216,10 +214,10 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	float3 kD = (float3)1.0 - kS;
 	kD *= 1.0 - fMetalic;
 
-	float			fEmissive = vEmissive.r * 5.f;
+	float			fEmissive = vEmissive.r * vEmissiveMask.a * 10.f;
 
-	vDiffuse.rgb = (kD *	vDiffuse.rgb) * fAmbientOcclusion;
-	//vDiffuse.a = vMask.r * vSSSMask.r;
+	vDiffuse.rgb = vDiffuse.rgb * fAmbientOcclusion;
+	vDiffuse.a *= vMask.r * vSSSMask.r;
 
 	if (0.1f > vDiffuse.a)
 		discard;
@@ -261,8 +259,8 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	float3 kD = (float3)1.0 - kS;
 	kD *= 1.0 - fMetalic;
 
-	vDiffuse.rgb = (kD *	vDiffuse.rgb) * fAmbientOcclusion;
-	//vDiffuse.a = vSSSMask.r;
+	vDiffuse.rgb = vDiffuse.rgb * fAmbientOcclusion;
+	vDiffuse.a *= vSSSMask.r;
 
 	if (0.1f > vDiffuse.a)
 		discard;
