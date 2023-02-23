@@ -16,6 +16,8 @@ HRESULT CLight::Initialize(const LIGHTDESC & LightDesc)
 {
 	m_LightDesc = LightDesc;
 
+	strcpy_s(m_LightDesc.szLightName,  LightDesc.szLightName);
+
 	return S_OK;
 }
 

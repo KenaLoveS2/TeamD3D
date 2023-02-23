@@ -169,7 +169,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	float3 kD = (float3)1.0 - kS;
 	kD *= 1.0 - fMetalic;
 
-	float		fEmissive = vEmissive.b * 10.f;
+	float		fEmissive = vEmissive.b * 5.f;
 
 	// 따로 설정이 필요할듯
 	//vDiffuse.rgb = (kD *	vDiffuse.rgb) * fAmbientOcclusion;
@@ -216,7 +216,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	float3 kD = (float3)1.0 - kS;
 	kD *= 1.0 - fMetalic;
 
-	float			fEmissive = vEmissive.r * 10.f;
+	float			fEmissive = vEmissive.r * 5.f;
 
 	vDiffuse.rgb = (kD *	vDiffuse.rgb) * fAmbientOcclusion;
 	//vDiffuse.a = vMask.r * vSSSMask.r;

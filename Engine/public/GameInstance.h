@@ -115,6 +115,7 @@ public: /* For.PipeLine */
 		const LIGHTDESC* Get_LightDesc(_uint iIndex);
 		HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc,
 						  class CLight** ppOut = nullptr);
+		void Imgui_LightManagerRender();
 		void Clear();
 
 	public: /* For.Font_Manager */

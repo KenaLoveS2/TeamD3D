@@ -541,6 +541,12 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pLight_Manager->Add_Light(pDevice, pContext, LightDesc, ppOut);
 }
 
+void CGameInstance::Imgui_LightManagerRender()
+{
+	if (nullptr == m_pLight_Manager) return;
+	m_pLight_Manager->Imgui_Render();
+}
+
 
 void CGameInstance::Enviroment_Clear()
 {

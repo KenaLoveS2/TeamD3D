@@ -15,7 +15,7 @@ vector			g_vLightSpecular;
 vector			g_vCamPosition;
 
 vector			g_vMtrlAmbient = (vector)1.f; 
-vector			g_vMtrlSpecular = (vector)0.3f;
+vector			g_vMtrlSpecular = (vector)0.2f;
 
 float				g_fTexcelSizeX = 8000.f;
 float				g_fTexcelSizeY = 4500.f;
