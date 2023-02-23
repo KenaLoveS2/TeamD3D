@@ -1,21 +1,23 @@
 #include "Shader_Client_Defines.h"
-
-/**********Constant Buffer*********/
+/**********Constant Buffer***********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix			g_SocketMatrix;
-float				g_fFar = 300.f;
-/**********************************/
+//vector			g_vBrushPos;
+//float			g_fBrushRange = 5.f;
+/*************************************/
 
+/* 재질정보 */
 Texture2D<float4>		g_DiffuseTexture;
-Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_ERAOTexture;
+
+///* 지형 셰이딩 */
+//Texture2D<float4>		g_BrushTexture;
+//Texture2D<float4>		g_FilterTexture;
+//
 
 struct VS_IN
 {
 	float3		vPosition : POSITION;
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
-	float3		vTangent : TANGENT;
 };
 
 struct VS_OUT
@@ -23,10 +25,10 @@ struct VS_OUT
 	float4		vPosition : SV_POSITION;
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos : TEXCOORD1;
-	float4		vTangent : TANGENT;
-	float3		vBinormal : BINORMAL;
+	float4		vWorldPos : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
 };
+
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -37,34 +39,12 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vTexUV = In.vTexUV;
+
+	Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
-	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
-	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-
-	return Out;
-}
-
-VS_OUT VS_MAIN_SOCKET(VS_IN In)
-{
-	VS_OUT		Out = (VS_OUT)0;
-
-	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
-
-	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
-	vPosition = mul(vPosition, g_SocketMatrix);
-
-	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
-	vNormal = mul(vNormal, g_SocketMatrix);
-
-	Out.vPosition = mul(vPosition, matVP); 
-	Out.vNormal = normalize(vNormal);
-	Out.vTexUV = In.vTexUV;
-	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
 
 	return Out;
 }
@@ -75,8 +55,6 @@ struct VS_OUT_TESS
 	float3		vPosition : POSITION;
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
-	float4		vTangent : TANGENT;
-	float3		vBinormal : BINORMAL;
 };
 
 VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
@@ -88,22 +66,21 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	Out.vPosition = In.vPosition;
 	Out.vNormal = In.vNormal;
 	Out.vTexUV = In.vTexUV;
-	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
-	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+
 	return Out;
 }
 
 
-
-struct PatchTess
+// 헐 세이더의 패치 상수 위상에 대한 출력 매개변수
+struct PatchTess		//CONSTANT_HS_OUT
 {
-	float EdgeTess[3] : SV_TessFactor;
-	float InsideTess : SV_InsideTessFactor;
+	float EdgeTess[3] : SV_TessFactor;			// 패치 가장자리의 테셀레이션 개수
+	float InsideTess : SV_InsideTessFactor;	// 패치 내부의 테셀레이션 계수
 
 	// Geometry cubic generated control points
-	float3 f3B210    : POSITION3;
-	float3 f3B120    : POSITION4;
-	float3 f3B021    : POSITION5;
+	float3 f3B210    : POSITION3;		// 추가할 제어점
+	float3 f3B120    : POSITION4;		// 추가 제어점
+	float3 f3B021    : POSITION5;		// 추가할 제어점
 	float3 f3B012    : POSITION6;
 	float3 f3B102    : POSITION7;
 	float3 f3B201    : POSITION8;
@@ -115,6 +92,7 @@ struct PatchTess
 	float3 f3N101    : NORMAL5;
 };
 
+// 제어점 만드들기
 PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_PrimitiveID)
 {
 	PatchTess		pt;
@@ -134,7 +112,7 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 	float3 f3N020 = Patch[1].vNormal;
 	float3 f3N200 = Patch[2].vNormal;
 
-	// Compute the cubic geometry control points
+	// Compute the cubic geometry control points		//입방체 기하 제어점 계산
 	// Edge control points
 	pt.f3B210 = ((2.0f * f3B003) + f3B030 - (dot((f3B030 - f3B003), f3N002) * f3N002)) / 3.0f;
 	pt.f3B120 = ((2.0f * f3B030) + f3B003 - (dot((f3B003 - f3B030), f3N020) * f3N020)) / 3.0f;
@@ -164,8 +142,6 @@ struct HullOut
 	float3	vPosition : POSITION;
 	float3	vNormal : NORMAL;
 	float2	vTexUV : TEXCOORD0;
-	float4		vTangent : TANGENT;
-	float3		vBinormal : BINORMAL;
 };
 
 
@@ -176,7 +152,9 @@ struct HullOut
 [patchconstantfunc("ConstantHS")]
 [maxtessfactor(9.0f)]
 
-HullOut HS_MAIN(InputPatch<VS_OUT_TESS, 3> p,uint i : SV_OutputControlPointID, uint patchID : SV_PrimitiveID)
+HullOut HS_MAIN(InputPatch<VS_OUT_TESS, 3> p,		//삼각형은 3개
+	uint i : SV_OutputControlPointID,
+	uint patchID : SV_PrimitiveID)
 {
 	HullOut		hout;
 
@@ -248,7 +226,7 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
 	return Out;
 }
 
-struct PS_IN_TESS
+struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
 	float4		vNormal : NORMAL;
@@ -257,130 +235,55 @@ struct PS_IN_TESS
 	float4		vProjPos : TEXCOORD2;
 };
 
-struct PS_OUT_TESS
+struct PS_OUT
 {
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
 };
 
-PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
-{
-	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
-
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-
-	if (0.1f > vDiffuse.a)
-		discard;
-
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-
-	/* 탄젠트스페이스 */
-	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-	//float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-	//vNormal = normalize(mul(vNormal, WorldMatrix));
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
-
-	Out.vDiffuse = CalcHDRColor(vDiffuse, vERAO.r);
-	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
-	return Out;
-}
-
-struct PS_IN
-{
-	float4		vPosition : SV_POSITION;
-	float4		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos : TEXCOORD1;
-	float4		vTangent : TANGENT;
-	float3		vBinormal : BINORMAL;
-};
-
-struct PS_OUT
-{
-	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vDiffuse  : SV_TARGET0;
-	float4		vNormal : SV_TARGET1;
-	float4		vDepth   : SV_TARGET2;
-};
-
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vSourDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
+	//vector		vDestDiffuse = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV * 30.f);
+	//vector		vFilter = g_FilterTexture.Sample(LinearSampler, In.vTexUV);
 
-	if (0.1f > vDiffuse.a)
-		discard;
+	//vector		vBrush = (vector)0.f;
 
-	vector		vERAO  = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	/*if (g_vBrushPos.x - g_fBrushRange <= In.vWorldPos.x && In.vWorldPos.x < g_vBrushPos.x + g_fBrushRange &&
+		g_vBrushPos.z - g_fBrushRange <= In.vWorldPos.z && In.vWorldPos.z < g_vBrushPos.z + g_fBrushRange)
+	{
+		float2		vUV;
 
-	/* 탄젠트스페이스 */
-	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
-	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-	vNormal = normalize(mul(vNormal, WorldMatrix));
+		vUV.x = (In.vWorldPos.x - (g_vBrushPos.x - g_fBrushRange)) / (2.f * g_fBrushRange);
+		vUV.y = ((g_vBrushPos.z + g_fBrushRange) - In.vWorldPos.z) / (2.f * g_fBrushRange);
 
-	Out.vDiffuse =	CalcHDRColor(vDiffuse, vERAO.r);
-	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
+	}*/
 
-	return Out;
-}
+	/*Out.vDiffuse = vSourDiffuse * vFilter.r +
+		vDestDiffuse * (1.f - vFilter.r) + vBrush;*/
 
-struct VS_IN_SHADOW
-{
-	float3	vPosition : POSITION;
-};
+	Out.vDiffuse = vSourDiffuse;
+	Out.vDiffuse.a = 1.f;
 
-struct VS_OUT_SHADOW
-{
-	float4	vPosition : SV_POSITION;
-	float4	vProjPos  : TEXCOORD0;
-};
+	/* -1 ~ 1 => 0 ~ 1 */
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN_SHADOW In)
-{
-	VS_OUT_SHADOW		Out = (VS_OUT_SHADOW)0;
+	//x, y, z * 투영행렬. 
+	//z == near -> 0
+	//z == far -> far
 
-	matrix		matWV, matWVP;
-
-	matWV = mul(g_WorldMatrix, g_ViewMatrix);
-	matWVP = mul(matWV, g_ProjMatrix);
-
-	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	Out.vProjPos = Out.vPosition;
-
-	return Out;
-}
-
-struct PS_IN_SHADOW
-{
-	float4			vPosition : SV_POSITION;
-	float4			vProjPos : TEXCOORD0;
-};
-
-struct PS_OUT_SHADOW
-{
-	vector			vLightDepth : SV_TARGET0;
-};
-
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
-{
-	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
-
-	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
-
-	Out.vLightDepth.a = 1.f;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 
 	return Out;
 }
 
 technique11 DefaultTechnique
 {
-	pass Default		//0
+	pass DefaultPass
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -393,58 +296,17 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket//1
+	pass TerrainTess
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Shadow//2
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
-	}
-
-	
-	pass WireFrame//3
-	{
-		SetRasterizerState(RS_Wireframe);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		//HullShader = compile  hu_5_0 ;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass MeshTess//4
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN_TESS();
 		GeometryShader = NULL;
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_TESS();
+		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-
 
 }

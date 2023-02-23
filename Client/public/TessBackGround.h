@@ -7,19 +7,18 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CNavigation;
-class CVIBuffer_Terrain;
+class CTransform;
+class CVIBuffer_Rect_Tess;
 END
 
 BEGIN(Client)
-class CTerrain final : public CGameObject
+
+class CTessBackGround final : public CGameObject
 {
-public:
-	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_FILTER, TYPE_END };
 private:
-	CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CTerrain(const CTerrain& rhs);
-	virtual ~CTerrain() = default;
+	CTessBackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CTessBackGround(const CTessBackGround& rhs);
+	virtual ~CTessBackGround() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -28,22 +27,26 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 private:
 	CShader*				m_pShaderCom = nullptr;
+	CTexture*				m_pTextureCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom[TYPE_END] = { nullptr };
-	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
+	CVIBuffer_Rect_Tess*			m_pVIBufferCom = nullptr;
 
-	CNavigation*			m_pNavigationCom = nullptr;
+private:
+	_float4x4				m_ViewMatrix;
+	_float4x4				m_ProjMatrix;
 
+	_float					m_fX, m_fY, m_fSizeX, m_fSizeY;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
 public:
-	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	static CTessBackGround* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
 

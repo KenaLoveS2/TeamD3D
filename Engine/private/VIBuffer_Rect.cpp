@@ -19,8 +19,9 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 		return E_FAIL;
 
 	m_iNumVertexBuffers = 1;
-	m_iStride = sizeof(VTXTEX);
 	m_iNumVertices = 4;
+	m_iStride = sizeof(VTXTEX);
+
 	m_iNumPrimitive = 2;	
 	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	m_eIndexFormat = DXGI_FORMAT_R16_UINT;

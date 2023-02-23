@@ -11,6 +11,12 @@ private:
 	CImgui_PropertyEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 public:
+	class  CGameObject*		Get_SelectedObject() {
+		if (m_pSelectedObject != nullptr)
+			return m_pSelectedObject;
+	}
+
+public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 	virtual void Imgui_RenderTab() override;
