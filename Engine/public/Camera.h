@@ -29,7 +29,7 @@ public:
 
 	_float* Get_Far()  { return &m_CameraDesc.fFar; }
 
-private:
+protected:
 	class CPipeLine*			m_pPipeLine = nullptr;
 	CAMERADESC				m_CameraDesc; 
 

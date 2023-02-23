@@ -57,7 +57,7 @@ void CMainApp::Tick(_float fTimeDelta)
 	m_TimeAcc += fTimeDelta;
 #endif 
 
-	m_pGameInstance->Tick_Engine(fTimeDelta);
+	m_pGameInstance->Tick_Engine(g_bWinActive, fTimeDelta);
 }
 
 HRESULT CMainApp::Render()

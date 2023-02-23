@@ -47,8 +47,11 @@ HRESULT CInput_Device::Ready_Input_Device(HINSTANCE hInst, HWND hWnd)
 	return S_OK;
 }
 
-void CInput_Device::Invalidate_Input_Device(void)
+void CInput_Device::Invalidate_Input_Device(_bool bWinActive)
 {
+	if (bWinActive == false)
+		return;
+
 	m_pKeyBoard->GetDeviceState(256, m_byKeyState);
 	m_pMouse->GetDeviceState(sizeof(m_MouseState), &m_MouseState);
 }
