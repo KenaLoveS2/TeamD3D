@@ -32,13 +32,13 @@ protected:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
-	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
-	virtual void			Imgui_RenderProperty() override;
+	virtual void				Imgui_RenderProperty() override;
 
 public:
-	void					Model_Synchronization(_bool bPausePlay);
+	void						Model_Synchronization(_bool bPausePlay);
 
 protected:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -53,7 +53,7 @@ protected:
 	virtual HRESULT		Ready_Parts() { return S_OK; }
 	virtual HRESULT		SetUp_Components() PURE;
 	virtual HRESULT		SetUp_ShaderResource() PURE;
-
+	float							m_fTest = 0.f;
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) PURE;
 	virtual void				Free() override;

@@ -92,7 +92,7 @@ public:
 	HRESULT SetUp_ClonedAnimations();
 	HRESULT SetUp_ClonedMeshes();
 
-	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath);
+	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 };
 
 END

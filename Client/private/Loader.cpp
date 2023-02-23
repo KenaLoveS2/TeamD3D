@@ -19,7 +19,6 @@
 
 /* Objects */
 #include "Cave_Rock.h"
-#include "ForkLift.h"
 
 /* UI */
 #include "BackGround.h"
@@ -287,10 +286,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_ForkLift*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	///* For.Prototype_GameObject_Effect_Rect_Instancing */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),

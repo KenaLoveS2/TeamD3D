@@ -16,7 +16,7 @@ public:
 	HRESULT Render(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader);
 
 private:
-	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
 
 private:

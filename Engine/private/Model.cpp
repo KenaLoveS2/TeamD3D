@@ -33,7 +33,7 @@ CModel::CModel(const CModel & rhs)
 {
 	for (auto& Material : m_Materials)
 	{
-		for (_uint i = 0; i < (_uint)AI_TEXTURE_TYPE_MAX; ++i)
+		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_AddRef(Material.pTexture[i]);
 	}
 
@@ -99,7 +99,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		for (_uint i = 0; i < m_iNumMaterials; i++)
 		{
 			MODELMATERIAL ModelMatrial;
-			for (_uint j = 0; j < (_uint)AI_TEXTURE_TYPE_MAX; j++)
+			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 			{
 				_bool bUseFlag = false;
 				ReadFile(hFile, &bUseFlag, sizeof(_bool), &dwByte, nullptr);
@@ -208,7 +208,7 @@ void CModel::Imgui_RenderProperty()
 			ImGui::Text("Mesh %d", i);
 			ImGui::Separator();
 
-			for (_uint j = 0; j < (_uint)AI_TEXTURE_TYPE_MAX; j++)
+			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 			{
 				if (m_Materials[iMaterialIndex].pTexture[j] != nullptr)
 				{
@@ -225,7 +225,7 @@ void CModel::Imgui_RenderProperty()
 		{
 			ImGui::Text("Material %d", i);
 
-			for (_uint j = 0; j < (_uint)AI_TEXTURE_TYPE_MAX; ++j)
+			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; ++j)
 			{
 				if (m_Materials[i].pTexture[j] != nullptr)
 				{
@@ -482,11 +482,11 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 
 	for (auto& tMaterial : m_Materials)
 	{
-		for (_uint i = 0; i < (_uint)AI_TEXTURE_TYPE_MAX; ++i)
+		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 		{
 			if (tMaterial.pTexture[i] == nullptr)
 			{
-				_uint		iTemp = (_uint)AI_TEXTURE_TYPE_MAX;
+				_uint		iTemp = (_uint)WJ_TEXTURE_TYPE_MAX;
 				WriteFile(hFile, &iTemp, sizeof(_uint), &dwByte, nullptr);
 			}
 			else
@@ -698,12 +698,12 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		MODELMATERIAL		tMaterial;
 		ZeroMemory(&tMaterial, sizeof(MODELMATERIAL));
 
-		for (_uint j = 0; j < (_uint)AI_TEXTURE_TYPE_MAX; ++j)
+		for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; ++j)
 		{
-			_uint		iTemp = AI_TEXTURE_TYPE_MAX;
+			_uint		iTemp = WJ_TEXTURE_TYPE_MAX;
 			ReadFile(hFile, &iTemp, sizeof(_uint), &dwByte, nullptr);
 
-			if (iTemp == (_uint)AI_TEXTURE_TYPE_MAX)
+			if (iTemp == (_uint)WJ_TEXTURE_TYPE_MAX)
 				continue;
 
 			_uint		iFilePathLength = 0;
@@ -825,7 +825,7 @@ void CModel::Free()
 
 	for (auto& Material : m_Materials)
 	{
-		for (_uint i = 0; i < (_uint)AI_TEXTURE_TYPE_MAX; ++i)
+		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_Release(Material.pTexture[i]);
 	}
 	m_Materials.clear();
@@ -835,7 +835,7 @@ void CModel::Free()
 	m_Meshes.clear();
 }
 
-HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath)
+HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
 {
 	if (iMaterialIndex >= m_Materials.size()) return E_FAIL;
 	
