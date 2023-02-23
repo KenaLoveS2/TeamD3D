@@ -10,6 +10,8 @@ texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 // Type
 int		g_TextureRenderType, g_BlendType;
 
+bool    g_IsUseMask;
+
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 
@@ -64,7 +66,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (g_TextureRenderType == 1) // Sprite
 	{
-		In.vTexUV.x = In.vTexUV.x * g_WidthFrame;
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
 		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
 
 		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
@@ -117,72 +119,60 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor = albedo0 * albedo1 * albedo2 * albedo3* albedo4*2.0f;
 		Out.vColor = saturate(Out.vColor);
 	}
+	if (g_BlendType == 2 || g_BlendType == 3)
+		Out.vColor = Out.vColor * g_vColor;
+	else
+		Out.vColor = (Out.vColor * g_vColor) + (Out.vColor * (1.f - g_vColor));
 
 	// MTexture
-	if (g_iTotalMTextureComCnt == 1)
+	if (g_IsUseMask == true)
 	{
-		vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		if (g_iTotalMTextureComCnt == 1)
+		{
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+			Out.vColor = Out.vColor * maskTex0;
+		}
+		if (g_iTotalMTextureComCnt == 2)
+		{
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+			vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
 
-		if (g_BlendType == 2)
-			Out.vColor = Out.vColor * maskTex0 * g_vColor;
-		else
-			Out.vColor = (Out.vColor * maskTex0) * g_vColor + (Out.vColor * maskTex0) * (1.f - g_vColor);
-
-	}
-	if (g_iTotalMTextureComCnt == 2)
-	{
-		vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-		vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
-
-		vector maskTex = saturate(maskTex0 * maskTex1* 2.0f);
-
-		if (g_BlendType == 2)
+			vector maskTex = saturate(maskTex0 * maskTex1* 2.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
-		else
-			Out.vColor = (Out.vColor * maskTex) * g_vColor + (Out.vColor * maskTex) * (1.f - g_vColor);
-	}
-	if (g_iTotalMTextureComCnt == 3)
-	{
-		vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-		vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
-		vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
+		}
+		if (g_iTotalMTextureComCnt == 3)
+		{
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+			vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
+			vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
 
-		vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* 2.0f);
-
-		if (g_BlendType == 2)
+			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* 2.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
-		else
-			Out.vColor = (Out.vColor * maskTex) * g_vColor + (Out.vColor * maskTex) * (1.f - g_vColor);
-	}
-	if (g_iTotalMTextureComCnt == 4)
-	{
-		vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-		vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
-		vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
-		vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
+		}
+		if (g_iTotalMTextureComCnt == 4)
+		{
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+			vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
+			vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
+			vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
 
-		vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* 2.0f);
-
-		if (g_BlendType == 2)
+			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* 2.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
-		else
-			Out.vColor = (Out.vColor * maskTex) * g_vColor + (Out.vColor * maskTex) * (1.f - g_vColor);
-	}
-	if (g_iTotalMTextureComCnt == 5)
-	{
-		vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-		vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
-		vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
-		vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
-		vector maskTex4 = g_MTexture_4.Sample(LinearSampler, In.vTexUV);
+		}
+		if (g_iTotalMTextureComCnt == 5)
+		{
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+			vector maskTex1 = g_MTexture_1.Sample(LinearSampler, In.vTexUV);
+			vector maskTex2 = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
+			vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
+			vector maskTex4 = g_MTexture_4.Sample(LinearSampler, In.vTexUV);
 
-		vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* maskTex4* 2.0f);
-
-		if (g_BlendType == 2)
+			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* maskTex4* 2.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
-		else
-			Out.vColor = (Out.vColor * maskTex) * g_vColor + (Out.vColor * maskTex) * (1.f - g_vColor);
+		}
 	}
+	else
+		Out.vColor = Out.vColor * g_vColor;
 
 	////
 	float2		vTexUV;

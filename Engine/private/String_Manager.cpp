@@ -17,12 +17,13 @@ void CString_Manager::Free()
 		}
 	}
 
-	m_vecUITextureProtoTag.clear();
-	m_vecUITextureName.clear();
-
-	for (auto pair : m_mapUIStrings)
+	for (auto pair : m_mapUIString)
 		pair.second.clear();
-	m_mapUIStrings.clear();
+	m_mapUIString.clear();
+
+	for (auto pair : m_mapUIWString)
+		pair.second.clear();
+	m_mapUIWString.clear();
 }
 
 void CString_Manager::Initalize(_uint iNumLevels)
@@ -80,57 +81,65 @@ _tchar* CString_Manager::Find_String(_uint iLevelIndex, _tchar * pStr)
 	return *iter;
 }
 
-void CString_Manager::Add_UITextureTag(wstring wstr)
+void CString_Manager::Add_UIString(_uint iKey, string str)
 {
-	for (auto tag : m_vecUITextureProtoTag)
-	{
-		if (0 == tag.compare(wstr))
-		{
-			MSG_BOX("Already Exists : String_Manager");
-			return;
-		}
-	}
-
-	m_vecUITextureProtoTag.push_back(wstr);
-	wstring tag = L"Prototype_Component_Texture_";
-	size_t tagLength = tag.length();
-	size_t length = 0;
-	length = wstr.length() - tagLength;
-	wstr = wstr.substr(tagLength, length);
-
-	string str;
-	str.assign(wstr.begin(), wstr.end());
-	m_vecUITextureName.push_back(str);
-}
-
-void CString_Manager::Add_UIString(_tchar * tag, string str)
-{
-	auto iter = find_if(m_mapUIStrings.begin(), m_mapUIStrings.end(), CTag_Finder(tag));
-	if (iter == m_mapUIStrings.end())
+	auto iter = m_mapUIString.find(iKey);
+	if (iter == m_mapUIString.end())
 	{
 		vector<string> vec;
 		vec.push_back(str);
-		m_mapUIStrings.emplace(tag, vec);
+		m_mapUIString.emplace(iKey, vec);
 	}
 	else
 	{
-		for (auto t : iter->second)
+		for (auto s : iter->second)
 		{
-			if (0 == t.compare(str))
+			if (0 == s.compare(str))
 			{
 				MSG_BOX("Already Exists");
 				return;
 			}
 		}
-
 		iter->second.push_back(str);
 	}
 }
 
-vector<string>* CString_Manager::Get_UIString(_tchar * tag)
+vector<string>* CString_Manager::Get_UIString(_uint iKey)
 {
-	auto iter = find_if(m_mapUIStrings.begin(), m_mapUIStrings.end(), CTag_Finder(tag));
-	if (iter == m_mapUIStrings.end())
+	auto iter = m_mapUIString.find(iKey);
+	if (iter == m_mapUIString.end())
+		return nullptr;
+
+	return &iter->second;
+}
+
+void CString_Manager::Add_UIWString(_uint iKey, wstring str)
+{
+	auto iter = m_mapUIWString.find(iKey);
+	if (iter == m_mapUIWString.end())
+	{
+		vector<wstring> vec;
+		vec.push_back(str);
+		m_mapUIWString.emplace(iKey, vec);
+	}
+	else
+	{
+		for (auto s : iter->second)
+		{
+			if (0 == s.compare(str))
+			{
+				MSG_BOX("Already Exists");
+				return;
+			}
+		}
+		iter->second.push_back(str);
+	}
+}
+
+vector<wstring>* CString_Manager::Get_UIWString(_uint iKey)
+{
+	auto iter = m_mapUIWString.find(iKey);
+	if (iter == m_mapUIWString.end())
 		return nullptr;
 
 	return &iter->second;

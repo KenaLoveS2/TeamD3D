@@ -53,28 +53,23 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDFrame"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDFrame.png")))))
 		return E_FAIL;
-	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDFrame");
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDFrame");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDFrame");
 
 	/* Bar */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarBG.png")))))
 		return E_FAIL;
-	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBar");
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBar");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBar");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarMask"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarMask.png")))))
 		return E_FAIL;
-	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBarMask");
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarMask");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarMask");
 	
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarNoise.png")))))
 		return E_FAIL;
-	pGameInstance->Add_UITextureTag(L"Prototype_Component_Texture_HUDHPBarNoise");
-	m_vecTextureProtoTag.push_back(L"Prototype_Component_Texture_HUDHPBarNoise");
-
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarNoise");
 
 	/* RingBar */
 	/* PipGuage */
@@ -93,10 +88,10 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* RenderPass List */
-	pGameInstance->Add_UIString(L"RenderPass", "Default");
-	pGameInstance->Add_UIString(L"RenderPass", "x(Effect)");
-	pGameInstance->Add_UIString(L"RenderPass", "DiffuseAlphaBlend");
-	pGameInstance->Add_UIString(L"RenderPass", "MaskMap");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Default");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "DiffuseAlphaBlend");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskMap");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HPBar");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -109,17 +104,19 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	/* HUD */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_HUD"), CUI_CanvasHUD::Create(pDevice, pContext))))
 		return E_FAIL;
-	m_vecCanvasProtoTag.push_back(TEXT("Prototype_GameObject_UI_Canvas_HUD"));
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_HUD");
 
 	/* HP Bar */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HP"), CUI_NodeHUDHP::Create(pDevice, pContext))))
-		return E_FAIL;
-	m_vecNodeProtoTag.push_back(TEXT("Prototype_GameObject_UI_Node_HP"));
-
-	/* HP Guage */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HPBar"), CUI_NodeHUDHPBar::Create(pDevice, pContext))))
 		return E_FAIL;
-	m_vecNodeProtoTag.push_back(TEXT("Prototype_GameObject_UI_Node_HPBar"));
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HPBar");
+
+	/* HP Guage */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HP"), CUI_NodeHUDHP::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HP");
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -132,19 +129,6 @@ HRESULT CUI_ClientManager::Ready_Clone_GameObject(ID3D11Device* pDevice, ID3D11D
 
 	/* Todo : File Load */
 
-	/* Test */
-
-
-	/* For. LifeBar */
-	//FAILED_CHECK_RETURN(pGameInstance->Clone_GameObject(
-	//	CGameInstance::Get_StaticLevelIndex(), TEXT("Layer_UI_LifeFrame"),
-	//	TEXT("Proto_GameObject_LifeBarFrame")), E_FAIL,
-	//	"Failed To Clone LifeBarFrame");
-
-
-	/* Ready Tool */
-	//CUI_Tool* pTool = ;
-	//pGameInstance->Add_ImguiObject(pTool);
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -152,9 +136,72 @@ HRESULT CUI_ClientManager::Ready_Clone_GameObject(ID3D11Device* pDevice, ID3D11D
 	return S_OK;
 }
 
+void CUI_ClientManager::Save_TextureComStrings(CGameInstance* pGameInstance, const _tchar*  pTag)
+{
+	// Ex. Prototype_Component_Texture_HUDFrame
+
+	// 1) Add TextureProtoTag(wstr)
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG, pTag);
+
+	// 2) Add TextureName(To make Texture List)
+	wstring head = L"Prototype_Component_Texture_";
+	size_t headLength = head.length();
+
+	wstring tag = pTag;
+	size_t length = tag.length();
+	length = tag.length() - headLength;
+
+	string str;
+	str = str.assign(tag.begin(), tag.end()).substr(headLength, length);
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_TEXTURE_NAME, str);
+}
+
+void CUI_ClientManager::Save_CanvasStrings(CGameInstance* pGameInstance, const _tchar * pTag)
+{
+	// Ex. Prototype_GameObject_UI_Canvas_HUD
+
+	// 1) Add Canvas ProtoTag
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG, pTag);
+
+	// 2) Add Canvas CloneTag
+	wstring head = L"Prototype_GameObject_UI_";
+	size_t headLength = head.length();
+	wstring tag = pTag;
+	size_t length = tag.length();
+	length = tag.length() - headLength;
+	tag = tag.substr(headLength, length);
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG, tag);
+
+	// 3) Add Canvas Name(CloneTag(wstr) to str)
+	string str;
+	str = str.assign(tag.begin(), tag.end());
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_CANVAS_NAME, str);
+
+}
+
+void CUI_ClientManager::Save_NodeStrings(CGameInstance* pGameInstance, const _tchar * pTag)
+{
+	// Ex. Prototype_GameObject_UI_Node_HPBar
+
+	// 1) Add Canvas ProtoTag
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_NODE_PROTOTAG, pTag);
+
+	// 2) Add Canvas CloneTag
+	wstring head = L"Prototype_GameObject_UI_";
+	size_t headLength = head.length();
+	wstring tag = pTag;
+	size_t length = tag.length();
+	length = tag.length() - headLength;
+	tag = tag.substr(headLength, length);
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_NODE_CLONETAG, tag);
+
+	// 3) Add Canvas Name(CloneTag(wstr) to str)
+	string str;
+	str = str.assign(tag.begin(), tag.end());
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_NODE_NAME, str);
+
+}
+
 void CUI_ClientManager::Free()
 {
-	m_vecTextureProtoTag.clear();
-	m_vecCanvasProtoTag.clear();
-	m_vecNodeProtoTag.clear();
 }

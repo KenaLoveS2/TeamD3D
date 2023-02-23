@@ -42,7 +42,7 @@ public:
 
 public:
 	static CNavigation* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pNavigationDataFilePath);
-	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
 	HRESULT Set_IndexByCurrentPos(_fvector vPos);

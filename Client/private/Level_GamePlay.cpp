@@ -6,7 +6,6 @@
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_UIEditor.h"
 #include "Tool_Animation.h"
-#include "Imgui_Effect.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -28,7 +27,6 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
@@ -82,10 +80,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vDiffuse = _float4(5.f, 5.f, 5.f, 1.f);
+	LightDesc.vAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vEmissive = _float4(0.f, 0.f, 0.f, 1.f);
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -99,8 +96,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Clone_Terrain"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Clone_Terrain"))))
+		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
@@ -147,6 +144,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
 		return E_FAIL;
+
+	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
+	CameraDesc.fNear = 0.1f;
+	CameraDesc.fFar = 1000.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
+	NULL_CHECK_RETURN(pCamera, E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -119,7 +119,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 				_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 				CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-				if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}
@@ -159,7 +159,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 
 				_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 				CGameInstance::GetInstance()->Add_String(szMTextureComTag);
-				if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}

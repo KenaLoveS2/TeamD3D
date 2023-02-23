@@ -32,6 +32,7 @@
 /* Components*/
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Camera_Player.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -79,7 +80,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_Critical_Section);
 
-	/* 로딩을 하기위한 추가적인 흐름을 만든다 (Thread). */
+	/* Make additional flow for Loading(Thread). */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -87,7 +88,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-/* 로고를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -126,7 +126,6 @@ HRESULT CLoader::Loading_ForLogo()
 	return S_OK;
 }
 
-/* 게임플레이를 위한 원형을 생성한다. */
 HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -156,11 +155,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_Texture_Explosion */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Effect */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
@@ -245,11 +239,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxEffectTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Shader_VtxRectInstance */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxRectInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstance.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
@@ -268,6 +257,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
+
+	/* For.Prototype_GameObject_Player_Camera */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
@@ -297,20 +291,20 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect_Rect_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),
-		CEffect_Rect_Instancing::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect_Rect_Instancing */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),
+	//	CEffect_Rect_Instancing::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect_Point_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point_Instancing"),
-		CEffect_Point_Instancing::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect_Point_Instancing */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point_Instancing"),
+	//	CEffect_Point_Instancing::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_Effect */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
-		CEffect::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Effect */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
+	//	CEffect::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
@@ -495,64 +489,16 @@ HRESULT CLoader::Loading_ForTestEffect()
 	Safe_AddRef(pGameInstance);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
-
-	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
-
-
-
-	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
-	/* For.Prototype_Component_Collider_AABB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_AABB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Texture/E_Effect_%d.png"), 94))))
 		return E_FAIL;
-	/* For.Prototype_Component_Collider_OBB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_OBB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
-		return E_FAIL;
-	/* For.Prototype_Component_Collider_SPHERE*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_SPHERE"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
-		return E_FAIL;
-
-	/*map_Object Compoents */
-	/* For.Prototype_Component_ControlMove*/
-
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
-	/* For.Prototype_Component_Shader_VtxNorTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxNorTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+	/* For.Prototype_Component_Shader_VtxEffectTex */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxModel*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxModel"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxAnimModel*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxCubeTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxCubeTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxRectInstance */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxRectInstance"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstance.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxPointInstance */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxPointInstance"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-
-	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
-
-
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
