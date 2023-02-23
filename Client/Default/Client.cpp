@@ -17,6 +17,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 bool		g_bFrmaeLimit = true;
 bool		g_bFullScreen = false;
 bool		g_bNeedResizeSwapChain = false;
+bool		g_bWinActive = true;
 unsigned int g_iWinSizeX = 1600;
 unsigned int g_iWinSizeY = 900;
 
@@ -226,6 +227,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			g_iWinSizeY = rt.bottom - rt.top;
 		}
 		g_bNeedResizeSwapChain = true;
+		break;
+	}
+	case WM_SETCURSOR:
+		//SetCursor(NULL);
+		break;
+	case WM_ACTIVATE:	/* 창 비활성화 상태일 때 키보드, 마우스 인풋 방지 */
+	{
+		if (HIWORD(wParam) == 32)
+			g_bWinActive = false;
+		else
+		{
+			if (LOWORD(wParam) == WA_INACTIVE)
+				g_bWinActive = false;
+			else if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
+				g_bWinActive = true;
+		}
 		break;
 	}
 	case WM_SYSKEYDOWN:

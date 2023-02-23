@@ -48,27 +48,28 @@ HRESULT CCamera_Dynamic::Initialize(void * pArg)
 
 void CCamera_Dynamic::Tick(_float fTimeDelta)
 {
-	if (GetKeyState('W') & 0x8000)
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Key_Pressing(DIK_W))
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
-	if (GetKeyState('S') & 0x8000)
+	if (pGameInstance->Key_Pressing(DIK_S))
 		m_pTransformCom->Go_Backward(fTimeDelta);
 
-	if (GetKeyState('A') & 0x8000)
+	if (pGameInstance->Key_Pressing(DIK_A))
 		m_pTransformCom->Go_Left(fTimeDelta);
 
-	if (GetKeyState('D') & 0x8000)
+	if (pGameInstance->Key_Pressing(DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
 
-	if (GetKeyState(VK_SPACE) & 0x8000)
+	if (pGameInstance->Key_Pressing(DIK_SPACE))
 		m_pTransformCom->Go_AxisY(fTimeDelta);
 
-	if (GetKeyState('C') & 0x8000)
+	if (pGameInstance->Key_Pressing(DIK_C))
 		m_pTransformCom->Go_AxisNegY(fTimeDelta);
 
-	m_pTransformCom->Speed_Boost(_bool(GetKeyState(VK_LSHIFT) & 0x8000), 5.f);
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
+	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);
 
 	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
 	{

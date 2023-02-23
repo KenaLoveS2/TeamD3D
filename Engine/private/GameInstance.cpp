@@ -118,14 +118,14 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	return S_OK;
 }
 
-void CGameInstance::Tick_Engine(_float fTimeDelta)
+void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 {
 	m_fTimeDelta = fTimeDelta;
 
 	if (nullptr == m_pInput_Device || nullptr == m_pLevel_Manager || nullptr == m_pObject_Manager)
 		return;
 	
-	m_pInput_Device->Invalidate_Input_Device();
+	m_pInput_Device->Invalidate_Input_Device(bWinActive);
 
 	m_pImgui_Manager->Tick_Imgui();
 
