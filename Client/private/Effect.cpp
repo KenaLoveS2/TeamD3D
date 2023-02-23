@@ -154,29 +154,29 @@ HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * Proto
 	CEffect_Base*    pEffectBase = nullptr;
 
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
-	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
 
 	_tchar      szChildProto[128];
 	CUtile::CharToWideChar(ProtoTag, szChildProto);
 
-	char*       szChildCloneTag = CUtile::SeparateText(ProtoTag);
-	char*       szDefault = "_";
-	_int        iTagLength = _int(strlen(szChildCloneTag) + strlen(szDefault) + 1);
-	strcat_s(szChildCloneTag, iTagLength, szDefault);
-
-	_tchar      szChildClone[128];
-	CUtile::CharToWideChar(szChildCloneTag, szChildClone);
+	_tchar    szBuffer[128] = L"";
+	_tchar    szChildClone[128] = L"";
 
 	for (_int i = 0; i < iCreateCnt; ++i)
 	{
-		// Desc Cpy
-		wstring strfinalclonetag = szChildClone;
-		strfinalclonetag += to_wstring(m_iHaveChildCnt);
-
+		// ProtoTag
 		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
 		pGameInstance->Add_String(szChildProtoTag);
 		
-		_tchar* szChildClondTag = CUtile::Create_String(strfinalclonetag.c_str());
+		// CloneTag
+		lstrcpy(szBuffer, L"");
+		lstrcpy(szChildClone, L"");
+
+		char*  szChildCloneTag = CUtile::SeparateText(ProtoTag);
+		CUtile::CharToWideChar(szChildCloneTag, szChildClone);
+		wsprintf(szBuffer, L"_%d", m_iHaveChildCnt);
+		lstrcat(szChildClone, szBuffer);
+
+		_tchar* szChildClondTag = CUtile::Create_String(szChildClone);
 		pGameInstance->Add_String(szChildClondTag);
 
 		pEffectBase = dynamic_cast<CEffect*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
@@ -192,6 +192,26 @@ HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * Proto
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CEffect::Edit_Child(const _tchar * ProtoTag)
+{
+	if (m_vecChild.size() == 0)
+		return S_OK;
+
+	for (auto& iter = m_vecChild.begin(); iter != m_vecChild.end();)
+	{
+		if (!lstrcmp((*iter)->Get_ObjectCloneName(), ProtoTag))
+		{
+			Safe_Release(*iter);
+			m_vecChild.erase(iter);
+			break;
+		}
+		else
+			iter++;
+	}
+
 	return S_OK;
 }
 

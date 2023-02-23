@@ -221,5 +221,6 @@ void CEffect_Base::Free()
 		for (auto& pChild : m_vecChild)
 			Safe_Release(pChild);
 		m_vecChild.clear();
+
 	}
 }

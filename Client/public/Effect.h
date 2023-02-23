@@ -20,6 +20,7 @@ public:
 
 public:
 	virtual HRESULT	Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag);
+	virtual HRESULT Edit_Child(const _tchar * ProtoTag);
 
 private:
 	HRESULT SetUp_Components();
