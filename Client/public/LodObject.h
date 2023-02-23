@@ -10,12 +10,12 @@ class CTexture;
 END
 
 BEGIN(Client)
-class CCave_Rock final : public CEnviromentObj
+class CLodObject final : public CEnviromentObj
 {
 private:
-	CCave_Rock(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CCave_Rock(const CCave_Rock& rhs);
-	virtual ~CCave_Rock() = default;
+	CLodObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CLodObject(const CLodObject& rhs);
+	virtual ~CLodObject() = default;
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -28,19 +28,19 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModelCom = nullptr;
-	class CInteraction_Com*			m_pInteractionCom = nullptr;	 
+	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
-
 public:
-	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex,const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
 public:
-	static  CCave_Rock*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static  CLodObject*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 };
 END
+

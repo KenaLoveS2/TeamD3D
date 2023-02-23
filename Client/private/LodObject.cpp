@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "..\public\Cave_Rock.h"
+#include "..\public\LodObject.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
-CCave_Rock::CCave_Rock(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CEnviromentObj(pDevice,pContext)
+CLodObject::CLodObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CEnviromentObj(pDevice, pContext)
 {
 }
 
-CCave_Rock::CCave_Rock(const CCave_Rock & rhs)
-	:CEnviromentObj(rhs)
+CLodObject::CLodObject(const CLodObject & rhs)
+	: CEnviromentObj(rhs)
 {
 }
 
-HRESULT CCave_Rock::Initialize_Prototype()
+HRESULT CLodObject::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,7 +22,7 @@ HRESULT CCave_Rock::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCave_Rock::Initialize(void * pArg)
+HRESULT CLodObject::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -35,21 +35,20 @@ HRESULT CCave_Rock::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CCave_Rock::Tick(_float fTimeDelta)
+void CLodObject::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
-void CCave_Rock::Late_Tick(_float fTimeDelta)
+void CLodObject::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if(  m_pRendererCom )
-		 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if (m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
-HRESULT CCave_Rock::Render()
+HRESULT CLodObject::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -65,12 +64,12 @@ HRESULT CCave_Rock::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 4);
 	}
 	return S_OK;
 }
 
-HRESULT CCave_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+HRESULT CLodObject::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
 
@@ -94,41 +93,29 @@ HRESULT CCave_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pCo
 	return S_OK;
 }
 
-HRESULT CCave_Rock::SetUp_Components()
+HRESULT CLodObject::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Shader */			
+	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	///* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-	//	(CComponent**)&m_pModelCom)))
-	//	return E_FAIL;
-	
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Model_SM_CliffWall_Large0_T"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Model_SM_CliffWall_Large0"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
-
-	//m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, m_EnviromentDesc.szTextureTag);
-
-	///* For.Com_E_R_AO */
-	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, , TEXT("Com_E_R_AO"),
-	//	(CComponent**)&m_pE_R_AoTexCom)))
-	//	return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CCave_Rock::SetUp_ShaderResources()
+HRESULT CLodObject::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -148,31 +135,31 @@ HRESULT CCave_Rock::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CCave_Rock * CCave_Rock::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CLodObject * CLodObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CCave_Rock*		pInstance = new CCave_Rock(pDevice, pContext);
+	CLodObject*		pInstance = new CLodObject(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CCave_Rock");
+		MSG_BOX("Failed to Created : CLodObject");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CCave_Rock::Clone(void * pArg)
+CGameObject * CLodObject::Clone(void * pArg)
 {
-	CCave_Rock*		pInstance = new CCave_Rock(*this);
+	CLodObject*		pInstance = new CLodObject(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CForkLift");
+		MSG_BOX("Failed to Cloned : CLodObject");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CCave_Rock::Free()
+void CLodObject::Free()
 {
 	__super::Free();
 

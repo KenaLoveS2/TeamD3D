@@ -8,10 +8,10 @@
 #include "Transform.h"
 #include "Navigation.h"
 #include "VIBuffer_Rect.h"
-#include "VIBuffer_Rect_Tess.h"
+
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Terrain.h"
-#include "VIBuffer_Terrain_Tess.h"
+
 #include "VIBuffer_Rect_Instancing.h"
 #include "VIBuffer_Point_Instancing.h"
 #include "StateMachine.h"
