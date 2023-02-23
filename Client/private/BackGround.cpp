@@ -47,12 +47,31 @@ HRESULT CBackGround::Initialize(void * pArg)
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));	
 
+	m_fAlpha = 0.f;
+	m_fAlphaDelta = 0.01f;
+	m_fSpeed = 0.f;
+	m_fTimeAcc = 0.f;
+	m_fTime = 0.1f;
+
 	return S_OK;
 }
 
 void CBackGround::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_fTime = 0.01f;
+	m_fTimeAcc += fTimeDelta;
+	if (m_fTimeAcc > m_fTime)
+	{
+		m_fAlpha += m_fAlphaDelta;
+		if (m_fAlpha > 1.f || m_fAlpha< 0.f)
+			m_fAlphaDelta *= -1;
+
+		m_fSpeed += fTimeDelta * 0.005;
+
+		m_fTimeAcc = 0.f;
+	}
 }
 
 void CBackGround::Late_Tick(_float fTimeDelta)
@@ -71,7 +90,7 @@ HRESULT CBackGround::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(7);
 
 	m_pVIBufferCom->Render();
 
@@ -100,6 +119,10 @@ HRESULT CBackGround::SetUp_Components()
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
+	if (FAILED(__super::Add_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"), TEXT("Com_NoiseTexture"),
+		(CComponent**)&m_pNoiseTexture)))
+		return E_FAIL;
+
 
 	///* For.Com_Tranform */
 	//
@@ -124,8 +147,19 @@ HRESULT CBackGround::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 1)))
 		return E_FAIL;
+
+	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShaderCom, "g_NoiseTexture")))
+		return E_FAIL;
+
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fSpeedX", &m_fSpeed, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+
 
 	return S_OK;
 }
@@ -162,5 +196,6 @@ void CBackGround::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pNoiseTexture);
 
 }

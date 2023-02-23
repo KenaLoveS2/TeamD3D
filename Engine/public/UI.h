@@ -31,6 +31,21 @@ public:
 		_bool		bFinished;
 	} SPRITEINFO;
 
+	typedef struct tagUVMoveInfo
+	{
+		_float2		vDelta;
+		_float		fDeltaTime;
+		_float		fDeltaTimeAcc;
+	}UVMOVE;
+
+	typedef struct tagDefaultRenderInfo
+	{
+		_float4		vColor;
+		_float		fAlpha;
+		_float		fDeltaTime;
+		_float		fDeltaTimeAcc;
+	}DEFAULTINFO;
+
 protected:
 	CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI(const CUI& rhs);
