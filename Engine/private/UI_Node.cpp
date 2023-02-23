@@ -129,6 +129,7 @@ HRESULT CUI_Node::Save_Data()
 	json["renderPass"] = m_iRenderPass;
 
 	wstring filePath = L"../Bin/Data/UI/";
+	filePath += this->Get_ObjectCloneName();
 	//filePath += this->Get_Name();
 	filePath += L"_Property.json";
 
