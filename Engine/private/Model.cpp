@@ -10,7 +10,6 @@
 #include <fstream>
 #include "Function_Manager.h"
 #include "Utile.h"
-
 #include "PipeLine.h"
 #include "Transform.h"
 
@@ -77,7 +76,7 @@ void CModel::Set_PlayTime(_double dPlayTime)
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
 }
 
-HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath)
+HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
@@ -139,7 +138,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		ReadFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
 		for (_uint i = 0; i < m_iNumMeshes; i++)
 		{
-			CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this);
+			CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
 			if (pMesh == nullptr) return E_FAIL;
 
 			m_Meshes.push_back(pMesh);
@@ -787,10 +786,10 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath)
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod )
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);

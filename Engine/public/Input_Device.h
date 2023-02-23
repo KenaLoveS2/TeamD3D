@@ -32,7 +32,7 @@ public:
 
 public:
 	HRESULT		Ready_Input_Device(HINSTANCE hInst, HWND hWnd);
-	void			Invalidate_Input_Device(void);
+	void			Invalidate_Input_Device(_bool bWinActive);
 
 private:
 	LPDIRECTINPUTDEVICE8		m_pKeyBoard;

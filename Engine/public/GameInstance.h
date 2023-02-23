@@ -36,7 +36,7 @@ public: /* For.GameInstance */
 public: /* For.GameInstance */
 	HRESULT Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc,
 							  ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
-	void Tick_Engine(_float fTimeDelta);
+	void Tick_Engine(_bool bWinActive, _float fTimeDelta);
 	void Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag = false);
 
 public: /* For.Graphic_Device */
