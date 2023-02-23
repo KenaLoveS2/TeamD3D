@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Effect.h"
 #include "Layer.h"
+#include "Camera.h"
 
 CImgui_Effect::CImgui_Effect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CImguiObject(pDevice, pContext)
@@ -53,7 +54,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		break;
 
 	case EFFECT_PLANE:
-		ImGui::Separator();
 		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
 		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectTag, 64); ImGui::SameLine();
 
@@ -62,7 +62,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 			wstring	strEffectTag(szEffectTag, &szEffectTag[64]);
 			strDefault = strDefault + strEffectTag;
 
-			if (FAILED(pGameInstance->Add_Prototype(strDefault.c_str(), CEffect::Create(m_pDevice, m_pContext))))
+			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
+			pGameInstance->Add_String(szDefaultTag);
+
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect::Create(m_pDevice, m_pContext))))
 			{
 				RELEASE_INSTANCE(CGameInstance);
 				return;
@@ -76,7 +79,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 				_tchar* szEffectCloneTag = CUtile::Create_String(szDefault);
 				pGameInstance->Add_String(szEffectCloneTag);
 
-				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", strDefault.c_str(), szEffectCloneTag)))
+				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag)))
 				{
 					RELEASE_INSTANCE(CGameInstance);
 					return;
@@ -89,8 +92,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 		}
 
 		ImGui::Separator();
-		if (iSelectObj != -1 &&
-			bIsCreate == true && m_bIsRectLayer == true)
+		if (iSelectObj != -1 && bIsCreate == true && m_bIsRectLayer == true)
 			CreateEffect_Plane(iSelectObj);
 		break;
 
@@ -138,7 +140,6 @@ void CImgui_Effect::LayerEffects_ListBox(_bool& bIsCreate, _int& iSelectObject, 
 	size_t iLayerObjSize = pGameObject.size();
 
 	char** szObjectTag = new char*[iLayerObjSize];
-
 	auto Pair = pGameObject.begin();
 	for (size_t i = 0; i < iLayerObjSize; ++i, ++Pair)
 	{
@@ -179,13 +180,132 @@ void CImgui_Effect::Set_ColorValue(OUT _float4& vColor)
 	vColor = _float4(color.x, color.y, color.z, color.w);
 }
 
+void CImgui_Effect::Set_OptionWindow_Rect(CEffect_Base* pEffect)
+{
+	ImGui::Begin("Moving Position Option Window");
+	static _float fSpeed = 0.0f;
+	static _float fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+
+	static _bool  bStart = true, bPause = false, bStop = false;
+	if (bStart == true)
+	{
+		m_eEffectDesc.bStart = true;
+		fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+	}
+	if (bStop == true)
+		m_eEffectDesc.fPlayBbackTime = 0.0f;
+
+	ImGui::BulletText("Play Button    : "); ImGui::SameLine();
+	if (ImGui::Button("Pause"))
+	{
+		m_eEffectDesc.bStart = false;
+
+		if (bPause == false)
+		{
+			fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+			bPause = true;
+		}
+		bStart = false;
+	}ImGui::SameLine();
+
+	if (ImGui::Button("ReStart"))
+	{
+		bStart = true;
+		bPause = false;
+		bStop = false;
+
+		m_eEffectDesc.fPlayBbackTime = fPlayBackTime;
+	}ImGui::SameLine();
+
+	if (ImGui::Button("Stop"))
+	{
+		m_eEffectDesc.bStart = false;
+		
+		bStart = false;
+		bStop = true;
+		fPlayBackTime = m_eEffectDesc.fPlayBbackTime = 0.0f;
+		fPlayBackTime = 0.0f;
+	}
+
+	ImGui::BulletText("Playback Speed : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(150);
+	ImGui::InputFloat("##PlaybackSpeed", (_float*)&fSpeed, 0.0f, 1.0f);
+
+	ImGui::BulletText("Playback Time  : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(150);
+	ImGui::Text(" %f", fPlayBackTime);
+
+	if (ImGui::CollapsingHeader("Move Detail Setting"))
+	{
+		ImGui::BulletText("MoveRange : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##MoveRange", (_float*)&m_eEffectDesc.fRange, 0.0f, 1.0f);
+
+		ImGui::BulletText("CreateRange : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##CreateRange", (_float*)&m_eEffectDesc.fCreateRange, 0.0f, 1.0f);
+
+		ImGui::BulletText("MoveAngle : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##MoveAngle", (_float*)&m_eEffectDesc.fAngle, 0.0f, 1.0f);
+
+		ImGui::BulletText("fMoveDurationTime : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##fMoveDurationTime", (_float*)&m_eEffectDesc.fMoveDurationTime, 0.0f, 1.0f);
+
+		static _int iSelectMoveDir = 0;
+		static _int iSelectRotation = 0;
+		ImGui::BulletText("MoveDir : ");
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance); // 빌보드를 사용하고 있다는 가정하에 
+
+		CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+		CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+
+		if (ImGui::RadioButton("MOVE_FRONT", &iSelectMoveDir, 0))
+		{			
+			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_FRONT;
+			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
+				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+		}ImGui::SameLine();
+		if (ImGui::RadioButton("MOVE_BACK", &iSelectMoveDir, 1))
+		{
+			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_BACK;
+			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
+				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+
+		}ImGui::SameLine();
+		if (ImGui::RadioButton("MOVE_UP", &iSelectMoveDir, 2))
+		{
+			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_UP;
+			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_UP);
+		}ImGui::SameLine();
+		if (ImGui::RadioButton("MOVE_DOWN", &iSelectMoveDir, 3))
+		{
+			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_DOWN;
+			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_UP));
+		}
+
+		if (ImGui::RadioButton("ROT_X", &iSelectRotation, 0))
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_X; ImGui::SameLine();
+		if (ImGui::RadioButton("ROT_Y", &iSelectRotation, 1))		
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Y; ImGui::SameLine();
+		if (ImGui::RadioButton("ROT_Z", &iSelectRotation, 2))
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Z;
+
+		RELEASE_INSTANCE(CGameInstance);
+	}
+	// moveposition
+	CTransform::TRANSFORMDESC eTransformDesc = pEffect->Get_TransformCom()->Get_TransformDesc();
+	eTransformDesc.fSpeedPerSec = fSpeed;
+	pEffect->Get_TransformCom()->Set_TransformDesc(eTransformDesc);
+	ImGui::End();
+}
+
 void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 {
 	if (m_bIsRectLayer == false)
 		return;
-
-	static _bool bSelect = false;
-	static _int  iBeforeSelect = iSelectObject;
 
 	// 2. Texture Create
 	if (iSelectObject != -1)
@@ -201,21 +321,11 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 		for (size_t i = 0; i < iSelectObject; ++i)
 			iter++;
 
-		iBeforeSelect = iSelectObject;
-		if (iBeforeSelect != iSelectObject)
-			bSelect = true;
-
 		CEffect* pEffect = dynamic_cast<CEffect*>(iter->second);
 		if (pEffect == nullptr)
 			return;
 		//////////////////////////////////////////////////////////////////////////
-		if (bSelect == true)
-		{
-			m_eEffectDesc = pEffect->Get_EffectDesc();
-			bSelect = false;
-		}
-
-		static _bool IsBillboard = false;
+		m_eEffectDesc = pEffect->Get_EffectDesc();
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None; // Tabbar Flag
 		if (ImGui::BeginTabBar("##Value Setting", tab_bar_flags))
@@ -223,13 +333,13 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 			if (ImGui::BeginTabItem("Set Item Value"))
 			{
 				static _int iTextureRender = 0;
-				static _int iBillboard = 0;
 				static _int iBlendType = 0;
 				static _float  fTimeDelta = 0.0f;
 				static _float2 fCnt, fSeparateCnt;
 				static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 				static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
+				ImGui::BulletText("TextureRender Type : ");
 				if (ImGui::RadioButton("TEX_ONE", &iTextureRender, 0))
 					m_eEffectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
 				if (ImGui::RadioButton("TEX_SPRITE", &iTextureRender, 1))
@@ -237,6 +347,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 
 				if (iTextureRender == 1)
 				{
+					ImGui::BulletText("Sprite Option : ");
+
 					ImGui::BulletText("CntWidth, Height : "); ImGui::InputFloat2("##CntWidth, Height", (_float*)&fCnt);
 					m_eEffectDesc.iWidthCnt = (_int)fCnt.x;
 					m_eEffectDesc.iHeightCnt = (_int)fCnt.y;
@@ -251,14 +363,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				}
 
 				ImGui::Separator();
-				ImGui::BulletText("Billboard Type : ");
-				if (ImGui::RadioButton("Use Billboard", &iBillboard, 0))
-					IsBillboard = true;
-				if (ImGui::RadioButton("No Use Billboard", &iBillboard, 1))
-					IsBillboard = false;
-				ImGui::Separator();
-
-				ImGui::BulletText("BlendType : ");
+				ImGui::BulletText("Blend Type : ");
 				if (ImGui::RadioButton("BlendType_Default", &iBlendType, 0))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_DEFAULT;
 				if (ImGui::RadioButton("BlendType_Alpha", &iBlendType, 1))
@@ -269,6 +374,16 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
 				ImGui::Separator();
 
+				ImGui::BulletText("Option : ");
+				static _bool bOpenMoviongPositionWindow = false;
+				ImGui::Checkbox("Use Trigger", &m_eEffectDesc.IsTrigger); ImGui::SameLine();
+				ImGui::Checkbox("Use Billboard", &m_eEffectDesc.IsBillboard);
+				ImGui::Checkbox("Use MaskTexture", &m_eEffectDesc.IsMask); ImGui::SameLine();
+				ImGui::Checkbox("Use MovingPosition", &m_eEffectDesc.IsMovingPosition);
+				ImGui::Checkbox("Use ChildSetting", &m_eEffectDesc.bUseChild);
+				if (m_eEffectDesc.IsMovingPosition)				Set_OptionWindow_Rect(pEffect);
+				ImGui::Separator();
+
 				ImGui::BulletText("fVector : ");	 ImGui::InputFloat4("##fVector", (_float*)&fVector);
 				m_eEffectDesc.vScale = XMVectorSet(fVector.x, fVector.y, fVector.z, fVector.w);
 
@@ -276,17 +391,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 				ImGui::BulletText("vColor : "); Set_ColorValue(fColor);
 				m_eEffectDesc.vColor = XMVectorSet(fColor.x, fColor.y, fColor.z, fColor.w);
 
-				ImGui::SameLine();
-				if (pGameInstance->Key_Down(DIK_RETURN) || ImGui::Button("Set_Data"))
-				{
-					if (IsBillboard == true)
-						m_eEffectDesc.IsBillboard = true;
-					else
-						m_eEffectDesc.IsBillboard = false;
-
-					pEffect->Set_EffectDesc(m_eEffectDesc);
-				}
-
+				pEffect->Set_EffectDesc(m_eEffectDesc);
 				ImGui::EndTabItem();
 			}
 
@@ -424,9 +529,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iSelectObject)
 			}
 		}
 		ImGui::EndTabBar();
+		RELEASE_INSTANCE(CGameInstance);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 

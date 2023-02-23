@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect.h"
 #include "GameInstance.h"
-
+#include "Camera.h"
 
 CEffect::CEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -42,6 +42,33 @@ void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_eEFfectDesc.IsMovingPosition == true )
+	{
+		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
+		if (m_eEFfectDesc.bStart == true && 
+			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
+		{
+			_vector vNormalLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationX(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+
+			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			vPos += vNormalLook * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}
+		else
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
+			m_eEFfectDesc.fPlayBbackTime = 0.0f;;
+		}
+	}
+
 	if (m_eEFfectDesc.IsBillboard == true)
 		BillBoardSetting(m_eEFfectDesc.vScale);
 	else
@@ -72,6 +99,13 @@ void CEffect::Tick(_float fTimeDelta)
 			}
 		}
 	}
+
+	// Child Tick
+	if (m_iHaveChildCnt != 0)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Tick(fTimeDelta);
+	}
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -81,6 +115,13 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if(nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	// Child Late_Tick
+	if (m_iHaveChildCnt != 0)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CEffect::Render()
@@ -112,7 +153,7 @@ HRESULT CEffect::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -136,7 +177,7 @@ HRESULT CEffect::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -149,7 +190,7 @@ HRESULT CEffect::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 	return S_OK;
@@ -181,6 +222,9 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
+		return E_FAIL;
+
 	/* TEX_SPRITE */
 	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
 	{

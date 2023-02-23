@@ -130,9 +130,6 @@
     <Filter Include="01.Levels\03. MapTool">
       <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Tool">
-      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
-    </Filter>
     <Filter Include="95. Tool">
       <UniqueIdentifier>{963a3bc8-daf7-423c-98f4-b558da61a187}</UniqueIdentifier>
     </Filter>
@@ -142,8 +139,20 @@
     <Filter Include="02.GameObjects\Envrioment\Components">
       <UniqueIdentifier>{76b5df7f-4b61-4e84-b945-76aceba1330d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Effect">
+      <UniqueIdentifier>{087c6b50-f34e-47b3-bbd6-088c0bc88544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\Effect">
+      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\05. EffectTool">
+      <UniqueIdentifier>{ce34ad4a-d0a5-4dca-b06c-aed4e706f13a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Levels\04. TestPlay">
-      <UniqueIdentifier>{6ce9d52e-d37c-4108-8e12-6e545a702e47}</UniqueIdentifier>
+      <UniqueIdentifier>{2503939d-7e35-41a8-9fcd-e40a2926e3ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State">
+      <UniqueIdentifier>{6e6de2cd-395c-4900-88d4-ff4763baf2d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -270,12 +279,11 @@
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h">
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Imgui_Effect.h">
-      <Filter>02.GameObjects\Effect\Tool</Filter>
+      <Filter>95. Tool\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Kena_Staff.h">
       <Filter>02.GameObjects\Player\Weapon</Filter>
@@ -292,10 +300,21 @@
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_EffectTest.h">
+      <Filter>01.Levels\05. EffectTool</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Level_TestPlay.h">
       <Filter>01.Levels\04. TestPlay</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_EffectTest.h" />
+    <ClInclude Include="..\Public\Camera_Player.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_State.h">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -406,9 +425,8 @@
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp">
-      <Filter>02.GameObjects\Effect\Tool</Filter>
+      <Filter>95. Tool\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Kena_Staff.cpp">
       <Filter>02.GameObjects\Player\Weapon</Filter>
@@ -425,10 +443,21 @@
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Level_EffectTest.cpp">
+      <Filter>01.Levels\05. EffectTool</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Level_TestPlay.cpp">
       <Filter>01.Levels\04. TestPlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_EffectTest.cpp" />
+    <ClCompile Include="..\Private\Camera_Player.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_State.cpp">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -465,9 +494,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
-      <Filter>02.GameObjects\Effect</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -476,6 +502,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

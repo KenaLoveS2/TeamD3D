@@ -27,13 +27,17 @@ public:
 
 	class CBone* Get_BonePtr(const char* pBoneName);
 	const _double&	Get_PlayTime();
+	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
 	void		Set_PlayTime(_double dPlayTime);
+	void		Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
 
 public:
 	HRESULT	Save_Model(const wstring& wstrSaveFileDirectory);
 	HRESULT	Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
 	void		Reset_Animation();
 	void Set_AnimIndex(_uint iAnimIndex);
+	HRESULT	Add_Event(_uint iAnimIndex, _float fPlayTime, const string& strFuncName);
+	void		Call_Event(const string& strFuncName);
 
 public:	
 	HRESULT Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath);
@@ -52,24 +56,26 @@ private:
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
 	_uint								m_iNumMeshes = 0;
-	vector<class CMesh*>				m_Meshes;	
+	vector<class CMesh*>			m_Meshes;	
 
 	_uint								m_iNumMaterials = 0;
-	vector<MODELMATERIAL>				m_Materials;
+	vector<MODELMATERIAL>		m_Materials;
 
 	/* 전체 뼈의 갯수. */
 	_uint								m_iNumBones = 0;
-	vector<class CBone*>				m_Bones;
+	vector<class CBone*>			m_Bones;
 
 	_uint								m_iCurrentAnimIndex = 0;
 	_uint								m_iNumAnimations = 0;
-	vector<class CAnimation*>			m_Animations;
+	vector<class CAnimation*>		m_Animations;
 
 	_float4x4							m_PivotMatrix;
 
-	_float m_fBlendDuration = 0.2f;
-	_float m_fBlendCurTime = 0.2f;
-	_uint m_iPreAnimIndex = 0;
+	_float								m_fBlendDuration = 0.2f;
+	_float								m_fBlendCurTime = 0.2f;
+	_uint								m_iPreAnimIndex = 0;
+
+	_bool								m_bPausePlay = false;
 
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);

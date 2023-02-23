@@ -52,7 +52,7 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 
 	if (true == m_pLoader->isFinished())
 	{
-		if (GetKeyState(VK_RETURN) & 0x8000)
+		//if (GetKeyState(VK_RETURN) & 0x8000)
 		{
 			CLevel*		pLevel = nullptr;
 

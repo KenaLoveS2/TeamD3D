@@ -8,6 +8,8 @@
 #include "GameObject.h"
 #include "Json/json.hpp"
 #include <fstream>
+#include "Function_Manager.h"
+#include "Utile.h"
 
 #include "PipeLine.h"
 #include "Transform.h"
@@ -239,8 +241,12 @@ void CModel::Imgui_RenderProperty()
 	if (ImGui::CollapsingHeader("Animations"))
 	{
 		static _int	iSelectAnimation = -1;
+		static _int	iSelectFunction = -1;
+		static _int	iSelectEvent = -1;
+		static _bool	bAddEvent = false;
 		CAnimation*	pAnimation = nullptr;
 		char**			ppAnimationTag = new char*[m_iNumAnimations];
+		char**			ppFunctionTags = nullptr;
 
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 		{
@@ -259,6 +265,7 @@ void CModel::Imgui_RenderProperty()
 
 			if (ImGui::Button("Play"))
 			{
+				m_bPausePlay = false;
 				Set_AnimIndex(iSelectAnimation);
 				m_Animations[iSelectAnimation]->Reset_Animation();
 				m_pOwner->Set_AnimationIndex(iSelectAnimation);
@@ -356,12 +363,40 @@ void CModel::Imgui_RenderProperty()
 			ImGui::BulletText("Play Progress");
 			if (ImGui::SliderFloat("Set Progress", &fProgress, 0.f, 1.f))
 			{
+				bAddEvent = true;
+				m_bPausePlay = true;
 				m_pOwner->Update_Child();
 				pAnimation->Reset_Animation();
 				dPlayTime = (_double)fProgress * dDuration;
 			}
-		}
+			if (bAddEvent == true)
+			{
+				_uint	iFuncCnt = 0;
+				CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTags);
 
+				ImGui::Combo("Select Function", &iSelectFunction, ppFunctionTags, iFuncCnt);
+				if (ImGui::Button("Add Event") && iSelectFunction > -1)
+				{
+					_tchar		wszFunctionTag[128] = L"";
+					CUtile::CharToWideChar(ppFunctionTags[iSelectFunction], wszFunctionTag);
+					pAnimation->Add_Event(_float(dPlayTime), string(ppFunctionTags[iSelectFunction]));
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Escape"))
+				{
+					bAddEvent = false;
+					iSelectFunction = -1;
+				}
+
+				for (_uint i = 0; i < iFuncCnt; ++i)
+					Safe_Delete_Array(ppFunctionTags[i]);
+				Safe_Delete_Array(ppFunctionTags);
+			}
+			ImGui::Separator();
+			ImGui::BulletText("Event");
+			pAnimation->ImGui_RenderEvents(iSelectEvent);
+		}
+		
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 			Safe_Delete_Array(ppAnimationTag[i]);
 		Safe_Delete_Array(ppAnimationTag);
@@ -550,10 +585,28 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 	*/
 }
 
+HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
+{
+	if (iAnimIndex >= m_iNumAnimations)
+		return E_FAIL;
+
+	FAILED_CHECK_RETURN(m_Animations[iAnimIndex]->Add_Event(fPlayTime, strFuncName), E_FAIL);
+
+	return S_OK;
+}
+
+void CModel::Call_Event(const string & strFuncName)
+{
+	m_pOwner->Call_EventFunction(strFuncName);
+}
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)
 		return;
+
+	if (m_bPausePlay == true)
+		fTimeDelta = 0.f;
 		
 	if (m_fBlendCurTime < m_fBlendDuration)
 	{

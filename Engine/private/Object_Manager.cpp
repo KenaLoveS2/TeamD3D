@@ -126,6 +126,10 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 	if (pCloneObjectTag != nullptr)
 		pGameObject->Set_CloneTag(pCloneObjectTag);
 
+	/*Set_ProtoTag*/
+	if (pPrototypeTag != nullptr)
+		pGameObject->Set_ProtoTag(pPrototypeTag);
+
 	if (ppOut)
 	{
 		*ppOut = pGameObject;
@@ -145,7 +149,11 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 		return nullptr;
 
 	if (pCloneObjectTag != nullptr)
-		pGameObject->Set_Name(pCloneObjectTag);
+		pGameObject->Set_CloneTag(pCloneObjectTag);
+
+	/*Set_ProtoTag*/
+	if (pPrototypeTag != nullptr)
+		pGameObject->Set_ProtoTag(pPrototypeTag);
 
 	return pGameObject;	
 }
@@ -174,6 +182,13 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 
 	m_mapAnimModel[iLevelIndex].emplace(pCloneObjectTag, pGameObject);
 	Safe_AddRef(pGameObject);
+
+	if (pCloneObjectTag != nullptr)
+		pGameObject->Set_CloneTag(pCloneObjectTag);
+
+	/*Set_ProtoTag*/
+	if (pPrototypeTag != nullptr)
+		pGameObject->Set_ProtoTag(pPrototypeTag);
 
 	if (ppOut)
 		*ppOut = pGameObject;
@@ -208,7 +223,7 @@ HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameOb
 
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 
-	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_Name(), pGameObject);
+	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_ObjectCloneName(), pGameObject);
 	Safe_AddRef(pGameObject);
 
 	return S_OK;

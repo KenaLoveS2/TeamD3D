@@ -10,13 +10,15 @@ class CModel;
 class CCollider;
 class CRenderer;
 class CNavigation;
-class CFSMComponent;
+class CStateMachine;
 END
 
 BEGIN(Client)
 
 class CKena final : public CGameObject
 {
+	friend class CKena_State;
+
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CKena(const CKena& rhs);
@@ -34,6 +36,8 @@ public:
 	virtual void			Imgui_RenderProperty() override;
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			Update_Child() override;
+	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
+	virtual void			Push_EventFunctions() override;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -41,7 +45,10 @@ private:
 	CModel*				m_pModelCom = nullptr;
 	CCollider*				m_pRangeCol = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
-	CFSMComponent*	m_pStateMachine = nullptr;
+	CStateMachine*		m_pStateMachine = nullptr;
+	class CKena_State*	m_pKenaState = nullptr;
+
+	class CCamera_Player*	m_pCamera = nullptr;
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
@@ -54,6 +61,7 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
+	void					Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<_int>		m_PlayerDelegator;

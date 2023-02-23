@@ -94,9 +94,8 @@ BlendState BS_Mix
 {
 	BlendEnable[0] = true;
 	SrcBlend = SRC_COLOR;
-	SrcBlendAlpha = SRC_ALPHA;
-	DestBlend = DEST_COLOR;
-	DestBlendAlpha = ONE;
+	SrcBlendAlpha = ONE;
+	DestBlend = ONE;
 	BlendOp = Add;
 };
 

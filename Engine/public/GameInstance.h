@@ -5,6 +5,7 @@
 #include "PipeLine.h"
 #include "Sound_Manager.h"
 #include "Utile.h"
+#include "Function_Manager.h"
 #include "UI_Manager.h"
 #include "Enviroment_Manager.h"
 
@@ -162,11 +163,19 @@ public: /* For.PipeLine */
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		_float*		Get_CameraFar();
 
-public: // for m_pEnviroment_Manager
-	void			Enviroment_Clear();
-	void			Add_Room(CEnviroment_Manager::ROOM_DESC& RoomDesc);
+	public:		/* For Function Manager */
+		template<typename T>
+		HRESULT		Add_Function(T* pObj, const _tchar* pFuncName, void (T::*memFunc)(_bool, _float)) {
+			NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
+			return m_pFunction_Manager->Add_Function(pObj, pFuncName, memFunc);
+		};
+		HRESULT		Call_Function(CBase* pObj, const _tchar* pFuncName, _float fTimeDelta);
 
-private:
+	public: // for m_pEnviroment_Manager
+		void			Enviroment_Clear();
+		void			Add_Room(CEnviroment_Manager::ROOM_DESC& RoomDesc);
+
+	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;
 		_float m_fTimeDelta = 0.f;
@@ -189,6 +198,7 @@ private:
 		class CCamera_Manager* m_pCamera_Manager = nullptr;
 		class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
+		class CFunction_Manager*	m_pFunction_Manager = nullptr;
 
 	public:
 		static void Release_Engine();

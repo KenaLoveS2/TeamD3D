@@ -14,10 +14,12 @@ public:
 public:
 	HRESULT		Save_Animation(HANDLE& hFile, DWORD& dwByte);
 	HRESULT		Load_Animation(HANDLE& hFile, DWORD& dwByte);
+	HRESULT		Add_Event(_float fPlayTime, const string& strFuncName);
 
 public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT Initialize(void* pArg);
+	void		ImGui_RenderEvents(_int& iSelectEvent);
 
 	void Update_Bones(_float fTimeDelta);
 	void Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
@@ -53,6 +55,13 @@ private:
 	/* 이 애니메이션을 재생하기위해 갱신해야하는 뼈들. */
 	_uint								m_iNumChannels = 0;
 	vector<class CChannel*>				m_Channels;
+
+private:
+	/* Map for Event Call. <PlayTime, FuncName> */
+	map<_float, const string>		m_mapEvent;
+
+private:
+	void	Call_Event(_float fLastPlayTime, _float fTimeDelta);
 
 public:
 	static CAnimation* Create(HANDLE hFile, class CModel* pModel);
