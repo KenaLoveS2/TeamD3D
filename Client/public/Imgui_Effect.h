@@ -26,6 +26,7 @@ public:
 
 	// MovePosition_Rect // 
 	void	Set_OptionWindow_Rect(class CEffect_Base* pEffect);
+	void	Set_OptionWindow_Particle(class CEffect_Base* pEffect);
 
 	// Child Setting //
 	void	Set_Child(class CEffect_Base* pEffect);
@@ -35,7 +36,7 @@ public:
 
 public:
 	void	CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject);
-	void	CreateEffect_Particle(_int iSelectObject);
+	void	CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject);
 	void	CreateEffect_Mesh(_int iSelectObject);
 
 private:

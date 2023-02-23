@@ -56,7 +56,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : ��� ������ ������ �ȼ��̴�. AND 0��° ����Ÿ�ٿ� �׸������� �����̴�. */
 	float4		vColor : SV_TARGET0;
 };
 

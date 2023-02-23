@@ -36,6 +36,7 @@ HRESULT CEffect::Initialize(void * pArg)
 		return E_FAIL;	
 
 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
 	return S_OK;
 }
 
