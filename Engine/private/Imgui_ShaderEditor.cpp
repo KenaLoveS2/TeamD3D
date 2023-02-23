@@ -22,17 +22,20 @@ void CImgui_ShaderEditor::Imgui_FreeRender()
 {
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-	if(ImGui::Button("Use Shadow"))
+	if(ImGui::CollapsingHeader("Shadow"))
 	{
-		m_pGameInstance->SwitchOnOff_Shadow(true);
+		if (ImGui::Button("Use Shadow"))
+			m_pGameInstance->SwitchOnOff_Shadow(true);
+
+		if (ImGui::Button("Don't Use Shadow"))
+			m_pGameInstance->SwitchOnOff_Shadow(false);
 	}
 
-	if(ImGui::Button("Don't Use Shadow"))
-	{
-		m_pGameInstance->SwitchOnOff_Shadow(false);
-	}
+	if (ImGui::CollapsingHeader("HDR"))
+		CPostFX::GetInstance()->Imgui_Render();
 
-	CPostFX::GetInstance()->Imgui_Render();
+	if (ImGui::CollapsingHeader("Light"))
+		m_pGameInstance->Imgui_LightManagerRender();
 
 	ImGui::End();
 }

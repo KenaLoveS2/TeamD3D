@@ -33,11 +33,7 @@ void CLevel_Logo::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	ChoseLevel();
-
-	
-
 }
 
 HRESULT CLevel_Logo::Render()

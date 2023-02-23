@@ -43,9 +43,6 @@
     <Filter Include="02.GameObjects\Player">
       <UniqueIdentifier>{7d1d57d2-8b05-4dc2-89a4-b399e380d07a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\ForkLift">
-      <UniqueIdentifier>{0ad9341f-2927-4804-8178-aa5f907d2e44}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster">
       <UniqueIdentifier>{58b49c17-7f0f-4919-b8cd-3e50c06e4b1a}</UniqueIdentifier>
     </Filter>
@@ -198,9 +195,6 @@
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ForkLift.h">
-      <Filter>02.GameObjects\ForkLift</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
     </ClInclude>
@@ -347,9 +341,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>02.GameObjects\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ForkLift.cpp">
-      <Filter>02.GameObjects\ForkLift</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
       <Filter>02.GameObjects\Sky</Filter>
