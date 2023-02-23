@@ -69,8 +69,14 @@ public:
 public: /*For.Imgui*/
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
+	void Imgui_Push_Group( class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
-	
+	void Imgui_Add_For_EnviroMent_Component();
+
+private:
+	list<class CGameObject*> Mulit_ObjectList;		// For. Component add. Delete many Objects 
+
+
 public:	
 	vector<PROTOTYPES>& Get_CopyPrototypes() { return m_CopyPrototypes; }
 	_uint Get_NumCopyPrototypes() { return m_iNumCopyPrototypes; }

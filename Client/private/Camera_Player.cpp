@@ -43,21 +43,135 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 void CCamera_Player::Tick(_float fTimeDelta)
 {
+	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
+		m_bMouseFix = !m_bMouseFix;
+
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
 		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(LEVEL_GAMEPLAY, L"Layer_Player", L"Kena"));
 		m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Find_Component(L"Com_Transform"));
+		Initialize_Position();
+
+		__super::Tick(fTimeDelta);
 
 		return;
 	}
+	m_fDistanceFromTarget = 2.f;
+	m_CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
 
+	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + 1.5f);
 
+	m_MouseMoveX = 0;
+	m_MouseMoveY = 0;
+	_float		fBackupAngle = m_fVerticalAngle;
+
+	/* Limit Up&Down Movement */
+	_vector	vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
+	m_fVerticalAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)), XMVectorSet(0.f, 1.f, 0.f, 0.f))));
+	if (isnan(m_fVerticalAngle))
+		m_fVerticalAngle = fBackupAngle;
+
+	if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
+	{
+		if (m_MouseMoveX != 0)
+		{
+			m_LastMoveX = m_MouseMoveX;
+
+			if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
+				m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
+			else
+				m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
+		}
+		else
+		{
+			if (m_fCurMouseSensitivityX > 0.f)
+				m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
+			else
+				m_fCurMouseSensitivityX = 0.f;
+		}
+
+		if (m_MouseMoveX != 0)
+			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+		else
+		{
+			if (m_LastMoveX < 0)
+				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
+			else if (m_LastMoveX > 0)
+				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX);
+		}
+	}
+	if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
+	{
+		_bool	bPossible = true;
+
+		if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
+		{
+			bPossible = false;
+
+			if (m_fVerticalAngle < XMConvertToRadians(40.f))
+				m_fCurMouseSensitivityY = 0.f;
+		}
+		if (m_fVerticalAngle > XMConvertToRadians(80.f) && m_MouseMoveY > 0)
+		{
+			bPossible = false;
+
+			if (m_fVerticalAngle > XMConvertToRadians(120.f))
+				m_fCurMouseSensitivityY = 0.f;
+		}
+
+		if (bPossible == false)
+		{
+			if (m_fCurMouseSensitivityY > 0.f)
+				m_fCurMouseSensitivityY -= fTimeDelta * 0.05f;
+			else
+				m_fCurMouseSensitivityY = 0.f;
+		}
+		else
+		{
+			if (m_fCurMouseSensitivityY < m_fInitMouseSensitivity)
+				m_fCurMouseSensitivityY += fTimeDelta * 0.1f;
+			else
+				m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
+		}
+
+		m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+
+	}
+	if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
+		m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 0.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
 
 	__super::Tick(fTimeDelta);
 }
 
 void CCamera_Player::Late_Tick(_float fTimeDelta)
 {
+	if (m_bMouseFix)
+	{
+		CUtile::SetClientCursorPos(g_hWnd, g_iWinSizeX >> 1, g_iWinSizeY >> 1);
+
+		::SetCursor(NULL);
+	}
+	else
+	{
+		LPTSTR win32_cursor = IDC_ARROW;
+		switch (ImGui::GetMouseCursor())
+		{
+		case ImGuiMouseCursor_Arrow:        win32_cursor = IDC_ARROW; break;
+		case ImGuiMouseCursor_TextInput:    win32_cursor = IDC_IBEAM; break;
+		case ImGuiMouseCursor_ResizeAll:    win32_cursor = IDC_SIZEALL; break;
+		case ImGuiMouseCursor_ResizeEW:     win32_cursor = IDC_SIZEWE; break;
+		case ImGuiMouseCursor_ResizeNS:     win32_cursor = IDC_SIZENS; break;
+		case ImGuiMouseCursor_ResizeNESW:   win32_cursor = IDC_SIZENESW; break;
+		case ImGuiMouseCursor_ResizeNWSE:   win32_cursor = IDC_SIZENWSE; break;
+		case ImGuiMouseCursor_Hand:         win32_cursor = IDC_HAND; break;
+		case ImGuiMouseCursor_NotAllowed:   win32_cursor = IDC_NO; break;
+		}
+		/* ImGui Draw Mouse Setting */
+		::SetCursor(::LoadCursor(NULL, win32_cursor));
+	}
+
+
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -66,6 +180,20 @@ HRESULT CCamera_Player::Render()
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
 	return S_OK;
+}
+
+void CCamera_Player::Initialize_Position()
+{
+	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
+
+	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + 2.f);
+
+	m_CameraDesc.vEye = vKenaPos + XMVector3Normalize(vKenaLook) * m_fDistanceFromTarget * -1.f;
+	m_CameraDesc.vAt = vKenaPos;
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_CameraDesc.vEye);
+	m_pTransformCom->LookAt(m_CameraDesc.vAt);
 }
 
 CCamera_Player * CCamera_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

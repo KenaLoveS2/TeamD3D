@@ -118,14 +118,14 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	return S_OK;
 }
 
-void CGameInstance::Tick_Engine(_float fTimeDelta)
+void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 {
 	m_fTimeDelta = fTimeDelta;
 
 	if (nullptr == m_pInput_Device || nullptr == m_pLevel_Manager || nullptr == m_pObject_Manager)
 		return;
 	
-	m_pInput_Device->Invalidate_Input_Device();
+	m_pInput_Device->Invalidate_Input_Device(bWinActive);
 
 	m_pImgui_Manager->Tick_Imgui();
 
@@ -388,6 +388,12 @@ void CGameInstance::Imgui_DeleteComponent(CGameObject * pSelectedObject)
 	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
 
 	m_pObject_Manager->Imgui_DeleteComponent(pSelectedObject);
+}
+
+void CGameInstance::Imgui_Push_Group(CGameObject * pSelectedObject)
+{
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	m_pObject_Manager->Imgui_Push_Group(pSelectedObject);
 }
 
 map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
@@ -664,16 +670,22 @@ void CGameInstance::Render_Update_ImGui()
 	m_pImgui_Manager->Render_Update_ImGui();
 }
 
-void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject)
+void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject, bool bIsSelectViewer)
 {
 	if (m_pImgui_Manager == nullptr) return;
-	m_pImgui_Manager->Add_ImguiObject(pImguiObject);
+	m_pImgui_Manager->Add_ImguiObject(pImguiObject, bIsSelectViewer);
 }
 
 void CGameInstance::Clear_ImguiObjects()
 {
 	if (m_pImgui_Manager == nullptr) return;
 	m_pImgui_Manager->Clear_ImguiObjects();
+}
+
+CGameObject * CGameInstance::Get_SelectObjectPtr()
+{
+	if (m_pImgui_Manager == nullptr) return nullptr;
+	return m_pImgui_Manager->Get_SelectObjectPtr();
 }
 
 HRESULT CGameInstance::Add_String(_uint iLevelIndex, _tchar * pStr)

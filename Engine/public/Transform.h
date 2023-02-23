@@ -81,9 +81,12 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 
+	/* Camera Movement */
 	void Go_AxisY(_float fTimeDelta);
 	void Go_AxisNegY(_float fTimeDelta);
 	void Speed_Boost(_bool bKeyState, _float fValue);
+	void Speed_Down(_bool bKeyState, _float fValue);
+	void Orbit(_fvector vTargetPos, _fvector vAxis, const _float& fDistance, _float fTimeDelta);
 
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _float fTimeDelta); /* Dynamic */

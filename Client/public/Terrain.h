@@ -12,7 +12,6 @@ class CVIBuffer_Terrain;
 END
 
 BEGIN(Client)
-
 class CTerrain final : public CGameObject
 {
 public:

@@ -36,7 +36,7 @@ public: /* For.GameInstance */
 public: /* For.GameInstance */
 	HRESULT Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHIC_DESC& GraphicDesc,
 							  ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
-	void Tick_Engine(_float fTimeDelta);
+	void Tick_Engine(_bool bWinActive, _float fTimeDelta);
 	void Clear_Level(_uint iLevelIndex, _bool bCamreaClearFlag = false);
 
 public: /* For.Graphic_Device */
@@ -84,6 +84,7 @@ public: /* For.Object_Manager */
 	void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
+	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 
 	map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
 
@@ -143,8 +144,9 @@ public: /* For.PipeLine */
 	public: // for imgui manager
 		void Render_ImGui();
 		void Render_Update_ImGui();
-		void Add_ImguiObject(class CImguiObject* pImguiObject);
+		void Add_ImguiObject(class CImguiObject* pImguiObject, bool bIsSelectViewer = false);
 		void Clear_ImguiObjects();
+		class CGameObject* Get_SelectObjectPtr();
 
 	public: // for String manager
 		HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);

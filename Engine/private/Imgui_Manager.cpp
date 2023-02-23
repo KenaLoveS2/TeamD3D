@@ -4,11 +4,19 @@
 #include "ImGui/ImGuiFileDialog.h"
 #include "ImguiObject.h"
 #include "ImGui/ImGuizmo.h"
-
+#include "Imgui_PropertyEditor.h"
 IMPLEMENT_SINGLETON(CImgui_Manager)
 
 CImgui_Manager::CImgui_Manager()
 {
+}
+
+CGameObject * CImgui_Manager::Get_SelectObjectPtr()
+{
+	if (dynamic_cast<CImgui_PropertyEditor*>(m_pSelectViewer_ImguiObj) != nullptr)
+		return static_cast<CImgui_PropertyEditor*>(m_pSelectViewer_ImguiObj)->Get_SelectedObject();
+
+	return nullptr;
 }
 
 void CImgui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContextOut)
@@ -148,7 +156,7 @@ void CImgui_Manager::Render_Update_ImGui()
 	}
 }
 
-void CImgui_Manager::Add_ImguiObject(CImguiObject* pImguiObject)
+void CImgui_Manager::Add_ImguiObject(CImguiObject* pImguiObject, bool bIsSelectViewer )
 {
 	if (nullptr == pImguiObject)
 		return;
@@ -159,6 +167,11 @@ void CImgui_Manager::Add_ImguiObject(CImguiObject* pImguiObject)
 		m_vecWin.push_back(pImguiObject);
 	else
 		m_vecWin.push_back(pImguiObject); // Free Render¿ë
+
+	if (bIsSelectViewer == true)
+		m_pSelectViewer_ImguiObj = pImguiObject;
+
+
 }
 
 void CImgui_Manager::Clear_ImguiObjects()

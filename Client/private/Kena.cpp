@@ -42,7 +42,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
-	m_pCamera->Set_Player(this, m_pTransformCom);
+	//m_pCamera->Set_Player(this, m_pTransformCom);
+	CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom, m_pCamera);
 
@@ -77,8 +78,15 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex++;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
 		m_iAnimationIndex--;
+	/* Delegator Test */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		_int i = 0;
+		m_PlayerDelegator.broadcast(i);
 
-	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 35);
+	}
+
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
 
 	if (m_pRendererCom != nullptr)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
