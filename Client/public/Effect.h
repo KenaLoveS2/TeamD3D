@@ -18,6 +18,10 @@ public:
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	virtual HRESULT	Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag);
+	virtual HRESULT Edit_Child(const _tchar * ProtoTag);
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
