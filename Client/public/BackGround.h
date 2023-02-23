@@ -32,6 +32,14 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CVIBuffer_Rect*			m_pVIBufferCom = nullptr;	
 
+	/* Test */
+	CTexture*				m_pNoiseTexture = nullptr;
+	_float					m_fAlpha;
+	_float					m_fAlphaDelta;
+	_float					m_fSpeed;
+	_float					m_fTime;
+	_float					m_fTimeAcc;
+
 
 private:	
 	_float4x4				m_ViewMatrix;

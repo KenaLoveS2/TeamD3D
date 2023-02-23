@@ -102,6 +102,10 @@ HRESULT CLoader::Loading_ForLogo()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/LoadingBG_%d.png"), 2))))
 		return E_FAIL;		
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_MediumWaves_H.png")))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
 	
 
