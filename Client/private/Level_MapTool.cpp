@@ -106,6 +106,12 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TestTerrain"), TEXT("Clone_Terrain"))))
 	//	return E_FAIL;
 
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_CLodObject"), TEXT("Clone_TestEnvi"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Cave_Rock"), TEXT("Clone_CaveRock"))))
+		return E_FAIL;
+
 	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TessBackGround"), TEXT("Clone_Rect"))))
 		return E_FAIL;*/
 

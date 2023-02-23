@@ -7,10 +7,6 @@ texture2D		g_Texture;
 texture2D		g_DepthTexture;
 texture2D		g_MaskTexture;
 
-/* 샘플링 해오는 함수 */
-/* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
-/* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;
