@@ -315,6 +315,8 @@
     <ClInclude Include="..\public\LightCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TestTerrain.h" />
+    <ClInclude Include="..\Public\TessBackGround.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -458,6 +460,8 @@
     <ClCompile Include="..\private\LightCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\TestTerrain.cpp" />
+    <ClCompile Include="..\Private\TessBackGround.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -505,6 +509,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTess.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Tess.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

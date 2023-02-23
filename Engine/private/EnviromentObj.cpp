@@ -16,6 +16,12 @@ CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 {	
 }
 
+void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath )
+{
+	m_vecStr_textureFilePath.push_back(TexturePath);
+	/*나중에 중복 처리하기*/
+}
+
 HRESULT CEnviromentObj::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype())) return E_FAIL;	
