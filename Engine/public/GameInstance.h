@@ -144,8 +144,9 @@ public: /* For.PipeLine */
 	public: // for imgui manager
 		void Render_ImGui();
 		void Render_Update_ImGui();
-		void Add_ImguiObject(class CImguiObject* pImguiObject);
+		void Add_ImguiObject(class CImguiObject* pImguiObject, bool bIsSelectViewer = false);
 		void Clear_ImguiObjects();
+		class CGameObject* Get_SelectObjectPtr();
 
 	public: // for String manager
 		HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);

@@ -27,7 +27,11 @@ HRESULT CVIBuffer_Terrain_Tess::Initialize_Prototype(_uint iNumVerticesX, _uint 
 	m_iStride = sizeof(VTXNORTEX);
 	
 	m_iNumPrimitive = (m_iNumVerticesX - 1) * (m_iNumVerticesZ - 1) * 2;
-	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;		// 여기가 다른부분
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;		// 여기가 다른부분
+
+	
+
+	
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
 	m_iNumIndicesPerPrimitive = 3;

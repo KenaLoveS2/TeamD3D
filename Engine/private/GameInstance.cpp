@@ -670,16 +670,22 @@ void CGameInstance::Render_Update_ImGui()
 	m_pImgui_Manager->Render_Update_ImGui();
 }
 
-void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject)
+void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject, bool bIsSelectViewer)
 {
 	if (m_pImgui_Manager == nullptr) return;
-	m_pImgui_Manager->Add_ImguiObject(pImguiObject);
+	m_pImgui_Manager->Add_ImguiObject(pImguiObject, bIsSelectViewer);
 }
 
 void CGameInstance::Clear_ImguiObjects()
 {
 	if (m_pImgui_Manager == nullptr) return;
 	m_pImgui_Manager->Clear_ImguiObjects();
+}
+
+CGameObject * CGameInstance::Get_SelectObjectPtr()
+{
+	if (m_pImgui_Manager == nullptr) return nullptr;
+	return m_pImgui_Manager->Get_SelectObjectPtr();
 }
 
 HRESULT CGameInstance::Add_String(_uint iLevelIndex, _tchar * pStr)

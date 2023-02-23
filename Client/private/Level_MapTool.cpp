@@ -23,7 +23,7 @@ HRESULT CLevel_MapTool::Initialize()
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		p_game_instance->Clear_ImguiObjects();
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
@@ -103,8 +103,8 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TestTerrain"), TEXT("Clone_Terrain"))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TestTerrain"), TEXT("Clone_Terrain"))))
+	//	return E_FAIL;
 
 	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TessBackGround"), TEXT("Clone_Rect"))))
 		return E_FAIL;*/

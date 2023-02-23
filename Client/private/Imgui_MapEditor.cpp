@@ -28,6 +28,8 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_SelectOption();
 		Imgui_CreateEnviromentObj();
 		Imgui_Save_Load_Json();
+
+		Imgui_SelectObject_Add_TexturePath();
 	}
 	ImGui::End();
 }
@@ -265,6 +267,40 @@ void CImgui_MapEditor::Imgui_Save_Load_Json()
 	//	Imgui_Load_Func();
 }
 
+void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
+{
+	CGameObject*	pSelectEnviObj = CGameInstance::GetInstance()->Get_SelectObjectPtr();
+
+	if (nullptr != dynamic_cast<CEnviromentObj*>(pSelectEnviObj))
+	{
+		wstring wstrCloneTag = pSelectEnviObj->Get_ObjectCloneName();
+		string	strClontTag = CUtile::WstringToString(wstrCloneTag);
+
+		ImGui::Text("Cur Obj Clone Name : %s", strClontTag.c_str());
+
+		static string	textureFilePath = "";
+		ImGui::InputText("Texture_Path", &textureFilePath);
+
+		if (ImGui::Button("Add FilePath"))
+		{
+			_tchar * pFilePath = 		CUtile::StringToWideChar(textureFilePath);
+			CGameInstance::GetInstance()->Add_String(pFilePath);
+			static_cast<CEnviromentObj*>(pSelectEnviObj)->Add_TexturePath(pFilePath);
+		}
+
+
+		vector<const _tchar*>* vecStr = static_cast<CEnviromentObj*>(pSelectEnviObj)->Get_TexturePaths();
+
+		for (auto& pComtag : *vecStr)
+		{
+			wstring Temp = pComtag;
+			string	strSaveTag = CUtile::WstringToString(Temp);
+			ImGui::Text(strSaveTag.c_str());
+		}
+
+	}
+}
+
 void CImgui_MapEditor::Imgui_Save_Func()
 {
 	// 현재 선택한 파일 경로 불러오는 함수
@@ -348,6 +384,18 @@ void CImgui_MapEditor::Imgui_Save_Func()
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
 			jChild["7_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
 		}
+
+		vector<const _tchar*>* vecStr = static_cast<CEnviromentObj*>(pObject.second)->Get_TexturePaths();
+
+		for (auto& pComtag : *vecStr)
+		{
+			wstring Temp = pComtag;
+			string	strSaveTag = CUtile::WstringToString(Temp);
+			jChild["8_TextureFilePath"].push_back(strSaveTag);
+		}
+
+
+
 		jEnviromentObjList["1_Data"].push_back(jChild);
 		szProtoObjTag = "";
 		szModelTag = "";
@@ -392,7 +440,10 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	_tchar*		wszCloneTag = L"";
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
-	vector<string> testStr;
+	vector<string> StrComponentVec;
+	vector<string> StrFilePathVec;
+
+
 
 	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -408,7 +459,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
 
 		for (string strTag : jLoadChild["6_AddComTag"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
-			testStr.push_back(strTag);
+			StrComponentVec.push_back(strTag);
 
 		float	fElement = 0.f;
 		int k = 0;
@@ -416,6 +467,9 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
+		for (string strTag : jLoadChild["8_TextureFilePath"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
+			StrFilePathVec.push_back(strTag);
+
 
 		m_wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		m_wstrModelName.assign(szModelTag.begin(), szModelTag.end());
@@ -437,12 +491,15 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		Load_ComTagToCreate(pGameInstance, pLoadObject, testStr);
+		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
+		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePathVec);
+
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;
-		testStr.clear();
+		StrComponentVec.clear();
+		StrFilePathVec.clear();
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -482,9 +539,25 @@ void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameOb
 
 }
 
+void CImgui_MapEditor::Load_TextureFilePath(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
+{
+	assert(nullptr != pGameObject && "CImgui_MapEditor::Load_TextureFilePath");
+	assert(nullptr != pGameInstace && "CImgui_MapEditor::Load_TextureFilePath");
+
+	if (vecStr.size() == 0)
+		return;
+
+	for (auto pStr : vecStr)
+	{
+		_tchar* pTextureFilePath = 	CUtile::StringToWideChar(pStr);
+		pGameInstace->Add_String(pTextureFilePath);
+		static_cast<CEnviromentObj*>(pGameObject)->Add_TexturePath(pTextureFilePath);
+	}
+}
+
 void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 {
-	ifstream      file("../Bin/Data/EnviromentObj_Json_Dir/Test_Map.json");
+	ifstream      file("../Bin/Data/EnviromentObj_Json_Dir/Test_TextureFilePath.json");
 	Json	jLoadEnviromentObjList;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -507,7 +580,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 	_tchar*		wszCloneTag = L"";
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
-	vector<string> testStr;
+	vector<string> StrComTagVec;
+	vector<string> StrFilePath;
 
 	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -523,7 +597,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
 
 		for (string strTag : jLoadChild["6_AddComTag"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
-			testStr.push_back(strTag);
+			StrComTagVec.push_back(strTag);
 
 		float	fElement = 0.f;
 		int k = 0;
@@ -531,6 +605,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
+
+		for (string strTag : jLoadChild["8_TextureFilePath"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
+			StrFilePath.push_back(strTag);
 
 		wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		wstrModelName.assign(szModelTag.begin(), szModelTag.end());
@@ -553,12 +630,14 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		Load_ComTagToCreate(pGameInstance, pLoadObject, testStr);
+		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
+		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePath);
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;
-		testStr.clear();
+		StrComTagVec.clear();
+		StrFilePath.clear();
 	}
 
 	RELEASE_INSTANCE(CGameInstance);

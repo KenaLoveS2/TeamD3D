@@ -45,6 +45,9 @@ public:
 	_bool Get_RenderActive() { return m_bRenderActive; }
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
+
+	void									Add_TexturePath(const _tchar * TexturePath);
+	vector<const _tchar*>*	Get_TexturePaths() { return &m_vecStr_textureFilePath; }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -71,7 +74,7 @@ private:/*For.ImguiTool*/
 	string										m_str_Imgui_ComTag = "";
 	_int											m_iImgui_ComponentOption = 0;
 	_bool										m_bWireFrame_Rendering = false;
-
+	vector<const _tchar*>				m_vecStr_textureFilePath;				//Texture °æ·Îµé
 	
 
 public:		

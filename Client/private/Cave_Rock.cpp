@@ -39,14 +39,7 @@ void CCave_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (ImGui::Button("Shader MeshLod"))
-	{
-		m_iShaderOption = 4;
-	}
-	if (ImGui::Button("Shader MeshLodNone"))
-	{
-		m_iShaderOption = 0;
-	}
+	
 
 }
 
@@ -121,9 +114,11 @@ HRESULT CCave_Rock::SetUp_Components()
 	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+	
+	//m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, m_EnviromentDesc.szTextureTag);
 
 	///* For.Com_E_R_AO */
-	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_RuinM_R_AO"), TEXT("Com_E_R_AO"),
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, , TEXT("Com_E_R_AO"),
 	//	(CComponent**)&m_pE_R_AoTexCom)))
 	//	return E_FAIL;
 

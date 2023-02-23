@@ -1,0 +1,141 @@
+{
+  "0_LayerTag": "Layer_Enviroment",
+  "1_Data": [
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Rock_04",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Rock_04_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 34.0, 0.0, 24.0, 1.0 ],
+      "8_TextureFilePath": [ "TestOne" ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Rock_03",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Rock_03_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 5.0, 0.0, 35.9813346862793, 1.0 ],
+      "8_TextureFilePath": [ "TestOne", "TestTwo" ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Cliff_Sheer_V2",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Sheer_V2_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 58.0, 0.0, 6.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Small05",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Small05_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 51.73517608642578, 0.0, -15.719015121459961, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Small04",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Small04_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 46.0, 0.0, -16.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Small03",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Small03_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 39.0, 0.0, -16.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Med02",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Med02_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -4.0, 0.0, 27.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Rock_01",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Rock_01_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 30.0, 0.0, 35.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Large0",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Med01_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -7.563079833984375, 0.0, 12.187402725219727, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Rock_02",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Rock_02_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.772536277770996, 0.0, 38.29173278808594, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Small01",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Small01_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 24.0, 0.0, -16.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_Cliff_Cliff_Sheer_V1",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Sheer_V1_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 62.0, 0.0, -18.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Small02",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_CliffWall_Small02_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 32.08012771606445, 0.0, -15.24603271484375, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Large0",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_Large00_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 9.313197135925293, 0.0, -14.519906997680664, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cave_Rock",
+      "1_ModelTag": "Prototype_Component_Model_SM_CliffWall_Large02",
+      "2_TextureTag": "",
+      "3_CloneTag": "SM_Large02_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -4.001929759979248, 0.0, -3.9506044387817383, 1.0 ]
+    }
+  ]}
