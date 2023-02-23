@@ -81,8 +81,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	/* Delegator Test */
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
-		_int i = 0;
-		m_PlayerDelegator.broadcast(i);
+		CUI_ClientManager::UI_ID eType = CUI_ClientManager::UI_HUD_HP;
+		_int iNum = 0;
+		m_PlayerDelegator.broadcast(eType, iNum);
 
 	}
 

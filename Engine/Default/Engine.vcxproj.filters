@@ -511,12 +511,6 @@
     <ClInclude Include="..\public\Model_Instancing.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Rect_Tess.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Rect\Tess</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Terrain_Tess.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\Tess</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -765,12 +759,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Model_Instancing.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Rect_Tess.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Rect\Tess</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer_Terrain_Tess.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\Tess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

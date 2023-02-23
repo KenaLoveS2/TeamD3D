@@ -38,6 +38,7 @@ HRESULT CCave_Rock::Initialize(void * pArg)
 void CCave_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
 }
 
 void CCave_Rock::Late_Tick(_float fTimeDelta)
@@ -61,8 +62,9 @@ HRESULT CCave_Rock::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
 	}
 	return S_OK;
@@ -106,10 +108,22 @@ HRESULT CCave_Rock::SetUp_Components()
 	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+	///* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
+	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	//	(CComponent**)&m_pModelCom)))
+	//	return E_FAIL;
+	
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Model_SM_CliffWall_Large0_T"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+
+	//m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, m_EnviromentDesc.szTextureTag);
+
+	///* For.Com_E_R_AO */
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, , TEXT("Com_E_R_AO"),
+	//	(CComponent**)&m_pE_R_AoTexCom)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -152,7 +166,7 @@ CGameObject * CCave_Rock::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CCave_Rock");
+		MSG_BOX("Failed to Cloned : CForkLift");
 		Safe_Release(pInstance);
 	}
 	return pInstance;

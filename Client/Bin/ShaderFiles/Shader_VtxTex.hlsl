@@ -6,10 +6,16 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_Texture;
 texture2D		g_DepthTexture;
 texture2D		g_MaskTexture;
+texture2D		g_NoiseTexture;
 
-/* »ùÇÃ¸µ ÇØ¿À´Â ÇÔ¼ö */
-/* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
-/* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */
+
+int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
+int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
+float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;	/* UV Move Speed */
+float4	g_vColor;
+float	g_fAlpha;
+float	g_fAmount; /* Guage Data (normalized) */
+
 
 struct VS_IN
 {
@@ -51,7 +57,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : ¸ðµç Á¤º¸°¡ °áÁ¤µÈ ÇÈ¼¿wÀÌ´Ù. AND 0¹øÂ° ·»´õÅ¸°Ù¿¡ ±×¸®±âÀ§ÇÑ »ö»óÀÌ´Ù. */
+	/*SV_TARGET0 : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½wï¿½Ì´ï¿½. AND 0ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ù¿ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. */
 	float4		vColor : SV_TARGET0;
 };
 
@@ -119,6 +125,117 @@ PS_OUT PS_MAIN_HPBar(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_SPRITE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+	In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+	In.vTexUV.x = In.vTexUV.x / g_XFrames;
+	In.vTexUV.y = In.vTexUV.y / g_YFrames;
+
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_UVMOVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x += g_fSpeedX;
+	In.vTexUV.y += g_fSpeedY;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_RINGGUAGE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	float3 center	= float3(0.5f, 0.5f, 0);
+	float3 top		= float3(0.5f, 0, 0);
+	float3 curUV	= float3(In.vTexUV.xy, 0);
+	float angle		= 0;
+
+	float3 centerToTop		= top - center;
+	float3 centerToCurUV	= curUV - center;
+
+	centerToTop		= normalize(centerToTop);
+	centerToCurUV	= normalize(centerToCurUV);
+
+	angle = acos(dot(centerToTop, centerToCurUV));
+	angle = angle * (180.0f / 3.141592654f); // radian to degree
+
+	/* Check the angle is 0 ~ 180 or 180 ~ 360 */
+	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
+
+	float condition = 360 * g_fAmount;
+
+	if (angle > condition)
+		discard;
+
+	Out.vColor = vDiffuse * g_fAlpha;
+
+	return Out;
+
+}
+
+PS_OUT PS_MAIN_LOADING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = 1.f;
+
+	In.vTexUV.x += g_fSpeedX;
+	In.vTexUV.y += g_fSpeedX;
+	
+	vector vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV*10);
+	
+	vNoise.a = vNoise.r;
+	if (vNoise.a < 0.9)
+		vNoise.a = 0.f;
+	vNoise.a *= g_fAlpha;
+	
+	Out.vColor = vDiffuse + vNoise;
+	Out.vColor.a = vDiffuse.a * (1 - vNoise.a);
+	//	Out.vColor.a = saturate(Out.vColor.a);
+	//}
+	//else
+	//	Out.vColor = vDiffuse;
+
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_TRIAL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite Animation  */
+	In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+	In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+	In.vTexUV.x = In.vTexUV.x / g_XFrames;
+	In.vTexUV.y = In.vTexUV.y / g_YFrames;
+
+	/* UV Move */
+	In.vTexUV.x += g_fSpeedX;
+	In.vTexUV.y += g_fSpeedY;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+}
+
+
 technique11 DefaultTechnique
 {
 	pass Rect // 0
@@ -171,5 +288,70 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HPBar();
+	}
+
+	pass AlphaBlendSprites // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SPRITE();
+	}
+	 
+	pass DefaultUVMove // 5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_UVMOVE();
+	}
+
+	pass RingGuage //6
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RINGGUAGE();
+	}
+
+	pass Loading //7
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_LOADING();
+	}
+
+	pass Trial
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_TRIAL();
 	}
 }
