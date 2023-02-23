@@ -78,6 +78,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex++;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
 		m_iAnimationIndex--;
+	/* Delegator Test */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		_int i = 0;
+		m_PlayerDelegator.broadcast(i);
+
+	}
 
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
 

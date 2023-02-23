@@ -13,6 +13,9 @@ private:
 	virtual ~CImgui_Manager() = default;
 
 public:
+	class CGameObject* Get_SelectObjectPtr();
+
+public:
 	void Ready_Imgui(HWND hWnd, ID3D11Device* pDeviceOut, ID3D11DeviceContext* pDeviceContextOut);
 	void Tick_Imgui();
 	void Render_Imgui();
@@ -24,7 +27,7 @@ public:
 	void ImGui_DockSpace();
 
 	// imgui object를 새로운 window로 추가한다.
-	void Add_ImguiObject(CImguiObject* pImguiObject);
+	void Add_ImguiObject(CImguiObject* pImguiObject,bool bIsSelectViewer=false);			// true 일때 Viewr에 있는 포인터 얻어올려고
 
 	// 현재 사용중인 imgui object를 모두 삭제한다.
 	void Clear_ImguiObjects();
@@ -38,6 +41,8 @@ private:
 
 	ImGuiWindowFlags m_iWindowFlags = ImGuiWindowFlags_MenuBar;
 	ImGuiTabBarFlags m_iTabBarFlags = ImGuiTabBarFlags_None;
+
+	class		CImguiObject* m_pSelectViewer_ImguiObj = nullptr;
 
 public:
 	virtual void Free() override;

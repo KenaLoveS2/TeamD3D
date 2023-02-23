@@ -77,7 +77,7 @@ HRESULT CMesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	ReadFile(hFile, &m_iStride, sizeof(_uint), &dwByte, nullptr);
 
 	m_iNumVertexBuffers = 1;
-	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST; //D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
 	m_iNumIndicesPerPrimitive = 3;
