@@ -90,7 +90,7 @@ HRESULT CBackGround::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(7);
+	m_pShaderCom->Begin(0);
 
 	m_pVIBufferCom->Render();
 
