@@ -6,6 +6,7 @@ class CImgui_Effect final : public CImguiObject
 {
 public:
 	enum CREATETYPE { EFFECT_PLANE = 1, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
+	enum TAGTYPE { TAG_CLONE, TAG_PROTO, TAG_END };
 
 private:
 	CImgui_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -15,9 +16,21 @@ public:
 	virtual void    Imgui_RenderWindow() override;
 
 public:
-	void	LayerEffects_ListBox(_bool& bIsCreate, _int& iSelectObject, _int& iSelectEffectType);
+	// "Layer_Effect" => ListBox
+	void	LayerEffects_ListBox(OUT char**& pObjectTag, OUT _uint& iLayerSize, OUT char*& pSelectObjectTag,
+								const char* pLabelTag, _int& iSelectObject, TAGTYPE eTag);
+	void	LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveChildSize, OUT char*& pSelectObjectTag, _int& iSelectObject, class CEffect_Base* pEffect);
+
+	// Color // 
 	void	Set_ColorValue(OUT _float4& vColor);
+
+	// MovePosition_Rect // 
 	void	Set_OptionWindow_Rect(class CEffect_Base* pEffect);
+
+	// Child Setting //
+	void	Set_Child(class CEffect_Base* pEffect);
+
+	void	TransformView(_int iSelectObject, class CEffect_Base* pEffect);
 
 public:
 	void	CreateEffect_Plane(_int& iSelectObject);

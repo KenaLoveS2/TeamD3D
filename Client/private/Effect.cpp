@@ -35,6 +35,7 @@ HRESULT CEffect::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
+	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	return S_OK;
 }
 
@@ -101,7 +102,7 @@ void CEffect::Tick(_float fTimeDelta)
 	}
 
 	// Child Tick
-	if (m_iHaveChildCnt != 0)
+	if (m_vecChild.size() != 0)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Tick(fTimeDelta);
@@ -117,11 +118,14 @@ void CEffect::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
 	// Child Late_Tick
-	if (m_iHaveChildCnt != 0)
+	if (m_vecChild.size() != 0)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Late_Tick(fTimeDelta);
 	}
+
+	if (nullptr != m_pParent)
+		Set_Matrix();
 }
 
 HRESULT CEffect::Render()
@@ -142,6 +146,52 @@ HRESULT CEffect::Render()
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
 
 	m_pVIBufferCom->Render();
+	return S_OK;
+}
+
+HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * ProtoTag)
+{
+	CEffect_Base*    pEffectBase = nullptr;
+
+	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
+	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
+
+	_tchar      szChildProto[128];
+	CUtile::CharToWideChar(ProtoTag, szChildProto);
+
+	char*       szChildCloneTag = CUtile::SeparateText(ProtoTag);
+	char*       szDefault = "_";
+	_int        iTagLength = _int(strlen(szChildCloneTag) + strlen(szDefault) + 1);
+	strcat_s(szChildCloneTag, iTagLength, szDefault);
+
+	_tchar      szChildClone[128];
+	CUtile::CharToWideChar(szChildCloneTag, szChildClone);
+
+	for (_int i = 0; i < iCreateCnt; ++i)
+	{
+		// Desc Cpy
+		wstring strfinalclonetag = szChildClone;
+		strfinalclonetag += to_wstring(m_iHaveChildCnt);
+
+		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
+		pGameInstance->Add_String(szChildProtoTag);
+		
+		_tchar* szChildClondTag = CUtile::Create_String(strfinalclonetag.c_str());
+		pGameInstance->Add_String(szChildClondTag);
+
+		pEffectBase = dynamic_cast<CEffect*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+
+		eEffectDesc.bUseChild = false;
+		pEffectBase->Set_EffectDesc(eEffectDesc);
+		pEffectBase->Set_Parent(this);
+		pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
+
+		m_vecChild.push_back(pEffectBase);
+		m_iHaveChildCnt++;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

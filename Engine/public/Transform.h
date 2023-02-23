@@ -98,10 +98,13 @@ public:
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
+
 private:	
 	_float4x4				m_WorldMatrix;
-	TRANSFORMDESC	m_TransformDesc;
+
+	TRANSFORMDESC			m_TransformDesc;
 	_float					m_fInitSpeed = 0.f;
+
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;

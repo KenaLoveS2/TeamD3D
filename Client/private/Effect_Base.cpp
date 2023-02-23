@@ -14,6 +14,25 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 {
 }
 
+void CEffect_Base::Set_Matrix()
+{
+	_matrix  matParent = m_pParent->Get_TransformCom()->Get_WorldMatrix();
+	_matrix  matScaleSet = XMMatrixIdentity();
+	_vector vRight, vUp, vLook;
+
+	memcpy(&vRight, &matParent.r[0], sizeof(_vector));
+	memcpy(&vUp, &matParent.r[1], sizeof(_vector));
+	memcpy(&vLook, &matParent.r[2], sizeof(_vector));
+
+	memcpy(&matScaleSet.r[0], &XMVector3Normalize(vRight), sizeof(_vector));
+	memcpy(&matScaleSet.r[1], &XMVector3Normalize(vUp), sizeof(_vector));
+	memcpy(&matScaleSet.r[2], &XMVector3Normalize(vLook), sizeof(_vector));
+	memcpy(&matScaleSet.r[3], &matParent.r[3], sizeof(_vector));
+
+	m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
+}
+
 void CEffect_Base::BillBoardSetting(_float3 vScale)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -202,8 +221,5 @@ void CEffect_Base::Free()
 		for (auto& pChild : m_vecChild)
 			Safe_Release(pChild);
 		m_vecChild.clear();
-
-		if (nullptr != m_pParentTransformCom)
-			Safe_Release(m_pParentTransformCom);
 	}
 }

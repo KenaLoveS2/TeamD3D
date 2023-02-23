@@ -67,11 +67,6 @@ public:
 		_bool	IsMovingPosition = false;
 		_bool	bUseChild = false;
 
-		// Child // 
-// 		_int    iHaveChildCnt = 0;
-// 		vector<class CEffect_Base*> vecChild;
-// 		class CTransform* pTransformCom = nullptr;
-
 	}EFFECTDESC;
 
 protected:
@@ -84,10 +79,23 @@ public:
 		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
 	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
 
-	void				 Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
-	void				 Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
+	// Effect Desc
+	void	Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
+	void	Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
 
-public:
+	_uint  Get_ChildCnt() { return (_uint)m_vecChild.size(); }
+	vector<class CEffect_Base*>* Get_vecChild() { return &m_vecChild; }
+
+	class CEffect_Base* Get_Parent() { return m_pParent; }
+	void				Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
+
+	void				Set_Matrix();
+	void	Set_InitMatrix(_fmatrix WorldMatrix) {
+		XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix);
+	}
+	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+
+public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
 
@@ -100,6 +108,9 @@ public:
 	virtual void		 Tick(_float fTimeDelta) override;
 	virtual void		 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		 Render() override;
+
+public:
+	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
 
 public:
 	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
@@ -120,9 +131,12 @@ protected:
 
 protected:
 	 /* Child */
-	_int    m_iHaveChildCnt = 0;
+	_uint m_iHaveChildCnt = 0;
 	vector<class CEffect_Base*> m_vecChild;
-	class CTransform* m_pParentTransformCom = nullptr;
+
+	class CEffect_Base*			m_pParent = nullptr;
+	_float4x4					m_InitWorldMatrix;
+	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 
 protected:
