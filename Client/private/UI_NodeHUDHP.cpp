@@ -44,7 +44,6 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
-	m_fTimeDelta = 0.f;
 
 	return S_OK;
 }
@@ -53,7 +52,6 @@ void CUI_NodeHUDHP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_fTimeDelta += fTimeDelta;
 }
 
 void CUI_NodeHUDHP::Late_Tick(_float fTimeDelta)
@@ -78,7 +76,6 @@ HRESULT CUI_NodeHUDHP::Render()
 		return E_FAIL;
 	}
 
-	m_iRenderPass = 5;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
