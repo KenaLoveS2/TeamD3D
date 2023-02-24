@@ -310,6 +310,7 @@
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LodObject.h" />
+    <ClInclude Include="..\Public\ModelViewerObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -451,6 +452,7 @@
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LodObject.cpp" />
+    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

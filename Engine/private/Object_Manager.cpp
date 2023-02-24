@@ -443,7 +443,10 @@ void CObject_Manager::Imgui_Push_Group(CGameObject * pSelectedObject)
 			CGameInstance::GetInstance()->Add_String(pComponentTag);
 
 			for (auto &pObj : Mulit_ObjectList)
+			{
 				pObj->Delete_Component(pComponentTag);
+				//Safe_Release(pComponentTag);
+			}
 		}
 
 		Imgui_Add_For_EnviroMent_Component();
