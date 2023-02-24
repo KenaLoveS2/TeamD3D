@@ -383,16 +383,16 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
-void CGameInstance::Imgui_DeleteComponent(CGameObject * pSelectedObject)
+void CGameInstance::Imgui_DeleteComponentOrObject(OUT  CGameObject*& pSelectedObject)
 {
-	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponentOrObject");
 
-	m_pObject_Manager->Imgui_DeleteComponent(pSelectedObject);
+	m_pObject_Manager->Imgui_DeleteComponentOrObject(pSelectedObject);
 }
 
 void CGameInstance::Imgui_Push_Group(CGameObject * pSelectedObject)
 {
-	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponentOrObject");
 	m_pObject_Manager->Imgui_Push_Group(pSelectedObject);
 }
 

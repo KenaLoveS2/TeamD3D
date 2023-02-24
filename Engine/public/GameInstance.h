@@ -83,7 +83,7 @@ public: /* For.Object_Manager */
 
 	void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
-	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
+	void Imgui_DeleteComponentOrObject(OUT class  CGameObject*& pSelectedObject);
 	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 
 	map<const _tchar*, class CGameObject*>& Get_ProtoTypeObjects();
