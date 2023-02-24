@@ -14,6 +14,8 @@ public:
 	class  CGameObject*		Get_SelectedObject() {
 		if (m_pSelectedObject != nullptr)
 			return m_pSelectedObject;
+	
+		nullptr;
 	}
 
 public:
