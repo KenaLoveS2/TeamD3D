@@ -114,6 +114,20 @@ HRESULT CUI::Initialize(void * pArg)
 		m_tSpriteInfo.fAnimTimeAcc = 0.f;
 		m_tSpriteInfo.bLoop = false;
 		m_tSpriteInfo.bFinished = false;
+
+		m_tUVMoveInfo.fDeltaTime = 0.f;
+		m_tUVMoveInfo.fDeltaTimeAcc = 0.f;
+		m_tUVMoveInfo.vSpeed = {1.f, 1.f};
+		m_tUVMoveInfo.vDelta = { 0.f, 0.f };
+
+
+		m_tDefaultRenderInfo.fAlpha = 1.f;
+		m_tDefaultRenderInfo.fDeltaTime = 0.f;
+		m_tDefaultRenderInfo.fDeltaTimeAcc = 0.f;
+		m_tDefaultRenderInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
+		m_tDefaultRenderInfo.vMinColor = { 0.f, 0.f ,0.f ,0.f };
+
+
 	}
 
 	return S_OK;
@@ -179,6 +193,7 @@ void CUI::Imgui_RenderingSetting()
 	/* For Shader Variables (Depending on RenderPass. */
 	/* if it doesnt work, then it might be not related to the selected Renderpass. */
 	ImGui::Separator();
+	ImGui::Text("Sprite Animation Setting");
 	static int size[2];
 	size[0] = m_tSpriteInfo.iXFrames;
 	size[1] = m_tSpriteInfo.iYFrames;
@@ -203,6 +218,60 @@ void CUI::Imgui_RenderingSetting()
 		m_tSpriteInfo.iYFrameNow = 0;
 
 	}
+
+	ImGui::Separator();
+	ImGui::Text("UV Animation Setting");
+
+	static float fUVTime;
+	fUVTime = m_tUVMoveInfo.fDeltaTime;
+	if (ImGui::SliderFloat("UV Duration", &fUVTime, 0.f, 30.f))
+		m_tUVMoveInfo.fDeltaTime = fUVTime;
+
+	static float fUVSpeed[2];
+	fUVSpeed[0] = m_tUVMoveInfo.vSpeed.x;
+	fUVSpeed[1] = m_tUVMoveInfo.vSpeed.y;
+	if (ImGui::SliderFloat("UV Speed", fUVSpeed, -50.f, 50.f))
+	{
+		m_tUVMoveInfo.vSpeed.x = fUVSpeed[0];
+		m_tUVMoveInfo.vSpeed.y = fUVSpeed[1];
+	}
+
+	ImGui::Separator();
+	ImGui::Text("Default RenderSetting");
+
+	static float fAlpha;
+	fAlpha = m_tDefaultRenderInfo.fAlpha;
+
+	static float vColor[4];
+	vColor[0] = m_tDefaultRenderInfo.vColor.x;
+	vColor[1] = m_tDefaultRenderInfo.vColor.y;
+	vColor[2] = m_tDefaultRenderInfo.vColor.z;
+	vColor[3] = m_tDefaultRenderInfo.vColor.w;
+	if (ImGui::SliderFloat4("Color", vColor, 0.f, 1.f))
+	{
+		m_tDefaultRenderInfo.vColor.x = vColor[0];
+		m_tDefaultRenderInfo.vColor.y = vColor[1];
+		m_tDefaultRenderInfo.vColor.z = vColor[2];
+		m_tDefaultRenderInfo.vColor.w = vColor[3];
+	}
+
+	static float vMinColor[4];
+	vMinColor[0] = m_tDefaultRenderInfo.vMinColor.x;
+	vMinColor[1] = m_tDefaultRenderInfo.vMinColor.y;
+	vMinColor[2] = m_tDefaultRenderInfo.vMinColor.z;
+	vMinColor[3] = m_tDefaultRenderInfo.vMinColor.w;
+	if (ImGui::SliderFloat4("MinColor", vMinColor, 0.f, 1.f))
+	{
+		m_tDefaultRenderInfo.vMinColor.x = vMinColor[0];
+		m_tDefaultRenderInfo.vMinColor.y = vMinColor[1];
+		m_tDefaultRenderInfo.vMinColor.z = vMinColor[2];
+		m_tDefaultRenderInfo.vMinColor.w = vMinColor[3];
+	}
+
+	static float fDeltaTime;
+	fDeltaTime = m_tDefaultRenderInfo.fDeltaTime;
+	if (ImGui::SliderFloat("DefaultDuration", &fDeltaTime, 0.f, 30.f))
+		m_tDefaultRenderInfo.fDeltaTime = fDeltaTime;
 
 	ImGui::Separator();
 }

@@ -34,6 +34,7 @@ public:
 	typedef struct tagUVMoveInfo
 	{
 		_float2		vDelta;
+		_float2		vSpeed;
 		_float		fDeltaTime;
 		_float		fDeltaTimeAcc;
 	}UVMOVE;
@@ -41,6 +42,7 @@ public:
 	typedef struct tagDefaultRenderInfo
 	{
 		_float4		vColor;
+		_float4		vMinColor;
 		_float		fAlpha;
 		_float		fDeltaTime;
 		_float		fDeltaTimeAcc;
@@ -95,6 +97,8 @@ protected:
 
 
 	SPRITEINFO			m_tSpriteInfo;
+	UVMOVE				m_tUVMoveInfo;
+	DEFAULTINFO			m_tDefaultRenderInfo;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
