@@ -95,6 +95,28 @@ char* CUtile::Create_String(const char * pText)
 	return pString;
 }
 
+char * CUtile::Split_String(char * pSour, char szSymbol)
+{
+	_uint	iSourLength = (_uint)strlen(pSour) + 1;
+
+	char*	pOut = new char[iSourLength];
+	ZeroMemory(pOut, iSourLength);
+
+	_bool	bSplitPoint = false;
+	for (_uint i = 0, j = 0; i < iSourLength; ++i)
+	{
+		if (bSplitPoint == false)
+		{
+			if (pSour[i] == szSymbol)
+				bSplitPoint = true;
+		}
+		else
+			pOut[j++] = pSour[i];
+	}
+
+	return pOut;
+}
+
 _float CUtile::Get_RandomFloat(_float fMinValue, _float fMaxValue)
 {
 	if (fMinValue >= fMaxValue)

@@ -67,6 +67,8 @@ protected:
 	_float4x4			m_matParentInit;
 	_float4x4			m_matLocal;
 
+	_uint				m_iLastWinSizeX = 0, m_iLastWinSizeY = 0;
+	_float				m_fAspectRatioX = 1.f, m_fAspectRatioY = 1.f;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;

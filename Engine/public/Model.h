@@ -65,6 +65,7 @@ private:
 	_uint								m_iNumBones = 0;
 	vector<class CBone*>			m_Bones;
 
+	_uint								m_iPreAnimIndex = 0;
 	_uint								m_iCurrentAnimIndex = 0;
 	_uint								m_iNumAnimations = 0;
 	vector<class CAnimation*>		m_Animations;
@@ -73,7 +74,6 @@ private:
 
 	_float								m_fBlendDuration = 0.2f;
 	_float								m_fBlendCurTime = 0.2f;
-	_uint								m_iPreAnimIndex = 0;
 
 	_bool								m_bPausePlay = false;
 

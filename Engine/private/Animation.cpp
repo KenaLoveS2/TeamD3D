@@ -30,7 +30,9 @@ HRESULT CAnimation::Save_Animation(HANDLE & hFile, DWORD & dwByte)
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 
 	WriteFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_fBlendDuration, sizeof(_float), &dwByte, nullptr);
 	WriteFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_eAnimType, sizeof(_int), &dwByte, nullptr);
 	WriteFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
 	WriteFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
 
@@ -59,7 +61,9 @@ HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
 	Safe_Delete_Array(pName);
 
 	ReadFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_fBlendDuration, sizeof(_float), &dwByte, nullptr);
 	ReadFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_eAnimType, sizeof(_int), &dwByte, nullptr);
 	ReadFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
 
 	ReadFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);

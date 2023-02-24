@@ -166,6 +166,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

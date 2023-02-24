@@ -255,6 +255,22 @@ void CModel::Imgui_RenderProperty()
 		}
 
 		ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+		if (ImGui::Button("Split All Animation Tag"))
+		{
+			for (_uint i = 0; i < m_iNumAnimations; ++i)
+				Safe_Delete_Array(ppAnimationTag[i]);
+			Safe_Delete_Array(ppAnimationTag);
+
+			iSelectAnimation = -1;
+			for (_uint i = 0; i < m_iNumAnimations; ++i)
+			{
+				char* pSlittedTag = CUtile::Split_String(const_cast<char*>(m_Animations[i]->Get_Name()), '|');
+				m_Animations[i]->Set_Name(pSlittedTag);
+				Safe_Delete_Array(pSlittedTag);
+			}
+
+			return;
+		}
 
 		if (iSelectAnimation != -1)
 		{
@@ -320,6 +336,13 @@ void CModel::Imgui_RenderProperty()
 			{
 				ImGui::InputText("Input New Name", szNewName, MAX_PATH);
 
+				if (ImGui::Button("Split Name"))
+				{
+					char* pSplittedName = CUtile::Split_String(ppAnimationTag[iSelectAnimation], '|');
+					strcpy_s(szNewName, pSplittedName);
+					Safe_Delete_Array(pSplittedName);
+				}
+				ImGui::SameLine();
 				if (ImGui::Button("Confirm"))
 				{
 					pAnimation->Set_Name(szNewName);
@@ -341,6 +364,20 @@ void CModel::Imgui_RenderProperty()
 			ImGui::InputDouble("Duration", &dDuration, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
 			_float		fProgress = _float(dPlayTime / dDuration);
 			ImGui::InputFloat("Progress", &fProgress, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			_float&	fBlendDuration = pAnimation->Get_BlendDuration();
+			ImGui::InputFloat("Blend Duration", &fBlendDuration, 0.01f, 0.05f, "%.3f");
+			ImGui::SameLine();
+			if (ImGui::SmallButton("reset"))
+				fBlendDuration = 0.2f;
+			
+			ImGui::Separator();
+			ImGui::BulletText("Animation Type");
+			CAnimation::ANIMTYPE&		eAnimType = pAnimation->Get_AnimationType();
+			if (ImGui::RadioButton("Common", eAnimType == CAnimation::ANIMTYPE_COMMON))
+				eAnimType = CAnimation::ANIMTYPE_COMMON;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Additive", eAnimType == CAnimation::ANIMTYPE_ADDITIVE))
+				eAnimType = CAnimation::ANIMTYPE_ADDITIVE;
 
 			ImGui::Separator();
 			ImGui::BulletText("Loop");
@@ -571,17 +608,14 @@ void CModel::Reset_Animation()
 
 void CModel::Set_AnimIndex(_uint iAnimIndex)
 {
-	m_iCurrentAnimIndex = iAnimIndex;
-	
-	/*
 	if (m_iCurrentAnimIndex != iAnimIndex)
 	{
 		m_iPreAnimIndex = m_iCurrentAnimIndex;
+		m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 		m_fBlendCurTime = 0.f;
 	}
 
 	m_iCurrentAnimIndex = iAnimIndex;
-	*/
 }
 
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)

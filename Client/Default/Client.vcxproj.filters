@@ -157,6 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
+      <Filter>02.GameObjects\Player</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">

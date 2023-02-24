@@ -226,7 +226,6 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	_vector			vRotation;
 	_vector			vPosition;
 
-	/* 현재 재생된 시간이 마지막 키프레임시간보다 커지며.ㄴ */
 	if (PlayTime >= m_KeyFrames.back().Time)
 	{
 		vScale = XMLoadFloat3(&m_KeyFrames.back().vScale);
@@ -237,9 +236,7 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	else
 	{
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
-		{
 			++m_iCurrentKeyFrameIndex;
-		}
 
 		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
