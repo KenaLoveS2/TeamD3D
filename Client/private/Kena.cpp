@@ -110,6 +110,8 @@ HRESULT CKena::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		if (i == 1)
 		{
+			// Arm & Leg
+			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
@@ -117,18 +119,29 @@ HRESULT CKena::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
-		else if (i == 4)	// Eye Render
+		else if (i == 4)
+		{
+			// Eye Render
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		}
 		else if (i ==5 || i == 6)
 		{
+			// Face
+			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
 		}
-		else if(i==0)
+		else if (i == 0)
+		{
+			// Render Off
 			continue;
+		}
 		else
+		{
+			// Eye Lash
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		}
 	}
 
 	return S_OK;
@@ -137,8 +150,16 @@ HRESULT CKena::Render()
 void CKena::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-	ImGui::Begin("KenaMain");
-	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
+
+	ImGui::Begin("Shader_KenaMain");
+	ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.01f, 0.f, 10.f);
+	_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z};
+	static _float2 sssMinMax{ -100.f, 100.f };
+	ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
+	ImGui::DragFloat3("SSSAmount", fColor, 0.01f, 0.f, 255.f);
+	m_vSSSColor.x = fColor[0];
+	m_vSSSColor.y = fColor[1];
+	m_vSSSColor.z = fColor[2];
 	ImGui::End();
 }
 
@@ -275,7 +296,10 @@ HRESULT CKena::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
+
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+
 	return S_OK;
 }
 

@@ -65,23 +65,19 @@ HRESULT CKena_MainOutfit::Render()
 
 		if (i == 0)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
+			// Real Cloth			
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			/******************************************************************/
-
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
 		else
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
@@ -93,8 +89,15 @@ HRESULT CKena_MainOutfit::Render()
 void CKena_MainOutfit::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-	ImGui::Begin("OutFit");
-	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
+	ImGui::Begin("Shader_OutFit");
+	ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.01f, 0.f, 10.f);
+	_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+	static _float2 sssMinMax{ -100.f, 100.f };
+	ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
+	ImGui::DragFloat3("SSSAmount", fColor, 0.01f, 0.f, 255.f);
+	m_vSSSColor.x = fColor[0];
+	m_vSSSColor.y = fColor[1];
+	m_vSSSColor.z = fColor[2];
 	ImGui::End();
 }
 
@@ -144,7 +147,10 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
+	
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+
 	return S_OK;
 }
 
