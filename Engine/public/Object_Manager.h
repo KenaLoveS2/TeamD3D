@@ -59,7 +59,7 @@ private:
 
 private: /*For.Imgui*/
 	string							m_strComponentTag = "";
-	
+	wstring							m_wstrSelecteObject_LayerTag = L"";
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
 
@@ -69,10 +69,12 @@ public:
 public: /*For.Imgui*/
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
-	void Imgui_Push_Group( class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
-	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
-	void Imgui_Add_For_EnviroMent_Component();
+	void Imgui_DeleteComponentOrObject(OUT class CGameObject*& pSelectedObject);
+	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 
+private:
+	void Imgui_Add_For_EnviroMent_Component();
+	
 private:
 	list<class CGameObject*> Mulit_ObjectList;		// For. Component add. Delete many Objects 
 
