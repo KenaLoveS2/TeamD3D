@@ -65,7 +65,7 @@ private:
 	void				Test(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<CUI_ClientManager::UI_ID, _int>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_HUD, _float>		m_PlayerDelegator;
 
 	_float m_fTest = 0.f;
 

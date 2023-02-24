@@ -162,7 +162,6 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-
 	str = "Node_HP";
 	tDesc.fileName.assign(str.begin(), str.end());
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HP", L"Node_HP", &tDesc));
@@ -252,9 +251,14 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::TestFunction(CUI_ClientManager::UI_ID, _int)
+void CUI_CanvasHUD::TestFunction(CUI_ClientManager::UI_HUD eType, _float fValue)
 {
-	MSG_BOX("Hey");
+	switch (eType)
+	{
+	case CUI_ClientManager::HUD_HP:
+		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Set_Guage(fValue);
+		break;
+	}
 }
 
 CUI_CanvasHUD * CUI_CanvasHUD::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

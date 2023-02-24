@@ -260,6 +260,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\public\UI_Canvas.h" />
+    <ClInclude Include="..\public\UI_Event.h" />
     <ClInclude Include="..\public\UI_Manager.h" />
     <ClInclude Include="..\public\UI_Node.h" />
     <ClInclude Include="..\public\Utile.h" />
@@ -332,6 +333,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Transform.cpp" />
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\private\UI_Canvas.cpp" />
+    <ClCompile Include="..\private\UI_Event.cpp" />
     <ClCompile Include="..\private\UI_Manager.cpp" />
     <ClCompile Include="..\private\UI_Node.cpp" />
     <ClCompile Include="..\private\Utile.cpp">

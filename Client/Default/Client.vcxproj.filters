@@ -151,6 +151,12 @@
     <Filter Include="02.GameObjects\Player\State">
       <UniqueIdentifier>{6e6de2cd-395c-4900-88d4-ff4763baf2d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events">
+      <UniqueIdentifier>{ff44ad07-8596-4bfd-ab42-0eda2c97469a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\BarGugage">
+      <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -310,6 +316,9 @@
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LodObject.h" />
+    <ClInclude Include="..\public\UI_Event_Barguage.h">
+      <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -451,6 +460,9 @@
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LodObject.cpp" />
+    <ClCompile Include="..\private\UI_Event_Barguage.cpp">
+      <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
