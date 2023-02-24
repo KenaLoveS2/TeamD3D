@@ -108,15 +108,11 @@ HRESULT CCave_Rock::SetUp_Components()
 	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	///* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-	//	(CComponent**)&m_pModelCom)))
-	//	return E_FAIL;
-	
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Model_SM_CliffWall_Large0_T"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+	
 
 	//m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, m_EnviromentDesc.szTextureTag);
 
