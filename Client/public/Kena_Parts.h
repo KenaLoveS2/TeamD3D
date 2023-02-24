@@ -53,7 +53,10 @@ protected:
 	virtual HRESULT		Ready_Parts() { return S_OK; }
 	virtual HRESULT		SetUp_Components() PURE;
 	virtual HRESULT		SetUp_ShaderResource() PURE;
-	float							m_fTest = 0.f;
+
+	_float							m_fSSSAmount = 0.1f;
+	_float4							m_vSSSColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
+
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) PURE;
 	virtual void				Free() override;

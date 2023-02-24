@@ -190,7 +190,6 @@ void CLight_Manager::Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& 
 	char SColor[MAX_PATH] = { "Specular##2f_" };
 	strcat_s(SColor, MAX_PATH, pLightTag);
 
-
 	if(eType == COLOR_DIFFUSE)
 	{
 		_float4 color = _float4(vColor.x / 255.f, vColor.y / 255.f, vColor.z / 255.f, vColor.w / 255.f);
