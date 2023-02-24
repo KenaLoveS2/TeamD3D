@@ -26,8 +26,6 @@ public:
 	static CKena_MainOutfit*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void				Free() override;
-
-	float			m_fTest = 0.f;
 };
 
 END

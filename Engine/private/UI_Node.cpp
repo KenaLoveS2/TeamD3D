@@ -78,8 +78,8 @@ void CUI_Node::Imgui_RenderProperty()
 {
 	ImGui::Separator();
 	
-	if (ImGui::Button("Save Node"))
-		Save_Data();
+	//if (ImGui::Button("Save Node"))
+	//	Save_Data();
 
 	/* Translation Setting */
 	ImGui::Text("Local Matrix");

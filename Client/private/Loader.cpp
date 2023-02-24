@@ -19,7 +19,6 @@
 
 /* Objects */
 #include "Cave_Rock.h"
-#include "ForkLift.h"
 
 /* UI */
 #include "BackGround.h"
@@ -102,6 +101,10 @@ HRESULT CLoader::Loading_ForLogo()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/LoadingBG_%d.png"), 2))))
 		return E_FAIL;		
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_MediumWaves_H.png")))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
 	
 
@@ -117,8 +120,6 @@ HRESULT CLoader::Loading_ForLogo()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
@@ -174,11 +175,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_VIBuffer_Rect_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
 		CVIBuffer_Rect_Instancing::Create(m_pDevice, m_pContext, 30))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Point_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Point_Instancing"),
-		CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
 
@@ -290,10 +286,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_ForkLift*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	///* For.Prototype_GameObject_Effect_Rect_Instancing */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Instancing"),
@@ -535,6 +527,17 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPointInstance */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectPointInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	//lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
+	///* For.Prototype_Component_VIBuffer_Point_Instancing */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Point_Instancing"),
+	//	CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 30))))
+	//	return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 

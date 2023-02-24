@@ -4,6 +4,9 @@
 BEGIN(Engine)
 class CLight_Manager final : public CBase
 {
+public:
+	enum eColor { COLOR_DIFFUSE, COLOR_AMBIENT, COLOR_SPECULAR, COLOR_END };
+
 	DECLARE_SINGLETON(CLight_Manager)
 private:
 	CLight_Manager();
@@ -16,10 +19,12 @@ public:
 	void Render_Light(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader);
 	void Clear();
 
-private:
+	void	Imgui_Render();
+	void Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& vColor);
 
+private:
 	vector<class CLight*>					m_Lights;
-	typedef vector<class CLight*>			LIGHTS;
+	typedef vector<class CLight*>		LIGHTS;
 
 public:
 	virtual void Free() override;

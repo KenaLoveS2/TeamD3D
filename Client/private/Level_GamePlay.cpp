@@ -83,6 +83,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(5.f, 5.f, 5.f, 1.f);
 	LightDesc.vAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -171,9 +172,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena")))
 		return E_FAIL;
 
- 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), L"ForkLift_Test")))
- 	//	return E_FAIL;
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -257,7 +255,6 @@ HRESULT CLevel_GamePlay::Initialize_ThreadData()
 
 	_tchar szTempObject[2][32] = {
 		TEXT("Prototype_GameObject_Player") ,
-		TEXT("Prototype_GameObject_ForkLift") ,
 	};
 	_tchar szTempClone[32] = { 0, };
 	

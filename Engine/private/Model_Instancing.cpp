@@ -34,7 +34,7 @@ CModel_Instancing::CModel_Instancing(const CModel_Instancing & rhs)
 	}
 	for (auto& Material : m_Materials)
 	{
-		for (_uint i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+		for (_uint i = 0; i < WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_AddRef(Material.pTexture[i]);
 	}
 
@@ -276,11 +276,11 @@ HRESULT CModel_Instancing::Ready_Materials(HANDLE hFile, const char * pModelFile
 		MODELMATERIAL ModelMaterial;
 		ZeroMemory(&ModelMaterial, sizeof(ModelMaterial));
 
-		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; ++j)
+		for (_uint j = 0; j < WJ_TEXTURE_TYPE_MAX; ++j)
 		{
 			_uint iTextureIndex = 0;
 			ReadFile(hFile, &iTextureIndex, sizeof(_uint), &dwByte, nullptr);
-			if (AI_TEXTURE_TYPE_MAX == iTextureIndex)
+			if (WJ_TEXTURE_TYPE_MAX == iTextureIndex)
 			{
 				continue;
 			}
@@ -340,7 +340,7 @@ void CModel_Instancing::Free()
 
 	for (auto& Material : m_Materials)
 	{
-		for (_uint i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+		for (_uint i = 0; i < WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_Release(Material.pTexture[i]);
 	}
 	m_Materials.clear();

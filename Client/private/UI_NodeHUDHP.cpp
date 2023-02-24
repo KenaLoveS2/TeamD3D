@@ -41,13 +41,9 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
-
-
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
-	
 
 	return S_OK;
 }
@@ -55,6 +51,15 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 void CUI_NodeHUDHP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_tUVMoveInfo.fDeltaTimeAcc += fTimeDelta;
+	if (m_tUVMoveInfo.fDeltaTimeAcc > m_tUVMoveInfo.fDeltaTime)
+	{
+		m_tUVMoveInfo.vDelta.x += m_tUVMoveInfo.vSpeed.x * fTimeDelta;
+
+		m_tUVMoveInfo.fDeltaTimeAcc = 0.f;
+	}
+
 }
 
 void CUI_NodeHUDHP::Late_Tick(_float fTimeDelta)
@@ -79,6 +84,7 @@ HRESULT CUI_NodeHUDHP::Render()
 		return E_FAIL;
 	}
 
+	Set_RenderPass(7);
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -134,6 +140,14 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
+
+	/* Test */
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fSpeedX", &m_tUVMoveInfo.vDelta.x, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vMinColor", &m_tDefaultRenderInfo.vMinColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tDefaultRenderInfo.vColor, sizeof(_float4))))
+		return E_FAIL;
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

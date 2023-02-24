@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "Delegator.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -33,11 +34,11 @@ public:
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
-	virtual void			Imgui_RenderProperty() override;
-	virtual void			ImGui_AnimationProperty() override;
-	virtual void			Update_Child() override;
+	virtual void				Imgui_RenderProperty() override;
+	virtual void				ImGui_AnimationProperty() override;
+	virtual void				Update_Child() override;
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
-	virtual void			Push_EventFunctions() override;
+	virtual void				Push_EventFunctions() override;
 
 private:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -61,14 +62,15 @@ private:
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
-	void					Test(_bool bIsInit, _float fTimeDelta);
+	void				Test(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<_int>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_ID, _int>		m_PlayerDelegator;
 
+	_float m_fTest = 0.f;
 
 public:
-	static CKena*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 };
