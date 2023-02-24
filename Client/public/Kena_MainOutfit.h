@@ -17,6 +17,7 @@ public:
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual void				Imgui_RenderProperty() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 
 private:
 	virtual HRESULT		SetUp_Components() override;

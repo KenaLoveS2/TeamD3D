@@ -55,6 +55,11 @@ HRESULT CKena::Initialize(void * pArg)
 
 	Push_EventFunctions();
 
+	m_fSSSAmount = 0.09f;
+	m_vSSSColor = _float4(0.2f, 0.18f, 0.16f, 1.f);
+	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
+	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+
 	return S_OK;
 }
 
@@ -150,17 +155,6 @@ HRESULT CKena::Render()
 void CKena::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-
-	ImGui::Begin("Shader_KenaMain");
-	ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.01f, 0.f, 10.f);
-	_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z};
-	static _float2 sssMinMax{ -100.f, 100.f };
-	ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
-	ImGui::DragFloat3("SSSAmount", fColor, 0.01f, 0.f, 255.f);
-	m_vSSSColor.x = fColor[0];
-	m_vSSSColor.y = fColor[1];
-	m_vSSSColor.z = fColor[2];
-	ImGui::End();
 }
 
 void CKena::ImGui_AnimationProperty()
@@ -180,6 +174,50 @@ void CKena::ImGui_AnimationProperty()
 	}
 
 	ImGui::EndTabBar();
+}
+
+void CKena::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
+	{
+		static _float2 AmountMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("SSSAmoutMinMax", (float*)&AmountMinMax);
+		ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.001f, AmountMinMax.x, AmountMinMax.y);
+
+		_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+		static _float2 sssMinMax{ -1.f, 1.f };
+		ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
+		ImGui::DragFloat3("SSSColor", fColor, 0.001f, sssMinMax.x, sssMinMax.y);
+		m_vSSSColor.x = fColor[0];
+		m_vSSSColor.y = fColor[1];
+		m_vSSSColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vEyeAmbientColor.x, m_vEyeAmbientColor.y, m_vEyeAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("EyeAAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("EyeAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vEyeAmbientColor.x = fColor[0];
+		m_vEyeAmbientColor.y = fColor[1];
+		m_vEyeAmbientColor.z = fColor[2];
+	}
+
+	for (auto& pPart : m_vecPart)
+	{
+		ImGui::NewLine();
+		pPart->ImGui_ShaderValueProperty();
+	}
 }
 
 void CKena::Update_Child()
@@ -299,6 +337,8 @@ HRESULT CKena::SetUp_ShaderResources()
 
 	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientEyeColor", &m_vEyeAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }

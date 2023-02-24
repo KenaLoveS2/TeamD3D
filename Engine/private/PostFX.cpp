@@ -7,6 +7,10 @@ IMPLEMENT_SINGLETON(CPostFX)
 CPostFX::CPostFX()
 {
 	m_bOn = true;
+	m_fMiddleGrey = 15.f;
+	m_fWhite = 3.f;
+	m_fBloomThreshold = 0.8f;
+	m_fBloomScale = 0.4f;
 }
 
 HRESULT CPostFX::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

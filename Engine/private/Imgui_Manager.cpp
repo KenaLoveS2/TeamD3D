@@ -170,8 +170,6 @@ void CImgui_Manager::Add_ImguiObject(CImguiObject* pImguiObject, bool bIsSelectV
 
 	if (bIsSelectViewer == true)
 		m_pSelectViewer_ImguiObj = pImguiObject;
-
-
 }
 
 void CImgui_Manager::Clear_ImguiObjects()
