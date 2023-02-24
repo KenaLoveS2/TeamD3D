@@ -15,7 +15,7 @@ public:
 		if (m_pSelectedObject != nullptr)
 			return m_pSelectedObject;
 	
-		nullptr;
+		return nullptr;
 	}
 
 public:
