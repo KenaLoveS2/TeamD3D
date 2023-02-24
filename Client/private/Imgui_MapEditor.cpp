@@ -288,7 +288,6 @@ void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
 			static_cast<CEnviromentObj*>(pSelectEnviObj)->Add_TexturePath(pFilePath);
 		}
 
-
 		vector<const _tchar*>* vecStr = static_cast<CEnviromentObj*>(pSelectEnviObj)->Get_TexturePaths();
 
 		for (auto& pComtag : *vecStr)
@@ -482,7 +481,9 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.szTextureTag = m_wstrTexturelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
-
+		EnviromentDesc.vecStr_textureFilePath.clear();
+		Insert_TextureFilePath(pGameInstance, EnviromentDesc, StrFilePathVec);
+		
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -492,7 +493,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePathVec);
+	
 
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
@@ -539,19 +540,18 @@ void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameOb
 
 }
 
-void CImgui_MapEditor::Load_TextureFilePath(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
+void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, vector<string> vecStr)
 {
-	assert(nullptr != pGameObject && "CImgui_MapEditor::Load_TextureFilePath");
 	assert(nullptr != pGameInstace && "CImgui_MapEditor::Load_TextureFilePath");
 
 	if (vecStr.size() == 0)
 		return;
-
+	
 	for (auto pStr : vecStr)
 	{
 		_tchar* pTextureFilePath = 	CUtile::StringToWideChar(pStr);
 		pGameInstace->Add_String(pTextureFilePath);
-		static_cast<CEnviromentObj*>(pGameObject)->Add_TexturePath(pTextureFilePath);
+		EnviromentDesc.vecStr_textureFilePath.push_back(pTextureFilePath);
 	}
 }
 
@@ -621,6 +621,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
+		EnviromentDesc.vecStr_textureFilePath.clear();
+		Insert_TextureFilePath(pGameInstance,EnviromentDesc,StrFilePath);
+
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
@@ -631,7 +634,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePath);
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;

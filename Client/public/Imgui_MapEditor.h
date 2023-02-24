@@ -27,7 +27,7 @@ public:
 public:
 	static				void					Load_MapObjects(_uint iLevel);
 	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void					Load_TextureFilePath(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
+	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, vector<string> vecStr);
 private:
 	void			Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void			Imgui_CreateEnviromentObj();

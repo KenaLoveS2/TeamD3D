@@ -18,7 +18,7 @@ CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 
 void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath)
 {
-	m_vecStr_textureFilePath.push_back(TexturePath);
+	m_EnviromentDesc.vecStr_textureFilePath.push_back(TexturePath);
 	/*나중에 중복 처리하기*/
 }
 
@@ -43,7 +43,7 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
 		m_EnviromentDesc.eChapterType = Desc->eChapterType;
 		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
-
+		m_EnviromentDesc.vecStr_textureFilePath = Desc->vecStr_textureFilePath;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
