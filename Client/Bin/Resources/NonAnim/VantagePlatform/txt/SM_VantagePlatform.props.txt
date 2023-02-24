@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/PulsePlateEnclosure/Material/MI_PulsePlateEnclosure.MI_PulsePlateEnclosure'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/FarmBombPlaform_StorehouseDoorPuzzle/Materials/MI_FarmBombPlaform_StorehouseDoorPuzzle_02.MI_FarmBombPlaform_StorehouseDoorPuzzle_02'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/PulsePlateEnclosure/Material/MI_PulsePlateEnclosure.MI_PulsePlateEnclosure'
+        MaterialSlotName = MI_PulsePlateEnclosure
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 905.031, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/FarmBombPlaform_StorehouseDoorPuzzle/Materials/MI_FarmBombPlaform_StorehouseDoorPuzzle_02.MI_FarmBombPlaform_StorehouseDoorPuzzle_02'
+        MaterialSlotName = MI_FarmBombPlaform_StorehouseDoorPuzzle_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1151.03, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.0466003, Y=-5.82108, Z=-3.40479 }
+    BoxExtent = { X=189.857, Y=195.585, Z=24.8165 }
+    SphereRadius = 205.273
+}

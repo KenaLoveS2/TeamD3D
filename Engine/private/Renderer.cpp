@@ -99,6 +99,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
+	/* For.ModelViewer */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_ModelViewer"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
+
+
+
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -110,6 +117,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
 		return E_FAIL;
+	// Model_Preview 렌더링용
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_ModelViewer"), TEXT("Target_ModelViewer"))))
+		return E_FAIL;
+
 
 	/* For.MRT_LightAcc */ /* 빛 연산의 결과를 저장할 렌더타겟들.  */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
@@ -120,6 +131,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	// HDR 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
+
+
 
 	/* For. SHADOW */
 	m_iShadowWidth = 8000;
@@ -170,6 +183,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	// For. Shadow
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
+	/* For.ModelViewer */
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
+		return E_FAIL;
+
 
 #endif
 	
@@ -274,6 +291,19 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 #ifdef _DEBUG
 
+
+	// Model Viewer
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
+		return E_FAIL;
+	
+	if (FAILED(Render_Viewer()))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
+		return E_FAIL;
+
+	// ~ Model Viewer
+
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
 
@@ -289,6 +319,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
+			m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
+		
 		}
 #endif
 
@@ -576,6 +608,27 @@ HRESULT CRenderer::Render_UI()
 
 	return S_OK;
 }
+
+HRESULT CRenderer::Render_Viewer()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_VIEWER])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_VIEWER].clear();
+
+
+	return S_OK;
+
+}
+
 
 #ifdef _DEBUG
 HRESULT CRenderer::Render_DebugObject()

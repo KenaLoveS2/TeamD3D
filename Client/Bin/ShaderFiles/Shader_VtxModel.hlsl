@@ -69,6 +69,26 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_MAIN_MODEL_VIEWER(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_WorldMatrix, g_ViewMatrix);
+	matWVP = mul(matWV, g_ProjMatrix);
+
+	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = (vector)0.f;
+	Out.vTangent = (vector)0.f;
+	Out.vBinormal = (vector)0.f;
+
+	return Out;
+}
+
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -85,6 +105,7 @@ struct PS_OUT
 	float4		vDiffuse  : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth   : SV_TARGET2;
+	//float4		vModelViewer   : SV_TARGET3;			// ¸ðµ¨_ÇÁ¸®ºä¿ë·»´õÅ¸ÄÏ
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -107,9 +128,38 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse =	CalcHDRColor(vDiffuse, vERAO.r);
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	//Out.vModelViewer = vDiffuse;
+	return Out;
+}
+
+struct PS_OUT_MODEL_VIEWER
+{
+	/*SV_TARGET0 : ¸ðµç Á¤º¸°¡ °áÁ¤µÈ ÇÈ¼¿ÀÌ´Ù. AND 0¹øÂ° ·»´õÅ¸°Ù¿¡ ±×¸®±âÀ§ÇÑ »ö»óÀÌ´Ù. */
+	float4		vModelViewer   : SV_TARGET0;			// ¸ðµ¨_ÇÁ¸®ºä¿ë·»´õÅ¸ÄÏ
+	
+};
+PS_OUT_MODEL_VIEWER PS_MAIN_MODEL_VIEWER(PS_IN In)
+{
+	PS_OUT_MODEL_VIEWER			Out = (PS_OUT_MODEL_VIEWER)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	Out.vModelViewer = vDiffuse * vNormalDesc;
 
 	return Out;
 }
+
+
 
 struct VS_IN_SHADOW
 {
@@ -199,7 +249,6 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
 
-	
 	pass WireFrame//3
 	{
 		SetRasterizerState(RS_Wireframe);
@@ -209,11 +258,22 @@ technique11 DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
-		//HullShader = compile  hu_5_0 ;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+	
+	pass ModelPreViewer//4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
+		VertexShader = compile vs_5_0 VS_MAIN_MODEL_VIEWER();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MODEL_VIEWER();
+	}
 
 
 }

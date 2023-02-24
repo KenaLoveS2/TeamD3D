@@ -199,6 +199,7 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />

@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_BrokenCrystals_Static.MI_BrokenCrystals_Static'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_BrokenCrystals_Static.MI_BrokenCrystals_Static'
+        MaterialSlotName = MI_BrokenCrystals4
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 106.602, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=1.81845, Y=1.36543, Z=2.47905 }
+    BoxExtent = { X=13.9898, Y=21.4003, Z=8.80061 }
+    SphereRadius = 22.6498
+}

@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals_Pulseable.MI_PowerCrystals_Pulseable'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals_Pulseable.MI_PowerCrystals_Pulseable'
+        MaterialSlotName = MI_BrokenCrystals5
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 268.086, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=4.58237, Y=3.24293, Z=6.15539 }
+    BoxExtent = { X=20.289, Y=15.6461, Z=11.6695 }
+    SphereRadius = 21.7623
+}
