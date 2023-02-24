@@ -57,18 +57,20 @@ private:
 private:
 	_bool					m_bAttack = false;
 
+	// temp
+	_float					m_fSSSAmount = 0.01f;
+	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+
 private:
 	HRESULT				Ready_Parts();
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
-	void				Test(_bool bIsInit, _float fTimeDelta);
+	void						Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_ID, _int>		m_PlayerDelegator;
-
-	_float m_fTest = 0.f;
-
+	
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
