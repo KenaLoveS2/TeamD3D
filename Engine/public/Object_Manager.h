@@ -17,6 +17,7 @@ public:
 	class CLayer*				Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
+	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex) { return &m_mapShaderValueModel[iLevelIndex]; }
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
@@ -32,7 +33,8 @@ public:
 		const _tchar* pCloneObjectTag,
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	HRESULT					Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
-	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+	HRESULT					Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+	HRESULT					Add_ShaderValueObject(_uint iLevelIndex, class CGameObject* pGameObject);
 
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
@@ -50,6 +52,9 @@ private:	/* Clone Objects */
 
 private:	/* Animation Objects, For Animation Tool */
 	map<const _tchar*, class CGameObject*>*	m_mapAnimModel = nullptr;
+
+private:	/* Change Shader Value Objects, For Shader Tool */
+	map<const _tchar*, class CGameObject*>*	m_mapShaderValueModel = nullptr;
 
 private:
 	_bool									m_bShadow = true;
