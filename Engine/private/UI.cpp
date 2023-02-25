@@ -99,12 +99,13 @@ HRESULT CUI::Initialize(void * pArg)
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 		m_pTextureCom[i] = nullptr;
 
-	//if (pArg != nullptr)
-	//{
-	//	ZeroMemory(&m_tSpriteInfo, sizeof m_tSpriteInfo);
-	//	memcpy(&m_tSpriteInfo, pArg, sizeof m_tSpriteInfo);
-	//}
-	//else
+	D3D11_VIEWPORT			ViewportDesc;
+	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+	_uint			iNumViewports = 1;
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
+
 	{
 		m_tSpriteInfo.iXFrames = 1;
 		m_tSpriteInfo.iYFrames = 1;
@@ -156,8 +157,20 @@ bool	texture_getter(void* data, int index, const char** output)
 	*output = (*pVec)[index].c_str();
 	return true;
 }
+
+HRESULT CUI::SetUp_ShaderResources()
+{
+	for (auto e : m_vecEvents)
+		e->SetUp_ShaderResources(m_pShaderCom);
+
+	return S_OK;
+}
+
 void CUI::Imgui_RenderingSetting()
 {
+	ImGui::Separator();
+	ImGui::Text("RenderingSetting");
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
 	vector<string>* pNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_TEXTURE_NAME);
@@ -276,11 +289,21 @@ void CUI::Imgui_RenderingSetting()
 	ImGui::Separator();
 }
 
+void CUI::Imgui_EventSetting()
+{
+	for (auto e : m_vecEvents)
+		e->Imgui_RenderProperty();
+}
+
 void CUI::Free()
 {
 	__super::Free();
 
 	//Safe_Release(m_pParent);
+
+	for (auto e : m_vecEvents)
+		Safe_Release(e);
+
 
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 		Safe_Release(m_pTextureCom[i]);

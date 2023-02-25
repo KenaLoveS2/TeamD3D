@@ -47,6 +47,8 @@ private:
 
 	_float					m_fX, m_fY, m_fSizeX, m_fSizeY;
 
+	_uint					m_iTextureIndex;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
