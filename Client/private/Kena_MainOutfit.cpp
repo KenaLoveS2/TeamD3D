@@ -42,6 +42,7 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Imgui_RenderProperty();
 }
 
 void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
@@ -73,16 +74,23 @@ HRESULT CKena_MainOutfit::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
 		{
+			// Shoes & Bag
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
-		else
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
+		else if(i == 3 || i == 4)
+		{
+			// Boots & Hair
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_HairDepthTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ALPHA, "g_HairAlphaTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ROOT, "g_HairRootTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" , 6);
+		}
 	}
 
 	return S_OK;
@@ -166,6 +174,16 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 		m_pModelCom->SetUp_Material(i, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
 	}
 	/******************************************************************/
+
+	for(_uint i = 3; i<5; ++i)
+	{
+		// Depth
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/hair_DEPTH.png"));
+		// Alpha
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ALPHA, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
+		// Root
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ROOT, TEXT("../Bin/Resources/Anim/Kena/hair_ROOT.png"));
+	}
 
 	return S_OK;
 }

@@ -140,12 +140,12 @@ HRESULT CKena::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else if (i == 4)
 		{
 			// Eye Render
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
 		}
 		else if (i ==5 || i == 6)
 		{
@@ -153,7 +153,7 @@ HRESULT CKena::Render()
 			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
+			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
 		}
 		else if (i == 0)
 		{
@@ -163,7 +163,7 @@ HRESULT CKena::Render()
 		else
 		{
 			// Eye Lash
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 		}
 	}
 

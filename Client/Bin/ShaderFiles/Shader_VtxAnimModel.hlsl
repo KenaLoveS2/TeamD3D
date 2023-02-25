@@ -18,6 +18,10 @@ Texture2D<float4>		g_EmissiveMaskTexture;
 Texture2D<float4>		g_MaskTexture;
 Texture2D<float4>		g_SSSMaskTexture;
 
+Texture2D<float4>		g_HairDepthTexture;
+Texture2D<float4>		g_HairAlphaTexture;
+Texture2D<float4>		g_HairRootTexture;
+
 float4							g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
@@ -316,6 +320,38 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_HAIR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vRoot = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepth = g_HairDepthTexture.Sample(LinearSampler, In.vTexUV);
+
+	float fAlpha = vAlpha.r;
+
+	if (fAlpha < 0.5f)
+		discard;
+
+	float fDepth = vDepth.r;
+	
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+
+	float fFinalAlpha = fAlpha * saturate((fDepth - vRoot.r)/(vRoot.g - vRoot.r));
+
+	Out.vDiffuse = float4(vDiffuse.rgb,fFinalAlpha);
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f , 0.f);
+	Out.vAmbient = (vector)1.f;
+	Out.vSpecular = (vector)0.f;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -394,6 +430,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF();
+	}
+
+	pass Kena_Hair
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_HAIR();
 	}
 }
 
