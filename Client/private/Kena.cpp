@@ -123,7 +123,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 
 	if (m_pRendererCom != nullptr)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
@@ -173,9 +176,25 @@ HRESULT CKena::Render()
 		else
 		{
 			// Eye Lash
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CKena::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
 }
@@ -239,6 +258,20 @@ void CKena::ImGui_ShaderValueProperty()
 		m_vEyeAmbientColor.x = fColor[0];
 		m_vEyeAmbientColor.y = fColor[1];
 		m_vEyeAmbientColor.z = fColor[2];
+	}
+
+	{
+		static _float2 LashWidthMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashWidthMinMax", (float*)&LashWidthMinMax);
+		ImGui::DragFloat("LashWidthAmount", &m_fLashWidth, 0.1f, LashWidthMinMax.x, LashWidthMinMax.y);
+
+		static _float2 LashDensityMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashDensityAmoutMinMax", (float*)&LashDensityMinMax);
+		ImGui::DragFloat("LashDensityAmount", &m_fLashDensity, 0.1f, LashDensityMinMax.x, LashDensityMinMax.y);
+
+		static _float2 LashIntensity{ 0.f, 100.f };
+		ImGui::InputFloat2("LashIntensityMinMax", (float*)&LashIntensity);
+		ImGui::DragFloat("LashIntensityAmount", &m_fLashIntensity, 0.1f, LashIntensity.x, LashIntensity.y);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -365,6 +398,29 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientEyeColor", &m_vEyeAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_fLashDensity", &m_fLashDensity, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
+
+	return S_OK;
+}
+
+HRESULT CKena::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

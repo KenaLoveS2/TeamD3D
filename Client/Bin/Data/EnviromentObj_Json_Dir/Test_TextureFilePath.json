@@ -19,7 +19,8 @@
       "4_RoomIndex": 0,
       "5_ChapterType": 0,
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 5.0, 0.0, 35.9813346862793, 1.0 ],
-      "8_TextureFilePath": [ "TestOne", "TestTwo" ]
+      "8_TextureFilePath": [ "../Bin/Resources/NonAnim/Cave_Ciff_Rock/T_Cliff_Tile_01_Comp_M_R_Ao.png",
+                                        "TestTwo" ]
     },
     {
       "0_ProtoTag": "Prototype_GameObject_Cave_Rock",

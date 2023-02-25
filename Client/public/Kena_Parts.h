@@ -35,6 +35,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
 
@@ -54,6 +55,7 @@ protected:
 	virtual HRESULT		Ready_Parts() { return S_OK; }
 	virtual HRESULT		SetUp_Components() PURE;
 	virtual HRESULT		SetUp_ShaderResource() PURE;
+	virtual HRESULT		SetUp_ShadowShaderResources() PURE;
 
 	_float							m_fSSSAmount = 0.1f;
 	_float4							m_vSSSColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
