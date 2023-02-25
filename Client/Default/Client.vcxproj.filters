@@ -157,6 +157,9 @@
     <Filter Include="02.GameObjects\UI\04. Events\BarGugage">
       <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95. Tool\ImGui Setting">
+      <UniqueIdentifier>{51a7fbbd-7b4e-4e0a-bcd0-edaae35666b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -323,6 +326,9 @@
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ModelViewerObject.h" />
+    <ClInclude Include="..\public\Tool_Settings.h">
+      <Filter>95. Tool\ImGui Setting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -468,6 +474,9 @@
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
+    <ClCompile Include="..\private\Tool_Settings.cpp">
+      <Filter>95. Tool\ImGui Setting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

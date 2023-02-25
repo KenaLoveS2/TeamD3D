@@ -236,7 +236,7 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	else
 	{
 		_uint		iFrameIndex = 0;
-		int a = 0;
+		
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
 			++m_iCurrentKeyFrameIndex;
 

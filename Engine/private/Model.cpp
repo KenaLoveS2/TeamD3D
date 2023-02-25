@@ -668,7 +668,6 @@ void CModel::Play_Animation(_float fTimeDelta)
 	}
 	else
 	{
-		int a = 0;
 		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
 	}
 
