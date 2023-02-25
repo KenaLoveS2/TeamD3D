@@ -81,7 +81,7 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
+	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

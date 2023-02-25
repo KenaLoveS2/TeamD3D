@@ -15,26 +15,94 @@ HRESULT CImgui_ShaderEditor::Initialize(void * pArg)
 {
 	m_szFreeRenderName = "Shader_Editor";
 
+	m_iCurrentLevel = m_pGameInstance->Get_CurLevelIndex();
+	m_mapShaderValueObject = m_pGameInstance->Get_ShaderValueObjects(m_iCurrentLevel);
+
 	return S_OK;
 }
 
 void CImgui_ShaderEditor::Imgui_FreeRender()
 {
+	Update_Level();
+
+	if (m_iCurrentLevel == 0)
+	{
+		ImGui::Text("Wait for Loading...");
+		return;
+	}
+
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-	if(ImGui::Button("Use Shadow"))
+	if(ImGui::CollapsingHeader("Shadow"))
 	{
-		m_pGameInstance->SwitchOnOff_Shadow(true);
+		if (ImGui::Button("Use Shadow"))
+			m_pGameInstance->SwitchOnOff_Shadow(true);
+
+		if (ImGui::Button("Don't Use Shadow"))
+			m_pGameInstance->SwitchOnOff_Shadow(false);
 	}
 
-	if(ImGui::Button("Don't Use Shadow"))
+	if (ImGui::CollapsingHeader("HDR"))
+		CPostFX::GetInstance()->Imgui_Render();
+
+	if (ImGui::CollapsingHeader("Light"))
+		m_pGameInstance->Imgui_LightManagerRender();
+
+	if(m_mapShaderValueObject->empty())
 	{
-		m_pGameInstance->SwitchOnOff_Shadow(false);
+		ImGui::Text("There is No object to change shader variables");
+		ImGui::End();
+		return;
 	}
 
-	CPostFX::GetInstance()->Imgui_Render();
+	_uint	 nObjectCount = static_cast<_uint>(m_mapShaderValueObject->size());
+
+	ImGui::BulletText("Object to change shader variables");
+
+	static _int iSelectObject = -1;
+	char** ppObjectTag = new char*[nObjectCount];
+
+	_uint iTagLength = 0;
+	_uint i = 0;
+
+	for (auto& Pair : *m_mapShaderValueObject)
+		ppObjectTag[i++] = CUtile::WideCharToChar(const_cast<_tchar*>(Pair.first));
+
+	ImGui::ListBox("Object List", &iSelectObject, ppObjectTag, nObjectCount);
+
+	if(iSelectObject != -1)
+	{
+		CGameObject*	pGameObject = Find_GameObject(iSelectObject);
+
+		ImGui::BulletText("Current Object : ");
+		ImGui::SameLine();
+		ImGui::Text(ppObjectTag[iSelectObject]);
+		pGameObject->ImGui_ShaderValueProperty();
+	}
+
+	for (_uint i = 0; i < nObjectCount; ++i)
+		Safe_Delete_Array(ppObjectTag[i]);
+	Safe_Delete_Array(ppObjectTag);
 
 	ImGui::End();
+}
+
+CGameObject * CImgui_ShaderEditor::Find_GameObject(_int iIndex)
+{
+	NULL_CHECK_RETURN(m_mapShaderValueObject, nullptr);
+
+	auto	iter = m_mapShaderValueObject->begin();
+
+	for (_int i = 0; i < iIndex; ++i)
+		++iter;
+
+	return iter->second;
+}
+
+void CImgui_ShaderEditor::Update_Level()
+{
+	m_iCurrentLevel = m_pGameInstance->Get_CurLevelIndex();
+	m_mapShaderValueObject = m_pGameInstance->Get_ShaderValueObjects(m_iCurrentLevel);
 }
 
 CImgui_ShaderEditor * CImgui_ShaderEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

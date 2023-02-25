@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeHUDHP.h"
 #include "GameInstance.h"
-
+#include "UI_Event_Barguage.h"
 
 CUI_NodeHUDHP::CUI_NodeHUDHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -11,6 +11,11 @@ CUI_NodeHUDHP::CUI_NodeHUDHP(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 CUI_NodeHUDHP::CUI_NodeHUDHP(const CUI_NodeHUDHP & rhs)
 	: CUI_Node(rhs)
 {
+}
+
+void CUI_NodeHUDHP::Set_Guage(_float fGuage)
+{
+	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
 HRESULT CUI_NodeHUDHP::Initialize_Prototype()
@@ -25,11 +30,7 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
 		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-			XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 
@@ -41,13 +42,10 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
 
-
-	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
-
-	
+	/* Events */
+	UIDESC* tDesc = (UIDESC*)pArg;
+	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
 
 	return S_OK;
 }
@@ -114,7 +112,8 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -133,6 +132,7 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

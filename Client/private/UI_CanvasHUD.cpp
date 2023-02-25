@@ -155,6 +155,10 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	string str;
 	wstring wstr;
 
+	/* Note : the reason using unstable temp address variable "fileName" is that
+		fileName(CloneTag) needed while it cloned when loading the data.
+		(The cloneTag is stored after the clone process.)
+	*/
 	str = "Node_HPBar";
 	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(지역변수) */
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar",&tDesc));
@@ -162,10 +166,45 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-
 	str = "Node_HP";
 	tDesc.fileName.assign(str.begin(), str.end());
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HP", L"Node_HP", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_ShieldBar";
+	tDesc.fileName.assign(str.begin(), str.end()); 
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_ShieldBar", L"Node_ShieldBar", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_Shield";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Shield", L"Node_Shield", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+
+	str = "Node_RotIcon";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotIcon", L"Node_RotIcon", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipBar";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipBar", L"Node_PipBar", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipGuage";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipGuage", L"Node_PipGuage", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
@@ -231,9 +270,14 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::TestFunction(_int)
+void CUI_CanvasHUD::TestFunction(CUI_ClientManager::UI_HUD eType, _float fValue)
 {
-	MSG_BOX("Hey");
+	switch (eType)
+	{
+	case CUI_ClientManager::HUD_HP:
+		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Set_Guage(fValue);
+		break;
+	}
 }
 
 CUI_CanvasHUD * CUI_CanvasHUD::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

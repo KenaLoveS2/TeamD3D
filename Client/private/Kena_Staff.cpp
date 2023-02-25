@@ -28,7 +28,7 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Staff.ao");
-
+	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 	return S_OK;
 }
 
@@ -39,6 +39,7 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
+	Imgui_RenderProperty();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -62,13 +63,13 @@ HRESULT CKena_Staff::Render()
 		if (i > 1)
 			continue;
 
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		/********************* For. Kena PostProcess By WJ*****************/
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 		/******************************************************************/
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 	}
 
 	return S_OK;
@@ -92,6 +93,19 @@ void CKena_Staff::ImGui_AnimationProperty()
 	ImGui::EndTabBar();
 }
 
+void CKena_Staff::ImGui_ShaderValueProperty()
+{
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("Staff_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("Staff_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
+}
+
 HRESULT CKena_Staff::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -105,11 +119,11 @@ HRESULT CKena_Staff::SetUp_Components()
 	for(int i = 0; i<2; ++i)
 	{
 		// AO_R_M
-		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
 		// EMISSIVE
-		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
 		// SPRINT_EMISSIVE
-		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
 	}
 	/******************************************************************/
 
@@ -124,6 +138,10 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }

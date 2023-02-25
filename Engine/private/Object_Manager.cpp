@@ -48,6 +48,7 @@ HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototy
 
 	m_pLayers = new LAYERS[iNumLevels];
 	m_mapAnimModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
+	m_mapShaderValueModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
 	
@@ -75,6 +76,11 @@ HRESULT CObject_Manager::Clear(_uint iLevelIndex)
  		Safe_Release(Pair.second);
  
  	m_mapAnimModel[iLevelIndex].clear();
+
+	for (auto& Pair : m_mapShaderValueModel[iLevelIndex])
+		Safe_Release(Pair.second);
+
+	m_mapShaderValueModel[iLevelIndex].clear();
 
 	return S_OK;
 }
@@ -216,6 +222,19 @@ HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * 
 	return S_OK;
 }
 
+HRESULT CObject_Manager::Add_ShaderValueObject(_uint iLevelIndex, CGameObject * pGameObject)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+
+	m_mapShaderValueModel[iLevelIndex].emplace(pGameObject->Get_ObjectCloneName(), pGameObject);
+	Safe_AddRef(pGameObject);
+
+	return S_OK;
+}
+
 HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameObject)
 {
 	if (iLevelIndex >= m_iNumLevels)
@@ -291,13 +310,17 @@ void CObject_Manager::Free()
 			Safe_Release(Pair.second);
 		m_mapAnimModel[i].clear();
 
+		for (auto& Pair : m_mapShaderValueModel[i])
+			Safe_Release(Pair.second);
+		m_mapShaderValueModel[i].clear();
+
 		for (auto& Pair : m_pLayers[i])
 			Safe_Release(Pair.second);
-
 		m_pLayers[i].clear();
 	}
 
 	Safe_Delete_Array(m_pLayers);
+	Safe_Delete_Array(m_mapShaderValueModel);
 	Safe_Delete_Array(m_mapAnimModel);
 	
 
@@ -357,17 +380,17 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 
 	if (ImGui::TreeNode("ObjectViewer"))
 	{
-		for (auto& Pair : targetLevel) // for layer loop
+		for (auto& LayerPair : targetLevel) // for layer loop
 		{
 			char szLayerTag[128];
 			char szobjectTag[128];
-			CUtile::WideCharToChar(Pair.first, szLayerTag);
+			CUtile::WideCharToChar(LayerPair.first, szLayerTag);
 			if (ImGui::TreeNode(szLayerTag))  // for object loop listbox
 			{
 				if (ImGui::BeginListBox("##"))
 				{
 					CGameObject *pObj = nullptr;
-					for (auto& Pair : Pair.second->GetGameObjects())
+					for (auto& Pair : LayerPair.second->GetGameObjects())
 					{
 						pObj = Pair.second;
 						if (pObj != nullptr)
@@ -381,6 +404,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 						}
 						if (ImGui::Selectable(szobjectTag, bSelected))
 						{
+							m_wstrSelecteObject_LayerTag = LayerPair.first;
 							pSelectedObject = pObj;
 							bFound = true;
 						}
@@ -397,75 +421,89 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 		pSelectedObject = nullptr;
 }
 
+void CObject_Manager::Imgui_DeleteComponentOrObject(OUT class CGameObject*& pSelectedObject)
+{
+	if (nullptr == pSelectedObject)
+		return;
+	ImGui::InputText("Com_Tag", &m_strComponentTag);
+	if (ImGui::Button("Delete_Object"))
+	{
+		Delete_Object(CGameInstance::GetInstance()->Get_CurLevelIndex(),
+			m_wstrSelecteObject_LayerTag.c_str(), pSelectedObject->Get_ObjectCloneName());
+
+		m_wstrSelecteObject_LayerTag = L"";
+		pSelectedObject = nullptr;
+	}
+	ImGui::SameLine();			// Delete_Object		ImGui::SameLine(); 	Delete_Component
+	if (ImGui::Button("Delete_Component"))	
+	{
+		if (nullptr == pSelectedObject)
+			return;
+		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
+		CGameInstance::GetInstance()->Add_String(pComponentTag);
+		pSelectedObject->Delete_Component(pComponentTag);
+	}
+}
+
 void CObject_Manager::Imgui_Push_Group(CGameObject * pSelectedObject)
 {
 	if (nullptr == pSelectedObject)
 		return;
 
-	if (ImGui::Button("Add Multi Group"))
+	if (ImGui::CollapsingHeader("Envirioments_Control_Components"))
 	{
-		Mulit_ObjectList.push_back(pSelectedObject);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Clear Multi Group"))
-		Mulit_ObjectList.clear();
-
-	ImGui::Separator();
-	
-	string str = "";
-	wstring pObjectClontTag = L"";
-	if (ImGui::BeginListBox("#MultiBox#"))
-	{
-		const bool bTestSelected = false;
-		for (auto& pAddObj : Mulit_ObjectList)
+		if (ImGui::Button("Add Multi Group"))
 		{
-			char szobjectTag[128];
-			CUtile::WideCharToChar(pAddObj->Get_ObjectCloneName(), szobjectTag);
+			Mulit_ObjectList.push_back(pSelectedObject);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear Multi Group"))
+			Mulit_ObjectList.clear();
 
-			if (ImGui::Selectable(szobjectTag, bTestSelected))
+		if (ImGui::Button("GroupObj_Delete_Component"))
+		{
+			_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
+			CGameInstance::GetInstance()->Add_String(pComponentTag);
+
+			for (auto &pObj : Mulit_ObjectList)
 			{
-				pObjectClontTag = pAddObj->Get_ObjectCloneName();
+				pObj->Delete_Component(pComponentTag);
+				//Safe_Release(pComponentTag);
 			}
 		}
-		ImGui::EndListBox();
-	}
 
-	if (pObjectClontTag != L"")
-	{
-		Mulit_ObjectList.remove_if([&](CGameObject* pGameObject)->bool
+		Imgui_Add_For_EnviroMent_Component();
+
+		ImGui::Separator();
+
+		string str = "";
+		wstring pObjectClontTag = L"";
+		if (ImGui::BeginListBox("#T#"))
 		{
-			if (!lstrcmp(pObjectClontTag.c_str(), pGameObject->Get_ObjectCloneName()))
-				return true;
-			return false;
-		});
+			const bool bTestSelected = false;
+			for (auto& pAddObj : Mulit_ObjectList)
+			{
+				char szobjectTag[128];
+				CUtile::WideCharToChar(pAddObj->Get_ObjectCloneName(), szobjectTag);
+
+				if (ImGui::Selectable(szobjectTag, bTestSelected))
+				{
+					pObjectClontTag = pAddObj->Get_ObjectCloneName();
+				}
+			}
+			ImGui::EndListBox();
+		}
+
+		if (pObjectClontTag != L"")
+		{
+			Mulit_ObjectList.remove_if([&](CGameObject* pGameObject)->bool
+			{
+				if (!lstrcmp(pObjectClontTag.c_str(), pGameObject->Get_ObjectCloneName()))
+					return true;
+				return false;
+			});
+		}
 	}
-
-}
-
-void CObject_Manager::Imgui_DeleteComponent(CGameObject * pSelectedObject)
-{
-	if (nullptr==pSelectedObject )
-		return;
-
-	ImGui::InputText("Com_Tag", &m_strComponentTag);
-	
-	if (ImGui::Button("Delete_Component"))
-	{
-		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
-		CGameInstance::GetInstance()->Add_String(pComponentTag);
-		pSelectedObject->Delete_Component(pComponentTag);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("GroupObj_Delete_Component"))
-	{
-		_tchar* pComponentTag = CUtile::StringToWideChar(m_strComponentTag);
-		CGameInstance::GetInstance()->Add_String(pComponentTag);
-	
-		for (auto &pObj : Mulit_ObjectList)
-			pObj->Delete_Component(pComponentTag);
-	}
-
-	Imgui_Add_For_EnviroMent_Component();
 }
 
 void CObject_Manager::Imgui_Add_For_EnviroMent_Component()

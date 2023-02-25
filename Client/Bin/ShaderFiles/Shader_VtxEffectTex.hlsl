@@ -56,7 +56,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
 	float4		vColor : SV_TARGET0;
 };
 
@@ -130,7 +129,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		if (g_iTotalMTextureComCnt == 1)
 		{
 			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-			Out.vColor = Out.vColor * maskTex0;
+			Out.vColor = Out.vColor * maskTex0* g_vColor;
 		}
 		if (g_iTotalMTextureComCnt == 2)
 		{
@@ -175,16 +174,16 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor = Out.vColor * g_vColor;
 
 	////
-	float2		vTexUV;
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	//float2		vTexUV;
+	//vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	//vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	//vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-	float		fOldViewZ = vDepthDesc.y * 300.f;
-	float		fViewZ = In.vProjPos.w;
+	//float		fOldViewZ = vDepthDesc.y * 300.f;
+	//float		fViewZ = In.vProjPos.w;
 
-	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	//Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
 	////
 
 	return Out;

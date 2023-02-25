@@ -29,6 +29,9 @@ HRESULT CKena_MainOutfit::Initialize(void * pArg)
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Kena_Clothing.ao");
 
+	m_vMulAmbientColor = _float4(2.f, 2.f, 2.f, 1.f);
+	m_fSSSAmount = 0.09f;
+	m_vSSSColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	return S_OK;
 }
 
@@ -59,32 +62,24 @@ HRESULT CKena_MainOutfit::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 
 		if (i == 0)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			// ex
-			//if(!sprint)
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
-			//else
-			//	m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_HEIGHT, "g_EmissiveTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSION_COLOR, "g_EmissiveMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DISPLACEMENT, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE_ROUGHNESS, "g_SSSMaskTexture");
-			/******************************************************************/
-
+			// Real Cloth			
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
 		else
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
@@ -111,6 +106,32 @@ void CKena_MainOutfit::ImGui_AnimationProperty()
 	ImGui::EndTabBar();
 }
 
+void CKena_MainOutfit::ImGui_ShaderValueProperty()
+{
+	{
+		static _float2 AmountMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("OutFit_SSSAmountMinMax", (float*)&AmountMinMax);
+		ImGui::DragFloat("OutFit_SSSAmount", &m_fSSSAmount, 0.001f, AmountMinMax.x, AmountMinMax.y);
+		_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+		static _float2 sssMinMax{ -1.f, 1.f };
+		ImGui::InputFloat2("OutFit_SSSMinMax", (float*)&sssMinMax);
+		ImGui::DragFloat3("OutFit_SSSAColor", fColor, 0.001f, sssMinMax.x, sssMinMax.y);
+		m_vSSSColor.x = fColor[0];
+		m_vSSSColor.y = fColor[1];
+		m_vSSSColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("OutFit_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("OutFit_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
+}
+
 HRESULT CKena_MainOutfit::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -122,27 +143,27 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 	/********************* For. Kena PostProcess By WJ*****************/
 	//For.Cloth
 	// AO_R_M
-	m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
 	// EMISSIVE
-	m_pModelCom->SetUp_Material(0, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE.png"));
 	// EMISSIVE_MASK
-	m_pModelCom->SetUp_Material(0, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE_MASK.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVEMASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE_MASK.png"));
 	// MASK
-	m_pModelCom->SetUp_Material(0, aiTextureType_DISPLACEMENT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_MASK.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_MASK.png"));
 	// SPRINT_EMISSIVE
-	m_pModelCom->SetUp_Material(0, aiTextureType_HEIGHT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
 	// SSS_MASK
-	m_pModelCom->SetUp_Material(0, aiTextureType_DIFFUSE_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+	m_pModelCom->SetUp_Material(0, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
 
 	// 1~2 For. props
 	for (_uint i = 1; i < 3; ++i)
 	{
 		// AO_R_M
-		m_pModelCom->SetUp_Material(i, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
 		// EMISSIVE
-		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
 		// SPRINT_EMISSIVE
-		m_pModelCom->SetUp_Material(i, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
 	}
 	/******************************************************************/
 
@@ -157,6 +178,10 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }

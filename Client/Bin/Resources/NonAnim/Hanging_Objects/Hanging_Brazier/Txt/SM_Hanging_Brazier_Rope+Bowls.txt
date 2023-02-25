@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = Material3'/Game/Mochi/Art/Interactables/RopeBridge_v2/Asset/M_BridgeRope.M_BridgeRope'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Props/Materials/MI_VillageCart_Bowls.MI_VillageCart_Bowls'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Interactables/RopeBridge_v2/Asset/M_BridgeRope.M_BridgeRope'
+        MaterialSlotName = Rope
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 38.9391, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Props/Materials/MI_VillageCart_Bowls.MI_VillageCart_Bowls'
+        MaterialSlotName = MI_VillageCart_Bowls
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 237.793, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=-50.1958 }
+    BoxExtent = { X=32.1524, Y=32.1524, Z=54.907 }
+    SphereRadius = 56.9188
+}

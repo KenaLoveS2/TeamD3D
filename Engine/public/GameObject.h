@@ -86,6 +86,7 @@ public: /* imgui */
 
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
+	virtual void ImGui_ShaderValueProperty() {};
 
 	void Set_Position(_float4& vPosition);
 };

@@ -15,6 +15,8 @@ class CUI_ClientManager final : public CBase
 	DECLARE_SINGLETON(CUI_ClientManager);
 
 public:
+	enum UI_HUD { HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT, HUD_END };
+private:
 	CUI_ClientManager();
 	virtual ~CUI_ClientManager() = default;
 

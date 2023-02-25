@@ -19,15 +19,21 @@ public:
 	typedef struct tagEffectDesc
 	{
 		// Effect Type = texture, texture_Particle , mesh
-		enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
+		enum EFFECTTYPE        { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
+		enum PARTICLETYPE	   { PARTICLE_STRITE, PARTICLE_SPHERE, PARTICLE_CONE, PARTICLE_SPREAD, PARTICLE_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
-		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
-		enum BLENDSTATE { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_END };
+		enum TEXTURETYPE       { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
+		enum BLENDSTATE        { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_END };
+		enum MOVEDIR           { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, DIR_END };
+		enum ROTXYZ            { ROT_X, ROT_Y, ROT_Z, ROT_END };
 
 		EFFECTTYPE        eEffectType = EFFECT_PLANE;
+		PARTICLETYPE	  eParticleType = PARTICLE_STRITE;
 		TEXTURERENDERTYPE eTextureRenderType = TEX_ONE;
 		TEXTURETYPE		  eTextureType = TYPE_END;
 		BLENDSTATE        eBlendType = BLENDSTATE_DEFAULT;
+		MOVEDIR           eMoveDir = MOVE_FRONT;
+		ROTXYZ            eRotation = ROT_Y;
 
 		// Diffuse Frame ( Cur Texture Idx )
 		_float		fFrame[MAX_TEXTURECNT] = { 0.0f };
@@ -55,10 +61,6 @@ public:
 		_bool   bStart = false;
 		_vector vInitPos = { 0.0f, 0.0f, 0.0f, 1.0f };
 		_vector vPixedDir = { 0.0f, 0.0f, 0.0f, 0.0f };
-		enum MOVEDIR { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, DIR_END };
-		enum ROTXYZ { ROT_X, ROT_Y, ROT_Z, ROT_END };
-		MOVEDIR eMoveDir = MOVE_FRONT;
-		ROTXYZ eRotation = ROT_Y;
 
 		// Option // 
 		_bool	IsBillboard = false;
@@ -66,11 +68,6 @@ public:
 		_bool	IsTrigger = false;
 		_bool	IsMovingPosition = false;
 		_bool	bUseChild = false;
-
-		// Child // 
-// 		_int    iHaveChildCnt = 0;
-// 		vector<class CEffect_Base*> vecChild;
-// 		class CTransform* pTransformCom = nullptr;
 
 	}EFFECTDESC;
 
@@ -84,15 +81,28 @@ public:
 		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
 	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
 
-	void				 Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
-	void				 Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
+	// Effect Desc
+	void	Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
+	void	Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
 
-public:
+	_uint					     Get_ChildCnt() { return (_uint)m_vecChild.size(); }
+	vector<class CEffect_Base*>* Get_vecChild() { return &m_vecChild; }
+
+	class CEffect_Base* Get_Parent() { return m_pParent; }
+	void				Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
+
+	void				Set_Matrix();
+	void				Set_InitMatrix(_fmatrix WorldMatrix) {
+		XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix);
+	}
+	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+
+public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
 
 public:
-	void				  BillBoardSetting(_float3 vScale);
+	void				 BillBoardSetting(_float3 vScale);
 
 public:
 	virtual HRESULT      Initialize_Prototype() override;
@@ -102,9 +112,13 @@ public:
 	virtual HRESULT		 Render() override;
 
 public:
+	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
+	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
+
+public:
 	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
-protected:
+protected: 
 	CShader*				    m_pShaderCom = nullptr;
 	CRenderer*				    m_pRendererCom = nullptr;
 	CVIBuffer_Rect*			    m_pVIBufferCom = nullptr;
@@ -120,9 +134,12 @@ protected:
 
 protected:
 	 /* Child */
-	_int    m_iHaveChildCnt = 0;
+	_uint m_iHaveChildCnt = 0;
 	vector<class CEffect_Base*> m_vecChild;
-	class CTransform* m_pParentTransformCom = nullptr;
+
+	class CEffect_Base*			m_pParent = nullptr;
+	_float4x4					m_InitWorldMatrix;
+	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 
 protected:

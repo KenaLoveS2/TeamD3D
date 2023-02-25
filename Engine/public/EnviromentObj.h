@@ -23,6 +23,7 @@ public:
 		_uint				iRoomIndex = 0;
 		CHAPTER		eChapterType = CHAPTER_END;
 		_int				iCurLevel = 0;				//이건 툴에서만 일단.
+		vector<const _tchar*>				vecStr_textureFilePath;
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
@@ -47,7 +48,7 @@ public:
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 
 	void									Add_TexturePath(const _tchar * TexturePath);
-	vector<const _tchar*>*	Get_TexturePaths() { return &m_vecStr_textureFilePath; }
+	vector<const _tchar*>*	Get_TexturePaths() { return &(m_EnviromentDesc.vecStr_textureFilePath); }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -74,7 +75,7 @@ private:/*For.ImguiTool*/
 	string										m_str_Imgui_ComTag = "";
 	_int											m_iImgui_ComponentOption = 0;
 	_bool										m_bWireFrame_Rendering = false;
-	vector<const _tchar*>				m_vecStr_textureFilePath;				//Texture 경로들
+	//vector<const _tchar*>				m_vecStr_textureFilePath;				//Texture 경로들
 	
 
 public:		

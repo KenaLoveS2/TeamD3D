@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_01_Crystal.MI_BowTarget_01_Crystal'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_01_Wood.MI_BowTarget_01_Wood'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_01_Crystal.MI_BowTarget_01_Crystal'
+        MaterialSlotName = BowTarget_01_Crystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 248.906, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_01_Wood.MI_BowTarget_01_Wood'
+        MaterialSlotName = BowTarget_01_Wood
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 291.141, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-3.77086, Y=6.26197, Z=0.825592 }
+    BoxExtent = { X=78.4733, Y=23.5546, Z=79.5103 }
+    SphereRadius = 85.5319
+}

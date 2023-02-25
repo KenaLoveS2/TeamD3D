@@ -32,9 +32,9 @@ public:
 	void				Call_Event(const string& strFuncName);
 
 public:	
-	HRESULT			Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath);
-	virtual HRESULT	Initialize(void* pArg, class CGameObject* pOwner);
-	virtual void		Imgui_RenderProperty() override;
+	HRESULT 		Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
+	virtual void	Imgui_RenderProperty() override;
 
 public:
 	void				Play_Animation(_float fTimeDelta);
@@ -76,8 +76,8 @@ private:
 	HRESULT			Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte);
 
 public:
-	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr);
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false);
 	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
@@ -86,7 +86,7 @@ public:
 	HRESULT SetUp_ClonedAnimations();
 	HRESULT SetUp_ClonedMeshes();
 
-	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, _tchar *pTexturePath);
+	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 };
 
 END

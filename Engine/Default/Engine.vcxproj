@@ -260,6 +260,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\public\UI_Canvas.h" />
+    <ClInclude Include="..\public\UI_Event.h" />
     <ClInclude Include="..\public\UI_Manager.h" />
     <ClInclude Include="..\public\UI_Node.h" />
     <ClInclude Include="..\public\Utile.h" />
@@ -270,9 +271,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\VIBuffer_Point_Instancing.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Instancing.h" />
-    <ClInclude Include="..\public\VIBuffer_Rect_Tess.h" />
     <ClInclude Include="..\public\VIBuffer_Terrain.h" />
-    <ClInclude Include="..\Public\VIBuffer_Terrain_Tess.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +333,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Transform.cpp" />
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\private\UI_Canvas.cpp" />
+    <ClCompile Include="..\private\UI_Event.cpp" />
     <ClCompile Include="..\private\UI_Manager.cpp" />
     <ClCompile Include="..\private\UI_Node.cpp" />
     <ClCompile Include="..\private\Utile.cpp">
@@ -347,9 +347,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\VIBuffer_Point_Instancing.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Instancing.cpp" />
-    <ClCompile Include="..\private\VIBuffer_Rect_Tess.cpp" />
     <ClCompile Include="..\private\VIBuffer_Terrain.cpp" />
-    <ClCompile Include="..\Private\VIBuffer_Terrain_Tess.cpp" />
     <ClCompile Include="..\public\Engine_Struct.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

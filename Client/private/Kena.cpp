@@ -43,7 +43,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
 	//m_pCamera->Set_Player(this, m_pTransformCom);
-	CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
+	//CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom, m_pCamera);
 
@@ -54,6 +54,11 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
 	Push_EventFunctions();
+
+	m_fSSSAmount = 0.09f;
+	m_vSSSColor = _float4(0.2f, 0.18f, 0.16f, 1.f);
+	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
+	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	return S_OK;
 }
@@ -84,13 +89,26 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex++;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
 		m_iAnimationIndex--;
-	/* Delegator Test */
-	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	
+	
+	/************** Delegator Test *************/
+	static _float fNum = 0.f;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		_int i = 0;
-		m_PlayerDelegator.broadcast(i);
+		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
+		fNum -= 0.1f;
+		m_PlayerDelegator.broadcast(eType, fNum);
 
 	}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	{
+		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
+		fNum += 0.1f;
+		m_PlayerDelegator.broadcast(eType, fNum);
+
+	}
+	/************** ~Delegator Test *************/
+
 
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
 
@@ -111,36 +129,42 @@ HRESULT CKena::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		if (i == 1)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			// ex
-			//if(!sprint)
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSIVE, "g_EmissiveTexture");
-			//else
-			//	m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_HEIGHT, "g_EmissiveTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_EMISSION_COLOR, "g_EmissiveMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DISPLACEMENT, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE_ROUGHNESS, "g_SSSMaskTexture");
-			/******************************************************************/
-
+			// Arm & Leg
+			// SSS OK
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
-		else if (i == 4)	// Eye Render
+		else if (i == 4)
+		{
+			// Eye Render
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		}
 		else if (i ==5 || i == 6)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE_ROUGHNESS, "g_SSSMaskTexture");
+			// Face
+			// SSS OK
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
 		}
-		else if(i==0)
+		else if (i == 0)
+		{
+			// Render Off
 			continue;
+		}
 		else
+		{
+			// Eye Lash
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		}
 	}
 
 	return S_OK;
@@ -148,7 +172,7 @@ HRESULT CKena::Render()
 
 void CKena::Imgui_RenderProperty()
 {
-	
+	__super::Imgui_RenderProperty();
 }
 
 void CKena::ImGui_AnimationProperty()
@@ -168,6 +192,50 @@ void CKena::ImGui_AnimationProperty()
 	}
 
 	ImGui::EndTabBar();
+}
+
+void CKena::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
+	{
+		static _float2 AmountMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("SSSAmoutMinMax", (float*)&AmountMinMax);
+		ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.001f, AmountMinMax.x, AmountMinMax.y);
+
+		_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+		static _float2 sssMinMax{ -1.f, 1.f };
+		ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
+		ImGui::DragFloat3("SSSColor", fColor, 0.001f, sssMinMax.x, sssMinMax.y);
+		m_vSSSColor.x = fColor[0];
+		m_vSSSColor.y = fColor[1];
+		m_vSSSColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vEyeAmbientColor.x, m_vEyeAmbientColor.y, m_vEyeAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("EyeAAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("EyeAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vEyeAmbientColor.x = fColor[0];
+		m_vEyeAmbientColor.y = fColor[1];
+		m_vEyeAmbientColor.z = fColor[2];
+	}
+
+	for (auto& pPart : m_vecPart)
+	{
+		ImGui::NewLine();
+		pPart->ImGui_ShaderValueProperty();
+	}
 }
 
 void CKena::Update_Child()
@@ -234,28 +302,27 @@ HRESULT CKena::SetUp_Components()
 
 	//For.Cloth
 	// AO_R_M
-	m_pModelCom->SetUp_Material(1, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
 	// EMISSIVE
-	m_pModelCom->SetUp_Material(1, aiTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE.png"));
 	// EMISSIVE_MASK
-	m_pModelCom->SetUp_Material(1, aiTextureType_EMISSION_COLOR, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE_MASK.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVEMASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_EMISSIVE_MASK.png"));
 	// MASK
-	m_pModelCom->SetUp_Material(1, aiTextureType_DISPLACEMENT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_MASK.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_MASK.png"));
 	// SPRINT_EMISSIVE
-	m_pModelCom->SetUp_Material(1, aiTextureType_HEIGHT, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
 	// SSS_MASK
-	m_pModelCom->SetUp_Material(1, aiTextureType_DIFFUSE_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+	m_pModelCom->SetUp_Material(1, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
 
 	// AO_R_M
-	m_pModelCom->SetUp_Material(5, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));
+	m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));
 	// SSS_MASK
-	m_pModelCom->SetUp_Material(5, aiTextureType_DIFFUSE_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
+	m_pModelCom->SetUp_Material(5, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
 
 	// AO_R_M
-	m_pModelCom->SetUp_Material(6, aiTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));
+	m_pModelCom->SetUp_Material(6, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));
 	// SSS_MASK
-	m_pModelCom->SetUp_Material(6, aiTextureType_DIFFUSE_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
-
+	m_pModelCom->SetUp_Material(6, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
@@ -285,6 +352,11 @@ HRESULT CKena::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientEyeColor", &m_vEyeAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }

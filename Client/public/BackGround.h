@@ -32,12 +32,22 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CVIBuffer_Rect*			m_pVIBufferCom = nullptr;	
 
+	/* Test */
+	CTexture*				m_pNoiseTexture = nullptr;
+	_float					m_fAlpha;
+	_float					m_fAlphaDelta;
+	_float					m_fSpeed;
+	_float					m_fTime;
+	_float					m_fTimeAcc;
+
 
 private:	
 	_float4x4				m_ViewMatrix;
 	_float4x4				m_ProjMatrix;
 
 	_float					m_fX, m_fY, m_fSizeX, m_fSizeY;
+
+	_uint					m_iTextureIndex;
 
 private:
 	HRESULT SetUp_Components();

@@ -41,11 +41,17 @@ HRESULT CUI_Canvas::Initialize(void * pArg)
 void CUI_Canvas::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	for (auto e : m_vecEvents)
+		e->Tick(fTimeDelta);
 }
 
 void CUI_Canvas::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
 }
 
 HRESULT CUI_Canvas::Render()
@@ -111,6 +117,11 @@ HRESULT CUI_Canvas::Save_Data()
 	file << json;
 	file.close();
 
+	for (auto node : m_vecNode)
+		node->Save_Data();
+
+	MSG_BOX("Save Complete");
+
 	return S_OK;
 }
 
@@ -127,9 +138,8 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 	ifstream file(filePath);
 	if (file.fail())
 		return E_FAIL;
-
-
 	file >> jLoad;
+	file.close();
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 

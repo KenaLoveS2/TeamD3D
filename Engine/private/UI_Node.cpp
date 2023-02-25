@@ -38,6 +38,10 @@ HRESULT CUI_Node::Initialize(void * pArg)
 void CUI_Node::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	for (auto e : m_vecEvents)
+		e->Tick(fTimeDelta);
+
 }
 
 void CUI_Node::Late_Tick(_float fTimeDelta)
@@ -56,9 +60,12 @@ void CUI_Node::Late_Tick(_float fTimeDelta)
 		float fRatioY = matWorldParent._22 / m_matParentInit._22;
 		_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
 
-		_matrix matWorld = matParentScale*m_matLocal*matParentTrans;
+		_matrix matWorld = m_matLocal*matParentScale*matParentTrans;
 		m_pTransformCom->Set_WorldMatrix(matWorld);
 	}
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
 }
 
 HRESULT CUI_Node::Render()
@@ -78,8 +85,8 @@ void CUI_Node::Imgui_RenderProperty()
 {
 	ImGui::Separator();
 	
-	if (ImGui::Button("Save Node"))
-		Save_Data();
+	//if (ImGui::Button("Save Node"))
+	//	Save_Data();
 
 	/* Translation Setting */
 	ImGui::Text("Local Matrix");
@@ -105,7 +112,9 @@ void CUI_Node::Imgui_RenderProperty()
 	m_matLocal._11 = scale[0];
 	m_matLocal._22 = scale[1];
 	m_matLocal._33 = scale[2];
-	ImGui::Separator();
+
+	/* Events */
+	Imgui_EventSetting();
 
 	/* Rendering Setting */
 	Imgui_RenderingSetting();
@@ -128,6 +137,9 @@ HRESULT CUI_Node::Save_Data()
 
 	json["renderPass"] = m_iRenderPass;
 
+	for (auto e : m_vecEvents)
+		e->Save_Data(&json);
+	
 	wstring filePath = L"../Bin/Data/UI/";
 	filePath += this->Get_ObjectCloneName();
 	//filePath += this->Get_Name();
@@ -156,8 +168,8 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 	ifstream file(filePath);
 	if (file.fail())
 		return E_FAIL;
-
 	file >> jLoad;
+	file.close();
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 
@@ -167,6 +179,8 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
 
 	this->Set_LocalMatrix(matLocal);
+
+
 
 	return S_OK;
 }

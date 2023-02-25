@@ -65,6 +65,11 @@ void CKena_Parts::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 }
 
+void CKena_Parts::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
+}
+
 void CKena_Parts::Model_Synchronization(_bool bPausePlay)
 {
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());

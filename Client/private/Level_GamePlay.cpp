@@ -79,10 +79,11 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(5.f, 5.f, 5.f, 1.f);
-	LightDesc.vAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
+	LightDesc.vDirection = _float4(-1.f, -1.f, -1.0f, 0.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -98,7 +99,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 		
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Clone_Terrain"))))
 		return E_FAIL;
-
+	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
 
@@ -168,11 +169,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena")))
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
- 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ForkLift"), L"ForkLift_Test")))
- 	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -257,7 +260,6 @@ HRESULT CLevel_GamePlay::Initialize_ThreadData()
 
 	_tchar szTempObject[2][32] = {
 		TEXT("Prototype_GameObject_Player") ,
-		TEXT("Prototype_GameObject_ForkLift") ,
 	};
 	_tchar szTempClone[32] = { 0, };
 	

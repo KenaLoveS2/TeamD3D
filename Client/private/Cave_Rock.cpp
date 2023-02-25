@@ -39,8 +39,6 @@ void CCave_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	
-
 }
 
 void CCave_Rock::Late_Tick(_float fTimeDelta)
@@ -64,8 +62,8 @@ HRESULT CCave_Rock::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
 	}
@@ -115,6 +113,7 @@ HRESULT CCave_Rock::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	
+
 	//m_pModelCom->SetUp_Material(0, aiTextureType_AMBIENT_OCCLUSION, m_EnviromentDesc.szTextureTag);
 
 	///* For.Com_E_R_AO */

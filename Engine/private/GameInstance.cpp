@@ -331,6 +331,13 @@ map<const _tchar*, class CGameObject*>* CGameInstance::Get_AnimObjects(_uint iLe
 	return m_pObject_Manager->Get_AnimObjects(iLevelIndex);
 }
 
+map<const _tchar*, class CGameObject*>* CGameInstance::Get_ShaderValueObjects(_uint iLevelIndex)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, nullptr);
+
+	return m_pObject_Manager->Get_ShaderValueObjects(iLevelIndex);
+}
+
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObject_Manager) return E_FAIL;
@@ -363,6 +370,13 @@ HRESULT CGameInstance::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameObje
 	return m_pObject_Manager->Add_AnimObject(iLevelIndex, pGameObject);
 }
 
+HRESULT CGameInstance::Add_ShaderValueObject(_uint iLevelIndex, CGameObject * pGameObject)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, E_FAIL);
+
+	return m_pObject_Manager->Add_ShaderValueObject(iLevelIndex, pGameObject);
+}
+
 HRESULT CGameInstance::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag, CGameObject * pGameObject)
 {
 	if (nullptr == m_pObject_Manager) return E_FAIL;
@@ -383,16 +397,16 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObject_Manager->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
-void CGameInstance::Imgui_DeleteComponent(CGameObject * pSelectedObject)
+void CGameInstance::Imgui_DeleteComponentOrObject(OUT  CGameObject*& pSelectedObject)
 {
-	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponentOrObject");
 
-	m_pObject_Manager->Imgui_DeleteComponent(pSelectedObject);
+	m_pObject_Manager->Imgui_DeleteComponentOrObject(pSelectedObject);
 }
 
 void CGameInstance::Imgui_Push_Group(CGameObject * pSelectedObject)
 {
-	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponent");
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Imgui_DeleteComponentOrObject");
 	m_pObject_Manager->Imgui_Push_Group(pSelectedObject);
 }
 
@@ -545,6 +559,12 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	if (nullptr == m_pLight_Manager) return E_FAIL;
 
 	return m_pLight_Manager->Add_Light(pDevice, pContext, LightDesc, ppOut);
+}
+
+void CGameInstance::Imgui_LightManagerRender()
+{
+	if (nullptr == m_pLight_Manager) return;
+	m_pLight_Manager->Imgui_Render();
 }
 
 

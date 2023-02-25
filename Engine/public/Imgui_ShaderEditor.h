@@ -13,11 +13,17 @@ public:
 	virtual  HRESULT Initialize(void* pArg) override;
 	virtual void Imgui_FreeRender() override;
 
+	class CGameObject*				Find_GameObject(_int iIndex);
+	void										Update_Level();
+
 	static CImgui_ShaderEditor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	virtual void Free() override;
 
 private:
 	class CGameInstance* m_pGameInstance = nullptr;
+
+	_uint	 m_iCurrentLevel = 0;
+	map	<const _tchar*, class CGameObject*>*		m_mapShaderValueObject;
 };
 
 END
