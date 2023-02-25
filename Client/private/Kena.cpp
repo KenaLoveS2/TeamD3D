@@ -83,14 +83,26 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex++;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
 		m_iAnimationIndex--;
-	/* Delegator Test */
-	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	
+	
+	/************** Delegator Test *************/
+	static _float fNum = 0.f;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		CUI_ClientManager::UI_ID eType = CUI_ClientManager::UI_HUD_HP;
-		_int iNum = 0;
-		m_PlayerDelegator.broadcast(eType, iNum);
+		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
+		fNum -= 0.1f;
+		m_PlayerDelegator.broadcast(eType, fNum);
 
 	}
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	{
+		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
+		fNum += 0.1f;
+		m_PlayerDelegator.broadcast(eType, fNum);
+
+	}
+	/************** ~Delegator Test *************/
+
 
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
 

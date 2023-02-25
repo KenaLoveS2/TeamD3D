@@ -210,6 +210,7 @@
     <ClInclude Include="..\public\UI_CanvasSubtitle.h" />
     <ClInclude Include="..\public\UI_ClientManager.h" />
     <ClInclude Include="..\public\Imgui_UIEditor.h" />
+    <ClInclude Include="..\public\UI_Event_Barguage.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="..\private\UI_CanvasSubtitle.cpp" />
     <ClCompile Include="..\private\UI_ClientManager.cpp" />
     <ClCompile Include="..\private\Imgui_UIEditor.cpp" />
+    <ClCompile Include="..\private\UI_Event_Barguage.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />

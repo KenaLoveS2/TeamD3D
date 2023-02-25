@@ -4,11 +4,13 @@
 
 CBackGround::CBackGround(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
+	, m_iTextureIndex(0)
 {
 }
 
 CBackGround::CBackGround(const CBackGround & rhs)
 	: CGameObject(rhs)
+	, m_iTextureIndex(0)
 {
 }
 
@@ -68,7 +70,7 @@ void CBackGround::Tick(_float fTimeDelta)
 		if (m_fAlpha > 1.f || m_fAlpha< 0.f)
 			m_fAlphaDelta *= -1;
 
-		m_fSpeed += fTimeDelta * 0.005;
+		m_fSpeed += fTimeDelta * 0.005f;
 
 		m_fTimeAcc = 0.f;
 	}
@@ -89,6 +91,7 @@ HRESULT CBackGround::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
+
 
 	m_pShaderCom->Begin(0);
 
@@ -115,11 +118,11 @@ HRESULT CBackGround::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Logo"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"), TEXT("Com_NoiseTexture"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Noise"), TEXT("Com_NoiseTexture"),
 		(CComponent**)&m_pNoiseTexture)))
 		return E_FAIL;
 
@@ -147,7 +150,12 @@ HRESULT CBackGround::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 1)))
+
+	if (LEVEL_LOADING == CGameInstance::GetInstance()->Get_CurLevelIndex())
+		m_iTextureIndex = 1;
+	else
+		m_iTextureIndex = 0;
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
 	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShaderCom, "g_NoiseTexture")))

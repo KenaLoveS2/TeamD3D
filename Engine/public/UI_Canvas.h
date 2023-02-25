@@ -17,11 +17,8 @@ public:
 	virtual HRESULT			Render()						override;
 
 protected: /* For Clones. */
-	virtual HRESULT			Bind() { return S_OK; }
-	virtual HRESULT			Ready_Nodes() { return S_OK; }
-	virtual HRESULT			SetUp_Components() { return S_OK; }
-	virtual HRESULT			SetUp_ShaderResources() { return S_OK; }
-
+	virtual HRESULT			Bind()					{ return S_OK; }
+	virtual HRESULT			Ready_Nodes()			{ return S_OK; }
 
 public:
 	virtual void			Imgui_RenderProperty();
@@ -38,7 +35,6 @@ protected:
 	vector<string>		m_vecNodeCloneTag;
 	vector<CUI*>		m_vecNode; 
 	_bool				m_bBindFinished;
-
 
 
 public:
