@@ -97,14 +97,6 @@ HRESULT CLoader::Loading_ForLogo()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));	
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/LoadingBG_%d.png"), 2))))
-		return E_FAIL;		
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Noise"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_MediumWaves_H.png")))))
-		return E_FAIL;
-
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
 	
 
@@ -115,11 +107,6 @@ HRESULT CLoader::Loading_ForLogo()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
-
-	/* For.Prototype_GameObject_BackGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
-		CBackGround::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
