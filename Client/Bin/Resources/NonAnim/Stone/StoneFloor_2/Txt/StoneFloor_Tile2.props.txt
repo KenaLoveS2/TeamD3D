@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Modular/StoneFloor/Materials/MI_StoneFloor_Tile2.MI_StoneFloor_Tile2'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Modular/StoneFloor/Materials/MI_StoneFloor_Tile2.MI_StoneFloor_Tile2'
+        MaterialSlotName = MI_StoneFloor_Tile7
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4242.67, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.00183105, Y=-0.000366211, Z=0.00104523 }
+    BoxExtent = { X=1208.41, Y=1235.86, Z=104.217 }
+    SphereRadius = 1619.78
+}

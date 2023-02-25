@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/MaskShrine/Materials/MI_MaskShrine_RuinsKit_LargeBridge01.MI_MaskShrine_RuinsKit_LargeBridge01'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/MaskShrine/Materials/MI_MaskShrine_RuinsKit_LargeBridge01.MI_MaskShrine_RuinsKit_LargeBridge01'
+        MaterialSlotName = MI_MaskShrine_RuinsKit_LargeBridge01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4722.88, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=51.0921, Y=52.0441, Z=11.7704 }
+    BoxExtent = { X=248.903, Y=245.887, Z=23.6011 }
+    SphereRadius = 334.335
+}

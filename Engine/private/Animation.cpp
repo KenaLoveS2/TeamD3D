@@ -13,10 +13,12 @@ CAnimation::CAnimation()
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_isLooping(true)
 	, m_pModel(rhs.m_pModel)
+	, m_Duration(rhs.m_Duration)
+	, m_fBlendDuration(rhs.m_fBlendDuration)
+	, m_TickPerSecond(rhs.m_TickPerSecond)
+	, m_eAnimType(rhs.m_eAnimType)
 {
 	strcpy_s(m_szName, rhs.m_szName);
-	m_Duration = rhs.m_Duration;
-	m_TickPerSecond = rhs.m_TickPerSecond;
 
 	m_iNumChannels = rhs.m_iNumChannels;
 	for (_uint i = 0; i < m_iNumChannels; i++)
@@ -30,7 +32,9 @@ HRESULT CAnimation::Save_Animation(HANDLE & hFile, DWORD & dwByte)
 	WriteFile(hFile, m_szName, sizeof(char) * iNameLength, &dwByte, nullptr);
 
 	WriteFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_fBlendDuration, sizeof(_float), &dwByte, nullptr);
 	WriteFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	WriteFile(hFile, &m_eAnimType, sizeof(_int), &dwByte, nullptr);
 	WriteFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
 	WriteFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
 
@@ -59,7 +63,9 @@ HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
 	Safe_Delete_Array(pName);
 
 	ReadFile(hFile, &m_Duration, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_fBlendDuration, sizeof(_float), &dwByte, nullptr);
 	ReadFile(hFile, &m_TickPerSecond, sizeof(_double), &dwByte, nullptr);
+	ReadFile(hFile, &m_eAnimType, sizeof(_int), &dwByte, nullptr);
 	ReadFile(hFile, &m_isLooping, sizeof(_bool), &dwByte, nullptr);
 
 	ReadFile(hFile, &m_iNumChannels, sizeof(_uint), &dwByte, nullptr);
@@ -228,10 +234,10 @@ void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 		m_isFinished = true;
 	}
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
 		m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
-		m_Channels[i]->Reset_KeyFrameIndex();
+		//m_Channels[i]->Reset_KeyFrameIndex();
 	}
 }
 

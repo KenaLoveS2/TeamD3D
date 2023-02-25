@@ -8,9 +8,9 @@ class ENGINE_DLL CStateMachine final : public CComponent
 protected:
 	typedef struct tagState
 	{
-		std::function<void(_double)>	State_Start = nullptr;
-		std::function<void(_double)>	State_Tick = nullptr;
-		std::function<void(_double)>	State_End = nullptr;
+		std::function<void(_float)>	State_Start = nullptr;
+		std::function<void(_float)>	State_Tick = nullptr;
+		std::function<void(_float)>	State_End = nullptr;
 	} STATE;
 
 	typedef struct tagChanger
@@ -37,47 +37,53 @@ public:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg, class CGameObject* pOwner) override;
-	virtual void				Tick(_double& dTimeDelta);
+	virtual void				Tick(_float fTimeDelta);
 	virtual void				Imgui_RenderProperty() override;
 
 public:
 	template<typename T>
-	CStateMachine& Init_Start(T* Obj, void (T::*memFunc)(_double))
+	CStateMachine& Init_Start(T* Obj, void (T::*memFunc)(_float))
 	{
-		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), CTag_Finder(m_wstrCurrentStateName));
+		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), [&](const pair<const wstring, STATE>& Pair) {
+			return m_wstrCurrentStateName == Pair.first;
+		});
 		assert(iter != m_mapState.end());
 
-		iter->second.State_Start = [Obj, memFunc](_double dTimeDelta)
+		iter->second.State_Start = [Obj, memFunc](_float fTimeDelta)
 		{
-			(Obj->*memFunc)(dTimeDelta);
+			(Obj->*memFunc)(fTimeDelta);
 		};
 
 		return *this;
 	}
 
 	template<typename T>
-	CStateMachine&	Init_Tick(T* Obj, void (T::*memFunc)(_double))
+	CStateMachine&	Init_Tick(T* Obj, void (T::*memFunc)(_float))
 	{
-		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), CTag_Finder(m_wstrCurrentStateName));
+		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), [&](const pair<const wstring, STATE>& Pair) {
+			return m_wstrCurrentStateName == Pair.first;
+		});
 		assert(iter != m_mapState.end());
 
-		iter->second.State_Tick = [Obj, memFunc](_double dTimeDelta)
+		iter->second.State_Tick = [Obj, memFunc](_float fTimeDelta)
 		{
-			(Obj->*memFunc)(dTimeDelta);
+			(Obj->*memFunc)(fTimeDelta);
 		};
 
 		return *this;
 	}
 
 	template<typename T>
-	CStateMachine&	Init_End(T* Obj, void (T::*memFunc)(_double))
+	CStateMachine&	Init_End(T* Obj, void (T::*memFunc)(_float))
 	{
-		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), CTag_Finder(m_wstrCurrentStateName));
+		const auto iter = find_if(m_mapState.begin(), m_mapState.end(), [&](const pair<const wstring, STATE>& Pair) {
+			return m_wstrCurrentStateName == Pair.first;
+		});
 		assert(iter != m_mapState.end());
 
-		iter->second.State_End = [Obj, memFunc](_double dTimeDelta)
+		iter->second.State_End = [Obj, memFunc](_float fTimeDelta)
 		{
-			(Obj->*memFunc)(dTimeDelta);
+			(Obj->*memFunc)(fTimeDelta);
 		};
 
 		return *this;
@@ -86,7 +92,9 @@ public:
 	template<typename T>
 	CStateMachine&	Init_Changer(const wstring& wstrNextState, T* Obj, _bool(T::*memFunc)())
 	{
-		const auto iter = find_if(m_mapChanger.begin(), m_mapChanger.end(), CTag_Finder(m_wstrCurrentStateName));
+		const auto iter = find_if(m_mapChanger.begin(), m_mapChanger.end(), [&](const pair<const wstring, list<CHANGER>>& Pair) {
+			return m_wstrCurrentStateName == Pair.first;
+		});
 
 		CHANGER		tChanger;
 		//ZeroMemory(&tChanger, sizeof(CHANGER));

@@ -226,7 +226,6 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	_vector			vRotation;
 	_vector			vPosition;
 
-	/* 현재 재생된 시간이 마지막 키프레임시간보다 커지며.ㄴ */
 	if (PlayTime >= m_KeyFrames.back().Time)
 	{
 		vScale = XMLoadFloat3(&m_KeyFrames.back().vScale);
@@ -236,10 +235,10 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	}
 	else
 	{
+		_uint		iFrameIndex = 0;
+		
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
-		{
 			++m_iCurrentKeyFrameIndex;
-		}
 
 		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
@@ -265,10 +264,12 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	//vScale = XMVectorLerp(vBaseScale, vScale, fBlendRadio);
 	//vRotation = XMQuaternionSlerp(vBaseRot, vRotation, fBlendRadio);
 	vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRadio);
-	vRotation = XMQuaternionMultiply(vBaseRot, vRotation);
+	vRotation = XMQuaternionMultiply(vRotation, vBaseRot);
+	//vRotation = vRotation + vBaseRot;
 
-	//vPosition = XMVectorLerp(vBasePos, vPosition, fBlendRadio);
-	//vPosition = XMVectorSetW(vPosition, 1.f);
+	//vPosition = XMVectorLerp(vBasePos, vPosition, fAdditiveRadio);
+	vPosition = vBasePos + vPosition;
+	vPosition = XMVectorSetW(vPosition, 1.f);
 
 	_matrix TransformMatrix = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
 

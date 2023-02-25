@@ -28,8 +28,17 @@ private:
 	class CKena*			m_pKena = nullptr;
 	CTransform*			m_pKenaTransform = nullptr;
 	
+	_float					m_fInitCamHeight = 1.5f;
+	_float					m_fMaxCamHeight = 2.f;
+	_float					m_fCurCamHeight = 1.5f;
+	_float					m_fInitDistance = 2.f;
+	_float					m_fMaxDistance = 2.3f;
+	_float					m_fMinDistance = 1.f;
 	_float					m_fDistanceFromTarget = 2.f;
+	_bool					m_bAim = false;
+	_float					m_fAimTime = 0.f;
 
+	/* Mouse */
 	_int					m_iInitMouseCursorCnt = 0;
 	_bool					m_bMouseFix = true;
 	_float					m_fCurMouseSensitivityX = 0.f;

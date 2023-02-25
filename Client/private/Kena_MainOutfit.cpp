@@ -93,6 +93,19 @@ void CKena_MainOutfit::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 }
 
+void CKena_MainOutfit::ImGui_AnimationProperty()
+{
+	ImGui::BeginTabBar("Kena MainOutfit Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+}
+
 void CKena_MainOutfit::ImGui_ShaderValueProperty()
 {
 	{
@@ -125,7 +138,7 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/********************* For. Kena PostProcess By WJ*****************/
 	//For.Cloth
