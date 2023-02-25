@@ -10,15 +10,15 @@ private:
 	virtual ~CUI_Event_Barguage() = default;
 
 public:
-	void			Set_Guage(_float fGauge) { m_fGuage = fGauge; }
-	_bool			Is_FullFilled() { if (m_fGuage >= 1.f) return true; else return false; }
+	virtual	void		Call_Event(_float fData)				override;
+	_bool				Is_FullFilled() { if (m_fGuage >= 1.f) return true; else return false; }
+	_bool				Is_Zero(); 
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
 	virtual	HRESULT		Late_Tick(_float fTimeDelta)			override;
 	virtual HRESULT		SetUp_ShaderResources(CShader* pShader)	override;
 	virtual void		Imgui_RenderProperty()					override;
-	virtual	void		Call_Event(_float fData)				override;
 public:
 	virtual HRESULT		Save_Data(Json* json);
 	virtual HRESULT		Load_Data(wstring fileName);
@@ -32,10 +32,8 @@ private:
 
 
 	_float				m_fGuage;	/* Normalized Data */
-	_float				m_fGuageOld;
-	_float				m_fGuageTime;
-	_float				m_fGuageTimeAcc;
-
+	_float				m_fGuageNew;
+	_float				m_fGuageSpeed;
 public:
 	static CUI_Event_Barguage*	Create();
 	static CUI_Event_Barguage*	Create(wstring fileName);

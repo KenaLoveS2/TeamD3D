@@ -18,7 +18,16 @@ CUI_NodeHUDPip::CUI_NodeHUDPip(const CUI_NodeHUDPip & rhs)
 
 void CUI_NodeHUDPip::Set_Guage(_float fGuage)
 {
-	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
+	/* pip guage doesn't go down step by step. */
+	/* full-filled -> and if use Rot -> it goes zero */
+	/* so if fGuage == 0, fullfilled texture changed to normal texture */
+	if (fGuage == 0.f)
+	{
+		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, 0);
+		m_vecEvents[EVENT_GUAGE]->Call_Event(0.f);
+	}
+	else
+		m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
 HRESULT CUI_NodeHUDPip::Initialize_Prototype()
@@ -62,10 +71,16 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 	if (static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled() 
 		&& !m_bFullFilled)
 	{
-		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this); /* 0: default, 1 : full pip */
+		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
 		m_bFullFilled = true;
 	}
 
+
+	_bool test = static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
+	if (m_bFullFilled &&static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	{
+		m_bFullFilled = false;
+	}
 }
 
 void CUI_NodeHUDPip::Late_Tick(_float fTimeDelta)
@@ -124,6 +139,8 @@ HRESULT CUI_NodeHUDPip::SetUp_ShaderResources()
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;

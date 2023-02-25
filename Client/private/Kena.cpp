@@ -98,6 +98,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_HUD eType1 = CUI_ClientManager::HUD_HP;
 	CUI_ClientManager::UI_HUD eType2 = CUI_ClientManager::HUD_PIP;
 	CUI_ClientManager::UI_HUD eType3 = CUI_ClientManager::HUD_SHIELD;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		_float fPipUse = 0;;
+		m_PlayerDelegator.broadcast(eType2, fPipUse);
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		fNum -= 0.1f;
@@ -112,6 +117,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eType2, fNum);
 		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
+
 	/************** ~Delegator Test *************/
 
 
