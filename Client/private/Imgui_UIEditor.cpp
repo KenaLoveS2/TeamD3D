@@ -25,19 +25,6 @@ HRESULT CImgui_UIEditor::Initialize(void * pArg)
 	m_pCanvas = nullptr;
 	m_pUI = nullptr;
 
-
-	//if (FAILED(Ready_TextureList()))
-	//{
-	//	MSG_BOX("Failed To Ready Texture List : Imgui_UIEditor");
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(Ready_CanvasProtoList()))
-	//{
-	//	MSG_BOX("Failed To Ready CanvasProto List : Imgui_UIEditor");
-	//	return E_FAIL;
-	//}
-
 	if (FAILED(Ready_CloneCanvasList()))
 	{
 		MSG_BOX("Failed To Ready CanvasClone List : Imgui_UIEditor");
