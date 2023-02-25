@@ -45,6 +45,10 @@ void CCamera_Player::Tick(_float fTimeDelta)
 {
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
+	if (CGameInstance::GetInstance()->Key_Pressing(DIK_LSHIFT))
+		m_bAim = true;
+	else
+		m_bAim = false;
 
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
@@ -56,11 +60,12 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 		return;
 	}
-	m_fDistanceFromTarget = 2.f;
+
 	m_CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
 
 	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + 1.5f);
+	_vector	vKenaRight = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT));
+	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + m_fCurCamHeight);
 
 	m_MouseMoveX = 0;
 	m_MouseMoveY = 0;
@@ -72,74 +77,128 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	if (isnan(m_fVerticalAngle))
 		m_fVerticalAngle = fBackupAngle;
 
-	if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
+	if (m_bAim == false)
 	{
-		if (m_MouseMoveX != 0)
-		{
-			m_LastMoveX = m_MouseMoveX;
+		m_fDistanceFromTarget = m_fInitDistance;
+		m_fCurCamHeight = m_fInitCamHeight;
 
-			if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
-				m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
-			else
-				m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
-		}
-		else
+		if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
 		{
-			if (m_fCurMouseSensitivityX > 0.f)
-				m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
-			else
-				m_fCurMouseSensitivityX = 0.f;
-		}
+			if (m_MouseMoveX != 0)
+			{
+				m_LastMoveX = m_MouseMoveX;
 
-		if (m_MouseMoveX != 0)
-			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
-		else
+				if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
+					m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
+				else
+					m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
+			}
+			else
+			{
+				if (m_fCurMouseSensitivityX > 0.f)
+					m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
+				else
+					m_fCurMouseSensitivityX = 0.f;
+			}
+
+			if (m_MouseMoveX != 0)
+				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+			else
+			{
+				if (m_LastMoveX < 0)
+					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
+				else if (m_LastMoveX > 0)
+					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX);
+			}
+		}
+		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
 		{
-			if (m_LastMoveX < 0)
-				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
-			else if (m_LastMoveX > 0)
-				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX);
+			_bool	bPossible = true;
+
+			if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
+			{
+				bPossible = false;
+
+				if (m_fVerticalAngle < XMConvertToRadians(40.f))
+					m_fCurMouseSensitivityY = 0.f;
+			}
+			if (m_fVerticalAngle > XMConvertToRadians(80.f) && m_MouseMoveY > 0)
+			{
+				bPossible = false;
+
+				if (m_fVerticalAngle > XMConvertToRadians(120.f))
+					m_fCurMouseSensitivityY = 0.f;
+			}
+
+			if (bPossible == false)
+			{
+				if (m_fCurMouseSensitivityY > 0.f)
+					m_fCurMouseSensitivityY -= fTimeDelta * 0.05f;
+				else
+					m_fCurMouseSensitivityY = 0.f;
+			}
+			else
+			{
+				if (m_fCurMouseSensitivityY < m_fInitMouseSensitivity)
+					m_fCurMouseSensitivityY += fTimeDelta * 0.1f;
+				else
+					m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
+			}
+
+			m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+		}
+		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
+			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
+	}
+	else
+	{
+		m_fDistanceFromTarget = 0.7f;
+		m_fCurCamHeight = 1.2f;
+
+		if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
+		{
+			if (m_MouseMoveX != 0)
+			{
+				m_LastMoveX = m_MouseMoveX;
+
+				if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
+					m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
+				else
+					m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
+			}
+			else
+			{
+				if (m_fCurMouseSensitivityX > 0.f)
+					m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
+				else
+					m_fCurMouseSensitivityX = 0.f;
+			}
+
+			if (m_MouseMoveX != 0)
+			{
+				//m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec);
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec);
+			}
+			else
+			{
+				if (m_LastMoveX < 0)
+				{
+					//m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec * -1.f);
+					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec * -1.f);
+				}
+				else if (m_LastMoveX > 0)
+				{
+					//m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec);
+					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * m_pKenaTransform->Get_TransformDesc().fRotationPerSec);
+				}
+			}
+			
+		}
+		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
+		{
+
 		}
 	}
-	if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
-	{
-		_bool	bPossible = true;
-
-		if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
-		{
-			bPossible = false;
-
-			if (m_fVerticalAngle < XMConvertToRadians(40.f))
-				m_fCurMouseSensitivityY = 0.f;
-		}
-		if (m_fVerticalAngle > XMConvertToRadians(80.f) && m_MouseMoveY > 0)
-		{
-			bPossible = false;
-
-			if (m_fVerticalAngle > XMConvertToRadians(120.f))
-				m_fCurMouseSensitivityY = 0.f;
-		}
-
-		if (bPossible == false)
-		{
-			if (m_fCurMouseSensitivityY > 0.f)
-				m_fCurMouseSensitivityY -= fTimeDelta * 0.05f;
-			else
-				m_fCurMouseSensitivityY = 0.f;
-		}
-		else
-		{
-			if (m_fCurMouseSensitivityY < m_fInitMouseSensitivity)
-				m_fCurMouseSensitivityY += fTimeDelta * 0.1f;
-			else
-				m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
-		}
-
-		m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
-
-	}
-	if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-		m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 0.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
 
 	__super::Tick(fTimeDelta);
 }
@@ -153,24 +212,7 @@ void CCamera_Player::Late_Tick(_float fTimeDelta)
 		::SetCursor(NULL);
 	}
 	else
-	{
-		LPTSTR win32_cursor = IDC_ARROW;
-		switch (ImGui::GetMouseCursor())
-		{
-		case ImGuiMouseCursor_Arrow:        win32_cursor = IDC_ARROW; break;
-		case ImGuiMouseCursor_TextInput:    win32_cursor = IDC_IBEAM; break;
-		case ImGuiMouseCursor_ResizeAll:    win32_cursor = IDC_SIZEALL; break;
-		case ImGuiMouseCursor_ResizeEW:     win32_cursor = IDC_SIZEWE; break;
-		case ImGuiMouseCursor_ResizeNS:     win32_cursor = IDC_SIZENS; break;
-		case ImGuiMouseCursor_ResizeNESW:   win32_cursor = IDC_SIZENESW; break;
-		case ImGuiMouseCursor_ResizeNWSE:   win32_cursor = IDC_SIZENWSE; break;
-		case ImGuiMouseCursor_Hand:         win32_cursor = IDC_HAND; break;
-		case ImGuiMouseCursor_NotAllowed:   win32_cursor = IDC_NO; break;
-		}
-		/* ImGui Draw Mouse Setting */
-		::SetCursor(::LoadCursor(NULL, win32_cursor));
-	}
-
+		::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 
 	__super::Late_Tick(fTimeDelta);
 }

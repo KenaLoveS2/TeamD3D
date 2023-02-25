@@ -71,6 +71,28 @@ string CUtile::WstringToString(wstring wstr)
 	return str.assign(wstr.begin(), wstr.end());
 }
 
+char * CUtile::Split_String(char * pSour, char szSymbol)
+{
+	_uint	iSourLength = (_uint)strlen(pSour) + 1;
+
+	char*	pOut = new char[iSourLength];
+	ZeroMemory(pOut, iSourLength);
+
+	_bool	bSplitPoint = false;
+	for (_uint i = 0, j = 0; i < iSourLength; ++i)
+	{
+		if (bSplitPoint == false)
+		{
+			if (pSour[i] == szSymbol)
+				bSplitPoint = true;
+		}
+		else
+			pOut[j++] = pSour[i];
+	}
+
+	return pOut;
+}
+
 _tchar* CUtile::Create_String(const _tchar *pText)
 {
 	_int iSize = (_int)wcslen(pText) + 1;

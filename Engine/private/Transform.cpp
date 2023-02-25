@@ -327,6 +327,19 @@ void CTransform::Rotation(_fvector vAxis, _float fRadian)
 	Set_State(CTransform::STATE_LOOK, XMVector4Transform(vLook, RotationMatrix));
 }
 
+void CTransform::RotationFromNow(_fvector vAxis, _float fRadian)
+{
+	_matrix	matRotation = XMMatrixRotationAxis(vAxis, fRadian);
+
+	_vector	vRight = Get_State(CTransform::STATE_RIGHT);
+	_vector	vUp = Get_State(CTransform::STATE_UP);
+	_vector	vLook = Get_State(CTransform::STATE_LOOK);
+
+	Set_State(CTransform::STATE_RIGHT, XMVector4Transform(vRight, matRotation));
+	Set_State(CTransform::STATE_UP, XMVector4Transform(vUp, matRotation));
+	Set_State(CTransform::STATE_LOOK, XMVector4Transform(vLook, matRotation));
+}
+
 void CTransform::LookAt(_fvector vTargetPos)
 {
 	_float3		vScale = Get_Scaled();

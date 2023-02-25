@@ -310,16 +310,16 @@ HRESULT CRenderer::Draw_RenderGroup()
 		{
 			m_bDebugRender = !m_bDebugRender;
 		}
-	RELEASE_INSTANCE(CGameInstance)
+	RELEASE_INSTANCE(CGameInstance);
 
-		if (nullptr != m_pTarget_Manager && m_bDebugRender)
-		{
-			m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
-			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
-			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
-			m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
-		
-		}
+	if (nullptr != m_pTarget_Manager && m_bDebugRender)
+	{
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
+	
+	}
 #endif
 
 	return S_OK;

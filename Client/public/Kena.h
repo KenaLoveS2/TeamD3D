@@ -59,6 +59,15 @@ private:
 private:
 	_bool					m_bAttack = false;
 
+	_float					m_fInertia = 5.f;
+
+	_bool					m_bJump = false;
+	_bool					m_bDoubleJump = false;
+	_float					m_fGravity;
+	_float					m_fInitJumpSpeed;
+	_float					m_fCurJumpSpeed;
+
+	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
 	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
 	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);

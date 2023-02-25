@@ -768,10 +768,24 @@ CCamera * CGameInstance::Find_Camera(const _tchar * pCameraTag)
 	return m_pCamera_Manager->Find_Camera(pCameraTag);
 }
 
+CCamera * CGameInstance::Get_WorkCameraPtr()
+{
+	NULL_CHECK_RETURN(m_pCamera_Manager, nullptr);
+
+	return m_pCamera_Manager->Get_WorkCameraPtr();
+}
+
 _float* CGameInstance::Get_CameraFar()
 {
 	if (m_pCamera_Manager == nullptr) return nullptr;
 	return m_pCamera_Manager->Get_CameraFar();
+}
+
+map<const _tchar*, class CCamera*>* CGameInstance::Get_CameraContainer()
+{
+	NULL_CHECK_RETURN(m_pCamera_Manager, nullptr);
+
+	return m_pCamera_Manager->Get_CameraContainer();
 }
 
 HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _float fTimeDelta)
