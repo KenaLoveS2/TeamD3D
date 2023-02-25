@@ -19,7 +19,7 @@ public:
 	// "Layer_Effect" => ListBox
 	class CGameObject*	LayerEffects_ListBox(OUT char**& pObjectTag, OUT _uint& iLayerSize, OUT char*& pSelectObjectTag,
 								const char* pLabelTag, _int& iSelectObject, TAGTYPE eTag);
-	void	LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveChildSize, OUT char*& pSelectObjectTag, _int& iSelectObject, class CEffect_Base* pEffect);
+	void				LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveChildSize, OUT char*& pSelectObjectTag, _int& iSelectObject, class CEffect_Base* pEffect);
 
 	// Color // 
 	_float4	Set_ColorValue();

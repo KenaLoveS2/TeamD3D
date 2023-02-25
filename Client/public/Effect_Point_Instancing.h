@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Effect_Base.h"
+#include "VIBuffer_Point_Instancing.h"
 
 BEGIN(Client)
 
@@ -13,9 +14,22 @@ private:
 	virtual ~CEffect_Point_Instancing() = default;
 
 public:
+	HRESULT				 Set_ShapePosition(CVIBuffer_Point_Instancing::POINTDESC& ePointDesc);
+
+public:
 	void	Set_VIBufferProtoTag(_tchar* pProtoTag) {
 		m_szVIBufferProtoTag = pProtoTag;
 	}
+
+	CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE		Get_ShapeType();
+	void													Set_ShapeType(CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE eType);
+
+	CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR			Get_MoveDir();
+	void													Set_MoveDir(CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR eType);
+
+	CVIBuffer_Point_Instancing::POINTDESC				    Get_PointInstanceDesc();
+	void													Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC eEffectDesc);
+	void	Set_PointSetRange(_float fRange){}
 
 	_float2			Get_RandomSpeeds();
 	void			Set_RandomSpeeds(_double fMin, _double fMax);

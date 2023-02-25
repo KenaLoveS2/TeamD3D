@@ -13,6 +13,62 @@ CEffect_Point_Instancing::CEffect_Point_Instancing(const CEffect_Point_Instancin
 {
 }
 
+HRESULT CEffect_Point_Instancing::Set_ShapePosition(CVIBuffer_Point_Instancing::POINTDESC& ePointDesc)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return E_FAIL;
+
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition(&ePointDesc);
+}
+
+CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE CEffect_Point_Instancing::Get_ShapeType()
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE();
+
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_ShapeType();
+}
+
+void CEffect_Point_Instancing::Set_ShapeType(CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE eType)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return;
+
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapeType(eType);
+}
+
+CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR CEffect_Point_Instancing::Get_MoveDir()
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR();
+
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_MoveDir();
+}
+
+void CEffect_Point_Instancing::Set_MoveDir(CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR eType)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return;
+
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_MoveDir(eType);
+}
+
+CVIBuffer_Point_Instancing::POINTDESC CEffect_Point_Instancing::Get_PointInstanceDesc()
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return CVIBuffer_Point_Instancing::POINTDESC();
+
+	return *dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PointDesc();
+}
+
+void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC eEffectDesc)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return ;
+
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PointDesc(&eEffectDesc);
+}
+
 _float2 CEffect_Point_Instancing::Get_RandomSpeeds()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
