@@ -11,6 +11,7 @@ private:
 
 public:
 	void			Set_Guage(_float fGauge) { m_fGuage = fGauge; }
+	_bool			Is_FullFilled() { if (m_fGuage >= 1.f) return true; else return false; }
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -28,7 +29,12 @@ private:
 	_float2				m_vSpeed;	
 	_float4				m_vMinColor;
 	_float4				m_vColor;
+
+
 	_float				m_fGuage;	/* Normalized Data */
+	_float				m_fGuageOld;
+	_float				m_fGuageTime;
+	_float				m_fGuageTimeAcc;
 
 public:
 	static CUI_Event_Barguage*	Create();

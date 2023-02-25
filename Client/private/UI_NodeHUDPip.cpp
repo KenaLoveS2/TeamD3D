@@ -1,16 +1,24 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeHUDPip.h"
 #include "GameInstance.h"
-
+#include "UI_Event_ChangeImg.h"
+#include "UI_Event_Barguage.h"
 
 CUI_NodeHUDPip::CUI_NodeHUDPip(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
+	, m_bFullFilled(false)
 {
 }
 
 CUI_NodeHUDPip::CUI_NodeHUDPip(const CUI_NodeHUDPip & rhs)
 	: CUI_Node(rhs)
+	, m_bFullFilled(false)
 {
+}
+
+void CUI_NodeHUDPip::Set_Guage(_float fGuage)
+{
+	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
 HRESULT CUI_NodeHUDPip::Initialize_Prototype()
@@ -25,11 +33,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
 		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-			XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 
@@ -39,12 +43,13 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
 	m_bActive = true;
-	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
-
-	g_fAmount = 0.f;
+	
+	/* Events */
+	/* 이미지가 변경되도록 하는 이벤트 */
+	UIDESC* tDesc = (UIDESC*)pArg;
+	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
 
 	return S_OK;
 }
@@ -53,10 +58,14 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//if(CGameInstance::GetInstance()->Key_Down(DIK_O))
-	//	g_fAmount += 0.1f;
-	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	//	g_fAmount -= 0.1f;
+
+	if (static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled() 
+		&& !m_bFullFilled)
+	{
+		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this); /* 0: default, 1 : full pip */
+		m_bFullFilled = true;
+	}
+
 }
 
 void CUI_NodeHUDPip::Late_Tick(_float fTimeDelta)
@@ -77,7 +86,7 @@ HRESULT CUI_NodeHUDPip::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHP");
+		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeHUDPip");
 		return E_FAIL;
 	}
 
@@ -116,7 +125,6 @@ HRESULT CUI_NodeHUDPip::SetUp_ShaderResources()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -135,13 +143,6 @@ HRESULT CUI_NodeHUDPip::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &g_fAmount, sizeof(_float))))
-		return E_FAIL;
-
-	_float g_fAlpha = 1.f;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &g_fAlpha, sizeof(_float))))
-		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

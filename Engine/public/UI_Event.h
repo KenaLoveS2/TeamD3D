@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 class CShader;
+class CUI;
 class ENGINE_DLL CUI_Event abstract : public CBase
 {
 public:
@@ -37,7 +38,7 @@ public:
 public: /* Provided Function */
 	virtual	void	Call_Event(_uint iData) {};
 	virtual	void	Call_Event(_float fData) {};
-
+	virtual	void	Call_Event(CUI* pUI, _uint iIndex = 1) {};
 
 protected:
 	const char*			m_szEventName; 

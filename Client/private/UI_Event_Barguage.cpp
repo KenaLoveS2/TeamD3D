@@ -12,7 +12,7 @@ CUI_Event_Barguage::CUI_Event_Barguage()
 	m_vSpeed		= {0.f, 0.f};
 	m_vMinColor		= {0.1f, 0.3f, 0.5f, 1.0f};
 	m_vColor		= {1.0f, 1.0f, 1.0f, 1.0f};
-	m_fGuage		= 1.f;
+	m_fGuage		= 0.f;
 }
 
 HRESULT CUI_Event_Barguage::Tick(_float fTimeDelta)
