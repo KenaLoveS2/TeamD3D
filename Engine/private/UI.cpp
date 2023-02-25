@@ -171,6 +171,14 @@ HRESULT CUI::Delete_Event()
 	return S_OK;
 }
 
+void CUI::Change_DiffuseTexture(CTexture * pTexture, CTexture ** ppOrigin)
+{
+	if (ppOrigin != nullptr)
+		*ppOrigin = m_pTextureCom[TEXTURE_DIFFUSE];
+
+	m_pTextureCom[TEXTURE_DIFFUSE] = pTexture;
+}
+
 bool	texture_getter(void* data, int index, const char** output)
 {
 	vector<string>*	 pVec = (vector<string>*)data;
@@ -326,14 +334,13 @@ void CUI::Free()
 
 	//Safe_Release(m_pParent);
 
-	for (auto e : m_vecEvents)
-		Safe_Release(e);
-
-
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 		Safe_Release(m_pTextureCom[i]);
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
+
+	for (auto e : m_vecEvents)
+		Safe_Release(e);
 }

@@ -22,8 +22,6 @@ void CUI_Event::Imgui_RenderProperty()
 {
 }
 
-
-
 void CUI_Event::Free()
 {
 }

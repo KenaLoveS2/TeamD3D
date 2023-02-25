@@ -8,11 +8,21 @@ CUI_Event_Barguage::CUI_Event_Barguage()
 	m_szEventName = "BarGuage";
 	m_iRenderPass = 7;
 
-	m_vAcceleration = {0.f, 0.f};
-	m_vSpeed		= {0.f, 0.f};
-	m_vMinColor		= {0.1f, 0.3f, 0.5f, 1.0f};
-	m_vColor		= {1.0f, 1.0f, 1.0f, 1.0f};
-	m_fGuage		= 1.f;
+	m_vAcceleration = { 0.f, 0.f };
+	m_vSpeed = { 0.f, 0.f };
+	m_vMinColor = { 0.1f, 0.3f, 0.5f, 1.0f };
+	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_fGuage = 0.f;
+	m_fGuageNew = 0.f;
+	m_fGuageSpeed = 2.f;
+}
+
+_bool CUI_Event_Barguage::Is_Zero()
+{
+	if (m_fGuage <= 0.f)
+		return true;
+	else
+		return false;
 }
 
 HRESULT CUI_Event_Barguage::Tick(_float fTimeDelta)
@@ -25,7 +35,21 @@ HRESULT CUI_Event_Barguage::Tick(_float fTimeDelta)
 		m_fTimeAcc = 0.f;
 	}
 
-	return S_OK;
+
+	if (m_fGuageNew > m_fGuage)
+	{
+		m_fGuage += (0.01f * m_fGuageSpeed);
+		if(0.0001f > m_fGuageNew - m_fGuage)
+			m_fGuage = m_fGuageNew;
+	}
+	else if (m_fGuageNew < m_fGuage)
+	{
+		m_fGuage -= (0.01f * m_fGuageSpeed);
+		if(0.0001f > m_fGuage - m_fGuageNew)
+			m_fGuage = m_fGuageNew;
+	}
+
+		return S_OK;
 }
 
 HRESULT CUI_Event_Barguage::Late_Tick(_float fTimeDelta)
@@ -51,9 +75,8 @@ HRESULT CUI_Event_Barguage::SetUp_ShaderResources(CShader * pShader)
 
 void CUI_Event_Barguage::Imgui_RenderProperty()
 {
-
 	ImGui::Separator();
-	ImGui::Text("Event: "); ImGui::SameLine(); 
+	ImGui::Text("Event: "); ImGui::SameLine();
 	ImGui::Text(m_szEventName);
 	string eventName = m_szEventName;
 	string tag;
@@ -81,6 +104,11 @@ void CUI_Event_Barguage::Imgui_RenderProperty()
 		m_vAcceleration.x = fUVSpeed[0];
 		m_vAcceleration.y = fUVSpeed[1];
 	}
+
+	static float fGuageSpeed;
+	fGuageSpeed = m_fGuageSpeed;
+	if (ImGui::SliderFloat("GuageSpeed", &fGuageSpeed, 0.f, 100.f))
+		m_fGuageSpeed = fGuageSpeed;
 
 	static float vColor[4];
 	vColor[0] = m_vColor.x;
@@ -113,7 +141,7 @@ void CUI_Event_Barguage::Imgui_RenderProperty()
 
 void CUI_Event_Barguage::Call_Event(_float fData)
 {
-	Set_Guage(fData);
+	m_fGuageNew = fData;
 }
 
 HRESULT CUI_Event_Barguage::Save_Data(Json* json)
@@ -172,7 +200,7 @@ HRESULT CUI_Event_Barguage::Load_Data(wstring fileName)
 	file.close();
 
 
-	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	//jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	jLoad["Duration"].get_to<_float>(m_fTime);
 
 	int i = 0;

@@ -91,23 +91,36 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex--;
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
+	
+	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
+	CUI_ClientManager::UI_HUD eType1 = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_HUD eType2 = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_HUD eType3 = CUI_ClientManager::HUD_SHIELD;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		_float fPipUse = 0;;
+		m_PlayerDelegator.broadcast(eType2, fPipUse);
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
 		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eType, fNum);
-
+		m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType2, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
-		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
 		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eType, fNum);
-
+		m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType2, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
+
 	/************** ~Delegator Test *************/
+
+
 
 	if (m_pRendererCom != nullptr)
 	{

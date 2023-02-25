@@ -23,19 +23,7 @@ CImgui_UIEditor::CImgui_UIEditor(ID3D11Device * pDevice, ID3D11DeviceContext * p
 HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
 	m_pCanvas = nullptr;
-
-
-	//if (FAILED(Ready_TextureList()))
-	//{
-	//	MSG_BOX("Failed To Ready Texture List : Imgui_UIEditor");
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(Ready_CanvasProtoList()))
-	//{
-	//	MSG_BOX("Failed To Ready CanvasProto List : Imgui_UIEditor");
-	//	return E_FAIL;
-	//}
+	m_pUI = nullptr;
 
 	if (FAILED(Ready_CloneCanvasList()))
 	{
@@ -127,7 +115,7 @@ void CImgui_UIEditor::EventList()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	vector<string>* pList = pGameInstance->Get_UIString(CUI_Manager::STRKEY_EVENT);
-
+	RELEASE_INSTANCE(CGameInstance);
 
 
 	_uint iSize = (_uint)pList->size();
@@ -135,8 +123,13 @@ void CImgui_UIEditor::EventList()
 	if (ListBox("EventList", &selected_Event, Editor_Getter, pList, iSize))
 	{
 		m_pUI = m_pCanvas->Get_SelectedNode();
-		if (m_pUI == nullptr)
-			return;
+	}
+
+	if (m_pUI == nullptr)
+		return;
+
+	if (Button("Add Event"))
+	{
 		switch (selected_Event)
 		{
 		case CUI_ClientManager::EVENT_BARGUAGE:
@@ -144,12 +137,10 @@ void CImgui_UIEditor::EventList()
 			break;
 		}
 	}
+
+	if (Button("DeleteEvent"))
+		m_pUI->Delete_Event();
 	
-	if (m_pUI != nullptr)
-		if (Button("DeleteEvent"))
-			m_pUI->Delete_Event();
-	
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)

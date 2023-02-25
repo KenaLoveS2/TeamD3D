@@ -183,7 +183,7 @@ PS_OUT PS_MAIN_RINGGUAGE(PS_IN In)
 	if (angle > condition)
 		discard;
 
-	Out.vColor = vDiffuse * g_fAlpha;
+	Out.vColor = vDiffuse;
 
 	return Out;
 
