@@ -183,7 +183,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vAmbientDesc	 = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecularDesc  = g_MtrlSpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vDiffuse * vShade * vAmbientDesc, vDepthDesc.b) + (vSpecular * vSpecularDesc);
+	Out.vColor =	CalcHDRColor(vDiffuse, vDepthDesc.b) * vShade * vAmbientDesc + (vSpecular * vSpecularDesc);
 
 	if (Out.vColor.a == 0.0f)
 		discard;
@@ -231,9 +231,8 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	fShadowRate /= 9.f;
 	fShadowRate *= 0.3f;
-
+	
 	Out.vColor *= (1.f - fShadowRate);
-
 	return Out;
 }
 

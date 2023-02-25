@@ -135,8 +135,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 
 	/* For. SHADOW */
-	m_iShadowWidth = 8000;
-	m_iShadowHeight = 4500;
+	m_iShadowWidth = 8192;
+	m_iShadowHeight = 8192;
 
 	if (FAILED(Initialize_ShadowResources(m_iShadowWidth, m_iShadowHeight)))
 		return E_FAIL;
@@ -290,8 +290,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-
-
 	// Model Viewer
 	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
 		return E_FAIL;
