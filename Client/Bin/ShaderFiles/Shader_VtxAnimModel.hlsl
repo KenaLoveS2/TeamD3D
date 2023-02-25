@@ -22,6 +22,13 @@ Texture2D<float4>		g_HairDepthTexture;
 Texture2D<float4>		g_HairAlphaTexture;
 Texture2D<float4>		g_HairRootTexture;
 
+float								g_fHairLength = 1.f;
+float								g_fHairThickness = 1.f;
+
+float								g_fLashDensity = 0.5f;
+float								g_fLashWidth = 0.5f;
+float								g_fLashIntensity = 0.5f;
+
 float4							g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
@@ -191,10 +198,9 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
 
 	float3		emissive = vEmissive.rgb;
-	float			smoothness = 1.f - fRoughness;
 
 	float4 color = float4(diffuse + emissive, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, smoothness);
+	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -227,17 +233,16 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	float			fMetalic = vAO_R_M.b;
 
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
+
 	float3		specular = vDiffuse.rgb * fMetalic;
 	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
 	float3		emissive = vEmissive.rgb * vEmissiveMask.rgb;
-
-	float			smoothness =1.f - fRoughness;
 
 	float4 sssDesc = SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
 	float3 sssColor = sssDesc.rgb;
 
 	float4		color = float4(diffuse + emissive * vEmissiveMask.a, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, smoothness);
+	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
 	color.rgb = lerp(color.rgb, sssColor, vSSSMask.r);
 
 	Out.vDiffuse = color;
@@ -305,11 +310,10 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
 	float3		specular = vDiffuse.rgb * fMetalic;
 	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
-	float			smoothness = 1.f - fRoughness;
 	float3		emissive = vEmissive.rgb;
 
 	float4		color = float4(diffuse + emissive, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, smoothness);
+	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -326,7 +330,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vRoot = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vRoot = g_HairRootTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepth = g_HairDepthTexture.Sample(LinearSampler, In.vTexUV);
 
 	float fAlpha = vAlpha.r;
@@ -334,20 +338,67 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	if (fAlpha < 0.5f)
 		discard;
 
+	float3 viewDirection = -In.vViewDir;
+	float3 rootPosition = vRoot.rgb;
+
 	float fDepth = vDepth.r;
 	
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
+	// Compute the position of the current pixel in hair space
+	float3 pixelPosition = float3(In.vPosition.xy, In.vTexUV.r) * g_fHairLength;
+	float3 hairDirection = normalize(pixelPosition - rootPosition);
 
-	float fFinalAlpha = fAlpha * saturate((fDepth - vRoot.r)/(vRoot.g - vRoot.r));
+	// Compute the angle between the current hair segment and the view direction
+	float viewAngle = dot(hairDirection, viewDirection);
 
-	Out.vDiffuse = float4(vDiffuse.rgb,fFinalAlpha);
+	// Compute the thickness of the current hair segment based on the view angle
+	float thickness = saturate(g_fHairThickness / (1.0f + viewAngle));
+
+	// Apply thickness to the hair color
+	vDiffuse.rgb *= thickness;
+
+	float fFinalAlpha = fAlpha * saturate((fDepth - rootPosition.z)/(1.f - rootPosition.z));
+	fFinalAlpha = 1.f - fFinalAlpha;
+
+	Out.vDiffuse = float4(vDiffuse.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f , 0.f);
 	Out.vAmbient = (vector)1.f;
-	Out.vSpecular = (vector)0.f;
+	Out.vSpecular = (vector)1.f;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_EYELASH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+	vector		vLashColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAlbedo = vLashColor;
+
+	// Step 1: Sample base color and alpha value
+	float alpha = vLashColor.r;
+
+	// Step 2: Calculate the distance of the pixel from the nearest lash
+	float distance = 1.0;
+	for (float i = 0.0; i < g_fLashDensity; i += 1.0)
+	{
+		float2 offset = float2(sin(i) * g_fLashWidth, cos(i) * g_fLashWidth);
+		float4 lashColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + offset);
+		float lashAlpha = lashColor.a * alpha;
+		distance = min(distance, lashAlpha);
+	}
+
+	// Step 3: Apply the final color based on the distance
+	float4 finalColor = float4(lerp(vAlbedo, vLashColor, distance * g_fLashIntensity));
+
+	Out.vDiffuse = finalColor;
+	Out.vNormal = (vector)1.f;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -443,6 +494,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HAIR();
+	}
+
+	pass Kena_EyeLash
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_EYELASH();
 	}
 }
 

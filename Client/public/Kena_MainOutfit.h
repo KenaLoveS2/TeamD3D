@@ -24,6 +24,10 @@ private:
 	virtual HRESULT		SetUp_Components() override;
 	virtual HRESULT		SetUp_ShaderResource() override;
 
+private:
+	_float					m_fHairLength = 1.f;
+	_float					m_fHairThickness = 1.f;
+
 public:
 	static CKena_MainOutfit*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;

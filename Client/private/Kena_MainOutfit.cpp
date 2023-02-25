@@ -74,7 +74,7 @@ HRESULT CKena_MainOutfit::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
 		{
@@ -138,6 +138,18 @@ void CKena_MainOutfit::ImGui_ShaderValueProperty()
 		m_vMulAmbientColor.y = fColor[1];
 		m_vMulAmbientColor.z = fColor[2];
 	}
+
+	{
+		static _float2 HairLengthMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("g_fHairLengthMinMax", (float*)&HairLengthMinMax);
+		ImGui::DragFloat("g_fHairLength", &m_fHairLength, 0.001f, HairLengthMinMax.x, HairLengthMinMax.y);
+	}
+
+	{
+		static _float2 HairThicknessMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("g_fHairThicknessMinMax", (float*)&HairThicknessMinMax);
+		ImGui::DragFloat("g_fHairThickness", &m_fHairThickness, 0.001f, HairThicknessMinMax.x, HairThicknessMinMax.y);
+	}
 }
 
 HRESULT CKena_MainOutfit::SetUp_Components()
@@ -197,9 +209,11 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(_float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_fHairLength", &m_fHairLength, sizeof(_float));
+	m_pShaderCom->Set_RawValue("g_fHairThickness", &m_fHairThickness, sizeof(_float));
 
 	return S_OK;
 }

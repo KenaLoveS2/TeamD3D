@@ -140,12 +140,12 @@ HRESULT CKena::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else if (i == 4)
 		{
 			// Eye Render
-			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
 		}
 		else if (i ==5 || i == 6)
 		{
@@ -153,7 +153,7 @@ HRESULT CKena::Render()
 			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
 		}
 		else if (i == 0)
 		{
@@ -163,7 +163,7 @@ HRESULT CKena::Render()
 		else
 		{
 			// Eye Lash
-			//m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
 		}
 	}
 
@@ -245,6 +245,20 @@ void CKena::ImGui_ShaderValueProperty()
 		m_vEyeAmbientColor.x = fColor[0];
 		m_vEyeAmbientColor.y = fColor[1];
 		m_vEyeAmbientColor.z = fColor[2];
+	}
+
+	{
+		static _float2 LashWidthMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashWidthMinMax", (float*)&LashWidthMinMax);
+		ImGui::DragFloat("LashWidthAmount", &m_fLashWidth, 0.1f, LashWidthMinMax.x, LashWidthMinMax.y);
+
+		static _float2 LashDensityMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashDensityAmoutMinMax", (float*)&LashDensityMinMax);
+		ImGui::DragFloat("LashDensityAmount", &m_fLashDensity, 0.1f, LashDensityMinMax.x, LashDensityMinMax.y);
+
+		static _float2 LashIntensity{ 0.f, 100.f };
+		ImGui::InputFloat2("LashIntensityMinMax", (float*)&LashIntensity);
+		ImGui::DragFloat("LashIntensityAmount", &m_fLashIntensity, 0.1f, LashIntensity.x, LashIntensity.y);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -371,7 +385,9 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientEyeColor", &m_vEyeAmbientColor, sizeof(_float4));
-
+	m_pShaderCom->Set_RawValue("g_fLashDensity", &m_fLashDensity, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
 	return S_OK;
 }
 
