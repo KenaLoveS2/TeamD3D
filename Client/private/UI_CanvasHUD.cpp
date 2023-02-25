@@ -155,6 +155,10 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	string str;
 	wstring wstr;
 
+	/* Note : the reason using unstable temp address variable "fileName" is that
+		fileName(CloneTag) needed while it cloned when loading the data.
+		(The cloneTag is stored after the clone process.)
+	*/
 	str = "Node_HPBar";
 	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(지역변수) */
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar",&tDesc));
@@ -168,6 +172,21 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_ShieldBar";
+	tDesc.fileName.assign(str.begin(), str.end()); 
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_ShieldBar", L"Node_ShieldBar", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_Shield";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Shield", L"Node_Shield", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
 
 	str = "Node_RotIcon";
 	tDesc.fileName.assign(str.begin(), str.end());

@@ -190,11 +190,14 @@ HRESULT CUI_Event_Barguage::Load_Data(wstring fileName)
 CUI_Event_Barguage * CUI_Event_Barguage::Create(wstring fileName)
 {
 	CUI_Event_Barguage* pInstance = new CUI_Event_Barguage();
-	if (pInstance->Load_Data(fileName))
-	{
-		MSG_BOX("Failed To Create : CUI_Event_Barguage");
-		Safe_Release(pInstance);
-	}
+	if (pInstance != nullptr)
+		pInstance->Load_Data(fileName);
+
+	//if (pInstance->Load_Data(fileName))
+	//{
+	//	MSG_BOX("Failed To Create : CUI_Event_Barguage");
+	//	Safe_Release(pInstance);
+	//}
 
 	return pInstance;
 }
