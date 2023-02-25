@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Large06_02.MI_RuinsKit_Large06_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Large06_01.MI_RuinsKit_Large06_01'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Large06_02.MI_RuinsKit_Large06_02'
+        MaterialSlotName = MI_RuinsKit_Large06_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3489.01, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Large06_01.MI_RuinsKit_Large06_01'
+        MaterialSlotName = MI_RuinsKit_Large06_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3092.83, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=125.122, Y=-210.755, Z=-1827.66 }
+    BoxExtent = { X=452.923, Y=608.743, Z=2899.2 }
+    SphereRadius = 2949.55
+}

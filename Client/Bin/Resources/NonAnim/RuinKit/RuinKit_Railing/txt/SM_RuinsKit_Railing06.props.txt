@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Railings.MI_RuinsKit_Railings'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Railings.MI_RuinsKit_Railings'
+        MaterialSlotName = Railings
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2322.35, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=5.91278e-05 }
+    BoxExtent = { X=936.962, Y=66.9924, Z=28.6957 }
+    SphereRadius = 937.694
+}

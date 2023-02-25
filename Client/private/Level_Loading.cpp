@@ -35,6 +35,8 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, L"Layer_Background", TEXT("Prototype_GameObject_BackGround"), TEXT("Clone_BackGround"))))
 		return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, L"Layer_Background", TEXT("Prototype_GameObject_LoadingIcon"), TEXT("Clone_LoadingIcon"))))
+		return E_FAIL;
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

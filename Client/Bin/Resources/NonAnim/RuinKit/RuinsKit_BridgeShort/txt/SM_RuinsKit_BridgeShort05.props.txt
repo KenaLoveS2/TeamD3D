@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Short_05.MI_RuinsKit_Short_05'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Short_05.MI_RuinsKit_Short_05'
+        MaterialSlotName = MI_RuinsKit_Short_05
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1565.28, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.74292, Y=4.14478, Z=21.0388 }
+    BoxExtent = { X=276.07, Y=214.379, Z=414.839 }
+    SphereRadius = 502.762
+}

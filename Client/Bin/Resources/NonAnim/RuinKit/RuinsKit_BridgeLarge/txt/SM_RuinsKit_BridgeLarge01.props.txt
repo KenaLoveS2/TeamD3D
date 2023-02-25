@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_LargeBridge01_02.MI_RuinsKit_LargeBridge01_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_LargeBridge01_01.MI_RuinsKit_LargeBridge01_01'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Runes.MI_RuinsKit_Runes'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_LargeBridge01_02.MI_RuinsKit_LargeBridge01_02'
+        MaterialSlotName = Bridge1_2_
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 11024.6, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_LargeBridge01_01.MI_RuinsKit_LargeBridge01_01'
+        MaterialSlotName = Bridge1_1_
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 10465.2, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_Runes.MI_RuinsKit_Runes'
+        MaterialSlotName = Runes
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3664.42, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=6.43127, Y=314.491, Z=-2.76782 }
+    BoxExtent = { X=967.771, Y=2536.94, Z=3305.05 }
+    SphereRadius = 4230.99
+}

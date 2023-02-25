@@ -130,6 +130,8 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend");
 
 
+	/* Event List */
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "BarGuage");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

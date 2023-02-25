@@ -8,12 +8,14 @@
 CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI(pDevice, pContext)
 	, m_bBindFinished(false)
+	, m_iSelectedNode(-1)
 {
 }
 
 CUI_Canvas::CUI_Canvas(const CUI_Canvas & rhs)
 	:CUI(rhs)
 	, m_bBindFinished(false)
+	, m_iSelectedNode(-1)
 {
 }
 
@@ -84,7 +86,8 @@ void CUI_Canvas::Imgui_RenderProperty()
 	{
 		static int selected_Node = 0;
 		_uint iNumNodes = (_uint)m_vecNodeCloneTag.size();
-		ImGui::ListBox(" : Node", &selected_Node, getter_ForCanvas, &m_vecNodeCloneTag, iNumNodes, 5);
+		if (ImGui::ListBox(" : Node", &selected_Node, getter_ForCanvas, &m_vecNodeCloneTag, iNumNodes, 5))
+			m_iSelectedNode = selected_Node;
 
 		m_vecNode[selected_Node]->Imgui_RenderProperty();	
 	}

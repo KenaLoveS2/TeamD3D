@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Modular/Stairs/MI_RuinStairs_4Set.MI_RuinStairs_4Set'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Modular/Stairs/MI_RuinStairs_4Set.MI_RuinStairs_4Set'
+        MaterialSlotName = MI_RuinStairs_4Set
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 690.007, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=1.95966, Y=7.62939e-06, Z=0 }
+    BoxExtent = { X=325.088, Y=116.419, Z=52.281 }
+    SphereRadius = 344.059
+}

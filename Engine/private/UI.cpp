@@ -151,6 +151,26 @@ HRESULT CUI::Render()
 	return S_OK;
 }
 
+HRESULT CUI::Add_Event(CUI_Event * pEvent)
+{
+	if (nullptr == pEvent)
+		return E_FAIL;
+
+	m_vecEvents.push_back(pEvent);
+
+	return S_OK;
+}
+
+HRESULT CUI::Delete_Event()
+{
+	if (!m_vecEvents.empty())
+	{
+		Safe_Release(m_vecEvents.back());
+		m_vecEvents.pop_back();
+	}
+	return S_OK;
+}
+
 bool	texture_getter(void* data, int index, const char** output)
 {
 	vector<string>*	 pVec = (vector<string>*)data;
@@ -203,8 +223,11 @@ void CUI::Imgui_RenderingSetting()
 		Set_RenderPass(selected_Pass);
 	}
 
+#pragma region Old
+	/* Update 230225 : detail information will be handled in events' Imgui_RenderProperty() */
 	/* For Shader Variables (Depending on RenderPass. */
 	/* if it doesnt work, then it might be not related to the selected Renderpass. */
+	/*
 	ImGui::Separator();
 	ImGui::Text("Sprite Animation Setting");
 	static int size[2];
@@ -217,7 +240,7 @@ void CUI::Imgui_RenderingSetting()
 
 	static float fTime;
 	fTime = m_tSpriteInfo.fAnimTime;
-	if (ImGui::SliderFloat("Duration", &fTime, 0.f, 30.f))
+	if (ImGui::SliderFloat("Duration_test", &fTime, 0.f, 30.f))
 		m_tSpriteInfo.fAnimTime = fTime;
 
 	static bool bLoop;
@@ -237,13 +260,13 @@ void CUI::Imgui_RenderingSetting()
 
 	static float fUVTime;
 	fUVTime = m_tUVMoveInfo.fDeltaTime;
-	if (ImGui::SliderFloat("UV Duration", &fUVTime, 0.f, 30.f))
+	if (ImGui::SliderFloat("UV Duration_Test", &fUVTime, 0.f, 30.f))
 		m_tUVMoveInfo.fDeltaTime = fUVTime;
 
 	static float fUVSpeed[2];
 	fUVSpeed[0] = m_tUVMoveInfo.vSpeed.x;
 	fUVSpeed[1] = m_tUVMoveInfo.vSpeed.y;
-	if (ImGui::SliderFloat("UV Speed", fUVSpeed, -50.f, 50.f))
+	if (ImGui::SliderFloat("UV Speed_Test", fUVSpeed, -50.f, 50.f))
 	{
 		m_tUVMoveInfo.vSpeed.x = fUVSpeed[0];
 		m_tUVMoveInfo.vSpeed.y = fUVSpeed[1];
@@ -260,7 +283,7 @@ void CUI::Imgui_RenderingSetting()
 	vColor[1] = m_tDefaultRenderInfo.vColor.y;
 	vColor[2] = m_tDefaultRenderInfo.vColor.z;
 	vColor[3] = m_tDefaultRenderInfo.vColor.w;
-	if (ImGui::SliderFloat4("Color", vColor, 0.f, 1.f))
+	if (ImGui::SliderFloat4("Color_test", vColor, 0.f, 1.f))
 	{
 		m_tDefaultRenderInfo.vColor.x = vColor[0];
 		m_tDefaultRenderInfo.vColor.y = vColor[1];
@@ -273,7 +296,7 @@ void CUI::Imgui_RenderingSetting()
 	vMinColor[1] = m_tDefaultRenderInfo.vMinColor.y;
 	vMinColor[2] = m_tDefaultRenderInfo.vMinColor.z;
 	vMinColor[3] = m_tDefaultRenderInfo.vMinColor.w;
-	if (ImGui::SliderFloat4("MinColor", vMinColor, 0.f, 1.f))
+	if (ImGui::SliderFloat4("MinColor_test", vMinColor, 0.f, 1.f))
 	{
 		m_tDefaultRenderInfo.vMinColor.x = vMinColor[0];
 		m_tDefaultRenderInfo.vMinColor.y = vMinColor[1];
@@ -287,6 +310,8 @@ void CUI::Imgui_RenderingSetting()
 		m_tDefaultRenderInfo.fDeltaTime = fDeltaTime;
 
 	ImGui::Separator();
+	*/
+#pragma endregion Old
 }
 
 void CUI::Imgui_EventSetting()
