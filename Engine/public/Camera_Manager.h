@@ -16,13 +16,14 @@ private:
 	virtual ~CCamera_Manager() = default;
 
 public:
-	HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
-	HRESULT Work_Camera(const _tchar* pCameraTag);
-	class CCamera* Find_Camera(const _tchar* pCameraTag);
+	HRESULT			Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+	HRESULT			Work_Camera(const _tchar* pCameraTag);
+	class CCamera*	Find_Camera(const _tchar* pCameraTag);
 
 
 public:
 	_float* Get_CameraFar();
+	map<const _tchar*, class CCamera*>*	Get_CameraContainer() { return &m_Cameras; }
 
 	virtual void Free() override;
 
