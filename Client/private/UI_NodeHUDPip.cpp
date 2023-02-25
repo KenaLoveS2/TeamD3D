@@ -53,10 +53,10 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(CGameInstance::GetInstance()->Key_Down(DIK_O))
-		g_fAmount += 0.1f;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-		g_fAmount -= 0.1f;
+	//if(CGameInstance::GetInstance()->Key_Down(DIK_O))
+	//	g_fAmount += 0.1f;
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	//	g_fAmount -= 0.1f;
 }
 
 void CUI_NodeHUDPip::Late_Tick(_float fTimeDelta)

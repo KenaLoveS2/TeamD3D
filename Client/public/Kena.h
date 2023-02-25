@@ -36,6 +36,7 @@ public:
 	virtual HRESULT		Render() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				Update_Child() override;
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
@@ -57,9 +58,19 @@ private:
 private:
 	_bool					m_bAttack = false;
 
-	// temp
+	_float					m_fInertia = 5.f;
+
+	_bool					m_bJump = false;
+	_bool					m_bDoubleJump = false;
+	_float					m_fGravity;
+	_float					m_fInitJumpSpeed;
+	_float					m_fCurJumpSpeed;
+
+	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
 	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 private:
 	HRESULT				Ready_Parts();
@@ -69,8 +80,10 @@ private:
 	void						Test(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<CUI_ClientManager::UI_ID, _int>		m_PlayerDelegator;
-	
+	Delegator<CUI_ClientManager::UI_HUD, _float>		m_PlayerDelegator;
+
+	_float m_fTest = 0.f;
+
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;

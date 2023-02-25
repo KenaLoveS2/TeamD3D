@@ -48,6 +48,7 @@ HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototy
 
 	m_pLayers = new LAYERS[iNumLevels];
 	m_mapAnimModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
+	m_mapShaderValueModel = new map<const _tchar*, class CGameObject*>[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
 	
@@ -75,6 +76,11 @@ HRESULT CObject_Manager::Clear(_uint iLevelIndex)
  		Safe_Release(Pair.second);
  
  	m_mapAnimModel[iLevelIndex].clear();
+
+	for (auto& Pair : m_mapShaderValueModel[iLevelIndex])
+		Safe_Release(Pair.second);
+
+	m_mapShaderValueModel[iLevelIndex].clear();
 
 	return S_OK;
 }
@@ -216,6 +222,19 @@ HRESULT CObject_Manager::Add_ClonedGameObject(_uint iLevelIndex, const _tchar * 
 	return S_OK;
 }
 
+HRESULT CObject_Manager::Add_ShaderValueObject(_uint iLevelIndex, CGameObject * pGameObject)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return E_FAIL;
+
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+
+	m_mapShaderValueModel[iLevelIndex].emplace(pGameObject->Get_ObjectCloneName(), pGameObject);
+	Safe_AddRef(pGameObject);
+
+	return S_OK;
+}
+
 HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameObject)
 {
 	if (iLevelIndex >= m_iNumLevels)
@@ -291,13 +310,17 @@ void CObject_Manager::Free()
 			Safe_Release(Pair.second);
 		m_mapAnimModel[i].clear();
 
+		for (auto& Pair : m_mapShaderValueModel[i])
+			Safe_Release(Pair.second);
+		m_mapShaderValueModel[i].clear();
+
 		for (auto& Pair : m_pLayers[i])
 			Safe_Release(Pair.second);
-
 		m_pLayers[i].clear();
 	}
 
 	Safe_Delete_Array(m_pLayers);
+	Safe_Delete_Array(m_mapShaderValueModel);
 	Safe_Delete_Array(m_mapAnimModel);
 	
 
@@ -443,7 +466,10 @@ void CObject_Manager::Imgui_Push_Group(CGameObject * pSelectedObject)
 			CGameInstance::GetInstance()->Add_String(pComponentTag);
 
 			for (auto &pObj : Mulit_ObjectList)
+			{
 				pObj->Delete_Component(pComponentTag);
+				//Safe_Release(pComponentTag);
+			}
 		}
 
 		Imgui_Add_For_EnviroMent_Component();

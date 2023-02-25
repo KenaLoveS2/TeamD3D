@@ -9,6 +9,9 @@
 #include "UI_NodeHUDRot.h"
 #include "UI_NodeHUDPip.h"
 #include "UI_NodeHUDPipBar.h"
+#include "UI_NodeHUDShield.h"
+#include "UI_NodeHUDShieldBar.h"
+
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -125,7 +128,10 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "BarGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend");
-	
+
+
+	/* Event List */
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "BarGuage");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -149,6 +155,16 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HP"), CUI_NodeHUDHP::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HP");
+
+	/* HP Shield */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ShieldBar"), CUI_NodeHUDShieldBar::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ShieldBar");
+
+	/* Shield Guage */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Shield"), CUI_NodeHUDShield::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Shield");
 
 	/* RotIcon */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotIcon"), CUI_NodeHUDRot::Create(pDevice, pContext))))

@@ -21,6 +21,7 @@ public:
 
 public:
 	CTransform* Get_TransformCom() { return m_pTransformCom; }
+	_matrix		Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
 
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);
@@ -85,6 +86,7 @@ public: /* imgui */
 
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
+	virtual void ImGui_ShaderValueProperty() {};
 
 	void Set_Position(_float4& vPosition);
 };

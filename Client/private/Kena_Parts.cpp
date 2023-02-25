@@ -44,6 +44,8 @@ HRESULT CKena_Parts::Initialize(void * pArg)
 void CKena_Parts::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pTransformCom->Set_WorldMatrix(m_pPlayer->Get_WorldMatrix());
 }
 
 void CKena_Parts::Late_Tick(_float fTimeDelta)
@@ -61,6 +63,11 @@ HRESULT CKena_Parts::Render()
 void CKena_Parts::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+}
+
+void CKena_Parts::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
 }
 
 void CKena_Parts::Model_Synchronization(_bool bPausePlay)

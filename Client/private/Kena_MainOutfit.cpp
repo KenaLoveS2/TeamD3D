@@ -29,6 +29,9 @@ HRESULT CKena_MainOutfit::Initialize(void * pArg)
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Kena_Clothing.ao");
 
+	m_vMulAmbientColor = _float4(2.f, 2.f, 2.f, 1.f);
+	m_fSSSAmount = 0.09f;
+	m_vSSSColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	return S_OK;
 }
 
@@ -39,7 +42,6 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
-	Imgui_RenderProperty();
 }
 
 void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
@@ -89,16 +91,45 @@ HRESULT CKena_MainOutfit::Render()
 void CKena_MainOutfit::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-	ImGui::Begin("Shader_OutFit");
-	ImGui::DragFloat("SSSAmount", &m_fSSSAmount, 0.01f, 0.f, 10.f);
-	_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
-	static _float2 sssMinMax{ -100.f, 100.f };
-	ImGui::InputFloat2("SSSMinMax", (float*)&sssMinMax);
-	ImGui::DragFloat3("SSSAmount", fColor, 0.01f, 0.f, 255.f);
-	m_vSSSColor.x = fColor[0];
-	m_vSSSColor.y = fColor[1];
-	m_vSSSColor.z = fColor[2];
-	ImGui::End();
+}
+
+void CKena_MainOutfit::ImGui_AnimationProperty()
+{
+	ImGui::BeginTabBar("Kena MainOutfit Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+}
+
+void CKena_MainOutfit::ImGui_ShaderValueProperty()
+{
+	{
+		static _float2 AmountMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("OutFit_SSSAmountMinMax", (float*)&AmountMinMax);
+		ImGui::DragFloat("OutFit_SSSAmount", &m_fSSSAmount, 0.001f, AmountMinMax.x, AmountMinMax.y);
+		_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+		static _float2 sssMinMax{ -1.f, 1.f };
+		ImGui::InputFloat2("OutFit_SSSMinMax", (float*)&sssMinMax);
+		ImGui::DragFloat3("OutFit_SSSAColor", fColor, 0.001f, sssMinMax.x, sssMinMax.y);
+		m_vSSSColor.x = fColor[0];
+		m_vSSSColor.y = fColor[1];
+		m_vSSSColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("OutFit_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("OutFit_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
 }
 
 HRESULT CKena_MainOutfit::SetUp_Components()
@@ -107,7 +138,7 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/********************* For. Kena PostProcess By WJ*****************/
 	//For.Cloth
@@ -150,6 +181,7 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	
 	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }

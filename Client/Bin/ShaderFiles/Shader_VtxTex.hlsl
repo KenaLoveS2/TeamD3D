@@ -195,9 +195,9 @@ PS_OUT PS_MAIN_BARGUAGE(PS_IN In)
 
 
 	float4 vColor = g_vColor;
-	vColor.r = g_vColor.r * (In.vTexUV.x + 0.1f);
-	vColor.g = g_vColor.g * (In.vTexUV.x + 0.3f);
-	vColor.b = g_vColor.b * (In.vTexUV.x + 0.5f);
+	vColor.r = g_vColor.r * (In.vTexUV.x + g_vMinColor.r); // 0.1f
+	vColor.g = g_vColor.g * (In.vTexUV.x + g_vMinColor.g); // 0.3f
+	vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); // 0.5f
 	vColor.a = g_vColor.a;
 	
 	/* Discard pixel depends on original UV.x */

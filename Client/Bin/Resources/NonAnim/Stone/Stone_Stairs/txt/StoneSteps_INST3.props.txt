@@ -1,0 +1,190 @@
+Parent = Material3'/Game/Mochi/Environment/Prototype/Assets/StoneSteps/Materials/StoneSteps_MASTER_MAT.StoneSteps_MASTER_MAT'
+ScalarParameterValues[10] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=BlendBias }
+        ParameterValue = -0.327684
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=BlendSharpness }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Moss_UV_Tiling }
+        ParameterValue = 7.83941
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=MossRoughness_MAX }
+        ParameterValue = 2.64389
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=MossRoughness_MIN }
+        ParameterValue = -1.32049
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Roughness }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=Specular }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither }
+        ParameterValue = 5
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither_NearFade }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[6] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Comp }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/Assets/StoneSteps/Textures/T_StoneSteps_Comp_E_R_Ao.T_StoneSteps_Comp_E_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/Assets/StoneSteps/Textures/T_StoneSteps_D.T_StoneSteps_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=MossDiffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/DeadMoss.DeadMoss'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=MossNormal }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/ProceduralNaturePack/moss_nrm.moss_nrm'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=MossRoughness }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/Assets/Tiles/Textures/Moss_Tile_01_ROUGHNESS.Moss_Tile_01_ROUGHNESS'
+        ParameterName = None
+    }
+    TextureParameterValues[5] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/Assets/StoneSteps/Textures/T_StoneSteps_N.T_StoneSteps_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Main_Color }
+        ParameterValue = { R=0.277777, G=0.277777, B=0.277777, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Moss_Color }
+        ParameterValue = { R=0.53, G=0.446792, B=0.316893, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[1] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_PixelDithering }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[6] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 7.84375
+        UVChannelIndex = 0
+        TextureName = DeadMoss
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 7.84375
+        UVChannelIndex = 0
+        TextureName = moss_nrm
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 7.84375
+        UVChannelIndex = 0
+        TextureName = Moss_Tile_01_ROUGHNESS
+    }
+    TextureStreamingData[3] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_StoneSteps_Comp_E_R_Ao
+    }
+    TextureStreamingData[4] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_StoneSteps_D
+    }
+    TextureStreamingData[5] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_StoneSteps_N
+    }
+}

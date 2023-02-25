@@ -68,6 +68,7 @@ public: /* For.Object_Manager */
 	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, const _tchar* pComponentTag);
 	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex);
+	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex);
 
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag = nullptr, void* pArg = nullptr);
@@ -77,6 +78,7 @@ public: /* For.Object_Manager */
 		const _tchar* pCloneObjectTag,
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	HRESULT		Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
+	HRESULT		Add_ShaderValueObject(_uint iLevelIndex, CGameObject * pGameObject);
 	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 	void SwitchOnOff_Shadow(_bool bSwitch);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
@@ -164,7 +166,9 @@ public: /* For.PipeLine */
 		HRESULT Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
+		class CCamera* Get_WorkCameraPtr();
 		_float*		Get_CameraFar();
+		map<const _tchar*, class CCamera*>*	Get_CameraContainer();
 
 	public:		/* For Function Manager */
 		template<typename T>

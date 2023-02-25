@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_FloorTiles_.MI_RuinsKit_FloorTiles_'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/RuinsKit_LargeBridge/Materials/MI_RuinsKit_FloorTiles_.MI_RuinsKit_FloorTiles_'
+        MaterialSlotName = MI_RuinsKit_FloorTiles_
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1244.26, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-2.32813, Y=-1.64258, Z=28.2185 }
+    BoxExtent = { X=282.203, Y=323.154, Z=43.7095 }
+    SphereRadius = 372.237
+}

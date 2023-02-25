@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/WarpShrine/Materials/MI_RusuFountain.MI_RusuFountain'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGodSpiritStatue_Vine.MI_RotGodSpiritStatue_Vine'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/WarpShrine/Materials/MI_RusuFountain.MI_RusuFountain'
+        MaterialSlotName = MI_RusuFountain
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2216.36, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGodSpiritStatue_Vine.MI_RotGodSpiritStatue_Vine'
+        MaterialSlotName = MI_RotGodSpiritStatue_Vine
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 416.39, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-39.5766, Y=-7.27539, Z=504.577 }
+    BoxExtent = { X=493.12, Y=385.968, Z=521.984 }
+    SphereRadius = 770.207
+}

@@ -220,6 +220,9 @@
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Terrain\Tess">
       <UniqueIdentifier>{87839bd5-789f-42be-af54-12be2cee934d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.GameObject\UI\04. Event">
+      <UniqueIdentifier>{116ed6cd-4a15-472f-b360-4d90da663ed0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -511,6 +514,9 @@
     <ClInclude Include="..\public\Model_Instancing.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_Event.h">
+      <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -759,6 +765,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Model_Instancing.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event.cpp">
+      <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

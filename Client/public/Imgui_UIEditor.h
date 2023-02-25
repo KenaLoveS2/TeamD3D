@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CUI_Canvas;
 class CUI_Node;
+class CUI;
 END
 
 BEGIN(Client)
@@ -19,10 +20,12 @@ public:
 
 private:
 	HRESULT Ready_CloneCanvasList();
+	void	EventList();
 
 private:
 	vector<CUI_Canvas*>				m_vecCanvas;
 	CUI_Canvas*						m_pCanvas;
+	CUI*							m_pUI;
 
 public:
 	static	CImgui_UIEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);

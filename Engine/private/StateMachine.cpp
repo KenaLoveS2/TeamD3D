@@ -44,7 +44,7 @@ HRESULT CStateMachine::Initialize(void * pArg, class CGameObject * pOwner)
 	return S_OK;
 }
 
-void CStateMachine::Tick(_double & dTimeDelta)
+void CStateMachine::Tick(_float fTimeDelta)
 {
 	auto	CurState = find_if(m_mapState.begin(), m_mapState.end(), [&](const pair<const wstring, STATE>& Pair) {
 		return m_wstrCurrentStateName == Pair.first;
@@ -64,20 +64,20 @@ void CStateMachine::Tick(_double & dTimeDelta)
 	if (m_wstrNextStateName != L"")
 	{
 		if (CurState->second.State_End != nullptr)
-			CurState->second.State_End(dTimeDelta);
+			CurState->second.State_End(fTimeDelta);
 
 		m_wstrLastStateName = m_wstrCurrentStateName;
 		m_wstrCurrentStateName = m_wstrNextStateName;
 
 		if (m_mapState[m_wstrCurrentStateName].State_Start != nullptr)
-			m_mapState[m_wstrCurrentStateName].State_Start(dTimeDelta);
+			m_mapState[m_wstrCurrentStateName].State_Start(fTimeDelta);
 
 		m_wstrNextStateName = L"";
 	}
 	else
 	{
 		if (CurState->second.State_Tick != nullptr)
-			CurState->second.State_Tick(dTimeDelta);
+			CurState->second.State_Tick(fTimeDelta);
 	}
 }
 

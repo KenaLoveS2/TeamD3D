@@ -1,11 +1,13 @@
 #pragma once
 #include "GameObject.h"
+#include "UI_Event.h"
 
 BEGIN(Engine)
 class CShader;
 class CRenderer;
 class CVIBuffer_Rect;
 class CTexture;
+class CUI_Event;
 class ENGINE_DLL CUI abstract : public CGameObject
 {
 public:
@@ -55,12 +57,12 @@ protected:
 
 
 public:
-	_fmatrix			Get_WorldMatrix();
-	_fmatrix			Get_InitMatrix();
-	void				Set_Parent(CUI* pUI);
-	HRESULT				Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
-	void				Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
-	void				Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
+	_fmatrix				Get_WorldMatrix();
+	_fmatrix				Get_InitMatrix();
+	void					Set_Parent(CUI* pUI);
+	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
+	void					Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
+	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -69,36 +71,45 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	HRESULT					Add_Event(CUI_Event* pEvent);
+	HRESULT					Delete_Event();
 
 public:
-	virtual HRESULT					Save_Data() { return S_OK; }
-	virtual HRESULT					Load_Data(wstring fileName) { return S_OK; }
+	virtual HRESULT			Save_Data() { return S_OK; }
+	virtual HRESULT			Load_Data(wstring fileName) { return S_OK; }
 
 protected:
+	virtual HRESULT			SetUp_Components() = 0;
+	virtual HRESULT			SetUp_ShaderResources(); /* For. Events */
 	void					Imgui_RenderingSetting();
+	void					Imgui_EventSetting();
 
 protected:
-	CShader*			m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CVIBuffer_Rect*		m_pVIBufferCom = nullptr;
-	CTexture*			m_pTextureCom[TEXTURE_END] = { nullptr, };
+	CShader*				m_pShaderCom = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CVIBuffer_Rect*			m_pVIBufferCom = nullptr;
+	CTexture*				m_pTextureCom[TEXTURE_END] = { nullptr, };
 
 protected:
-	UIDESC				m_tDesc;
-	CUI*				m_pParent;
-	_bool				m_bActive;
-	_uint				m_iRenderPass;
-	wstring				m_TextureComTag[TEXTURE_END];
+	UIDESC					m_tDesc;
+	CUI*					m_pParent;
+	_bool					m_bActive;
+	_uint					m_iRenderPass;
+	wstring					m_TextureComTag[TEXTURE_END];
 
 	/* For. Node (mostly) */
-	_float4x4			m_matInit;
-	_float4x4			m_matParentInit;
-	_float4x4			m_matLocal;
+	_float4x4				m_matInit;
+	_float4x4				m_matParentInit;
+	_float4x4				m_matLocal;
 
+protected: /* Event */
+	//_uint				m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
+	vector<CUI_Event*>		m_vecEvents;
 
-	SPRITEINFO			m_tSpriteInfo;
-	UVMOVE				m_tUVMoveInfo;
-	DEFAULTINFO			m_tDefaultRenderInfo;
+	SPRITEINFO				m_tSpriteInfo;
+	UVMOVE					m_tUVMoveInfo;
+	DEFAULTINFO				m_tDefaultRenderInfo;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;

@@ -166,6 +166,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -197,11 +198,14 @@
     <ClInclude Include="..\Public\Level_TestPlay.h" />
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
+    <ClInclude Include="..\public\LoadingIcon.h" />
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
+    <ClInclude Include="..\public\Tool_Settings.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasMonHP.h" />
     <ClInclude Include="..\public\UI_CanvasSkillBtn.h" />
@@ -209,6 +213,7 @@
     <ClInclude Include="..\public\UI_CanvasSubtitle.h" />
     <ClInclude Include="..\public\UI_ClientManager.h" />
     <ClInclude Include="..\public\Imgui_UIEditor.h" />
+    <ClInclude Include="..\public\UI_Event_Barguage.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -248,11 +253,14 @@
     <ClCompile Include="..\Private\Level_TestPlay.cpp" />
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingIcon.cpp" />
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
+    <ClCompile Include="..\private\Tool_Settings.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasMonHP.cpp" />
     <ClCompile Include="..\private\UI_CanvasSkillBtn.cpp" />
@@ -260,6 +268,7 @@
     <ClCompile Include="..\private\UI_CanvasSubtitle.cpp" />
     <ClCompile Include="..\private\UI_ClientManager.cpp" />
     <ClCompile Include="..\private\Imgui_UIEditor.cpp" />
+    <ClCompile Include="..\private\UI_Event_Barguage.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />

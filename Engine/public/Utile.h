@@ -24,6 +24,8 @@ public:
 	static _tchar* Create_String(const _tchar *pText);
 	static char* Create_String(const char *pText);
 
+	static char* Split_String(char * pSour, char szSymbol);
+
 	static _float  Get_RandomFloat(_float fMinValue, _float fMaxValue);
 	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);
 

@@ -28,7 +28,7 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Staff.ao");
-
+	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 	return S_OK;
 }
 
@@ -39,6 +39,7 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
+	Imgui_RenderProperty();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -79,13 +80,39 @@ void CKena_Staff::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 }
 
+void CKena_Staff::ImGui_AnimationProperty()
+{
+	ImGui::BeginTabBar("Kena Staff Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+}
+
+void CKena_Staff::ImGui_ShaderValueProperty()
+{
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("Staff_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("Staff_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
+}
+
 HRESULT CKena_Staff::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/********************* For. Kena PostProcess By WJ*****************/
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -114,6 +141,7 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 
 	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 
 	return S_OK;
 }
