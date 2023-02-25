@@ -1,0 +1,146 @@
+Parent = Material3'/Game/Mochi/MaterialLibrary/M_Standard_Env.M_Standard_Env'
+ScalarParameterValues[9] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color_Intensity }
+        ParameterValue = 0.6
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Desaturate }
+        ParameterValue = 0.35
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=RoughnessAmount }
+        ParameterValue = 3
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Specular_Intensity }
+        ParameterValue = 0.03
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Blend_Bias }
+        ParameterValue = -0.971428
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Blend_Sharpness }
+        ParameterValue = 5.03663
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=TopLayer_Specular }
+        ParameterValue = 0.2
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=TopLayer_UV_Tiling }
+        ParameterValue = 4
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[5] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Comp_M_R_Ao }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Props/Textures/T_VillageCart_Bowls_Comp_M_R_Ao.T_VillageCart_Bowls_Comp_M_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Props/Textures/T_VillageCart_Bowls_D.T_VillageCart_Bowls_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Props/Textures/T_VillageCart_Bowls_N.T_VillageCart_Bowls_N'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=T_TopLayer_Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/DeadMoss.DeadMoss'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=TopLayer_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Prototype/Assets/Tiles/Textures/Dirt_Tile_01_NORMAL.Dirt_Tile_01_NORMAL'
+        ParameterName = None
+    }
+}
+VectorParameterValues[0] = {}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[1] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = false
+            ParameterInfo = { Name=Enable_WorldAlign }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_VillageCart_Bowls_Comp_M_R_Ao
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_VillageCart_Bowls_D
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_VillageCart_Bowls_N
+    }
+}

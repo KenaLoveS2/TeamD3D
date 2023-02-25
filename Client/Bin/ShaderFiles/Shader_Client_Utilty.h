@@ -4,22 +4,6 @@
 #define IDENTITY_MATRIX float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 static const float PI = 3.14159265359;
 
-float4 ToneMap(float4 color)
-{
-	float4 mappedColor = color;
-
-	// Convert from linear to gamma-corrected color space
-	mappedColor.rgb = pow(mappedColor.rgb, 1.0 / 2.2);
-
-	// Apply tonemapping curve (e.g. Reinhard tonemapping)
-	mappedColor.rgb /= mappedColor.rgb + 1.0;
-
-	// Convert back to linear color space
-	mappedColor.rgb = pow(mappedColor.rgb, 2.2);
-
-	return mappedColor;
-}
-
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);

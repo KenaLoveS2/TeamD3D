@@ -17,6 +17,7 @@ public:
 	class CLayer*				Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
+	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex) { return &m_mapShaderValueModel[iLevelIndex]; }
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
@@ -32,7 +33,8 @@ public:
 		const _tchar* pCloneObjectTag,
 		void* pArg = nullptr, CGameObject** ppOut = nullptr);
 	HRESULT					Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
-	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+	HRESULT					Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
+	HRESULT					Add_ShaderValueObject(_uint iLevelIndex, class CGameObject* pGameObject);
 
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
@@ -51,6 +53,9 @@ private:	/* Clone Objects */
 private:	/* Animation Objects, For Animation Tool */
 	map<const _tchar*, class CGameObject*>*	m_mapAnimModel = nullptr;
 
+private:	/* Change Shader Value Objects, For Shader Tool */
+	map<const _tchar*, class CGameObject*>*	m_mapShaderValueModel = nullptr;
+
 private:
 	_bool									m_bShadow = true;
 	_uint m_iNumCopyPrototypes = 0;
@@ -59,7 +64,7 @@ private:
 
 private: /*For.Imgui*/
 	string							m_strComponentTag = "";
-	
+	wstring							m_wstrSelecteObject_LayerTag = L"";
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
 
@@ -69,10 +74,12 @@ public:
 public: /*For.Imgui*/
 	void Imgui_ProtoViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
-	void Imgui_Push_Group( class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
-	void Imgui_DeleteComponent(class CGameObject* pSelectedObject);
-	void Imgui_Add_For_EnviroMent_Component();
+	void Imgui_DeleteComponentOrObject(OUT class CGameObject*& pSelectedObject);
+	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 
+private:
+	void Imgui_Add_For_EnviroMent_Component();
+	
 private:
 	list<class CGameObject*> Mulit_ObjectList;		// For. Component add. Delete many Objects 
 

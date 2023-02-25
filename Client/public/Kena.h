@@ -36,6 +36,7 @@ public:
 	virtual HRESULT		Render() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				Update_Child() override;
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
@@ -57,12 +58,17 @@ private:
 private:
 	_bool					m_bAttack = false;
 
+	_float					m_fSSSAmount = 0.01f;
+	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+
 private:
 	HRESULT				Ready_Parts();
 	HRESULT				SetUp_Components();
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_State();
-	void				Test(_bool bIsInit, _float fTimeDelta);
+	void						Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_HUD, _float>		m_PlayerDelegator;

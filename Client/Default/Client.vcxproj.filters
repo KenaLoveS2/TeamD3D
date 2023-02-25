@@ -319,6 +319,7 @@
     <ClInclude Include="..\public\UI_Event_Barguage.h">
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -463,6 +464,7 @@
     <ClCompile Include="..\private\UI_Event_Barguage.cpp">
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

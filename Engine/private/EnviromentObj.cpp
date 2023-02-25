@@ -13,18 +13,18 @@ CEnviromentObj::CEnviromentObj(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 	: CGameObject(rhs)
 	, m_pEnviroment_Manager(rhs.m_pEnviroment_Manager)
-{	
+{
 }
 
-void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath )
+void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath)
 {
-	m_vecStr_textureFilePath.push_back(TexturePath);
+	m_EnviromentDesc.vecStr_textureFilePath.push_back(TexturePath);
 	/*나중에 중복 처리하기*/
 }
 
 HRESULT CEnviromentObj::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype())) return E_FAIL;	
+	if (FAILED(__super::Initialize_Prototype())) return E_FAIL;
 
 	return S_OK;
 }
@@ -33,8 +33,8 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 {
 	m_CurComponenteTag.reserve(5);
 
-	if (pArg) 
-	{		
+	if (pArg)
+	{
 		ENVIROMENT_DESC* Desc = reinterpret_cast<ENVIROMENT_DESC*>(pArg);
 
 		m_EnviromentDesc.szProtoObjTag = Desc->szProtoObjTag;
@@ -43,7 +43,7 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
 		m_EnviromentDesc.eChapterType = Desc->eChapterType;
 		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
-
+		m_EnviromentDesc.vecStr_textureFilePath = Desc->vecStr_textureFilePath;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}
@@ -90,46 +90,48 @@ HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar 
 
 void CEnviromentObj::Imgui_RenderComponentProperties()
 {
-	ImGui::InputInt(" Option : ", &m_iImgui_ComponentOption); 
+	if (ImGui::CollapsingHeader("Single_Enviroment Obj"))
+	{
+		ImGui::InputInt(" Option : ", &m_iImgui_ComponentOption);
 #pragma region 예외처리
-	if (m_iImgui_ComponentOption < 0)
-		m_iImgui_ComponentOption = 0;
-	else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
-		m_iImgui_ComponentOption = COMPONENTS_END;
+		if (m_iImgui_ComponentOption < 0)
+			m_iImgui_ComponentOption = 0;
+		else if (m_iImgui_ComponentOption >= static_cast<COMPONENTS_OPTION>(COMPONENTS_END))
+			m_iImgui_ComponentOption = COMPONENTS_END;
 #pragma endregion
 
-	if (m_iImgui_ComponentOption == 0)
-		m_str_Imgui_ComTag = "Com_CtrlMove";
-	else if (m_iImgui_ComponentOption == 1)
-		m_str_Imgui_ComTag = "Com_Interaction";
-	else
-		m_str_Imgui_ComTag = "None";
-	
-	ImGui::Text( "Cur Option : %s" , m_str_Imgui_ComTag.c_str());
+		if (m_iImgui_ComponentOption == 0)
+			m_str_Imgui_ComTag = "Com_CtrlMove";
+		else if (m_iImgui_ComponentOption == 1)
+			m_str_Imgui_ComTag = "Com_Interaction";
+		else
+			m_str_Imgui_ComTag = "None";
 
-	if (ImGui::Button("Add Component") && m_str_Imgui_ComTag != "None")
-	{
-		if (COMPONENTS_END == m_iImgui_ComponentOption)
-			return;
+		ImGui::Text("Cur Option : %s", m_str_Imgui_ComTag.c_str());
 
-		CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
-		_tchar* pComTag = CUtile::StringToWideChar(m_str_Imgui_ComTag);
-		pGameInstace->Add_String(pComTag);
-		Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), pComTag,
-			static_cast<COMPONENTS_OPTION>(m_iImgui_ComponentOption));
-		
-		RELEASE_INSTANCE(CGameInstance);
-	}
+		if (ImGui::Button("Add Component") && m_str_Imgui_ComTag != "None")
+		{
+			if (COMPONENTS_END == m_iImgui_ComponentOption)
+				return;
+
+			CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
+			_tchar* pComTag = CUtile::StringToWideChar(m_str_Imgui_ComTag);
+			pGameInstace->Add_String(pComTag);
+			Add_AdditionalComponent(pGameInstace->Get_CurLevelIndex(), pComTag,
+				static_cast<COMPONENTS_OPTION>(m_iImgui_ComponentOption));
+
+			RELEASE_INSTANCE(CGameInstance);
+		}
+
 
 #pragma region 와이어프레임으로 그리기
-	ImGui::Checkbox("WireFrame_Render", &m_bWireFrame_Rendering);
-	if (m_bWireFrame_Rendering == true)
-		m_iShaderOption = 3;
-	else
-		m_iShaderOption = 0;
-
+		ImGui::Checkbox("WireFrame_Render", &m_bWireFrame_Rendering);
+		if (m_bWireFrame_Rendering == true)
+			m_iShaderOption = 3;
+		else
+			m_iShaderOption = 0;
+	}
 #pragma endregion
-
 
 	__super::Imgui_RenderComponentProperties();
 }
@@ -137,5 +139,5 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 void CEnviromentObj::Free()
 {
 	__super::Free();
-	
+
 }

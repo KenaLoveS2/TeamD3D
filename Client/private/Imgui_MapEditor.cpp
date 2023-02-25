@@ -8,7 +8,7 @@
 #include <fstream>
 
 #include "EnviromentObj.h"
-
+#include "ModelViewerObject.h"
 CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CImguiObject(pDevice, pContext)
 {
@@ -17,6 +17,7 @@ CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext *
 HRESULT CImgui_MapEditor::Initialize(void * pArg)
 {
 	m_bComOptions.fill(false);
+
 	return S_OK;
 }
 
@@ -30,7 +31,9 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_Save_Load_Json();
 
 		Imgui_SelectObject_Add_TexturePath();
+		Imgui_Control_ViewerCamTransform();
 	}
+
 	ImGui::End();
 }
 
@@ -111,7 +114,10 @@ void CImgui_MapEditor::Imgui_SelectOption()
 						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
 
 						if (ImGui::Selectable(szViewName, bModelSelected))
+						{
 							m_wstrModelName = ProtoPair.first;
+							m_bModelChange = true;
+						}
 					}
 				}
 				else
@@ -119,7 +125,10 @@ void CImgui_MapEditor::Imgui_SelectOption()
 					CUtile::WideCharToChar(ProtoPair.first, szProtoName);
 					sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
 					if (ImGui::Selectable(szViewName, bModelSelected))
+					{
 						m_wstrModelName = ProtoPair.first;			// 리스트 박스를 누르면 현재 모델프로토 타입 이름을 가져옴
+						m_bModelChange = true;
+					}
 				}
 			}
 			ImGui::EndListBox();
@@ -152,6 +161,28 @@ void CImgui_MapEditor::Imgui_SelectOption()
 	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
 	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
 	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
+
+	if(m_bModelChange ==true)
+	{
+		/* 모델 프로토 타입이 널이 아닐때 바꾸기*/
+		if (m_wstrModelName != L"")
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+			if (false == m_bOnceSearch)
+			{
+				m_pViewerObject = static_cast<CModelViewerObject*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_BackGround"), TEXT("VIEWER_Objcet")));
+				m_bOnceSearch = true;
+			}
+
+			if (m_pViewerObject != nullptr)
+				m_pViewerObject->Change_Model(pGameInstance->Get_CurLevelIndex(), m_wstrModelName.c_str());
+
+			RELEASE_INSTANCE(CGameInstance);
+			m_bModelChange = false;
+		}
+	}
+
 
 #pragma endregion ~선택된 오브젝트들 보여주기
 }
@@ -288,7 +319,6 @@ void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
 			static_cast<CEnviromentObj*>(pSelectEnviObj)->Add_TexturePath(pFilePath);
 		}
 
-
 		vector<const _tchar*>* vecStr = static_cast<CEnviromentObj*>(pSelectEnviObj)->Get_TexturePaths();
 
 		for (auto& pComtag : *vecStr)
@@ -299,6 +329,39 @@ void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
 		}
 
 	}
+}
+
+void CImgui_MapEditor::Imgui_Control_ViewerCamTransform()
+{
+	ImGui::Separator();
+
+	if (m_pViewerObject != nullptr)
+	{
+		static float fYPos_Num = 0.1f;
+		static float fXAngle_Num = 0.1f;
+		static float fZPos_Num = -5.f;
+
+		_float fViewerCamYPos = m_pViewerObject->Get_ViewerCamYPos();
+		_float fViewerCamXAngle = m_pViewerObject->Get_ViewerCamXAngle();
+
+
+		ImGui::Text("ViewerCam ZPos, %f", &fZPos_Num);
+		ImGui::Text("ViewerCam YPos, %f", &fViewerCamYPos);
+		ImGui::Text("ViewerCam XAngle, %f", fViewerCamXAngle);
+
+
+		ImGui::InputFloat("ZPosNum", &fZPos_Num); ImGui::SameLine();
+		if (ImGui::Button("zPos Chagne"))
+			m_pViewerObject->Set_ViewerCamZPos(fZPos_Num);
+		ImGui::InputFloat("YPos_Increase&Reduce_Num", &fYPos_Num);
+		ImGui::InputFloat("xAngle_Increase&Reduce_Num", &fXAngle_Num);
+		
+		m_pViewerObject->Set_ViewerCamMoveRatio(fYPos_Num, fXAngle_Num);
+	
+	
+	}
+	
+
 }
 
 void CImgui_MapEditor::Imgui_Save_Func()
@@ -482,7 +545,9 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.szTextureTag = m_wstrTexturelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
-
+		EnviromentDesc.vecStr_textureFilePath.clear();
+		Insert_TextureFilePath(pGameInstance, EnviromentDesc, StrFilePathVec);
+		
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -492,7 +557,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePathVec);
+	
 
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
@@ -539,19 +604,18 @@ void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameOb
 
 }
 
-void CImgui_MapEditor::Load_TextureFilePath(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
+void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, vector<string> vecStr)
 {
-	assert(nullptr != pGameObject && "CImgui_MapEditor::Load_TextureFilePath");
 	assert(nullptr != pGameInstace && "CImgui_MapEditor::Load_TextureFilePath");
 
 	if (vecStr.size() == 0)
 		return;
-
+	
 	for (auto pStr : vecStr)
 	{
 		_tchar* pTextureFilePath = 	CUtile::StringToWideChar(pStr);
 		pGameInstace->Add_String(pTextureFilePath);
-		static_cast<CEnviromentObj*>(pGameObject)->Add_TexturePath(pTextureFilePath);
+		EnviromentDesc.vecStr_textureFilePath.push_back(pTextureFilePath);
 	}
 }
 
@@ -621,6 +685,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
+		EnviromentDesc.vecStr_textureFilePath.clear();
+		Insert_TextureFilePath(pGameInstance,EnviromentDesc,StrFilePath);
+
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
@@ -631,7 +698,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Load_TextureFilePath(pGameInstance, pLoadObject, StrFilePath);
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -660,4 +727,5 @@ void CImgui_MapEditor::Free()
 	__super::Free();
 
 	m_wstrProtoName.clear();
+
 }

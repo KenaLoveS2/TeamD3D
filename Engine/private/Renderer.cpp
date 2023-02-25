@@ -62,27 +62,35 @@ HRESULT CRenderer::Initialize_Prototype()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	/* For.Target_Diffuse */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_Normal */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Normal"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Normal"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	/* For.Target_Depth */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 1.f, 0.f, 1.f))))
-		return E_FAIL;	
+		return E_FAIL;
+
+	/* For.Target_MtrlSpecular */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_MtrlSpecular"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	
+	/* For.Target_MtrlAmbient */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_MtrlAmbient"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 
 	/* For.Target_Shade */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shade"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.0f, 0.0f, 0.0f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shade"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_Specular */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_HDR */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.8f, 0.8f, 0.8f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.8f, 0.8f, 0.8f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_LDR */
@@ -91,6 +99,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
+	/* For.ModelViewer */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_ModelViewer"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
+
+
+
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -98,6 +113,14 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Depth"))))
 		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlSpecular"))))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
+		return E_FAIL;
+	// Model_Preview 렌더링용
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_ModelViewer"), TEXT("Target_ModelViewer"))))
+		return E_FAIL;
+
 
 	/* For.MRT_LightAcc */ /* 빛 연산의 결과를 저장할 렌더타겟들.  */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
@@ -108,6 +131,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	// HDR 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
+
+
 
 	/* For. SHADOW */
 	m_iShadowWidth = 8000;
@@ -144,15 +169,24 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), fSizeX * 0.5f, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
 		return E_FAIL;
 
-	// For. Lighting
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlSpecular"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlAmbient"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	// For. Lighting
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), (fSizeX * 0.5f) + fSizeX * 2.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
 	// For. Shadow
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
+	/* For.ModelViewer */
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
+		return E_FAIL;
+
 
 #endif
 	
@@ -257,6 +291,19 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 #ifdef _DEBUG
 
+
+	// Model Viewer
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
+		return E_FAIL;
+	
+	if (FAILED(Render_Viewer()))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
+		return E_FAIL;
+
+	// ~ Model Viewer
+
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
 
@@ -272,6 +319,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
 			m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
+			m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
+		
 		}
 #endif
 
@@ -418,6 +467,10 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
 		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlSpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlSpecular")))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlAmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
+		return E_FAIL;
 
 	/* For. Shadow */
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
@@ -555,6 +608,27 @@ HRESULT CRenderer::Render_UI()
 
 	return S_OK;
 }
+
+HRESULT CRenderer::Render_Viewer()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_VIEWER])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_VIEWER].clear();
+
+
+	return S_OK;
+
+}
+
 
 #ifdef _DEBUG
 HRESULT CRenderer::Render_DebugObject()

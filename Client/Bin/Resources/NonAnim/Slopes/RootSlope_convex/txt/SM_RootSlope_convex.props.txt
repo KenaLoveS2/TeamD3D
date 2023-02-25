@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Slopes/MI_RootSlope_Ground.MI_RootSlope_Ground'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Slopes/MI_RootSlope.MI_RootSlope'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Slopes/MI_RootSlope_Ground.MI_RootSlope_Ground'
+        MaterialSlotName = MI_RootSlope_Ground
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 515.428, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Slopes/MI_RootSlope.MI_RootSlope'
+        MaterialSlotName = MI_RootSlope
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 507.656, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-9.23291, Y=-38.0943, Z=2.88514 }
+    BoxExtent = { X=392.907, Y=165.053, Z=96.6373 }
+    SphereRadius = 408.262
+}

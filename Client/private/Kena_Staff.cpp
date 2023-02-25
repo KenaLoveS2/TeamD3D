@@ -28,7 +28,7 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Staff.ao");
-
+	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 	return S_OK;
 }
 
@@ -69,7 +69,7 @@ HRESULT CKena_Staff::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 		/******************************************************************/
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 2);
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 	}
 
 	return S_OK;
@@ -78,9 +78,19 @@ HRESULT CKena_Staff::Render()
 void CKena_Staff::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-	ImGui::Begin("Staff");
-	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
-	ImGui::End();
+}
+
+void CKena_Staff::ImGui_ShaderValueProperty()
+{
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("Staff_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("Staff_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
 }
 
 HRESULT CKena_Staff::SetUp_Components()
@@ -115,7 +125,11 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
+
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+
 	return S_OK;
 }
 

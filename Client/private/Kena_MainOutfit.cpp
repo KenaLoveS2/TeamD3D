@@ -29,6 +29,9 @@ HRESULT CKena_MainOutfit::Initialize(void * pArg)
 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Kena_Clothing.ao");
 
+	m_vMulAmbientColor = _float4(2.f, 2.f, 2.f, 1.f);
+	m_fSSSAmount = 0.09f;
+	m_vSSSColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	return S_OK;
 }
 
@@ -39,7 +42,6 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
-	Imgui_RenderProperty();
 }
 
 void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
@@ -65,23 +67,19 @@ HRESULT CKena_MainOutfit::Render()
 
 		if (i == 0)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
+			// Real Cloth			
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			/******************************************************************/
-
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
 		{
-			/********************* For. Kena PostProcess By WJ*****************/
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
 		else
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
@@ -93,9 +91,32 @@ HRESULT CKena_MainOutfit::Render()
 void CKena_MainOutfit::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-	ImGui::Begin("OutFit");
-	ImGui::DragFloat("Roughness", &m_fTest, 0.001f, -100.f, 100.f);
-	ImGui::End();
+}
+
+void CKena_MainOutfit::ImGui_ShaderValueProperty()
+{
+	{
+		static _float2 AmountMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("OutFit_SSSAmountMinMax", (float*)&AmountMinMax);
+		ImGui::DragFloat("OutFit_SSSAmount", &m_fSSSAmount, 0.001f, AmountMinMax.x, AmountMinMax.y);
+		_float fColor[3] = { m_vSSSColor.x, m_vSSSColor.y, m_vSSSColor.z };
+		static _float2 sssMinMax{ -1.f, 1.f };
+		ImGui::InputFloat2("OutFit_SSSMinMax", (float*)&sssMinMax);
+		ImGui::DragFloat3("OutFit_SSSAColor", fColor, 0.001f, sssMinMax.x, sssMinMax.y);
+		m_vSSSColor.x = fColor[0];
+		m_vSSSColor.y = fColor[1];
+		m_vSSSColor.z = fColor[2];
+	}
+
+	{
+		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+		static _float2 maMinMax{ 0.f, 255.f };
+		ImGui::InputFloat2("OutFit_MAMinMax", (float*)&maMinMax);
+		ImGui::DragFloat3("OutFit_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+		m_vMulAmbientColor.x = fColor[0];
+		m_vMulAmbientColor.y = fColor[1];
+		m_vMulAmbientColor.z = fColor[2];
+	}
 }
 
 HRESULT CKena_MainOutfit::SetUp_Components()
@@ -144,7 +165,11 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fTest, sizeof(float));
+	
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+
 	return S_OK;
 }
 
