@@ -230,6 +230,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Imgui_PropertyEditor.h" />
     <ClInclude Include="..\public\Imgui_ShaderEditor.h" />
     <ClInclude Include="..\public\Input_Device.h" />
+    <ClInclude Include="..\Public\Instancing_Mesh.h" />
     <ClInclude Include="..\public\Json\json.hpp" />
     <ClInclude Include="..\public\Json\json_fwd.hpp" />
     <ClInclude Include="..\public\Layer.h" />
@@ -305,6 +306,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp" />
     <ClCompile Include="..\private\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="..\private\Input_Device.cpp" />
+    <ClCompile Include="..\Private\Instancing_Mesh.cpp" />
     <ClCompile Include="..\private\Layer.cpp" />
     <ClCompile Include="..\private\Level.cpp" />
     <ClCompile Include="..\private\Level_Manager.cpp" />

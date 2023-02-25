@@ -517,6 +517,7 @@
     <ClInclude Include="..\public\UI_Event.h">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Instancing_Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -769,6 +770,7 @@
     <ClCompile Include="..\private\UI_Event.cpp">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Instancing_Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">

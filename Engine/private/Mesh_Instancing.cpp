@@ -132,8 +132,9 @@ HRESULT CMeshInstancing::Initialize_Prototype(CModel_Instancing* pModel, HANDLE 
 	m_BufferDesc.ByteWidth = m_iInstanceStride * iNumInstance;
 	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;					//Rock UnLock을 하겠다.
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iInstanceStride;
 	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
+	m_BufferDesc.StructureByteStride = m_iInstanceStride;
+	
 	m_BufferDesc.MiscFlags = 0;
 
 	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[iNumInstance];

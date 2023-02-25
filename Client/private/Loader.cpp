@@ -406,7 +406,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris")))
 	//	return E_FAIL;
-
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs")))
@@ -417,8 +416,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2")))
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath")))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath")))
+		return E_FAIL;
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));

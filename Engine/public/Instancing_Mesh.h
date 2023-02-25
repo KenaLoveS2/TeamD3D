@@ -1,0 +1,63 @@
+#pragma once
+
+#include "VIBuffer_Instancing.h"
+#include "Model.h"
+
+/* 모델의 교체가능한 한 파츠. */
+/* 이 메시를 그려내기위한 정점, 인덱스 버퍼를 보유한다. */
+BEGIN(Engine)
+class CInstancing_Mesh  final : public CVIBuffer_Instancing
+{
+private:
+	CInstancing_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CInstancing_Mesh(const CInstancing_Mesh& rhs);
+	virtual ~CInstancing_Mesh() = default;
+
+public:
+	HRESULT		Save_Mesh(HANDLE& hFile, DWORD& dwByte);
+	HRESULT		Save_MeshBones(HANDLE& hFile, DWORD& dwByte);
+	HRESULT		Load_Mesh(HANDLE& hFile, DWORD& dwByte);
+	_uint Get_MaterialIndex() const {
+		return m_iMaterialIndex;
+	}
+public:
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
+	virtual HRESULT Tick(_float fTimeDelta) override;
+	virtual HRESULT Render();
+
+public:
+	HRESULT SetUp_BonePtr(CModel* pModel);
+	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
+	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
+
+private:
+	CModel::TYPE		m_eType;
+	/* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
+	_uint				m_iMaterialIndex = 0;
+
+	/* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
+	_uint					m_iNumBones = 0;
+	vector<class CBone*>	m_Bones;
+
+	string* m_pBoneNames = nullptr;
+	VTXMODEL* m_pNonAnimVertices = nullptr;
+	VTXANIMMODEL*		m_pAnimVertices = nullptr;
+	FACEINDICES32*			m_pIndices = nullptr;
+
+	_bool						m_bLodMesh = false;
+private:
+	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
+	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
+
+private:
+	//_double*				m_pSpeeds = nullptr;
+
+public:
+	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod = false);
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
+	virtual void Free();
+	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
+};
+
+END

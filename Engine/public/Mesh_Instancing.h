@@ -1,6 +1,6 @@
 #pragma once
 #include "VIBuffer_Instancing.h"
-#include "Model_Instancing.h"
+#include "Model.h"
 
 BEGIN(Engine)
 
