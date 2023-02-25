@@ -13,10 +13,12 @@ CAnimation::CAnimation()
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_isLooping(true)
 	, m_pModel(rhs.m_pModel)
+	, m_Duration(rhs.m_Duration)
+	, m_fBlendDuration(rhs.m_fBlendDuration)
+	, m_TickPerSecond(rhs.m_TickPerSecond)
+	, m_eAnimType(rhs.m_eAnimType)
 {
 	strcpy_s(m_szName, rhs.m_szName);
-	m_Duration = rhs.m_Duration;
-	m_TickPerSecond = rhs.m_TickPerSecond;
 
 	m_iNumChannels = rhs.m_iNumChannels;
 	for (_uint i = 0; i < m_iNumChannels; i++)
@@ -232,10 +234,10 @@ void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 		m_isFinished = true;
 	}
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
 		m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
-		m_Channels[i]->Reset_KeyFrameIndex();
+		//m_Channels[i]->Reset_KeyFrameIndex();
 	}
 }
 

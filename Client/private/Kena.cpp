@@ -51,7 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
 	Push_EventFunctions();
 
@@ -62,7 +62,11 @@ void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
+	m_pKenaState->Tick(fTimeDelta);
+	m_pStateMachine->Tick(fTimeDelta);
+	int a = 0;
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
@@ -73,6 +77,8 @@ void CKena::Tick(_float fTimeDelta)
 void CKena::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	m_pKenaState->Late_Tick(fTimeDelta);
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
 		m_iAnimationIndex++;

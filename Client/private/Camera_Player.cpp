@@ -148,7 +148,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
 		}
 		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 0.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
+			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
 	}
 	else
 	{

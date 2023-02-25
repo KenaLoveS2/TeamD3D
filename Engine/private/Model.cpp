@@ -584,19 +584,20 @@ HRESULT CModel::Animation_Synchronization(CModel * pModelCom, const string & str
 
 	if (m_eType == TYPE_NONANIM)
 		m_eType = TYPE_ANIM;
-	else
-	{
-		for (auto& pAnimation : m_Animations)
-			Safe_Release(pAnimation);
 
-		m_Animations.clear();
-	}
+	for (auto& pAnimation : m_Animations)
+		Safe_Release(pAnimation);
+
+	m_Animations.clear();
+
 
 	for (auto& pAnimation : pModelCom->m_Animations)
 		m_Animations.push_back((CAnimation*)pAnimation->Clone());
 
 	for (auto pAnimation : m_Animations)
 		FAILED_CHECK_RETURN(pAnimation->Synchronization_ChannelsBonePtr(this, strRootNodeName), E_FAIL);
+
+	m_iNumAnimations = (_uint)m_Animations.size();
 
 	return S_OK;
 }
@@ -608,14 +609,30 @@ void CModel::Reset_Animation()
 
 void CModel::Set_AnimIndex(_uint iAnimIndex)
 {
-	if (m_iCurrentAnimIndex != iAnimIndex)
-	{
-		m_iPreAnimIndex = m_iCurrentAnimIndex;
-		m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
-		m_fBlendCurTime = 0.f;
-	}
+	if (iAnimIndex >= m_iNumAnimations)
+		return;
 
-	m_iCurrentAnimIndex = iAnimIndex;
+	CAnimation::ANIMTYPE	eType = m_Animations[iAnimIndex]->Get_AnimationType();
+
+	if (eType == CAnimation::ANIMTYPE_ADDITIVE)
+	{
+		if (m_iAdditiveAnimIndex != iAnimIndex)
+		{
+			m_iAdditiveAnimIndex = iAnimIndex;
+			m_fAdditiveCurTime = 0.f;
+		}
+	}
+	else if (eType == CAnimation::ANIMTYPE_COMMON)
+	{
+		if (m_iCurrentAnimIndex != iAnimIndex)
+		{
+			m_iPreAnimIndex = m_iCurrentAnimIndex;
+			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
+			m_fBlendCurTime = 0.f;
+		}
+
+		m_iCurrentAnimIndex = iAnimIndex;
+	}
 }
 
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
@@ -651,7 +668,19 @@ void CModel::Play_Animation(_float fTimeDelta)
 	}
 	else
 	{
+		int a = 0;
 		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+	}
+
+	if (m_iAdditiveAnimIndex != 0)
+	{
+		_float	fAdditiveRatio = m_fAdditiveCurTime / (_float)m_Animations[m_iAdditiveAnimIndex]->Get_AnimationDuration();
+		m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Addtive(fTimeDelta, fAdditiveRatio);
+
+		if (fAdditiveRatio >= 1.f)
+			m_iAdditiveAnimIndex = 0;
+
+		m_fAdditiveCurTime += fTimeDelta;
 	}
 	
 	for (auto& pBone : m_Bones)

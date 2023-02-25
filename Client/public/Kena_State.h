@@ -379,8 +379,7 @@ public:
 	HRESULT					Initialize(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);
-	
-private:
+	void						ImGui_RenderProperty();
 
 private:
 	CGameInstance*			m_pGameInstance = nullptr;
@@ -393,12 +392,51 @@ private:
 	class CCamera_Player*	m_pCamera = nullptr;
 
 private:
+	CTransform::DIRECTION	m_eDir = CTransform::DIR_END;
+	CTransform::DIRECTION	m_ePreDir = CTransform::DIR_END;
 
 private:
+	HRESULT					SetUp_State_Idle();
+	HRESULT					SetUp_State_Run();
 
 private:
+	void						Start_Idle(_float fTimeDelta);
+	void						Start_Run(_float fTimeDelta);
 
 private:
+	void						Tick_Idle(_float fTimeDelta);
+	void						Tick_Run(_float fTimeDelta);
+
+private:
+	void						End_Idle(_float fTimeDelta);
+	void						End_Run(_float fTimeDelta);
+
+private:	/* Changer */
+	_bool	KeyInput_None();
+	_bool	KeyInput_Direction();
+	_bool	KeyInput_W();
+	_bool	KeyInput_A();
+	_bool	KeyInput_S();
+	_bool	KeyInput_D();
+	_bool	KeyInput_WA();
+	_bool	KeyInput_WD();
+	_bool	KeyInput_SA();
+	_bool	KeyInput_SD();
+	_bool	KeyInput_Space();
+	_bool	KeyInput_LShift();
+	_bool	KeyInput_LCtrl();
+
+	_bool	KeyDown_E();
+	_bool	KeyDown_Q();
+	_bool	KeyDown_R();
+	_bool	KeyDown_LCtrl();
+	_bool	MouseDown_Middle();
+
+	_bool	KeyUp_E();
+
+private:
+	void	Move(_float TimeDelta, CTransform::DIRECTION eDir);
+	CTransform::DIRECTION		DetectDirectionInput();
 
 public:
 	static	CKena_State*	Create(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CTransform* pTransform, class CCamera_Player* pCamera);

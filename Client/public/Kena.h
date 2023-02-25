@@ -56,6 +56,14 @@ private:
 private:
 	_bool					m_bAttack = false;
 
+	_float					m_fInertia = 5.f;
+
+	_bool					m_bJump = false;
+	_bool					m_bDoubleJump = false;
+	_float					m_fGravity;
+	_float					m_fInitJumpSpeed;
+	_float					m_fCurJumpSpeed;
+
 private:
 	HRESULT				Ready_Parts();
 	HRESULT				SetUp_Components();

@@ -12,6 +12,7 @@ public:
 	/* STATE_TRANSLATION : (원점 또는 부모) 기준으로부터 얼마나 떨어져있어. */
 	/* Position : 절대적인 월드공간에서의 위치. */
 	enum STATE { STATE_RIGHT, STATE_UP, STATE_LOOK, STATE_TRANSLATION, STATE_END };
+	enum DIRECTION { DIR_W, DIR_A, DIR_S, DIR_D, DIR_WA, DIR_WD, DIR_SA, DIR_SD, DIR_LOOK, DIR_END };
 
 	typedef struct TRANSFORMDESC
 	{
@@ -91,6 +92,7 @@ public:
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _float fTimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
+	void RotationFromNow(_fvector vAxis, _float fRadian);
 
 	/* 쳐다본다. */
 	/*void LookAt(const CTransform* pTarget);*/

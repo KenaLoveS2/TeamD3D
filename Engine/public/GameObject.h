@@ -21,6 +21,7 @@ public:
 
 public:
 	CTransform* Get_TransformCom() { return m_pTransformCom; }
+	_matrix		Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
 
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);

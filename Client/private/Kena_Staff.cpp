@@ -79,13 +79,26 @@ void CKena_Staff::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 }
 
+void CKena_Staff::ImGui_AnimationProperty()
+{
+	ImGui::BeginTabBar("Kena Staff Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+}
+
 HRESULT CKena_Staff::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", L"Com_Model", (CComponent**)&m_pModelCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_Staff", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	/********************* For. Kena PostProcess By WJ*****************/
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
