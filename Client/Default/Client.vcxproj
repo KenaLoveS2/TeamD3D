@@ -198,6 +198,7 @@
     <ClInclude Include="..\Public\Level_TestPlay.h" />
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
+    <ClInclude Include="..\public\LoadingIcon.h" />
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="..\Private\Level_TestPlay.cpp" />
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingIcon.cpp" />
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />

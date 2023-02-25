@@ -71,6 +71,9 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	HRESULT					Add_Event(CUI_Event* pEvent);
+	HRESULT					Delete_Event();
 
 public:
 	virtual HRESULT			Save_Data() { return S_OK; }
