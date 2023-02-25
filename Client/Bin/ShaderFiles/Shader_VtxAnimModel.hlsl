@@ -141,9 +141,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
-	Out.vSpecular = (vector)0.f;
+	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -168,9 +168,9 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = g_vAmbientEyeColor;
-	Out.vSpecular = (vector)0.f;
+	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -204,7 +204,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vector(ambient, 1.f);
 	Out.vSpecular = vector(specular, 0.f);
 
@@ -214,15 +214,18 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
 
-	vector		vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vEmissiveMask = g_EmissiveMaskTexture.Sample(LinearSampler, In.vTexUV);
+	float2		vTexUV = In.vTexUV;
 
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, vTexUV);
+
+	vector		vMask = g_MaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vEmissiveMask = g_EmissiveMaskTexture.Sample(LinearSampler, vTexUV);
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, vTexUV);
+	vector		vEmissive = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
@@ -247,7 +250,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vector(ambient, 1.f);
 	Out.vSpecular = vector(specular, 0.f);
 
@@ -284,7 +287,7 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vector(ambient, 1.f);
 	Out.vSpecular = vector(specular, 0.f);
 
@@ -317,7 +320,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 
 	Out.vDiffuse = color;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, emissive.b, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vector(ambient, 1.f);
 	Out.vSpecular = vector(specular, 0.f);
 
@@ -365,7 +368,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
 	Out.vDiffuse = float4(vDiffuse.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f , 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
 	Out.vAmbient = (vector)1.f;
 	Out.vSpecular = (vector)1.f;
 
@@ -396,7 +399,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 
 	Out.vDiffuse = finalColor;
 	Out.vNormal = (vector)1.f;
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 	Out.vSpecular = (vector)1.f;
 

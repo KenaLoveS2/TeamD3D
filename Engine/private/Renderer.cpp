@@ -427,6 +427,10 @@ HRESULT CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlSpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlSpecular")))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlAmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
+		return E_FAIL;
 
 	CPipeLine*		pPipeLine = GET_INSTANCE(CPipeLine);	
 
@@ -465,11 +469,6 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlSpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlSpecular")))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlAmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
-		return E_FAIL;
-
 	/* For. Shadow */
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
@@ -499,7 +498,7 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
