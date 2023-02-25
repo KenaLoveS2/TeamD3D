@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/StoneBridge/Materials/MI_StoneBridge_06.MI_StoneBridge_06'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/StoneBridge/Materials/MI_StoneBridge_06.MI_StoneBridge_06'
+        MaterialSlotName = 6
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1562.35, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=7.57074, Y=-8.3743, Z=75.036 }
+    BoxExtent = { X=346.015, Y=218.867, Z=564.345 }
+    SphereRadius = 663.631
+}

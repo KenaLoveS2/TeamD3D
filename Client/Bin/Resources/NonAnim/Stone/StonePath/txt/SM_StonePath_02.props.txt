@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath.MI_StonePath'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath_CheapLOD.MI_StonePath_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath.MI_StonePath'
+        MaterialSlotName = lambert2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 254.929, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath_CheapLOD.MI_StonePath_CheapLOD'
+        MaterialSlotName = MI_StonePath_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 263.299, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-10.9731, Y=-3.48779, Z=-5.06989 }
+    BoxExtent = { X=89.0958, Y=93.1243, Z=12.6126 }
+    SphereRadius = 115.834
+}

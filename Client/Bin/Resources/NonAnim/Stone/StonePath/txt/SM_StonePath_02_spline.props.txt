@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath.MI_StonePath'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Path/_Materials/MI_StonePath.MI_StonePath'
+        MaterialSlotName = MI_StonePath1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 247.826, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-4.97557, Y=-3.4878, Z=11.0469 }
+    BoxExtent = { X=12.5183, Y=93.1243, Z=89.022 }
+    SphereRadius = 115.874
+}
