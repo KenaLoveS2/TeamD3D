@@ -23,6 +23,8 @@ protected:
 	virtual ~CUI_Event() = default;
 
 public:
+	void	Set_UIName(const _tchar* cloneTag);
+public:
 	virtual	HRESULT		Tick(_float fTimeDelta) = 0;
 	virtual	HRESULT		Late_Tick(_float fTimeDelta) = 0;
 	virtual HRESULT		SetUp_ShaderResources(CShader* pShader) = 0;
@@ -40,6 +42,7 @@ public: /* Provided Function */
 protected:
 	const char*			m_szEventName; 
 	_uint				m_iRenderPass= 0;
+	const char*			m_szUIName;
 	
 	_float				m_fTime;
 	_float				m_fTimeAcc;

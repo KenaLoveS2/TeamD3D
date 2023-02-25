@@ -31,6 +31,7 @@ private:
 	_float				m_fGuage;	/* Normalized Data */
 
 public:
+	static CUI_Event_Barguage*	Create();
 	static CUI_Event_Barguage*	Create(wstring fileName);
 	virtual void				Free();
 };

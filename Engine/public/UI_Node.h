@@ -4,10 +4,12 @@
 BEGIN(Engine)
 class ENGINE_DLL CUI_Node abstract : public CUI
 {
-public:
+protected:
 	CUI_Node(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_Node(const CUI_Node& rhs);
 	virtual ~CUI_Node() = default;
+
+
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
