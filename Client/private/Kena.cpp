@@ -100,6 +100,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
 	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
 		/* Pip Guage pop test */
@@ -114,6 +116,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		/* Bomb Guage test */
 		static _float fBomb = 0.f;
 		m_PlayerDelegator.broadcast(eBomb, fBomb);
+
+		/* Arrow Guage test */
+		static _float fArrow = 1.f;
+		m_PlayerDelegator.broadcast(eArrowGuage, fArrow);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))

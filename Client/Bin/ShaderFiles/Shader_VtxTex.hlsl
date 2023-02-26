@@ -263,15 +263,15 @@ PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
 											 /* Check the angle is 0 ~ 180 or 180 ~ 360 */
 	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
 
-
 	float4 vColor = g_vColor;
-	vColor.r = g_vColor.r * (In.vTexUV.x + g_vMinColor.r); 
-	vColor.g = g_vColor.g * (In.vTexUV.x + g_vMinColor.g); 
-	vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); 
+	vColor.r = g_vColor.r * (In.vTexUV.x); 
+	vColor.g = g_vColor.g * (In.vTexUV.x); 
+	vColor.b = g_vColor.b * (In.vTexUV.x); 
 	vColor.a = g_vColor.a;
-
-	vDiffuse.a = vMask.r;
 	Out.vColor = vDiffuse * vColor;
+	Out.vColor += g_vMinColor;
+	Out.vColor.a = vMask.r;
+
 
 	float condition = 360 * g_fAmount;
 	if (angle > condition)

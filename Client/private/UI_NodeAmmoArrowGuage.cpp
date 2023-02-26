@@ -2,6 +2,7 @@
 #include "..\public\UI_NodeAmmoArrowGuage.h"
 #include "GameInstance.h"
 #include "UI_Event_Guage.h"
+#include "UI_CanvasAmmo.h"
 
 CUI_NodeAmmoArrowGuage::CUI_NodeAmmoArrowGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -19,9 +20,8 @@ void CUI_NodeAmmoArrowGuage::Set_Guage(_float fNextGuage)
 {
 	/* Bomb guage doesn't go down step by step. */
 	/* full-filled -> and if use -> it goes zero */
-	/* so if fGuage == 0, fullfilled texture changed to normal texture */
-	/* and after cool time end -> it goes back to Full */
-
+	/* after cool time end -> it goes back to Full */
+	m_vecEvents[EVENT_GUAGE]->Call_Event(fNextGuage);
 }
 
 HRESULT CUI_NodeAmmoArrowGuage::Initialize_Prototype()
@@ -60,23 +60,32 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	/* change to fullfilled texture (once) */
+	/* When Fullfilled, Sparkling Effect Needed (once) */
 	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
 		&& !m_bFullFilled)
 	{
 		m_bFullFilled = true;
+
+		if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
+		{
+			static_cast<CUI_CanvasAmmo*>(m_pParent)->FillArrow();
+
+			if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
+				m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
+		}
 	}
 
+	/* Full To Zero process ended */
 	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
 	{
 		m_bFullFilled = false;
 	}
 
-	if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero()
+		&& !(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
 	{
 		m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
 	}
-
 }
 
 void CUI_NodeAmmoArrowGuage::Late_Tick(_float fTimeDelta)

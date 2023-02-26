@@ -4,6 +4,7 @@
 
 /* Nodes */
 #include "UI_NodeAmmoBombGuage.h"
+#include "UI_NodeAmmoArrowGuage.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -48,6 +49,10 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
+
+	/* Arrow */
+	m_iNumArrows	= 4;
+	m_iNumArrowNow	= m_iNumArrows;
 
 	return S_OK;
 }
@@ -197,6 +202,13 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	{
 	case CUI_ClientManager::AMMO_BOMB:
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::AMMO_ARROW:
+		if (m_iNumArrowNow == 0)
+			return;
+		else
+			m_iNumArrowNow -= 1;
+		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
 		break;
 	}
 }
