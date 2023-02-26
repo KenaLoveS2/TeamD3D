@@ -5,6 +5,7 @@
 #include "UI_NodeHUDHPBar.h"
 #include "UI_NodeHUDShield.h"
 #include "UI_NodeHUDPip.h"
+#include "UI_NodeHUDRot.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -139,6 +140,7 @@ HRESULT CUI_CanvasHUD::Bind()
 		return E_FAIL;
 	}
 	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -283,6 +285,9 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_HUD eType, _float fValue)
 		break;
 	case CUI_ClientManager::HUD_PIP:
 		static_cast<CUI_NodeHUDPip*>(m_vecNode[UI_PIPGAUGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_ROT:
+		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
 		break;
 	}
 }

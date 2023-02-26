@@ -76,6 +76,11 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarNoise");
 
 	/* RotActionIcon */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotIcons"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Rot_%d.png"),4))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotIcons");
+
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotCarry"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotCarry_Anim.png")))))
 		return E_FAIL;
@@ -99,7 +104,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	/* PipEnergy */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDPipGauge"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipRing.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipRing_%d.png"), 2))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDPipGauge");
 
@@ -136,7 +141,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 
 
 	/* Event List */
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_BarGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 
 	RELEASE_INSTANCE(CGameInstance);

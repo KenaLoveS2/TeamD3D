@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeHUDHP.h"
 #include "GameInstance.h"
-#include "UI_Event_Barguage.h"
+#include "UI_Event_Guage.h"
 
 CUI_NodeHUDHP::CUI_NodeHUDHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -45,7 +45,7 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 
 	return S_OK;
 }

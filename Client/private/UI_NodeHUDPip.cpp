@@ -2,7 +2,7 @@
 #include "..\public\UI_NodeHUDPip.h"
 #include "GameInstance.h"
 #include "UI_Event_ChangeImg.h"
-#include "UI_Event_Barguage.h"
+#include "UI_Event_Guage.h"
 
 CUI_NodeHUDPip::CUI_NodeHUDPip(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -57,7 +57,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
 	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
 
 	return S_OK;
@@ -68,7 +68,7 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 
-	if (static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled() 
+	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
 		&& !m_bFullFilled)
 	{
 		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
@@ -76,8 +76,8 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 	}
 
 
-	_bool test = static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
-	if (m_bFullFilled &&static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	_bool test = static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
+	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
 	{
 		m_bFullFilled = false;
 	}
@@ -151,7 +151,7 @@ HRESULT CUI_NodeHUDPip::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))
 			return E_FAIL;
 	}
 

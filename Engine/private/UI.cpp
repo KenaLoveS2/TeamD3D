@@ -11,6 +11,7 @@ CUI::CUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	, m_pParent(nullptr)
 	, m_bActive(false)
 	, m_iRenderPass(0)
+	, m_iTextureIdx(0)
 {
 }
 
@@ -19,6 +20,7 @@ CUI::CUI(const CUI & rhs)
 	, m_pParent(nullptr)
 	, m_bActive(false)
 	, m_iRenderPass(0)
+	, m_iTextureIdx(0)
 {
 	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
 	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
@@ -105,31 +107,6 @@ HRESULT CUI::Initialize(void * pArg)
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
-
-	{
-		m_tSpriteInfo.iXFrames = 1;
-		m_tSpriteInfo.iYFrames = 1;
-		m_tSpriteInfo.iXFrameNow = 0;
-		m_tSpriteInfo.iYFrameNow = 0;
-		m_tSpriteInfo.fAnimTime = 0.f;
-		m_tSpriteInfo.fAnimTimeAcc = 0.f;
-		m_tSpriteInfo.bLoop = false;
-		m_tSpriteInfo.bFinished = false;
-
-		m_tUVMoveInfo.fDeltaTime = 0.f;
-		m_tUVMoveInfo.fDeltaTimeAcc = 0.f;
-		m_tUVMoveInfo.vSpeed = {1.f, 1.f};
-		m_tUVMoveInfo.vDelta = { 0.f, 0.f };
-
-
-		m_tDefaultRenderInfo.fAlpha = 1.f;
-		m_tDefaultRenderInfo.fDeltaTime = 0.f;
-		m_tDefaultRenderInfo.fDeltaTimeAcc = 0.f;
-		m_tDefaultRenderInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
-		m_tDefaultRenderInfo.vMinColor = { 0.f, 0.f ,0.f ,0.f };
-
-
-	}
 
 	return S_OK;
 }

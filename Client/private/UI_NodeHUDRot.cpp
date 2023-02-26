@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeHUDRot.h"
 #include "GameInstance.h"
+#include "UI_Event_ChangeImg.h"
+#include "UI_Event_Animation.h"
 
 CUI_NodeHUDRot::CUI_NodeHUDRot(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -10,6 +12,13 @@ CUI_NodeHUDRot::CUI_NodeHUDRot(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 CUI_NodeHUDRot::CUI_NodeHUDRot(const CUI_NodeHUDRot & rhs)
 	:CUI_Node(rhs)
 {
+}
+
+void CUI_NodeHUDRot::Change_RotIcon(_float fIcon)
+{
+	m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, (_uint)fIcon);
+	m_vecEvents[EVENT_ANIM]->Call_Event((_uint)fIcon);
+
 }
 
 HRESULT CUI_NodeHUDRot::Initialize_Prototype()
@@ -24,11 +33,7 @@ HRESULT CUI_NodeHUDRot::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
 		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-			XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 
@@ -40,12 +45,13 @@ HRESULT CUI_NodeHUDRot::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	//XMVectorSet(m_tDesc.vPos.x - g_iWinSizeX * 0.5f, -m_tDesc.vPos.y + g_iWinSizeY * 0.5f, 0.f, 1.f));
 
-
-	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
-
+	/* Event */
+	/* Texture Change */
+	/* Sprite Animation Event */
+	UIDESC* tDesc = (UIDESC*)pArg;
+	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
 
 
 	return S_OK;
@@ -54,43 +60,7 @@ HRESULT CUI_NodeHUDRot::Initialize(void * pArg)
 void CUI_NodeHUDRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	/* 공용함수로 뺄거임 */
-	if (m_tSpriteInfo.bFinished)
-		return;
-	m_tSpriteInfo.fAnimTimeAcc += fTimeDelta;
-	if (m_tSpriteInfo.fAnimTimeAcc > m_tSpriteInfo.fAnimTime)
-	{
-		++m_tSpriteInfo.iXFrameNow;
-		if (m_tSpriteInfo.iXFrameNow == m_tSpriteInfo.iXFrames)
-		{
-			if (m_tSpriteInfo.iYFrameNow == m_tSpriteInfo.iYFrames - 1) /* Last Sprite */
-			{
-				if (!m_tSpriteInfo.bLoop)
-				{
-					m_tSpriteInfo.iXFrameNow--;
-					m_tSpriteInfo.bFinished = true;
-				}
-				else
-				{
-					m_tSpriteInfo.iXFrameNow = 0;
-					m_tSpriteInfo.iYFrameNow = 0;
-
-				}
-			}
-			else
-			{
-				m_tSpriteInfo.iXFrameNow = 0;
-				++m_tSpriteInfo.iYFrameNow;
-			}
-
-
-		}
-
-		m_tSpriteInfo.fAnimTimeAcc = 0.f;
 	}
-
-}
 
 void CUI_NodeHUDRot::Late_Tick(_float fTimeDelta)
 {
@@ -136,7 +106,7 @@ HRESULT CUI_NodeHUDRot::SetUp_Components()
 
 	/* Texture */
 	/* Carry, Cloud, Hide, Neutral */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotNeutral"), TEXT("Com_DiffuseTexture"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotIcons"), TEXT("Com_DiffuseTexture"),
 		(CComponent**)&m_pTextureCom[0])))
 		return E_FAIL;
 
@@ -160,21 +130,10 @@ HRESULT CUI_NodeHUDRot::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 		return E_FAIL;
 
-	/* Sprite Animation */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_tSpriteInfo.iXFrames, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_tSpriteInfo.iYFrames, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_tSpriteInfo.iXFrameNow, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_tSpriteInfo.iYFrameNow, sizeof(_int))))
-		return E_FAIL;
-
-
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))
 			return E_FAIL;
 	}
 

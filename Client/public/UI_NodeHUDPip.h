@@ -6,8 +6,8 @@ BEGIN(Client)
 class CUI_NodeHUDPip final : public CUI_Node
 {
 public:
-	enum EVENT_ID { EVENT_GUAGE, EVENT_TEXCHANGE, EVENT_END };
-
+	enum EVENT_ID	{ EVENT_GUAGE, EVENT_TEXCHANGE, EVENT_END };
+	enum TEXTURE_ID { TEX_DEFAULT, TEX_FULL, TEX_END };
 private:
 	CUI_NodeHUDPip(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeHUDPip(const CUI_NodeHUDPip& rhs);
