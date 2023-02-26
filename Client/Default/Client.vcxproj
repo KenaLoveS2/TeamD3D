@@ -220,6 +220,7 @@
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
+    <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
+    <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
