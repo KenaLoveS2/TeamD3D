@@ -3,13 +3,17 @@
         0.0,
         0.0
     ],
+    "GuageSpeed" : 2,
     "Color": [
         1.0,
         1.0,
         1.0,
         1.0
     ],
+    "DiffuseTextureIndex": 9,
     "Duration": 0.0,
+    "EventRenderPass": 1,
+    "MaskTextureIndex": -1,
     "MinColor": [
         1.0,
         1.0,

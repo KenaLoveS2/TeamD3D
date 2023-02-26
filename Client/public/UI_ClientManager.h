@@ -15,8 +15,14 @@ class CUI_ClientManager final : public CBase
 	DECLARE_SINGLETON(CUI_ClientManager);
 
 public:
-	enum UI_EVENT { EVENT_BARGUAGE, EVENT_END };
-	enum UI_HUD { HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT, HUD_END };
+	enum UI_EVENT	{ EVENT_BARGUAGE, EVENT_CHANGEIMG, EVENT_ANIMATION, EVENT_END };
+	enum UI_PRESENT {
+		HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT,
+		AMMO_BOMB,
+
+		UI_PRESENT_END
+	};
+
 private:
 	CUI_ClientManager();
 	virtual ~CUI_ClientManager() = default;

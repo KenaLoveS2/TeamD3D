@@ -48,27 +48,13 @@ void CUI_NodeHUDShieldBar::Tick(_float fTimeDelta)
 void CUI_NodeHUDShieldBar::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_NodeHUDShieldBar::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
 
 	if (FAILED(__super::Render()))
 		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHPBar");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -85,11 +71,6 @@ HRESULT CUI_NodeHUDShieldBar::SetUp_Components()
 
 	/* VIBuffer_Rect */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
-		return E_FAIL;
-
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
 		return E_FAIL;
 
 

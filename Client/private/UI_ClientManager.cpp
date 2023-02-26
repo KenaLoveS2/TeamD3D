@@ -12,6 +12,10 @@
 #include "UI_NodeHUDShield.h"
 #include "UI_NodeHUDShieldBar.h"
 
+/* CanvasAmmo */
+#include "UI_CanvasAmmo.h"
+#include "UI_NodeAmmoBombFrame.h"
+#include "UI_NodeAmmoBombGuage.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -52,7 +56,9 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/* For. HUD */
+	/********************************************/
+	/*				For. Canvas_HUD				*/
+	/********************************************/
 	/* HUD Frame */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDFrame"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDFrame.png")))))
@@ -76,6 +82,11 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarNoise");
 
 	/* RotActionIcon */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotIcons"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Rot_%d.png"),4))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotIcons");
+
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotCarry"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_RotCarry_Anim.png")))))
 		return E_FAIL;
@@ -96,10 +107,9 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotNeutral");
 
-
 	/* PipEnergy */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDPipGauge"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipRing.png")))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipRing_%d.png"), 2))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDPipGauge");
 
@@ -112,6 +122,31 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDPipFull.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDPipFull");
+
+
+	/********************************************/
+	/*				For. Canvas_Ammo			*/
+	/********************************************/
+	/* Ammo Frame */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoFrame"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Ammo.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoFrame");
+
+	/* Bomb Frame */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoBombFrame"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Ammo_BombFrame.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoBombFrame");
+
+	/* Bomb Guage */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoBombGuage"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Ammo_BombGuage_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoBombGuage");
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -136,8 +171,9 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 
 
 	/* Event List */
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_BarGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -147,7 +183,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/************** Canvas_HUD ****************/
+	/********************************************/
+	/*				For. Canvas_HUD				*/
+	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_HUD"), CUI_CanvasHUD::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_HUD");
@@ -186,8 +224,24 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_PipBar"), CUI_NodeHUDPipBar::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_PipBar");
-	/************** ~Canvas_HUD ****************/
 
+
+	/********************************************/
+	/*				For. Canvas_Ammo			*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Ammo"), CUI_CanvasAmmo::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Ammo");
+
+	/* Bomb Frame */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BombFrame"), CUI_NodeAmmoBombFrame::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BombFrame");
+
+	/* Bomb Guage */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BombGuage"), CUI_NodeAmmoBombGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BombGuage");
 
 	RELEASE_INSTANCE(CGameInstance);
 

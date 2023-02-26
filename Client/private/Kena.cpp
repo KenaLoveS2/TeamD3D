@@ -95,13 +95,26 @@ void CKena::Late_Tick(_float fTimeDelta)
 	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
-	CUI_ClientManager::UI_HUD eType1 = CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_HUD eType2 = CUI_ClientManager::HUD_PIP;
-	CUI_ClientManager::UI_HUD eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType1 = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT eType2 = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
+		/* Pip Guage pop test */
 		_float fPipUse = 0;;
 		m_PlayerDelegator.broadcast(eType2, fPipUse);
+
+		/* Rot icon chagne test */
+		static _float fIcon = 0;
+		fIcon = _uint(fIcon + 1) % 4;
+		m_PlayerDelegator.broadcast(eType4, fIcon);
+
+		/* Bomb Guage test */
+		static _float fBomb = 0.f;
+		m_PlayerDelegator.broadcast(eBomb, fBomb);
+
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
