@@ -42,7 +42,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(66.f, 66.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 

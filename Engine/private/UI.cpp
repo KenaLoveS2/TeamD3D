@@ -235,11 +235,12 @@ void CUI::Imgui_RenderingSetting()
 	}
 
 	/* RenderPass */
-	static int selected_Pass = 0;
+	static int selected_Pass;// = 0;
+	selected_Pass = m_iRenderPass;
 	_uint iNumPasses = (_uint)pPasses->size();
-	if (ImGui::ListBox(" : RenderPass", &selected_Pass, texture_getter, pPasses, iNumPasses, 5))
+	if (ImGui::ListBox(" : RenderPass", &selected_Pass, texture_getter, pPasses, iNumPasses))
 	{
-		Set_RenderPass(selected_Pass);
+		m_iRenderPass = selected_Pass;
 	}
 
 #pragma region Old

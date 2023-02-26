@@ -7,7 +7,7 @@
 
 CUI_Event_ChangeImg::CUI_Event_ChangeImg()
 {
-	m_szEventName = "ChangeImg";
+	m_szEventName = "ChangeTexture";
 	//m_vecTextures.push_back(nullptr); /* Prepare for original */
 
 	m_iLastSelected = 0;
@@ -46,8 +46,15 @@ HRESULT CUI_Event_ChangeImg::SetUp_ShaderResources(CShader * pShader)
 
 void CUI_Event_ChangeImg::Imgui_RenderProperty()
 {
-	/* Texture 배열에 텍스처 정보 셋팅 */
-	/* Texture 리스트에서 */
+	ImGui::Separator();
+	ImGui::Text("Event: "); ImGui::SameLine();
+	ImGui::Text(m_szEventName);
+
+	/* RenderPass */
+	_int iPass = (_int)m_iRenderPass;
+	if (ImGui::InputInt("RenderPass", &iPass))
+		m_iRenderPass = iPass;
+
 }
 
 void CUI_Event_ChangeImg::Call_Event(CUI* pUI, _uint iImgIndex)

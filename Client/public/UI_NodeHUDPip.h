@@ -29,7 +29,6 @@ private:
 
 private: 
 	_bool			m_bFullFilled;
-	_bool			m_bZero;
 
 public:
 	static	CUI_NodeHUDPip*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

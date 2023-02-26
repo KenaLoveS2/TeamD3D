@@ -5,15 +5,15 @@
 
 CUI_Event_Guage::CUI_Event_Guage()
 {
-	m_szEventName = "BarGuage";
+	m_szEventName = "Guage";
 	m_iRenderPass = 7;
 
 	m_vAcceleration = { 0.f, 0.f };
 	m_vSpeed = { 0.f, 0.f };
 	m_vMinColor = { 0.1f, 0.3f, 0.5f, 1.0f };
 	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_fGuage = 0.f;
-	m_fGuageNew = 0.f;
+	m_fGuage = 1.f;
+	m_fGuageNew = 1.f;
 	m_fGuageSpeed = 2.f;
 }
 
@@ -27,7 +27,14 @@ _bool CUI_Event_Guage::Is_Zero()
 
 HRESULT CUI_Event_Guage::Tick(_float fTimeDelta)
 {
-		return S_OK;
+	/* Verify Immediately Changing Guage */
+	if (m_fGuageNew == -1.f)
+	{
+		m_fGuageNew = 0.f;
+		m_fGuage = 0.f;
+	}
+
+	return S_OK;
 }
 
 HRESULT CUI_Event_Guage::Late_Tick(_float fTimeDelta)
@@ -77,11 +84,6 @@ void CUI_Event_Guage::Imgui_RenderProperty()
 	ImGui::Separator();
 	ImGui::Text("Event: "); ImGui::SameLine();
 	ImGui::Text(m_szEventName);
-
-	/* RenderPass */
-	ImGui::Text("Recommended RenderPass:"); ImGui::SameLine();
-	_int iPass = (_int)m_iRenderPass;
-	ImGui::InputInt("RenderPass", &iPass);
 
 	/* To Fine-Tuning */
 	static float fDuration;
@@ -144,6 +146,7 @@ HRESULT CUI_Event_Guage::Save_Data(Json* json)
 		return E_FAIL;
 
 	(*json)["Duration"] = m_fTime;
+	(*json)["GuageSpeed"] = m_fGuageSpeed;
 
 	_float fValue = 0.f;
 	for (int i = 0; i < 2; ++i)
@@ -194,8 +197,8 @@ HRESULT CUI_Event_Guage::Load_Data(wstring fileName)
 	file.close();
 
 
-	//jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	jLoad["Duration"].get_to<_float>(m_fTime);
+	jLoad["GuageSpeed"].get_to<_float>(m_fGuageSpeed);
 
 	int i = 0;
 	for (float fElement : jLoad["Acceleration"])

@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 
 /* Nodes */
-#include "UI_NodeAmmoBombFrame.h"
+#include "UI_NodeAmmoBombGuage.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -87,16 +87,13 @@ HRESULT CUI_CanvasAmmo::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-
-	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-	//	L"Layer_Player", L"Kena"));
-	//if (pKena == nullptr)
-	//{
-	//	RELEASE_INSTANCE(CGameInstance);
-	//	return E_FAIL;
-	//}
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
-
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return E_FAIL;
+	}
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -124,7 +121,15 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_BombGuage";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombGuage", L"Node_BombGuage", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
 
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -179,8 +184,14 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_HUD eType, _float fValue)
+void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
+	switch (eType)
+	{
+	case CUI_ClientManager::AMMO_BOMB:
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
+		break;
+	}
 }
 
 CUI_CanvasAmmo * CUI_CanvasAmmo::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

@@ -8,7 +8,8 @@ class CUI_CanvasAmmo final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_END };
+	enum UI_ORDER { UI_BOMBFRAME, UI_BOMBGUAGE, UI_END };
+
 
 private:
 	CUI_CanvasAmmo(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -29,7 +30,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_HUD eType, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
