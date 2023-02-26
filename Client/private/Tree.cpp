@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "..\public\LodObject.h"
+#include "..\public\Tree.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
-CLodObject::CLodObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CTree::CTree(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
 }
 
-CLodObject::CLodObject(const CLodObject & rhs)
+CTree::CTree(const CTree & rhs)
 	: CEnviromentObj(rhs)
 {
 }
 
-HRESULT CLodObject::Initialize_Prototype()
+HRESULT CTree::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,7 +22,7 @@ HRESULT CLodObject::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CLodObject::Initialize(void * pArg)
+HRESULT CTree::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -35,12 +35,13 @@ HRESULT CLodObject::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CLodObject::Tick(_float fTimeDelta)
+void CTree::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
 }
 
-void CLodObject::Late_Tick(_float fTimeDelta)
+void CTree::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -48,7 +49,7 @@ void CLodObject::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
-HRESULT CLodObject::Render()
+HRESULT CTree::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -64,12 +65,12 @@ HRESULT CLodObject::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 4);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
 }
 
-HRESULT CLodObject::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+HRESULT CTree::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
 
@@ -93,7 +94,7 @@ HRESULT CLodObject::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pC
 	return S_OK;
 }
 
-HRESULT CLodObject::SetUp_Components()
+HRESULT CTree::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
@@ -104,18 +105,19 @@ HRESULT CLodObject::SetUp_Components()
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+	
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Model_SM_CliffWall_Large0"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CLodObject::SetUp_ShaderResources()
+HRESULT CTree::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -133,33 +135,34 @@ HRESULT CLodObject::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+
 }
 
-CLodObject * CLodObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CTree * CTree::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CLodObject*		pInstance = new CLodObject(pDevice, pContext);
+	CTree*		pInstance = new CTree(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CLodObject");
+		MSG_BOX("Failed to Created : CTree");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CLodObject::Clone(void * pArg)
+CGameObject * CTree::Clone(void * pArg)
 {
-	CLodObject*		pInstance = new CLodObject(*this);
+	CTree*		pInstance = new CTree(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CLodObject");
+		MSG_BOX("Failed to Cloned : CTree");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CLodObject::Free()
+void CTree::Free()
 {
 	__super::Free();
 
@@ -170,6 +173,3 @@ void CLodObject::Free()
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
 }
-
-
-

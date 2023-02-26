@@ -116,7 +116,7 @@ HRESULT CCave_Rock::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel,TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
 		(CComponent**)&m_pMasterDiffuseBlendTexCom)))
 		return E_FAIL;
 

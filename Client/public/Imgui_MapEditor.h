@@ -25,15 +25,17 @@ public:
 public:
 	static				void					Load_MapObjects(_uint iLevel);
 	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, vector<string> vecStr);
+	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, 
+																									array<string, (_int)WJTextureType_UNKNOWN> vecStr);
 
 private:
 	void											Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void											Imgui_Save_Load_Json();
 	void											Imgui_CreateEnviromentObj();
 	void											Imgui_SelectObject_Add_TexturePath();
-
 	void											Imgui_Control_ViewerCamTransform();
+	void											Imgui_TexturePathNaming();
+	void											Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
 
 private:		/*Logic*/
 	void											Imgui_Save_Func();
@@ -48,12 +50,15 @@ private: /*For_Tool*/
 	wstring										m_wstrTexturelName = TEXT("");
 	char											m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
-	_bool										m_bWireFrame = false;
-	string										m_strFileName = "";
-	_bool										m_bSaveWrite = false;
+	_bool														m_bWireFrame = false;
+	string														m_strFileName = "";
+	_bool														m_bSaveWrite = false;
 	class CModelViewerObject*						m_pViewerObject = nullptr;
 	_bool														m_bOnceSearch = false;
 	_bool														m_bModelChange = false;
+	_int															m_iTexturePathNum = false;
+
+
 
 private:	/*Use_Data*/
 	_int											m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
@@ -63,5 +68,13 @@ private:	/*Use_Data*/
 public:
 	static	CImgui_MapEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);
 	virtual void				Free() override;
+
 };
 END
+
+//
+//string	strDiffuse, SPECULAR_path, AMBIENT_path, EMISSIVE_path,
+//EMISSIVEMASK_path, NORMALS_path, MASK_path, SSS_MASK_path,
+//SPRINT_EMISSIVE_path, LIGHTMAP_path, HAIR_ALPHA_path, HAIR_ROOT_path,
+//COMP_MSK_CURV_path, COMP_H_R_AO_path, METALNESS_path, COMP_AMBIENT_OCCLUSION_path,
+//AMBIENT_OCCLUSION_path;
