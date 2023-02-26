@@ -13,7 +13,7 @@
 #include "Utile.h"
 #include "PipeLine.h"
 #include "Transform.h"
-
+#include "GameInstance.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -216,6 +216,15 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 
 		CloseHandle(hFile);
 	}
+
+#ifdef _DEBUG
+	/*For.Imgui*/
+
+	m_pInstanceTransform =static_cast<CTransform*>(CGameInstance::GetInstance()->
+		Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
+
+#endif // _DEBUG
+
 
 	return S_OK;
 }
@@ -1008,6 +1017,15 @@ void CModel::Free()
 		Safe_Release(pInstMesh);
 	m_InstancingMeshes.clear();
 
+	for (auto &pInstMatrix : m_pInstancingMatrix)
+	{
+		Safe_Delete(pInstMatrix);
+	}
+	m_pInstancingMatrix.clear();
+
+#ifdef _DEBUG
+	Safe_Release(m_pInstanceTransform);
+#endif
 }
 
 HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
@@ -1025,6 +1043,67 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 
 	return S_OK;
 }
+
+void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
+{
+	if (ImGui::BeginListBox("##"))
+	{
+		_int iIndex = 0;
+		for (auto& ProtoPair : m_pInstancingMatrix)
+		{
+			const bool bSelected = false;
+
+			char szViewName[512];
+
+			sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
+
+			if (ImGui::Selectable(szViewName, bSelected))
+			{
+				m_iSelectMeshInstace_Index = iIndex;
+			}
+
+			++iIndex;
+		}
+
+		ImGui::EndListBox();
+	}
+
+	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
+	if (ImGui::Button("Instancing Num Increase"))
+	{
+		_float4x4* Temp = new _float4x4;
+		XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+		m_pInstancingMatrix.push_back(Temp);
+		
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+	}
+
+	if (m_iSelectMeshInstace_Index == -1)
+		return;
+	
+	_matrix ParentMulChild, InvParentMulChild,ResultMatrix;
+	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
+	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
+
+	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+
+	m_pInstanceTransform->Imgui_RenderProperty();
+
+	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+	ResultMatrix *= InvParentMulChild;
+	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
+	
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+}
+
+
+
+
+
 
 
 

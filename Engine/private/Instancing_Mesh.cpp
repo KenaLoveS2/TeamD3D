@@ -132,6 +132,85 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
+void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
+{
+	m_iNumInstance = (_uint)VecInstancingMatrix.size();
+	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
+	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_BufferDesc.StructureByteStride = 0;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.MiscFlags = 0;
+
+	/*Instancing_ Mesh*/
+	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
+	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+
+	_uint		iNumFaces = 0;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		for (_uint j = 0; j < m_iOriginNumPrimitive; ++j)
+		{
+			pIndices[iNumFaces]._0 = m_pIndices[j]._0;
+			pIndices[iNumFaces]._1 = m_pIndices[j]._1;
+			pIndices[iNumFaces]._2 = m_pIndices[j]._2;
+			++iNumFaces;
+		}
+	}
+
+	Safe_Release(m_pIB);
+	m_pIB = nullptr;
+
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pIndices;
+
+	if (FAILED(__super::Create_IndexBuffer()))
+		assert(!"Instancing Create Issue");
+
+	Safe_Delete_Array(pIndices);
+
+#pragma endregion
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;					//Rock UnLock을 하겠다.
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.StructureByteStride = m_iInstanceStride;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
+	m_BufferDesc.MiscFlags = 0;
+
+	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[m_iNumInstance];
+	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX)*m_iNumInstance);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		memcpy(&pInstanceVertices[i].vRight, &VecInstancingMatrix[i]->m[0],sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+		
+		//memcpy(&pInstanceVertices[i].vRight, &m[0], sizeof(_vector));
+		//pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);		// 버퍼 하나의 행렬을 만들어서 쉐이더에게 전달해줘야한다.
+		//pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
+		//pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
+		//pInstanceVertices[i].vPosition = _float4(2 * i, 0.f, 2 * i, 1.f);		// 나중에 인스터닝을 할때 이포지션을 움직일 수 있게 락 언락구조를 짜야한다.
+	}
+
+	Safe_Release(m_pInstanceBuffer);
+	m_pInstanceBuffer = nullptr;
+
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pInstanceVertices;
+
+	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
+
+	Safe_Delete_Array(pInstanceVertices);
+}
+
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
 {
 	if (hFile == nullptr)
@@ -168,21 +247,18 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	ReadFile(hFile, &m_eIndexFormat, sizeof(DXGI_FORMAT), &dwByte, nullptr);
 	ReadFile(hFile, &m_eTopology, sizeof(D3D11_PRIMITIVE_TOPOLOGY), &dwByte, nullptr);
 
-	m_iOriginNumPrimitive = m_iNumPrimitive;
-	m_iNumInstance = iNumInstance;
-	m_iIndexCountPerInstance = 3 * m_iNumPrimitive;
+
 
 	m_pInstancingPositions.push_back(_float4(0.f, 0.f, 0.f, 1.f));			//Test 용 위치잡기
 	m_pInstancingPositions.push_back(_float4(0.f, 0.f, 4.f, 1.f));
 
+	m_iOriginNumPrimitive = m_iNumPrimitive;
+	m_iNumInstance = iNumInstance;
+	m_iIndexCountPerInstance = 3 * m_iNumPrimitive;
 	m_iNumVertexBuffers = 2;
 	m_iNumVertices = m_iNumVertices;
 	m_iNumPrimitive = m_iNumPrimitive * iNumInstance;
-	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
-	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
-	m_iNumIndicesPerPrimitive = 3;
-	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+	
 
 #pragma region VERTEX_BUFFER
 	HRESULT	hr = 0;
@@ -254,7 +330,7 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);				// 버퍼 하나의 행렬을 만들어서 쉐이더에게 전달해줘야한다.
 		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
 		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		pInstanceVertices[i].vPosition = _float4(_float(rand() % 5), 0.f, _float(rand() % 5), 1.f);		// 나중에 인스터닝을 할때 이포지션을 움직일 수 있게 락 언락구조를 짜야한다.
+		pInstanceVertices[i].vPosition = _float4(0.f, 0.f, 0.f, 1.f);		// 나중에 인스터닝을 할때 이포지션을 움직일 수 있게 락 언락구조를 짜야한다.
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -392,18 +468,22 @@ HRESULT CInstancing_Mesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel *
 
 HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel * pModel)
 {
-	//if (m_bLodMesh == true)
-	//{
-	//	m_iMaterialIndex;
-	//	m_iNumVertexBuffers = 1;
-	//	m_iNumVertices;
-	//	m_iNumPrimitive;
-	//	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
-	//	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
-	//	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
-	//	m_iNumIndicesPerPrimitive = 3;
-	//	//m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
-	//}
+	if (m_bLodMesh == true)
+	{
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 3;
+		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+	}
+	else
+	{
+		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+		m_iNumIndicesPerPrimitive = 3;
+		m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+	}
 
 	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
@@ -441,6 +521,7 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel *
 
 	return S_OK;
 }
+
 
 
 HRESULT CInstancing_Mesh::Set_up_Instancing()
