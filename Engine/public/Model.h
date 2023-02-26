@@ -32,7 +32,7 @@ public:
 	void				Call_Event(const string& strFuncName);
 
 public:	
-	HRESULT 		Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod);
+	HRESULT 		Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 	virtual void	Imgui_RenderProperty() override;
 
@@ -71,13 +71,16 @@ private:
 
 	_bool								m_bPausePlay = false;
 
+/*For.Mesh_Instancing*/
+	_bool								m_bIsInstancing = false;
+	vector<class CInstancing_Mesh*>			m_InstancingMeshes;
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);
 	HRESULT			Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false);
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false, _bool bIsInstancing = false);
 	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 

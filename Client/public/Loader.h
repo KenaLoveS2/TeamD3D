@@ -56,7 +56,8 @@ public:
 	virtual void Free() override;
 
 	HRESULT LoadNonAnimModel(_uint iLevelIndex);
-	HRESULT LoadNonAnimFolderModel(_uint iLevelIndex , string strFolderName);
+	HRESULT LoadNonAnimFolderModel(_uint iLevelIndex , string strFolderName,_bool bIsLod=false,_bool bIsInstancing =false );
+
 };
 
 END
