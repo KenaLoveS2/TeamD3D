@@ -11,8 +11,8 @@ RWTexture2D<float4> HDRDownScale : register( u1 );
 cbuffer DownScaleConstants : register( b0 )
 {
     uint2 Res		 : packoffset( c0 );   // Resulotion of the down scaled image: x - width, y - height
-	uint Domain		 : packoffset( c0.z ); // Total pixel in the downvscaled image
-	uint GroupSize	 : packoffset( c0.w ); // Number of groups dispached on the first pass
+	uint	Domain		 : packoffset( c0.z ); // Total pixel in the downvscaled image
+	uint	GroupSize	 : packoffset( c0.w ); // Number of groups dispached on the first pass
 	float Adaptation : packoffset( c1 );   // Adaptation factor
 	float fBloomThreshold : packoffset( c1.y ); // Bloom threshold percentage
 }

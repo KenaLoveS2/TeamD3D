@@ -2,6 +2,7 @@
 #include "..\public\Texture.h"
 #include "Shader.h"
 
+
 CTexture::CTexture(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -73,8 +74,6 @@ HRESULT CTexture::Bind_ShaderResource(CShader * pShaderCom, const char * pConsta
 
 	return pShaderCom->Set_ShaderResourceView(pConstantName, m_pTextures[iTextureIndex]);	
 }
-
-
 
 CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures)
 {

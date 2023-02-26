@@ -468,6 +468,4 @@ technique11 DefaultTechnique
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
 	}
-
-
 }

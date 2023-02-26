@@ -108,6 +108,11 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDPipBar");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDPipFull"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HUDPipFull.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDPipFull");
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -130,6 +135,9 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend");
 
 
+	/* Event List */
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_BarGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

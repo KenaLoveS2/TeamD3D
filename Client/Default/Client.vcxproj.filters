@@ -157,8 +157,17 @@
     <Filter Include="02.GameObjects\UI\04. Events\BarGugage">
       <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\BackGround\LoadingIcon">
+      <UniqueIdentifier>{b52be0e8-53b8-4792-b885-a68c2bdfbd24}</UniqueIdentifier>
+    </Filter>
     <Filter Include="95. Tool\ImGui Setting">
       <UniqueIdentifier>{51a7fbbd-7b4e-4e0a-bcd0-edaae35666b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\ChangeImg">
+      <UniqueIdentifier>{2df87f8c-a285-47cf-a020-dec9336a7d89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Animation">
+      <UniqueIdentifier>{3eb5b0f2-7881-4e8f-a9a4-0cadf00a4573}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +276,6 @@
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeHUDPipFill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Kena_MainOutfit.h">
       <Filter>02.GameObjects\Player\Outfit</Filter>
     </ClInclude>
@@ -326,10 +332,18 @@
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ModelViewerObject.h" />
+    <ClInclude Include="..\public\LoadingIcon.h">
+      <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Tool_Settings.h">
       <Filter>95. Tool\ImGui Setting</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Tree.h" />
+    <ClInclude Include="..\public\UI_Event_ChangeImg.h">
+      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Animation.h">
+      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -419,9 +433,6 @@
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeHUDPipFill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
       <Filter>02.GameObjects\Player\Outfit</Filter>
     </ClCompile>
@@ -475,10 +486,18 @@
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
+    <ClCompile Include="..\private\LoadingIcon.cpp">
+      <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Tool_Settings.cpp">
       <Filter>95. Tool\ImGui Setting</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Tree.cpp" />
+    <ClCompile Include="..\private\UI_Event_ChangeImg.cpp">
+      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Animation.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -509,6 +528,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -529,12 +551,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "UI_NodeHUDHP.h"
 #include "UI_NodeHUDHPBar.h"
+#include "UI_NodeHUDShield.h"
+#include "UI_NodeHUDPip.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -136,7 +138,7 @@ HRESULT CUI_CanvasHUD::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::TestFunction);
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -186,7 +188,6 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
-
 
 	str = "Node_RotIcon";
 	tDesc.fileName.assign(str.begin(), str.end());
@@ -270,12 +271,18 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::TestFunction(CUI_ClientManager::UI_HUD eType, _float fValue)
+void CUI_CanvasHUD::Function(CUI_ClientManager::UI_HUD eType, _float fValue)
 {
 	switch (eType)
 	{
 	case CUI_ClientManager::HUD_HP:
 		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_SHIELD:
+		static_cast<CUI_NodeHUDShield*>(m_vecNode[UI_SHIELD])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::HUD_PIP:
+		static_cast<CUI_NodeHUDPip*>(m_vecNode[UI_PIPGAUGE])->Set_Guage(fValue);
 		break;
 	}
 }

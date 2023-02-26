@@ -56,13 +56,17 @@ protected:
 	virtual ~CUI() = default;
 
 
-public:
+public: /* Get */
 	_fmatrix				Get_WorldMatrix();
 	_fmatrix				Get_InitMatrix();
+	_uint					Get_RenderPass() { return m_iRenderPass; }
+	
+public: /* Set */
 	void					Set_Parent(CUI* pUI);
 	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
 	void					Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
 	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
+
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -71,6 +75,11 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	HRESULT					Add_Event(CUI_Event* pEvent);
+	HRESULT					Delete_Event();
+public:
+	void					Change_DiffuseTexture(CTexture* pTexture, CTexture** ppOrigin = nullptr);
 
 public:
 	virtual HRESULT			Save_Data() { return S_OK; }

@@ -6,6 +6,7 @@
 #include "Camera_Dynamic.h"
 #include "LightCamera.h"
 #include "BackGround.h"
+#include "LoadingIcon.h"
 
 #include "UI_ClientManager.h"
 
@@ -155,6 +156,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_MediumWaves_H.png")))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingIcon"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_UI_LoadSaveIcon_Alpha.png")))))
+		return E_FAIL;
+
 	Safe_AddRef(m_pRenderer);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", CStateMachine::Create(m_pDevice, m_pContext)), E_FAIL);
@@ -180,6 +185,9 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 	/* For.Prototype_GameObject_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingIcon"),
+		CLoadingIcon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* UI_Manager */

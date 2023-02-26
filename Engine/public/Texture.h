@@ -22,7 +22,6 @@ public:
 	HRESULT Bind_ShaderResources(class CShader* pShaderCom, const char* pConstantName);
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName, _uint iTextureIndex = 0);
 
-
 private:
 	_uint										m_iNumTextures = 0;
 	ID3D11ShaderResourceView**					m_pTextures = nullptr;

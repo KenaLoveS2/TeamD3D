@@ -8,11 +8,21 @@ CUI_Event_Barguage::CUI_Event_Barguage()
 	m_szEventName = "BarGuage";
 	m_iRenderPass = 7;
 
-	m_vAcceleration = {0.f, 0.f};
-	m_vSpeed		= {0.f, 0.f};
-	m_vMinColor		= {0.1f, 0.3f, 0.5f, 1.0f};
-	m_vColor		= {1.0f, 1.0f, 1.0f, 1.0f};
-	m_fGuage		= 1.f;
+	m_vAcceleration = { 0.f, 0.f };
+	m_vSpeed = { 0.f, 0.f };
+	m_vMinColor = { 0.1f, 0.3f, 0.5f, 1.0f };
+	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_fGuage = 0.f;
+	m_fGuageNew = 0.f;
+	m_fGuageSpeed = 2.f;
+}
+
+_bool CUI_Event_Barguage::Is_Zero()
+{
+	if (m_fGuage <= 0.f)
+		return true;
+	else
+		return false;
 }
 
 HRESULT CUI_Event_Barguage::Tick(_float fTimeDelta)
@@ -25,7 +35,21 @@ HRESULT CUI_Event_Barguage::Tick(_float fTimeDelta)
 		m_fTimeAcc = 0.f;
 	}
 
-	return S_OK;
+
+	if (m_fGuageNew > m_fGuage)
+	{
+		m_fGuage += (0.01f * m_fGuageSpeed);
+		if(0.0001f > m_fGuageNew - m_fGuage)
+			m_fGuage = m_fGuageNew;
+	}
+	else if (m_fGuageNew < m_fGuage)
+	{
+		m_fGuage -= (0.01f * m_fGuageSpeed);
+		if(0.0001f > m_fGuage - m_fGuageNew)
+			m_fGuage = m_fGuageNew;
+	}
+
+		return S_OK;
 }
 
 HRESULT CUI_Event_Barguage::Late_Tick(_float fTimeDelta)
@@ -52,21 +76,39 @@ HRESULT CUI_Event_Barguage::SetUp_ShaderResources(CShader * pShader)
 void CUI_Event_Barguage::Imgui_RenderProperty()
 {
 	ImGui::Separator();
-	ImGui::Text("Event: "); ImGui::SameLine(); 
+	ImGui::Text("Event: "); ImGui::SameLine();
 	ImGui::Text(m_szEventName);
+	string eventName = m_szEventName;
+	string tag;
 
 	/* RenderPass */
 	ImGui::Text("Recommended RenderPass:"); ImGui::SameLine();
 	_int iPass = (_int)m_iRenderPass;
-	ImGui::InputInt("RenderPass", &iPass);
+	tag = eventName + " RenderPass";
+	ImGui::InputInt(tag.c_str(), &iPass);
 
 	/* To Fine-Tuning */
 	static float fDuration;
 	fDuration = m_fTime;
-	if (ImGui::SliderFloat("Duration", &fDuration, 0.f, 30.f))
+	tag = eventName + " Duration";
+	if (ImGui::SliderFloat(tag.c_str(), &fDuration, 0.f, 30.f))
 	{
 		m_fTime = fDuration;
 	}
+	static float fUVSpeed[2];
+	fUVSpeed[0] = m_vAcceleration.x;
+	fUVSpeed[1] = m_vAcceleration.y;
+	tag = eventName + "UV Speed";
+	if (ImGui::SliderFloat(tag.c_str(), fUVSpeed, -50.f, 50.f))
+	{
+		m_vAcceleration.x = fUVSpeed[0];
+		m_vAcceleration.y = fUVSpeed[1];
+	}
+
+	static float fGuageSpeed;
+	fGuageSpeed = m_fGuageSpeed;
+	if (ImGui::SliderFloat("GuageSpeed", &fGuageSpeed, 0.f, 100.f))
+		m_fGuageSpeed = fGuageSpeed;
 
 	static float vColor[4];
 	vColor[0] = m_vColor.x;
@@ -94,19 +136,12 @@ void CUI_Event_Barguage::Imgui_RenderProperty()
 		m_vMinColor.w = vMinColor[3];
 	}
 
-	static float fUVSpeed[2];
-	fUVSpeed[0] = m_vAcceleration.x;
-	fUVSpeed[1] = m_vAcceleration.y;
-	if (ImGui::SliderFloat("UV Speed", fUVSpeed, -50.f, 50.f))
-	{
-		m_vAcceleration.x = fUVSpeed[0];
-		m_vAcceleration.y = fUVSpeed[1];
-	}
+
 }
 
 void CUI_Event_Barguage::Call_Event(_float fData)
 {
-	Set_Guage(fData);
+	m_fGuageNew = fData;
 }
 
 HRESULT CUI_Event_Barguage::Save_Data(Json* json)
@@ -165,7 +200,7 @@ HRESULT CUI_Event_Barguage::Load_Data(wstring fileName)
 	file.close();
 
 
-	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	//jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	jLoad["Duration"].get_to<_float>(m_fTime);
 
 	int i = 0;
@@ -185,6 +220,12 @@ HRESULT CUI_Event_Barguage::Load_Data(wstring fileName)
 		memcpy(((float*)&m_vMinColor) + (i++), &fElement, sizeof(float));
 
 	return S_OK;
+}
+
+CUI_Event_Barguage * CUI_Event_Barguage::Create()
+{
+	CUI_Event_Barguage* pInstance = new CUI_Event_Barguage();
+	return pInstance;
 }
 
 CUI_Event_Barguage * CUI_Event_Barguage::Create(wstring fileName)

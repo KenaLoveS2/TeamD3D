@@ -8,6 +8,12 @@ public:
 	CUI_Canvas(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_Canvas(const CUI_Canvas& rhs);
 	virtual ~CUI_Canvas() = default;
+public:
+	CUI*	Get_SelectedNode() { 
+		if (m_iSelectedNode < 0 || m_iSelectedNode >= m_vecNode.size())
+			return nullptr;
+		return m_vecNode[m_iSelectedNode]; 
+	}
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -29,12 +35,16 @@ public:
 	virtual HRESULT					Load_Data(wstring fileName) override;
 
 public:
-	virtual		HRESULT	Add_Node(CUI* pUI)sealed;		/* 캔버스에 하위 UI(Node 또는 Canvas) 추가 */
+	/* Add Sub UI(Canvas Or Node)*/
+	virtual		HRESULT	Add_Node(CUI* pUI)sealed;	
 
 protected:
 	vector<string>		m_vecNodeCloneTag;
 	vector<CUI*>		m_vecNode; 
 	_bool				m_bBindFinished;
+
+	/* For Tool */
+	_int				m_iSelectedNode;
 
 
 public:

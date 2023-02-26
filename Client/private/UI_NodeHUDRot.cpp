@@ -151,6 +151,8 @@ HRESULT CUI_NodeHUDRot::SetUp_ShaderResources()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))

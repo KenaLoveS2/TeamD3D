@@ -27,15 +27,14 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void Imgui_RenderProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom[TYPE_END] = { nullptr };
+	CShader*						m_pShaderCom = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
+	CTexture*						m_pTextureCom[TYPE_END] = { nullptr };
 	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
-
-	CNavigation*			m_pNavigationCom = nullptr;
-
+	CNavigation*				m_pNavigationCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();
