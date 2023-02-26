@@ -66,11 +66,27 @@ void CUI_Node::Late_Tick(_float fTimeDelta)
 
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_Node::Render()
 {
-	__super::Render();
+	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
+		return S_OK;
+
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+	{
+		MSG_BOX("Failed To Setup ShaderResources : UI_Node");
+		return E_FAIL;
+	}
+
+	m_pShaderCom->Begin(m_iRenderPass);
+	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -137,6 +153,19 @@ HRESULT CUI_Node::Save_Data()
 
 	json["renderPass"] = m_iRenderPass;
 
+	_int iIndex;
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_DIFFUSE];
+	else
+		iIndex = -1;
+	json["DiffuseTextureIndex"] = iIndex;
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_MASK];
+	else
+		iIndex = -1;
+	json["MaskTextureIndex"] = iIndex;
+
 	for (auto e : m_vecEvents)
 		e->Save_Data(&json);
 	
@@ -172,6 +201,28 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 	file.close();
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+
+	jLoad["DiffuseTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_DIFFUSE]);
+	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (-1 != m_TextureListIndices[TEXTURE_DIFFUSE])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			(*pTags)[m_TextureListIndices[TEXTURE_DIFFUSE]].c_str(), TEXT("Com_DiffuseTexture"),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+	}
+	if (-1 != m_TextureListIndices[TEXTURE_MASK])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			(*pTags)[m_TextureListIndices[TEXTURE_MASK]].c_str(), TEXT("Com_MaskTexture"),
+			(CComponent**)&m_pTextureCom[1])))
+			return S_OK;
+	}
 
 	int i = 0;
 	_float4x4	matLocal;

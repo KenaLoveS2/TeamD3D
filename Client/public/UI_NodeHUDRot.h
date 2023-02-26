@@ -5,11 +5,15 @@
 BEGIN(Client)
 class CUI_NodeHUDRot final : public CUI_Node
 {
+public:
+	enum	EVENT_ID { EVENT_TEXCHANGE, EVENT_ANIM, EVENT_END };
 private:
 	CUI_NodeHUDRot(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeHUDRot(const CUI_NodeHUDRot& rhs);
 	virtual ~CUI_NodeHUDRot() = default;
 
+public:
+	void	Change_RotIcon(_float fIcon);
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;

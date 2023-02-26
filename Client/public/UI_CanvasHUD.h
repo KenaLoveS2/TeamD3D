@@ -29,7 +29,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_HUD eType, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 
 
 

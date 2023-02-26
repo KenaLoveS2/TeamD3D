@@ -24,11 +24,7 @@ HRESULT CUI_NodeHUDPipBar::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_tDesc.vSize = { (_float)g_iWinSizeX, (_float)g_iWinSizeY };
-		m_tDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f };
 		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-			XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 
@@ -40,8 +36,6 @@ HRESULT CUI_NodeHUDPipBar::Initialize(void * pArg)
 
 	/* Test */
 	m_bActive = true;
-	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 
 	return S_OK;
 }
@@ -53,28 +47,16 @@ void CUI_NodeHUDPipBar::Tick(_float fTimeDelta)
 
 void CUI_NodeHUDPipBar::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	/* Code */
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	/* ~Code */
+
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CUI_NodeHUDPipBar::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
-
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHP");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
+	__super::Render();
 
 	return S_OK;
 }
@@ -91,11 +73,6 @@ HRESULT CUI_NodeHUDPipBar::SetUp_Components()
 
 	/* VIBuffer_Rect */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
-		return E_FAIL;
-
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDPipBar"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
 		return E_FAIL;
 
 	return S_OK;

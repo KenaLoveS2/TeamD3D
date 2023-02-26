@@ -89,11 +89,6 @@ HRESULT CUI_NodeHUDHPBar::SetUp_Components()
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
 
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBar"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
-		return E_FAIL;
-
 
 	return S_OK;
 }

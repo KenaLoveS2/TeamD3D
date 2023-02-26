@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeHUDShield.h"
 #include "GameInstance.h"
-#include "UI_Event_Barguage.h"
+#include "UI_Event_Guage.h"
 
 CUI_NodeHUDShield::CUI_NodeHUDShield(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -45,7 +45,7 @@ HRESULT CUI_NodeHUDShield::Initialize(void * pArg)
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 
 	return S_OK;
 }
@@ -59,26 +59,13 @@ void CUI_NodeHUDShield::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_NodeHUDShield::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
 
 	if (FAILED(__super::Render()))
 		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : HUDShield");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -97,10 +84,7 @@ HRESULT CUI_NodeHUDShield::SetUp_Components()
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
 
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
-		return E_FAIL;
+
 
 	return S_OK;
 }
