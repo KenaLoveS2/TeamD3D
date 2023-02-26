@@ -58,33 +58,33 @@ void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType T
 	{
 		m_EnviromentDesc.AI_textureFilePaths.SPRINT_EMISSIVE_path = TexturePath;
 	}
-	else 	if (WJTextureType_LIGHTMAP == Type)
+	else 	if (WJTextureType_HAIR_DEPTH == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.LIGHTMAP_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = TexturePath;
 	}
-	else 	if (WJTextureType_REFLECTION == Type)
+	else 	if (WJTextureType_HAIR_ALPHA == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.REFLECTION_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.HAIR_ALPHA_path = TexturePath;
 	}
-	else 	if (WJTextureType_BASE_COLOR == Type)
+	else 	if (WJTextureType_HAIR_ROOT == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.BASE_COLOR_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.HAIR_ROOT_path = TexturePath;
 	}
-	else 	if (WJTextureType_NORMAL_CAMERA == Type)
+	else 	if (WJTextureType_COMP_MSK_CURV == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.NORMAL_CAMERA_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.COMP_MSK_CURV_path = TexturePath;
 	}
-	else 	if (WJTextureType_EMISSION_COLOR == Type)
+	else 	if (WJTextureType_COMP_H_R_AO == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.EMISSION_COLOR_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = TexturePath;
 	}
 	else 	if (WJTextureType_METALNESS == Type)
 	{
 		m_EnviromentDesc.AI_textureFilePaths.METALNESS_path = TexturePath;
 	}
-	else 	if (WJTextureType_DIFFUSE_ROUGHNESS == Type)
+	else 	if (WJTextureType_COMP_AMBIENT_OCCLUSION == Type)
 	{
-		m_EnviromentDesc.AI_textureFilePaths.DIFFUSE_ROUGHNESS_path = TexturePath;
+		m_EnviromentDesc.AI_textureFilePaths.COMP_AMBIENT_OCCLUSION_path = TexturePath;
 	}
 	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
 	{

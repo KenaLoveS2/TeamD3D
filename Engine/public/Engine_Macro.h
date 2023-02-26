@@ -132,13 +132,13 @@ typedef struct tag_aiTextureType_FilePath
 	const wchar_t*  MASK_path = L"";						// 7
 	const wchar_t*  SSS_MASK_path = L"";				// 8
 	const wchar_t*  SPRINT_EMISSIVE_path = L"";	// 9
-	const wchar_t*  LIGHTMAP_path = L"";				// 10
-	const wchar_t*  REFLECTION_path = L"";			// 11
-	const wchar_t*  BASE_COLOR_path = L"";			//	12
-	const wchar_t*  NORMAL_CAMERA_path = L"";	// 13
-	const wchar_t*  EMISSION_COLOR_path = L"";	//	14
+	const wchar_t*  HAIR_DEPTH_Path = L"";				// 10
+	const wchar_t*  HAIR_ALPHA_path = L"";			// 11
+	const wchar_t*  HAIR_ROOT_path = L"";			//	12
+	const wchar_t*  COMP_MSK_CURV_path = L"";	// 13
+	const wchar_t*  COMP_H_R_AO_path = L"";	//	14
 	const wchar_t*  METALNESS_path = L"";			//	15
-	const wchar_t*  DIFFUSE_ROUGHNESS_path = L"";	// 16
+	const wchar_t*  COMP_AMBIENT_OCCLUSION_path = L"";	// 16
 	const wchar_t*  AMBIENT_OCCLUSION_path = L"";	// 17
 
 }aiTextureType_FilePath;
