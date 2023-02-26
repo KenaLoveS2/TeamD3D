@@ -109,7 +109,7 @@ void CImgui_MapEditor::Imgui_SelectOption()
 		static string FindModelTag = "";		// ! == No Find
 		ImGui::InputText("Find_Model_Tag", &FindModelTag);
 
-		if (ImGui::BeginListBox("#Model_Proto#"))
+		if (ImGui::BeginListBox("#Model_No_Instancing_Proto#"))
 		{
 			char szViewName[512], szProtoName[256];
 			const bool bModelSelected = false;
@@ -117,6 +117,53 @@ void CImgui_MapEditor::Imgui_SelectOption()
 			{
 				if (dynamic_cast<CModel*>(ProtoPair.second) == nullptr)
 					continue;
+				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_IStancingModel() == true)	// nInstacing
+					continue;
+
+				if (FindModelTag != "")
+				{
+					wstring  Temp = ProtoPair.first;
+					string str = CUtile::WstringToString(Temp);
+
+					if (str.find(FindModelTag, 25) != std::string::npos)
+					{
+						CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+
+						if (ImGui::Selectable(szViewName, bModelSelected))
+						{
+							m_wstrModelName = ProtoPair.first;
+							m_bModelChange = true;
+						}
+					}
+				}
+				else
+				{
+					CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+					sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+					if (ImGui::Selectable(szViewName, bModelSelected))
+					{
+						m_wstrModelName = ProtoPair.first;			// 리스트 박스를 누르면 현재 모델프로토 타입 이름을 가져옴
+						m_bModelChange = true;
+					}
+				}
+			}
+			ImGui::EndListBox();
+		}
+		ImGui::Separator();
+		if (ImGui::BeginListBox("#Mode_Instancing_Proto#"))
+		{
+			char szViewName[512], szProtoName[256];
+			const bool bModelSelected = false;
+			for (auto& ProtoPair : CGameInstance::GetInstance()->Get_ComponentProtoType()[CGameInstance::GetInstance()->Get_CurLevelIndex()])
+			{
+				if (dynamic_cast<CModel*>(ProtoPair.second) == nullptr)	// nInstacing
+					continue;
+				
+				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_IStancingModel()==false)	// nInstacing
+					continue;
+
+
 				if (FindModelTag != "")
 				{
 					wstring  Temp = ProtoPair.first;
@@ -148,6 +195,9 @@ void CImgui_MapEditor::Imgui_SelectOption()
 			ImGui::EndListBox();
 		}
 	}
+
+
+
 #pragma endregion ~생성시 사용되는 모델 이름
 
 #pragma region 생성시 사용되는 클론 이름짓기
@@ -335,7 +385,7 @@ void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
 		}
 
 		Imgui_TexturePathViewer(pSelectEnviObj);
-	
+		Imgui_Instancing_control(pSelectEnviObj);
 
 	}
 }
@@ -1004,5 +1054,24 @@ void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
 	IMGUI_TEXT_COLOR_CHANGE
 	ImGui::Text(CUtile::WstringToString(wstr_AMBIENT_OCCLUSIONPath).c_str());
 	IMGUI_TEXT_COLOR_CHANGE_END
+}
+
+void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
+{
+	if (pSelectEnviObj == nullptr)
+		return;
+	
+	CModel* pModel =dynamic_cast<CModel*>(pSelectEnviObj->Find_Component(TEXT("Com_Model")));
+	if (nullptr == pModel || false == pModel->Get_IStancingModel())
+		return;
+
+	ImGui::Begin("Instance Obj PosControl");
+
+	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));
+
+	pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix());
+
+	ImGui::End();
+
 }
 

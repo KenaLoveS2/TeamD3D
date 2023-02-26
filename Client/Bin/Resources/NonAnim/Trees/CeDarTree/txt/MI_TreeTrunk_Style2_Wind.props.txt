@@ -1,0 +1,188 @@
+Parent = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/_MI_TreeBark_Branches_Master._MI_TreeBark_Branches_Master'
+ScalarParameterValues[14] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Color_Intensity }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_Normal_Intensity }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_Roughness }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Base_Specular }
+        ParameterValue = 0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Base_U_Tile }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Base_V_Tile }
+        ParameterValue = 3
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither_NearFade }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=BranchWindStrength }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=Global_WindStrength }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=Height }
+        ParameterValue = 4000
+        ParameterName = None
+    }
+    ScalarParameterValues[11] =
+    {
+        ParameterInfo = { Name=Trunk_BendFactor }
+        ParameterValue = 1.1
+        ParameterName = None
+    }
+    ScalarParameterValues[12] =
+    {
+        ParameterInfo = { Name=TrunkWindStrength }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[13] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[6] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Color_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Bark/T_BarkTile_D.T_BarkTile_D'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_Comp_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Bark/T_BarkTile_Comp_E_R_Ao.T_BarkTile_Comp_E_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Bark/T_BarkTile_N.T_BarkTile_N'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=Blend_Comp_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Moss/T_Moss_01_Comp_H_R_Ao.T_Moss_01_Comp_H_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=Blend_Diffuse_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Moss/T_Moss_01_D.T_Moss_01_D'
+        ParameterName = None
+    }
+    TextureParameterValues[5] =
+    {
+        ParameterInfo = { Name=Blend_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Moss/T_Moss_01_N.T_Moss_01_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[1] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base ColorOverlay }
+        ParameterValue = { R=0.263889, G=0.205395, B=0.161028, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[4] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=UV_Split }
+            bOverride = true
+        }
+        StaticSwitchParameters[1] =
+        {
+            Value = false
+            ParameterInfo = { Name=Apply_DetailColor }
+            bOverride = true
+        }
+        StaticSwitchParameters[2] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_BlendTextures }
+            bOverride = true
+        }
+        StaticSwitchParameters[3] =
+        {
+            Value = true
+            ParameterInfo = { Name=Enable_TreeWind }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[0] = {}

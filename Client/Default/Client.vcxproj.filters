@@ -169,6 +169,12 @@
     <Filter Include="02.GameObjects\UI\04. Events\Animation">
       <UniqueIdentifier>{3eb5b0f2-7881-4e8f-a9a4-0cadf00a4573}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Editor">
+      <UniqueIdentifier>{21c043ef-647a-4e8d-a37f-bf59338c85c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Test">
+      <UniqueIdentifier>{ddae39d3-0bac-4af3-b5a7-b24bf94b4eb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -285,9 +291,6 @@
     <ClInclude Include="..\Public\Kena.h">
       <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Cave_Rock.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_MapTool.h">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClInclude>
@@ -302,12 +305,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ControlMove.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
@@ -327,11 +324,9 @@
     <ClInclude Include="..\public\LightCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\UI_Event_Barguage.h">
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\LoadingIcon.h">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
     </ClInclude>
@@ -343,6 +338,30 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_Event_Animation.h">
       <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -442,9 +461,6 @@
     <ClCompile Include="..\Private\Kena.cpp">
       <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Cave_Rock.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
@@ -456,12 +472,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ControlMove.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
@@ -481,11 +491,9 @@
     <ClCompile Include="..\private\LightCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\UI_Event_Barguage.cpp">
       <Filter>02.GameObjects\UI\04. Events\BarGugage</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
     </ClCompile>
@@ -497,6 +505,30 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Animation.cpp">
       <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -551,6 +583,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
