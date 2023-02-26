@@ -106,24 +106,24 @@ void CKena::Late_Tick(_float fTimeDelta)
 		//m_PlayerDelegator.broadcast(eType2, fPipUse);
 
 		/* Rot icon chagne test */
-		//static _float fIcon = 0;
-		//fIcon = _uint(fIcon + 1) % 4;
-		//m_PlayerDelegator.broadcast(eType4, fIcon);
+		static _float fIcon = 0;
+		fIcon = _uint(fIcon + 1) % 4;
+		m_PlayerDelegator.broadcast(eType4, fIcon);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		fNum -= 0.1f;
-		//m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType1, fNum);
 		m_PlayerDelegator.broadcast(eType2, fNum);
-		//m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
 		fNum += 0.1f;
-		//m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType1, fNum);
 		m_PlayerDelegator.broadcast(eType2, fNum);
-		//m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
 
 	/************** ~Delegator Test *************/

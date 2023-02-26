@@ -13,6 +13,8 @@ CUI::CUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	, m_iRenderPass(0)
 	, m_iTextureIdx(0)
 {
+	for (auto i : m_TextureListIndices)
+		i = -1;
 }
 
 CUI::CUI(const CUI & rhs)
@@ -24,6 +26,9 @@ CUI::CUI(const CUI & rhs)
 {
 	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
 	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
+	
+	for (auto i : m_TextureListIndices)
+		i = -1;
 
 	XMStoreFloat4x4(&m_matInit, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matParentInit, XMMatrixIdentity());
@@ -51,7 +56,17 @@ void CUI::Set_Parent(CUI* pUI)
 
 HRESULT CUI::Set_Texture(TEXTURE_TYPE eType, wstring textureComTag)
 {
-	if (nullptr == m_pTextureCom[eType])
+	if (textureComTag == L"Delete")
+	{
+		if (nullptr != m_pTextureCom[eType])
+		{
+			auto iter = find_if(m_Components.begin(), m_Components.end(), CTag_Finder(m_TextureComTag[eType].c_str()));
+			Safe_Release(m_pTextureCom[eType]);
+			Safe_Release(m_pTextureCom[eType]);
+			m_Components.erase(iter);
+		}
+	}
+	else if (nullptr == m_pTextureCom[eType])
 	{
 		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureComTag.c_str(), m_TextureComTag[eType].c_str(),
 			(CComponent**)&m_pTextureCom[eType])))
@@ -185,19 +200,38 @@ void CUI::Imgui_RenderingSetting()
 	_uint iNumTextures = (_uint)pTags->size();
 
 	/* Diffuse */
-	static int selected_Diffuse = 0;
+	static int selected_Diffuse;
+	selected_Diffuse = m_TextureListIndices[TEXTURE_DIFFUSE];
 	if (ImGui::ListBox(" : Diffuse", &selected_Diffuse, texture_getter, pNames, iNumTextures, 5))
 	{
+		m_TextureListIndices[TEXTURE_DIFFUSE] = selected_Diffuse;
+
 		if (FAILED(Set_Texture(CUI::TEXTURE_DIFFUSE, (*pTags)[selected_Diffuse])))
+			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
+	} ImGui::SameLine();
+	if (ImGui::Button("Delete Diffuse"))
+	{
+		m_TextureListIndices[TEXTURE_DIFFUSE] = -1 ;
+		if (FAILED(Set_Texture(CUI::TEXTURE_DIFFUSE, L"Delete")))
 			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
 	}
 
+
 	/* Mask */
 	static int selected_Mask = 0;
+	selected_Mask = m_TextureListIndices[TEXTURE_MASK];
 	if (ImGui::ListBox(" : Mask", &selected_Mask, texture_getter, pNames, iNumTextures, 5))
 	{
+		m_TextureListIndices[TEXTURE_MASK] = selected_Mask;
+
 		if (FAILED(Set_Texture(CUI::TEXTURE_MASK, (*pTags)[selected_Mask])))
 			MSG_BOX("Failed To Set Mask Texture : UIEditor");
+	} ImGui::SameLine();
+	if (ImGui::Button("Delete Mask"))
+	{
+		m_TextureListIndices[TEXTURE_MASK] = -1;
+		if (FAILED(Set_Texture(CUI::TEXTURE_MASK, L"Delete")))
+			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
 	}
 
 	/* RenderPass */

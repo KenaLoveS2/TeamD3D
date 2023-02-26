@@ -75,12 +75,16 @@ protected:
 	_bool					m_bActive;
 	_uint					m_iRenderPass;
 	wstring					m_TextureComTag[TEXTURE_END];
-	_uint					m_iTextureIdx;
+	_int					m_TextureListIndices[TEXTURE_END]; /* Save the index of texture for using save/load */
+
+	_uint					m_iTextureIdx; /* Diffuse Texture's index (for render) */
 
 	/* For. Node (mostly) */
 	_float4x4				m_matInit;
 	_float4x4				m_matParentInit;
 	_float4x4				m_matLocal;
+
+
 
 protected: /* Event */
 	//_uint					m_iEventNum; /* Mostly, One UI gets One Events, but for extension */

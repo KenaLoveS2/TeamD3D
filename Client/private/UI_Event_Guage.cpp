@@ -27,6 +27,11 @@ _bool CUI_Event_Guage::Is_Zero()
 
 HRESULT CUI_Event_Guage::Tick(_float fTimeDelta)
 {
+		return S_OK;
+}
+
+HRESULT CUI_Event_Guage::Late_Tick(_float fTimeDelta)
+{
 	m_fTimeAcc += fTimeDelta;
 	if (m_fTimeAcc > m_fTime)
 	{
@@ -39,21 +44,15 @@ HRESULT CUI_Event_Guage::Tick(_float fTimeDelta)
 	if (m_fGuageNew > m_fGuage)
 	{
 		m_fGuage += (0.01f * m_fGuageSpeed);
-		if(0.0001f > m_fGuageNew - m_fGuage)
+		if (0.0001f > m_fGuageNew - m_fGuage)
 			m_fGuage = m_fGuageNew;
 	}
 	else if (m_fGuageNew < m_fGuage)
 	{
 		m_fGuage -= (0.01f * m_fGuageSpeed);
-		if(0.0001f > m_fGuage - m_fGuageNew)
+		if (0.0001f > m_fGuage - m_fGuageNew)
 			m_fGuage = m_fGuageNew;
 	}
-
-		return S_OK;
-}
-
-HRESULT CUI_Event_Guage::Late_Tick(_float fTimeDelta)
-{
 	return S_OK;
 }
 

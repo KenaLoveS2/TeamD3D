@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasHUD.h"
 #include "GameInstance.h"
+
+/* Nodes */
 #include "UI_NodeHUDHP.h"
 #include "UI_NodeHUDHPBar.h"
 #include "UI_NodeHUDShield.h"
@@ -43,9 +45,6 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
 			XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	}
-	/* Test */
-	m_bActive = true;
-
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -53,16 +52,14 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-
-	XMStoreFloat4x4(&m_tDesc.ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_tDesc.ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
-
 	if (FAILED(Ready_Nodes()))
 	{
 		MSG_BOX("Failed To Ready Nodes");
 		return E_FAIL;
 	}
 
+	/* Test */
+	m_bActive = true;
 
 	return S_OK;
 }
@@ -76,54 +73,26 @@ void CUI_CanvasHUD::Tick(_float fTimeDelta)
 			MSG_BOX("Bind Failed");
 			return;
 		}
-
 	}
 
 	__super::Tick(fTimeDelta);
 
-	for (auto node : m_vecNode)
-		node->Tick(fTimeDelta);
+	//for (auto node : m_vecNode)
+	//	node->Tick(fTimeDelta);
 }
 
 void CUI_CanvasHUD::Late_Tick(_float fTimeDelta)
 {
+	/* Code */
+
+	/* ~Code */
+
 	__super::Late_Tick(fTimeDelta);
-
-	m_bActive = true;
-	if (nullptr != m_pRendererCom && m_bActive)
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
-
-		/* Nodes added to RenderList After the canvas. */
-		/* So It can be guaranteed that Canvas Draw first */
-		for (auto node : m_vecNode)
-			node->Late_Tick(fTimeDelta);
-	}
-
-
-
-
-
-
 }
 
 HRESULT CUI_CanvasHUD::Render()
 {
-	/* ÅØ½ºÃ³ */
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
-
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_CanvasHUD");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
+	__super::Render();
 
 	return S_OK;
 }
@@ -231,13 +200,6 @@ HRESULT CUI_CanvasHUD::SetUp_Components()
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),(CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
 
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDFrame"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
-		return E_FAIL;
-
-	/* Todo : Load FileData */
-
 	return S_OK;
 }
 
@@ -247,6 +209,8 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))

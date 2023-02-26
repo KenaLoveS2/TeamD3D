@@ -154,13 +154,13 @@
     <Filter Include="02.GameObjects\UI\04. Events\Animation">
       <UniqueIdentifier>{3eb5b0f2-7881-4e8f-a9a4-0cadf00a4573}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. COOL HUD">
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo">
       <UniqueIdentifier>{933a747c-097a-4bf4-ad47-e3342acbcb87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. COOL HUD\Arrow">
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow">
       <UniqueIdentifier>{dfe5e34b-2713-40d1-8b4d-2c18c35a072f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. COOL HUD\Bomb">
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb">
       <UniqueIdentifier>{2ab0690c-f419-4a38-9612-802b4949f3d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -326,6 +326,21 @@
     <ClInclude Include="..\public\UI_Event_Guage.h">
       <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAmmo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -467,6 +482,21 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Guage.cpp">
       <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

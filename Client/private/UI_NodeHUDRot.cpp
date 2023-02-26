@@ -66,26 +66,14 @@ void CUI_NodeHUDRot::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_NodeHUDRot::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
 
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : HUDROT");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -104,11 +92,6 @@ HRESULT CUI_NodeHUDRot::SetUp_Components()
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
 
-	/* Texture */
-	/* Carry, Cloud, Hide, Neutral */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotIcons"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
-		return E_FAIL;
 
 
 	return S_OK;

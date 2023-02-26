@@ -39,6 +39,11 @@ void CUI_Event_Animation::Call_Event(_uint iTexIdx)
 
 HRESULT CUI_Event_Animation::Tick(_float fTimeDelta)
 {
+	return S_OK;
+}
+
+HRESULT CUI_Event_Animation::Late_Tick(_float fTimeDelta)
+{
 	//m_bStart = true;
 
 	/* Need Start Call */
@@ -84,11 +89,6 @@ HRESULT CUI_Event_Animation::Tick(_float fTimeDelta)
 		m_fTimeAcc = 0.f;
 	}
 
-	return S_OK;
-}
-
-HRESULT CUI_Event_Animation::Late_Tick(_float fTimeDelta)
-{
 	return S_OK;
 }
 
