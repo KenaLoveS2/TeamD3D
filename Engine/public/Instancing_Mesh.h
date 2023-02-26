@@ -14,6 +14,9 @@ private:
 	virtual ~CInstancing_Mesh() = default;
 
 public:
+	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
+
+public:
 	HRESULT		Save_Mesh(HANDLE& hFile, DWORD& dwByte);
 	HRESULT		Save_MeshBones(HANDLE& hFile, DWORD& dwByte);
 	HRESULT		Load_Mesh(HANDLE& hFile, DWORD& dwByte);
@@ -21,7 +24,7 @@ public:
 		return m_iMaterialIndex;
 	}
 public:
-	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod);
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
@@ -31,33 +34,36 @@ public:
 	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
-private:
-	CModel::TYPE		m_eType;
-	/* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
-	_uint				m_iMaterialIndex = 0;
-
-	/* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
-	_uint					m_iNumBones = 0;
+private:				/*For.OriginMeshData*/
+	CModel::TYPE				m_eType;
+	_uint								m_iMaterialIndex = 0;  /* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
+	_uint								m_iNumBones = 0; /* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
 	vector<class CBone*>	m_Bones;
-
-	string* m_pBoneNames = nullptr;
-	VTXMODEL* m_pNonAnimVertices = nullptr;
-	VTXANIMMODEL*		m_pAnimVertices = nullptr;
+	string*							m_pBoneNames = nullptr;
+	VTXMODEL*					m_pNonAnimVertices = nullptr;
 	FACEINDICES32*			m_pIndices = nullptr;
 
-	_bool						m_bLodMesh = false;
+private:		/*for.Lod */
+	_bool							m_bLodMesh = false;
+
+private:		/*For.Instancing*/
+	//_double*					m_pSpeeds = nullptr;
+	vector<_float4>			m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
+	_uint								m_iOriginNumPrimitive = 0;			// 기존 NumPrimitive Data
+	_uint								m_iIncreaseInstancingNumber = 0;
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
-	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 
+	void Map_UnMapViBuffer(_uint iNumInstance);
 private:
-	//_double*				m_pSpeeds = nullptr;
+	HRESULT	Set_up_Instancing();
+
 
 public:
-	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod = false);
+	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _uint iNumInstance =50 );
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
-	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
+	
 };
 
 END

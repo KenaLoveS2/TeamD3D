@@ -2,21 +2,25 @@
 #include "..\public\Instancing_Mesh.h"
 #include "Model.h"
 #include "Bone.h"
+#include "GameInstance.h"
 
 CInstancing_Mesh::CInstancing_Mesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CVIBuffer_Instancing(pDevice,pContext)
+	:CVIBuffer_Instancing(pDevice, pContext)
 {
 }
 
 CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
-	:CVIBuffer_Instancing(rhs)
-	,  m_eType(rhs.m_eType)
+	: CVIBuffer_Instancing(rhs)
 	, m_iMaterialIndex(rhs.m_iMaterialIndex)
 	, m_iNumBones(rhs.m_iNumBones)
-	, m_pNonAnimVertices(rhs.m_pNonAnimVertices)
-	, m_pAnimVertices(rhs.m_pAnimVertices)
+	, m_Bones(rhs.m_Bones)
+	, m_eType(rhs.m_eType)
+	, m_iOriginNumPrimitive(rhs.m_iOriginNumPrimitive)
 	, m_pIndices(rhs.m_pIndices)
+	, m_pNonAnimVertices(rhs.m_pNonAnimVertices)
 	, m_bLodMesh(rhs.m_bLodMesh)
+	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
+	, m_pInstancingPositions(rhs.m_pInstancingPositions)
 {
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
@@ -47,8 +51,7 @@ HRESULT CInstancing_Mesh::Save_Mesh(HANDLE & hFile, DWORD & dwByte)
 	}
 	else if (m_eType == CModel::TYPE_ANIM)
 	{
-		for (_uint i = 0; i < m_iNumVertices; ++i)
-			WriteFile(hFile, &m_pAnimVertices[i], sizeof(VTXANIMMODEL), &dwByte, nullptr);
+		assert(!"this type Only Non_Anim");
 	}
 
 	for (_uint i = 0; i < m_iNumPrimitive; ++i)
@@ -94,16 +97,7 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 		ZeroMemory(&m_SubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
 		m_SubResourceData.pSysMem = m_pNonAnimVertices;
 	}
-	else if (m_eType == CModel::TYPE_ANIM)
-	{
-		m_pAnimVertices = new VTXANIMMODEL[m_iNumVertices];
 
-		for (_uint i = 0; i < m_iNumVertices; ++i)
-			ReadFile(hFile, &m_pAnimVertices[i], sizeof(VTXANIMMODEL), &dwByte, nullptr);
-
-		ZeroMemory(&m_SubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-		m_SubResourceData.pSysMem = m_pAnimVertices;
-	}
 
 	ZeroMemory(&m_BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
@@ -138,11 +132,11 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod)
+HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
-	m_bLodMesh = bIsLod;
+	m_bLodMesh = bIsLod;			// is_Lod Or NonLod????
 
 	_ulong dwByte = 0;
 	ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
@@ -174,60 +168,103 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	ReadFile(hFile, &m_eIndexFormat, sizeof(DXGI_FORMAT), &dwByte, nullptr);
 	ReadFile(hFile, &m_eTopology, sizeof(D3D11_PRIMITIVE_TOPOLOGY), &dwByte, nullptr);
 
+	m_iOriginNumPrimitive = m_iNumPrimitive;
+	m_iNumInstance = iNumInstance;
+	m_iIndexCountPerInstance = 3 * m_iNumPrimitive;
+
+	m_pInstancingPositions.push_back(_float4(0.f, 0.f, 0.f, 1.f));			//Test 용 위치잡기
+	m_pInstancingPositions.push_back(_float4(0.f, 0.f, 4.f, 1.f));
+
+	m_iNumVertexBuffers = 2;
+	m_iNumVertices = m_iNumVertices;
+	m_iNumPrimitive = m_iNumPrimitive * iNumInstance;
+	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+	m_iNumIndicesPerPrimitive = 3;
+	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
 #pragma region VERTEX_BUFFER
 	HRESULT	hr = 0;
 	if (CModel::TYPE_NONANIM == m_eType)
 		hr = Ready_VertexBuffer_NonAnimModel(hFile, pModel);
-	else if (CModel::TYPE_ANIM == m_eType)
-		hr = Ready_VertexBuffer_AnimModel(hFile, pModel);
 
 	if (FAILED(hr))
 		return E_FAIL;
 #pragma endregion
 
+
 #pragma region INDEX_BUFFER
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_BufferDesc.StructureByteStride = 0;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.MiscFlags = 0;
 
-	if (m_bLodMesh == true)
+	/*Origin _Mesh*/
+	m_pIndices = new FACEINDICES32[m_iOriginNumPrimitive];
+	ZeroMemory(m_pIndices, sizeof(FACEINDICES32)*m_iOriginNumPrimitive);
+	ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iOriginNumPrimitive, &dwByte, nullptr);
+
+#pragma region Instancing_INDEX_BUFFER
+
+	/*Instancing_ Mesh*/
+	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
+	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+
+	_uint		iNumFaces = 0;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-		m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-		m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		m_BufferDesc.StructureByteStride = 0;
-		m_BufferDesc.MiscFlags = 0;
-
-		m_pIndices = new FACEINDICES32[m_iNumPrimitive];
-		ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
-		ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive, &dwByte, nullptr);
-
-		ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
-		m_SubResourceData.pSysMem = m_pIndices;
-
-		if (FAILED(__super::Create_IndexBuffer()))
-			return E_FAIL;
+		for (_uint j = 0; j < m_iOriginNumPrimitive; ++j)
+		{
+			pIndices[iNumFaces]._0 = m_pIndices[j]._0;
+			pIndices[iNumFaces]._1 = m_pIndices[j]._1;
+			pIndices[iNumFaces]._2 = m_pIndices[j]._2;
+			++iNumFaces;
+		}
 	}
-	else
-	{
-		ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-		m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-		m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		m_BufferDesc.StructureByteStride = 0;
-		m_BufferDesc.CPUAccessFlags = 0;
-		m_BufferDesc.MiscFlags = 0;
 
-		m_pIndices = new FACEINDICES32[m_iNumPrimitive];
-		ZeroMemory(m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
-		ReadFile(hFile, m_pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive, &dwByte, nullptr);
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pIndices;
 
-		ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
-		m_SubResourceData.pSysMem = m_pIndices;
+	if (FAILED(__super::Create_IndexBuffer()))
+		return E_FAIL;
 
-		if (FAILED(__super::Create_IndexBuffer()))
-			return E_FAIL;
+	Safe_Delete_Array(pIndices);
 #pragma endregion
+
+	m_iInstanceStride = sizeof(VTXMATRIX);
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iInstanceStride * iNumInstance;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;					//Rock UnLock을 하겠다.
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.StructureByteStride = m_iInstanceStride;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
+	m_BufferDesc.MiscFlags = 0;
+
+	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[iNumInstance];
+	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX)*iNumInstance);
+
+	for (_uint i = 0; i < iNumInstance; ++i)
+	{
+		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);				// 버퍼 하나의 행렬을 만들어서 쉐이더에게 전달해줘야한다.
+		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
+		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
+		pInstanceVertices[i].vPosition = _float4(_float(rand() % 5), 0.f, _float(rand() % 5), 1.f);		// 나중에 인스터닝을 할때 이포지션을 움직일 수 있게 락 언락구조를 짜야한다.
 	}
+
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pInstanceVertices;
+
+	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
+
+	Safe_Delete_Array(pInstanceVertices);
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -288,10 +325,10 @@ HRESULT CInstancing_Mesh::Render()
 
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
 
-	/*m_pContext->DrawIndexed(m_iNumIndices, 0, 0);*/
-	m_pContext->DrawIndexedInstanced(m_iIndexCountPerInstance, m_iNumInstance, 0, 0, 0);
+	m_pContext->DrawIndexedInstanced(m_iIndexCountPerInstance, m_iNumInstance, 0, 0, 0);			// 인스턴싱을 위한  DX_ 함수 제공 
 
 	return S_OK;
+
 }
 
 void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
@@ -355,27 +392,28 @@ HRESULT CInstancing_Mesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel *
 
 HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel * pModel)
 {
-	if (m_bLodMesh == true)
-	{
-		m_iMaterialIndex;
-		m_iNumVertexBuffers = 1;
-		m_iNumVertices;
-		m_iNumPrimitive;
-		m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
-		m_eIndexFormat = DXGI_FORMAT_R32_UINT;
-		m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
-		m_iNumIndicesPerPrimitive = 3;
-		//m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
-	}
+	//if (m_bLodMesh == true)
+	//{
+	//	m_iMaterialIndex;
+	//	m_iNumVertexBuffers = 1;
+	//	m_iNumVertices;
+	//	m_iNumPrimitive;
+	//	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+	//	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+	//	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
+	//	m_iNumIndicesPerPrimitive = 3;
+	//	//m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+	//}
+
 	m_iStride = sizeof(VTXMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
 	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	m_BufferDesc.StructureByteStride = m_iStride;
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
+
 
 	_matrix	PivotMatrix = pModel->Get_PivotMatrix();
 	_ulong dwByte = 0;
@@ -404,36 +442,17 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel *
 	return S_OK;
 }
 
-HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel * pModel)
+
+HRESULT CInstancing_Mesh::Set_up_Instancing()
 {
-	m_iStride = sizeof(VTXANIMMODEL);
-	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iStride;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
-
-	_ulong dwByte = 0;
-	m_pAnimVertices = new VTXANIMMODEL[m_iNumVertices];
-	ZeroMemory(m_pAnimVertices, sizeof(VTXANIMMODEL) * m_iNumVertices);
-	ReadFile(hFile, m_pAnimVertices, sizeof(VTXANIMMODEL) * m_iNumVertices, &dwByte, nullptr);
-
-	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
-	m_SubResourceData.pSysMem = m_pAnimVertices;
-
-	if (FAILED(__super::Create_VertexBuffer()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel * pModel, _bool bIsLod)
+CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
+	HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, iNumInstance)))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);
@@ -458,13 +477,13 @@ void CInstancing_Mesh::Free()
 
 	for (auto& pBone : m_Bones)
 		Safe_Release(pBone);
-
 	m_Bones.clear();
 
 	if (m_isCloned == false)
 	{
 		Safe_Delete_Array(m_pNonAnimVertices);
-		Safe_Delete_Array(m_pAnimVertices);
 		Safe_Delete_Array(m_pIndices);
 	}
+
+	m_pInstancingPositions.clear();
 }

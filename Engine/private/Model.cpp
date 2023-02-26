@@ -465,6 +465,17 @@ void CModel::Imgui_RenderProperty()
 			Safe_Delete_Array(ppAnimationTag[i]);
 		Safe_Delete_Array(ppAnimationTag);
 	}
+
+	if (m_bIsInstancing == true)
+	{
+		
+
+		for (auto &pInstanceMesh : m_InstancingMeshes)
+		{
+			//pInstanceMesh->Set_Position(); 
+		}
+	}
+
 }
 
 HRESULT CModel::SetUp_BonesParentPtr()

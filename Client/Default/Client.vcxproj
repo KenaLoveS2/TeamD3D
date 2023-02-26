@@ -205,6 +205,7 @@
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
     <ClInclude Include="..\public\Tool_Settings.h" />
+    <ClInclude Include="..\Public\Tree.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasMonHP.h" />
     <ClInclude Include="..\public\UI_CanvasSkillBtn.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
     <ClCompile Include="..\private\Tool_Settings.cpp" />
+    <ClCompile Include="..\Private\Tree.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasMonHP.cpp" />
     <ClCompile Include="..\private\UI_CanvasSkillBtn.cpp" />
@@ -299,6 +301,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />

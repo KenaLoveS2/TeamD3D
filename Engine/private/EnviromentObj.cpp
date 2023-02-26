@@ -16,9 +16,82 @@ CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 {
 }
 
-void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath)
+void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType Type)
 {
-	m_EnviromentDesc.vecStr_textureFilePath.push_back(TexturePath);
+	if (WJTextureType_NONE == Type)
+	{
+		MSG_BOX("NONE");
+	}
+	else 	if (WJTextureType_DIFFUSE == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.DIFFUSE_path = TexturePath;
+	}
+	else 	if (WJTextureType_SPECULAR == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.SPECULAR_path = TexturePath;
+	}
+	else 	if (WJTextureType_AMBIENT == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_path = TexturePath;
+	}
+	else 	if (WJTextureType_EMISSIVE == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.EMISSIVE_path = TexturePath;
+	}
+	else 	if (WJTextureType_EMISSIVEMASK == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.EMISSIVEMASK_path = TexturePath;
+	}
+	else 	if (WJTextureType_NORMALS == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.NORMALS_path = TexturePath;
+	}
+	else 	if (WJTextureType_MASK == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.MASK_path = TexturePath;
+	}
+	else 	if (WJTextureType_SSS_MASK == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.SSS_MASK_path = TexturePath;
+	}
+	else 	if (WJTextureType_SPRINT_EMISSIVE == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.SPRINT_EMISSIVE_path = TexturePath;
+	}
+	else 	if (WJTextureType_LIGHTMAP == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.LIGHTMAP_path = TexturePath;
+	}
+	else 	if (WJTextureType_REFLECTION == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.REFLECTION_path = TexturePath;
+	}
+	else 	if (WJTextureType_BASE_COLOR == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.BASE_COLOR_path = TexturePath;
+	}
+	else 	if (WJTextureType_NORMAL_CAMERA == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.NORMAL_CAMERA_path = TexturePath;
+	}
+	else 	if (WJTextureType_EMISSION_COLOR == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.EMISSION_COLOR_path = TexturePath;
+	}
+	else 	if (WJTextureType_METALNESS == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.METALNESS_path = TexturePath;
+	}
+	else 	if (WJTextureType_DIFFUSE_ROUGHNESS == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.DIFFUSE_ROUGHNESS_path = TexturePath;
+	}
+	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
+	{
+		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_OCCLUSION_path = TexturePath;
+	}
+	else
+		assert(!  " CEnviromentObj::Add_TexturePath Out_Of_Range");
 	/*나중에 중복 처리하기*/
 }
 
@@ -43,7 +116,7 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
 		m_EnviromentDesc.eChapterType = Desc->eChapterType;
 		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
-		m_EnviromentDesc.vecStr_textureFilePath = Desc->vecStr_textureFilePath;
+		m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}

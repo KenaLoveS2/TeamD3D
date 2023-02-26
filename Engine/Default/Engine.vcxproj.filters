@@ -205,14 +205,8 @@
     <Filter Include="01.Utility\97. EventFucn Manager">
       <UniqueIdentifier>{e0a5d880-aa0a-447a-83ac-dad2b5e19877}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Bone">
-      <UniqueIdentifier>{c7c46548-11a7-420a-a97c-5df7a7e00256}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Mesh">
       <UniqueIdentifier>{6806406e-b2b2-491a-81a9-e35c573c3128}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Model">
-      <UniqueIdentifier>{a54d6a22-6302-4563-8fcd-eb64e69311df}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Rect\Tess">
       <UniqueIdentifier>{80405fd2-d774-4439-b21e-64e4da4949f6}</UniqueIdentifier>
@@ -505,19 +499,12 @@
     <ClInclude Include="..\public\ImGui\Imgui_stdlib.h">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Bone_Instacing.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Bone</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Mesh_Instancing.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Model_Instancing.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_Event.h">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Instancing_Mesh.h" />
+    <ClInclude Include="..\Public\Instancing_Mesh.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -758,19 +745,12 @@
     <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Bone_Instacing.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Bone</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Mesh_Instancing.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Model_Instancing.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_Event.cpp">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Instancing_Mesh.cpp" />
+    <ClCompile Include="..\Private\Instancing_Mesh.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
