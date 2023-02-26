@@ -136,7 +136,7 @@ HRESULT CUI_Canvas::Save_Data()
 		json["worldMatrix"].push_back(fValue);
 	}
 
-	json["renderPass"] = m_iRenderPass;
+	json["renderPass"] = m_iOriginalRenderPass;
 	
 	_int iIndex;
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
@@ -189,6 +189,7 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 	file.close();
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	m_iOriginalRenderPass = m_iRenderPass;
 
 
 	jLoad["DiffuseTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_DIFFUSE]);

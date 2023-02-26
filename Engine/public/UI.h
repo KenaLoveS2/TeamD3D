@@ -84,6 +84,9 @@ protected:
 	_float4x4				m_matParentInit;
 	_float4x4				m_matLocal;
 
+	/* For. Save_Data */
+	/* Some Data is changed during the game...*/
+	_uint					m_iOriginalRenderPass;
 
 
 protected: /* Event */

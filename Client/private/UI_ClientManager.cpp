@@ -16,6 +16,7 @@
 #include "UI_CanvasAmmo.h"
 #include "UI_NodeAmmoBombFrame.h"
 #include "UI_NodeAmmoBombGuage.h"
+#include "UI_NodeAmmoArrowGuage.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -145,7 +146,17 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoBombGuage");
 
+	/* Arrow Guage Diffuse */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoArrowGuage"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowAmmo_ProgressGradient.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoArrowGuage");
 
+	/* Arrow Guage Mask */ 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoArrowGuageMask"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowAmmo_ProgressMask.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoArrowGuageMask");
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -167,6 +178,10 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "DefaultUVMove");	
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "BarGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RotationZ");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RotationZ(Loading)");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage_Mask");
+
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend");
 
 
@@ -229,6 +244,8 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	/********************************************/
 	/*				For. Canvas_Ammo			*/
 	/********************************************/
+
+	/* Canvas Ammo(Arrow Frame) */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Ammo"), CUI_CanvasAmmo::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Ammo");
@@ -242,6 +259,14 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BombGuage"), CUI_NodeAmmoBombGuage::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BombGuage");
+
+	/* Arrow Guage */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ArrowGuage"), CUI_NodeAmmoArrowGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ArrowGuage");
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

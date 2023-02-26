@@ -241,6 +241,7 @@ void CUI::Imgui_RenderingSetting()
 	if (ImGui::ListBox(" : RenderPass", &selected_Pass, texture_getter, pPasses, iNumPasses))
 	{
 		m_iRenderPass = selected_Pass;
+		m_iOriginalRenderPass = selected_Pass;
 	}
 
 #pragma region Old
