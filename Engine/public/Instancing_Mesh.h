@@ -24,6 +24,10 @@ public:
 		return m_iMaterialIndex;
 	}
 public:
+	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
+
+
+public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
@@ -53,14 +57,13 @@ private:		/*For.Instancing*/
 	_uint								m_iIncreaseInstancingNumber = 0;
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
-
-	void Map_UnMapViBuffer(_uint iNumInstance);
 private:
 	HRESULT	Set_up_Instancing();
 
 
 public:
-	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _uint iNumInstance =50 );
+	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
+		HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _uint iNumInstance =1 );
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	

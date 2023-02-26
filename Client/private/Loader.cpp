@@ -18,8 +18,11 @@
 /* Enemies*/
 
 /* Objects */
-#include "Cave_Rock.h"
+#include "Cliff_Rock.h"
 #include "Tree.h"
+#include "Crystal.h"
+#include "BowTarget.h"
+
 /* UI */
 #include "BackGround.h"
 
@@ -386,7 +389,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VantagePlatform")))
 	//	return E_FAIL;
-
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar")))
@@ -424,6 +426,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath",false,true)))
 	//	return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal", false, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
 		return E_FAIL;
 
 
@@ -501,24 +505,36 @@ HRESULT CLoader::Loading_ForMapTool()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
-
-	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-		CCave_Rock::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	/* ~Test*/
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
 		CLodObject::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_Tree */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
-		CTree::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	/* For.Prototype_GameObject_ModelViewerObject */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
 		CModelViewerObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	/* ~Test*/
 
+	/* For.Prototype_GameObject_Cave_Rock */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
+		CCliff_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;	
+
+	/* For.Prototype_GameObject_Tree */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
+		CTree::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Crystal */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
+		CCrystal::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_BowTarget */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
+		CBowTarget::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	
 
@@ -609,7 +625,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-		CCave_Rock::Create(m_pDevice, m_pContext))))
+		CCliff_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
@@ -813,3 +829,4 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 	return S_OK;
 }
+

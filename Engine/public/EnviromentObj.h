@@ -28,6 +28,7 @@ public:
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
 			ObjectDesc.TransformDesc.fSpeedPerSec = 0;
+
 		}
 
 	} ENVIROMENT_DESC;		/*wstring 이  있는 애들은 zeromemory를 쓰지마라*/
@@ -60,6 +61,9 @@ public:
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
 	virtual  void				Imgui_RenderComponentProperties()override;
+
+protected:
+	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;

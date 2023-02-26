@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "..\public\EnviromentObj.h"
 #include "GameInstance.h"
+
 #include "Utile.h"
+#include "Model.h"
+
 #include "Enviroment_Manager.h"
 
 CEnviromentObj::CEnviromentObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -18,6 +21,11 @@ CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 
 void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType Type)
 {
+	assert(this != nullptr && "EnviromentObj::Add_TexturePathl");
+		
+	CModel* pModel =		dynamic_cast<CModel*>(Find_Component(TEXT("Com_Model")));
+	assert(nullptr != pModel && "CEnviromentObj::Add_TexturePath Model NonFind");
+
 	if (WJTextureType_NONE == Type)
 	{
 		MSG_BOX("NONE");
@@ -92,7 +100,11 @@ void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType T
 	}
 	else
 		assert(!  " CEnviromentObj::Add_TexturePath Out_Of_Range");
-	/*나중에 중복 처리하기*/
+
+	if (FAILED(Set_UpTexture_FilePathToMaterial(pModel, TexturePath, Type)))
+		assert(!"EnviromentObj::Add_TexturePath");
+
+
 }
 
 HRESULT CEnviromentObj::Initialize_Prototype()
@@ -207,6 +219,18 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 #pragma endregion
 
 	__super::Imgui_RenderComponentProperties();
+}
+
+HRESULT CEnviromentObj::Set_UpTexture_FilePathToMaterial(CModel * pModel , const _tchar * TexturePath, aiTextureType Type)
+{
+	_uint iNumMeshes = pModel->Get_NumMeshes();
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		pModel->SetUp_Material(i, Type, TexturePath);
+	}
+
+
+	return S_OK;
 }
 
 void CEnviromentObj::Free()
