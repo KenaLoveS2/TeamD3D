@@ -164,18 +164,31 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
 	Safe_Delete_Array(ppEvents);
 }
 
-void CAnimation::Update_Bones(_float fTimeDelta)
+void CAnimation::Update_Bones(_float fTimeDelta, CAnimation * pBlendAnim)
 {
 	if (true == m_isFinished)
 	{
 		if (m_isLooping)
+		{
 			m_isFinished = false;
+
+			if (pBlendAnim != nullptr)
+				pBlendAnim->m_isFinished = false;
+		}
 		else
 			return;
 	}
 
 	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	if (pBlendAnim != nullptr)
+	{
+		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
+		
+		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
+			pBlendAnim->m_isFinished = true;
+	}
 
 	Call_Event(fLastPlayTime, fTimeDelta);
 
@@ -184,34 +197,66 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
-			m_Channels[i]->Reset_KeyFrameIndex();
-
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		if (pBlendAnim == nullptr)
 		{
-			//m_Channels[i]->Set_BoneTranfromMatrix(m_matCelibrate);
-			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
+			if (true == m_isFinished)
+				m_Channels[i]->Reset_KeyFrameIndex();
+
+			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+				m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
+			else
+				m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
 		}
 		else
-			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
+		{
+			if (true == m_isFinished || true == pBlendAnim->m_isFinished)
+			{
+				m_Channels[i]->Reset_KeyFrameIndex();
+				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
+			}
+
+			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+				m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
+			else
+				m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, false, pBlendAnim->m_Channels[i]);
+		}
 	}
 
 	if (m_isFinished && m_isLooping)
 		m_PlayTime = 0.0;
+
+	if (pBlendAnim != nullptr)
+	{
+		if (pBlendAnim->m_isFinished && pBlendAnim->m_isLooping)
+			pBlendAnim->m_PlayTime = 0.0;
+	}
 }
 
-void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
+void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation * pBlendAnim)
 {
 	if (true == m_isFinished)
 	{
 		if (m_isLooping)
+		{
 			m_isFinished = false;
+
+			if (pBlendAnim != nullptr)
+				pBlendAnim->m_isFinished = false;
+		}
 		else
 			return;
 	}
 
 	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+// 	if (pBlendAnim != nullptr)
+// 	{
+// 		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
+// 
+// 		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
+// 			pBlendAnim->m_isFinished = true;
+// 	}
 
 	Call_Event(fLastPlayTime, fTimeDelta);
 
@@ -220,16 +265,33 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
-			m_Channels[i]->Reset_KeyFrameIndex();
-
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		if (pBlendAnim == nullptr)
 		{
-			//m_Channels[i]->Set_BoneTranfromMatrix(m_matCelibrate);
-			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, true);
+			if (true == m_isFinished)
+				m_Channels[i]->Reset_KeyFrameIndex();
+
+			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+			{
+				m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, true);
+			}
+			else
+				m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
 		}
 		else
-			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
+		{
+			if (true == m_isFinished)
+			{
+				m_Channels[i]->Reset_KeyFrameIndex();
+				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
+			}
+
+			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+			{
+				m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, true, pBlendAnim->m_Channels[i]);
+			}
+			else
+				m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, false, pBlendAnim->m_Channels[i]);
+		}
 	}
 }
 

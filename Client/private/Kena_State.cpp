@@ -197,7 +197,7 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
+	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
@@ -207,7 +207,7 @@ void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_LEFT);
+	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)

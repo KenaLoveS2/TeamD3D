@@ -36,7 +36,8 @@ void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+	CModel*	pKenaModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
+	m_pModelCom->Set_AnimIndex(pKenaModel->Get_AnimIndex(), pKenaModel->Get_BlendAnimIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
 	Imgui_RenderProperty();

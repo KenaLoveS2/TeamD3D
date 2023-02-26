@@ -28,6 +28,7 @@ public:
 	const char*					Get_Name() const { return m_szName; }
 	_float&						Get_BlendDuration() { return m_fBlendDuration; }
 	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
+	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
 	void							Set_PlayTime(_double dPlayTime) { m_PlayTime = dPlayTime; }
 	void							Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
 
@@ -36,8 +37,8 @@ public:
 	HRESULT						Initialize(void* pArg);
 	void							ImGui_RenderEvents(_int& iSelectEvent);
 
-	void							Update_Bones(_float fTimeDelta);
-	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
+	void							Update_Bones(_float fTimeDelta, CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation* pBlendAnim = nullptr);
 	void							Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
 	void							Reset_Animation();
 

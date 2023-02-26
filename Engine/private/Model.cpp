@@ -443,6 +443,9 @@ void CModel::Imgui_RenderProperty()
 			}
 
 			ImGui::Separator();
+			const _uint&		iChannelCount = pAnimation->Get_ChannelCount();
+			ImGui::InputInt("Num of Channel", (_int*)&iChannelCount, 0, 0, ImGuiInputTextFlags_ReadOnly);
+			ImGui::Separator();
 			_double&	dPlayTime = pAnimation->Get_PlayTime();
 			ImGui::InputDouble("Current Play Time", &dPlayTime, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
 			_double&	dDuration = pAnimation->Get_AnimationDuration();
@@ -701,9 +704,9 @@ void CModel::Reset_Animation()
 	m_Animations[m_iCurrentAnimIndex]->Reset_Animation();
 }
 
-void CModel::Set_AnimIndex(_uint iAnimIndex)
+void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 {
-	if (iAnimIndex >= m_iNumAnimations)
+	if (iAnimIndex >= m_iNumAnimations || iBlendAnimIndex >= (_int)m_iNumAnimations)
 		return;
 
 	CAnimation::ANIMTYPE	eType = m_Animations[iAnimIndex]->Get_AnimationType();
@@ -721,12 +724,29 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 		if (m_iCurrentAnimIndex != iAnimIndex)
 		{
 			m_iPreAnimIndex = m_iCurrentAnimIndex;
+			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
 			m_Animations[iAnimIndex]->Reset_Animation();
 			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 			m_fBlendCurTime = 0.f;
+
+			if (iBlendAnimIndex != -1)
+				m_Animations[iBlendAnimIndex]->Reset_Animation();
+		}
+		else
+		{
+			if (iBlendAnimIndex != m_iBlendAnimIndex)
+			{
+				m_iPreAnimIndex = m_iCurrentAnimIndex;
+				m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+				m_fBlendCurTime = 0.f;
+
+				if (iBlendAnimIndex != -1)
+					m_Animations[iBlendAnimIndex]->Reset_Animation();
+			}
 		}
 
 		m_iCurrentAnimIndex = iAnimIndex;
+		m_iBlendAnimIndex = iBlendAnimIndex;
 	}
 }
 
@@ -756,14 +776,37 @@ void CModel::Play_Animation(_float fTimeDelta)
 	if (m_fBlendCurTime < m_fBlendDuration)
 	{
 		_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
-		m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
+
+		if (m_iPreBlendAnimIndex != -1)
+		{
+			if (m_iCurrentAnimIndex != m_iPreBlendAnimIndex && m_iBlendAnimIndex != m_iPreBlendAnimIndex)
+			{
+				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
+			}
+		}
+		else
+		{
+			if (m_iPreAnimIndex == m_iCurrentAnimIndex)
+				m_Animations[m_iPreAnimIndex]->Update_Bones(0.f);
+			else
+				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
+		}
+
+		if (m_iBlendAnimIndex != -1)
+		{
+				m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
+		}
+		else
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
 
 		m_fBlendCurTime += fTimeDelta;
 	}
 	else
 	{
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+		if (m_iBlendAnimIndex != -1)
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iBlendAnimIndex]);
+		else
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
 	}
 
 	if (m_iAdditiveAnimIndex != 0)

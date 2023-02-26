@@ -20,10 +20,11 @@ public:
 	const _double&	Get_PlayTime();
 	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
+	const _int&		Get_BlendAnimIndex() const { return m_iBlendAnimIndex; }
 	const _bool&		Get_AnimationFinish() const;
 	void				Set_PlayTime(_double dPlayTime);
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
-	void				Set_AnimIndex(_uint iAnimIndex);
+	void				Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex = -1);
 	void				Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
 
 public:
@@ -62,6 +63,8 @@ private:
 	_uint								m_iPreAnimIndex = 0;
 	_uint								m_iCurrentAnimIndex = 0;
 	_uint								m_iAdditiveAnimIndex = 0;
+	_int								m_iPreBlendAnimIndex = -1;
+	_int								m_iBlendAnimIndex = -1;
 	_uint								m_iNumAnimations = 0;
 	vector<class CAnimation*>		m_Animations;
 

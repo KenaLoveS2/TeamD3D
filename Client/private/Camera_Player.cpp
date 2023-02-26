@@ -61,8 +61,6 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		return;
 	}
 
-	m_CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
-
 	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vKenaRight = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT));
 	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + m_fCurCamHeight);
