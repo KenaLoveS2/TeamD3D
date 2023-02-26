@@ -29,6 +29,7 @@ CModel::CModel(const CModel & rhs)
 	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_AdditionalPivotMatrix(rhs.m_AdditionalPivotMatrix)
 	, m_dwBeginBoneData(rhs.m_dwBeginBoneData)
 {
 	for (auto& Material : m_Materials)
@@ -71,6 +72,11 @@ const _double & CModel::Get_PlayTime()
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }
 
+const _bool & CModel::Get_AnimationFinish() const
+{
+	return m_Animations[m_iCurrentAnimIndex]->IsFinished();
+}
+
 void CModel::Set_PlayTime(_double dPlayTime)
 {
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
@@ -79,6 +85,7 @@ void CModel::Set_PlayTime(_double dPlayTime)
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
+	m_AdditionalPivotMatrix = _smatrix::Identity;
 
 	m_wstrModelFilePath = pModelFilePath;
 
@@ -245,21 +252,65 @@ void CModel::Imgui_RenderProperty()
 		static _bool	bAddEvent = false;
 		CAnimation*	pAnimation = nullptr;
 		char**			ppAnimationTag = new char*[m_iNumAnimations];
+		static string	strSearchTag = "";
+		_bool			bSearchMode = false;
 		char**			ppFunctionTags = nullptr;
 
+		string			LastSearchTag = strSearchTag;
+		ImGui::InputText("Search", &strSearchTag);
+		if (strSearchTag != "")
+			bSearchMode = true;
+		else
+			bSearchMode = false;
+
+		if (LastSearchTag != strSearchTag)
+			iSelectAnimation = -1;
+
+		string		strCompareTag = "";
+		_uint		iSearchedCount = 0;
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 		{
-			_uint	iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
-			ppAnimationTag[i] = new char[iTagLength];
-			sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
-		}
+			_uint	iTagLength = 0;
 
-		ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+			if (bSearchMode)
+			{
+				strCompareTag = m_Animations[i]->Get_Name();
+
+				if (strCompareTag.find(strSearchTag) != string::npos)
+				{
+					iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+					ppAnimationTag[iSearchedCount] = new char[iTagLength];
+					sprintf_s(ppAnimationTag[iSearchedCount++], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
+				}
+				else
+					continue;
+			}
+			else
+			{
+				iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+				ppAnimationTag[i] = new char[iTagLength];
+				sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
+			}
+		}
+		if (bSearchMode == true)
+			ImGui::ListBox("Animation Search", &iSelectAnimation, ppAnimationTag, (_int)iSearchedCount);
+		else
+			ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+
 		if (ImGui::Button("Split All Animation Tag"))
 		{
-			for (_uint i = 0; i < m_iNumAnimations; ++i)
-				Safe_Delete_Array(ppAnimationTag[i]);
-			Safe_Delete_Array(ppAnimationTag);
+			if (bSearchMode == true)
+			{
+				for (_uint i = 0; i < iSearchedCount; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
+			else
+			{
+				for (_uint i = 0; i < m_iNumAnimations; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
 
 			iSelectAnimation = -1;
 			for (_uint i = 0; i < m_iNumAnimations; ++i)
@@ -271,19 +322,55 @@ void CModel::Imgui_RenderProperty()
 
 			return;
 		}
+		static _double	dMasterSpeed = 24.0;
+		ImGui::InputDouble("Default Speed = 24.0", &dMasterSpeed, 0.5, 1.0, "%.3f");
+		if (ImGui::Button("Change All Animations Speed"))
+		{
+			for (auto& pAnim : m_Animations)
+				pAnim->Get_AnimationTickPerSecond() = dMasterSpeed;
+		}
 
 		if (iSelectAnimation != -1)
 		{
 			static _bool	bReName = false;
 			static char	szNewName[MAX_PATH] = "";
-			pAnimation = m_Animations[iSelectAnimation];
+
+			if (bSearchMode == true)
+			{
+				for (auto& pAnim : m_Animations)
+				{
+					if (!strcmp(pAnim->Get_Name(), ppAnimationTag[iSelectAnimation]))
+					{
+						pAnimation = pAnim;
+						break;
+					}
+				}
+			}
+			else
+				pAnimation = m_Animations[iSelectAnimation];
 
 			if (ImGui::Button("Play"))
 			{
 				m_bPausePlay = false;
-				Set_AnimIndex(iSelectAnimation);
-				m_Animations[iSelectAnimation]->Reset_Animation();
-				m_pOwner->Set_AnimationIndex(iSelectAnimation);
+				pAnimation->Reset_Animation();
+
+				if (bSearchMode == true)
+				{
+					for (_uint i = 0; i < m_iNumAnimations; ++i)
+					{
+						if (pAnimation == m_Animations[i])
+						{
+							Set_AnimIndex(i);
+							m_pOwner->Set_AnimationIndex(i);
+							break;
+						}
+					}
+				}
+				else
+				{
+					Set_AnimIndex(iSelectAnimation);
+					m_pOwner->Set_AnimationIndex(iSelectAnimation);
+				}
 				m_pOwner->Update_Child();
 			}
 			ImGui::SameLine();
@@ -431,11 +518,35 @@ void CModel::Imgui_RenderProperty()
 			ImGui::Separator();
 			ImGui::BulletText("Event");
 			pAnimation->ImGui_RenderEvents(iSelectEvent);
+
+			ImGui::Separator();
+			ImGui::BulletText("Celibrate Matrix");
+
+			_smatrix&		matCelibrate = pAnimation->Get_CelibrateMatrix();
+			_float vTranslation[3], vRotation[3], vScale[3];
+
+			ImGuizmo::DecomposeMatrixToComponents((_float*)(&matCelibrate), vTranslation, vRotation, vScale);
+			if (ImGui::DragFloat3("Translate", vTranslation, 0.1f))
+				m_pOwner->Update_Child();
+			if (ImGui::DragFloat3("Rotate", vRotation, 0.1f, -180.f, 180.f))
+				m_pOwner->Update_Child();
+			if (ImGui::DragFloat3("Scale", vScale, 0.1f))
+				m_pOwner->Update_Child();
+			ImGuizmo::RecomposeMatrixFromComponents(vTranslation, vRotation, vScale, (_float*)(&matCelibrate));
 		}
 		
-		for (_uint i = 0; i < m_iNumAnimations; ++i)
-			Safe_Delete_Array(ppAnimationTag[i]);
-		Safe_Delete_Array(ppAnimationTag);
+		if (bSearchMode == true)
+		{
+			for (_uint i = 0; i < iSearchedCount; ++i)
+				Safe_Delete_Array(ppAnimationTag[i]);
+			Safe_Delete_Array(ppAnimationTag);
+		}
+		else
+		{
+			for (_uint i = 0; i < m_iNumAnimations; ++i)
+				Safe_Delete_Array(ppAnimationTag[i]);
+			Safe_Delete_Array(ppAnimationTag);
+		}
 	}
 }
 
@@ -627,12 +738,19 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 		if (m_iCurrentAnimIndex != iAnimIndex)
 		{
 			m_iPreAnimIndex = m_iCurrentAnimIndex;
+			m_Animations[iAnimIndex]->Reset_Animation();
 			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 			m_fBlendCurTime = 0.f;
+			m_AdditionalPivotMatrix = m_Animations[iAnimIndex]->Get_CelibrateMatrix();
 		}
 
 		m_iCurrentAnimIndex = iAnimIndex;
 	}
+}
+
+void CModel::Set_AdditionalPivot(_fmatrix matPivot)
+{
+	m_Animations[m_iCurrentAnimIndex]->Get_CelibrateMatrix() = matPivot;
 }
 
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
@@ -717,7 +835,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 		{
 			_float4x4		BoneMatrices[800];
 
-			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
+			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix), m_AdditionalPivotMatrix);
 			
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
 		}		

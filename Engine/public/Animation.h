@@ -20,7 +20,7 @@ public:
 	HRESULT		Add_Event(_float fPlayTime, const string& strFuncName);
 
 public:
-	_bool							IsFinished() { return m_isFinished; }
+	const _bool&					IsFinished() const { return m_isFinished; }
 	_bool&							IsLooping() { return m_isLooping; }
 	_double&						Get_AnimationDuration() { return m_Duration; }
 	_double&						Get_PlayTime() { return m_PlayTime; }
@@ -28,6 +28,7 @@ public:
 	const char*					Get_Name() const { return m_szName; }
 	_float&						Get_BlendDuration() { return m_fBlendDuration; }
 	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
+	_smatrix&						Get_CelibrateMatrix() { return m_matCelibrate; }
 	void							Set_PlayTime(_double dPlayTime) { m_PlayTime = dPlayTime; }
 	void							Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
 
@@ -57,6 +58,8 @@ private:
 
 	_uint							m_iNumChannels = 0;
 	vector<class CChannel*>		m_Channels;
+
+	_smatrix						m_matCelibrate = _smatrix::Identity;
 
 private:
 	/* Map for Event Call. <PlayTime, FuncName> */

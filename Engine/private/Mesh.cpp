@@ -238,7 +238,7 @@ HRESULT CMesh::Initialize(void * pArg, CGameObject * pOwner)
 	return S_OK;
 }
 
-void CMesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
+void CMesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix, _fmatrix AdditionalPivotMatrix)
 {
 	_uint		iNumBones = 0;
 
@@ -248,10 +248,20 @@ void CMesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
 	for (auto& pBone : m_Bones)
 	{
 		// BoneMatrix = 오프셋매트릭스 * 컴바인드매트릭스;
-		XMStoreFloat4x4(&pBoneMatrices[iNumBones++],
-			pBone->Get_OffsetMatrix()
-			* pBone->Get_CombindMatrix()
-			* PivotMatrix);
+		if (XMMatrixIsIdentity(AdditionalPivotMatrix) == true)
+		{
+			XMStoreFloat4x4(&pBoneMatrices[iNumBones++],
+				pBone->Get_OffsetMatrix()
+				* pBone->Get_CombindMatrix()
+				* PivotMatrix);
+		}
+		else
+		{
+			XMStoreFloat4x4(&pBoneMatrices[iNumBones++],
+				pBone->Get_OffsetMatrix()
+				* pBone->Get_CombindMatrix()
+				* PivotMatrix * AdditionalPivotMatrix);
+		}
 	}
 }
 

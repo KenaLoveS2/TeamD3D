@@ -11,12 +11,13 @@ CAnimation::CAnimation()
 }
 
 CAnimation::CAnimation(const CAnimation& rhs)
-	: m_isLooping(true)
+	: m_isLooping(rhs.m_isLooping)
 	, m_pModel(rhs.m_pModel)
 	, m_Duration(rhs.m_Duration)
 	, m_fBlendDuration(rhs.m_fBlendDuration)
 	, m_TickPerSecond(rhs.m_TickPerSecond)
 	, m_eAnimType(rhs.m_eAnimType)
+	, m_matCelibrate(rhs.m_matCelibrate)
 {
 	strcpy_s(m_szName, rhs.m_szName);
 

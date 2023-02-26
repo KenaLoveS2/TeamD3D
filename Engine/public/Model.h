@@ -16,13 +16,17 @@ public:
 	_uint				Get_NumMeshes() const { return m_iNumMeshes; }
 	_matrix			Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
 	_float4x4			Get_PivotFloat4x4() const { return m_PivotMatrix; }
+	_smatrix			Get_AdditionalPivotMatrix() const { return m_AdditionalPivotMatrix; }
 	class CBone*		Get_BonePtr(const char* pBoneName);
 	const _double&	Get_PlayTime();
 	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
+	const _bool&		Get_AnimationFinish() const;
 	void				Set_PlayTime(_double dPlayTime);
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
 	void				Set_AnimIndex(_uint iAnimIndex);
+	void				Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
+	void				Set_AdditionalPivot(_fmatrix matPivot);
 
 public:
 	HRESULT			Save_Model(const wstring& wstrSaveFileDirectory);
@@ -64,6 +68,7 @@ private:
 	vector<class CAnimation*>		m_Animations;
 
 	_float4x4							m_PivotMatrix;
+	_smatrix							m_AdditionalPivotMatrix;
 
 	_float								m_fBlendDuration = 0.2f;
 	_float								m_fBlendCurTime = 0.2f;
