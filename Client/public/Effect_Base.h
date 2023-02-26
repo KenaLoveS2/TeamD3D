@@ -68,6 +68,7 @@ public:
 		_bool	IsTrigger = false;
 		_bool	IsMovingPosition = false;
 		_bool	bUseChild = false;
+		_bool	bSpread = false;
 
 	}EFFECTDESC;
 

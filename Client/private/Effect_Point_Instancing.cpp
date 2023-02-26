@@ -13,52 +13,52 @@ CEffect_Point_Instancing::CEffect_Point_Instancing(const CEffect_Point_Instancin
 {
 }
 
-HRESULT CEffect_Point_Instancing::Set_ShapePosition(CVIBuffer_Point_Instancing::POINTDESC& ePointDesc)
+HRESULT CEffect_Point_Instancing::Set_ShapePosition()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return E_FAIL;
 
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition(&ePointDesc);
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition();
 }
 
-CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE CEffect_Point_Instancing::Get_ShapeType()
+//CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE CEffect_Point_Instancing::Get_ShapeType()
+//{
+//	if (nullptr == m_pVIInstancingBufferCom)
+//		return CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE();
+//
+//	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_ShapeType();
+//}
+//
+//void CEffect_Point_Instancing::Set_ShapeType(CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE eType)
+//{
+//	if (nullptr == m_pVIInstancingBufferCom)
+//		return;
+//
+//	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapeType(eType);
+//}
+
+//CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR CEffect_Point_Instancing::Get_MoveDir()
+//{
+//	if (nullptr == m_pVIInstancingBufferCom)
+//		return CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR();
+//
+//	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_MoveDir();
+//}
+//
+//void CEffect_Point_Instancing::Set_MoveDir(CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR eType)
+//{
+//	if (nullptr == m_pVIInstancingBufferCom)
+//		return;
+//
+//	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_MoveDir(eType);
+//}
+
+CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing::Get_PointInstanceDesc()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
-		return CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE();
+		return nullptr;
 
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_ShapeType();
-}
-
-void CEffect_Point_Instancing::Set_ShapeType(CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE eType)
-{
-	if (nullptr == m_pVIInstancingBufferCom)
-		return;
-
-	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapeType(eType);
-}
-
-CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR CEffect_Point_Instancing::Get_MoveDir()
-{
-	if (nullptr == m_pVIInstancingBufferCom)
-		return CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR();
-
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_MoveDir();
-}
-
-void CEffect_Point_Instancing::Set_MoveDir(CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR eType)
-{
-	if (nullptr == m_pVIInstancingBufferCom)
-		return;
-
-	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_MoveDir(eType);
-}
-
-CVIBuffer_Point_Instancing::POINTDESC CEffect_Point_Instancing::Get_PointInstanceDesc()
-{
-	if (nullptr == m_pVIInstancingBufferCom)
-		return CVIBuffer_Point_Instancing::POINTDESC();
-
-	return *dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PointDesc();
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PointDesc();
 }
 
 void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC eEffectDesc)
@@ -151,33 +151,13 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pVIInstancingBufferCom->Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.IsMovingPosition == true)
+	if (m_eEFfectDesc.bStart == true)
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
-		if (m_eEFfectDesc.bStart == true &&
-			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
-		{
-			_vector vNormalLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+		m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
 
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationX(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-
-			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			vPos += vNormalLook * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
-
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
-		}
-		else
-		{
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
-			m_eEFfectDesc.fPlayBbackTime = 0.0f;;
-		}
+		if (m_eEFfectDesc.bStart == false)
+			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 	}
 
 	if (m_eEFfectDesc.IsBillboard == true)
@@ -210,6 +190,7 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			}
 		}
 	}
+	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 
 	// Child Tick
 	if (m_vecChild.size() != 0)

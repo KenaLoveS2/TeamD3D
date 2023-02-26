@@ -9,49 +9,41 @@ class ENGINE_DLL CVIBuffer_Point_Instancing final : public CVIBuffer_Instancing
 public:
 	typedef struct tagPointDesc
 	{
-		enum  SHAPETYPE { VIBUFFER_BOX, VIBUFFER_SPHERE, VIBUFFER_CONE, VIBUFFER_EXPLOSION, VIBUFFER_END };
-		enum  MOVEDIR { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, MOVE_END };
-		enum  ROTXYZ { ROT_X, ROT_Y, ROT_Z, ROT_END };
+		enum  SHAPETYPE { VIBUFFER_BOX, VIBUFFER_STRIGHT, VIBUFFER_PLANECIRCLE, VIBUFFER_CONE, VIBUFFER_EXPLOSION, VIBUFFER_END };
+		enum  DIRXYZ { DIR_X, DIR_Y, DIR_Z, DIR_END };
 
-		SHAPETYPE		eShapeType = VIBUFFER_BOX;
-		MOVEDIR			eMoveDir = MOVE_DOWN;
-		ROTXYZ			eRotXYZ = ROT_Y;
+		SHAPETYPE	eShapeType = VIBUFFER_BOX;
+		DIRXYZ		eRotXYZ = DIR_Y;
 
-		_vector vDir = { 1.0f,0.0f,0.0f,0.0f };
-		_float4 vInitPos;
-		_float  fRange = 3.0f;
+		_float4		vDir = { 1.0f,0.0f,0.0f,0.0f };
+		_float		fRange = 3.0f;
+		_int		iCreateInstance = 0;
+		_int		iInstanceIndex = 0;
+
+		_bool	    bSpread = true; // if(Spread == true) => Out, 
+		_bool		bIsAlive;		// 파티클이 생존한 경우 true, 소멸한 경우 false
+		_float		fTimeDelta = 0.0f;
 
 		// Shape_Box  //
-		_float3 fMin = { 1.f,1.f,1.f };
-		_float3 fMax = { 1.f,1.f,1.f };
+		_float3     fMin = { 1.f,1.f,1.f };
+		_float3     fMax = { 1.f,1.f,1.f };
 		// ~Shape_Box //
 
-		// Shape_Sphere  //
-		_float fChargeRange;
-		_float fCircleRate;
-		// ~Shape_Sphere //
+		// Shape_Sprite  //
+		_float      fCreateRange = 1.0f;
+		_float      fDurationTime = 0.0f;
+		_float      fMaxTime = 0.0f;
+		_float4		vCirclePos = { 0.0f,0.0f,0.0f,1.0f };
+		// ~Shape_Sprite  //
 
 		// Shape_Cone  //
-		_float fMinY, fRangeY, fRangeOffset;
-		_float fStopMinTime, fStopMaxTime;
+		_float2     fConeRange = { 1.0f, 3.0f };
 		// ~Shape_Cone //
 
 		// Shape_Explosion  //
-// 		_float3		fMin = { 1.f,1.f,1.f };
-// 		_float3		fMax = { 1.f,1.f,1.f };
-		_float4		vOriginPos = { 0.0f,0.0f,0.0f,1.0f };		// 생성 위치 
-		_vector		vExplosionDir;	// 움직일 Dir
-
-		_float      fExplosionRange = 0.0f;
-	//	_float      fRangeOffset = 0.0f;
-		_float      fDegree = 0.0f;
-		_float      fDegreeOffset = 0.0f;
-		_float      fSizeRate = 1.0f;
-		_float      fSizeRateOffset = 0.0f;
-
-		_float3		vVelocity;		// 파티클 속도
-		_float		fDurationTime;	// 파티클의 현재나이
-		_bool		bIsAlive;		// 파티클이 생존한 경우 true, 소멸한 경우 false
+		_float4		vOriginPos = { 0.0f,0.0f,0.0f,1.0f }; // 생성 위치 
+		_vector		vExplosionDir;// 움직일 Dir
+		_float		fRangeOffset, fRangeY;
 		// ~Shape_Explosion //
 		
 	}POINTDESC;
@@ -62,22 +54,12 @@ public:
 	virtual ~CVIBuffer_Point_Instancing() = default;
 
 public:
-	POINTDESC::SHAPETYPE		Get_ShapeType() { return m_ePointDesc->eShapeType; }
-	void						Set_ShapeType(POINTDESC::SHAPETYPE eType) {
-		memcpy(&m_ePointDesc->eShapeType, &eType, sizeof(POINTDESC::SHAPETYPE));
+	POINTDESC*   Get_PointDesc() { return m_ePointDesc; }
+	void	     Set_PointDesc(POINTDESC* ePointDesc) {
+		memcpy(m_ePointDesc, ePointDesc, sizeof(POINTDESC) * m_iNumInstance);
 	}
 
-	POINTDESC::MOVEDIR			Get_MoveDir() { return m_ePointDesc->eMoveDir; }
-	void						Set_MoveDir(POINTDESC::MOVEDIR eType) {
-		memcpy(&m_ePointDesc->eMoveDir, &eType, sizeof(POINTDESC::MOVEDIR));
-	}
-
-	POINTDESC*  Get_PointDesc() { return m_ePointDesc; }
-	void	    Set_PointDesc(POINTDESC* ePointDesc) {
-		memcpy(m_ePointDesc, ePointDesc, sizeof(POINTDESC));
-	}
-
-	HRESULT			Set_ShapePosition(POINTDESC* ePointDesc);
+	HRESULT			Set_ShapePosition();
 
 public:
 	_double*		Get_Speeds() { return m_pSpeeds;}
@@ -104,7 +86,6 @@ private:
 
 	_float4			m_fPos = { 0.0f,0.0f,0.0f,1.0f };
 	_float2			m_fPSize = { 0.2f,0.2f };
-	VTXPOINT*       m_pVerices = nullptr;
 
 private:
 	POINTDESC*		m_ePointDesc;

@@ -50,24 +50,30 @@ void CEffect::Tick(_float fTimeDelta)
 		if (m_eEFfectDesc.bStart == true && 
 			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
 		{
-			_vector vNormalLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+			_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
 
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationX(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.fAngle != 0.0f )
+			{
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			}
 
 			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			vPos += vNormalLook * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+			if (m_eEFfectDesc.bSpread == true)
+				vPos += XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+			else
+				vPos -= XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
 
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 		}
 		else
 		{
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
-			m_eEFfectDesc.fPlayBbackTime = 0.0f;;
+			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 		}
 	}
 
