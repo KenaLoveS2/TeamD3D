@@ -57,6 +57,12 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	/* Fonts */
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Gulim"), TEXT("../Bin/Resources/fonts/Gulim.spritefont"))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/fonts/131.SpriteFont"))))
+		return E_FAIL;
+
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
