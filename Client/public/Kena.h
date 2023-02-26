@@ -41,9 +41,6 @@ public:
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
 	virtual void			Push_EventFunctions() override;
 
-public:
-	void					PivotMatrix_Synchronization();
-
 private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;

@@ -30,13 +30,13 @@ public:
 	HRESULT Initialize_Prototype(HANDLE hFile);
 	HRESULT Initialize(void* pArg);
 	void Compute_CombindTransformationMatrix();
+	CBone*				m_pParent = nullptr;
 
 private:
 	char				m_szName[MAX_PATH];
 	_float4x4			m_OffsetMatrix;
 	_float4x4			m_TransformMatrix;
 	_float4x4			m_CombindTransformMatrix;
-	CBone*				m_pParent = nullptr;
 
 	char				m_szParentName[MAX_PATH] = { 0, };
 

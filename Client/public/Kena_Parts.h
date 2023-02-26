@@ -40,7 +40,6 @@ public:
 
 public:
 	void						Model_Synchronization(_bool bPausePlay);
-	void						PivotMatrix_Synchronization();
 
 protected:
 	CRenderer*			m_pRendererCom = nullptr;

@@ -77,12 +77,6 @@ void CKena_Parts::Model_Synchronization(_bool bPausePlay)
 	m_pModelCom->Set_PausePlay(bPausePlay);
 }
 
-void CKena_Parts::PivotMatrix_Synchronization()
-{
-	CModel*	pPlayerModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-	m_pModelCom->Set_AdditionalPivot(pPlayerModel->Get_AdditionalPivotMatrix());
-}
-
 void CKena_Parts::Free()
 {
 	__super::Free();

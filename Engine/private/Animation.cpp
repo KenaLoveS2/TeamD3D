@@ -17,7 +17,6 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	, m_fBlendDuration(rhs.m_fBlendDuration)
 	, m_TickPerSecond(rhs.m_TickPerSecond)
 	, m_eAnimType(rhs.m_eAnimType)
-	, m_matCelibrate(rhs.m_matCelibrate)
 {
 	strcpy_s(m_szName, rhs.m_szName);
 
@@ -188,7 +187,13 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		if (true == m_isFinished)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
+		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		{
+			//m_Channels[i]->Set_BoneTranfromMatrix(m_matCelibrate);
+			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
+		}
+		else
+			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
 	}
 
 	if (m_isFinished && m_isLooping)
@@ -218,7 +223,13 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 		if (true == m_isFinished)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
+		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		{
+			//m_Channels[i]->Set_BoneTranfromMatrix(m_matCelibrate);
+			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, true);
+		}
+		else
+			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
 	}
 }
 

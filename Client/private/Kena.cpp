@@ -238,10 +238,7 @@ void CKena::ImGui_ShaderValueProperty()
 void CKena::Update_Child()
 {
 	for (auto& pPart : m_vecPart)
-	{
 		pPart->Model_Synchronization(m_pModelCom->Get_PausePlay());
-		pPart->PivotMatrix_Synchronization();
-	}
 }
 
 HRESULT CKena::Call_EventFunction(const string & strFuncName)
@@ -252,12 +249,6 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 void CKena::Push_EventFunctions()
 {
 	Test(true, 0.f);
-}
-
-void CKena::PivotMatrix_Synchronization()
-{
-	for (auto& pPart : m_vecPart)
-		pPart->PivotMatrix_Synchronization();
 }
 
 HRESULT CKena::Ready_Parts()

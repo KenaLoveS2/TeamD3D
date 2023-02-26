@@ -29,7 +29,6 @@ CModel::CModel(const CModel & rhs)
 	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
-	, m_AdditionalPivotMatrix(rhs.m_AdditionalPivotMatrix)
 	, m_dwBeginBoneData(rhs.m_dwBeginBoneData)
 {
 	for (auto& Material : m_Materials)
@@ -85,7 +84,6 @@ void CModel::Set_PlayTime(_double dPlayTime)
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
-	m_AdditionalPivotMatrix = _smatrix::Identity;
 
 	m_wstrModelFilePath = pModelFilePath;
 
@@ -518,21 +516,6 @@ void CModel::Imgui_RenderProperty()
 			ImGui::Separator();
 			ImGui::BulletText("Event");
 			pAnimation->ImGui_RenderEvents(iSelectEvent);
-
-			ImGui::Separator();
-			ImGui::BulletText("Celibrate Matrix");
-
-			_smatrix&		matCelibrate = pAnimation->Get_CelibrateMatrix();
-			_float vTranslation[3], vRotation[3], vScale[3];
-
-			ImGuizmo::DecomposeMatrixToComponents((_float*)(&matCelibrate), vTranslation, vRotation, vScale);
-			if (ImGui::DragFloat3("Translate", vTranslation, 0.1f))
-				m_pOwner->Update_Child();
-			if (ImGui::DragFloat3("Rotate", vRotation, 0.1f, -180.f, 180.f))
-				m_pOwner->Update_Child();
-			if (ImGui::DragFloat3("Scale", vScale, 0.1f))
-				m_pOwner->Update_Child();
-			ImGuizmo::RecomposeMatrixFromComponents(vTranslation, vRotation, vScale, (_float*)(&matCelibrate));
 		}
 		
 		if (bSearchMode == true)
@@ -741,16 +724,10 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 			m_Animations[iAnimIndex]->Reset_Animation();
 			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 			m_fBlendCurTime = 0.f;
-			m_AdditionalPivotMatrix = m_Animations[iAnimIndex]->Get_CelibrateMatrix();
 		}
 
 		m_iCurrentAnimIndex = iAnimIndex;
 	}
-}
-
-void CModel::Set_AdditionalPivot(_fmatrix matPivot)
-{
-	m_Animations[m_iCurrentAnimIndex]->Get_CelibrateMatrix() = matPivot;
 }
 
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
@@ -835,7 +812,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 		{
 			_float4x4		BoneMatrices[800];
 
-			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix), m_AdditionalPivotMatrix);
+			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 			
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
 		}		

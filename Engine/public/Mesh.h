@@ -29,7 +29,7 @@ public:
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
 	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
-	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix, _fmatrix AdditionalPivotMatrix);
+	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
 private:
 	CModel::TYPE		m_eType;

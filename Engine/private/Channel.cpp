@@ -61,6 +61,11 @@ HRESULT CChannel::Load_Channel(HANDLE & hFile, DWORD & dwByte)
 }
 
 
+void CChannel::Set_BoneTranfromMatrix(_fmatrix matTransform)
+{
+	m_pBone->m_pParent->Set_TransformMatrix(matTransform);
+}
+
 /* 특정애니메이션ㄴ에서 사용되는 뼈. */
 HRESULT CChannel::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
@@ -112,7 +117,7 @@ HRESULT CChannel::Synchronization_BonePtr(CModel * pModel)
 }
 
 /* 현재 애니메이션이 재생된 시간을 얻어온다. PlayTime */
-void CChannel::Update_TransformMatrix(_float PlayTime)
+void CChannel::Update_TransformMatrix(_float PlayTime, _bool isRootBone)
 {
 	_vector			vScale;
 	_vector			vRotation;
@@ -156,12 +161,15 @@ void CChannel::Update_TransformMatrix(_float PlayTime)
 		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
 
-	TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+	if (isRootBone == false)
+	{
+		TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 
-	m_pBone->Set_TransformMatrix(TransformMatrix);	
+		m_pBone->Set_TransformMatrix(TransformMatrix);
+	}
 }
 
-void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio)
+void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone)
 {
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, m_pBone->Get_TransformMatrix());
@@ -211,10 +219,17 @@ void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio)
 	vPosition = XMVectorLerp(vBasePos, vPosition, fBlendRadio);
 	vPosition = XMVectorSetW(vPosition, 1.f);
 
+	if (isRootBone == true)
+	{
+		//vPosition = XMVectorSet(0.f, XMVectorGetY(vPosition), 0.f, 1.f);
+		vRotation = vBaseRot;
+	}
+	else
+	{
+		_matrix TransformMatrix = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vRotation, vPosition);
 
-	_matrix TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
-
-	m_pBone->Set_TransformMatrix(TransformMatrix);
+		m_pBone->Set_TransformMatrix(TransformMatrix);
+	}
 }
 
 void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
