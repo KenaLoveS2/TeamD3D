@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/W3/Materials/MI_CraterSpike_01.MI_CraterSpike_01'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/W3/Materials/MI_CraterSpike_01.MI_CraterSpike_01'
+        MaterialSlotName = 1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 33194.7, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-34.8477, Y=-185.154, Z=12669 }
+    BoxExtent = { X=9477.49, Y=8044.55, Z=10739 }
+    SphereRadius = 14821.3
+}

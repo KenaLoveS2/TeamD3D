@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/Ledges/MI_Cliff_Ledge_01.MI_Cliff_Ledge_01'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/Ledges/MI_Cliff_Ledge_01.MI_Cliff_Ledge_01'
+        MaterialSlotName = SM_Cliff_Ledge_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 556.176, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.897827, Y=0.600189, Z=0.825851 }
+    BoxExtent = { X=81.6633, Y=84.1198, Z=184.102 }
+    SphereRadius = 204.942
+}

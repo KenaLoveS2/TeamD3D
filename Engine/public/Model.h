@@ -27,12 +27,14 @@ public:
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
 	void				Set_AnimIndex(_uint iAnimIndex, _int iBendAnimIndex = -1);
 	void				Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
-
+	CModel::TYPE		Get_Type()const { return m_eType; }
 	/*for.Instancing*/
 	const	_bool		Get_IStancingModel() const { return m_bIsInstancing; }
 	vector<_float4x4*>*	Get_InstancePos() { return &m_pInstancingMatrix; }
 	void				Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
 	/*~for.Instancing*/
+	/*for.Lod*/
+	const	_bool 		Get_IsLodModel()const { return m_bIsLodModel; }
 public:
 	HRESULT				Save_Model(const wstring& wstrSaveFileDirectory);
 	HRESULT				Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
@@ -88,6 +90,8 @@ private:
 	vector<_float4x4*>			m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
 	_uint						m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
+	/*For.Lod*/
+	_bool														m_bIsLodModel = false;
 #ifdef _DEBUG
 	class	CTransform*										m_pInstanceTransform = nullptr;
 #endif

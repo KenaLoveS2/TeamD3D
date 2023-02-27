@@ -194,7 +194,7 @@ void CAnimation::Update_Bones(_float fTimeDelta, CAnimation * pBlendAnim)
 	if (pBlendAnim != nullptr)
 	{
 		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
-
+		
 		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
 			pBlendAnim->m_isFinished = true;
 	}
