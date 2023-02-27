@@ -231,18 +231,12 @@ void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
-// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
-// 		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_FORWARD);
-// 	else
-		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
+	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
-// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
-// 		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_FORWARD);
-// 	else
-		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
+	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
@@ -252,18 +246,12 @@ void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
-// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
-// 		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_BACKWARD);
-// 	else
-		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
+	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
-// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
-// 		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_BACKWARD);
-// 	else
-		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
+	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)

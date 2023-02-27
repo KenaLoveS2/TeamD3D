@@ -5,7 +5,7 @@
 
 extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
-extern bool g_bFrmaeLimit;
+extern bool g_bFrameLimit;
 
 #define FOR_MAPTOOL
 #undef FOR_MAPTOOL
@@ -16,7 +16,7 @@ namespace Client
 
 	static void Set_FrameLimit(bool bLimitFlag)
 	{
-		g_bFrmaeLimit = bLimitFlag;
+		g_bFrameLimit = bLimitFlag;
 	}
 }
 

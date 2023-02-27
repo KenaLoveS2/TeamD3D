@@ -111,7 +111,7 @@ HRESULT CChannel::Synchronization_BonePtr(CModel * pModel)
 {
 	m_pBone = pModel->Get_BonePtr(m_szName);
 	if (m_pBone == nullptr) return S_FALSE;
-	int a = 0;
+
 	Safe_AddRef(m_pBone);
 	return S_OK;
 }
