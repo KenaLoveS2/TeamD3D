@@ -822,11 +822,19 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 		{
 			m_iPreAnimIndex = m_iCurrentAnimIndex;
 			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
-			m_Animations[iAnimIndex]->Reset_Animation();
+
+			if (iAnimIndex != m_iPreBlendAnimIndex)
+			{
+				if (m_iPreAnimIndex != iBlendAnimIndex)
+					m_Animations[iAnimIndex]->Reset_Animation();
+				else
+					m_Animations[iAnimIndex]->Set_PlayTime(m_Animations[m_iPreAnimIndex]->Get_PlayTime());
+			}
+
 			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 			m_fBlendCurTime = 0.f;
 
-			if (iBlendAnimIndex != -1)
+			if (iBlendAnimIndex != -1 && m_iPreAnimIndex != iBlendAnimIndex)
 				m_Animations[iBlendAnimIndex]->Reset_Animation();
 		}
 		else
@@ -838,7 +846,7 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 				m_fBlendCurTime = 0.f;
 
 				if (iBlendAnimIndex != -1)
-					m_Animations[iBlendAnimIndex]->Reset_Animation();
+					m_Animations[iBlendAnimIndex]->Set_PlayTime(m_Animations[m_iCurrentAnimIndex]->Get_PlayTime());
 			}
 		}
 
@@ -876,23 +884,19 @@ void CModel::Play_Animation(_float fTimeDelta)
 
 		if (m_iPreBlendAnimIndex != -1)
 		{
-			if (m_iCurrentAnimIndex != m_iPreBlendAnimIndex && m_iBlendAnimIndex != m_iPreBlendAnimIndex)
-			{
-				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
-			}
+			m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
+
+			if (m_iPreBlendAnimIndex == m_iCurrentAnimIndex || m_iPreBlendAnimIndex == m_iBlendAnimIndex)
+				m_Animations[m_iPreBlendAnimIndex]->Reverse_Play(fTimeDelta);
 		}
 		else
-		{
-			if (m_iPreAnimIndex == m_iCurrentAnimIndex)
-				m_Animations[m_iPreAnimIndex]->Update_Bones(0.f);
-			else
-				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
-		}
+			m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
+
+		if (m_iPreAnimIndex == m_iCurrentAnimIndex || m_iPreAnimIndex == m_iBlendAnimIndex)
+			m_Animations[m_iPreAnimIndex]->Reverse_Play(fTimeDelta);
 
 		if (m_iBlendAnimIndex != -1)
-		{
 			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
-		}
 		else
 			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
 

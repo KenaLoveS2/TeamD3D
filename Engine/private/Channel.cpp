@@ -347,6 +347,13 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
 
+void CChannel::Set_KeyFrameIndex(_double dPlayTime)
+{
+	m_iCurrentKeyFrameIndex = 0;
+
+	while (dPlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
+		++m_iCurrentKeyFrameIndex;
+}
 
 CChannel * CChannel::Create(HANDLE hFile, CModel* pModel)
 {
