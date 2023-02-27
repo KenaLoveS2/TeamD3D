@@ -173,6 +173,7 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\Public\ControlMove.h" />
+    <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
@@ -204,6 +206,7 @@
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
+    <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
@@ -231,6 +234,7 @@
     <ClInclude Include="..\public\UI_NodeHUDRot.h" />
     <ClInclude Include="..\public\UI_NodeHUDShield.h" />
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
+    <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -238,12 +242,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
+    <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
@@ -268,6 +274,7 @@
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
+    <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
@@ -295,6 +302,7 @@
     <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
+    <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -119,6 +119,8 @@ void CImgui_MapEditor::Imgui_SelectOption()
 					continue;
 				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_IStancingModel() == true)	// nInstacing
 					continue;
+				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_Type() != CModel::TYPE_NONANIM)	// nInstacing
+					continue;
 
 				if (FindModelTag != "")
 				{
@@ -162,7 +164,50 @@ void CImgui_MapEditor::Imgui_SelectOption()
 				
 				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_IStancingModel()==false)	// nInstacing
 					continue;
+				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_Type() != CModel::TYPE_NONANIM)	// nInstacing
+					continue;
 
+				if (FindModelTag != "")
+				{
+					wstring  Temp = ProtoPair.first;
+					string str = CUtile::WstringToString(Temp);
+
+					if (str.find(FindModelTag, 25) != std::string::npos)
+					{
+						CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+
+						if (ImGui::Selectable(szViewName, bModelSelected))
+						{
+							m_wstrModelName = ProtoPair.first;
+							m_bModelChange = true;
+						}
+					}
+				}
+				else
+				{
+					CUtile::WideCharToChar(ProtoPair.first, szProtoName);
+					sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+					if (ImGui::Selectable(szViewName, bModelSelected))
+					{
+						m_wstrModelName = ProtoPair.first;			// 리스트 박스를 누르면 현재 모델프로토 타입 이름을 가져옴
+						m_bModelChange = true;
+					}
+				}
+			}
+			ImGui::EndListBox();
+		}
+		ImGui::Separator();
+		if (ImGui::BeginListBox("#Mode_Anim_Proto#"))
+		{
+			char szViewName[512], szProtoName[256];
+			const bool bModelSelected = false;
+			for (auto& ProtoPair : CGameInstance::GetInstance()->Get_ComponentProtoType()[CGameInstance::GetInstance()->Get_CurLevelIndex()])
+			{
+				if (dynamic_cast<CModel*>(ProtoPair.second) == nullptr)	// nInstacing
+					continue;
+				if (dynamic_cast<CModel*>(ProtoPair.second)->Get_Type() != CModel::TYPE_ANIM)	
+					continue;
 
 				if (FindModelTag != "")
 				{
@@ -195,6 +240,7 @@ void CImgui_MapEditor::Imgui_SelectOption()
 			ImGui::EndListBox();
 		}
 	}
+
 
 
 
@@ -451,8 +497,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		string	   strSaveFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 		char   szDash[128] = "\\";
 		strcat_s(szDash, strSaveFileName.c_str());
-		strSaveFileName += string(szDash);
-		//strSaveFileName += ".json";
+		strSaveDirectory += string(szDash);
 	}
 
 	ofstream      file(strSaveDirectory.c_str());
@@ -572,6 +617,25 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		string	AMBIENT_OCCLUSION_path = CUtile::WstringToString(TextureFilePaths->AMBIENT_OCCLUSION_path);
 		jChild["24_AMBIENT_OCCLUSION_path"] = AMBIENT_OCCLUSION_path;
 
+		CModel* pModel = static_cast<CModel*>(pObject.second->Find_Component(L"Com_Model"));
+		
+		if (pModel != nullptr &&  true == pModel->Get_IStancingModel())
+		{
+			vector<_float4x4*> SaveInsPosMatrixVec = (*pModel->Get_InstancePos());
+			size_t InstancingPosSize = SaveInsPosMatrixVec.size();
+			for (size_t i = 0; i < InstancingPosSize; ++i)
+			{
+				_float4x4 fInsMaxtrix = *SaveInsPosMatrixVec[i];
+				for (int j = 0; j < 16; ++j)
+				{
+					fElement = 0.f;
+					memcpy(&fElement, (float*)&fInsMaxtrix + j, sizeof(float));
+					jChild["25_Instancing_Transform_matrix"].push_back(fElement);
+				}
+			}
+		}
+	
+
 		jEnviromentObjList["1_Data"].push_back(jChild);
 		szProtoObjTag = "";
 		szModelTag = "";
@@ -644,7 +708,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 			StrComponentVec.push_back(strTag);
 
 		float	fElement = 0.f;
-		int k = 0;
+		int		k = 0;
 		for (float fElement : jLoadChild["7_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
@@ -672,6 +736,21 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_COMP_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
 		jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
+	
+		vector<_float4x4>	vecInstnaceMatrixVec;
+		_int MatrixNumber = 0;
+		_float4x4 fInsMaxtrix;
+		for (float fElement : jLoadChild["25_Instancing_Transform_matrix"])
+		{
+			memcpy(((float*)&fInsMaxtrix) + (MatrixNumber++), &fElement, sizeof(float));
+		
+			if (MatrixNumber >= 16)
+			{
+				vecInstnaceMatrixVec.push_back(fInsMaxtrix);
+				MatrixNumber = 0;
+			}
+		}
+			
 		m_wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		m_wstrModelName.assign(szModelTag.begin(), szModelTag.end());
 		m_wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
@@ -694,7 +773,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-	
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
 
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
@@ -702,6 +781,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		iLoadChapterType = 0;		pLoadObject = nullptr;
 		StrComponentVec.clear();
 		strFilePaths_arr.fill("");
+		vecInstnaceMatrixVec.clear();
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -894,6 +974,21 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_COMP_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
 		jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
+		
+		vector<_float4x4>	vecInstnaceMatrixVec;
+		_int MatrixNumber = 0;
+		_float4x4 fInsMaxtrix;
+		for (float fElement : jLoadChild["25_Instancing_Transform_matrix"])
+		{
+			memcpy(((float*)&fInsMaxtrix) + (MatrixNumber++), &fElement, sizeof(float));
+
+			if (MatrixNumber >= 16)
+			{
+				vecInstnaceMatrixVec.push_back(fInsMaxtrix);
+				MatrixNumber = 0;
+			}
+		}
+
 		wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		wstrModelName.assign(szModelTag.begin(), szModelTag.end());
 		wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
@@ -917,7 +1012,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -1058,6 +1153,7 @@ void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
+#ifdef _DEBUG
 	if (pSelectEnviObj == nullptr)
 		return;
 	
@@ -1072,6 +1168,18 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix());
 
 	ImGui::End();
+#endif
+}
+
+void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)
+{
+	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
+	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
+	
+	if (false == pModel->Get_IStancingModel())
+		return;
+
+	pModel->Set_InstancePos(vecMatrixVec);
 
 }
 
