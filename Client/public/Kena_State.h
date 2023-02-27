@@ -395,23 +395,63 @@ private:
 	CTransform::DIRECTION	m_eDir = CTransform::DIR_END;
 	CTransform::DIRECTION	m_ePreDir = CTransform::DIR_END;
 
+	_matrix					m_matPivotBackUp;
+
 private:
 	HRESULT					SetUp_State_Idle();
 	HRESULT					SetUp_State_Run();
+	HRESULT					SetUp_State_Aim();
 
 private:
 	void						Start_Idle(_float fTimeDelta);
 	void						Start_Run(_float fTimeDelta);
+	void						Start_Aim_Into(_float fTimeDelta);
+	void						Start_Aim_Loop(_float fTimeDelta);
+	void						Start_Aim_Return(_float fTimeDelta);
+	void						Start_Aim_Run(_float fTimeDelta);
+	void						Start_Aim_Run_Forward(_float fTimeDelta);
+	void						Start_Aim_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Aim_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Aim_Run_Backward(_float fTimeDelta);
+	void						Start_Aim_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Aim_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Aim_Run_Left(_float fTimeDelta);
+	void						Start_Aim_Run_Right(_float fTimeDelta);
 
 private:
 	void						Tick_Idle(_float fTimeDelta);
 	void						Tick_Run(_float fTimeDelta);
+	void						Tick_Aim_Into(_float fTimeDelta);
+	void						Tick_Aim_Loop(_float fTimeDelta);
+	void						Tick_Aim_Return(_float fTimeDelta);
+	void						Tick_Aim_Run_Forward(_float fTimeDelta);
+	void						Tick_Aim_Run_Forward_Left(_float fTimeDelta);
+	void						Tick_Aim_Run_Forward_Right(_float fTimeDelta);
+	void						Tick_Aim_Run_Backward(_float fTimeDelta);
+	void						Tick_Aim_Run_Backward_Left(_float fTimeDelta);
+	void						Tick_Aim_Run_Backward_Right(_float fTimeDelta);
+	void						Tick_Aim_Run_Left(_float fTimeDelta);
+	void						Tick_Aim_Run_Right(_float fTimeDelta);
 
 private:
 	void						End_Idle(_float fTimeDelta);
 	void						End_Run(_float fTimeDelta);
+	void						End_Aim_Into(_float fTimeDelta);
+	void						End_Aim_Loop(_float fTimeDelta);
+	void						End_Aim_Return(_float fTimeDelta);
+	void						End_Aim_Run_Forward(_float fTimeDelta);
+	void						End_Aim_Run_Forward_Left(_float fTimeDelta);
+	void						End_Aim_Run_Forward_Right(_float fTimeDelta);
+	void						End_Aim_Run_Backward(_float fTimeDelta);
+	void						End_Aim_Run_Backward_Left(_float fTimeDelta);
+	void						End_Aim_Run_Backward_Right(_float fTimeDelta);
+	void						End_Aim_Run_Left(_float fTimeDelta);
+	void						End_Aim_Run_Right(_float fTimeDelta);
 
 private:	/* Changer */
+	_bool	Animation_Finish();
+	_bool	Direction_Change();
+
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();
 	_bool	KeyInput_W();
@@ -433,6 +473,7 @@ private:	/* Changer */
 	_bool	MouseDown_Middle();
 
 	_bool	KeyUp_E();
+	_bool	KeyUp_LShift();
 
 private:
 	void	Move(_float TimeDelta, CTransform::DIRECTION eDir);

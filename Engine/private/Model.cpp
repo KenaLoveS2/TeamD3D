@@ -83,6 +83,11 @@ const _double & CModel::Get_PlayTime()
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }
 
+const _bool & CModel::Get_AnimationFinish() const
+{
+	return m_Animations[m_iCurrentAnimIndex]->IsFinished();
+}
+
 void CModel::Set_PlayTime(_double dPlayTime)
 {
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
@@ -282,21 +287,65 @@ void CModel::Imgui_RenderProperty()
 		static _bool	bAddEvent = false;
 		CAnimation*	pAnimation = nullptr;
 		char**			ppAnimationTag = new char*[m_iNumAnimations];
+		static string	strSearchTag = "";
+		_bool			bSearchMode = false;
 		char**			ppFunctionTags = nullptr;
 
+		string			LastSearchTag = strSearchTag;
+		ImGui::InputText("Search", &strSearchTag);
+		if (strSearchTag != "")
+			bSearchMode = true;
+		else
+			bSearchMode = false;
+
+		if (LastSearchTag != strSearchTag)
+			iSelectAnimation = -1;
+
+		string		strCompareTag = "";
+		_uint		iSearchedCount = 0;
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 		{
-			_uint	iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
-			ppAnimationTag[i] = new char[iTagLength];
-			sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
-		}
+			_uint	iTagLength = 0;
 
-		ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+			if (bSearchMode)
+			{
+				strCompareTag = m_Animations[i]->Get_Name();
+
+				if (strCompareTag.find(strSearchTag) != string::npos)
+				{
+					iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+					ppAnimationTag[iSearchedCount] = new char[iTagLength];
+					sprintf_s(ppAnimationTag[iSearchedCount++], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
+				}
+				else
+					continue;
+			}
+			else
+			{
+				iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+				ppAnimationTag[i] = new char[iTagLength];
+				sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
+			}
+		}
+		if (bSearchMode == true)
+			ImGui::ListBox("Animation Search", &iSelectAnimation, ppAnimationTag, (_int)iSearchedCount);
+		else
+			ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+
 		if (ImGui::Button("Split All Animation Tag"))
 		{
-			for (_uint i = 0; i < m_iNumAnimations; ++i)
-				Safe_Delete_Array(ppAnimationTag[i]);
-			Safe_Delete_Array(ppAnimationTag);
+			if (bSearchMode == true)
+			{
+				for (_uint i = 0; i < iSearchedCount; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
+			else
+			{
+				for (_uint i = 0; i < m_iNumAnimations; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
 
 			iSelectAnimation = -1;
 			for (_uint i = 0; i < m_iNumAnimations; ++i)
@@ -308,19 +357,55 @@ void CModel::Imgui_RenderProperty()
 
 			return;
 		}
+		static _double	dMasterSpeed = 24.0;
+		ImGui::InputDouble("Default Speed = 24.0", &dMasterSpeed, 0.5, 1.0, "%.3f");
+		if (ImGui::Button("Change All Animations Speed"))
+		{
+			for (auto& pAnim : m_Animations)
+				pAnim->Get_AnimationTickPerSecond() = dMasterSpeed;
+		}
 
 		if (iSelectAnimation != -1)
 		{
 			static _bool	bReName = false;
 			static char	szNewName[MAX_PATH] = "";
-			pAnimation = m_Animations[iSelectAnimation];
+
+			if (bSearchMode == true)
+			{
+				for (auto& pAnim : m_Animations)
+				{
+					if (!strcmp(pAnim->Get_Name(), ppAnimationTag[iSelectAnimation]))
+					{
+						pAnimation = pAnim;
+						break;
+					}
+				}
+			}
+			else
+				pAnimation = m_Animations[iSelectAnimation];
 
 			if (ImGui::Button("Play"))
 			{
 				m_bPausePlay = false;
-				Set_AnimIndex(iSelectAnimation);
-				m_Animations[iSelectAnimation]->Reset_Animation();
-				m_pOwner->Set_AnimationIndex(iSelectAnimation);
+				pAnimation->Reset_Animation();
+
+				if (bSearchMode == true)
+				{
+					for (_uint i = 0; i < m_iNumAnimations; ++i)
+					{
+						if (pAnimation == m_Animations[i])
+						{
+							Set_AnimIndex(i);
+							m_pOwner->Set_AnimationIndex(i);
+							break;
+						}
+					}
+				}
+				else
+				{
+					Set_AnimIndex(iSelectAnimation);
+					m_pOwner->Set_AnimationIndex(iSelectAnimation);
+				}
 				m_pOwner->Update_Child();
 			}
 			ImGui::SameLine();
@@ -394,6 +479,9 @@ void CModel::Imgui_RenderProperty()
 				}
 			}
 
+			ImGui::Separator();
+			const _uint&		iChannelCount = pAnimation->Get_ChannelCount();
+			ImGui::InputInt("Num of Channel", (_int*)&iChannelCount, 0, 0, ImGuiInputTextFlags_ReadOnly);
 			ImGui::Separator();
 			_double&	dPlayTime = pAnimation->Get_PlayTime();
 			ImGui::InputDouble("Current Play Time", &dPlayTime, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
@@ -469,10 +557,19 @@ void CModel::Imgui_RenderProperty()
 			ImGui::BulletText("Event");
 			pAnimation->ImGui_RenderEvents(iSelectEvent);
 		}
-
-		for (_uint i = 0; i < m_iNumAnimations; ++i)
-			Safe_Delete_Array(ppAnimationTag[i]);
-		Safe_Delete_Array(ppAnimationTag);
+		
+		if (bSearchMode == true)
+		{
+			for (_uint i = 0; i < iSearchedCount; ++i)
+				Safe_Delete_Array(ppAnimationTag[i]);
+			Safe_Delete_Array(ppAnimationTag);
+		}
+		else
+		{
+			for (_uint i = 0; i < m_iNumAnimations; ++i)
+				Safe_Delete_Array(ppAnimationTag[i]);
+			Safe_Delete_Array(ppAnimationTag);
+		}
 	}
 
 	if (m_bIsInstancing == true)
@@ -703,9 +800,9 @@ void CModel::Reset_Animation()
 	m_Animations[m_iCurrentAnimIndex]->Reset_Animation();
 }
 
-void CModel::Set_AnimIndex(_uint iAnimIndex)
+void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 {
-	if (iAnimIndex >= m_iNumAnimations)
+	if (iAnimIndex >= m_iNumAnimations || iBlendAnimIndex >= (_int)m_iNumAnimations)
 		return;
 
 	CAnimation::ANIMTYPE	eType = m_Animations[iAnimIndex]->Get_AnimationType();
@@ -723,11 +820,29 @@ void CModel::Set_AnimIndex(_uint iAnimIndex)
 		if (m_iCurrentAnimIndex != iAnimIndex)
 		{
 			m_iPreAnimIndex = m_iCurrentAnimIndex;
+			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+			m_Animations[iAnimIndex]->Reset_Animation();
 			m_fBlendDuration = m_Animations[iAnimIndex]->Get_BlendDuration();
 			m_fBlendCurTime = 0.f;
+
+			if (iBlendAnimIndex != -1)
+				m_Animations[iBlendAnimIndex]->Reset_Animation();
+		}
+		else
+		{
+			if (iBlendAnimIndex != m_iBlendAnimIndex)
+			{
+				m_iPreAnimIndex = m_iCurrentAnimIndex;
+				m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+				m_fBlendCurTime = 0.f;
+
+				if (iBlendAnimIndex != -1)
+					m_Animations[iBlendAnimIndex]->Reset_Animation();
+			}
 		}
 
 		m_iCurrentAnimIndex = iAnimIndex;
+		m_iBlendAnimIndex = iBlendAnimIndex;
 	}
 }
 
@@ -757,14 +872,37 @@ void CModel::Play_Animation(_float fTimeDelta)
 	if (m_fBlendCurTime < m_fBlendDuration)
 	{
 		_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
-		m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
+
+		if (m_iPreBlendAnimIndex != -1)
+		{
+			if (m_iCurrentAnimIndex != m_iPreBlendAnimIndex && m_iBlendAnimIndex != m_iPreBlendAnimIndex)
+			{
+				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
+			}
+		}
+		else
+		{
+			if (m_iPreAnimIndex == m_iCurrentAnimIndex)
+				m_Animations[m_iPreAnimIndex]->Update_Bones(0.f);
+			else
+				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
+		}
+
+		if (m_iBlendAnimIndex != -1)
+		{
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
+		}
+		else
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
 
 		m_fBlendCurTime += fTimeDelta;
 	}
 	else
 	{
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+		if (m_iBlendAnimIndex != -1)
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iBlendAnimIndex]);
+		else
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
 	}
 
 	if (m_iAdditiveAnimIndex != 0)
