@@ -166,6 +166,7 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
       <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
       <UniqueIdentifier>{b0f71ada-673e-4942-88cc-0efdc42ed7ec}</UniqueIdentifier>
     </Filter>
@@ -180,6 +181,19 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\04. Events\Transform">
       <UniqueIdentifier>{7336f2ec-35d5-46d2-8e48-32e8c207ebf5}</UniqueIdentifier>
+=======
+    <Filter Include="02.GameObjects\Envrioment\Editor">
+      <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\NonAnim">
+      <UniqueIdentifier>{0921d749-fa88-4bfc-82d4-3b535bda739b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Anim">
+      <UniqueIdentifier>{3abcfc56-e04d-4933-bc6d-ea12a92bfd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Test">
+      <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
+>>>>>>> parent of 1397ece (Particle Effect + Rect Move function + Trail Effect)
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -300,12 +314,6 @@
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ControlMove.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
@@ -362,6 +370,7 @@
     <ClInclude Include="..\Public\Tree.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
+<<<<<<< HEAD
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasAim.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
@@ -377,6 +386,44 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeAimBomb.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+=======
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Door_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PulseStone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wall.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base_Ground.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+>>>>>>> parent of 1397ece (Particle Effect + Rect Move function + Trail Effect)
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,12 +523,6 @@
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ControlMove.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
@@ -538,6 +579,7 @@
     <ClCompile Include="..\Private\Tree.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
+<<<<<<< HEAD
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasAim.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
@@ -553,6 +595,44 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+=======
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Door_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PulseStone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wall.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Base_Ground.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+>>>>>>> parent of 1397ece (Particle Effect + Rect Move function + Trail Effect)
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -608,6 +688,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
