@@ -5,7 +5,9 @@
 #include "Utile.h"
 #include "UI_Canvas.h"
 #include "UI_Node.h"
-#include "UI_Event_Barguage.h"
+#include "UI_Event_Guage.h"
+#include "UI_Event_ChangeImg.h"
+#include "UI_Event_Animation.h"
 
 /* Defines for Imgui */
 #define		AND			ImGui::SameLine()
@@ -133,7 +135,13 @@ void CImgui_UIEditor::EventList()
 		switch (selected_Event)
 		{
 		case CUI_ClientManager::EVENT_BARGUAGE:
-			m_pUI->Add_Event(CUI_Event_Barguage::Create());
+			m_pUI->Add_Event(CUI_Event_Guage::Create());
+			break;
+		case CUI_ClientManager::EVENT_CHANGEIMG:
+			m_pUI->Add_Event(CUI_Event_ChangeImg::Create());
+			break;
+		case CUI_ClientManager::EVENT_ANIMATION:
+			m_pUI->Add_Event(CUI_Event_Animation::Create(m_pUI));
 			break;
 		}
 	}

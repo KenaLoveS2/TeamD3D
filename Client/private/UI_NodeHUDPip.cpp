@@ -2,7 +2,7 @@
 #include "..\public\UI_NodeHUDPip.h"
 #include "GameInstance.h"
 #include "UI_Event_ChangeImg.h"
-#include "UI_Event_Barguage.h"
+#include "UI_Event_Guage.h"
 
 CUI_NodeHUDPip::CUI_NodeHUDPip(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -42,7 +42,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(275.f, 23.f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(66.f, 66.f, 1.f));
 		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
 	}
 
@@ -57,7 +57,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
 	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Barguage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
 
 	return S_OK;
@@ -67,8 +67,7 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-
-	if (static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled() 
+	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
 		&& !m_bFullFilled)
 	{
 		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
@@ -76,8 +75,8 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 	}
 
 
-	_bool test = static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
-	if (m_bFullFilled &&static_cast<CUI_Event_Barguage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	_bool test = static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
+	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
 	{
 		m_bFullFilled = false;
 	}
@@ -86,27 +85,12 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 void CUI_NodeHUDPip::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_NodeHUDPip::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeHUDPip");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -123,11 +107,6 @@ HRESULT CUI_NodeHUDPip::SetUp_Components()
 
 	/* VIBuffer_Rect */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
-		return E_FAIL;
-
-	/* Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDPipGauge"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pTextureCom[0])))
 		return E_FAIL;
 
 	return S_OK;
@@ -151,7 +130,7 @@ HRESULT CUI_NodeHUDPip::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))
 			return E_FAIL;
 	}
 

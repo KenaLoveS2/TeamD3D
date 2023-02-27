@@ -23,11 +23,12 @@ public:
 		_uint				iRoomIndex = 0;
 		CHAPTER		eChapterType = CHAPTER_END;
 		_int				iCurLevel = 0;				//이건 툴에서만 일단.
-		vector<const _tchar*>				vecStr_textureFilePath;
+		aiTextureType_FilePath			AI_textureFilePaths;
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
 			ObjectDesc.TransformDesc.fSpeedPerSec = 0;
+
 		}
 
 	} ENVIROMENT_DESC;		/*wstring 이  있는 애들은 zeromemory를 쓰지마라*/
@@ -47,8 +48,8 @@ public:
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 
-	void									Add_TexturePath(const _tchar * TexturePath);
-	vector<const _tchar*>*	Get_TexturePaths() { return &(m_EnviromentDesc.vecStr_textureFilePath); }
+	void									Add_TexturePath(const _tchar * TexturePath, aiTextureType Type);
+	aiTextureType_FilePath*	Get_TexturePaths() { return &(m_EnviromentDesc.AI_textureFilePaths); }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -60,6 +61,9 @@ public:
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
 	virtual  void				Imgui_RenderComponentProperties()override;
+
+protected:
+	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;

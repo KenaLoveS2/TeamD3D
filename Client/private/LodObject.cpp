@@ -170,3 +170,6 @@ void CLodObject::Free()
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
 }
+
+
+

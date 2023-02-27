@@ -239,6 +239,49 @@ PS_OUT PS_MAIN_LOADING(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	float4	vMask	 = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	float3 center = float3(0.5f, 0.5f, 0);
+	float3 top = float3(0.5f, 0, 0);
+	float3 curUV = float3(In.vTexUV.xy, 0);
+	float angle = 0;
+
+	float3 centerToTop = top - center;
+	float3 centerToCurUV = curUV - center;
+
+	centerToTop = normalize(centerToTop);
+	centerToCurUV = normalize(centerToCurUV);
+
+	angle = acos(dot(centerToTop, centerToCurUV));
+	angle = angle * (180.0f / 3.141592654f); // radian to degree
+
+											 /* Check the angle is 0 ~ 180 or 180 ~ 360 */
+	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
+
+	float4 vColor = g_vColor;
+	vColor.r = g_vColor.r * (In.vTexUV.x); 
+	vColor.g = g_vColor.g * (In.vTexUV.x); 
+	vColor.b = g_vColor.b * (In.vTexUV.x); 
+	vColor.a = g_vColor.a;
+	Out.vColor = vDiffuse * vColor;
+	Out.vColor += g_vMinColor;
+	Out.vColor.a = vMask.r;
+
+
+	float condition = 360 * g_fAmount;
+	if (angle > condition)
+		discard;
+
+
+	return Out;
+
+}
+
 PS_OUT PS_MAIN_TRIAL(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -377,6 +420,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_LOADING();
+	}
+
+	pass RingGuageMask // 9
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_RINGGUAGE_MASK();
 	}
 
 	pass Trial

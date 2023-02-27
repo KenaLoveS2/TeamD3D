@@ -74,7 +74,6 @@ HRESULT CVIBuffer_Rect_Instancing::Initialize_Prototype(_uint iNumInstance)
 #pragma region INDEX_BUFFER
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
 	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -117,7 +116,6 @@ HRESULT CVIBuffer_Rect_Instancing::Initialize_Prototype(_uint iNumInstance)
 	m_iInstanceStride = sizeof(VTXMATRIX);
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);	
-
 	m_BufferDesc.ByteWidth = m_iInstanceStride * iNumInstance;
 	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;

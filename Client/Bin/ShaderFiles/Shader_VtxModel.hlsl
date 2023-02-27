@@ -114,7 +114,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float4 albedo0 = g_MasterBlendDiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	float4 albedo1 = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	float4 vColor = albedo0 * albedo1 * 2.0f;
+	float4 vColor = albedo1;			//albedo0 * albedo1 * 2.0f;
 	vColor = saturate(vColor);
 
 	if (0.1f > vColor.a)

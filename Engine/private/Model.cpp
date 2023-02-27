@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Model.h"
+#include "Instancing_Mesh.h"
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
@@ -12,6 +13,7 @@
 #include "Utile.h"
 #include "PipeLine.h"
 #include "Transform.h"
+#include "GameInstance.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -30,6 +32,8 @@ CModel::CModel(const CModel & rhs)
 	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
 	, m_dwBeginBoneData(rhs.m_dwBeginBoneData)
+	/*for Instancing*/
+	, m_bIsInstancing(rhs.m_bIsInstancing)
 {
 	for (auto& Material : m_Materials)
 	{
@@ -47,10 +51,18 @@ CModel::CModel(const CModel & rhs)
 		m_Animations.push_back((CAnimation*)pAnimation->Clone());
 	}
 
-	for (auto& pMesh : rhs.m_Meshes)
+	for (auto& pMesh : rhs.m_Meshes)			/*For.Origin*/
 	{
 		m_Meshes.push_back((CMesh*)pMesh->Clone());
 	}
+
+	for (auto& pInstanceMesh : rhs.m_InstancingMeshes)			/*For.Instacing*/
+	{
+		m_InstancingMeshes.push_back((CInstancing_Mesh*)pInstanceMesh->Clone());
+	}
+
+
+
 }
 
 CBone * CModel::Get_BonePtr(const char * pBoneName)
@@ -76,8 +88,10 @@ void CModel::Set_PlayTime(_double dPlayTime)
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
 }
 
-HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod)
+HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
 {
+	m_bIsInstancing = bIsInstancing;			/* 현재 모델이 인스턴싱인가?*/
+
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	m_wstrModelFilePath = pModelFilePath;
@@ -138,10 +152,20 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		ReadFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
 		for (_uint i = 0; i < m_iNumMeshes; i++)
 		{
-			CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
-			if (pMesh == nullptr) return E_FAIL;
+			// for. Instaincing
+			if (m_bIsInstancing == true)
+			{
+				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
+				assert(nullptr != pMesh && "CModel::Initialize_Prototype _Instancing");
+				m_InstancingMeshes.push_back(pMesh);
+			}
+			else   // For.origin Mesh
+			{
+				CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
+				if (pMesh == nullptr) return E_FAIL;
 
-			m_Meshes.push_back(pMesh);
+				m_Meshes.push_back(pMesh);
+			}
 		}
 
 		ReadFile(hFile, &m_iNumAnimations, sizeof(_uint), &dwByte, nullptr);
@@ -193,6 +217,15 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 		CloseHandle(hFile);
 	}
 
+#ifdef _DEBUG
+	/*For.Imgui*/
+
+	m_pInstanceTransform =static_cast<CTransform*>(CGameInstance::GetInstance()->
+		Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
+
+#endif // _DEBUG
+
+
 	return S_OK;
 }
 
@@ -202,9 +235,13 @@ void CModel::Imgui_RenderProperty()
 
 	if (ImGui::CollapsingHeader("Meshes"))
 	{
+		_uint	iMaterialIndex = 0;
 		for (size_t i = 0; i < m_iNumMeshes; ++i)
 		{
-			_uint	iMaterialIndex = m_Meshes[i]->Get_MaterialIndex();
+			if (m_bIsInstancing == true)			/*For.Instacing*/
+				iMaterialIndex = m_InstancingMeshes[i]->Get_MaterialIndex();
+			else												/*For.Origin*/
+				iMaterialIndex = m_Meshes[i]->Get_MaterialIndex();
 			ImGui::Text("Mesh %d", i);
 			ImGui::Separator();
 
@@ -369,7 +406,7 @@ void CModel::Imgui_RenderProperty()
 			ImGui::SameLine();
 			if (ImGui::SmallButton("reset"))
 				fBlendDuration = 0.2f;
-			
+
 			ImGui::Separator();
 			ImGui::BulletText("Animation Type");
 			CAnimation::ANIMTYPE&		eAnimType = pAnimation->Get_AnimationType();
@@ -432,11 +469,22 @@ void CModel::Imgui_RenderProperty()
 			ImGui::BulletText("Event");
 			pAnimation->ImGui_RenderEvents(iSelectEvent);
 		}
-		
+
 		for (_uint i = 0; i < m_iNumAnimations; ++i)
 			Safe_Delete_Array(ppAnimationTag[i]);
 		Safe_Delete_Array(ppAnimationTag);
 	}
+
+	if (m_bIsInstancing == true)
+	{
+		
+
+		for (auto &pInstanceMesh : m_InstancingMeshes)
+		{
+			//pInstanceMesh->Set_Position(); 
+		}
+	}
+
 }
 
 HRESULT CModel::SetUp_BonesParentPtr()
@@ -483,11 +531,34 @@ HRESULT CModel::SetUp_ClonedMeshes()
 {
 	for (_uint i = 0; i < m_iNumMeshes; i++)
 	{
-		if (FAILED(m_Meshes[i]->SetUp_BonePtr(this)))
+		/*For. Origin*/
+		if (false == m_bIsInstancing  && FAILED(m_Meshes[i]->SetUp_BonePtr(this)))
 			return E_FAIL;
+		/*For. Instaincing*/
+		else if (true == m_bIsInstancing &&FAILED(m_InstancingMeshes[i]->SetUp_BonePtr(this)))
+			return E_FAIL;
+		else continue;
 	}
 
 	return S_OK;
+}
+
+void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	size_t InputVecSize = InstanceMatrixVec.size();
+	
+	for (size_t i = 0; i < InputVecSize; ++i)
+	{
+		_float4x4* NewMatrix = new _float4x4;
+		*NewMatrix = InstanceMatrixVec[i];
+		m_pInstancingMatrix.push_back(NewMatrix);
+	}
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+
 }
 
 HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
@@ -501,15 +572,31 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 	/* Meshes */
 	WriteFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
 
-	for (auto& pMesh : m_Meshes)
+	if (m_bIsInstancing == true)		/*for. Instancing*/
 	{
-		if (FAILED(pMesh->Save_Mesh(hFile, dwByte)))
+		for (auto& pInstanceMesh : m_InstancingMeshes)
 		{
-			MSG_BOX("Failed to Save : Mesh");
-			CloseHandle(hFile);
-			return E_FAIL;
+			if (FAILED(pInstanceMesh->Save_Mesh(hFile, dwByte)))
+			{
+				MSG_BOX("Failed to Save : Instance_Mesh");
+				CloseHandle(hFile);
+				return E_FAIL;
+			}
 		}
 	}
+	else    /*Origin.Instacing*/
+	{
+		for (auto& pMesh : m_Meshes)
+		{
+			if (FAILED(pMesh->Save_Mesh(hFile, dwByte)))
+			{
+				MSG_BOX("Failed to Save : Mesh");
+				CloseHandle(hFile);
+				return E_FAIL;
+			}
+		}
+	}
+
 
 	/* Materials*/
 	if (m_iNumMaterials == 0)
@@ -557,8 +644,17 @@ HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 	}
 
 	/* Mesh Bones */
-	for (auto& pMesh : m_Meshes)
-		pMesh->Save_MeshBones(hFile, dwByte);
+	if (true == m_bIsInstancing)			/*For. Instaincing*/
+	{
+		for (auto& pInstanceMesh : m_InstancingMeshes)
+			pInstanceMesh->Save_MeshBones(hFile, dwByte);
+	}
+	else													/*For. Origin*/
+	{
+		for (auto& pMesh : m_Meshes)
+			pMesh->Save_MeshBones(hFile, dwByte);
+	}
+
 
 	/* Animations */
 	WriteFile(hFile, &m_iNumAnimations, sizeof(_uint), &dwByte, nullptr);
@@ -657,7 +753,7 @@ void CModel::Play_Animation(_float fTimeDelta)
 
 	if (m_bPausePlay == true)
 		fTimeDelta = 0.f;
-		
+
 	if (m_fBlendCurTime < m_fBlendDuration)
 	{
 		_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
@@ -681,7 +777,7 @@ void CModel::Play_Animation(_float fTimeDelta)
 
 		m_fAdditiveCurTime += fTimeDelta;
 	}
-	
+
 	for (auto& pBone : m_Bones)
 	{
 		if (nullptr != pBone)
@@ -693,8 +789,12 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 {
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
+	_uint iMaterialIndex = 0;
 
-	_uint iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+	if (m_bIsInstancing == true)			/*for.Instancing*/
+		iMaterialIndex = m_InstancingMeshes[iMeshIndex]->Get_MaterialIndex();
+	else	                                          /*for.Origin*/
+		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
 
 	if (iMaterialIndex >= m_iNumMaterials)
 		return E_FAIL;
@@ -703,29 +803,40 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 	{
 		m_Materials[iMaterialIndex].pTexture[eType]->Bind_ShaderResource(pShader, pConstantName);
 	}
-	else	
-		return E_FAIL;	
+	else
+		return E_FAIL;
+
 
 	return S_OK;
 }
 
 HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName, _uint iPassIndex)
 {
-	if (nullptr != m_Meshes[iMeshIndex])
+	/*For.Instancing*/
+	if (true == m_bIsInstancing && nullptr != m_InstancingMeshes[iMeshIndex])	 
 	{
 		if (nullptr != pBoneConstantName)
 		{
 			_float4x4		BoneMatrices[800];
-
-			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
-			
+			m_InstancingMeshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
-		}		
-
+		}
+		pShader->Begin(iPassIndex);
+		m_InstancingMeshes[iMeshIndex]->Render();
+	}
+	/*For.Origin*/
+	else  if (false == m_bIsInstancing	&& nullptr != m_Meshes[iMeshIndex])                               
+	{
+		if (nullptr != pBoneConstantName)
+		{
+			_float4x4		BoneMatrices[800];
+			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
+			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
+		}
 		pShader->Begin(iPassIndex);
 		m_Meshes[iMeshIndex]->Render();
 	}
-		
+
 	return S_OK;
 }
 
@@ -739,16 +850,31 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 
 	/* Meshes */
 	ReadFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
-	m_Meshes.reserve(m_iNumMeshes);
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	/*For. Instancing*/
+	if (true == m_bIsInstancing)			
 	{
-		CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, nullptr, this);
-		NULL_CHECK_RETURN(pMesh, E_FAIL);
+		m_InstancingMeshes.reserve(m_iNumMeshes);
+		for (_uint i = 0; i < m_iNumMeshes; ++i)
+		{
+			CInstancing_Mesh*		pInstanceMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, nullptr, this);
+			NULL_CHECK_RETURN(pInstanceMesh, E_FAIL);
+			pInstanceMesh->Load_Mesh(hFile, dwByte);
+			m_InstancingMeshes.push_back(pInstanceMesh);
+		}
+	}
+	/*For. Origin*/
+	else                                     
+	{
+		m_Meshes.reserve(m_iNumMeshes);
+		for (_uint i = 0; i < m_iNumMeshes; ++i)
+		{
+			CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, nullptr, this);
+			NULL_CHECK_RETURN(pMesh, E_FAIL);
 
-		pMesh->Load_Mesh(hFile, dwByte);
+			pMesh->Load_Mesh(hFile, dwByte);
 
-		m_Meshes.push_back(pMesh);
+			m_Meshes.push_back(pMesh);
+		}
 	}
 
 	/* Materials */
@@ -829,8 +955,17 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 	}
 
 	/* SetUp Mesh Bones */
-	for (auto& pMesh : m_Meshes)
-		pMesh->SetUp_BonePtr(hFile, dwByte, this);
+	if (m_bIsInstancing == true)			/*For.Instaicing*/
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->SetUp_BonePtr(hFile, dwByte, this);
+
+	}
+	else												/*For.Origin*/
+	{
+		for (auto& pMesh : m_Meshes)
+			pMesh->SetUp_BonePtr(hFile, dwByte, this);
+	}
 
 	/* Animations */
 	ReadFile(hFile, &m_iNumAnimations, sizeof(_uint), &dwByte, nullptr);
@@ -848,10 +983,10 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod )
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
@@ -892,19 +1027,33 @@ void CModel::Free()
 	}
 	m_Materials.clear();
 
-	for (auto& pMesh : m_Meshes)
+	for (auto& pMesh : m_Meshes)		/*Origin Mesh*/
 		Safe_Release(pMesh);
 	m_Meshes.clear();
+
+	for (auto& pInstMesh : m_InstancingMeshes)		/*Instancing Mesh*/
+		Safe_Release(pInstMesh);
+	m_InstancingMeshes.clear();
+
+	for (auto &pInstMatrix : m_pInstancingMatrix)
+	{
+		Safe_Delete(pInstMatrix);
+	}
+	m_pInstancingMatrix.clear();
+
+#ifdef _DEBUG
+	Safe_Release(m_pInstanceTransform);
+#endif
 }
 
 HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
 {
 	if (iMaterialIndex >= m_Materials.size()) return E_FAIL;
-	
+
 	CTexture *pTexture = CTexture::Create(m_pDevice, m_pContext, pTexturePath);
 	if (pTexture == nullptr) return E_FAIL;
 
-	if (m_Materials[iMaterialIndex].pTexture[eType]) { 
+	if (m_Materials[iMaterialIndex].pTexture[eType]) {
 		Safe_Release(m_Materials[iMaterialIndex].pTexture[eType]);
 	}
 
@@ -912,6 +1061,68 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
+{
+	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
+	{
+		_int iIndex = 0;
+		for (auto& ProtoPair : m_pInstancingMatrix)
+		{
+			const bool bSelected = false;
+
+			char szViewName[512];
+
+			sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
+
+			if (ImGui::Selectable(szViewName, bSelected))
+			{
+				m_iSelectMeshInstace_Index = iIndex;
+			}
+
+			++iIndex;
+		}
+
+		ImGui::EndListBox();
+	}
+
+	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
+	if (ImGui::Button("Instancing Num Increase"))
+	{
+		_float4x4* Temp = new _float4x4;
+		XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+		m_pInstancingMatrix.push_back(Temp);
+		
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+	}
+
+	if (m_iSelectMeshInstace_Index == -1)
+		return;
+	
+	_matrix ParentMulChild, InvParentMulChild,ResultMatrix;
+	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
+	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
+
+	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+
+	m_pInstanceTransform->Imgui_RenderProperty();
+
+	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+	ResultMatrix *= InvParentMulChild;
+	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
+	
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+}
+#endif
+
+
+
+
 
 
 

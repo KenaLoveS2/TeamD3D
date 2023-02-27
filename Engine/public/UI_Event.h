@@ -25,9 +25,11 @@ public:
 public: /* Provided Function */
 	virtual	void	Call_Event(_uint iData) {};
 	virtual	void	Call_Event(_float fData) {};
+	virtual	void	Call_Event(_bool bTrue) {};
 	virtual	void	Call_Event(CUI* pUI, _uint iIndex = 1) {};
 
 protected:
+	CUI*				m_pParent = nullptr;
 	const char*			m_szEventName; 
 	_uint				m_iRenderPass= 0;
 	const char*			m_szUIName;

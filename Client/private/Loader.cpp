@@ -18,7 +18,10 @@
 /* Enemies*/
 
 /* Objects */
-#include "Cave_Rock.h"
+#include "Cliff_Rock.h"
+#include "Tree.h"
+#include "Crystal.h"
+#include "BowTarget.h"
 
 /* UI */
 #include "BackGround.h"
@@ -318,6 +321,11 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_Component_Texture_Filter */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Cave_Ciff_Rock/DeadMoss.png")))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 		
@@ -381,7 +389,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VantagePlatform")))
 	//	return E_FAIL;
-
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar")))
@@ -406,19 +413,22 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris")))
 	//	return E_FAIL;
-
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneBridge")))
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1")))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1")))
+		return E_FAIL;
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2" , false, true)))
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2")))
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath",false,true)))
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath")))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal", false, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
+		return E_FAIL;
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -487,14 +497,15 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxPointInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
+	/* For.Prototype_Component_Shader_VtxMeshInstance */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModelInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelInstance.hlsl"), VTXMODEL_INSTAICING_DECLARATION::Elements, VTXMODEL_INSTAICING_DECLARATION::iNumElements))))
+		return E_FAIL;
+
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
-
-	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-		CCave_Rock::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	/* ~Test*/
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
 		CLodObject::Create(m_pDevice, m_pContext))))
@@ -502,6 +513,27 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_GameObject_ModelViewerObject */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
 		CModelViewerObject::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* ~Test*/
+
+	/* For.Prototype_GameObject_Cave_Rock */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
+		CCliff_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;	
+
+	/* For.Prototype_GameObject_Tree */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
+		CTree::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Crystal */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
+		CCrystal::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_BowTarget */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
+		CBowTarget::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	
@@ -586,12 +618,14 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1")))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
 
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cave_Rock"),
-		CCave_Rock::Create(m_pDevice, m_pContext))))
+		CCliff_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
@@ -725,7 +759,7 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 	return S_OK;
 }
 
-HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName)
+HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod , _bool bIsInstancing )
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -780,7 +814,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName)
 			lstrcat(pPrototypeTag, pFileName);
 
 			if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, pPrototypeTag,
-				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
+				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix, nullptr,bIsLod,bIsInstancing))))
 				return E_FAIL;
 
 			Safe_Delete_Array(pFileName);
@@ -795,3 +829,4 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName)
 
 	return S_OK;
 }
+

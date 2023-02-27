@@ -49,11 +49,15 @@ void CUtile::CharToWideChar(const char * pCharStr, _tchar * pOut)
 
 void CUtile::WideCharToChar(const _tchar * pWideStr, char * pOut)
 {
+	if (!lstrcmp(pWideStr,L""))
+		return;
 	_int len;
 	_int slength = lstrlen(pWideStr) + 1;
 	len = ::WideCharToMultiByte(CP_ACP, 0, pWideStr, slength, 0, 0, 0, 0);
 	::WideCharToMultiByte(CP_ACP, 0, pWideStr, slength, pOut, len, 0, 0);
 }
+
+
 
 
 _tchar * CUtile::StringToWideChar(string str)
