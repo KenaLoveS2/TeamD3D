@@ -7,7 +7,7 @@ class CUI_NodeAimBomb final : public CUI_Node
 {
 private:
 	CUI_NodeAimBomb(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
-	CUI_NodeAimBomb(const CUI_NodeAimLine& rhs);
+	CUI_NodeAimBomb(const CUI_NodeAimBomb& rhs);
 	virtual ~CUI_NodeAimBomb() = default;
 
 public:
