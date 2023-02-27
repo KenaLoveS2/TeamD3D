@@ -34,6 +34,7 @@ CModel::CModel(const CModel & rhs)
 	, m_dwBeginBoneData(rhs.m_dwBeginBoneData)
 	/*for Instancing*/
 	, m_bIsInstancing(rhs.m_bIsInstancing)
+	, m_bIsLodModel(rhs.m_bIsLodModel)
 {
 	for (auto& Material : m_Materials)
 	{
@@ -91,7 +92,7 @@ void CModel::Set_PlayTime(_double dPlayTime)
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
 {
 	m_bIsInstancing = bIsInstancing;			/* 현재 모델이 인스턴싱인가?*/
-
+	m_bIsLodModel = bIsLod;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	m_wstrModelFilePath = pModelFilePath;
@@ -1097,6 +1098,30 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 		
 		for (auto& pInstMesh : m_InstancingMeshes)
 			pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+	}
+
+	if (ImGui::Button("Instancing Num Delete"))
+	{
+		_int iDeleteIndex = 0;
+		for (auto iter = m_pInstancingMatrix.begin(); iter != m_pInstancingMatrix.end();)
+		{
+			if (iDeleteIndex == m_iSelectMeshInstace_Index)
+			{
+				Safe_Delete(*iter);
+				*iter = nullptr;
+				iter = m_pInstancingMatrix.erase(iter);
+				m_iSelectMeshInstace_Index = -1;
+				for (auto& pInstMesh : m_InstancingMeshes)
+					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+				break;
+			}
+			else
+			{
+				++iter;
+				++iDeleteIndex;
+			}
+		}
+			
 	}
 
 	if (m_iSelectMeshInstace_Index == -1)
