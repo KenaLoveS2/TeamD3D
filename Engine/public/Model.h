@@ -25,7 +25,7 @@ public:
 	const _bool&		Get_AnimationFinish() const;
 	void				Set_PlayTime(_double dPlayTime);
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
-	void				Set_AnimIndex(_uint iAnimIndex);
+	void				Set_AnimIndex(_uint iAnimIndex, _int iBendAnimIndex = -1);
 	void				Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
 
 	/*for.Instancing*/

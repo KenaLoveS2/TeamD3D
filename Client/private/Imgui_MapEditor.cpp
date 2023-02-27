@@ -1095,6 +1095,7 @@ void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
+#ifdef _DEBUG
 	if (pSelectEnviObj == nullptr)
 		return;
 	
@@ -1109,7 +1110,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix());
 
 	ImGui::End();
-
+#endif
 }
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)
