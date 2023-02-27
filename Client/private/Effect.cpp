@@ -122,20 +122,26 @@ void CEffect::Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
-		static _int iCurIdx = 0;
+		if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
+			return;
 
-		auto& iter = m_vecFreePos.begin();
-		if (iCurIdx >= m_vecFreePos.size())
-			iCurIdx = 0;
-
-		for (_int i = 0; i < iCurIdx; ++i)
-			iter++;
-
-		_bool bNextTime = Play_FreePos(*iter);
-		if (bNextTime)
+		if(!CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
 		{
-			m_bLerp = false;
-			iCurIdx++;
+			static _int iCurIdx = 0;
+
+			auto& iter = m_vecFreePos.begin();
+			if (iCurIdx >= m_vecFreePos.size())
+				iCurIdx = 0;
+
+			for (_int i = 0; i < iCurIdx; ++i)
+				iter++;
+
+			_bool bNextTime = Play_FreePos(*iter);
+			if (bNextTime)
+			{
+				m_bLerp = false;
+				iCurIdx++;
+			}
 		}
 	}
 
