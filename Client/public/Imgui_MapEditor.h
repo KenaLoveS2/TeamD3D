@@ -37,7 +37,6 @@ private:
 	void											Imgui_TexturePathNaming();
 	void											Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
 	void											Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
-	void											Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
 private:		/*Logic*/
 	void											Imgui_Save_Func();
 	HRESULT									Imgui_Load_Func();

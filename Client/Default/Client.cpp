@@ -236,15 +236,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else
 		{
 			if (LOWORD(wParam) == WA_INACTIVE)
-			{
 				g_bWinActive = false;
-				::SetCursor(LoadCursor(nullptr, IDC_ARROW));
-			}
 			else if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
-			{
 				g_bWinActive = true;
-				::SetCursor(LoadCursor(nullptr, IDC_ARROW));
-			}
 		}
 		break;
 	}

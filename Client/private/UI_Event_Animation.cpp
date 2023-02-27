@@ -6,8 +6,10 @@
 
 CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 {
-	m_szEventName = "BarGuage";
+	m_szEventName = "Animation";
 	m_iRenderPass = 4;
+	m_pParent = pUI;
+
 
 	m_bStart		= false;
 	m_bFinished		= false;
@@ -19,7 +21,6 @@ CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 	m_iFrameXNow	= 0;
 	m_iFrameYNow	= 0;
 
-	m_pParent = pUI;
 	m_iTextureNum = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
 	for (_uint i = 0; i < m_iTextureNum; ++i)
 	{
@@ -153,6 +154,7 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 	bLoop = m_bLoop;
 	if (ImGui::Checkbox("IsLoop", &bLoop))
 	{
+		m_bStart = true;
 		m_bLoop = bLoop;
 		m_bFinished = false;
 		m_fTimeAcc = 0.f;

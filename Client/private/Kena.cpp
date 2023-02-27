@@ -101,6 +101,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
 	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -110,7 +112,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 		/* Rot icon chagne test */
 		static _float fIcon = 0;
-		fIcon = _uint(fIcon + 1) % 4;
+		fIcon = _float(_uint(fIcon + 1) % 4);
 		m_PlayerDelegator.broadcast(eType4, fIcon);
 
 		/* Bomb Guage test */
@@ -120,6 +122,10 @@ void CKena::Late_Tick(_float fTimeDelta)
 		/* Arrow Guage test */
 		static _float fArrow = 1.f;
 		m_PlayerDelegator.broadcast(eArrowGuage, fArrow);
+
+		/* Aim Test */
+		static _float fAim = 1.f;
+		m_PlayerDelegator.broadcast(eAim, fAim);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))

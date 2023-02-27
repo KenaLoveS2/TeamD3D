@@ -47,7 +47,7 @@ void CLight_Manager::Clear()
 void CLight_Manager::Imgui_Render()
 {
 	static _int iSelectLight = -1;
-	static _int iSize = (_int)m_Lights.size();
+	static _int iSize = m_Lights.size();
 	CLight* pLight = nullptr;
 
 	LIGHTDESC::TYPE eType = LIGHTDESC::TYPE_END;
@@ -152,7 +152,7 @@ void CLight_Manager::Imgui_Render()
 		}
 	}
 	
-	for (_uint i = 0; i < (_uint)iSize; ++i)
+	for (_uint i = 0; i < iSize; ++i)
 		Safe_Delete_Array(ppLightTag[i]);
 
 	Safe_Delete_Array(ppLightTag);

@@ -20,7 +20,7 @@ public:
 	HRESULT		Add_Event(_float fPlayTime, const string& strFuncName);
 
 public:
-	const _bool&					IsFinished() const { return m_isFinished; }
+	_bool							IsFinished() { return m_isFinished; }
 	_bool&							IsLooping() { return m_isLooping; }
 	_double&						Get_AnimationDuration() { return m_Duration; }
 	_double&						Get_PlayTime() { return m_PlayTime; }
@@ -37,8 +37,8 @@ public:
 	HRESULT						Initialize(void* pArg);
 	void							ImGui_RenderEvents(_int& iSelectEvent);
 
-	void							Update_Bones(_float fTimeDelta, CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones(_float fTimeDelta);
+	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
 	void							Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
 	void							Reverse_Play(_float fTimeDelta);
 	void							Reset_Animation();
