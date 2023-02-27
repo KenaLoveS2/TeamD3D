@@ -181,6 +181,13 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_PipEffect";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_PipEffect", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

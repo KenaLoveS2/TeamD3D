@@ -53,7 +53,6 @@ HRESULT CUI_NodeHUDRot::Initialize(void * pArg)
 	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
 	m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
 
-
 	return S_OK;
 }
 

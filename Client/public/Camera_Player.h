@@ -29,14 +29,13 @@ private:
 	CTransform*			m_pKenaTransform = nullptr;
 	
 	_float					m_fInitCamHeight = 1.5f;
-	_float					m_fAimCamHeight = 1.2f;
 	_float					m_fMaxCamHeight = 2.f;
 	_float					m_fCurCamHeight = 1.5f;
 	_float					m_fInitDistance = 2.f;
-	_float					m_fAimDistance = 0.7f;
+	_float					m_fMaxDistance = 2.3f;
+	_float					m_fMinDistance = 1.f;
 	_float					m_fDistanceFromTarget = 2.f;
 	_bool					m_bAim = false;
-	_bool					m_bInitPlayerLook = false;
 	_float					m_fAimTime = 0.f;
 
 	/* Mouse */

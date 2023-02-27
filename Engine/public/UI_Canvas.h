@@ -40,7 +40,7 @@ public:
 
 protected:
 	vector<string>		m_vecNodeCloneTag;
-	vector<CUI*>		m_vecNode; 
+	vector<CUI*>		m_vecNode;
 	_bool				m_bBindFinished;
 
 	/* For Tool */

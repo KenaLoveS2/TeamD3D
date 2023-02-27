@@ -121,9 +121,9 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 {
 	PatchTess		pt;
 
-	pt.EdgeTess[0] = 6;
-	pt.EdgeTess[1] = 6;
-	pt.EdgeTess[2] = 6;
+	pt.EdgeTess[0] = 2;
+	pt.EdgeTess[1] = 2;
+	pt.EdgeTess[2] = 2;
 
 	pt.InsideTess = (pt.EdgeTess[0] + pt.EdgeTess[1] + pt.EdgeTess[2]) / 3.f;
 	// Assign Positions

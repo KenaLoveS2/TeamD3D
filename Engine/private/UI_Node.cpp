@@ -232,7 +232,7 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 
 	this->Set_LocalMatrix(matLocal);
 
-
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	return S_OK;
 }

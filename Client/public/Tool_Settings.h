@@ -22,15 +22,9 @@ private:
 	CGameInstance*				m_pGameInstance = nullptr;
 
 private:
-	/* Frame */
-	_float*						m_fFrameRate = nullptr;
-	ImVec4						m_TextColor;
-
-	/* Camera */
 	map<const _tchar*, CCamera*>*	m_mapCamera = nullptr;
 
 private:
-	HRESULT						FrameRate();
 	HRESULT						Camera_Setting();
 
 public:
