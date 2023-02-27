@@ -223,6 +223,9 @@
     <Filter Include="01.Utility\02.GameObject\UI\04. Event">
       <UniqueIdentifier>{116ed6cd-4a15-472f-b360-4d90da663ed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Trail">
+      <UniqueIdentifier>{7cc50bc9-6d33-4307-8410-9546f9ea579b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -517,6 +520,9 @@
     <ClInclude Include="..\public\UI_Event.h">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Trail.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -768,6 +774,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Event.cpp">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Trail.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

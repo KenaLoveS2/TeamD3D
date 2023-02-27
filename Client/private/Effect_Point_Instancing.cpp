@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Effect_Point_Instancing.h"
 #include "GameInstance.h"
+#include "Effect_Trail.h"
 
 CEffect_Point_Instancing::CEffect_Point_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -21,37 +22,80 @@ HRESULT CEffect_Point_Instancing::Set_ShapePosition()
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition();
 }
 
-//CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE CEffect_Point_Instancing::Get_ShapeType()
-//{
-//	if (nullptr == m_pVIInstancingBufferCom)
-//		return CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE();
-//
-//	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_ShapeType();
-//}
-//
-//void CEffect_Point_Instancing::Set_ShapeType(CVIBuffer_Point_Instancing::POINTDESC::SHAPETYPE eType)
-//{
-//	if (nullptr == m_pVIInstancingBufferCom)
-//		return;
-//
-//	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapeType(eType);
-//}
+HRESULT CEffect_Point_Instancing::Set_Trail(CEffect_Base * pEffect, const _tchar * pProtoTag)
+{
+	CEffect_Base*   pEffectTrail = nullptr;
+	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
 
-//CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR CEffect_Point_Instancing::Get_MoveDir()
-//{
-//	if (nullptr == m_pVIInstancingBufferCom)
-//		return CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR();
-//
-//	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_MoveDir();
-//}
-//
-//void CEffect_Point_Instancing::Set_MoveDir(CVIBuffer_Point_Instancing::POINTDESC::MOVEDIR eType)
-//{
-//	if (nullptr == m_pVIInstancingBufferCom)
-//		return;
-//
-//	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_MoveDir(eType);
-//}
+	if (pEffect->Get_HaveTrail() == true)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+
+	_int   iVIBufferICnt = m_pVIInstancingBufferCom->Get_PointDesc()->iCreateInstance;
+
+	wstring		strGameObjectTag = L"Prototype_GameObject_";
+	size_t TagLength = strGameObjectTag.length();
+	
+	for (_int i = 0; i < iVIBufferICnt; ++i)
+	{
+		_matrix  matInitWorld = XMMatrixIdentity();
+		wstring  strTrailProtoTag = pProtoTag;
+		strTrailProtoTag += L"Trail";
+		strTrailProtoTag += to_wstring(i);
+
+		_tchar*     szTrailProtoTag = CUtile::Create_String(strTrailProtoTag.c_str());
+		pGameInstance->Add_String(szTrailProtoTag);
+		size_t ProtoLength = strTrailProtoTag.length();
+
+		wstring     strTrailCloneTag = strTrailProtoTag.substr(TagLength, ProtoLength - TagLength);
+		_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
+		pGameInstance->Add_String(szTrailCloneTag);
+
+		if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		_int iCurLevel = pGameInstance->Get_CurLevelIndex();
+		pEffectTrail = dynamic_cast<CEffect_Trail*>(pGameInstance->Clone_GameObject(szTrailProtoTag, szTrailCloneTag));
+		if (pEffectTrail == nullptr)
+		{
+			RELEASE_INSTANCE(CGameInstance);
+			return S_OK;
+		}
+		matInitWorld.r[3] = m_pVIInstancingBufferCom->Get_InstanceData_Idx(i).fPos;
+		dynamic_cast<CEffect_Trail*>(pEffectTrail)->Set_InitMatrix(matInitWorld);
+		dynamic_cast<CEffect_Trail*>(pEffectTrail)->Set_ParticleIdx(i);
+		m_vecTrailEffect.push_back(dynamic_cast<CEffect_Trail*>(pEffectTrail));
+	}
+
+	for(auto& pTrailEffect : m_vecTrailEffect)
+	{
+		pTrailEffect->Set_Parent(this);
+		pTrailEffect->Set_HaveTrail(true);
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+CEffect_Trail * CEffect_Point_Instancing::Get_Trail()
+{
+	if (m_pEffectTrail == nullptr)
+		return nullptr;
+
+	return dynamic_cast<CEffect_Trail*>(m_pEffectTrail);
+}
+
+void CEffect_Point_Instancing::Delete_Trail(const _tchar * pProtoTag)
+{
+	for (auto& iter = m_vecTrailEffect.begin(); iter != m_vecTrailEffect.end();)
+	{
+		Safe_Release(*iter);
+		iter = m_vecTrailEffect.erase(iter);
+	}
+	m_vecTrailEffect.clear();
+}
 
 CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing::Get_PointInstanceDesc()
 {
@@ -69,12 +113,28 @@ void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing:
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PointDesc(&eEffectDesc);
 }
 
-_float2 CEffect_Point_Instancing::Get_RandomSpeeds()
+CVIBuffer_Point_Instancing::INSTANCEDATA* CEffect_Point_Instancing::Get_InstanceData()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
-		return _float2(0.0f, 0.0f);
+		return nullptr;
 
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_RandomSpeeds();
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_InstanceData();
+}
+
+CVIBuffer_Point_Instancing::INSTANCEDATA CEffect_Point_Instancing::Get_InstanceData_Idx(_int iIndex)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return CVIBuffer_Point_Instancing::INSTANCEDATA();
+
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_InstanceData_Idx(iIndex);
+}
+
+void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA eInstanceData)
+{
+	if (nullptr == m_pVIInstancingBufferCom)
+		return;
+
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_InstanceData(&eInstanceData);
 }
 
 void CEffect_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
@@ -91,14 +151,6 @@ HRESULT CEffect_Point_Instancing::Set_Pos(_float3 fMin, _float3 fMax)
 		return E_FAIL;
 
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_Pos(fMin,fMax);
-}
-
-_float2 CEffect_Point_Instancing::Get_PSize()
-{
-	if (nullptr == m_pVIInstancingBufferCom)
-		return _float2(0.0f, 0.0f);
-
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PSize();
 }
 
 void CEffect_Point_Instancing::Set_PSize(_float2 PSize)
@@ -190,13 +242,25 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			}
 		}
 	}
-	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 
 	// Child Tick
 	if (m_vecChild.size() != 0)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Tick(fTimeDelta);
+	}
+
+	m_pVIInstancingBufferCom->Tick(fTimeDelta);
+	if (m_vecTrailEffect.size() != 0)
+	{
+		_matrix WorldMatrix = XMMatrixIdentity();
+		auto &iter = m_vecTrailEffect.begin();
+		for (_int i = 0; i < m_vecTrailEffect.size(); i++, iter++)
+		{
+			WorldMatrix.r[3] = m_pVIInstancingBufferCom->Get_InstanceData_Idx(i).fPos;
+			(*iter)->Tick(fTimeDelta);
+			(*iter)->Set_WorldMatrix(WorldMatrix* m_pTransformCom->Get_WorldMatrix());
+		}
 	}
 }
 
@@ -214,6 +278,12 @@ void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
 			pChild->Late_Tick(fTimeDelta);
 	}
 
+	if (m_vecTrailEffect.size() != 0)
+	{
+		for (auto& pTrailEffect : m_vecTrailEffect)
+			pTrailEffect->Late_Tick(fTimeDelta);
+	}	
+	
 	if (nullptr != m_pParent)
 		Set_Matrix();
 }
@@ -398,4 +468,8 @@ CGameObject * CEffect_Point_Instancing::Clone(void * pArg)
 void CEffect_Point_Instancing::Free()
 {
 	__super::Free();
+
+	for (auto& vecTrail : m_vecTrailEffect)
+		Safe_Release(vecTrail);
+	m_vecTrailEffect.clear();
 }

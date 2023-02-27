@@ -2,6 +2,7 @@
 #include "..\public\Effect_Base.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Effect_Trail.h"
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -31,6 +32,21 @@ void CEffect_Base::Set_Matrix()
 
 	m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
+}
+
+void CEffect_Base::Set_TrailDesc()
+{
+	if (m_pParent == nullptr)
+		return;
+
+	EFFECTDESC effectDesc = m_pParent->Get_EffectDesc();
+
+	m_eEFfectDesc.bActive = effectDesc.bActive;
+	m_eEFfectDesc.bAlpha = effectDesc.bAlpha;
+	m_eEFfectDesc.fLife = effectDesc.fLife;
+	m_eEFfectDesc.fWidth = effectDesc.fWidth;
+	m_eEFfectDesc.fSegmentSize = effectDesc.fSegmentSize;
+	m_eEFfectDesc.fAlpha = effectDesc.fAlpha;
 }
 
 void CEffect_Base::BillBoardSetting(_float3 vScale)
@@ -190,37 +206,36 @@ void CEffect_Base::Free()
 {
 	__super::Free();
 
-	if (m_isCloned)
+	// Shader, Renderer Release
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+
+	// Texture
+	if (nullptr != m_pDTextureCom)
 	{
-		// Shader, Renderer Release
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRendererCom);
-
-		// Texture
-		if (nullptr != m_pDTextureCom)
-		{
-			// Diffuse Release
-			for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
-				Safe_Release(m_pDTextureCom[i]);
-		}
-
-		if (nullptr != m_pMTextureCom)
-		{
-			// Mask Release
-			for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
-				Safe_Release(m_pMTextureCom[i]);
-		}
-
-		// VIBuffer Release
-		if (nullptr != m_pVIBufferCom)
-			Safe_Release(m_pVIBufferCom);
-
-		if (nullptr != m_pVIInstancingBufferCom)
-			Safe_Release(m_pVIInstancingBufferCom);
-
-		for (auto& pChild : m_vecChild)
-			Safe_Release(pChild);
-		m_vecChild.clear();
-
+		// Diffuse Release
+		for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+			Safe_Release(m_pDTextureCom[i]);
 	}
+
+	if (nullptr != m_pMTextureCom)
+	{
+		// Mask Release
+		for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+			Safe_Release(m_pMTextureCom[i]);
+	}
+
+	// VIBuffer Release
+	if (nullptr != m_pVIBufferCom)
+		Safe_Release(m_pVIBufferCom);
+
+	if (nullptr != m_pVIInstancingBufferCom)
+		Safe_Release(m_pVIInstancingBufferCom);
+
+	if (nullptr != m_pVITrailBufferCom)
+		Safe_Release(m_pVITrailBufferCom);
+
+	for (auto& pChild : m_vecChild)
+		Safe_Release(pChild);
+	m_vecChild.clear();
 }

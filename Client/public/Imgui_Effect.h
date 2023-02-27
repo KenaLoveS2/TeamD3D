@@ -31,6 +31,12 @@ public:
 	// Child Setting //
 	void	Set_Child(class CEffect_Base* pEffect);
 
+	// Trail Setting //
+	void	Set_Trail(class CEffect_Base* pEffect);
+
+	// FreeMoving Setting //
+	void	Set_FreePos(class CEffect_Base* pEffect);
+
 	void	TransformView(_int iSelectObject, class CEffect_Base* pEffect);
 	void	TransformView_child(_int iSelectObject, class CEffect_Base* pEffect);
 

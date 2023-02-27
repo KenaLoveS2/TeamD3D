@@ -163,6 +163,9 @@
     <Filter Include="95. Tool\ImGui Setting">
       <UniqueIdentifier>{51a7fbbd-7b4e-4e0a-bcd0-edaae35666b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Trail">
+      <UniqueIdentifier>{7a3b0acb-7019-4871-9c85-983179b53690}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -331,9 +334,12 @@
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\LoadingIcon.h">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
-    </ClInclude>      
+    </ClInclude>
     <ClInclude Include="..\public\Tool_Settings.h">
       <Filter>95. Tool\ImGui Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail.h">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -482,9 +488,12 @@
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
-    </ClCompile>      
+    </ClCompile>
     <ClCompile Include="..\private\Tool_Settings.cpp">
       <Filter>95. Tool\ImGui Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail.cpp">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
