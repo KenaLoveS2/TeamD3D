@@ -1,1 +1,23 @@
-{"DiffuseTextureIndex":0,"MaskTextureIndex":-1,"renderPass":1,"worldMatrix":[400.0,0.0,0.0,0.0,0.0,119.40298461914063,0.0,0.0,0.0,0.0,1.0,0.0,-550.0,-340.0,0.0,1.0]}
+{
+    "DiffuseTextureIndex": 0,
+    "MaskTextureIndex": -1,
+    "renderPass": 1,
+    "worldMatrix": [
+        400.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        119.40298461914063,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -550.0,
+        -340.0,
+        0.0,
+        1.0
+    ]
+}
