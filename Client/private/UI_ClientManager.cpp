@@ -21,6 +21,8 @@
 /* CanvasAim */
 #include "UI_CanvasAim.h"
 #include "UI_NodeAimLine.h"
+#include "UI_NodeAimArrow.h"
+#include "UI_NodeAimBomb.h"
 
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
@@ -329,6 +331,16 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimLine"), CUI_NodeAimLine::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimLine");
+
+	/* Aim Arrow */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimArrow"), CUI_NodeAimArrow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimArrow");
+
+	/* Aim Bomb */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimBomb"), CUI_NodeAimBomb::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimBomb");
 
 
 	/********************************************/

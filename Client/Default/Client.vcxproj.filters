@@ -372,6 +372,10 @@
     <ClInclude Include="..\public\UI_Event_Transform.h">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimBomb.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -542,6 +546,10 @@
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
