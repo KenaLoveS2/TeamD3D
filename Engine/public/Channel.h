@@ -28,12 +28,9 @@ public:
 	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
 	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio);
 
-	void Reset_KeyFrameIndex() {
-		m_iCurrentKeyFrameIndex = 0;
-	}
-	const char* Get_Name() const {
-		return m_szName;
-	}
+	void Reset_KeyFrameIndex() { m_iCurrentKeyFrameIndex = 0; }
+	void Set_KeyFrameIndex(_double dPlayTime);
+	const char* Get_Name() const { return m_szName; }
 
 	HRESULT SetUp_BonePtr(CModel* pModel);
 	HRESULT Synchronization_BonePtr(CModel* pModel);

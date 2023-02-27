@@ -29,7 +29,7 @@ public:
 	_float&						Get_BlendDuration() { return m_fBlendDuration; }
 	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
 	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
-	void							Set_PlayTime(_double dPlayTime) { m_PlayTime = dPlayTime; }
+	void							Set_PlayTime(_double dPlayTime);
 	void							Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
 
 public:
@@ -40,6 +40,7 @@ public:
 	void							Update_Bones(_float fTimeDelta, CAnimation* pBlendAnim = nullptr);
 	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation* pBlendAnim = nullptr);
 	void							Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
+	void							Reverse_Play(_float fTimeDelta);
 	void							Reset_Animation();
 
 private:

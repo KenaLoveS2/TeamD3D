@@ -93,6 +93,15 @@ HRESULT CAnimation::Add_Event(_float fPlayTime, const string & strFuncName)
 	return S_OK;
 }
 
+void CAnimation::Set_PlayTime(_double dPlayTime)
+{
+	for (auto& pChannel : m_Channels)
+		pChannel->Set_KeyFrameIndex(dPlayTime);
+
+	m_PlayTime = dPlayTime;
+	m_isFinished = false;
+}
+
 HRESULT CAnimation::Initialize_Prototype(HANDLE hFile, CModel* pModel)
 {
 	m_pModel = pModel;
@@ -185,7 +194,7 @@ void CAnimation::Update_Bones(_float fTimeDelta, CAnimation * pBlendAnim)
 	if (pBlendAnim != nullptr)
 	{
 		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
-		
+
 		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
 			pBlendAnim->m_isFinished = true;
 	}
@@ -250,13 +259,13 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnim
 	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
-// 	if (pBlendAnim != nullptr)
-// 	{
-// 		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
-// 
-// 		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
-// 			pBlendAnim->m_isFinished = true;
-// 	}
+	if (pBlendAnim != nullptr)
+	{
+		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
+	
+		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
+			pBlendAnim->m_isFinished = true;
+	}
 
 	Call_Event(fLastPlayTime, fTimeDelta);
 
@@ -293,6 +302,15 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnim
 				m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, false, pBlendAnim->m_Channels[i]);
 		}
 	}
+
+	if (m_isFinished && m_isLooping)
+		m_PlayTime = 0.0;
+
+	if (pBlendAnim != nullptr)
+	{
+		if (pBlendAnim->m_isFinished && pBlendAnim->m_isLooping)
+			pBlendAnim->m_PlayTime = 0.0;
+	}
 }
 
 void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
@@ -313,6 +331,17 @@ void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
 		m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
 		//m_Channels[i]->Reset_KeyFrameIndex();
 	}
+}
+
+void CAnimation::Reverse_Play(_float fTimeDelta)
+{
+	m_PlayTime -= (_double)fTimeDelta * m_TickPerSecond;
+
+	if (m_PlayTime < 0.0)
+		m_PlayTime = m_Duration + m_PlayTime;
+
+	for (auto& pChannel : m_Channels)
+		pChannel->Set_KeyFrameIndex(m_PlayTime);
 }
 
 void CAnimation::Reset_Animation()

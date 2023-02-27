@@ -124,6 +124,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"AIM_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
 		.Init_Changer(L"AIM_RUN_LEFT", this, &CKena_State::KeyInput_A)
 		.Init_Changer(L"AIM_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"AIM_RUN_FORWARD")
 		.Init_Start(this, &CKena_State::Start_Aim_Run_Forward)
@@ -230,17 +231,17 @@ void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
-	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
-		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_FORWARD);
-	else
+// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
+// 		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_FORWARD);
+// 	else
 		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
-	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
-		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_FORWARD);
-	else
+// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
+// 		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_FORWARD);
+// 	else
 		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
@@ -251,17 +252,17 @@ void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
-	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
-		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_BACKWARD);
-	else
+// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
+// 		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_BACKWARD);
+// 	else
 		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
-	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
-		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_BACKWARD);
-	else
+// 	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
+// 		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_BACKWARD);
+// 	else
 		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
 }
 

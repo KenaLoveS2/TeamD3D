@@ -72,6 +72,8 @@ void CStateMachine::Tick(_float fTimeDelta)
 		if (m_mapState[m_wstrCurrentStateName].State_Start != nullptr)
 			m_mapState[m_wstrCurrentStateName].State_Start(fTimeDelta);
 
+		StateHistoryUpdate(m_wstrNextStateName);
+
 		m_wstrNextStateName = L"";
 	}
 	else
@@ -83,6 +85,37 @@ void CStateMachine::Tick(_float fTimeDelta)
 
 void CStateMachine::Imgui_RenderProperty()
 {
+	ImGui::Text("State History");
+
+	string	strCurState = "";
+	strCurState.assign(m_wstrCurrentStateName.begin(), m_wstrCurrentStateName.end());
+	ImGui::BulletText("Cur State : %s", strCurState.c_str());
+
+	if (ImGui::BeginListBox("Node Transition History"))
+	{
+		string	strDebugTag = "";
+		for (const auto& wstrDebugTag : m_wstrDebugList)
+		{
+			strDebugTag.assign(wstrDebugTag.begin(), wstrDebugTag.end());
+			ImGui::Selectable(strDebugTag.c_str());
+		}
+		ImGui::EndListBox();
+	}
+
+	_int iInput = static_cast<_int>(m_iDebugQueSize);
+	ImGui::InputInt("Debug History Size(unsigned)", &iInput);
+	if (iInput >= 0) m_iDebugQueSize = iInput;
+}
+
+void CStateMachine::StateHistoryUpdate(const wstring & wstrLastStateName)
+{
+	wstring	wstrInput = m_wstrLastStateName;
+	
+	wstrInput += L" -> " + wstrLastStateName;
+	m_wstrDebugList.push_back(wstrInput);
+
+	if (m_wstrDebugList.size() > m_iDebugQueSize)
+		m_wstrDebugList.pop_front();
 }
 
 CStateMachine * CStateMachine::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
