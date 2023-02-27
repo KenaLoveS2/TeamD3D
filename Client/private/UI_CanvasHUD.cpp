@@ -18,7 +18,7 @@ CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 }
 
 CUI_CanvasHUD::CUI_CanvasHUD(const CUI_CanvasHUD & rhs)
-	:CUI_Canvas(rhs)
+	: CUI_Canvas(rhs)
 {
 }
 
@@ -129,12 +129,12 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	wstring wstr;
 
 	/* Note : the reason using unstable temp address variable "fileName" is that
-		fileName(CloneTag) needed while it cloned when loading the data.
-		(The cloneTag is stored after the clone process.)
+	fileName(CloneTag) needed while it cloned when loading the data.
+	(The cloneTag is stored after the clone process.)
 	*/
 	str = "Node_HPBar";
 	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(지역변수) */
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar",&tDesc));
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
@@ -147,7 +147,7 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	m_vecNodeCloneTag.push_back(str);
 
 	str = "Node_ShieldBar";
-	tDesc.fileName.assign(str.begin(), str.end()); 
+	tDesc.fileName.assign(str.begin(), str.end());
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_ShieldBar", L"Node_ShieldBar", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
@@ -181,6 +181,13 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_PipEffect";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_PipEffect", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -189,7 +196,7 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 HRESULT CUI_CanvasHUD::SetUp_Components()
 {
 	/* Renderer */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),(CComponent**)&m_pRendererCom))
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
 		return E_FAIL;
 
 	/* Shader */
@@ -197,7 +204,7 @@ HRESULT CUI_CanvasHUD::SetUp_Components()
 		return E_FAIL;
 
 	/* VIBuffer_Rect */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),(CComponent**)&m_pVIBufferCom))
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
 		return E_FAIL;
 
 	return S_OK;

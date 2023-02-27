@@ -6,20 +6,21 @@
 
 CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 {
-	m_szEventName = "BarGuage";
+	m_szEventName = "Animation";
 	m_iRenderPass = 4;
+	m_pParent = pUI;
 
-	m_bStart		= false;
-	m_bFinished		= false;
-	m_bLoop			= true;
+
+	m_bStart = false;
+	m_bFinished = false;
+	m_bLoop = true;
 	m_iTextureIndex = 0;
 
 	//m_iFramesX		= 1;
 	//m_iFramesY		= 1;
-	m_iFrameXNow	= 0;
-	m_iFrameYNow	= 0;
+	m_iFrameXNow = 0;
+	m_iFrameYNow = 0;
 
-	m_pParent = pUI;
 	m_iTextureNum = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
 	for (_uint i = 0; i < m_iTextureNum; ++i)
 	{
@@ -125,11 +126,11 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 
 	static int selectedIdx;
 	selectedIdx = m_iTextureIndex;
-	if (ImGui::SliderInt("Texture Index", &selectedIdx, 0, totalTextures-1))
+	if (ImGui::SliderInt("Texture Index", &selectedIdx, 0, totalTextures - 1))
 	{
 		m_iTextureIndex = selectedIdx;
 
-		if(m_pParent != nullptr)
+		if (m_pParent != nullptr)
 			m_pParent->Set_TextureIndex(m_iTextureIndex);
 	}
 
@@ -153,6 +154,7 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 	bLoop = m_bLoop;
 	if (ImGui::Checkbox("IsLoop", &bLoop))
 	{
+		m_bStart = true;
 		m_bLoop = bLoop;
 		m_bFinished = false;
 		m_fTimeAcc = 0.f;

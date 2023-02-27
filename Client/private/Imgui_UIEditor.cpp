@@ -49,17 +49,17 @@ void CImgui_UIEditor::Imgui_FreeRender()
 	//if (Begin("UI Editor"))
 	{
 		Text("<Canvas>");
-		
+
 		/* Type */
 		if (CollapsingHeader("Type"))
 		{
 			static int selected_canvasType = 0;
-			
+
 			CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 			vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
 			vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
 			vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
-			
+
 			RELEASE_INSTANCE(CGameInstance);
 
 			_uint iNumItems = (_uint)pCanvasProtoTags->size();
@@ -91,8 +91,8 @@ void CImgui_UIEditor::Imgui_FreeRender()
 		/* For. Add Event To UIs */
 		EventList();
 
- 	Exit:
- 		End();
+	Exit:
+		End();
 	}
 }
 
@@ -106,7 +106,7 @@ HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
 	m_vecCanvas.resize(types);
 	for (_uint i = 0; i < types; ++i)
 		m_vecCanvas[i] = nullptr;
-	
+
 	/* Todo : File Load */
 	/* To Maintain the sequence of the ProtoTags, push_back m_vecCanvas before Dealing with Real Layer */
 
@@ -148,7 +148,7 @@ void CImgui_UIEditor::EventList()
 
 	if (Button("DeleteEvent"))
 		m_pUI->Delete_Event();
-	
+
 }
 
 CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)

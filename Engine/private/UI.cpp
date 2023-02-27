@@ -24,9 +24,9 @@ CUI::CUI(const CUI & rhs)
 	, m_iRenderPass(0)
 	, m_iTextureIdx(0)
 {
-	m_TextureComTag[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
-	m_TextureComTag[TEXTURE_MASK]		= L"Com_MaskTexture";
-	
+	m_TextureComTag[TEXTURE_DIFFUSE] = L"Com_DiffuseTexture";
+	m_TextureComTag[TEXTURE_MASK] = L"Com_MaskTexture";
+
 	for (auto i : m_TextureListIndices)
 		i = -1;
 
@@ -34,6 +34,7 @@ CUI::CUI(const CUI & rhs)
 	XMStoreFloat4x4(&m_matParentInit, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matLocal, XMMatrixIdentity());
 
+	m_vOriginalSettingScale = { 100.f ,100.f, 100.f };
 }
 
 _fmatrix CUI::Get_WorldMatrix()
@@ -44,6 +45,11 @@ _fmatrix CUI::Get_WorldMatrix()
 _fmatrix CUI::Get_InitMatrix()
 {
 	return XMLoadFloat4x4(&m_matInit);
+}
+
+_float3 CUI::Get_WorldScale()
+{
+	return m_pTransformCom->Get_Scaled();
 }
 
 void CUI::Set_Parent(CUI* pUI)
@@ -211,7 +217,7 @@ void CUI::Imgui_RenderingSetting()
 	} ImGui::SameLine();
 	if (ImGui::Button("Delete Diffuse"))
 	{
-		m_TextureListIndices[TEXTURE_DIFFUSE] = -1 ;
+		m_TextureListIndices[TEXTURE_DIFFUSE] = -1;
 		if (FAILED(Set_Texture(CUI::TEXTURE_DIFFUSE, L"Delete")))
 			MSG_BOX("Failed To Set Diffuse Texture : UIEditor");
 	}
@@ -255,24 +261,24 @@ void CUI::Imgui_RenderingSetting()
 	size[0] = m_tSpriteInfo.iXFrames;
 	size[1] = m_tSpriteInfo.iYFrames;
 	if (ImGui::SliderInt("XFrames", &size[0], 1, 20))
-		m_tSpriteInfo.iXFrames = size[0];
+	m_tSpriteInfo.iXFrames = size[0];
 	if(ImGui::SliderInt("YFrames", &size[1], 1, 20))
-		m_tSpriteInfo.iYFrames = size[1];
+	m_tSpriteInfo.iYFrames = size[1];
 
 	static float fTime;
 	fTime = m_tSpriteInfo.fAnimTime;
 	if (ImGui::SliderFloat("Duration_test", &fTime, 0.f, 30.f))
-		m_tSpriteInfo.fAnimTime = fTime;
+	m_tSpriteInfo.fAnimTime = fTime;
 
 	static bool bLoop;
 	bLoop = m_tSpriteInfo.bLoop;
 	if (ImGui::Checkbox("IsLoop", &bLoop))
 	{
-		m_tSpriteInfo.bLoop = bLoop;
-		m_tSpriteInfo.bFinished = false;
-		m_tSpriteInfo.fAnimTimeAcc = 0.f;
-		m_tSpriteInfo.iXFrameNow = 0;
-		m_tSpriteInfo.iYFrameNow = 0;
+	m_tSpriteInfo.bLoop = bLoop;
+	m_tSpriteInfo.bFinished = false;
+	m_tSpriteInfo.fAnimTimeAcc = 0.f;
+	m_tSpriteInfo.iXFrameNow = 0;
+	m_tSpriteInfo.iYFrameNow = 0;
 
 	}
 
@@ -282,15 +288,15 @@ void CUI::Imgui_RenderingSetting()
 	static float fUVTime;
 	fUVTime = m_tUVMoveInfo.fDeltaTime;
 	if (ImGui::SliderFloat("UV Duration_Test", &fUVTime, 0.f, 30.f))
-		m_tUVMoveInfo.fDeltaTime = fUVTime;
+	m_tUVMoveInfo.fDeltaTime = fUVTime;
 
 	static float fUVSpeed[2];
 	fUVSpeed[0] = m_tUVMoveInfo.vSpeed.x;
 	fUVSpeed[1] = m_tUVMoveInfo.vSpeed.y;
 	if (ImGui::SliderFloat("UV Speed_Test", fUVSpeed, -50.f, 50.f))
 	{
-		m_tUVMoveInfo.vSpeed.x = fUVSpeed[0];
-		m_tUVMoveInfo.vSpeed.y = fUVSpeed[1];
+	m_tUVMoveInfo.vSpeed.x = fUVSpeed[0];
+	m_tUVMoveInfo.vSpeed.y = fUVSpeed[1];
 	}
 
 	ImGui::Separator();
@@ -306,10 +312,10 @@ void CUI::Imgui_RenderingSetting()
 	vColor[3] = m_tDefaultRenderInfo.vColor.w;
 	if (ImGui::SliderFloat4("Color_test", vColor, 0.f, 1.f))
 	{
-		m_tDefaultRenderInfo.vColor.x = vColor[0];
-		m_tDefaultRenderInfo.vColor.y = vColor[1];
-		m_tDefaultRenderInfo.vColor.z = vColor[2];
-		m_tDefaultRenderInfo.vColor.w = vColor[3];
+	m_tDefaultRenderInfo.vColor.x = vColor[0];
+	m_tDefaultRenderInfo.vColor.y = vColor[1];
+	m_tDefaultRenderInfo.vColor.z = vColor[2];
+	m_tDefaultRenderInfo.vColor.w = vColor[3];
 	}
 
 	static float vMinColor[4];
@@ -319,16 +325,16 @@ void CUI::Imgui_RenderingSetting()
 	vMinColor[3] = m_tDefaultRenderInfo.vMinColor.w;
 	if (ImGui::SliderFloat4("MinColor_test", vMinColor, 0.f, 1.f))
 	{
-		m_tDefaultRenderInfo.vMinColor.x = vMinColor[0];
-		m_tDefaultRenderInfo.vMinColor.y = vMinColor[1];
-		m_tDefaultRenderInfo.vMinColor.z = vMinColor[2];
-		m_tDefaultRenderInfo.vMinColor.w = vMinColor[3];
+	m_tDefaultRenderInfo.vMinColor.x = vMinColor[0];
+	m_tDefaultRenderInfo.vMinColor.y = vMinColor[1];
+	m_tDefaultRenderInfo.vMinColor.z = vMinColor[2];
+	m_tDefaultRenderInfo.vMinColor.w = vMinColor[3];
 	}
 
 	static float fDeltaTime;
 	fDeltaTime = m_tDefaultRenderInfo.fDeltaTime;
 	if (ImGui::SliderFloat("DefaultDuration", &fDeltaTime, 0.f, 30.f))
-		m_tDefaultRenderInfo.fDeltaTime = fDeltaTime;
+	m_tDefaultRenderInfo.fDeltaTime = fDeltaTime;
 
 	ImGui::Separator();
 	*/
@@ -356,4 +362,5 @@ void CUI::Free()
 
 	for (auto e : m_vecEvents)
 		Safe_Release(e);
+
 }

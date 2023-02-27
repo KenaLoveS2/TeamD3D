@@ -53,7 +53,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 	}
 
 	m_bActive = true;
-	
+
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
 	UIDESC* tDesc = (UIDESC*)pArg;

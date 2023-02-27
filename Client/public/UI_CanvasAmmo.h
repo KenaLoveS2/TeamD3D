@@ -16,7 +16,7 @@ private:
 	CUI_CanvasAmmo(const CUI_CanvasAmmo& rhs);
 	virtual ~CUI_CanvasAmmo() = default;
 
-public:
+public: /* For. Events */
 	_uint	Is_ArrowFull() {
 		if (m_iNumArrows == m_iNumArrowNow) return true;
 		else return false;

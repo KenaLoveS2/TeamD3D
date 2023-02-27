@@ -36,7 +36,7 @@ private:
 	_uint			m_iTextureIndex;
 	vector<_int>	m_vecFramesX;
 	vector<_int>	m_vecFramesY;
-	
+
 	_int	m_iFrameXNow;
 	_int	m_iFrameYNow;
 

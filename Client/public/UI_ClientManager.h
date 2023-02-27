@@ -7,7 +7,7 @@ class CGameInstance;
 END
 
 /* Only for Preparing Components and GameObjects */
-/* UIs are in static Level, so this class should be in MainApp Class, 
+/* UIs are in static Level, so this class should be in MainApp Class,
 and all works are done before Imgui_UIEditor Starts. */
 BEGIN(Client)
 class CUI_ClientManager final : public CBase
@@ -15,10 +15,11 @@ class CUI_ClientManager final : public CBase
 	DECLARE_SINGLETON(CUI_ClientManager);
 
 public:
-	enum UI_EVENT	{ EVENT_BARGUAGE, EVENT_CHANGEIMG, EVENT_ANIMATION, EVENT_END };
+	enum UI_EVENT { EVENT_BARGUAGE, EVENT_CHANGEIMG, EVENT_ANIMATION, EVENT_END };
 	enum UI_PRESENT {
-		HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT,
-		AMMO_BOMB,AMMO_ARROW,
+		HUD_, HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT,
+		AMMO_BOMB, AMMO_ARROW,
+		AIM_, AIM_LINES,
 
 		UI_PRESENT_END
 	};

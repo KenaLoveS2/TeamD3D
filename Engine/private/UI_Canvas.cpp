@@ -118,7 +118,7 @@ void CUI_Canvas::Imgui_RenderProperty()
 		if (ImGui::ListBox(" : Node", &selected_Node, getter_ForCanvas, &m_vecNodeCloneTag, iNumNodes, 5))
 			m_iSelectedNode = selected_Node;
 
-		m_vecNode[selected_Node]->Imgui_RenderProperty();	
+		m_vecNode[selected_Node]->Imgui_RenderProperty();
 	}
 
 }
@@ -137,7 +137,7 @@ HRESULT CUI_Canvas::Save_Data()
 	}
 
 	json["renderPass"] = m_iOriginalRenderPass;
-	
+
 	_int iIndex;
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 		iIndex = m_TextureListIndices[TEXTURE_DIFFUSE];
@@ -221,6 +221,10 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 	for (float fElement : jLoad["worldMatrix"])
 		memcpy(((float*)&matWorld) + (i++), &fElement, sizeof(float));
 	m_pTransformCom->Set_WorldMatrix_float4x4(matWorld);
+
+
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+
 
 	return S_OK;
 }

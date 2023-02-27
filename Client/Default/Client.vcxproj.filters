@@ -178,6 +178,21 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{f140c208-2b44-44eb-8085-37dc6b4fa03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{a8156456-9658-4cf7-8410-64aef2bd526d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{aa80d4f6-48b3-494f-ae8e-b659e32eceae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{26b6c140-6969-4518-8990-b6e9b7f2f4ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{9bcc8c4a-cf39-4d5c-9861-66ee0bb6d9b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -389,6 +404,21 @@
     <ClInclude Include="..\Public\Stair.h" />
     <ClInclude Include="..\Public\Statue.h" />
     <ClInclude Include="..\public\Roots.h" />
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimBomb.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -579,6 +609,21 @@
     <ClCompile Include="..\Private\Stair.cpp" />
     <ClCompile Include="..\Private\Statue.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

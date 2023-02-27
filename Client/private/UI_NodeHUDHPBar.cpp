@@ -8,7 +8,7 @@ CUI_NodeHUDHPBar::CUI_NodeHUDHPBar(ID3D11Device * pDevice, ID3D11DeviceContext *
 }
 
 CUI_NodeHUDHPBar::CUI_NodeHUDHPBar(const CUI_NodeHUDHPBar & rhs)
-	:CUI_Node(rhs)
+	: CUI_Node(rhs)
 {
 }
 
