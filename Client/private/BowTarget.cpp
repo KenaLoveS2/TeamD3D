@@ -33,7 +33,6 @@ HRESULT CBowTarget::Initialize(void * pArg)
 	m_bRenderActive = true;
 
 	return S_OK;
-
 }
 
 void CBowTarget::Tick(_float fTimeDelta)
@@ -69,7 +68,6 @@ HRESULT CBowTarget::Render()
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
-
 }
 
 HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

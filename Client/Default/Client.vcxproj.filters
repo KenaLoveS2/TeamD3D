@@ -375,6 +375,15 @@
     <ClInclude Include="..\public\Door_Anim.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PulseStone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wall.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base_Ground.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -550,6 +559,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Door_Anim.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PulseStone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wall.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Base_Ground.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
