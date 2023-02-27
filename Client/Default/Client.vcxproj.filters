@@ -166,6 +166,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
       <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Editor">
+      <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -285,12 +288,6 @@
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ControlMove.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
@@ -309,8 +306,6 @@
     <ClInclude Include="..\public\LightCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LodObject.h" />
-    <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\LoadingIcon.h">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
     </ClInclude>
@@ -341,12 +336,32 @@
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h" />
-    <ClInclude Include="..\Public\Crystal.h" />
-    <ClInclude Include="..\Public\Cliff_Rock.h" />
-    <ClInclude Include="..\Public\Tree.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -446,12 +461,6 @@
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ControlMove.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
@@ -470,8 +479,6 @@
     <ClCompile Include="..\private\LightCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LodObject.cpp" />
-    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp">
       <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
     </ClCompile>
@@ -502,12 +509,32 @@
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp" />
-    <ClCompile Include="..\Private\Crystal.cpp" />
-    <ClCompile Include="..\Private\Cliff_Rock.cpp" />
-    <ClCompile Include="..\Private\Tree.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -563,6 +590,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
