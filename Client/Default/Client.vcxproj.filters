@@ -91,6 +91,21 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD">
       <UniqueIdentifier>{3a10fc7b-5f35-420a-ba5c-cd78bb41e765}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\SkillButton">
+      <UniqueIdentifier>{3b50b0be-388f-46de-9bf9-61df9b19f44c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\Subtitle">
+      <UniqueIdentifier>{d533c51b-c2de-46fd-ac48-52d29f373b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\MonsterHP">
+      <UniqueIdentifier>{a8801df1-816c-485a-87e8-028f41c1ef4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\Inventory">
+      <UniqueIdentifier>{f85400af-5d17-4194-ac99-80f765740962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\SkillWindow">
+      <UniqueIdentifier>{fd385cae-7e16-4e37-96fc-26b2069a0ede}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD\HP">
       <UniqueIdentifier>{5808fd0d-4aff-4711-a21b-da1076c64588}</UniqueIdentifier>
     </Filter>
@@ -136,47 +151,20 @@
     <Filter Include="02.GameObjects\Player\State">
       <UniqueIdentifier>{6e6de2cd-395c-4900-88d4-ff4763baf2d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events">
+      <UniqueIdentifier>{ff44ad07-8596-4bfd-ab42-0eda2c97469a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\BarGugage">
+      <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\BackGround\LoadingIcon">
       <UniqueIdentifier>{b52be0e8-53b8-4792-b885-a68c2bdfbd24}</UniqueIdentifier>
     </Filter>
     <Filter Include="95. Tool\ImGui Setting">
       <UniqueIdentifier>{51a7fbbd-7b4e-4e0a-bcd0-edaae35666b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events">
-      <UniqueIdentifier>{ff44ad07-8596-4bfd-ab42-0eda2c97469a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events\Guage">
-      <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events\ChangeImg">
-      <UniqueIdentifier>{2df87f8c-a285-47cf-a020-dec9336a7d89}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events\Animation">
-      <UniqueIdentifier>{3eb5b0f2-7881-4e8f-a9a4-0cadf00a4573}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo">
-      <UniqueIdentifier>{933a747c-097a-4bf4-ad47-e3342acbcb87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow">
-      <UniqueIdentifier>{dfe5e34b-2713-40d1-8b4d-2c18c35a072f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb">
-      <UniqueIdentifier>{2ab0690c-f419-4a38-9612-802b4949f3d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
-      <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Envrioment\Editor">
-      <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Envrioment\NonAnim">
-      <UniqueIdentifier>{0921d749-fa88-4bfc-82d4-3b535bda739b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Envrioment\Anim">
-      <UniqueIdentifier>{3abcfc56-e04d-4933-bc6d-ea12a92bfd5b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Envrioment\Test">
-      <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Effect\Trail">
+      <UniqueIdentifier>{7a3b0acb-7019-4871-9c85-983179b53690}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +285,12 @@
     <ClInclude Include="..\public\Tool_Animation.h">
       <Filter>95. Tool\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Interaction_Com.h">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClInclude>
@@ -321,68 +315,65 @@
     <ClInclude Include="..\public\Tool_Settings.h">
       <Filter>95. Tool\ImGui Setting</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_Event_ChangeImg.h">
-      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Animation.h">
-      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Guage.h">
-      <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_CanvasAmmo.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeEffect.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Imgui_MapEditor.h">
-      <Filter>02.GameObjects\Envrioment\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ModelViewerObject.h">
-      <Filter>02.GameObjects\Envrioment\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ControlMove.h">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BowTarget.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Cliff_Rock.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Crystal.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Tree.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\LodObject.h">
-      <Filter>02.GameObjects\Envrioment\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Door_Anim.h">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PulseStone.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Wall.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    <ClInclude Include="..\public\Effect_Trail.h">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Base_Ground.h">
-      <Filter>02.GameObjects\Envrioment\Test</Filter>
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Door_Anim.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PulseStone.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAmmo.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Animation.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_ChangeImg.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Guage.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeEffect.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wall.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -482,6 +473,12 @@
     <ClCompile Include="..\private\Tool_Animation.cpp">
       <Filter>95. Tool\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Interaction_Com.cpp">
       <Filter>02.GameObjects\Envrioment\Components</Filter>
     </ClCompile>
@@ -506,68 +503,65 @@
     <ClCompile Include="..\private\Tool_Settings.cpp">
       <Filter>95. Tool\ImGui Setting</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Event_ChangeImg.cpp">
-      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Animation.cpp">
-      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Guage.cpp">
-      <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeEffect.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
-      <Filter>02.GameObjects\Envrioment\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ModelViewerObject.cpp">
-      <Filter>02.GameObjects\Envrioment\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ControlMove.cpp">
-      <Filter>02.GameObjects\Envrioment\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BowTarget.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Cliff_Rock.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Crystal.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Tree.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\LodObject.cpp">
-      <Filter>02.GameObjects\Envrioment\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Door_Anim.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PulseStone.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Wall.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    <ClCompile Include="..\private\Effect_Trail.cpp">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Base_Ground.cpp">
-      <Filter>02.GameObjects\Envrioment\Test</Filter>
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Door_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PulseStone.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Animation.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_ChangeImg.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Guage.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeEffect.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wall.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -623,8 +617,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
   </ItemGroup>
 </Project>

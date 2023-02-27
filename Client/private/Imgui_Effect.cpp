@@ -83,7 +83,11 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::Button("Save_Data"); ImGui::SameLine();
 		ImGui::Button("Load_Data"); ImGui::SameLine();
 		if (ImGui::Button("Reset_Data"))
+		{
+			m_bIsRectLayer = false;
+			m_bIsParticleLayer = false;
 			iSelectEffectType = 0;
+		}
 
 		for (size_t i = 0; i < iLayerSize; ++i)
 			Safe_Delete_Array(pObjectTag[i]);
@@ -147,7 +151,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 	case EFFECT_PARTICLE:
 		ImGui::Separator();
-		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
+		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateParticleCnt", &iCreateCnt);
 
 		ImGui::InputTextWithHint("EffectTag", "Only Input Tagname.", szEffectTag, 64); 
 		ImGui::InputTextWithHint("VIBufferTag", "Only Input ComponentTag.", szEffectComponentTag, 64); ImGui::SameLine();
@@ -204,7 +208,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::Separator();
 
 		if (iSelectObj != -1 && bIsCreate == true && m_bIsParticleLayer == true)
-			CreateEffect_Particle(iCurSelect, iSelectObj);
+			CreateEffect_Particle(iCreateCnt, iCurSelect, iSelectObj);
 		break;
 
 	case EFFECT_MESH:
@@ -399,43 +403,46 @@ void CImgui_Effect::Set_OptionWindow_Rect(CEffect_Base* pEffect)
 
 		static _int iSelectMoveDir = 0;
 		static _int iSelectRotation = 0;
+		ImGui::Separator();
 		ImGui::BulletText("MoveDir : ");
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance); // 빌보드를 사용하고 있다는 가정하에 
 
 		CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
 		CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
 
-		if (ImGui::RadioButton("MOVE_FRONT", &iSelectMoveDir, 0))
-		{			
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_FRONT;
-			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
-				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		static _bool   bSpread = true;
+		static _int    iSpread = 0;
+		if (ImGui::RadioButton("DIR_X", &iSelectMoveDir, 0))
+		{
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_X;
+			m_eEffectDesc.vPixedDir = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		}ImGui::SameLine();
 
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_BACK", &iSelectMoveDir, 1))
+		if (ImGui::RadioButton("DIR_Y", &iSelectMoveDir, 1))
 		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_BACK;
-			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
-				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Y;
+			m_eEffectDesc.vPixedDir = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		}ImGui::SameLine();
 
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_UP", &iSelectMoveDir, 2))
+		if (ImGui::RadioButton("DIR_Z", &iSelectMoveDir, 2))
 		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_UP;
-			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_UP);
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_DOWN", &iSelectMoveDir, 3))
-		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_DOWN;
-			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_UP));
+			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Z;
+			m_eEffectDesc.vPixedDir = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 		}
 
-		if (ImGui::RadioButton("ROT_X", &iSelectRotation, 0))
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_X; ImGui::SameLine();
-		if (ImGui::RadioButton("ROT_Y", &iSelectRotation, 1))		
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Y; ImGui::SameLine();
-		if (ImGui::RadioButton("ROT_Z", &iSelectRotation, 2))
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Z;
+		ImGui::Separator();
+		ImGui::BulletText("Playback Spread or Gather : ");
+		if (ImGui::RadioButton("Spread", &iSpread, 0))
+			bSpread = true;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Gather", &iSpread, 1))
+			bSpread = false;
+		ImGui::Separator();
+
+		if (bSpread == true)
+			m_eEffectDesc.bSpread = true;
+		else
+			m_eEffectDesc.bSpread = false;
 
 		RELEASE_INSTANCE(CGameInstance);
 	}
@@ -446,182 +453,445 @@ void CImgui_Effect::Set_OptionWindow_Rect(CEffect_Base* pEffect)
 	ImGui::End();
 }
 
-void CImgui_Effect::Set_OptionWindow_Particle(CEffect_Base * pEffect)
+void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * pEffect)
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	ImGui::Begin("Moving Particle Option Window");
 	CEffect_Point_Instancing* pParticle = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
-	static _float2 fSpeed = pParticle->Get_RandomSpeeds();
-	static _float2 fPSize = pParticle->Get_PSize();
+	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = pParticle->Get_PointInstanceDesc();
+	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = pParticle->Get_InstanceData();
+
+	static _float2 fSpeed = eInstanceData->SpeedMinMax;
+	static _float2 fPSize = eInstanceData->fPSize;
 	static _float3 fPosMin = _float3(0.0f);
 	static _float3 fPosMax = _float3(0.0f);
 	static _float  fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
 	static _float2 fSaveSpeed = { 0.0f,0.0f };
 
-	static _bool  bStart = true, bPause = false, bStop = false;
-	if (bStart == true)
-	{
-		m_eEffectDesc.bStart = true;
-		fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
-	}
-	if (bStop == true)
-		m_eEffectDesc.fPlayBbackTime = 0.0f;
+	static _int iSelectShapes = 0;
+	const char* szShapeType[] = { "VIBUFFER_BOX", "VIBUFFER_STRIGHT","VIBUFFER_PLANECIRCLE", "VIBUFFER_CONE", "VIBUFFER_EXPLOSION" };
+	static _bool bShape[5] = { true, false, false, false, false };
 
-	ImGui::BulletText("Play Button    : "); ImGui::SameLine();
-	if (ImGui::Button("Pause"))
+	if (ImGui::TreeNode("Option"))
 	{
-		m_eEffectDesc.bStart = false;
-		if (bPause == false)
+		ImGui::BulletText("Shape : ");
+		if (ImGui::RadioButton(szShapeType[0], &iSelectShapes, 0))
 		{
+			for (_int i = 0; i < IM_ARRAYSIZE(bShape); i++)
+			{
+				if (i == 0)
+					bShape[i] = true;
+				else
+					bShape[i] = false;
+			}
+
+			ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_BOX;
+		}ImGui::SameLine();
+		if (ImGui::RadioButton(szShapeType[1], &iSelectShapes, 1))
+		{
+			for (_int i = 0; i < IM_ARRAYSIZE(bShape); i++)
+			{
+				if (i == 1)
+					bShape[i] = true;
+				else
+					bShape[i] = false;
+			}
+			ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_STRIGHT;
+		}ImGui::SameLine();
+		if (ImGui::RadioButton(szShapeType[2], &iSelectShapes, 2))
+		{
+			for (_int i = 0; i < IM_ARRAYSIZE(bShape); i++)
+			{
+				if (i == 2)
+					bShape[i] = true;
+				else
+					bShape[i] = false;
+			}
+			ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_PLANECIRCLE;
+
+		}
+		if (ImGui::RadioButton(szShapeType[3], &iSelectShapes, 3))
+		{
+			for (_int i = 0; i < IM_ARRAYSIZE(bShape); i++)
+			{
+				if (i == 3)
+					bShape[i] = true;
+				else
+					bShape[i] = false;
+			}
+			ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_CONE;
+		}ImGui::SameLine();
+		if (ImGui::RadioButton(szShapeType[4], &iSelectShapes, 4))
+		{
+			for (_int i = 0; i < IM_ARRAYSIZE(bShape); i++)
+			{
+				if (i == 4)
+					bShape[i] = true;
+				else
+					bShape[i] = false;
+			}
+			ePointDesc->eShapeType = CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_EXPLOSION;
+		}
+
+		static _bool  bStart = true, bPause = false, bStop = false;
+		if (bStart == true)
+		{
+			m_eEffectDesc.bStart = true;
+			fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+		}
+		if (bStop == true)
+			m_eEffectDesc.fPlayBbackTime = 0.0f;
+
+		ImGui::BulletText("Play Button			 : "); ImGui::SameLine();
+		if (ImGui::Button("Pause"))
+		{
+			m_eEffectDesc.bStart = false;
+			if (bPause == false)
+			{
+				fSaveSpeed = fSpeed;
+				fSpeed = _float2(0.0f, 0.0f);
+				fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+				bPause = true;
+			}
+			bStart = false;
+		}ImGui::SameLine();
+
+		if (ImGui::Button("ReStart"))
+		{
+			bStart = true;
+			bPause = false;
+
+			m_eEffectDesc.fPlayBbackTime = fPlayBackTime;
+
+			if (bStop == true)
+			{
+				pParticle->Set_Pos(fPosMin, fPosMax);
+				bStop = false;
+			}
+			fSpeed = _float2(fSaveSpeed.x, fSaveSpeed.y);
+
+		}ImGui::SameLine();
+
+		if (ImGui::Button("Stop"))
+		{
+			m_eEffectDesc.bStart = false;
+
+			bStart = false;
+			bStop = true;
+			fPlayBackTime = m_eEffectDesc.fPlayBbackTime = 0.0f;
+			fPlayBackTime = 0.0f;
 			fSaveSpeed = fSpeed;
 			fSpeed = _float2(0.0f, 0.0f);
-			fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
-			bPause = true;
 		}
-		bStart = false;
-	}ImGui::SameLine();
 
-	if (ImGui::Button("ReStart"))
-	{
-		bStart = true;
-		bPause = false;
+		ImGui::BulletText("Playback Particle Time  : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##fPlayBackTime", (_float*)&fPlayBackTime);
 
-		m_eEffectDesc.fPlayBbackTime = fPlayBackTime;
+		static _float fRange = ePointDesc->fRange;
+		ImGui::BulletText("Playback Particle Range : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat("##fRange", (_float*)&fRange);
+		ePointDesc->fRange = fRange;
 
-		if(bStop == true)
+		ImGui::BulletText("Playback Particle Speed : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat2("##PlaybackParticleSpeed", (_float*)&fSpeed);
+		pParticle->Set_RandomSpeeds(fSpeed.x, fSpeed.y);
+
+		ImGui::BulletText("Playback Particle PSize : "); ImGui::SameLine();
+		ImGui::SetNextItemWidth(150);
+		ImGui::InputFloat2("##PlaybackParticlePSize", (_float*)&fPSize); ImGui::SameLine();
+
+		if (ImGui::Button("InputSize"))
+			pParticle->Set_PSize(fPSize);
+		ImGui::SameLine();
+
+		if (ImGui::Button("RandomSize"))
+			pParticle->Set_RandomPSize(fPSize);
+
+		if (ImGui::CollapsingHeader("Move Detail Setting"))
 		{
-			pParticle->Set_Pos(fPosMin, fPosMax);
-			bStop = false;
+			ImGui::BulletText("MoveRange : "); ImGui::SameLine();
+			ImGui::SetNextItemWidth(150);
+			ImGui::InputFloat("##MoveRange", (_float*)&m_eEffectDesc.fRange, 0.0f, 1.0f);
+
+			ImGui::BulletText("CreateRange : "); ImGui::SameLine();
+			ImGui::SetNextItemWidth(150);
+			ImGui::InputFloat("##CreateRange", (_float*)&m_eEffectDesc.fCreateRange, 0.0f, 1.0f);
+
+			ImGui::BulletText("MoveAngle : "); ImGui::SameLine();
+			ImGui::SetNextItemWidth(150);
+			ImGui::InputFloat("##MoveAngle", (_float*)&m_eEffectDesc.fAngle, 0.0f, 1.0f);
+
+			ImGui::BulletText("fMoveDurationTime : "); ImGui::SameLine();
+			ImGui::SetNextItemWidth(150);
+			ImGui::InputFloat("##fMoveDurationTime", (_float*)&m_eEffectDesc.fMoveDurationTime, 0.0f, 1.0f);
+
 		}
-		fSpeed = _float2(fSaveSpeed.x, fSaveSpeed.y);
+		ImGui::TreePop();
+	}
+	ImGui::Separator();
+	static _int iSelectMoveDir = 0;
+	static _int iSelectRotation = 0;
 
-	}ImGui::SameLine();
-
-	if (ImGui::Button("Stop"))
+	if (bShape[0] == true) // BOX TYPE
 	{
-		m_eEffectDesc.bStart = false;
+		if (ImGui::CollapsingHeader("VIBuffer_Box Option"))
+		{
+			ImGui::BulletText("MoveDir : ");
+			CCamera*       pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+			CTransform*    pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+			static _bool   bSpread = true;
+			static _int    iSpread = 0;
 
-		bStart = false;
-		bStop = true;
-		fPlayBackTime = m_eEffectDesc.fPlayBbackTime = 0.0f;
-		fPlayBackTime = 0.0f;
-		fSaveSpeed = fSpeed;
-		fSpeed = _float2(0.0f, 0.0f);
+			if (ImGui::RadioButton("DIR_X", &iSelectMoveDir, 0))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_X;
+				ePointDesc->vDir = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Y", &iSelectMoveDir, 1))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Y;
+				ePointDesc->vDir = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Z", &iSelectMoveDir, 2))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Z;
+				ePointDesc->vDir = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+			}
+
+			ImGui::Separator();
+			ImGui::BulletText("Playback Spread or Gather : ");
+			if (ImGui::RadioButton("Spread", &iSpread, 0))
+				bSpread = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Gather", &iSpread, 1))
+				bSpread = false;
+
+			ImGui::Separator();
+			ImGui::BulletText("Playback Position Min, Max : ");
+			ImGui::InputFloat3("ParticlePos Min", (_float*)&fPosMin);
+			ImGui::InputFloat3("ParticlePos Max", (_float*)&fPosMax); ImGui::SameLine();
+
+			if (ImGui::Button("Set Box"))
+			{
+				ePointDesc->fMin = fPosMin;
+				ePointDesc->fMax = fPosMax;
+				ePointDesc->bSpread = bSpread;
+
+				pParticle->Set_ShapePosition();
+			}
+		}
+		ImGui::Separator();
 	}
 
-	ImGui::BulletText("Playback Particle Speed : "); ImGui::SameLine();
-	ImGui::SetNextItemWidth(150);
-	ImGui::InputFloat2("##PlaybackParticleSpeed", (_float*)&fSpeed);
-	pParticle->Set_RandomSpeeds(fSpeed.x, fSpeed.y);
-
-	ImGui::BulletText("Playback Particle PSize : "); ImGui::SameLine();
-	ImGui::SetNextItemWidth(150);
-	ImGui::InputFloat2("##PlaybackParticlePSize", (_float*)&fPSize); ImGui::SameLine();
-
-	if (ImGui::Button("InputSize"))
-		pParticle->Set_PSize(fPSize);
-	ImGui::SameLine();
-
-	if (ImGui::Button("RandomSize"))
-		pParticle->Set_RandomPSize(fPSize);
-
-	ImGui::BulletText("Playback Particle Pos Min, Max : "); 
-	ImGui::InputFloat3("ParticlePos Min", (_float*)&fPosMin);
-	ImGui::InputFloat3("ParticlePos Max", (_float*)&fPosMax); ImGui::SameLine();
-
-	if (ImGui::Button("Set Pos"))
+	if (bShape[1] == true) // VIBUFFER_STRIGHT TYPE
 	{
-		pParticle->Set_Pos(fPosMin, fPosMax);
+		if (ImGui::CollapsingHeader("VIBuffer_Stright Option"))
+		{
+			CCamera*       pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+			CTransform*    pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+			static _bool   bSpread = true;
+			static _int    iSpread = 0;
+			static _float4 vPosition = { 0.0f,0.0f,0.0f,1.0f };
+
+			ImGui::BulletText("Playback OriginPos : ");
+			ImGui::InputFloat3("OriginPos", (_float*)&vPosition);
+
+			ImGui::Separator();
+			ImGui::BulletText("MoveDir : ");
+			if (ImGui::RadioButton("DIR_X", &iSelectMoveDir, 0))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_X;
+				ePointDesc->vDir = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Y", &iSelectMoveDir, 1))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Y;
+				ePointDesc->vDir = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Z", &iSelectMoveDir, 2))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Z;
+				ePointDesc->vDir = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+			}
+
+			ImGui::Separator();
+			ImGui::BulletText("Playback Spread or Gather : ");
+			if (ImGui::RadioButton("Spread", &iSpread, 0))
+				bSpread = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Gather", &iSpread, 1))
+				bSpread = false;
+
+			ImGui::SameLine();
+			if (ImGui::Button("Set Straight"))
+			{
+				ePointDesc->vOriginPos = vPosition;
+				ePointDesc->bSpread = bSpread;
+				pParticle->Set_ShapePosition();
+			}
+		}
+		ImGui::Separator();
 	}
 
-	ImGui::BulletText("Playback Particle Time  : "); ImGui::SameLine();
-	ImGui::SetNextItemWidth(150);
-	ImGui::Text(" %f", fPlayBackTime);
-
-	if (ImGui::CollapsingHeader("Move Detail Setting"))
+	if (bShape[2] == true) // VIBUFFER_PLANECIRCLE TYPE
 	{
-		ImGui::BulletText("MoveRange : "); ImGui::SameLine();
-		ImGui::SetNextItemWidth(150);
-		ImGui::InputFloat("##MoveRange", (_float*)&m_eEffectDesc.fRange, 0.0f, 1.0f);
-
-		ImGui::BulletText("CreateRange : "); ImGui::SameLine();
-		ImGui::SetNextItemWidth(150);
-		ImGui::InputFloat("##CreateRange", (_float*)&m_eEffectDesc.fCreateRange, 0.0f, 1.0f);
-
-		ImGui::BulletText("MoveAngle : "); ImGui::SameLine();
-		ImGui::SetNextItemWidth(150);
-		ImGui::InputFloat("##MoveAngle", (_float*)&m_eEffectDesc.fAngle, 0.0f, 1.0f);
-
-		ImGui::BulletText("fMoveDurationTime : "); ImGui::SameLine();
-		ImGui::SetNextItemWidth(150);
-		ImGui::InputFloat("##fMoveDurationTime", (_float*)&m_eEffectDesc.fMoveDurationTime, 0.0f, 1.0f);
-
-		static _int iSelectMoveDir = 0;
-		static _int iSelectRotation = 0;
-		static _int iSelectShapes = 0;
-
-		ImGui::BulletText("Shapes : ");
-		if (ImGui::RadioButton("PARTICLE_STRITE", &iSelectShapes, 0))
+		if (ImGui::CollapsingHeader("VIBuffer_PlaneCircle Option"))
 		{
+			CCamera*       pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+			CTransform*    pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
+			static _bool   bSpread = true;
+			static _int    iSpread = 0;
+			static _float    fDurationTime = 0.0f;
+			static _float    fCreateRange = 0.0f;
+			static _float4 vPosition = { 0.0f,0.0f,0.0f,1.0f };
 
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("PARTICLE_SPHERE", &iSelectShapes, 1))
-		{
+			ImGui::BulletText("Playback OriginPos : ");
+			ImGui::InputFloat3("OriginPos", (_float*)&vPosition);
 
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("PARTICLE_CONE", &iSelectShapes, 2))
-		{
+			ImGui::Separator();
+			ImGui::BulletText("Playback Spread or Gather : ");
+			if (ImGui::RadioButton("Spread", &iSpread, 0))
+				bSpread = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Gather", &iSpread, 1))
+				bSpread = false;
 
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("PARTICLE_SPREAD", &iSelectShapes, 3))
-		{
+			ImGui::Separator();
+			ImGui::BulletText("Playback Duration Time : ");
+			ImGui::PushItemWidth(150);
+			ImGui::InputFloat("##Duration Time", (_float*)&fDurationTime);
 
+			ImGui::BulletText("Playback Creat Range : ");
+			ImGui::PushItemWidth(150);
+			ImGui::InputFloat("##Creat Range", (_float*)&fCreateRange);	
+
+			static _bool bMoveTornado = false;
+			static _bool bMoveRotation = false;
+			static _float fMoveY = 0.0f;
+			ImGui::Checkbox("Move Tornado", &bMoveTornado); ImGui::SameLine();
+			ImGui::Checkbox("Move Rotation", &bMoveRotation);
+			if (bMoveRotation)
+				ImGui::InputFloat("Move RotationY", (_float*)&fMoveY);
+
+			ImGui::SameLine();
+			if (ImGui::Button("Set PlaneCircle"))
+			{
+				ePointDesc->fMin = fPosMin;
+				ePointDesc->fMax = fPosMax;
+				ePointDesc->bSpread = bSpread;
+				ePointDesc->fCreateRange = fCreateRange;
+				ePointDesc->fMaxTime = fDurationTime;
+				ePointDesc->vOriginPos = vPosition;
+
+				if (bMoveTornado)
+					ePointDesc->bMoveY = true;
+				else
+					ePointDesc->bMoveY = false;
+
+				if (bMoveRotation)
+				{
+					ePointDesc->bRotation = true;
+					ePointDesc->fMoveY = fMoveY;
+				}
+				else
+					ePointDesc->bRotation = false;
+
+				pParticle->Set_ShapePosition();
+			}
 		}
-
-		ImGui::BulletText("MoveDir : ");
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance); // 빌보드를 사용하고 있다는 가정하에 
-
-		CCamera* pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
-		CTransform* pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
-
-		if (ImGui::RadioButton("MOVE_FRONT", &iSelectMoveDir, 0))
-		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_FRONT;
-			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
-				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_BACK", &iSelectMoveDir, 1))
-		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_BACK;
-			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_TRANSLATION)
-				- pEffect->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_UP", &iSelectMoveDir, 2))
-		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_UP;
-			m_eEffectDesc.vPixedDir = pTargetTransform->Get_State(CTransform::STATE_UP);
-		}ImGui::SameLine();
-		if (ImGui::RadioButton("MOVE_DOWN", &iSelectMoveDir, 3))
-		{
-			m_eEffectDesc.eMoveDir = CEffect_Base::EFFECTDESC::MOVEDIR::MOVE_DOWN;
-			m_eEffectDesc.vPixedDir = -(pTargetTransform->Get_State(CTransform::STATE_UP));
-		}
-
-		if (ImGui::RadioButton("ROT_X", &iSelectRotation, 0))
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_X; ImGui::SameLine();
-		if (ImGui::RadioButton("ROT_Y", &iSelectRotation, 1))
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Y; ImGui::SameLine();
-		if (ImGui::RadioButton("ROT_Z", &iSelectRotation, 2))
-			m_eEffectDesc.eRotation = CEffect_Base::EFFECTDESC::ROTXYZ::ROT_Z;
-
-		RELEASE_INSTANCE(CGameInstance);
 	}
-	// moveposition
-// 	CTransform::TRANSFORMDESC eTransformDesc = pEffect->Get_TransformCom()->Get_TransformDesc();
-// 	eTransformDesc.fSpeedPerSec = fSpeed;
-// 	pEffect->Get_TransformCom()->Set_TransformDesc(eTransformDesc);
+	if (bShape[3] == true) // CONE TYPE
+	{
+		if (ImGui::CollapsingHeader("VIBuffer_Sphere Option"))
+		{
+			static _float4 vPosition  = { 0.0f,0.0f,0.0f,1.0f };
+			static _float2 vConeRange = { 1.0f, 3.0f };
+			static _int    iSpread = 0;
+			static _bool   bSpread = true;
+
+			ImGui::BulletText("Playback OriginPos : ");
+			ImGui::InputFloat3("OriginPos", (_float*)&vPosition);
+
+			ImGui::Separator();
+			ImGui::BulletText("Cone Range : ");
+			ImGui::InputFloat2("ConrRange", (_float*)&vConeRange);
+
+			ImGui::Separator();
+			if (ImGui::RadioButton("DIR_X", &iSelectMoveDir, 0))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_X;
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Y", &iSelectMoveDir, 1))
+			{
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Y;
+			}ImGui::SameLine();
+
+			if (ImGui::RadioButton("DIR_Z", &iSelectMoveDir, 2))
+				ePointDesc->eRotXYZ = CVIBuffer_Point_Instancing::POINTDESC::DIRXYZ::DIR_Z;
+
+				ImGui::Separator();
+			ImGui::BulletText("Playback Spread or Gather : ");
+			if (ImGui::RadioButton("Spread", &iSpread, 0))
+				bSpread = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Gather", &iSpread, 1))
+				bSpread = false;
+
+			ImGui::SameLine();
+			if (ImGui::Button("Set Cone"))
+			{
+				ePointDesc->vOriginPos = vPosition;
+				ePointDesc->fConeRange = vConeRange;
+				ePointDesc->bSpread = bSpread;
+
+				pParticle->Set_ShapePosition();
+			}
+			ImGui::Separator();
+		}
+	}
+
+	if (bShape[4] == true) // EXPLOSION TYPE
+	{
+		if (ImGui::CollapsingHeader("VIBuffer_Explosion Option"))
+		{
+			static _float4 vPosition = { 0.0f,0.0f,0.0f,1.0f };
+			static _int    iSpread = 0;
+			static _bool   bSpread = true;
+
+			ImGui::BulletText("Playback OriginPos : ");
+			ImGui::InputFloat3("OriginPos", (_float*)&vPosition);
+
+			ImGui::Separator();
+			ImGui::BulletText("Playback Spread or Gather : ");
+			if (ImGui::RadioButton("Spread", &iSpread, 0)) 
+				bSpread = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Gather", &iSpread, 1))
+				bSpread = false;
+
+			ImGui::SameLine();
+			if (ImGui::Button("Set Explosion"))
+			{
+				ePointDesc->vOriginPos = vPosition;
+				ePointDesc->bSpread = bSpread;
+
+				pParticle->Set_ShapePosition();
+			}
+			ImGui::Separator();
+		}
+	}
+
+	//pParticle->Set_PointInstanceDesc(ePointDesc);
 	ImGui::End();
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
@@ -712,6 +982,191 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 
 	ImGui::End();
 }
+
+void CImgui_Effect::Set_Trail(class CEffect_Base* pEffect)
+{
+	if (pEffect == nullptr)
+		return;
+
+	ImGui::Begin("Setting Trail Window");
+	static _bool   bActive = true;
+	static _bool   bAlpha = false;
+	static _bool   bHaveTrail = false;
+	static _float4 fOption = { 0.1f,0.1f,0.1f,1.f };
+
+	ImGui::BulletText("Setting Option : ");
+	ImGui::Checkbox("Active", &bActive); ImGui::SameLine();
+	ImGui::Checkbox("Alpha", &bAlpha); ImGui::SameLine();
+	ImGui::Checkbox("Add Trail", &bHaveTrail);
+
+	if (bHaveTrail && m_eEffectDesc.IsTrail == false)
+	{
+		pEffect->Set_Trail(pEffect, pEffect->Get_ProtoObjectName());
+		m_eEffectDesc.IsTrail = true;
+	}
+	if (!bHaveTrail && m_eEffectDesc.IsTrail == true)
+	{
+		pEffect->Delete_Trail(pEffect->Get_ProtoObjectName());
+		m_eEffectDesc.IsTrail = false;
+	}
+	// hdr하고 effect=>hdr 먹이면 안되나봄
+
+	ImGui::PushItemWidth(200);
+	ImGui::Separator();
+	ImGui::BulletText("Life / Width /  SegmentSize / Alpha : ");
+	ImGui::InputFloat4("##fOption", (_float*)&fOption);
+
+	m_eEffectDesc.bActive = bActive;
+	m_eEffectDesc.bAlpha = bAlpha;
+	m_eEffectDesc.fLife = fOption.x;
+	m_eEffectDesc.fWidth = fOption.y;
+	m_eEffectDesc.fSegmentSize = fOption.z;
+	m_eEffectDesc.fAlpha = fOption.w;
+	pEffect->Set_EffectDesc(m_eEffectDesc);
+	ImGui::End();
+}
+
+void CImgui_Effect::Set_FreePos(CEffect_Base * pEffect)
+{
+	ImGui::Begin("Free Moving");
+
+	char** pObjectTag = nullptr;
+
+	static _uint  iLayerSize = 0;
+	static char*  pSelectObject = "";
+	static _int   iSelectObject = 0;
+	static _int   iAddObjctCnt = 0;
+	static _int   iCreateCnt = 0;
+	static _float fSpeed = 0.0f;
+	static _float fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+	static _uint vecSize =0.0f;
+	static _int iCurPlayIdx = 0.0f;
+
+	vector<_float4>* vecPosition = dynamic_cast<CEffect*>(pEffect)->Get_FreePos();
+	vecSize = (_uint)vecPosition->size();
+
+	static _bool  bStart = true, bPause = false, bStop = false;
+	static _bool  bPlay = false;
+
+	if (bStart == true)
+	{
+		m_eEffectDesc.bStart = true;
+		fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+		dynamic_cast<CEffect*>(pEffect)->Set_FreePos();
+	}
+	if (bStop == true)
+		m_eEffectDesc.fPlayBbackTime = 0.0f;
+
+// 	if (bPlay == true) {
+// 		m_eEffectDesc.bStart = true;
+// 		static _int iCurIdx = 0;
+// 
+// 		auto& iter = vecPosition->begin();
+// 		if (iCurIdx >= vecPosition->size())
+// 			iCurIdx = 0;
+// 
+// 		for (_int i = 0; i < iCurIdx; ++i)
+// 			iter++;
+// 
+// 		_bool bNextTime = dynamic_cast<CEffect*>(pEffect)->Play_FreePos(*iter);
+// 		if (bNextTime)
+// 		{
+// 			dynamic_cast<CEffect*>(pEffect)->Set_Lerp(false);
+// 			iCurIdx++;
+// 		}
+// 	}
+
+	ImGui::BulletText("Play Button    : "); ImGui::SameLine();
+	if (ImGui::Button("Pause"))
+	{
+		m_eEffectDesc.bStart = false;
+		if (bPause == false)
+		{
+			fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
+			bPause = true;
+		}
+		bStart = false;
+	}ImGui::SameLine();
+
+	if (ImGui::Button("Play"))
+	{
+		bPlay = true;
+		bPause = false;
+		bStop = false;
+
+		m_eEffectDesc.bFreeMove = true;
+	}ImGui::SameLine();
+
+	if (ImGui::Button("Stop"))
+	{
+		m_eEffectDesc.bStart = false;
+		m_eEffectDesc.bFreeMove = false;
+		bPlay = false; 
+		bStart = false;
+		bStop = true;
+		fPlayBackTime = m_eEffectDesc.fPlayBbackTime = 0.0f;
+		fPlayBackTime = 0.0f;
+	}ImGui::SameLine();
+
+	if (ImGui::Button("Clear"))
+	{
+		m_eEffectDesc.bStart = false;
+		bStart = false;
+		bStop = true;
+		fPlayBackTime = m_eEffectDesc.fPlayBbackTime = 0.0f;
+		fPlayBackTime = 0.0f;
+		vecPosition->clear();
+		vecSize = (_uint)vecPosition->size();
+	}ImGui::SameLine();
+
+	wstring strFreePos;
+	if (ImGui::Button("Delete"))
+	{
+		auto& iter = vecPosition->begin();
+		for (_int i = 0; i < iSelectObject; ++i)
+			iter++;
+
+		vecPosition->erase(iter);
+		vecSize = (_uint)vecPosition->size();
+	}
+
+	ImGui::BulletText("Free_Position :");
+
+	pObjectTag = new char*[vecSize];
+	auto& iter = vecPosition->begin();
+	for (size_t i = 0; i < vecSize; i++, iter++)
+	{
+		pObjectTag[i] = new char[128];
+		strFreePos.clear();
+
+		strFreePos.append(to_wstring((*iter).x));
+		strFreePos.push_back('/');
+		strFreePos.append(to_wstring((*iter).y));
+		strFreePos.push_back('/');
+		strFreePos.append(to_wstring((*iter).z));
+		strFreePos.push_back('/');
+		strFreePos.append(to_wstring((*iter).w));
+		CUtile::WideCharToChar(strFreePos.c_str(), pObjectTag[i]);
+	}
+
+	ImGui::ListBox("Layer_Position", &iSelectObject, pObjectTag, (_int)vecSize);
+
+	if (ImGui::Button("Move"))
+	{
+		auto& iter = vecPosition->begin();
+		for (_int i = 0; i < iSelectObject; ++i)
+			iter++;
+
+		dynamic_cast<CEffect*>(pEffect)->Set_Position(*iter);
+		iCurPlayIdx = iSelectObject;
+	}
+	for (size_t i = 0; i < vecSize; ++i)
+		Safe_Delete_Array(pObjectTag[i]);
+	Safe_Delete_Array(pObjectTag);
+
+	ImGui::End();
+}
+
 void CImgui_Effect::TransformView(_int iSelectObject, CEffect_Base* pEffect)
 {
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
@@ -758,8 +1213,8 @@ void CImgui_Effect::TransformView(_int iSelectObject, CEffect_Base* pEffect)
 		ImGuizmo::SetRect((_float)LT.x, (_float)LT.y, io.DisplaySize.x, io.DisplaySize.y);
 
 		_float4x4		matView, matProj;
-		XMStoreFloat4x4(&matView, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
-		XMStoreFloat4x4(&matProj, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+		XMStoreFloat4x4(&matView, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+		XMStoreFloat4x4(&matProj, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
 
 		ImGuizmo::Manipulate(
 			reinterpret_cast<_float*>(&matView),
@@ -823,8 +1278,8 @@ void CImgui_Effect::TransformView_child(_int iSelectObject, CEffect_Base* pEffec
 	ImGuizmo::SetRect((_float)LT.x, (_float)LT.y, io.DisplaySize.x, io.DisplaySize.y);
 
 	_float4x4		matView, matProj;
-	XMStoreFloat4x4(&matView, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
-	XMStoreFloat4x4(&matProj, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+	XMStoreFloat4x4(&matView, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+	XMStoreFloat4x4(&matProj, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
 
 	ImGuizmo::Manipulate(
 		reinterpret_cast<_float*>(&matView),
@@ -850,6 +1305,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	CEffect* pEffect = nullptr;
+
 	// 2. Texture Create
 	if (iSelectObject != -1)
 	{
@@ -864,12 +1321,12 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 		for (size_t i = 0; i < iSelectObject; ++i)
 			iter++;
 
-		CEffect* pEffect = dynamic_cast<CEffect*>(iter->second);
-		if (pEffect == nullptr)
-			return;
-
 		if (iCurSelect != iSelectObject)
 		{
+			pEffect = dynamic_cast<CEffect*>(iter->second);
+			if (pEffect == nullptr)
+				return;
+
 			m_eEffectDesc = pEffect->Get_EffectDesc();
 
 			iTextureRender = (_int)m_eEffectDesc.eTextureRenderType;
@@ -880,14 +1337,29 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 			fVector = m_eEffectDesc.vScale;
 			fColor = m_eEffectDesc.vColor;
 		}
-		
+
 		//////////////////////////////////////////////////////////////////////////
 		TransformView(iSelectObject, pEffect);
 		static _bool bChildWindow = false;
+		static _bool bUseTrail = false;
+		static _bool bFreeMovingPos = false;
 		ImGui::Checkbox("Open Child Setting Window", &bChildWindow);
+		ImGui::Checkbox("Use N Open TrailSetting Window", &bUseTrail);
+		ImGui::Checkbox("FreeMoving Window", &bFreeMovingPos);
 
 		if (bChildWindow)
 			Set_Child(pEffect);
+
+		if (bUseTrail)
+			Set_Trail(pEffect);
+
+		if (bFreeMovingPos)
+		{
+			m_eEffectDesc.bFreeMove = true;
+			Set_FreePos(pEffect);
+		}
+		else
+			m_eEffectDesc.bFreeMove = false;
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None; // Tabbar Flag
 		if (ImGui::BeginTabBar("##Value Setting", tab_bar_flags))
@@ -1090,8 +1562,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 	}
 }
 
-
-void CImgui_Effect::CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject)
+void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _int& iSelectObject)
 {
 	if (m_bIsParticleLayer == false)
 		return;
@@ -1104,6 +1575,7 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject)
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	CEffect_Point_Instancing* pEffect = nullptr;
 	// 2. Texture Create
 	if (iSelectObject != -1)
 	{
@@ -1118,16 +1590,14 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject)
 		for (size_t i = 0; i < iSelectObject; ++i)
 			iter++;
 
-		CEffect_Point_Instancing* pEffect = dynamic_cast<CEffect_Point_Instancing*>(iter->second);
-		if (pEffect == nullptr)
-			return;
-
-		Set_OptionWindow_Particle(pEffect);
-
 		if (iCurSelect != iSelectObject)
 		{
-			m_eEffectDesc = pEffect->Get_EffectDesc();
+			pEffect = dynamic_cast<CEffect_Point_Instancing*>(iter->second);
+			if (pEffect == nullptr)
+				return;
 
+			m_eEffectDesc = pEffect->Get_EffectDesc();
+			
 			iTextureRender = (_int)m_eEffectDesc.eTextureRenderType;
 			iParticleType = (_int)m_eEffectDesc.eParticleType;
 			iBlendType = (_int)m_eEffectDesc.eBlendType;
@@ -1137,14 +1607,20 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject)
 			fVector = m_eEffectDesc.vScale;
 			fColor = m_eEffectDesc.vColor;
 		}
+		Set_OptionWindow_Particle(iCreateCnt, pEffect);
 
 		//////////////////////////////////////////////////////////////////////////
 		TransformView(iSelectObject, pEffect);
 		static _bool bChildWindow = false;
+		static _bool bUseTrail = false;
 		ImGui::Checkbox("Open Child Setting Window", &bChildWindow);
+		ImGui::Checkbox("Use N Open TrailSetting Window", &bUseTrail);
 
 		if (bChildWindow)
 			Set_Child(pEffect);
+
+		if (bUseTrail)
+			Set_Trail(pEffect);
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None; // Tabbar Flag
 		if (ImGui::BeginTabBar("##Value Setting", tab_bar_flags))
