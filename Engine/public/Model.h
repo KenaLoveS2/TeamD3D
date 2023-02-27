@@ -23,7 +23,11 @@ public:
 	void				Set_PlayTime(_double dPlayTime);
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
 	void				Set_AnimIndex(_uint iAnimIndex);
+	/*for.Instancing*/
 	const	_bool  Get_IStancingModel() const { return m_bIsInstancing; }
+	vector<_float4x4*>*		Get_InstancePos() { return &m_pInstancingMatrix; }
+	void								Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
+	/*~for.Instancing*/
 public:
 	HRESULT			Save_Model(const wstring& wstrSaveFileDirectory);
 	HRESULT			Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
@@ -77,8 +81,9 @@ private:
 	vector<_float4x4*>									m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
 	_uint															m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
+#ifdef _DEBUG
 	class	CTransform*										m_pInstanceTransform = nullptr;
-
+#endif
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);
 	HRESULT			Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte);
@@ -89,17 +94,17 @@ public:
 	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
-
 	HRESULT SetUp_BonesParentPtr();
 	HRESULT SetUp_ClonedAnimations();
 	HRESULT SetUp_ClonedMeshes();
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 
+#ifdef _DEBUG
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix);
-
+#endif
 };
 
 END
