@@ -65,7 +65,7 @@ HRESULT CTree::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
 	}
 	return S_OK;
 }
@@ -116,18 +116,12 @@ HRESULT CTree::SetUp_Components()
 		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
-
-		if (m_pModelCom->Get_IsLodModel())
-			m_iShaderOption = 1;
 	}
 	else
 	{
 		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
-
-		if (m_pModelCom->Get_IsLodModel())
-			m_iShaderOption = 4;
 	}
 
 	return S_OK;
