@@ -99,7 +99,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
-	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + g_vLightAmbient * vAmbientDesc);
+	// shade 는 빛의 명암을 표시하기 위해 마지막으로 그려진 Blend와 섞이면서 명암이 표현된다.
+	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * vAmbientDesc));
 	Out.vShade.a = 1.f;
 
 	/* 화면에 그려지고 있는 픽셀들의 투영스페이스 상의 위치. */
@@ -122,7 +123,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightSpecular * vSpecularDesc * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar);
+	Out.vSpecular = (g_vLightSpecular * vSpecularDesc) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), g_fFar);
 	Out.vSpecular.a = 0.f;
 
 	return Out;
@@ -180,13 +181,14 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 PS_OUT PS_MAIN_BLEND(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
-
+	             
 	vector		vDiffuse			 = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vShade				 = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vDiffuse , vDepthDesc.b) * vShade + vSpecular;
+	//Out.vColor =	CalcHDRColor(vDiffuse , vDepthDesc.b) * vShade + vSpecular;
+	Out.vColor = vDiffuse * vShade/* + vSpecular*/;
 
 	if (Out.vColor.a == 0.0f)
 		discard;

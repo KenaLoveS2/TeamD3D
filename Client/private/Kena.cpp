@@ -120,12 +120,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	/************** ~Delegator Test *************/
 
-
-
 	if (m_pRendererCom != nullptr)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 	}
 
 	for (auto& pPart : m_vecPart)
