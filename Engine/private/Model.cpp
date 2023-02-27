@@ -543,6 +543,24 @@ HRESULT CModel::SetUp_ClonedMeshes()
 	return S_OK;
 }
 
+void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	size_t InputVecSize = InstanceMatrixVec.size();
+	
+	for (size_t i = 0; i < InputVecSize; ++i)
+	{
+		_float4x4* NewMatrix = new _float4x4;
+		*NewMatrix = InstanceMatrixVec[i];
+		m_pInstancingMatrix.push_back(NewMatrix);
+	}
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+
+}
+
 HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 {
 	DWORD	dwByte = 0;
@@ -1044,9 +1062,10 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	return S_OK;
 }
 
+#ifdef _DEBUG
 void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 {
-	if (ImGui::BeginListBox("##"))
+	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
 	{
 		_int iIndex = 0;
 		for (auto& ProtoPair : m_pInstancingMatrix)
@@ -1099,7 +1118,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 }
-
+#endif
 
 
 
