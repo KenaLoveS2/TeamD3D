@@ -28,7 +28,7 @@
 #include "Border.h"
 #include "Statue.h"
 #include "Roots.h"
-
+#include "Door_Anim.h"
 /* UI */
 #include "BackGround.h"
 
@@ -335,7 +335,6 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 		
-<<<<<<< HEAD
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells",true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target", true)))
@@ -425,7 +424,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, true)))
-=======
+		return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells")))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target")))
@@ -523,7 +522,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath",false,true)))
 	//	return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal", false, true)))
->>>>>>> bd024b19bff5780139dd11b0052e11b567387c51
 		return E_FAIL;
 	
 #pragma region Cliff
@@ -552,7 +550,6 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma  region Tree
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
 		return E_FAIL;
-<<<<<<< HEAD
 
 #pragma endregion ~Tree
 
@@ -570,8 +567,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_DoorCrystal_0",
 	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Door/DoorCrystal/DoorCrystal_Anim_0.mdat"), PivotMatrix))))
 	//	return E_FAIL;
-=======
->>>>>>> bd024b19bff5780139dd11b0052e11b567387c51
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -679,26 +674,25 @@ HRESULT CLoader::Loading_ForMapTool()
 		CBowTarget::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-<<<<<<< HEAD
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_PulseStone */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
-		CPulseStone::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_PulseStone */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
+	//	CPulseStone::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_BaseGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BaseGround"),
-		CBase_Ground::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_BaseGround */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BaseGround"),
+	//	CBase_Ground::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
-	/* For.Prototype_GameObject_Wall */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wall"),
-		CWall::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_Wall */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wall"),
+	//	CWall::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	/* For.Prototype_GameObject_Wall */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Root"),
@@ -724,8 +718,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Border"),
 		CBorder::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-=======
->>>>>>> bd024b19bff5780139dd11b0052e11b567387c51
+
 	
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
