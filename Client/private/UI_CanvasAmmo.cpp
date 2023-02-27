@@ -68,6 +68,10 @@ void CUI_CanvasAmmo::Tick(_float fTimeDelta)
 		}
 	}
 
+	/* Code */
+
+	/* ~Code */
+
 	__super::Tick(fTimeDelta);
 
 }
@@ -83,7 +87,8 @@ void CUI_CanvasAmmo::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasAmmo::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	/* Arrow Count */
 	_float4 vPos;
@@ -104,16 +109,12 @@ HRESULT CUI_CanvasAmmo::Render()
 HRESULT CUI_CanvasAmmo::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
-
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (pKena == nullptr)
+		return E_FAIL;
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -184,7 +185,6 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources();
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
