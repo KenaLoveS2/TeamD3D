@@ -332,15 +332,15 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimLine");
 
-	/* Aim Arrow */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimArrow"), CUI_NodeAimArrow::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimArrow");
+	///* Aim Arrow */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimArrow"), CUI_NodeAimArrow::Create(pDevice, pContext))))
+	//	return E_FAIL;
+	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimArrow");
 
-	/* Aim Bomb */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimBomb"), CUI_NodeAimBomb::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimBomb");
+	///* Aim Bomb */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimBomb"), CUI_NodeAimBomb::Create(pDevice, pContext))))
+	//	return E_FAIL;
+	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimBomb");
 
 
 	/********************************************/
