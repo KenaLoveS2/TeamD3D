@@ -43,8 +43,8 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
-	//UIDESC* tDesc = (UIDESC*)pArg;
-	//m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
+	UIDESC* tDesc = (UIDESC*)pArg;
+	m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
 
 	return S_OK;
 }

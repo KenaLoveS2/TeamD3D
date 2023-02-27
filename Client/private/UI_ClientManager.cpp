@@ -198,7 +198,6 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Aim/Aim_Bomb.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimBomb");
-	RELEASE_INSTANCE(CGameInstance);
 
 	/********************************************/
 	/*				For. Effects				*/

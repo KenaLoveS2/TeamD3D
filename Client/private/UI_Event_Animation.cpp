@@ -6,7 +6,7 @@
 
 CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 {
-	m_szEventName = "BarGuage";
+	m_szEventName = "Animation";
 	m_iRenderPass = 4;
 	m_pParent = pUI;
 
@@ -154,6 +154,7 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 	bLoop = m_bLoop;
 	if (ImGui::Checkbox("IsLoop", &bLoop))
 	{
+		m_bStart = true;
 		m_bLoop = bLoop;
 		m_bFinished = false;
 		m_fTimeAcc = 0.f;
