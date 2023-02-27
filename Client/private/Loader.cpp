@@ -336,26 +336,26 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells")))
 	//	return E_FAIL;
 	
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target",true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Big_Pillar",true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Ciff_Rock",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal",true,false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_RockRubble",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/Hanging_Brazier",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes",true,false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal",true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big",true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_NonAnim",true)))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target", true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Big_Pillar", true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Ciff_Rock", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal", true, false)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_RockRubble", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/Hanging_Brazier", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_NonAnim", true)))
+		return E_FAIL;
 	
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_StoneBorder")))
 	//	return E_FAIL;
@@ -364,8 +364,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock")))
 	//	return E_FAIL;
 	
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Roots/Roots_Nomral",true,true)))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Roots/Roots_Nomral",true,true)))
+		return E_FAIL;
 
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/Rot_Rock")))
 	//	return E_FAIL;
@@ -378,16 +378,16 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Save_StoneTree")))
 	//	return E_FAIL;
 	
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/DirtBank",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/DirtSlope_Spline02",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/RootSlope_convex",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/RootSlope_Rock",true,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/SlideCap_Spline",true,true)))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/DirtBank", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/DirtSlope_Spline02", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/RootSlope_convex", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/RootSlope_Rock", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Slopes/SlideCap_Spline", true, true)))
+		return E_FAIL;
 	
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue/Owl_WrapShrine")))
 	//	return E_FAIL;
@@ -434,10 +434,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2")))
 	//	return E_FAIL;
 
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
+		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Base_Stairs_Pos")))
 		return E_FAIL;
 

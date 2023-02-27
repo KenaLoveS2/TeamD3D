@@ -128,7 +128,7 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 	m_pInput_Device->Invalidate_Input_Device(bWinActive);
 
 	m_pImgui_Manager->Tick_Imgui();
-
+	
 	m_pObject_Manager->Tick(fTimeDelta);
 	m_pCamera_Manager->Tick(fTimeDelta);
 	m_pLevel_Manager->Tick(fTimeDelta);
