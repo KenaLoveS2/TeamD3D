@@ -5,10 +5,15 @@
 BEGIN(Client)
 class CUI_NodeEffect final : public CUI_Node
 {
+public:
+
 private:
 	CUI_NodeEffect(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeEffect(const CUI_NodeEffect& rhs);
 	virtual ~CUI_NodeEffect() = default;
+
+public:
+	void	Start_Effect(CUI* pTarget, _float fX, _float fY);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

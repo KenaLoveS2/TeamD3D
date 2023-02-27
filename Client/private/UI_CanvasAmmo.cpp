@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasAmmo.h"
 #include "GameInstance.h"
+#include "UI_ClientManager.h"
+#include "UI_NodeEffect.h"
 
 /* Nodes */
 #include "UI_NodeAmmoBombGuage.h"
@@ -153,6 +155,25 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+
+	/* Effects are stored in the canvas of UI that need it. */
+	/* But Call through ClientManager because Node doesn't have to know the canvas belong to.*/
+	str = "Node_EffectBomb";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectBomb", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_BOMBFULL, static_cast<CUI_NodeEffect*>(pUI));
+
+	str = "Node_EffectArrow";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectArrow", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_ARROWFULL, static_cast<CUI_NodeEffect*>(pUI));
+
 
 
 	RELEASE_INSTANCE(CGameInstance);

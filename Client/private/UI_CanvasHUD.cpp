@@ -8,6 +8,7 @@
 #include "UI_NodeHUDShield.h"
 #include "UI_NodeHUDPip.h"
 #include "UI_NodeHUDRot.h"
+#include "UI_NodeEffect.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -181,12 +182,15 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-	str = "Node_PipEffect";
+	/* Effects are stored in the canvas of UI that need it. */
+	/* But Call through ClientManager because Node doesn't have to know the canvas belong to.*/
+	str = "Node_EffectPip";
 	tDesc.fileName.assign(str.begin(), str.end());
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_PipEffect", &tDesc));
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectPip", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_PIPFULL, static_cast<CUI_NodeEffect*>(pUI));
 
 
 	RELEASE_INSTANCE(CGameInstance);

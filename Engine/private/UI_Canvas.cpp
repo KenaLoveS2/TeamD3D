@@ -253,4 +253,5 @@ void CUI_Canvas::Free()
 	for (auto node : m_vecNode)
 		Safe_Release(node);
 	m_vecNode.clear();
+
 }

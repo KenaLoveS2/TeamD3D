@@ -31,6 +31,8 @@ IMPLEMENT_SINGLETON(CUI_ClientManager)
 
 CUI_ClientManager::CUI_ClientManager()
 {
+	for (_uint i = 0; i < EFFECT_END; ++i)
+		m_vecEffects.push_back(nullptr);
 }
 
 HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -210,8 +212,27 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipFill_Anim.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_PipFill");
-	RELEASE_INSTANCE(CGameInstance);
 
+
+	/* Bomb Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_BombFill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BombFill");
+
+	/* Arrow Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ArrowFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowRefill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArrowFill");
+
+
+
+
+
+
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -236,10 +257,11 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
 
 
-																					 /* Event List */
+	/* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -438,4 +460,5 @@ void CUI_ClientManager::Save_NodeStrings(CGameInstance* pGameInstance, const _tc
 
 void CUI_ClientManager::Free()
 {
+	m_vecEffects.clear();
 }

@@ -37,20 +37,6 @@ CUI::CUI(const CUI & rhs)
 	m_vOriginalSettingScale = { 100.f ,100.f, 100.f };
 }
 
-_fmatrix CUI::Get_WorldMatrix()
-{
-	return m_pTransformCom->Get_WorldMatrix();
-}
-
-_fmatrix CUI::Get_InitMatrix()
-{
-	return XMLoadFloat4x4(&m_matInit);
-}
-
-_float3 CUI::Get_WorldScale()
-{
-	return m_pTransformCom->Get_Scaled();
-}
 
 void CUI::Set_Parent(CUI* pUI)
 {

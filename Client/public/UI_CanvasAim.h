@@ -36,7 +36,6 @@ private:  /* Test .... Transform Event를 따로 뺄지 말지 생각중 */
 	_float		m_fTimeAcc;
 
 
-
 private: /* Bind Functions */
 	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 

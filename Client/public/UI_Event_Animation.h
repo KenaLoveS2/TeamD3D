@@ -14,6 +14,8 @@ private:
 	virtual ~CUI_Event_Animation() = default;
 
 public:
+	_bool	Is_Finished() { return m_bFinished; }
+public:
 	virtual void		Call_Event(_uint iData)					override;
 
 public:

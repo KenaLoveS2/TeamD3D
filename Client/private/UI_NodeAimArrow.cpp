@@ -77,11 +77,9 @@ void CUI_NodeAimArrow::Late_Tick(_float fTimeDelta)
 		float fRatioY = matWorldParent._22 / m_matParentInit._22;
 		_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
 
-		_matrix matScaleInv = XMMatrixInverse(nullptr, matParentScale);
-
 		_matrix matInitSclaeRatio = XMMatrixScaling(m_fInitialRatioX, m_fInitialRatioY, 1.f);
 
-		_matrix matWorld = matInitSclaeRatio*m_matLocal;
+		_matrix matWorld = matInitSclaeRatio*m_matLocal*matParentTrans;
 		m_pTransformCom->Set_WorldMatrix(matWorld);
 	}
 

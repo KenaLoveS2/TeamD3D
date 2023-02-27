@@ -28,19 +28,29 @@ protected:
 
 
 public: /* Get */
-	_fmatrix				Get_WorldMatrix();
-	_fmatrix				Get_InitMatrix();
-	_float3					Get_WorldScale();
-	_float3					Get_OriginalSettingScale() { return m_vOriginalSettingScale; }
-	_uint					Get_RenderPass() { return m_iRenderPass; }
-	CTexture*				Get_DiffuseTexture() { return m_pTextureCom[TEXTURE_DIFFUSE]; }
+	_fmatrix				Get_WorldMatrix()			{ return m_pTransformCom->Get_WorldMatrix(); }
+	_fmatrix				Get_InitMatrix()			{ return XMLoadFloat4x4(&m_matInit); }
+	_fmatrix				Get_LocalMatrix()			{ return XMLoadFloat4x4(&m_matLocal); }
+	_float4x4				Get_LocalMatrixFloat4x4()	{ return m_matLocal; }
+	_float3					Get_WorldScale()			{ return m_pTransformCom->Get_Scaled(); }
+	_float3					Get_OriginalSettingScale()	{ return m_vOriginalSettingScale; }
+	_uint					Get_RenderPass()			{ return m_iRenderPass; }
+	CTexture*				Get_DiffuseTexture()		{ return m_pTextureCom[TEXTURE_DIFFUSE]; }
 
 public: /* Set */
 	void					Set_Parent(CUI* pUI);
 	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
-	void					Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
+	void					Set_RenderPass(_uint iPass)			{ m_iRenderPass = iPass; }
 	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
-	void					Set_TextureIndex(_uint iIdx) { m_iTextureIdx = iIdx; }
+	void					Set_TextureIndex(_uint iIdx) {  /* For Diffuse Texture */
+		if(m_pTextureCom[TEXTURE_DIFFUSE]!=nullptr)
+			m_iTextureIdx = iIdx; 
+	}
+	void					Set_LocalTranslation(_float4 vPos)	{ 
+		m_matLocal._41 = vPos.x;
+		m_matLocal._42 = vPos.y;
+		m_matLocal._43 = vPos.z;
+	}
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

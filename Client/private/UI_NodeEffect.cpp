@@ -17,6 +17,29 @@ CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 {
 }
 
+void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
+{
+	if (nullptr == pTarget)
+		return;
+
+	m_pTarget = pTarget;
+	m_bActive = true;
+
+	_float4 vPos = pTarget->Get_LocalMatrix().r[3];
+	vPos.x += fX;
+	vPos.y += fY;
+
+	this->Set_LocalTranslation(vPos);
+
+	//_float4 vPos = pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	//vPos.x += fX;
+	//vPos.y += fY;
+	//
+	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,vPos);
+
+	m_vecEvents[0]->Call_Event((_uint)0);
+}
+
 HRESULT CUI_NodeEffect::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -39,7 +62,7 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
@@ -51,12 +74,42 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 void CUI_NodeEffect::Tick(_float fTimeDelta)
 {
+	 m_bActive = true;
+	if (!m_bActive)
+		return;
+
+	if (static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
+		m_bActive = false;
+
 	__super::Tick(fTimeDelta);
 }
 
 void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	if (!m_bActive)
+		return;
+
+	if (m_pParent != nullptr)
+	{
+		_float4x4 matWorldParent;
+		XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
+
+		_matrix matParentTrans = XMMatrixTranslation(matWorldParent._41, matWorldParent._42, matWorldParent._43);
+
+		float fRatioX = matWorldParent._11 / m_matParentInit._11;
+		float fRatioY = matWorldParent._22 / m_matParentInit._22;
+		_matrix matParentScale = XMMatrixScaling(fRatioX, fRatioY, 1.f);
+
+		_matrix matWorld = m_matLocal*matParentScale*matParentTrans;
+		m_pTransformCom->Set_WorldMatrix(matWorld);
+	}
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+
 }
 
 HRESULT CUI_NodeEffect::Render()
