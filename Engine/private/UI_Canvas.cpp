@@ -222,10 +222,6 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 		memcpy(((float*)&matWorld) + (i++), &fElement, sizeof(float));
 	m_pTransformCom->Set_WorldMatrix_float4x4(matWorld);
 
-
-	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
-
-
 	return S_OK;
 }
 

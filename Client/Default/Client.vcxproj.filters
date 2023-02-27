@@ -181,6 +181,18 @@
     <Filter Include="02.GameObjects\UI\04. Events\Transform">
       <UniqueIdentifier>{7336f2ec-35d5-46d2-8e48-32e8c207ebf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Editor">
+      <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\NonAnim">
+      <UniqueIdentifier>{0921d749-fa88-4bfc-82d4-3b535bda739b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Anim">
+      <UniqueIdentifier>{3abcfc56-e04d-4933-bc6d-ea12a92bfd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Test">
+      <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -372,6 +384,42 @@
     <ClInclude Include="..\public\UI_Event_Transform.h">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Door_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PulseStone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wall.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base_Ground.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -541,6 +589,42 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Door_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PulseStone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wall.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Base_Ground.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
