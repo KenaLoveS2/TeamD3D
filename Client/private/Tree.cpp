@@ -117,17 +117,15 @@ HRESULT CTree::SetUp_Components()
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 
-		if (m_pModelCom->Get_IsLodModel())
-			m_iShaderOption = 1;
+		m_iShaderOption = 2;
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 
-		if (m_pModelCom->Get_IsLodModel())
-			m_iShaderOption = 4;
+		m_iShaderOption = 4;
 	}
 
 	return S_OK;
