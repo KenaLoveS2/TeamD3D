@@ -166,6 +166,21 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
       <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{b0f71ada-673e-4942-88cc-0efdc42ed7ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{afc08a89-cbe9-4d3f-8639-6dd0aea012ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{3039f710-8776-4036-86a4-fe7e1440311f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{da0485af-3fc5-4227-8cb7-b115711e791e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{7336f2ec-35d5-46d2-8e48-32e8c207ebf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -348,6 +363,15 @@
     <ClInclude Include="..\public\UI_NodeEffect.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -508,6 +532,15 @@
     <ClCompile Include="..\Private\Tree.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

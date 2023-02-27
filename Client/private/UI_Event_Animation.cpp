@@ -8,6 +8,8 @@ CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 {
 	m_szEventName = "BarGuage";
 	m_iRenderPass = 4;
+	m_pParent = pUI;
+
 
 	m_bStart		= false;
 	m_bFinished		= false;
@@ -19,7 +21,6 @@ CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 	m_iFrameXNow	= 0;
 	m_iFrameYNow	= 0;
 
-	m_pParent = pUI;
 	m_iTextureNum = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
 	for (_uint i = 0; i < m_iTextureNum; ++i)
 	{
