@@ -18,13 +18,14 @@ public:
 		ZeroMemory(m_szName, MAX_PATH);
 		strcpy_s(m_szName, strRootNodeName.c_str());
 	}
+	void		Set_BoneTranfromMatrix(_fmatrix matTransform);
 
 public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT Initialize(void* pArg);
 	
-	void Update_TransformMatrix(_float PlayTime);
-	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio);
+	void Update_TransformMatrix(_float PlayTime, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
+	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
 	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio);
 
 	void Reset_KeyFrameIndex() {

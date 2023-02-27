@@ -73,6 +73,11 @@ HRESULT CTerrain::Render()
 	return S_OK;
 }
 
+void CTerrain::Imgui_RenderProperty()
+{
+	CGameObject::Imgui_RenderProperty();
+}
+
 HRESULT CTerrain::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -139,11 +144,6 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &_float4(15.f, 0.f, 15.f, 1.f), sizeof(_float4))))
 		return E_FAIL;
-
-	
-
-
-
 
 	return S_OK;
 }

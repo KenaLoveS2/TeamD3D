@@ -91,26 +91,61 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex--;
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
+	
+	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
+	CUI_ClientManager::UI_PRESENT eType1 = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT eType2 = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		/* Pip Guage pop test */
+		_float fPipUse = 0;;
+		m_PlayerDelegator.broadcast(eType2, fPipUse);
+
+		/* Rot icon chagne test */
+		static _float fIcon = 0;
+		fIcon = _uint(fIcon + 1) % 4;
+		m_PlayerDelegator.broadcast(eType4, fIcon);
+
+		/* Bomb Guage test */
+		static _float fBomb = 0.f;
+		m_PlayerDelegator.broadcast(eBomb, fBomb);
+
+		/* Arrow Guage test */
+		static _float fArrow = 1.f;
+		m_PlayerDelegator.broadcast(eArrowGuage, fArrow);
+
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
 		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eType, fNum);
-
+		m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType2, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
-		CUI_ClientManager::UI_HUD eType = CUI_ClientManager::HUD_HP;
 		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eType, fNum);
-
+		m_PlayerDelegator.broadcast(eType1, fNum);
+		m_PlayerDelegator.broadcast(eType2, fNum);
+		m_PlayerDelegator.broadcast(eType3, fNum);
 	}
+
 	/************** ~Delegator Test *************/
 
+
+
 	if (m_pRendererCom != nullptr)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
@@ -160,9 +195,25 @@ HRESULT CKena::Render()
 		else
 		{
 			// Eye Lash
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CKena::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
 }
@@ -226,6 +277,20 @@ void CKena::ImGui_ShaderValueProperty()
 		m_vEyeAmbientColor.x = fColor[0];
 		m_vEyeAmbientColor.y = fColor[1];
 		m_vEyeAmbientColor.z = fColor[2];
+	}
+
+	{
+		static _float2 LashWidthMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashWidthMinMax", (float*)&LashWidthMinMax);
+		ImGui::DragFloat("LashWidthAmount", &m_fLashWidth, 0.1f, LashWidthMinMax.x, LashWidthMinMax.y);
+
+		static _float2 LashDensityMinMax{ 0.f, 100.f };
+		ImGui::InputFloat2("LashDensityAmoutMinMax", (float*)&LashDensityMinMax);
+		ImGui::DragFloat("LashDensityAmount", &m_fLashDensity, 0.1f, LashDensityMinMax.x, LashDensityMinMax.y);
+
+		static _float2 LashIntensity{ 0.f, 100.f };
+		ImGui::InputFloat2("LashIntensityMinMax", (float*)&LashIntensity);
+		ImGui::DragFloat("LashIntensityAmount", &m_fLashIntensity, 0.1f, LashIntensity.x, LashIntensity.y);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -352,6 +417,29 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientEyeColor", &m_vEyeAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_fLashDensity", &m_fLashDensity, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
+
+	return S_OK;
+}
+
+HRESULT CKena::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

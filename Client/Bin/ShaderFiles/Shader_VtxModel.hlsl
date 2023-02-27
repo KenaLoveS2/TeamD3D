@@ -8,8 +8,7 @@ float				g_fFar = 300.f;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_ERAOTexture;
-
+Texture2D<float4>		g_MasterBlendDiffuseTexture;
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -33,11 +32,9 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	matrix		matWV, matWVP;
-
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
-
-
+	
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
@@ -112,12 +109,17 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	if (0.1f > vDiffuse.a)
+	float4 albedo0 = g_MasterBlendDiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	float4 albedo1 = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4 vColor = albedo1;			//albedo0 * albedo1 * 2.0f;
+	vColor = saturate(vColor);
+
+	if (0.1f > vColor.a)
 		discard;
 
-	vector		vERAO  = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
@@ -125,10 +127,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse =	CalcHDRColor(vDiffuse, vERAO.r);
+	Out.vDiffuse = vColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
-	//Out.vModelViewer = vDiffuse;
 	return Out;
 }
 
@@ -144,7 +145,6 @@ PS_OUT_MODEL_VIEWER PS_MAIN_MODEL_VIEWER(PS_IN In)
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;

@@ -24,6 +24,13 @@ sampler EyeSampler = sampler_state
 	AddressV = clamp;
 };
 
+sampler SkySampler = sampler_state
+{
+	filter = min_mag_mip_linear;
+AddressU = clamp;
+AddressV = clamp;
+};
+
 RasterizerState RS_Default
 {
 	FillMode = Solid;

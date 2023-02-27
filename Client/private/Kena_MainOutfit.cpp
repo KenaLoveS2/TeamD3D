@@ -39,7 +39,8 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+	CModel*	pKenaModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
+	m_pModelCom->Set_AnimIndex(pKenaModel->Get_AnimIndex(), pKenaModel->Get_BlendAnimIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
@@ -49,7 +50,10 @@ void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CKena_MainOutfit::Render()
@@ -77,13 +81,36 @@ HRESULT CKena_MainOutfit::Render()
 		}
 		else	if(i==1 || i ==2)
 		{
+			// Shoes & Bag
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
-		else
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" );
+		else if(i == 3 || i == 4)
+		{
+			// Boots & Hair
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_HairDepthTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ALPHA, "g_HairAlphaTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ROOT, "g_HairRootTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" , 6);
+		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CKena_MainOutfit::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
 }
@@ -130,6 +157,18 @@ void CKena_MainOutfit::ImGui_ShaderValueProperty()
 		m_vMulAmbientColor.y = fColor[1];
 		m_vMulAmbientColor.z = fColor[2];
 	}
+
+	{
+		static _float2 HairLengthMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("g_fHairLengthMinMax", (float*)&HairLengthMinMax);
+		ImGui::DragFloat("g_fHairLength", &m_fHairLength, 0.001f, HairLengthMinMax.x, HairLengthMinMax.y);
+	}
+
+	{
+		static _float2 HairThicknessMinMax{ -10.f, 10.f };
+		ImGui::InputFloat2("g_fHairThicknessMinMax", (float*)&HairThicknessMinMax);
+		ImGui::DragFloat("g_fHairThickness", &m_fHairThickness, 0.001f, HairThicknessMinMax.x, HairThicknessMinMax.y);
+	}
 }
 
 HRESULT CKena_MainOutfit::SetUp_Components()
@@ -167,6 +206,16 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 	}
 	/******************************************************************/
 
+	for(_uint i = 3; i<5; ++i)
+	{
+		// Depth
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/hair_DEPTH.png"));
+		// Alpha
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ALPHA, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
+		// Root
+		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ROOT, TEXT("../Bin/Resources/Anim/Kena/hair_ROOT.png"));
+	}
+
 	return S_OK;
 }
 
@@ -179,9 +228,31 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	
-	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
+	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(_float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
+	m_pShaderCom->Set_RawValue("g_fHairLength", &m_fHairLength, sizeof(_float));
+	m_pShaderCom->Set_RawValue("g_fHairThickness", &m_fHairThickness, sizeof(_float));
+
+	return S_OK;
+}
+
+HRESULT CKena_MainOutfit::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

@@ -105,6 +105,18 @@ namespace Engine
 		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXRECTINSTANCE_DECLARATION;
 
+	typedef struct ENGINE_DLL tagVertexModel_Instancing_Declaration
+	{
+		static const unsigned int			iNumElements = 8;
+		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+
+	}VTXMODEL_INSTAICING_DECLARATION;
+/*
+	XMFLOAT3		vPosition;
+	XMFLOAT3		vNormal;
+	XMFLOAT2		vTexUV;
+	XMFLOAT3		vTangent;*/
+
 
 	typedef struct tagVertexPositionCubeTexture
 	{

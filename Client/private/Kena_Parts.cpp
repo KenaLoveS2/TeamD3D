@@ -44,18 +44,25 @@ HRESULT CKena_Parts::Initialize(void * pArg)
 void CKena_Parts::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pTransformCom->Set_WorldMatrix(m_pPlayer->Get_WorldMatrix());
 }
 
 void CKena_Parts::Late_Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pTransformCom->Set_WorldMatrix(m_pPlayer->Get_WorldMatrix());
 }
 
 HRESULT CKena_Parts::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CKena_Parts::RenderShadow()
+{
+	FAILED_CHECK_RETURN(__super::RenderShadow(), E_FAIL);
 
 	return S_OK;
 }

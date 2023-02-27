@@ -151,10 +151,10 @@ HRESULT CBackGround::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (LEVEL_LOADING == CGameInstance::GetInstance()->Get_CurLevelIndex())
-		m_iTextureIndex = 1;
-	else
+	if (LEVEL_LOGO == CGameInstance::GetInstance()->Get_CurLevelIndex())
 		m_iTextureIndex = 0;
+	else
+		m_iTextureIndex = 1;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 

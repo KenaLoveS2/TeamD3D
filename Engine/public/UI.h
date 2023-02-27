@@ -21,48 +21,24 @@ public:
 		_float4x4			ProjMatrix;
 	} UIDESC;
 
-	typedef struct tagSpriteAnimInfo
-	{
-		_int		iXFrames;
-		_int		iYFrames;
-		_int		iXFrameNow;
-		_int		iYFrameNow;
-		_float		fAnimTime;
-		_float		fAnimTimeAcc;
-		_bool		bLoop;
-		_bool		bFinished;
-	} SPRITEINFO;
-
-	typedef struct tagUVMoveInfo
-	{
-		_float2		vDelta;
-		_float2		vSpeed;
-		_float		fDeltaTime;
-		_float		fDeltaTimeAcc;
-	}UVMOVE;
-
-	typedef struct tagDefaultRenderInfo
-	{
-		_float4		vColor;
-		_float4		vMinColor;
-		_float		fAlpha;
-		_float		fDeltaTime;
-		_float		fDeltaTimeAcc;
-	}DEFAULTINFO;
-
 protected:
 	CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI(const CUI& rhs);
 	virtual ~CUI() = default;
 
 
-public:
+public: /* Get */
 	_fmatrix				Get_WorldMatrix();
 	_fmatrix				Get_InitMatrix();
+	_uint					Get_RenderPass() { return m_iRenderPass; }
+	CTexture*				Get_DiffuseTexture() { return m_pTextureCom[TEXTURE_DIFFUSE]; }
+	
+public: /* Set */
 	void					Set_Parent(CUI* pUI);
 	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
 	void					Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
 	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
+	void					Set_TextureIndex(_uint iIdx) { m_iTextureIdx = iIdx; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -74,6 +50,8 @@ public:
 public:
 	HRESULT					Add_Event(CUI_Event* pEvent);
 	HRESULT					Delete_Event();
+public:
+	void					Change_DiffuseTexture(CTexture* pTexture, CTexture** ppOrigin = nullptr);
 
 public:
 	virtual HRESULT			Save_Data() { return S_OK; }
@@ -97,20 +75,23 @@ protected:
 	_bool					m_bActive;
 	_uint					m_iRenderPass;
 	wstring					m_TextureComTag[TEXTURE_END];
+	_int					m_TextureListIndices[TEXTURE_END]; /* Save the index of texture for using save/load */
+
+	_uint					m_iTextureIdx; /* Diffuse Texture's index (for render) */
 
 	/* For. Node (mostly) */
 	_float4x4				m_matInit;
 	_float4x4				m_matParentInit;
 	_float4x4				m_matLocal;
 
+	/* For. Save_Data */
+	/* Some Data is changed during the game...*/
+	_uint					m_iOriginalRenderPass;
+
+
 protected: /* Event */
-	//_uint				m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
+	//_uint					m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
 	vector<CUI_Event*>		m_vecEvents;
-
-	SPRITEINFO				m_tSpriteInfo;
-	UVMOVE					m_tUVMoveInfo;
-	DEFAULTINFO				m_tDefaultRenderInfo;
-
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
 	virtual void			Free()	override;
