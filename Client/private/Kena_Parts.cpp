@@ -60,6 +60,13 @@ HRESULT CKena_Parts::Render()
 	return S_OK;
 }
 
+HRESULT CKena_Parts::RenderShadow()
+{
+	FAILED_CHECK_RETURN(__super::RenderShadow(), E_FAIL);
+
+	return S_OK;
+}
+
 void CKena_Parts::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();

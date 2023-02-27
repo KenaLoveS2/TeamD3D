@@ -95,8 +95,8 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_ModelViewerObject"), TEXT("VIEWER_Objcet"))))
-		return E_FAIL;
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_ModelViewerObject"), TEXT("VIEWER_Objcet"))))
+		return E_FAIL;*/
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -106,8 +106,8 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_TessBackGround"), TEXT("Clone_Rect"))))
-		return E_FAIL;*/
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Tree"), TEXT("Clone_Tree"))))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

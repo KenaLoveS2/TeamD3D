@@ -181,7 +181,6 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\public\Base.h" />
     <ClInclude Include="..\public\Bone.h" />
-    <ClInclude Include="..\public\Bone_Instacing.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\public\Cell.h" />
@@ -230,6 +229,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Imgui_PropertyEditor.h" />
     <ClInclude Include="..\public\Imgui_ShaderEditor.h" />
     <ClInclude Include="..\public\Input_Device.h" />
+    <ClInclude Include="..\Public\Instancing_Mesh.h" />
     <ClInclude Include="..\public\Json\json.hpp" />
     <ClInclude Include="..\public\Json\json_fwd.hpp" />
     <ClInclude Include="..\public\Layer.h" />
@@ -238,9 +238,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Light.h" />
     <ClInclude Include="..\public\Light_Manager.h" />
     <ClInclude Include="..\public\Mesh.h" />
-    <ClInclude Include="..\public\Mesh_Instancing.h" />
     <ClInclude Include="..\public\Model.h" />
-    <ClInclude Include="..\public\Model_Instancing.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
@@ -278,7 +276,6 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\private\Base.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
-    <ClCompile Include="..\private\Bone_Instacing.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
@@ -305,15 +302,14 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp" />
     <ClCompile Include="..\private\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="..\private\Input_Device.cpp" />
+    <ClCompile Include="..\Private\Instancing_Mesh.cpp" />
     <ClCompile Include="..\private\Layer.cpp" />
     <ClCompile Include="..\private\Level.cpp" />
     <ClCompile Include="..\private\Level_Manager.cpp" />
     <ClCompile Include="..\private\Light.cpp" />
     <ClCompile Include="..\private\Light_Manager.cpp" />
     <ClCompile Include="..\private\Mesh.cpp" />
-    <ClCompile Include="..\private\Mesh_Instancing.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
-    <ClCompile Include="..\private\Model_Instancing.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />

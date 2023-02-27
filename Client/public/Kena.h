@@ -26,29 +26,30 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	const _double&		Get_AnimationPlayTime();
+	const _double&			Get_AnimationPlayTime();
 
 public:
-	virtual HRESULT		Initialize_Prototype() override;
-	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT		Render() override;
+	virtual HRESULT			Render() override;
+	virtual HRESULT			RenderShadow() override;
 	virtual void			Imgui_RenderProperty() override;
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			ImGui_ShaderValueProperty() override;
 	virtual void			Update_Child() override;
-	virtual HRESULT		Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void			Push_EventFunctions() override;
 
 private:
-	CRenderer*			m_pRendererCom = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CModel*				m_pModelCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
 	CCollider*				m_pRangeCol = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
-	CStateMachine*		m_pStateMachine = nullptr;
-	class CKena_State*	m_pKenaState = nullptr;
+	CStateMachine*			m_pStateMachine = nullptr;
+	class CKena_State*		m_pKenaState = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
 
@@ -68,19 +69,23 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float					m_fLashWidth = 10.f;
+	_float					m_fLashDensity = 10.f;
+	_float					m_fLashIntensity = 10.f;
 
 private:
-	HRESULT				Ready_Parts();
-	HRESULT				SetUp_Components();
-	HRESULT				SetUp_ShaderResources();
-	HRESULT				SetUp_State();
+	HRESULT					Ready_Parts();
+	HRESULT					SetUp_Components();
+	HRESULT					SetUp_ShaderResources();
+	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					SetUp_State();
 	void					Test(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<CUI_ClientManager::UI_HUD, _float>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, _float>		m_PlayerDelegator;
 
 	_float m_fTest = 0.f;
 

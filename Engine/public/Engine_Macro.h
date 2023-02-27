@@ -100,13 +100,13 @@ enum aiTextureType
 	WJTextureType_MASK = 7,
 	WJTextureType_SSS_MASK = 8,
 	WJTextureType_SPRINT_EMISSIVE = 9,
-	WJTextureType_LIGHTMAP = 10,
-	WJTextureType_REFLECTION = 11,
-	WJTextureType_BASE_COLOR = 12,
-	WJTextureType_NORMAL_CAMERA = 13,
-	WJTextureType_EMISSION_COLOR = 14,
+	WJTextureType_HAIR_DEPTH = 10,
+	WJTextureType_HAIR_ALPHA = 11,
+	WJTextureType_HAIR_ROOT = 12,
+	WJTextureType_COMP_MSK_CURV = 13,
+	WJTextureType_COMP_H_R_AO = 14,
 	WJTextureType_METALNESS = 15,
-	WJTextureType_DIFFUSE_ROUGHNESS = 16,
+	WJTextureType_COMP_AMBIENT_OCCLUSION = 16,
 	WJTextureType_AMBIENT_OCCLUSION = 17,
 
 	/** Unknown texture
@@ -117,5 +117,30 @@ enum aiTextureType
 	*/
 	WJTextureType_UNKNOWN = 18,
 };
-
 #define WJ_TEXTURE_TYPE_MAX  WJTextureType_UNKNOWN
+
+
+typedef struct tag_aiTextureType_FilePath
+{
+	const wchar_t*  NONE_path = L"";						// 0
+	const wchar_t*  DIFFUSE_path = L"";					// 1
+	const wchar_t*  SPECULAR_path = L"";				// 2
+	const wchar_t*  AMBIENT_path= L"";					// 3 
+	const wchar_t*  EMISSIVE_path = L"";					// 4
+	const wchar_t*  EMISSIVEMASK_path = L"";		// 5
+	const wchar_t*  NORMALS_path = L"";				//	6
+	const wchar_t*  MASK_path = L"";						// 7
+	const wchar_t*  SSS_MASK_path = L"";				// 8
+	const wchar_t*  SPRINT_EMISSIVE_path = L"";	// 9
+	const wchar_t*  HAIR_DEPTH_Path = L"";				// 10
+	const wchar_t*  HAIR_ALPHA_path = L"";			// 11
+	const wchar_t*  HAIR_ROOT_path = L"";			//	12
+	const wchar_t*  COMP_MSK_CURV_path = L"";	// 13
+	const wchar_t*  COMP_H_R_AO_path = L"";	//	14
+	const wchar_t*  METALNESS_path = L"";			//	15
+	const wchar_t*  COMP_AMBIENT_OCCLUSION_path = L"";	// 16
+	const wchar_t*  AMBIENT_OCCLUSION_path = L"";	// 17
+
+}aiTextureType_FilePath;
+
+

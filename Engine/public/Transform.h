@@ -37,6 +37,10 @@ public:
 	_matrix Get_WorldMatrix() {
 		return XMLoadFloat4x4(&m_WorldMatrix);
 	}
+	_float4x4 Get_WorldMatrixFloat4x4() {
+		return m_WorldMatrix;
+	}
+
 
 	_vector Get_State(STATE eState) const {
 		return XMLoadFloat4x4(&m_WorldMatrix).r[eState];
