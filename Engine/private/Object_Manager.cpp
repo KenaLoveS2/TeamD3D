@@ -326,8 +326,8 @@ void CObject_Manager::Free()
 
 	for (auto& Pair : m_Prototypes)
 		Safe_Release(Pair.second);
-	m_Prototypes.clear();
 
+	m_Prototypes.clear();
 	for (_uint i = 0; i < m_iNumCopyPrototypes; i++)
 	{
 		for (auto& Pair : m_CopyPrototypes[i])

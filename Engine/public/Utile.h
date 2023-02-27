@@ -30,8 +30,7 @@ public:
 	static _float  Get_RandomFloat(_float fMinValue, _float fMaxValue);
 	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);
 
-	static void   SeparateText(OUT char* pTemp, char* pCharStr);
-	static _float  FloatLerp(_float fNum1, _float fNum2, _float fRatio);
+	static char*   SeparateText(char* pCharStr);
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

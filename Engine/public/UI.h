@@ -30,8 +30,6 @@ protected:
 public: /* Get */
 	_fmatrix				Get_WorldMatrix();
 	_fmatrix				Get_InitMatrix();
-	_float3					Get_WorldScale();
-	_float3					Get_OriginalSettingScale() { return m_vOriginalSettingScale; }
 	_uint					Get_RenderPass() { return m_iRenderPass; }
 	CTexture*				Get_DiffuseTexture() { return m_pTextureCom[TEXTURE_DIFFUSE]; }
 	
@@ -91,14 +89,9 @@ protected:
 	_uint					m_iOriginalRenderPass;
 
 
-	/* For. Event */
-	/* it's not a real original scale. it's the scale after the scale setting.*/
-	_float3					m_vOriginalSettingScale; 
-
 protected: /* Event */
 	//_uint					m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
 	vector<CUI_Event*>		m_vecEvents;
-
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
 	virtual void			Free()	override;

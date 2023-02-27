@@ -254,6 +254,25 @@ void CTransform::Go_Right(_float fTimeDelta)
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }
 
+void CTransform::Go_Direction(_fvector vDirection, _float fTimeDelta, CNavigation * pNavigCom)
+{
+	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
+
+	vPosition += XMVector3Normalize(vDirection) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+
+	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+}
+
+void CTransform::Go_DirectionNoY(_fvector vDirection, _float fTimeDelta, CNavigation * pNavigCom)
+{
+	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vDirectionNoY = XMVectorSetY(vDirection, 0.f);
+
+	vPosition += XMVector3Normalize(vDirectionNoY) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+
+	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+}
+
 void CTransform::Go_AxisY(_float fTimeDelta)
 {
 	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
@@ -295,8 +314,11 @@ void CTransform::Orbit(_fvector vTargetPos, _fvector vAxis, const _float & fDist
 	if (fTimeDelta != 0.f)
 		Turn(vAxis, m_TransformDesc.fRotationPerSec * fTimeDelta);
 
-	Set_State(STATE_TRANSLATION, vTargetPos - XMVector3Normalize(Get_State(STATE_LOOK)) * fDistance);
-	LookAt(vTargetPos);
+	if (!XMVector3Equal(Get_State(CTransform::STATE_TRANSLATION), vTargetPos))
+	{
+		Set_State(STATE_TRANSLATION, vTargetPos - XMVector3Normalize(Get_State(STATE_LOOK)) * fDistance);
+		LookAt(vTargetPos);
+	}
 }
 
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)

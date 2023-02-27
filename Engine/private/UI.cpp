@@ -34,7 +34,6 @@ CUI::CUI(const CUI & rhs)
 	XMStoreFloat4x4(&m_matParentInit, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_matLocal, XMMatrixIdentity());
 
-	m_vOriginalSettingScale = { 100.f ,100.f, 100.f };
 }
 
 _fmatrix CUI::Get_WorldMatrix()
@@ -45,11 +44,6 @@ _fmatrix CUI::Get_WorldMatrix()
 _fmatrix CUI::Get_InitMatrix()
 {
 	return XMLoadFloat4x4(&m_matInit);
-}
-
-_float3 CUI::Get_WorldScale()
-{
-	return m_pTransformCom->Get_Scaled();
 }
 
 void CUI::Set_Parent(CUI* pUI)
@@ -362,5 +356,4 @@ void CUI::Free()
 
 	for (auto e : m_vecEvents)
 		Safe_Release(e);
-
 }
