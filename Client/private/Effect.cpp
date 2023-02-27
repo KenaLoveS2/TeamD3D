@@ -2,6 +2,7 @@
 #include "..\public\Effect.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Effect_Trail.h"
 
 CEffect::CEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -37,6 +38,7 @@ HRESULT CEffect::Initialize(void * pArg)
 
 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
+	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
 
@@ -44,30 +46,39 @@ void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_eEFfectDesc.bStart == true)
+		m_fFreePosTimeDelta += fTimeDelta;
+
 	if (m_eEFfectDesc.IsMovingPosition == true )
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
 		if (m_eEFfectDesc.bStart == true && 
 			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
 		{
-			_vector vNormalLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+			_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
 
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationX(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
-				vNormalLook = XMVector3TransformNormal(vNormalLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			if (m_eEFfectDesc.fAngle != 0.0f )
+			{
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+			}
 
 			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			vPos += vNormalLook * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+			if (m_eEFfectDesc.bSpread == true)
+				vPos += XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+			else
+				vPos -= XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
 
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 		}
 		else
 		{
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
-			m_eEFfectDesc.fPlayBbackTime = 0.0f;;
+			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 		}
 	}
 
@@ -108,6 +119,34 @@ void CEffect::Tick(_float fTimeDelta)
 		for (auto& pChild : m_vecChild)
 			pChild->Tick(fTimeDelta);
 	}
+
+	if (m_eEFfectDesc.bFreeMove == true)
+	{
+		if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
+			return;
+
+		if(!CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
+		{
+			static _int iCurIdx = 0;
+
+			auto& iter = m_vecFreePos.begin();
+			if (iCurIdx >= m_vecFreePos.size())
+				iCurIdx = 0;
+
+			for (_int i = 0; i < iCurIdx; ++i)
+				iter++;
+
+			_bool bNextTime = Play_FreePos(*iter);
+			if (bNextTime)
+			{
+				m_bLerp = false;
+				iCurIdx++;
+			}
+		}
+	}
+
+	if (nullptr != m_pEffectTrail)
+		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
@@ -153,14 +192,10 @@ HRESULT CEffect::Render()
 HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * ProtoTag)
 {
 	CEffect_Base*    pEffectBase = nullptr;
-
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
 
 	_tchar      szChildProto[128];
 	CUtile::CharToWideChar(ProtoTag, szChildProto);
-
-	_tchar    szBuffer[128] = L"";
-	_tchar    szChildClone[128] = L"";
 
 	for (_int i = 0; i < iCreateCnt; ++i)
 	{
@@ -169,15 +204,17 @@ HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * Proto
 		pGameInstance->Add_String(szChildProtoTag);
 		
 		// CloneTag
-		lstrcpy(szBuffer, L"");
-		lstrcpy(szChildClone, L"");
+		wstring		strGameObjectTag = L"Prototype_GameObject_";
+		size_t		TagLength = strGameObjectTag.length();
 
-		char*  szChildCloneTag = CUtile::SeparateText(ProtoTag);
-		CUtile::CharToWideChar(szChildCloneTag, szChildClone);
-		wsprintf(szBuffer, L"_%d", m_iHaveChildCnt);
-		lstrcat(szChildClone, szBuffer);
+		wstring		strProtoTag = szChildProtoTag;
+		size_t      ProtoLength = strProtoTag.length();
 
-		_tchar* szChildClondTag = CUtile::Create_String(szChildClone);
+		wstring     strChildCloneTag = strProtoTag.substr(TagLength, ProtoLength - TagLength);
+		strChildCloneTag += '_';
+		strChildCloneTag += to_wstring(m_iHaveChildCnt);
+		
+		_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
 		pGameInstance->Add_String(szChildClondTag);
 
 		pEffectBase = dynamic_cast<CEffect*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
@@ -344,6 +381,125 @@ HRESULT CEffect::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CEffect::Set_Trail(CEffect_Base* pEffect, const _tchar* pProtoTag)
+{
+	CEffect_Base*   pEffectTrail = nullptr;
+	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pEffect->Get_HaveTrail() == true)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+
+	// ProtoTag = Prototype_GameObject_OwnerTrail
+	// CloneTag = OwnerTrail
+	wstring		strGameObjectTag = L"Prototype_GameObject_";
+	size_t TagLength = strGameObjectTag.length();
+
+	wstring     strTrailProtoTag = pProtoTag;
+	strTrailProtoTag += L"Trail";
+
+	_tchar*     szTrailProtoTag = CUtile::Create_String(strTrailProtoTag.c_str());
+	pGameInstance->Add_String(szTrailProtoTag);
+	size_t ProtoLength = strTrailProtoTag.length();
+
+	wstring     strTrailCloneTag = strTrailProtoTag.substr(TagLength, ProtoLength - TagLength);
+	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
+	pGameInstance->Add_String(szTrailCloneTag);
+
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
+	if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Trail", szTrailProtoTag, szTrailCloneTag)))
+		return E_FAIL;
+	m_pEffectTrail = dynamic_cast<CEffect_Trail*>(pGameInstance->Get_GameObjectPtr(iCurLevel, L"Layer_Trail", szTrailCloneTag));
+	if (m_pEffectTrail == nullptr)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+	m_pEffectTrail->Set_Parent(this);
+	m_pEffectTrail->Set_HaveTrail(true);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+CEffect_Trail * CEffect::Get_Trail()
+{
+	if (m_pEffectTrail == nullptr)
+		return nullptr;
+
+	return dynamic_cast<CEffect_Trail*>(m_pEffectTrail);
+}
+
+void CEffect::Delete_Trail(const _tchar* pProtoTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
+
+	wstring		strGameObjectTag = L"Prototype_GameObject_";
+	size_t TagLength = strGameObjectTag.length();
+
+	wstring     strTrailProtoTag = pProtoTag;
+	strTrailProtoTag += L"Trail";
+
+	_tchar*     szTrailProtoTag = CUtile::Create_String(strTrailProtoTag.c_str());
+	pGameInstance->Add_String(szTrailProtoTag);
+	size_t ProtoLength = strTrailProtoTag.length();
+
+	wstring     strTrailCloneTag = strTrailProtoTag.substr(TagLength, ProtoLength - TagLength);
+	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
+	pGameInstance->Add_String(szTrailCloneTag);
+
+	pGameInstance->Delete_Object(iCurLevel, L"Layer_Trail", szTrailCloneTag);
+	
+	m_pEffectTrail = nullptr;
+	Set_HaveTrail(false);
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CEffect::Set_FreePos()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if(pGameInstance->Key_Pressing(DIK_LCONTROL) && pGameInstance->Mouse_Pressing(DIM_LB))
+	{
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		if (m_vecFreePos.empty() || m_vecFreePos.back() != vPosition)
+			m_vecFreePos.push_back(vPosition);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+_bool CEffect::Play_FreePos(_float4& vPos)
+{
+	if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
+		return false;
+
+	m_vPrePos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_vCurPos = vPos;
+
+	// XMVectorLerp(카메라 위치, 타켓, lerp퍼센트) 
+	_float4 vPositon = XMVectorLerp(m_vPrePos, m_vCurPos, m_fLerp);
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPositon);
+	m_fLerp += 0.9f;
+
+	if (m_fLerp >= 1.0f)
+	{
+		m_bLerp = true;
+		m_fLerp = 0.0f;
+	}
+	return m_bLerp;
+}
+
+vector<_float4>* CEffect::Get_FreePos()
+{
+	return &m_vecFreePos;
+}
+
 CEffect * CEffect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
  	CEffect*		pInstance = new CEffect(pDevice, pContext);
@@ -371,4 +527,5 @@ CGameObject * CEffect::Clone(void * pArg)
 void CEffect::Free()
 {
 	__super::Free();
+
 }
