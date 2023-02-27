@@ -116,6 +116,10 @@ HRESULT CKena_State::SetUp_State_Aim()
 
 		.Add_State(L"AIM_RUN")
 		.Init_Start(this, &CKena_State::Start_Aim_Run)
+		.Init_Changer(L"AIM_RUN_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"AIM_RUN_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"AIM_RUN_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"AIM_RUN_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
 		.Init_Changer(L"AIM_RUN_FORWARD", this, &CKena_State::KeyInput_W)
 		.Init_Changer(L"AIM_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
 		.Init_Changer(L"AIM_RUN_LEFT", this, &CKena_State::KeyInput_A)
@@ -126,9 +130,23 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Forward)
 		.Init_End(this, &CKena_State::End_Aim_Run_Forward)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
-		.Init_Changer(L"AIM_RUN_LEFT", this, &CKena_State::KeyInput_A)
-		.Init_Changer(L"AIM_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"AIM_RUN_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Aim_Run_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Forward_Left)
+		.Init_End(this, &CKena_State::End_Aim_Run_Forward_Left)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"AIM_RUN_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Aim_Run_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Forward_Right)
+		.Init_End(this, &CKena_State::End_Aim_Run_Forward_Right)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"AIM_RUN_BACKWARD")
@@ -136,9 +154,23 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Backward)
 		.Init_End(this, &CKena_State::End_Aim_Run_Backward)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN_FORWARD", this, &CKena_State::KeyInput_W)
-		.Init_Changer(L"AIM_RUN_LEFT", this, &CKena_State::KeyInput_A)
-		.Init_Changer(L"AIM_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"AIM_RUN_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Aim_Run_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Backward_Left)
+		.Init_End(this, &CKena_State::End_Aim_Run_Backward_Left)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"AIM_RUN_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Aim_Run_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Backward_Right)
+		.Init_End(this, &CKena_State::End_Aim_Run_Backward_Right)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"AIM_RUN_LEFT")
@@ -146,9 +178,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Left)
 		.Init_End(this, &CKena_State::End_Aim_Run_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN_FORWARD", this, &CKena_State::KeyInput_W)
-		.Init_Changer(L"AIM_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
-		.Init_Changer(L"AIM_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"AIM_RUN_RIGHT")
@@ -156,9 +186,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Run_Right)
 		.Init_End(this, &CKena_State::End_Aim_Run_Right)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN_FORWARD", this, &CKena_State::KeyInput_W)
-		.Init_Changer(L"AIM_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
-		.Init_Changer(L"AIM_RUN_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Finish_Setting();
@@ -197,7 +225,23 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
+	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
+}
+
+void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
+{
+	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
+		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_FORWARD);
+	else
+		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
+}
+
+void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
+{
+	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_FORWARD)
+		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_FORWARD);
+	else
+		m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
@@ -205,9 +249,25 @@ void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD);
 }
 
+void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
+{
+	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
+		m_pModel->Set_AnimIndex(AIM_RUN_LEFT, AIM_RUN_BACKWARD);
+	else
+		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
+}
+
+void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
+{
+	if (m_pModel->Get_LastAnimIndex() == AIM_RUN_BACKWARD)
+		m_pModel->Set_AnimIndex(AIM_RUN_RIGHT, AIM_RUN_BACKWARD);
+	else
+		m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
+}
+
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
+	m_pModel->Set_AnimIndex(AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
@@ -238,18 +298,42 @@ void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Aim_Run_Forward_Left(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Aim_Run_Forward_Right(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Backward(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Aim_Run_Backward_Left(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Aim_Run_Backward_Right(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Left(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Right(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::End_Idle(_float fTimeDelta)
@@ -276,7 +360,23 @@ void CKena_State::End_Aim_Run_Forward(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Aim_Run_Forward_Left(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Aim_Run_Forward_Right(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Aim_Run_Backward(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Aim_Run_Backward_Left(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Aim_Run_Backward_Right(_float fTimeDelta)
 {
 }
 
@@ -291,6 +391,11 @@ void CKena_State::End_Aim_Run_Right(_float fTimeDelta)
 _bool CKena_State::Animation_Finish()
 {
 	return m_pModel->Get_AnimationFinish();
+}
+
+_bool CKena_State::Direction_Change()
+{
+	return m_eDir != m_ePreDir && m_eDir != CTransform::DIR_END;
 }
 
 _bool CKena_State::KeyInput_None()
@@ -468,12 +573,6 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 	if (eDir == CTransform::DIR_END)
 		return;
 
-	if (eDir == CTransform::DIR_LOOK)
-	{
-		m_pTransform->Go_Straight(fTimeDelta);
-		return;
-	}
-
 	_matrix	matCamWorld = m_pCamera->Get_WorldMatrix();
 	_float4	vCamRight = matCamWorld.r[0];
 	_float4	vCamLook = matCamWorld.r[2];
@@ -481,6 +580,49 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 	vCamRight.y = vCamLook.y = vKenaLook.y = 0.f;
 
 	_float4	vDir;
+
+	if (eDir == CTransform::DIR_LOOK)
+	{
+		switch (m_eDir)
+		{
+		case CTransform::DIR_W:
+			vDir = XMVector3Normalize(matCamWorld.r[2]);
+			break;
+
+		case CTransform::DIR_A:
+			vDir = XMVector3Normalize(matCamWorld.r[0]) * -1.f;
+			break;
+
+		case CTransform::DIR_S:
+			vDir = XMVector3Normalize(matCamWorld.r[2]) * -1.f;
+			break;
+
+		case CTransform::DIR_D:
+			vDir = XMVector3Normalize(matCamWorld.r[0]);
+			break;
+
+		case CTransform::DIR_WA:
+			vDir = XMVector3Normalize(matCamWorld.r[2] + matCamWorld.r[0] * -1.f);
+			break;
+
+		case CTransform::DIR_WD:
+			vDir = XMVector3Normalize(matCamWorld.r[2] + matCamWorld.r[0]);
+			break;
+
+		case CTransform::DIR_SA:
+			vDir = XMVector3Normalize(matCamWorld.r[2] * -1.f + matCamWorld.r[0] * -1.f);
+			break;
+
+		case CTransform::DIR_SD:
+			vDir = XMVector3Normalize(matCamWorld.r[2] * -1.f + matCamWorld.r[0]);
+			break;
+		}
+
+		vDir.y = 0.f;
+
+		m_pTransform->Go_Direction(vDir, fTimeDelta);
+		return;
+	}
 
 	switch (eDir)
 	{

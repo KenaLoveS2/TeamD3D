@@ -21,6 +21,7 @@ public:
 	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
 	const _int&		Get_BlendAnimIndex() const { return m_iBlendAnimIndex; }
+	const _uint&		Get_LastAnimIndex() const { return m_iPreAnimIndex; }
 	const _bool&		Get_AnimationFinish() const;
 	void				Set_PlayTime(_double dPlayTime);
 	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }

@@ -794,7 +794,7 @@ void CModel::Play_Animation(_float fTimeDelta)
 
 		if (m_iBlendAnimIndex != -1)
 		{
-				m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
 		}
 		else
 			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
