@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
+    <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
     <ClInclude Include="..\public\Tool_Settings.h" />
+    <ClInclude Include="..\public\UI_CanvasAim.h" />
     <ClInclude Include="..\public\UI_CanvasAmmo.h" />
     <ClInclude Include="..\Public\Tree.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
@@ -229,6 +231,10 @@
     <ClInclude Include="..\public\UI_Event_Animation.h" />
     <ClInclude Include="..\public\UI_Event_Guage.h" />
     <ClInclude Include="..\public\UI_Event_ChangeImg.h" />
+    <ClInclude Include="..\public\UI_Event_Transform.h" />
+    <ClInclude Include="..\public\UI_NodeAimArrow.h" />
+    <ClInclude Include="..\public\UI_NodeAimBomb.h" />
+    <ClInclude Include="..\public\UI_NodeAimLine.h" />
     <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h" />
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
@@ -262,6 +268,7 @@
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
+    <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />
@@ -296,6 +303,7 @@
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
     <ClCompile Include="..\private\Tool_Settings.cpp" />
+    <ClCompile Include="..\private\UI_CanvasAim.cpp" />
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp" />
     <ClCompile Include="..\Private\Tree.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
@@ -304,6 +312,10 @@
     <ClCompile Include="..\private\UI_Event_Animation.cpp" />
     <ClCompile Include="..\private\UI_Event_Guage.cpp" />
     <ClCompile Include="..\private\UI_Event_ChangeImg.cpp" />
+    <ClCompile Include="..\private\UI_Event_Transform.cpp" />
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp" />
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp" />
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />

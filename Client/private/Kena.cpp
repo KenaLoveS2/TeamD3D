@@ -60,6 +60,21 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	/*
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
+	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
+	PxSphereDesc.fRadius = 0.2f;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 10.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+			
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	*/
+
 	return S_OK;
 }
 
@@ -69,7 +84,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-	
+
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	//m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 	
@@ -93,12 +108,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
-	CUI_ClientManager::UI_PRESENT eType1 = CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_PRESENT eType2 = CUI_ClientManager::HUD_PIP;
-	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
-	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
-	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eType1		= CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT eType2		= CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eType3		= CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4		= CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_PRESENT eBomb			= CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eArrowGuage	= CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -108,7 +124,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 		/* Rot icon chagne test */
 		static _float fIcon = 0;
-		fIcon = _uint(fIcon + 1) % 4;
+		fIcon = _float(_uint(fIcon + 1) % 4);
 		m_PlayerDelegator.broadcast(eType4, fIcon);
 
 		/* Bomb Guage test */
@@ -116,8 +132,12 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, fBomb);
 
 		/* Arrow Guage test */
-		static _float fArrow = 1.f;
-		m_PlayerDelegator.broadcast(eArrowGuage, fArrow);
+		static _float fArrow = 1.f; 
+		m_PlayerDelegator.broadcast(eArrowGuage, fArrow); 
+
+		/* Aim Test */
+		static _float fAim = 1.f;
+		m_PlayerDelegator.broadcast(eAim, fAim);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))

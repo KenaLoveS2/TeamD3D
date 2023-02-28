@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\VIBuffer.h"
+#include "PhysX_Manager.h"
 
 CVIBuffer::CVIBuffer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -21,6 +22,9 @@ CVIBuffer::CVIBuffer(const CVIBuffer & rhs)
 	, m_eTopology(rhs.m_eTopology)
 	, m_iNumIndices(rhs.m_iNumIndices)
 
+	// kbj physx
+	, m_pPxVertices(rhs.m_pPxVertices)
+	, m_pPxIndicies(rhs.m_pPxIndicies)
 {
 	Safe_AddRef(m_pVB);
 	Safe_AddRef(m_pIB);
@@ -98,5 +102,30 @@ void CVIBuffer::Free()
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);
 
-
+	// kbj physx
+	if (m_isCloned == false)
+	{
+		Safe_Delete_Array(m_pPxVertices);
+		Safe_Delete_Array(m_pPxIndicies);
+	}
 }
+
+// kbj physx
+HRESULT CVIBuffer::Create_PxActor()
+{	
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	PxTriangleMeshDesc TriangleMeshDesc;
+	TriangleMeshDesc.points.count = m_iNumVertices;
+	TriangleMeshDesc.points.stride = sizeof(PxVec3);
+	TriangleMeshDesc.points.data = m_pPxVertices;
+	TriangleMeshDesc.triangles.count = m_iNumPrimitive;
+	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+	TriangleMeshDesc.triangles.data = m_pPxIndicies;
+	
+	pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+
+	return S_OK;
+}
+
+

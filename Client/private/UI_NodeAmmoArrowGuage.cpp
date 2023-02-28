@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "UI_Event_Guage.h"
 #include "UI_CanvasAmmo.h"
+#include "UI_ClientManager.h"
+#include "UI_NodeEffect.h"
 
 CUI_NodeAmmoArrowGuage::CUI_NodeAmmoArrowGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -73,6 +75,10 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 			if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
 				m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
 		}
+
+		CUI_ClientManager::GetInstance()
+			->Get_Effect(CUI_ClientManager::EFFECT_ARROWFULL)
+			->Start_Effect(this, 0.f, 35.f);
 	}
 
 	/* Full To Zero process ended */
@@ -85,6 +91,7 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 		&& !(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
 	{
 		m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
+
 	}
 }
 

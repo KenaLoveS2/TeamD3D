@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasAmmo.h"
 #include "GameInstance.h"
+#include "UI_ClientManager.h"
+#include "UI_NodeEffect.h"
+
+/* Canvas */
+#include "UI_CanvasAim.h"
 
 /* Nodes */
 #include "UI_NodeAmmoBombGuage.h"
@@ -51,8 +56,12 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 	m_bActive = true;
 
 	/* Arrow */
-	m_iNumArrows	= 4;
-	m_iNumArrowNow	= m_iNumArrows;
+	m_iNumArrows = 4;
+	m_iNumArrowNow = m_iNumArrows;
+
+	/* Bomb */
+	m_iNumBombs = 1;
+	m_iBombNow = m_iNumBombs;
 
 	return S_OK;
 }
@@ -67,6 +76,10 @@ void CUI_CanvasAmmo::Tick(_float fTimeDelta)
 			return;
 		}
 	}
+
+	/* Code */
+
+	/* ~Code */
 
 	__super::Tick(fTimeDelta);
 
@@ -83,17 +96,18 @@ void CUI_CanvasAmmo::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasAmmo::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	/* Arrow Count */
 	_float4 vPos;
-	
+
 	wchar_t cnt[10];
 	_itow_s(m_iNumArrowNow, cnt, 10);
 
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Render_Font(TEXT("Font_Comic"), cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f -20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	pGameInstance->Render_Font(TEXT("Font_Comic"), cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f - 20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	RELEASE_INSTANCE(CGameInstance);
 
 
@@ -104,16 +118,12 @@ HRESULT CUI_CanvasAmmo::Render()
 HRESULT CUI_CanvasAmmo::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
-
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Player", L"Kena"));
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (pKena == nullptr)
+		return E_FAIL;
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -133,7 +143,7 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 	(The cloneTag is stored after the clone process.)
 	*/
 	str = "Node_BombFrame";
-	tDesc.fileName.assign(str.begin(), str.end()); 
+	tDesc.fileName.assign(str.begin(), str.end());
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombFrame", L"Node_BombFrame", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
@@ -152,6 +162,25 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+
+	/* Effects are stored in the canvas of UI that need it. */
+	/* But Call through ClientManager because Node doesn't have to know the canvas belong to.*/
+	str = "Node_EffectBomb";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectBomb", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_BOMBFULL, static_cast<CUI_NodeEffect*>(pUI));
+
+	str = "Node_EffectArrow";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectArrow", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_ARROWFULL, static_cast<CUI_NodeEffect*>(pUI));
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -184,7 +213,6 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources();
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -216,12 +244,14 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	case CUI_ClientManager::AMMO_BOMB:
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
 		break;
-	case CUI_ClientManager::AMMO_ARROW:
+	case CUI_ClientManager::AMMO_ARROW: /* Shoot An Arrow */
 		if (m_iNumArrowNow == 0)
 			return;
-		else
-			m_iNumArrowNow -= 1;
+
+		m_iNumArrowNow -= 1;
 		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
+		static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()
+			->Get_Canvas(CUI_ClientManager::CANVAS_AIM))->Set_Arrow(m_iNumArrowNow, 0);
 		break;
 	}
 }
