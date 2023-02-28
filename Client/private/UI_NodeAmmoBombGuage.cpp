@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "UI_Event_ChangeImg.h"
 #include "UI_Event_Guage.h"
+#include "UI_ClientManager.h"
+#include "UI_NodeEffect.h"
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -74,6 +76,9 @@ void CUI_NodeAmmoBombGuage::Tick(_float fTimeDelta)
 	{
 		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
 		m_bFullFilled = true;
+		CUI_ClientManager::GetInstance()
+			->Get_Effect(CUI_ClientManager::EFFECT_BOMBFULL)
+			->Start_Effect(this, 0.f, 0.f);
 	}
 
 	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())

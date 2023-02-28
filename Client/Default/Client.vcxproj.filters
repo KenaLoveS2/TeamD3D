@@ -178,6 +178,21 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{79609944-3003-4620-9aa1-2b6d1c8ba3a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{f4789984-e4ac-4df0-a511-748d1d6e6901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{7a8e6555-f678-4712-bea4-710c37a4ceb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{b6d50ce2-6c46-480a-abb7-381cce4437ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{dc393d41-157e-40f1-8689-a9ed3532fac1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -405,6 +420,21 @@
     <ClInclude Include="..\Public\Slope.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimBomb.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -610,6 +640,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\Slope.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -100,7 +100,7 @@ bool	Getter_forNode(void* data, int index, const char** output)
 void CUI_Node::Imgui_RenderProperty()
 {
 	ImGui::Separator();
-	
+
 	//if (ImGui::Button("Save Node"))
 	//	Save_Data();
 
@@ -168,7 +168,7 @@ HRESULT CUI_Node::Save_Data()
 
 	for (auto e : m_vecEvents)
 		e->Save_Data(&json);
-	
+
 	wstring filePath = L"../Bin/Data/UI/";
 	filePath += this->Get_ObjectCloneName();
 	//filePath += this->Get_Name();
@@ -232,7 +232,7 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 
 	this->Set_LocalMatrix(matLocal);
 
-
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	return S_OK;
 }
