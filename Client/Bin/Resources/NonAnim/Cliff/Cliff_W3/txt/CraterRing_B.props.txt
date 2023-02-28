@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/W3/Materials/MI_CraterRing_B.MI_CraterRing_B'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/W3/Materials/MI_CraterRing_B.MI_CraterRing_B'
+        MaterialSlotName = CraterRing_B
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 8458.16, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=57.7539, Y=-6.16772, Z=493.557 }
+    BoxExtent = { X=5752.3, Y=2312.84, Z=1397.71 }
+    SphereRadius = 6217.11
+}

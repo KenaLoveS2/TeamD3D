@@ -39,7 +39,8 @@ void CKena_MainOutfit::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+	CModel*	pKenaModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
+	m_pModelCom->Set_AnimIndex(pKenaModel->Get_AnimIndex(), pKenaModel->Get_BlendAnimIndex());
 	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
@@ -50,9 +51,9 @@ void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 	}
 }
 

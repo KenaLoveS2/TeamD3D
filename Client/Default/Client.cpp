@@ -14,7 +14,7 @@ HINSTANCE g_hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-bool		g_bFrmaeLimit = true;
+bool		g_bFrameLimit = true;
 bool		g_bFullScreen = false;
 bool		g_bNeedResizeSwapChain = false;
 bool		g_bWinActive = true;
@@ -92,8 +92,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			pGameInstance->Update_Timer(TEXT("Timer_Default"));
 
 			TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-
-			if (TimerAcc > FrameTime || !g_bFrmaeLimit)
+			
+			if (TimerAcc > FrameTime || !g_bFrameLimit)
 			{
 				pGameInstance->Update_Timer(TEXT("Timer_60"));
 
@@ -236,9 +236,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else
 		{
 			if (LOWORD(wParam) == WA_INACTIVE)
+			{
 				g_bWinActive = false;
+				::SetCursor(LoadCursor(nullptr, IDC_ARROW));
+			}
 			else if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
+			{
 				g_bWinActive = true;
+				::SetCursor(LoadCursor(nullptr, IDC_ARROW));
+			}
 		}
 		break;
 	}

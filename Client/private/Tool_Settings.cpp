@@ -13,13 +13,34 @@ HRESULT CTool_Settings::Initialize(void * pArg)
 {
 	m_szWindowName = "Public Settings";
 
+	m_fFrameRate = &ImGui::GetIO().Framerate;
+	m_TextColor = { 0.f, 0.f, 0.f, 1.f };
+
 	return S_OK;
 }
 
 void CTool_Settings::Imgui_RenderWindow()
 {
+	FAILED_CHECK_RETURN(FrameRate(), );
+	ImGui::Separator();
 	FAILED_CHECK_RETURN(Camera_Setting(), );
 	ImGui::Separator();
+}
+
+HRESULT CTool_Settings::FrameRate()
+{
+	ImGui::Checkbox("Frame Limit", &g_bFrameLimit);
+
+	if (*m_fFrameRate >= 60.f)
+		m_TextColor = { 0.f, 1.f, 0.f, 1.f };
+	else if (*m_fFrameRate >= 30.f && *m_fFrameRate < 60.f)
+		m_TextColor = { 1.f, 0.7f, 0.f, 1.f };
+	else
+		m_TextColor = { 1.f, 0.f, 0.f, 1.f };
+
+	ImGui::TextColored(m_TextColor, "FPS : %.1f", ImGui::GetIO().Framerate);
+
+	return S_OK;
 }
 
 HRESULT CTool_Settings::Camera_Setting()
