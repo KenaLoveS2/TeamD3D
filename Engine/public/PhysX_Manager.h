@@ -197,7 +197,7 @@ public:
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
 
 	void Get_ActorMatrix(_uint iPxActorIndex);
-	void Set_GravityFlag(const _tchar *pActorTag, _bool bFlag);
+	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow);
 	
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);
 	void Add_Force(PxRigidActor* pActor, _float3 vForce);

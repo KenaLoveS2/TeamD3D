@@ -359,12 +359,16 @@ void CPhysX_Manager::Get_ActorMatrix(_uint iPxActorIndex)
 	*/
 }
 
-void CPhysX_Manager::Set_GravityFlag(const _tchar *pActorTag, _bool bFlag)
+void CPhysX_Manager::Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow)
 {	
 	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
 	if (pActor == nullptr) return;
 
-	pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, bFlag);
+	pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !bGravityFlag);
+	if (bNow && bGravityFlag)
+	{
+		Add_Force(pActor, _float3(0.f, 0.1f, 0.f));
+	}
 }
 
 void CPhysX_Manager::Add_Force(const _tchar *pActorTag, _float3 vForce)
@@ -372,7 +376,7 @@ void CPhysX_Manager::Add_Force(const _tchar *pActorTag, _float3 vForce)
 	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
 	if (pActor == nullptr) return;
 
-	Add_Force(pActorTag, vForce);
+	Add_Force(pActor, vForce);
 }
 
 void CPhysX_Manager::Add_Force(PxRigidActor* pActor, _float3 vForce)

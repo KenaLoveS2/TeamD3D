@@ -64,14 +64,15 @@ HRESULT CKena::Initialize(void * pArg)
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
-	PxSphereDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
 	PxSphereDesc.fRadius = 0.2f;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fDensity = 10.f;
 	PxSphereDesc.fAngularDamping = 0.5f;
 			
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
 	*/
 
 	return S_OK;
@@ -83,7 +84,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-	
+
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	//m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 	
