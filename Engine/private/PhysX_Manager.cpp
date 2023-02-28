@@ -367,13 +367,18 @@ void CPhysX_Manager::Set_GravityFlag(const _tchar *pActorTag, _bool bFlag)
 	pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, bFlag);
 }
 
-void CPhysX_Manager::Add_Force(const _tchar *pActorTag, _float3 v)
+void CPhysX_Manager::Add_Force(const _tchar *pActorTag, _float3 vForce)
 {
 	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
 	if (pActor == nullptr) return;
 
+	Add_Force(pActorTag, vForce);
+}
+
+void CPhysX_Manager::Add_Force(PxRigidActor* pActor, _float3 vForce)
+{
 	// pActor->addForce(PxVec3(v.x, v.y, v.z));
-	PxVec3 displacement = CUtile::ConvertPosition_D3DToPx(v);
+	PxVec3 displacement = CUtile::ConvertPosition_D3DToPx(vForce);
 	PxTransform newTransform = pActor->getGlobalPose();
 	newTransform.p += displacement;
 	pActor->setGlobalPose(newTransform);
@@ -484,3 +489,4 @@ void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _f
 	PxCapsuleGeometry newGeometry(fRadius, fHalfHeight);
 	shape->setGeometry(newGeometry);
 }
+

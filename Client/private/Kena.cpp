@@ -60,6 +60,20 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	/*
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
+	PxSphereDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	PxSphereDesc.fRadius = 0.2f;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 10.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+			
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	*/
+
 	return S_OK;
 }
 
