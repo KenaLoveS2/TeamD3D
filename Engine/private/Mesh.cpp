@@ -327,7 +327,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 	ZeroMemory(pVertices, sizeof(VTXMODEL) * m_iNumVertices);
 	ReadFile(hFile, pVertices, sizeof(VTXMODEL) * m_iNumVertices, &dwByte, nullptr);
 
-	for (_uint i = 0; i < m_iNumVertices; ++i)
+	for (_uint i = 0; i < m_iNumVertices; ++i)			// pVertices  3°³-> 1°³·Î
 	{
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PivotMatrix));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PivotMatrix));

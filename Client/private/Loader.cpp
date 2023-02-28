@@ -348,12 +348,12 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 		
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells", true)))
-	//	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target", true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells", true)))
 		return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Big_Pillar", true)))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target", true,false,true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Big_Pillar", true)))
+		return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_Broken_Crystal", true, false)))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cave_RockRubble", true, true)))
@@ -388,7 +388,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true)))
 	//	return E_FAIL;
 #pragma region PulseStone_包访等巴
-	/*if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_NonAnim", true)))
 		return E_FAIL;
@@ -398,7 +398,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock", true)))
 		return E_FAIL;
-*/
+
 #pragma endregion PulseStone_包访等巴
 	/*if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Roots/Roots_Nomral", true, false)))
 		return E_FAIL;
@@ -476,16 +476,16 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion
 	
 #pragma  region Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
-		return E_FAIL;
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))
+	//	return E_FAIL;
 
 #pragma endregion ~Tree
 
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VantagePlatform", true)))
 	//	return E_FAIL;
 
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Base_Stairs_Pos")))
-	//	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Base_Stairs_Pos")))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Kena */
 	_matrix PivotMatrix;
@@ -677,7 +677,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Bow_Target", true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Bow_Target", true,false)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cave_Big_Pillar", true)))
 		return E_FAIL;
@@ -982,7 +982,7 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 	return S_OK;
 }
 
-HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod , _bool bIsInstancing )
+HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod , _bool bIsInstancing,_bool bIsJsonMatarial )
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -1006,6 +1006,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	if (handle == -1) return E_FAIL;
 
 	char szFullPath[MAX_PATH] = "";
+	char szJSonFullPath[MAX_PATH] = "";
 	char szFileName[MAX_PATH] = "";
 	char szExt[MAX_PATH] = "";
 
@@ -1018,11 +1019,21 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	while (iResult != -1)
 	{
 		strcpy_s(szFullPath, FilePath);
+		strcpy_s(szJSonFullPath, FilePath);
 		strcat_s(szFullPath, FindData.name);
+	
 
 		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
 		if (!strcmp(szExt, ".mdat"))
 		{
+			if (bIsJsonMatarial == true)
+			{
+				strcat_s(szJSonFullPath, szFileName);
+				strcat_s(szJSonFullPath, ".json");
+			}
+			else
+				strcpy_s(szJSonFullPath, sizeof(char)*5,"NULL");
+
 			int iFileNameLen = (int)strlen(szFileName) + 1;
 			_tchar* pFileName = new _tchar[iFileNameLen];
 			ZeroMemory(pFileName, sizeof(_tchar) * iFileNameLen);
@@ -1037,7 +1048,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 			lstrcat(pPrototypeTag, pFileName);
 
 			if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, pPrototypeTag,
-				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix, nullptr,bIsLod,bIsInstancing))))
+				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix, nullptr,bIsLod,bIsInstancing, szJSonFullPath))))
 				return E_FAIL;
 
 			Safe_Delete_Array(pFileName);

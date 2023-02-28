@@ -43,7 +43,8 @@ public:
 	void				Call_Event(const string& strFuncName);
 
 public:	
-	HRESULT 			Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing);
+	HRESULT 			Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
+		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial);
 	virtual HRESULT 	Initialize(void* pArg, class CGameObject* pOwner);
 	virtual void		Imgui_RenderProperty() override;
 
@@ -62,7 +63,7 @@ private:
 	vector<class CMesh*>		m_Meshes;	
 
 	_uint						m_iNumMaterials = 0;
-	vector<MODELMATERIAL>		m_Materials;
+	vector<MODELMATERIAL>		m_Materials;			
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint						m_iNumBones = 0;
@@ -101,7 +102,7 @@ private:
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false, _bool bIsInstancing = false);
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false, _bool bIsInstancing = false, const char* JsonMatrial = nullptr);
 	virtual CComponent* Clone(void* pArg, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 

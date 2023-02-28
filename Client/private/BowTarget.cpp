@@ -64,6 +64,10 @@ HRESULT CBowTarget::Render()
 		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+
+		// 	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_NormalTexture");
+		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}

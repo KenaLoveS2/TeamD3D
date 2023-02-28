@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_02.MI_BowTarget_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_03_Crystal.MI_BowTarget_03_Crystal'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_02.MI_BowTarget_02'
+        MaterialSlotName = Bark
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 322.08, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Targets/Materials/MI_BowTarget_03_Crystal.MI_BowTarget_03_Crystal'
+        MaterialSlotName = Crystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 345.833, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=4.77423, Z=0 }
+    BoxExtent = { X=63.5822, Y=58.5846, Z=153.045 }
+    SphereRadius = 163.531
+}
