@@ -145,6 +145,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
@@ -245,6 +246,12 @@ void CKena::ImGui_AnimationProperty()
 
 void CKena::ImGui_ShaderValueProperty()
 {
+	if(ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	__super::ImGui_ShaderValueProperty();
 	{
 		static _float2 AmountMinMax{ -10.f, 10.f };

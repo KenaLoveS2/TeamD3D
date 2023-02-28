@@ -10,6 +10,7 @@ float	   g_fFar = 300.f;
 float4 g_vCamPosition;
 /**************************************/
 
+
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_AO_R_MTexture;
@@ -121,8 +122,7 @@ struct PS_OUT
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
-	float4		vSpecular : SV_TARGET3;
-	float4		vAmbient : SV_TARGET4;
+	float4		vAmbient : SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -143,7 +143,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
-	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -170,7 +169,6 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = g_vAmbientEyeColor;
-	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -184,29 +182,31 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
 
-	float			fAmbientOcclusion = vAO_R_M.r;
-	float			fRoughness = vAO_R_M.g;
-	float			fMetalic = vAO_R_M.b;
-
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
+	float4		FinalColor = float4(0, 0, 0, 1);
+	FinalColor = vDiffuse + vEmissive;
 
-	float3		specular = vDiffuse.rgb * fMetalic;
-	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
+	/* first algorithm*/
+	//float			fAmbientOcclusion = vAO_R_M.r;
+	//float			fRoughness = vAO_R_M.g;
+	//float			fMetalic = vAO_R_M.b;
+	//float3			diffuse = vDiffuse.rgb * (1.f - fMetalic);
+	//float3			specular = vDiffuse.rgb * fMetalic;
+	//float3			ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
+	//float3			emissive = vEmissive.rgb;
+	//float4 color = float4(diffuse + emissive, vDiffuse.a);
+	//color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
 
-	float3		emissive = vEmissive.rgb;
+	if (0.1f > vDiffuse.a)
+		discard;
 
-	float4 color = float4(diffuse + emissive, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
-
-	Out.vDiffuse = color;
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vector(ambient, 1.f);
-	Out.vSpecular = vector(specular, 0.f);
+	Out.vAmbient = vAO_R_M;
 
 	return Out;
 }
@@ -217,42 +217,43 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	float2		vTexUV = In.vTexUV;
 
-	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, vTexUV);
-
-	vector		vMask = g_MaskTexture.Sample(LinearSampler, vTexUV);
-	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vAO_R_M			 = g_AO_R_MTexture.Sample(LinearSampler, vTexUV);
+	vector		vMask		 		 = g_MaskTexture.Sample(LinearSampler, vTexUV);
+	vector		vSSSMask		 	 = g_SSSMaskTexture.Sample(LinearSampler, vTexUV);
 	vector		vEmissiveMask = g_EmissiveMaskTexture.Sample(LinearSampler, vTexUV);
-
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, vTexUV);
-	vector		vEmissive = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, vTexUV);
+	vector		vDiffuse			 = g_DiffuseTexture.Sample(LinearSampler, vTexUV);
+	vector		vEmissive			 = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
+	vector		vNormalDesc	 = g_NormalTexture.Sample(LinearSampler, vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float			fAmbientOcclusion = vAO_R_M.r;
-	float			fRoughness = vAO_R_M.g;
-	float			fMetalic = vAO_R_M.b;
+	float4		FinalColor = float4(1, 1, 1, 1);
 
-	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
+	if(vMask.r == 0.0f && vMask.g == 0.0f && vMask.b == 0.0f)
+		FinalColor = (vDiffuse) + (vEmissive * vEmissiveMask.r);
+	else 
+		FinalColor = (vDiffuse /** vMask.r*/) + (vEmissive * vEmissiveMask.r);
 
-	float3		specular = vDiffuse.rgb * fMetalic;
-	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
-	float3		emissive = vEmissive.rgb * vEmissiveMask.rgb;
+	/* first algorithm*/
+	//float				fAmbientOcclusion	= vAO_R_M.r;
+	//float				fRoughness				= vAO_R_M.g;
+	//float				fMetalic					= vAO_R_M.b;
+	//float3				diffuse						= vDiffuse.rgb * (1.f - fMetalic);
+	//float3				specular					= vDiffuse.rgb * fMetalic;
+	//float3				ambient					= g_vAmbientColor.rgb * fAmbientOcclusion;
+	//float3				emissive					= vEmissive.rgb * vEmissiveMask.rgb;
+	//float4				sssDesc					= SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
+	//float3				sssColor					= sssDesc.rgb;
+	//FinalColor										= float4((diffuse + emissive * vEmissiveMask.r) * vMask.r, vDiffuse.a);
+	//FinalColor.rgb									= lerp(FinalColor.rgb, vDiffuse.rgb, fRoughness);
+	//FinalColor.rgb									= lerp(FinalColor.rgb, sssColor, vSSSMask.r);
 
-	float4 sssDesc = SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
-	float3 sssColor = sssDesc.rgb;
-
-	float4		color = float4(diffuse + emissive * vEmissiveMask.a, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
-	color.rgb = lerp(color.rgb, sssColor, vSSSMask.r);
-
-	Out.vDiffuse = color;
-	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vector(ambient, 1.f);
-	Out.vSpecular = vector(specular, 0.f);
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
+	Out.vNormal  = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth     = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAO_R_M;
 
 	return Out;
 }
@@ -269,27 +270,26 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float			fAmbientOcclusion = vAO_R_M.r;
+	float4		FinalColor = float4(0, 0, 0, 1);
+	FinalColor = vDiffuse;
+
+	/* first algorithm*/
+	/*float			fAmbientOcclusion = vAO_R_M.r;
 	float			fRoughness = vAO_R_M.g;
 	float			fMetalic = vAO_R_M.b;
-
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
-	float3		specular = vDiffuse.rgb * fMetalic;
 	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
 	float			smoothness = 1.f - fRoughness;
-
 	float4 sssDesc = SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz ,g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
 	float3 sssColor = sssDesc.rgb;
-
 	float4 color = float4(diffuse, vDiffuse.a);
 	color.rgb = lerp(color.rgb, vDiffuse.rgb, smoothness);
-	color.rgb =  lerp(color.rgb, sssColor, vSSSMask.r);
+	color.rgb =  lerp(color.rgb, sssColor, vSSSMask.r);*/
 
-	Out.vDiffuse = color;
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vector(ambient, 1.f);
-	Out.vSpecular = vector(specular, 0.f);
+	Out.vAmbient = vAO_R_M;
 
 	return Out;
 }
@@ -306,23 +306,22 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float			fAmbientOcclusion = vAO_R_M.r;
+	float4		FinalColor = float4(0, 0, 0, 1);
+	FinalColor = vDiffuse + vEmissive;
+
+	/* first algorithm*/
+	/*float			fAmbientOcclusion = vAO_R_M.r;
 	float			fRoughness = vAO_R_M.g;
 	float			fMetalic = vAO_R_M.b;
-
 	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
-	float3		specular = vDiffuse.rgb * fMetalic;
-	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
 	float3		emissive = vEmissive.rgb;
-
 	float4		color = float4(diffuse + emissive, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
+	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);*/
 
-	Out.vDiffuse = color;
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vector(ambient, 1.f);
-	Out.vSpecular = vector(specular, 0.f);
+	Out.vAmbient = vAO_R_M;
 
 	return Out;
 }
@@ -370,7 +369,6 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
 	Out.vAmbient = (vector)1.f;
-	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
@@ -401,7 +399,6 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vNormal = (vector)1.f;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
-	Out.vSpecular = (vector)1.f;
 
 	return Out;
 }
