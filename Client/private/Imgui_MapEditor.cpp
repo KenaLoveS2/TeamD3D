@@ -347,7 +347,7 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 		EnviromentDesc.szTextureTag = TEXT("");
 		EnviromentDesc.iRoomIndex = m_iCreateObjRoom_Option;
 		EnviromentDesc.eChapterType = static_cast<CEnviromentObj::CHAPTER>(m_iChapterOption);
-
+		EnviromentDesc.iCurLevel = CGameInstance::GetInstance()->Get_CurLevelIndex();
 		string			strCloneTag = m_strCloneTag;
 		_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
 		CGameInstance::GetInstance()->Add_String(pCloneName);
@@ -729,7 +729,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["16_SPRINT_EMISSIVE_path"].get_to<string>(SPRINT_EMISSIVE_path);					strFilePaths_arr[WJTextureType_SPRINT_EMISSIVE] = SPRINT_EMISSIVE_path;
 		jLoadChild["17_LIGHTMAP_path"].get_to<string>(HAIR_DEPTH_Path);											strFilePaths_arr[WJTextureType_HAIR_DEPTH] = HAIR_DEPTH_Path;
 		jLoadChild["18_REFLECTION_path"].get_to<string>(HAIR_ALPHA_path);									strFilePaths_arr[WJTextureType_HAIR_ALPHA] = HAIR_ALPHA_path;
-		jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
+		jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								 strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
 		jLoadChild["20_NORMAL_CAMERA_path"].get_to<string>(COMP_MSK_CURV_path);				strFilePaths_arr[WJTextureType_COMP_MSK_CURV] = COMP_MSK_CURV_path;
 		jLoadChild["21_EMISSION_COLOR_path"].get_to<string>(COMP_H_R_AO_path);					strFilePaths_arr[WJTextureType_COMP_H_R_AO] = COMP_H_R_AO_path;
 		jLoadChild["22_METALNESS_path"].get_to<string>(METALNESS_path);									strFilePaths_arr[WJTextureType_METALNESS] = METALNESS_path;
@@ -898,9 +898,13 @@ void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnv
 
 }
 
-void CImgui_MapEditor::Load_MapObjects(_uint iLevel)
+void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 {
-	ifstream      file("../Bin/Data/EnviromentObj_Json_Dir/TestTextureFilePath2.json");
+	string      strLoadDirectory = "../Bin/Data/EnviromentObj_Json_Dir/";
+	strLoadDirectory += JsonFileName;
+
+
+	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
