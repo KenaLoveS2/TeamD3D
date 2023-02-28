@@ -319,10 +319,13 @@ void CImgui_Effect::LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveC
 	for (_int i = 0; i < iSelectObject; ++i)
 		iter++;
 
-	static _int iDeleteCnt = 0;
-	ImGui::SameLine();
-	if (ImGui::Button("Delete Child"))
-		pEffect->Edit_Child((*iter)->Get_ObjectCloneName());
+	if (eTag == TAGTYPE::TAG_PROTO)
+	{
+		static _int iDeleteCnt = 0;
+		ImGui::SameLine();
+		if (ImGui::Button("Delete Child"))
+			pEffect->Edit_Child((*iter)->Get_ObjectCloneName());
+	}
 }
 
 _float4 CImgui_Effect::Set_ColorValue()
@@ -921,9 +924,12 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 	char** pObjectTag = nullptr;
 	char** pChildObjectTag = nullptr;
 	char** pSelectObjectTag = nullptr;
+	char** pSelectChildTag = nullptr;
 
 	static _uint iLayerSize = 0;
 	static _uint iChildSize = 0;
+	static _uint iGrandChildSize = 0;
+	static _uint iSuperGrandChildSize = 0;
 
 	static char* pSelectObject = "";
 	static char* pSelectChildObject = "";
@@ -942,7 +948,7 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 	CGameObject* pChild1 = nullptr;
 
 	ImGui::PushItemWidth(400);
-	ImGui::BulletText("Cur Layer_Effect Object List :");
+	ImGui::BulletText("Cur Layer_Effect Object List :"); // 부모
 	LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "Set_CloneTag", iSelectObject, TAGTYPE::TAG_CLONE);
 	for (size_t i = 0; i < iLayerSize; ++i)
 		Safe_Delete_Array(pObjectTag[i]);
@@ -967,7 +973,7 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 	}
 	ImGui::NewLine();
 	CGameObject* pChildGameObject = nullptr;
-		if (ImGui::CollapsingHeader("Create Child"))
+		if (ImGui::CollapsingHeader("Create Child")) // 자식으로 설정할 객체
 	{
 		ImGui::BulletText("Input Create Child Cnt : ");
 		ImGui::SameLine();
@@ -980,10 +986,10 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 
 		ImGui::Separator();
 		ImGui::BulletText("Choose Child Object :");
-		LayerEffects_ListBox(pSelectObjectTag, iLayerSize, pChildObject, "Child_CloneTag", iSelectChild, TAGTYPE::TAG_CLONE);
-		for (size_t i = 0; i < iLayerSize; ++i)
-			Safe_Delete_Array(pSelectObjectTag[i]);
-		Safe_Delete_Array(pSelectObjectTag);
+		//LayerEffects_ListBox(pSelectObjectTag, iLayerSize, pChildObject, "Child_CloneTag", iSelectChild, TAGTYPE::TAG_CLONE);
+		//for (size_t i = 0; i < iLayerSize; ++i)
+		//	Safe_Delete_Array(pSelectObjectTag[i]);
+		//Safe_Delete_Array(pSelectObjectTag);
 
 		pChildGameObject = LayerEffects_ListBox(pSelectObjectTag, iLayerSize, pChildObject, "Child_ProtoTag", iSelectChild, TAGTYPE::TAG_PROTO);
 		ImGui::BulletText("Cur Select ChildObject :");  ImGui::SameLine();	ImGui::Text(pChildObject);
@@ -1006,7 +1012,7 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 		{
 			static _bool bChild = false;
 			static _int iCreateChild = 0;
-			if (ImGui::CollapsingHeader("Cur Layer_Effect Child List"))
+			if (ImGui::CollapsingHeader("Cur Layer_Effect Child List")) // 부모 자식
 			{
 				ImGui::BulletText("Input Create GrandChild Cnt : ");
 				ImGui::SameLine();
@@ -1018,17 +1024,17 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 					iCreateChild = 10;
 
 				vector<CEffect_Base*>* vecChild = dynamic_cast<CEffect_Base*>(pParents)->Get_vecChild();
-				LayerChild_ListBox(pChildObjectTag, iChildSize, pSelectChildObject, "CreateChild_ProtoeTag", iSelectChildObject, nullptr, vecChild, TAGTYPE::TAG_CLONE);
-				for (size_t i = 0; i < iChildSize; ++i)
+				LayerChild_ListBox(pChildObjectTag, iGrandChildSize, pSelectChildObject, "CreateChild_ProtoeTag", iSelectChildObject, nullptr, vecChild, TAGTYPE::TAG_CLONE);
+				for (size_t i = 0; i < iGrandChildSize; ++i)
 					Safe_Delete_Array(pChildObjectTag[i]);
 				Safe_Delete_Array(pChildObjectTag);
-				LayerChild_ListBox(pChildObjectTag, iChildSize, pSelectChildObject, "CreateChild_CloneTag", iSelectChildObject, nullptr, vecChild, TAGTYPE::TAG_PROTO);
+				LayerChild_ListBox(pChildObjectTag, iGrandChildSize, pSelectChildObject, "CreateChild_CloneTag", iSelectChildObject, nullptr, vecChild, TAGTYPE::TAG_PROTO);
 
 				auto& iter = vecChild->begin();
 				for (_int i = 0; i < iSelectChildObject; i++)
 					iter++;
 
-				if (iChildSize != 0)
+				if (iGrandChildSize != 0)
 					TransformView_child(iSelectChildObject, dynamic_cast<CEffect_Base*>(pParents));
 
 				ImGui::SameLine();
@@ -1042,12 +1048,12 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 					dynamic_cast<CEffect_Base*>(pParents)->Set_Child(eEffectDesc, iCreateChild, pSelectChildObject);
 					bChild = false;
 				}
-				for (size_t i = 0; i < iChildSize; ++i)
+				for (size_t i = 0; i < iGrandChildSize; ++i)
 					Safe_Delete_Array(pChildObjectTag[i]);
 				Safe_Delete_Array(pChildObjectTag);
 			}
 
-			if(dynamic_cast<CEffect_Base*>(pChildGameObject)->Get_ChildCnt() != 0 )
+			if(dynamic_cast<CEffect_Base*>(pChildGameObject)->Get_ChildCnt() != 0 ) // 부모 - 자식 - 자식
 			{
 				static _bool bGrandChild = false;
 				static _int iCreateGrandChild = 0;
@@ -1063,9 +1069,17 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 					else if (iCreateGrandChild >= 10)
 						iCreateGrandChild = 10;
 
-					LayerChild_ListBox(pChildObjectTag, iChildSize, pSelectGrandChildObject, iSelectChildObject, dynamic_cast<CEffect_Base*>(pChildGameObject), nullptr);
+					LayerChild_ListBox(pSelectChildTag, iSuperGrandChildSize, pSelectGrandChildObject, "CreateGrandChild_ProtoeTag",
+						iSelectChildObject, dynamic_cast<CEffect_Base*>(pChildGameObject), nullptr, TAGTYPE::TAG_CLONE);
 
-					if (iChildSize != 0)
+					for (size_t i = 0; i < iSuperGrandChildSize; ++i)
+						Safe_Delete_Array(pSelectChildTag[i]);
+					Safe_Delete_Array(pSelectChildTag);
+
+					LayerChild_ListBox(pSelectChildTag, iSuperGrandChildSize, pSelectChildObject, "CreateGrandChild_CloneTag",
+						iSelectChildObject, dynamic_cast<CEffect_Base*>(pChildGameObject), nullptr, TAGTYPE::TAG_PROTO);
+
+					if (iSuperGrandChildSize != 0)
 						TransformView_child(iSelectGrandChild, dynamic_cast<CEffect_Base*>(pChildGameObject));
 
 					ImGui::SameLine();
@@ -1080,124 +1094,13 @@ void CImgui_Effect::Set_Child(CEffect_Base* pEffect)
 						dynamic_cast<CEffect_Base*>(pChildGameObject)->Set_Child(eEffectDesc, iCreateGrandChild, pSelectGrandChildObject);
 						bGrandChild = false;
 					}
-					for (size_t i = 0; i < iChildSize; ++i)
-						Safe_Delete_Array(pChildObjectTag[i]);
-					Safe_Delete_Array(pChildObjectTag);
+					for (size_t i = 0; i < iSuperGrandChildSize; ++i)
+						Safe_Delete_Array(pSelectChildTag[i]);
+					Safe_Delete_Array(pSelectChildTag);
 				}
 			}
 		}
 
-
-	for (size_t i = 0; i < iLayerSize; ++i)
-		Safe_Delete_Array(pObjectTag[i]);
-	Safe_Delete_Array(pObjectTag);
-
-	ImGui::End();
-}
-
-void CImgui_Effect::Set_GrandChild(CEffect_Base * pEffect)
-{
-	ImGui::Begin("Setting GrandChild Window");
-
-	// Layer_ListBox용 
-	char** pObjectTag = nullptr;
-	char** pChildObjectTag = nullptr;
-	char** pSelectObjectTag = nullptr;
-
-	static _uint iLayerSize = 0;
-	static _uint iChildSize = 0;
-
-	static char* pSelectObject = "";
-	static char* pSelectChildObject = "";
-	static char* pChildObject = "";
-
-	static _int iSelectObject = 0;
-	static _int iSelectChild = 0;
-	static _int iSelectChildObject = 0;
-	// Layer_ListBox용 
-
-	static _bool bCreatechild = false;
-	static _int  iAddObjctCnt = 0;
-	static _int  iCreateCnt = 0;
-
-	ImGui::PushItemWidth(400);
-	ImGui::BulletText("Cur Layer_Effect Object List :");
-	LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "Set_CloneTag", iSelectObject, TAGTYPE::TAG_CLONE);
-	for (size_t i = 0; i < iLayerSize; ++i)
-		Safe_Delete_Array(pObjectTag[i]);
-	Safe_Delete_Array(pObjectTag);
-
-	CGameObject* pParents = LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "Set_ProtoTag", iSelectObject, TAGTYPE::TAG_PROTO);
-	ImGui::BulletText("Cur Select Parents :");  ImGui::SameLine();	ImGui::Text(pSelectObject); ImGui::SameLine();
-
-	static _bool bChildOptionWindow = false;
-	if (dynamic_cast<CEffect*>(pParents)->Get_ChildCnt() != 0)
-	{
-		ImGui::Checkbox("Child Option Window", &bChildOptionWindow);
-		if (bChildOptionWindow)
-		{
-			vector<class CEffect_Base*>* pEffect = dynamic_cast<CEffect*>(pParents)->Get_vecChild();
-			auto& iter = pEffect->begin();
-			for (_int i = 0; i < iSelectObject; i++)
-				iter++;
-
-			Show_ChildWindow(*iter);
-		}
-	}
-	ImGui::NewLine();
-	CGameObject* pChildGameObject = nullptr;
-	if (ImGui::CollapsingHeader("Create Child"))
-	{
-		ImGui::BulletText("Input Create Child Cnt : ");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(200);
-		ImGui::InputInt("##CreateChild", (_int*)&iCreateCnt);
-		if (iCreateCnt <= 0)
-			iCreateCnt = 0;
-		else if (iCreateCnt >= 10)
-			iCreateCnt = 10;
-
-		ImGui::Separator();
-		ImGui::BulletText("Choose Child Object :");
-		LayerEffects_ListBox(pSelectObjectTag, iLayerSize, pChildObject, "Child_CloneTag", iSelectChild, TAGTYPE::TAG_CLONE);
-		for (size_t i = 0; i < iLayerSize; ++i)
-			Safe_Delete_Array(pSelectObjectTag[i]);
-		Safe_Delete_Array(pSelectObjectTag);
-
-		pChildGameObject = LayerEffects_ListBox(pSelectObjectTag, iLayerSize, pChildObject, "Child_ProtoTag", iSelectChild, TAGTYPE::TAG_PROTO);
-		ImGui::BulletText("Cur Select ChildObject :");  ImGui::SameLine();	ImGui::Text(pChildObject);
-
-		ImGui::SameLine();
-		if (ImGui::Button("Add Child"))
-		{
-			if (pChildGameObject != nullptr)
-			{
-				CEffect_Base::EFFECTDESC eEffectDesc = dynamic_cast<CEffect_Base*>(pChildGameObject)->Get_EffectDesc();
-				dynamic_cast<CEffect_Base*>(pParents)->Set_Child(eEffectDesc, iCreateCnt, pChildObject);
-			}
-		}
-		for (size_t i = 0; i < iLayerSize; ++i)
-			Safe_Delete_Array(pSelectObjectTag[i]);
-		Safe_Delete_Array(pSelectObjectTag);
-	}
-	static _bool bCreateChildChild = false;
-	if (ImGui::CollapsingHeader("Cur Layer_Effect Object List"))
-	{
-		// vector<CEffect_Base*>* vecChild = dynamic_cast<CEffect*>(pParents)->Get_vecChild();
-		LayerChild_ListBox(pChildObjectTag, iChildSize, pSelectChildObject, iSelectChildObject, dynamic_cast<CEffect_Base*>(pChildGameObject));
-
-		if (iChildSize != 0)
-			TransformView_child(iSelectChildObject, dynamic_cast<CEffect_Base*>(pChildGameObject));
-
-		ImGui::Separator();
-		ImGui::BulletText("Child-Child Setting : ");
-		ImGui::Checkbox("##ChildChildSetting", &bCreateChildChild);
-		if (bCreateChildChild) Set_GrandChild(dynamic_cast<CEffect_Base*>(pParents));
-
-		for (size_t i = 0; i < iChildSize; ++i)
-			Safe_Delete_Array(pChildObjectTag[i]);
-		Safe_Delete_Array(pChildObjectTag);
-	}
 
 	for (size_t i = 0; i < iLayerSize; ++i)
 		Safe_Delete_Array(pObjectTag[i]);

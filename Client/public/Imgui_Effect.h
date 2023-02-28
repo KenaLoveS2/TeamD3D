@@ -30,7 +30,6 @@ public:
 
 	// Child Setting //
 	void	Set_Child(class CEffect_Base* pEffect);
-	void	Set_GrandChild(class CEffect_Base* pEffect);
 
 	// Trail Setting //
 	void	Set_Trail(class CEffect_Base* pEffect);

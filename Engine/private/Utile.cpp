@@ -166,3 +166,8 @@ char * CUtile::SeparateText(char * pCharStr)
 	}
 	return Temp;
 }
+
+_float CUtile::FloatLerp(_float fNum1, _float fNum2, _float fRatio)
+{
+	return fNum1 * (1.f - fRatio) + fNum2 * fRatio;
+}

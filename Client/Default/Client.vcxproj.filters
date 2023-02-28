@@ -178,6 +178,9 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Trail">
+      <UniqueIdentifier>{5930dbbd-ae58-49f1-8234-88fa722084d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -405,6 +408,9 @@
     <ClInclude Include="..\Public\Slope.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail.h">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -610,6 +616,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Slope.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail.cpp">
+      <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

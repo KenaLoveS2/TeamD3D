@@ -877,11 +877,11 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	//lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
-	///* For.Prototype_Component_VIBuffer_Point_Instancing */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Point_Instancing"),
-	//	CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 30))))
-	//	return E_FAIL;
+	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
+	/* For.Prototype_Component_VIBuffer_Point_Instancing */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Trail"),
+		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
