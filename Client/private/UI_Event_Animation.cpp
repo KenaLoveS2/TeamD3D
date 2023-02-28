@@ -6,21 +6,26 @@
 
 CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 {
-	m_szEventName = "BarGuage";
+	m_szEventName = "Animation";
 	m_iRenderPass = 4;
+	m_pParent = pUI;
 
-	m_bStart		= false;
-	m_bFinished		= false;
-	m_bLoop			= true;
+
+	m_bStart = false;
+	m_bFinished = false;
+	m_bLoop = true;
 	m_iTextureIndex = 0;
 
 	//m_iFramesX		= 1;
 	//m_iFramesY		= 1;
-	m_iFrameXNow	= 0;
-	m_iFrameYNow	= 0;
+	m_iFrameXNow = 0;
+	m_iFrameYNow = 0;
 
-	m_pParent = pUI;
-	m_iTextureNum = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
+	CTexture* pDiffuse = m_pParent->Get_DiffuseTexture();
+	if (pDiffuse == nullptr)
+		m_iTextureNum = 0;
+	else
+		m_iTextureNum = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
 	for (_uint i = 0; i < m_iTextureNum; ++i)
 	{
 		m_vecFramesX.push_back(1);
@@ -95,6 +100,9 @@ HRESULT CUI_Event_Animation::Late_Tick(_float fTimeDelta)
 HRESULT CUI_Event_Animation::SetUp_ShaderResources(CShader * pShader)
 {
 	/* Sprite Animation */
+	if (m_iTextureIndex < 0 || m_vecFramesX.size() <= m_iTextureIndex)
+		return S_OK;
+
 	if (FAILED(pShader->Set_RawValue("g_XFrames", &m_vecFramesX[m_iTextureIndex], sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(pShader->Set_RawValue("g_YFrames", &m_vecFramesY[m_iTextureIndex], sizeof(_int))))
@@ -120,27 +128,48 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 
 	/* Total Cnt of x,y frames */
 
-	static int totalTextures = m_iTextureNum;
+	static int totalTextures;
+	if (nullptr == m_pParent->Get_DiffuseTexture())
+		totalTextures = 0;
+	else
+		totalTextures = m_pParent->Get_DiffuseTexture()->Get_TextureIdx();
+	if (m_iTextureNum != totalTextures)
+	{
+		m_vecFramesX.clear();
+		m_vecFramesY.clear();
+
+		for (_uint i = 0; i < totalTextures; ++i)
+		{
+			m_vecFramesX.push_back(1);
+			m_vecFramesY.push_back(1);
+		}
+	}
+	m_iTextureNum = totalTextures;
 	ImGui::InputInt("TotalTextures", &totalTextures, 0, 100, ImGuiInputTextFlags_ReadOnly);
 
-	static int selectedIdx;
-	selectedIdx = m_iTextureIndex;
-	if (ImGui::SliderInt("Texture Index", &selectedIdx, 0, totalTextures-1))
-	{
-		m_iTextureIndex = selectedIdx;
 
-		if(m_pParent != nullptr)
-			m_pParent->Set_TextureIndex(m_iTextureIndex);
+	if (m_iTextureNum > 0)
+	{
+		static int selectedIdx;
+		selectedIdx = m_iTextureIndex;
+		if (ImGui::SliderInt("Texture Index", &selectedIdx, 0, totalTextures - 1))
+		{
+			m_iTextureIndex = selectedIdx;
+
+			if (m_pParent != nullptr)
+				m_pParent->Set_TextureIndex(m_iTextureIndex);
+		}
+
+		static int framesX;
+		static int framesY;
+		framesX = m_vecFramesX[m_iTextureIndex];
+		framesY = m_vecFramesY[m_iTextureIndex];
+		if (ImGui::SliderInt("Cnt of FramesX", &framesX, 1, 20))
+			m_vecFramesX[m_iTextureIndex] = framesX;
+		if (ImGui::SliderInt("Cnt of FramesY", &framesY, 1, 20))
+			m_vecFramesY[m_iTextureIndex] = framesY;
 	}
 
-	static int framesX;
-	static int framesY;
-	framesX = m_vecFramesX[m_iTextureIndex];
-	framesY = m_vecFramesY[m_iTextureIndex];
-	if (ImGui::SliderInt("Cnt of FramesX", &framesX, 1, 20))
-		m_vecFramesX[m_iTextureIndex] = framesX;
-	if (ImGui::SliderInt("Cnt of FramesY", &framesY, 1, 20))
-		m_vecFramesY[m_iTextureIndex] = framesY;
 
 	/* Animation Speed */
 	static float fDuration;
@@ -153,6 +182,7 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 	bLoop = m_bLoop;
 	if (ImGui::Checkbox("IsLoop", &bLoop))
 	{
+		m_bStart = true;
 		m_bLoop = bLoop;
 		m_bFinished = false;
 		m_fTimeAcc = 0.f;
@@ -194,22 +224,26 @@ HRESULT CUI_Event_Animation::Load_Data(wstring fileName)
 	file >> jLoad;
 	file.close();
 
-	jLoad["Duration"].get_to<_float>(m_fTime);
-	jLoad["Loop"].get_to<_bool>(m_bLoop);
+	if(jLoad.contains("Duration"))
+		jLoad["Duration"].get_to<_float>(m_fTime);
+	if(jLoad.contains("Loop"))
+		jLoad["Loop"].get_to<_bool>(m_bLoop);
 
 	_uint i = 0;
-	for (_int iFrame : jLoad["FramesX"])
-	{
-		m_vecFramesX[i] = iFrame;
-		++i;
-	}
+	if(jLoad.contains("FramesX"))
+		for (_int iFrame : jLoad["FramesX"])
+		{
+			m_vecFramesX[i] = iFrame;
+			++i;
+		}
 
 	i = 0;
-	for (_int iFrame : jLoad["FramesY"])
-	{
-		m_vecFramesY[i] = iFrame;
-		++i;
-	}
+	if(jLoad.contains("FramesY"))
+		for (_int iFrame : jLoad["FramesY"])
+		{
+			m_vecFramesY[i] = iFrame;
+			++i;
+		}
 
 	return S_OK;
 }

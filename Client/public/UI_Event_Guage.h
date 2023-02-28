@@ -12,7 +12,7 @@ private:
 public:
 	virtual	void		Call_Event(_float fData)				override;
 	_bool				Is_FullFilled() { if (m_fGuage >= 1.f) return true; else return false; }
-	_bool				Is_Zero(); 
+	_bool				Is_Zero();
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -25,8 +25,8 @@ public:
 
 private:
 	_uint				m_iRenderPass;
-	_float2				m_vAcceleration; 
-	_float2				m_vSpeed;	
+	_float2				m_vAcceleration;
+	_float2				m_vSpeed;
 	_float4				m_vMinColor;
 	_float4				m_vColor;
 

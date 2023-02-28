@@ -14,6 +14,8 @@ private:
 	virtual ~CUI_Event_Animation() = default;
 
 public:
+	_bool	Is_Finished() { return m_bFinished; }
+public:
 	virtual void		Call_Event(_uint iData)					override;
 
 public:
@@ -36,7 +38,7 @@ private:
 	_uint			m_iTextureIndex;
 	vector<_int>	m_vecFramesX;
 	vector<_int>	m_vecFramesY;
-	
+
 	_int	m_iFrameXNow;
 	_int	m_iFrameYNow;
 

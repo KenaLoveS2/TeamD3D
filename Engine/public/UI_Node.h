@@ -9,8 +9,6 @@ protected:
 	CUI_Node(const CUI_Node& rhs);
 	virtual ~CUI_Node() = default;
 
-
-
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
