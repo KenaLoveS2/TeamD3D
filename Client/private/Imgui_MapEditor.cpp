@@ -21,8 +21,6 @@ static string strTexturePathNum[WJTextureType_UNKNOWN] =
 	"METALNESS_path",			"COMP_AMBIENT_OCCLUSION_path",		"AMBIENT_OCCLUSION_path"
 };
 
-
-
 CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CImguiObject(pDevice, pContext)
 {
@@ -363,6 +361,46 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 	}
 }
 
+void CImgui_MapEditor::Imgui_ViewMeshOption(CGameObject* pSelecteObj)
+{
+	CModel* pModel = dynamic_cast<CModel*>(pSelecteObj->Find_Component(L"Com_Model"));
+	
+	_uint iNumMesh = pModel->Get_NumMeshes();
+	 vector<_uint> vecMeshIndex;
+
+	for (_uint i = 0; i < iNumMesh; ++i)
+	{
+		vecMeshIndex.push_back(i);
+	}
+
+	if (ImGui::BeginListBox("#Select_Mesh_Index#"))
+	{
+		_int iIndex = 0;
+		for (auto& ProtoPair : vecMeshIndex)
+		{
+			const bool bSelected = false;
+			char szViewName[512];
+
+			sprintf_s(szViewName, sizeof(szViewName), " Mesh %d _ Index ", iIndex);
+
+			if (ImGui::Selectable(szViewName, bSelected))
+			{
+				m_iSelectMeshIndex = iIndex;
+			}
+			++iIndex;
+		}
+
+		ImGui::EndListBox();
+	}
+
+	if (m_iSelectMeshIndex != -1)
+	{
+		_bool b = false;
+	}
+
+}
+
+
 
 void CImgui_MapEditor::Imgui_Save_Load_Json()
 {
@@ -417,7 +455,8 @@ void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
 		wstring wstrCloneTag = pSelectEnviObj->Get_ObjectCloneName();
 		string	strClontTag = CUtile::WstringToString(wstrCloneTag);
 
-		ImGui::Text("Cur Obj Clone Name : %s", strClontTag.c_str());
+		ImGui::Text("Cur_Clone_Name : %s", strClontTag.c_str());
+		Imgui_ViewMeshOption(pSelectEnviObj);
 
 		Imgui_TexturePathNaming();
 		static string	textureFilePath = "";

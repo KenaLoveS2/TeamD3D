@@ -31,7 +31,7 @@ public:
 	/*for.Instancing*/
 	const	_bool		Get_IStancingModel() const { return m_bIsInstancing; }
 	vector<_float4x4*>*	Get_InstancePos() { return &m_pInstancingMatrix; }
-	void				Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
+	void						Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
 	/*~for.Instancing*/
 	/*for.Lod*/
 	const	_bool 		Get_IsLodModel()const { return m_bIsLodModel; }

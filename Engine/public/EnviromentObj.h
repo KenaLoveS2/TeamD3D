@@ -23,6 +23,7 @@ public:
 		_uint				iRoomIndex = 0;
 		CHAPTER		eChapterType = CHAPTER_END;
 		_int				iCurLevel = 0;				//이건 툴에서만 일단.
+		
 		aiTextureType_FilePath			AI_textureFilePaths;
 		tagEnviromnetObjectDesc()
 		{

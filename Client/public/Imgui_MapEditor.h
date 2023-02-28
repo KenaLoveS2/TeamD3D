@@ -27,10 +27,12 @@ public:
 	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
 	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, array<string, (_int)WJTextureType_UNKNOWN> vecStr);
 	static				void					Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
+
 private:
 	void											Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void											Imgui_Save_Load_Json();
 	void											Imgui_CreateEnviromentObj();
+	void											Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
 	void											Imgui_SelectObject_Add_TexturePath();
 	void											Imgui_Control_ViewerCamTransform();
 	void											Imgui_TexturePathNaming();
@@ -58,6 +60,7 @@ private: /*For_Tool*/
 	_bool														m_bModelChange = false;
 	_int															m_iTexturePathNum = false;
 
+	_int															m_iSelectMeshIndex = -1;
 
 
 private:	/*Use_Data*/

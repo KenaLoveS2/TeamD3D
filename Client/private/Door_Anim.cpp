@@ -32,12 +32,16 @@ HRESULT CDoor_Anim::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
+	m_pModelCom->Set_AnimIndex(0);
 	return S_OK;
 }
 
 void CDoor_Anim::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CDoor_Anim::Late_Tick(_float fTimeDelta)
@@ -60,12 +64,11 @@ HRESULT CDoor_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 	}
+	
 	return S_OK;
 }
 
@@ -110,7 +113,7 @@ HRESULT CDoor_Anim::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_MAPTOOL, 
+	FAILED_CHECK_RETURN(__super::Add_Component(m_EnviromentDesc.iCurLevel,
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	return S_OK;
@@ -130,6 +133,8 @@ HRESULT CDoor_Anim::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
