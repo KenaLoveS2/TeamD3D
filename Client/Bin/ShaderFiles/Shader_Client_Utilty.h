@@ -62,6 +62,33 @@ float3 DisneyBRDF(float3 V, float3 L, float3 N, float3 albedo, float metallic, f
 	return (diffuse + specular) * dot(L, N);
 }
 
+float3 CalculateSpecularBRDF(float3 viewDirection, float3 lightDirection, float3 halfVector, float3 normalVector, float roughness, float metallic)
+{
+	// N = normalVector
+	// V = viewDirection
+	// L = lightDirection
+	// H = halfVector
+	float dotNL = max(dot(normalVector, lightDirection), 0.0);
+	float dotNV = max(dot(normalVector, viewDirection), 0.0);
+	float dotNH = max(dot(normalVector, halfVector), 0.001);
+	float dotLH = max(dot(lightDirection, halfVector), 0.0);
+	float dotVH = max(dot(viewDirection, halfVector), 0.0);
+
+	float roughnessSquared = roughness * roughness;
+	float a = roughnessSquared;
+	float a2 = a * a;
+
+	float D = (dotNH * a2 - dotNH) * dotNH + 1.0;
+	float G = min(min(2.0 * dotNH * dotNV / dotVH, 2.0 * dotNH * dotNL / dotVH), 1.0);
+
+	float F0 = metallic * 0.08 + 0.92;
+	float F = F0 + (1.0 - F0) * pow(1.0 - dotLH, 5.0);
+
+	float3 specularColor = F * G * D / max(dotNL * dotNV, 0.001);
+
+	return specularColor;
+}
+
 float SchlickGGX(float NdotV, float roughness)
 {
 	float k = roughness * roughness * 0.5f;

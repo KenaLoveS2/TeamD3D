@@ -4,6 +4,7 @@
 #define IDENTITY_MATRIX float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 static const float PI = 3.14159265359;
 
+
 float4 ToneMap(float4 color)
 {
 	float4 mappedColor = color;

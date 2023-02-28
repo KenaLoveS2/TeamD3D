@@ -48,7 +48,7 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	if (m_pRendererCom != nullptr)
 	{
 		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 	}
 }
@@ -70,7 +70,7 @@ HRESULT CKena_Staff::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		/********************* For. Kena PostProcess By WJ*****************/
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPRINT_EMISSIVE, "g_EmissiveTexture");
 		/******************************************************************/
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 	}
