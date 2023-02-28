@@ -33,6 +33,10 @@ public:
 	static char*   SeparateText(char* pCharStr);
 	static _float  FloatLerp(_float fNum1, _float fNum2, _float fRatio);
 
+	static _float3 ConvertPosition_PxToD3D(PxVec3& vPxPosition);
+	static PxVec3 ConvertPosition_D3DToPx(_float3& vD3dPosition);
+
+
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)
 	{
