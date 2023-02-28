@@ -70,7 +70,7 @@ void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType T
 	{
 		m_EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = TexturePath;
 	}
-	else 	if (WJTextureType_HAIR_ALPHA == Type)
+	else 	if (WJTextureType_ALPHA == Type)
 	{
 		m_EnviromentDesc.AI_textureFilePaths.HAIR_ALPHA_path = TexturePath;
 	}
@@ -86,11 +86,11 @@ void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType T
 	{
 		m_EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = TexturePath;
 	}
-	else 	if (WJTextureType_METALNESS == Type)
+	else 	if (WJTextureType_ROUGHNESS == Type)
 	{
 		m_EnviromentDesc.AI_textureFilePaths.METALNESS_path = TexturePath;
 	}
-	else 	if (WJTextureType_COMP_AMBIENT_OCCLUSION == Type)
+	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
 	{
 		m_EnviromentDesc.AI_textureFilePaths.COMP_AMBIENT_OCCLUSION_path = TexturePath;
 	}

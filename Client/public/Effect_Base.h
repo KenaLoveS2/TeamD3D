@@ -7,7 +7,6 @@ class CShader;
 class CTexture;
 class CRenderer;
 class CVIBuffer_Rect;
-class CVIBuffer_Trail;
 class CVIBuffer_Point_Instancing;
 END
 
@@ -20,16 +19,16 @@ public:
 	typedef struct tagEffectDesc
 	{
 		// Effect Type = texture, texture_Particle , mesh
-		enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_TRAIL, EFFECT_END };
-		enum PARTICLETYPE { PARTICLE_BOX, PARTICLE_SPHERE, PARTICLE_CONE, PARTICLE_SPREAD, PARTICLE_END };
+		enum EFFECTTYPE        { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_END };
+		enum PARTICLETYPE	   { PARTICLE_STRITE, PARTICLE_SPHERE, PARTICLE_CONE, PARTICLE_SPREAD, PARTICLE_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
-		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
-		enum BLENDSTATE { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_TRAIL, BLENDSTATE_END };
-		enum MOVEDIR { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, DIR_END };
-		enum ROTXYZ { ROT_X, ROT_Y, ROT_Z, ROT_END };
+		enum TEXTURETYPE       { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
+		enum BLENDSTATE        { BLENDSTATE_DEFAULT, BLENDSTATE_ALPHA, BLENDSTATE_ONEEFFECT, BLENDSTATE_MIX, BLENDSTATE_END };
+		enum MOVEDIR           { MOVE_FRONT, MOVE_BACK, MOVE_UP, MOVE_DOWN, DIR_END };
+		enum ROTXYZ            { ROT_X, ROT_Y, ROT_Z, ROT_END };
 
 		EFFECTTYPE        eEffectType = EFFECT_PLANE;
-		PARTICLETYPE	  eParticleType = PARTICLE_BOX;
+		PARTICLETYPE	  eParticleType = PARTICLE_STRITE;
 		TEXTURERENDERTYPE eTextureRenderType = TEX_ONE;
 		TEXTURETYPE		  eTextureType = TYPE_END;
 		BLENDSTATE        eBlendType = BLENDSTATE_DEFAULT;
@@ -63,26 +62,12 @@ public:
 		_vector vInitPos = { 0.0f, 0.0f, 0.0f, 1.0f };
 		_vector vPixedDir = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		/* Trail  */
-		_bool   IsTrail = false; // Trail이 있는지 없는지 
-		_bool   bActive = true;
-		_bool   bAlpha = false;
-		_float  fLife = 0.0f;
-		_float  fWidth = 0.0f;
-		_float  fSegmentSize = 0.0f;
-		_float  fAlpha = 0.0f;
-		/* ~Trail */
-
 		// Option // 
 		_bool	IsBillboard = false;
 		_bool	IsMask = false;
 		_bool	IsTrigger = false;
 		_bool	IsMovingPosition = false;
 		_bool	bUseChild = false;
-		_bool	bSpread = false;
-		// ~Option // 
-
-		_bool   bFreeMove = false;
 
 	}EFFECTDESC;
 
@@ -92,27 +77,22 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
-	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {
-		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC));
-	}
+	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) { 
+		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC)); }
 	EFFECTDESC           Get_EffectDesc() { return m_eEFfectDesc; }
 
 	// Effect Desc
-	void						 Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) {
-		m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe;
-	}
-	void						 Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) {
-		m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe;
-	}
+	void	Set_EffectDescDTexture(_int iSelectIdx, _float fDTextureframe) { m_eEFfectDesc.fFrame[iSelectIdx] = fDTextureframe; }
+	void	Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) { m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe; }
 
 	_uint					     Get_ChildCnt() { return (_uint)m_vecChild.size(); }
 	vector<class CEffect_Base*>* Get_vecChild() { return &m_vecChild; }
 
-	class CEffect_Base*			 Get_Parent() { return m_pParent; }
-	void						 Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
+	class CEffect_Base* Get_Parent() { return m_pParent; }
+	void				Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
 
-	void						 Set_Matrix();
-	void						 Set_InitMatrix(_fmatrix WorldMatrix) {
+	void				Set_Matrix();
+	void				Set_InitMatrix(_fmatrix WorldMatrix) {
 		XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix);
 	}
 	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
@@ -122,13 +102,8 @@ public: // Texture Cnt
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
 
 public:
-	_bool   Get_HaveTrail() { return m_eEFfectDesc.IsTrail; }
-	void    Set_HaveTrail(_bool bHave) { m_eEFfectDesc.IsTrail = bHave; }
-	void    Set_TrailDesc();
-
-public:
 	void				 BillBoardSetting(_float3 vScale);
-	
+
 public:
 	virtual HRESULT      Initialize_Prototype() override;
 	virtual HRESULT		 Initialize(void* pArg) override;
@@ -140,10 +115,6 @@ public:
 	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
 	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
 
-	virtual HRESULT				 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
-	virtual class CEffect_Trail* Get_Trail() { return nullptr; }
-	virtual void				 Delete_Trail(const _tchar* pProtoTag) {}
-
 public:
 	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
@@ -152,7 +123,6 @@ protected:
 	CRenderer*				    m_pRendererCom = nullptr;
 	CVIBuffer_Rect*			    m_pVIBufferCom = nullptr;
 	CVIBuffer_Point_Instancing*	m_pVIInstancingBufferCom = nullptr;
-	CVIBuffer_Trail*			m_pVITrailBufferCom = nullptr;
 
 	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
 	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
@@ -171,11 +141,6 @@ protected:
 	_float4x4					m_InitWorldMatrix;
 	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
-
-	/* Trail  */
-	vector<_float4>				m_vecProPos;
-	class CEffect_Base*		    m_pEffectTrail = nullptr;
-	/* ~Trail */
 
 protected:
 	EFFECTDESC			  m_eEFfectDesc;

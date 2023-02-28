@@ -458,7 +458,20 @@ technique11 DefaultTechnique
 
 	pass MeshTess//4
 	{
-		SetRasterizerState(RS_Wireframe); //RS_Default , RS_Wireframe
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_TESS();
+	}
+
+	pass MeshTessViewer//5
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

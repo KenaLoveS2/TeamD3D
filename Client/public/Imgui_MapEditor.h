@@ -23,7 +23,7 @@ public:
 	virtual void Imgui_FreeRender();
 
 public:
-	static				void					Load_MapObjects(_uint iLevel);
+	static				void					Load_MapObjects(_uint iLevel, string JsonFileName );
 	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
 	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, array<string, (_int)WJTextureType_UNKNOWN> vecStr);
 	static				void					Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
@@ -36,7 +36,7 @@ private:
 	void											Imgui_TexturePathNaming();
 	void											Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
 	void											Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
-
+	
 private:		/*Logic*/
 	void											Imgui_Save_Func();
 	HRESULT									Imgui_Load_Func();

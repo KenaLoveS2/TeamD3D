@@ -123,6 +123,13 @@ private:
 private:
 	map<const wstring, list<CHANGER>>	m_mapChanger;
 
+private:
+	list<wstring>								m_wstrDebugList;
+	_uint										m_iDebugQueSize = 10;
+
+private:
+	void StateHistoryUpdate(const wstring& wstrLastStateName);
+
 public:
 	static CStateMachine*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent*					Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;

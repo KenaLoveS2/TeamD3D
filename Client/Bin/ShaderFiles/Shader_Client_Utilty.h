@@ -4,9 +4,105 @@
 #define IDENTITY_MATRIX float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 static const float PI = 3.14159265359;
 
-float3 FresnelSchlick(float cosTheta, float3 F0)
+/* For Disney Rendering*/
+
+// -------------------------------------------------------------------------
+//    Disney
+// -------------------------------------------------------------------------
+
+float3 disney_D(float3 H, float3 N, float3 L, float alpha, float metallic)
 {
-	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+	float dotNH = dot(N, H);
+	float dotNL = dot(N, L);
+	float dotHL = dot(H, L);
+
+	float alpha2 = alpha * alpha;
+	float invPI = 1.0 / PI;
+
+	float D_ggx = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNH * dotNH - 1.0), 2.0);
+	float D_ggx90 = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNL * dotNL - 1.0), 2.0);
+
+	float3 D = lerp(float3(1.f,1.f,1.f), exp((D_ggx + D_ggx90) * metallic), metallic);
+	return D;
+}
+
+float smith_G1(float3 V, float3 N, float alpha)
+{
+	float dotNV = dot(N, V);
+	return 2.0 / (1.0 + sqrt(1.0 + alpha * alpha * (1.0 - dotNV * dotNV) / (dotNV * dotNV)));
+}
+
+float3 F0_from_albedo(float3 albedo, float metallic)
+{
+	return lerp(float3(0.04f,0.04f,0.04f), albedo, metallic);
+}
+
+float3 DisneyBRDF(float3 V, float3 L, float3 N, float3 albedo, float metallic, float roughness, float3 F0)
+{
+	// Half vector
+	float3 H = normalize(L + V);
+
+	// Fresnel term
+	float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
+
+	// Roughness term
+	float alpha = roughness * roughness;
+
+	// Geometric attenuation
+	float G = smith_G1(V, N, alpha) * smith_G1(L, N, alpha);
+
+	// Specular (reflection) term
+	float3 D = disney_D(H, N, L, alpha, metallic);
+	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(L, N));
+
+	// Diffuse (Lambertian) term
+	float3 diffuse = albedo / PI;
+
+	// Final color
+	return (diffuse + specular) * dot(L, N);
+}
+
+float3 CalculateSpecularBRDF(float3 viewDirection, float3 lightDirection, float3 halfVector, float3 normalVector, float roughness, float metallic)
+{
+	// N = normalVector
+	// V = viewDirection
+	// L = lightDirection
+	// H = halfVector
+	float dotNL = max(dot(normalVector, lightDirection), 0.0);
+	float dotNV = max(dot(normalVector, viewDirection), 0.0);
+	float dotNH = max(dot(normalVector, halfVector), 0.001);
+	float dotLH = max(dot(lightDirection, halfVector), 0.0);
+	float dotVH = max(dot(viewDirection, halfVector), 0.0);
+
+	float roughnessSquared = roughness * roughness;
+	float a = roughnessSquared;
+	float a2 = a * a;
+
+	float D = (dotNH * a2 - dotNH) * dotNH + 1.0;
+	float G = min(min(2.0 * dotNH * dotNV / dotVH, 2.0 * dotNH * dotNL / dotVH), 1.0);
+
+	float F0 = metallic * 0.08 + 0.92;
+	float F = F0 + (1.0 - F0) * pow(1.0 - dotLH, 5.0);
+
+	float3 specularColor = F * G * D / max(dotNL * dotNV, 0.001);
+
+	return specularColor;
+}
+
+float SchlickGGX(float NdotV, float roughness)
+{
+	float k = roughness * roughness * 0.5f;
+	float nom = NdotV;
+	float denom = NdotV * (1.0f - k) + k;
+	return nom / denom;
+}
+
+float GGXTerm(float NdotH, float roughness)
+{
+	float alpha = roughness * roughness;
+	float alphaSqr = alpha * alpha;
+	float denom = (NdotH * NdotH) * (alphaSqr - 1.0f) + 1.0f;
+	return alphaSqr / (PI * denom * denom);
 }
 
 float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)

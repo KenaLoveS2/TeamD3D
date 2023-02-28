@@ -29,6 +29,8 @@ void CTool_Settings::Imgui_RenderWindow()
 
 HRESULT CTool_Settings::FrameRate()
 {
+	ImGui::Checkbox("Frame Limit", &g_bFrameLimit);
+
 	if (*m_fFrameRate >= 60.f)
 		m_TextColor = { 0.f, 1.f, 0.f, 1.f };
 	else if (*m_fFrameRate >= 30.f && *m_fFrameRate < 60.f)

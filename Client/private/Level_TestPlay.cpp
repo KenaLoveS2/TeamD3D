@@ -6,6 +6,8 @@
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
 #include "Imgui_ShaderEditor.h"
+#include "Layer.h"
+#include "GameObject.h"
 
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -25,7 +27,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
-	RELEASE_INSTANCE(CGameInstance);
+
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -45,6 +47,16 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
+	CGameObject* pGameObject = nullptr;
+	map<const _tchar*,  CGameObject*>*	mapPtr = p_game_instance->Find_Layer(p_game_instance->Get_CurLevelIndex(), (TEXT("Layer_Enviroment")))->Get_CloneObjects();
+
+	for(auto& pGameObject : *mapPtr)
+	{
+		if (FAILED(p_game_instance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject.second)))
+			return E_FAIL;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -102,7 +114,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_TESTPLAY);
+	CImgui_MapEditor::Load_MapObjects(LEVEL_TESTPLAY, "Test_Map_Obj.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -146,10 +158,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-
 HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

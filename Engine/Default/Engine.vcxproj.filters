@@ -205,14 +205,8 @@
     <Filter Include="01.Utility\97. EventFucn Manager">
       <UniqueIdentifier>{e0a5d880-aa0a-447a-83ac-dad2b5e19877}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Bone">
-      <UniqueIdentifier>{c7c46548-11a7-420a-a97c-5df7a7e00256}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Mesh">
       <UniqueIdentifier>{6806406e-b2b2-491a-81a9-e35c573c3128}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Model">
-      <UniqueIdentifier>{a54d6a22-6302-4563-8fcd-eb64e69311df}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Rect\Tess">
       <UniqueIdentifier>{80405fd2-d774-4439-b21e-64e4da4949f6}</UniqueIdentifier>
@@ -222,9 +216,6 @@
     </Filter>
     <Filter Include="01.Utility\02.GameObject\UI\04. Event">
       <UniqueIdentifier>{116ed6cd-4a15-472f-b360-4d90da663ed0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\02.VIBuffer\Instancing\Trail">
-      <UniqueIdentifier>{7cc50bc9-6d33-4307-8410-9546f9ea579b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -501,6 +492,7 @@
     <ClInclude Include="..\public\GameObject.h">
       <Filter>01.Utility\02.GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui\Imgui_stdlib.h" />
     <ClInclude Include="..\public\Delegator.h">
       <Filter>01.Utility\02.GameObject\UI\01. Delegator</Filter>
     </ClInclude>
@@ -510,14 +502,8 @@
     <ClInclude Include="..\public\UI_Event.h">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Trail.h">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Trail</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Instancing_Mesh.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\Imgui_stdlib.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -749,6 +735,7 @@
     <ClCompile Include="..\private\Enviroment_Manager.cpp">
       <Filter>01.Utility\02.GameObject\Enviroment\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>01.Utility\12. FSM</Filter>
     </ClCompile>
@@ -761,14 +748,8 @@
     <ClCompile Include="..\private\UI_Event.cpp">
       <Filter>01.Utility\02.GameObject\UI\04. Event</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Trail.cpp">
-      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Trail</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Instancing_Mesh.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\Imgui_stdlib.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

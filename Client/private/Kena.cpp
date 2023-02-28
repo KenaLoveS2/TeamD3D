@@ -91,8 +91,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex--;
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
-	
-	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
 	CUI_ClientManager::UI_PRESENT eType1 = CUI_ClientManager::HUD_HP;
@@ -139,11 +137,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	/************** ~Delegator Test *************/
 
-
-
 	if (m_pRendererCom != nullptr)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
@@ -244,6 +242,12 @@ void CKena::ImGui_AnimationProperty()
 
 void CKena::ImGui_ShaderValueProperty()
 {
+	if(ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	__super::ImGui_ShaderValueProperty();
 	{
 		static _float2 AmountMinMax{ -10.f, 10.f };
