@@ -1,20 +1,21 @@
 #include "stdafx.h"
-#include "..\public\BowTarget.h"
+#include "..\public\FloorMesh.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
-CBowTarget::CBowTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+
+CFloorMesh::CFloorMesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
 }
 
-CBowTarget::CBowTarget(const CBowTarget & rhs)
+CFloorMesh::CFloorMesh(const CFloorMesh & rhs)
 	: CEnviromentObj(rhs)
 {
 }
 
-HRESULT CBowTarget::Initialize_Prototype()
+HRESULT CFloorMesh::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,8 +23,9 @@ HRESULT CBowTarget::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CBowTarget::Initialize(void * pArg)
+HRESULT CFloorMesh::Initialize(void * pArg)
 {
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -35,12 +37,12 @@ HRESULT CBowTarget::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CBowTarget::Tick(_float fTimeDelta)
+void CFloorMesh::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CBowTarget::Late_Tick(_float fTimeDelta)
+void CFloorMesh::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -48,7 +50,7 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
-HRESULT CBowTarget::Render()
+HRESULT CFloorMesh::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -61,7 +63,7 @@ HRESULT CBowTarget::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
+		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
@@ -70,7 +72,7 @@ HRESULT CBowTarget::Render()
 	return S_OK;
 }
 
-HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+HRESULT CFloorMesh::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
 
@@ -94,23 +96,23 @@ HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pC
 	return S_OK;
 }
 
-HRESULT CBowTarget::SetUp_Components()
+HRESULT CFloorMesh::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	
+	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-	
+
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
-	/* For.Com_Shader */
+
 	if (m_pModelCom->Get_IStancingModel())
 	{
 		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
@@ -127,11 +129,10 @@ HRESULT CBowTarget::SetUp_Components()
 
 		m_iShaderOption = 4;
 	}
-	
 
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
+	/*if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
 		(CComponent**)&m_pMasterDiffuseBlendTexCom)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/************************** ex ***********************/
 	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -147,7 +148,7 @@ HRESULT CBowTarget::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CBowTarget::SetUp_ShaderResources()
+HRESULT CFloorMesh::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -167,31 +168,31 @@ HRESULT CBowTarget::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CBowTarget * CBowTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CFloorMesh * CFloorMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CBowTarget*		pInstance = new CBowTarget(pDevice, pContext);
+	CFloorMesh*		pInstance = new CFloorMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CBowTarget");
+		MSG_BOX("Failed to Created : CFloorMesh");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CBowTarget::Clone(void * pArg)
+CGameObject * CFloorMesh::Clone(void * pArg)
 {
-	CBowTarget*		pInstance = new CBowTarget(*this);
+	CFloorMesh*		pInstance = new CFloorMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBowTarget");
+		MSG_BOX("Failed to Cloned : CForkLift");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CBowTarget::Free()
+void CFloorMesh::Free()
 {
 	__super::Free();
 
@@ -201,5 +202,5 @@ void CBowTarget::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
-	Safe_Release(m_pMasterDiffuseBlendTexCom);
+	//Safe_Release(m_pMasterDiffuseBlendTexCom);
 }
