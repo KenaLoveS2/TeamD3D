@@ -36,10 +36,8 @@ HRESULT CUI_NodeAimBomb::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
-
 	m_bSetInitialRatio = false;
+	m_fIntervalX = 18.f;
 
 	return S_OK;
 }

@@ -56,7 +56,8 @@ HRESULT CUI_NodeAmmoBombGuage::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	/* Move m_fIntervalX when Level Up */
+	m_fIntervalX = -90.f;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
@@ -87,7 +88,7 @@ void CUI_NodeAmmoBombGuage::Tick(_float fTimeDelta)
 
 			/* Connect With Canvas Aim's Bomb */
 			static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
-				CUI_CanvasAmmo::AIM_BOMB, 1);
+				CUI_CanvasAmmo::AIM_BOMB, 1, this);
 		}
 	}
 

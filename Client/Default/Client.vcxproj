@@ -231,7 +231,6 @@
     <ClInclude Include="..\public\UI_NodeAimArrow.h" />
     <ClInclude Include="..\public\UI_NodeAimBomb.h" />
     <ClInclude Include="..\public\UI_NodeAimLine.h" />
-    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h" />
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
@@ -308,7 +307,6 @@
     <ClCompile Include="..\private\UI_NodeAimArrow.cpp" />
     <ClCompile Include="..\private\UI_NodeAimBomb.cpp" />
     <ClCompile Include="..\private\UI_NodeAimLine.cpp" />
-    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />

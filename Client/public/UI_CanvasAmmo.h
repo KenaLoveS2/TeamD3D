@@ -10,8 +10,14 @@ class CUI_CanvasAmmo final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_BOMBFRAME, UI_BOMBGUAGE, UI_ARROWGUAGE, UI_END };
+	enum UI_ORDER { UI_BOMBFRAME1, UI_BOMBGUAGE1, 
+		UI_BOMBFRAME2, UI_BOMBGUAGE2,
+		UI_ARROWGUAGE, 
+		UI_BOMBEFFECT, UI_ARROWEFFECT, UI_END };
 	enum AIM_UI { AIM_ARROW, AIM_BOMB, AIM_END };
+
+	enum BOMB_ID { BOMB_1, BOMB_2 ,BOMB_END };
+
 
 private:
 	CUI_CanvasAmmo(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -33,7 +39,7 @@ public: /* For. Events */
 
 
 public: 
-	void	ConnectToAimUI(AIM_UI eUIType, _int iParam);
+	void	ConnectToAimUI(AIM_UI eUIType, _int iParam, CUI* pUI = nullptr);
 
 
 public:
@@ -50,7 +56,11 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
+
+private:
+	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
 
 private: 
 	/* Arrow */
@@ -60,6 +70,7 @@ private:
 	/* Bomb */
 	_uint	m_iNumBombs;
 	_uint	m_iNumBombNow;
+	_int	m_Bombs[BOMB_END];
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

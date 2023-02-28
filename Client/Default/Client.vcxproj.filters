@@ -348,9 +348,6 @@
     <ClInclude Include="..\public\UI_CanvasAmmo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClInclude>
@@ -568,9 +565,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>

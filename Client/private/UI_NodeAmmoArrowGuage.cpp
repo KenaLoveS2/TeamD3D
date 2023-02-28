@@ -48,7 +48,6 @@ HRESULT CUI_NodeAmmoArrowGuage::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
