@@ -171,3 +171,25 @@ _float CUtile::FloatLerp(_float fNum1, _float fNum2, _float fRatio)
 {
 	return fNum1 * (1.f - fRatio) + fNum2 * fRatio;
 }
+// PhysX to DirectX 11 conversion matrix
+const DirectX::XMMATRIX g_PhysXToD3D11Matrix = DirectX::XMMatrixScaling(1.0f, 1.0f, -1.0f);
+
+// Transform a position vector from PhysX to DirectX 11 coordinate system
+_float3 CUtile::ConvertPosition_PxToD3D(PxVec3& vPxPosition)
+{	
+	DirectX::XMVECTOR d3d11Pos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.0f), g_PhysXToD3D11Matrix);
+
+	return d3d11Pos;
+}
+
+// Transform a position vector from DirectX 11 to PhysX coordinate system
+PxVec3 CUtile::ConvertPosition_D3DToPx(_float3& vD3dPosition)
+{	
+	physx::PxVec3 PxPos(
+		g_PhysXToD3D11Matrix.r[0].m128_f32[0] * vD3dPosition.x + g_PhysXToD3D11Matrix.r[1].m128_f32[0] * vD3dPosition.y + g_PhysXToD3D11Matrix.r[2].m128_f32[0] * vD3dPosition.z,
+		g_PhysXToD3D11Matrix.r[0].m128_f32[1] * vD3dPosition.x + g_PhysXToD3D11Matrix.r[1].m128_f32[1] * vD3dPosition.y + g_PhysXToD3D11Matrix.r[2].m128_f32[1] * vD3dPosition.z,
+		g_PhysXToD3D11Matrix.r[0].m128_f32[2] * vD3dPosition.x + g_PhysXToD3D11Matrix.r[1].m128_f32[2] * vD3dPosition.y + g_PhysXToD3D11Matrix.r[2].m128_f32[2] * vD3dPosition.z);
+
+	return PxPos;
+}
