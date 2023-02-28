@@ -26,7 +26,7 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	const _double&			Get_AnimationPlayTime();
+	_double					Get_AnimationPlayTime();
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;

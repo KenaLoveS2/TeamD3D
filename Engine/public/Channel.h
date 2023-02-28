@@ -26,7 +26,7 @@ public:
 	
 	void Update_TransformMatrix(_float PlayTime, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
 	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
-	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio);
+	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone, CChannel* pRefChannel);
 
 	void Reset_KeyFrameIndex() { m_iCurrentKeyFrameIndex = 0; }
 	void Set_KeyFrameIndex(_double dPlayTime);

@@ -313,24 +313,40 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnim
 	}
 }
 
-void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio)
+void CAnimation::Update_Bones_Addtive(_float fTimeDelta, _float fRatio, CAnimation * pRefAnim)
 {
+	if (true == m_isFinished)
+	{
+		if (m_isLooping)
+			m_isFinished = false;
+	}
+
 	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	Call_Event(fLastPlayTime, fTimeDelta);
 
-	if (m_PlayTime >= m_Duration)
+	if (m_isLooping == false)
+		CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
+	else
 	{
-		m_PlayTime = 0.0;
-		m_isFinished = true;
+		if (m_PlayTime > m_Duration)
+			m_isFinished = true;
 	}
 
 	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
-		m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
-		//m_Channels[i]->Reset_KeyFrameIndex();
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
+		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio, true, pRefAnim->m_Channels[i]);
+		else
+			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio, false, pRefAnim->m_Channels[i]);
 	}
+
+	if (m_isFinished && m_isLooping)
+		m_PlayTime = 0.0;
 }
 
 void CAnimation::Reverse_Play(_float fTimeDelta)

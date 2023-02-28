@@ -79,9 +79,12 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
-const _double & CModel::Get_PlayTime()
+_double CModel::Get_PlayTime()
 {
-	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
+	if (m_iAdditiveAnimIndex == -1)
+		return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
+	else
+		return m_Animations[m_iAdditiveAnimIndex]->Get_PlayTime();
 }
 
 const _bool & CModel::Get_AnimationFinish() const
@@ -91,7 +94,10 @@ const _bool & CModel::Get_AnimationFinish() const
 
 void CModel::Set_PlayTime(_double dPlayTime)
 {
-	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
+	if (m_iAdditiveAnimIndex == -1)
+		m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
+	else
+		m_Animations[m_iAdditiveAnimIndex]->Set_PlayTime(dPlayTime);
 }
 
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
@@ -806,22 +812,44 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 	if (iAnimIndex >= m_iNumAnimations || iBlendAnimIndex >= (_int)m_iNumAnimations)
 		return;
 
-	CAnimation::ANIMTYPE	eType = m_Animations[iAnimIndex]->Get_AnimationType();
+	CAnimation::ANIMTYPE	eType = CAnimation::ANIMTYPE_END;
+	
+	if (iBlendAnimIndex == -1)
+		eType = m_Animations[iAnimIndex]->Get_AnimationType();
+	else
+		eType = m_Animations[iBlendAnimIndex]->Get_AnimationType();
 
 	if (eType == CAnimation::ANIMTYPE_ADDITIVE)
 	{
-		if (m_iAdditiveAnimIndex != iAnimIndex)
+		if (m_iCurrentAnimIndex != iAnimIndex)
 		{
-			m_iAdditiveAnimIndex = iAnimIndex;
-			m_fAdditiveCurTime = 0.f;
+			m_iPreAnimIndex = m_iCurrentAnimIndex;
+			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+			m_Animations[iAnimIndex]->Reset_Animation();
+
+			if (m_iPreBlendAnimIndex != iBlendAnimIndex)
+				m_Animations[iBlendAnimIndex]->Reset_Animation();
 		}
+		else
+		{
+			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+			m_Animations[iBlendAnimIndex]->Reset_Animation();
+		}
+
+		m_iCurrentAnimIndex = iAnimIndex;
+		m_iBlendAnimIndex = -1;
+		m_iAdditiveAnimIndex = iBlendAnimIndex;
 	}
 	else if (eType == CAnimation::ANIMTYPE_COMMON)
 	{
 		if (m_iCurrentAnimIndex != iAnimIndex)
 		{
 			m_iPreAnimIndex = m_iCurrentAnimIndex;
-			m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+
+			if (m_iAdditiveAnimIndex == -1)
+				m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+			else
+				m_iPreBlendAnimIndex = m_iAdditiveAnimIndex;
 
 			if (iAnimIndex != m_iPreBlendAnimIndex)
 			{
@@ -842,7 +870,12 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 			if (iBlendAnimIndex != m_iBlendAnimIndex)
 			{
 				m_iPreAnimIndex = m_iCurrentAnimIndex;
-				m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+				
+				if (m_iAdditiveAnimIndex == -1)
+					m_iPreBlendAnimIndex = m_iBlendAnimIndex;
+				else
+					m_iPreBlendAnimIndex = m_iAdditiveAnimIndex;
+
 				m_fBlendCurTime = 0.f;
 
 				if (iBlendAnimIndex != -1)
@@ -852,6 +885,7 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 
 		m_iCurrentAnimIndex = iAnimIndex;
 		m_iBlendAnimIndex = iBlendAnimIndex;
+		m_iAdditiveAnimIndex = -1;
 	}
 }
 
@@ -884,7 +918,13 @@ void CModel::Play_Animation(_float fTimeDelta)
 
 		if (m_iPreBlendAnimIndex != -1)
 		{
-			m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
+			if (m_Animations[m_iPreBlendAnimIndex]->Get_AnimationType() == CAnimation::ANIMTYPE_COMMON)
+				m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iPreBlendAnimIndex]);
+			else
+			{
+				// Additive老 锭 贸府
+				//m_Animations[m_iPreBlendAnimIndex]->Update_Bones_Addtive(fTimeDelta, fBlendRatio, m_Animations[m_iPreAnimIndex]);
+			}
 
 			if (m_iPreBlendAnimIndex == m_iCurrentAnimIndex || m_iPreBlendAnimIndex == m_iBlendAnimIndex)
 				m_Animations[m_iPreBlendAnimIndex]->Reverse_Play(fTimeDelta);
@@ -898,7 +938,15 @@ void CModel::Play_Animation(_float fTimeDelta)
 		if (m_iBlendAnimIndex != -1)
 			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_Animations[m_iBlendAnimIndex]);
 		else
-			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
+		{
+			if (m_iAdditiveAnimIndex == -1)
+				m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
+			else
+			{
+				// Additive老 锭 贸府
+				//m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Addtive(fTimeDelta, fBlendRatio, m_Animations[m_iCurrentAnimIndex]);
+			}
+		}
 
 		m_fBlendCurTime += fTimeDelta;
 	}
@@ -907,19 +955,32 @@ void CModel::Play_Animation(_float fTimeDelta)
 		if (m_iBlendAnimIndex != -1)
 			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_Animations[m_iBlendAnimIndex]);
 		else
-			m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+		{
+			if (m_iAdditiveAnimIndex == -1)
+				m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+			else
+			{
+				// Additive老 锭 贸府
+				m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+				_float	fAdditiveRatio = (_float)m_Animations[m_iAdditiveAnimIndex]->Get_PlayTime() / (_float)m_Animations[m_iAdditiveAnimIndex]->Get_AnimationDuration();
+				m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Addtive(fTimeDelta, 0.f, m_Animations[m_iCurrentAnimIndex]);
+				if (fAdditiveRatio >= 1.f)
+					m_fAdditiveCurTime = 0.f;
+				m_fAdditiveCurTime += fTimeDelta;
+			}
+		}
 	}
 
-	if (m_iAdditiveAnimIndex != 0)
-	{
-		_float	fAdditiveRatio = m_fAdditiveCurTime / (_float)m_Animations[m_iAdditiveAnimIndex]->Get_AnimationDuration();
-		m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Addtive(fTimeDelta, fAdditiveRatio);
-
-		if (fAdditiveRatio >= 1.f)
-			m_iAdditiveAnimIndex = 0;
-
-		m_fAdditiveCurTime += fTimeDelta;
-	}
+// 	if (m_iAdditiveAnimIndex != 0)
+// 	{
+// 		_float	fAdditiveRatio = m_fAdditiveCurTime / (_float)m_Animations[m_iAdditiveAnimIndex]->Get_AnimationDuration();
+// 		m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Addtive(fTimeDelta, fAdditiveRatio);
+// 
+// 		if (fAdditiveRatio >= 1.f)
+// 			m_iAdditiveAnimIndex = 0;
+// 
+// 		m_fAdditiveCurTime += fTimeDelta;
+// 	}
 
 	for (auto& pBone : m_Bones)
 	{

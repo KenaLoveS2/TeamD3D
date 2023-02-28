@@ -16,7 +16,7 @@ CKena::CKena(const CKena & rhs)
 {
 }
 
-const _double & CKena::Get_AnimationPlayTime()
+_double CKena::Get_AnimationPlayTime()
 {
 	return m_pModelCom->Get_PlayTime();
 }

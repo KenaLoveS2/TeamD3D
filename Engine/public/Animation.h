@@ -39,7 +39,7 @@ public:
 
 	void							Update_Bones(_float fTimeDelta, CAnimation* pBlendAnim = nullptr);
 	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
+	void							Update_Bones_Addtive(_float fTimeDelta, _float fRatio, CAnimation* pRefAnim);
 	void							Reverse_Play(_float fTimeDelta);
 	void							Reset_Animation();
 

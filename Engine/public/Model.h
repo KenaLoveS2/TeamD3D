@@ -17,10 +17,17 @@ public:
 	_matrix				Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
 	_float4x4			Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	class CBone*		Get_BonePtr(const char* pBoneName);
-	const _double&		Get_PlayTime();
+	_double			Get_PlayTime();
 	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
-	const _int&			Get_BlendAnimIndex() const { return m_iBlendAnimIndex; }
+	_int				Get_BlendAnimIndex() const {
+		if (m_iBlendAnimIndex != -1 && m_iAdditiveAnimIndex == -1)
+			return m_iBlendAnimIndex;
+		else if (m_iBlendAnimIndex == -1 && m_iAdditiveAnimIndex != -1)
+			return m_iAdditiveAnimIndex;
+		else
+			return -1;
+	}
 	const _uint&		Get_LastAnimIndex() const { return m_iPreAnimIndex; }
 	const _bool&		Get_AnimationFinish() const;
 	void				Set_PlayTime(_double dPlayTime);
@@ -70,9 +77,11 @@ private:
 
 	_uint						m_iPreAnimIndex = 0;
 	_uint						m_iCurrentAnimIndex = 0;
-	_uint						m_iAdditiveAnimIndex = 0;
 	_int						m_iPreBlendAnimIndex = -1;
 	_int						m_iBlendAnimIndex = -1;
+	_int						m_iAdditiveRefPoseIndex = -1;
+	_int						m_iPreAdditiveAnimIndex = -1;
+	_int						m_iAdditiveAnimIndex = -1;
 	_uint						m_iNumAnimations = 0;
 	vector<class CAnimation*>	m_Animations;
 

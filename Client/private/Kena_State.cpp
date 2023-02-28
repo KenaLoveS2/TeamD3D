@@ -226,7 +226,7 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
+	m_pModel->Set_AnimIndex(BOW_AIM_REFPOSE, BOW_RETURN_ADD);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
@@ -287,7 +287,7 @@ void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
 {
-	Move(fTimeDelta, CTransform::DIR_LOOK);
+	//Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Forward_Left(_float fTimeDelta)

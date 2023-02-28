@@ -288,7 +288,7 @@ void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool 
 	}
 }
 
-void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
+void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone, CChannel * pRefChannel)
 {
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, m_pBone->Get_TransformMatrix());
@@ -306,8 +306,6 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 	}
 	else
 	{
-		_uint		iFrameIndex = 0;
-		
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
 			++m_iCurrentKeyFrameIndex;
 
@@ -332,19 +330,16 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRadio)
 		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
 
-	//vScale = XMVectorLerp(vBaseScale, vScale, fBlendRadio);
-	//vRotation = XMQuaternionSlerp(vBaseRot, vRotation, fBlendRadio);
-	vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRadio);
+	//vRotation = XMQuaternionMultiply(vRotation, XMLoadFloat4(&pRefChannel->m_KeyFrames[1].vRotation));
 	vRotation = XMQuaternionMultiply(vRotation, vBaseRot);
-	//vRotation = vRotation + vBaseRot;
+	vPosition = XMVectorSetW(vBasePos + vPosition, 1.f);
+	
+	if (isRootBone == false)
+	{
+		_matrix TransformMatrix = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
 
-	//vPosition = XMVectorLerp(vBasePos, vPosition, fAdditiveRadio);
-	vPosition = vBasePos + vPosition;
-	vPosition = XMVectorSetW(vPosition, 1.f);
-
-	_matrix TransformMatrix = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
-
-	m_pBone->Set_TransformMatrix(TransformMatrix);
+		m_pBone->Set_TransformMatrix(TransformMatrix);
+	}
 }
 
 void CChannel::Set_KeyFrameIndex(_double dPlayTime)
