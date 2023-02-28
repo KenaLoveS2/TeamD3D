@@ -208,8 +208,11 @@
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
+    <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\Public\Pillar.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
+    <ClInclude Include="..\public\RockGolem.h" />
     <ClInclude Include="..\public\Roots.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
@@ -280,8 +283,11 @@
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
+    <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
+    <ClCompile Include="..\private\RockGolem.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />

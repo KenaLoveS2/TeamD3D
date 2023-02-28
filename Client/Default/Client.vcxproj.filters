@@ -178,6 +178,24 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Moth">
+      <UniqueIdentifier>{135effaf-789d-4207-8230-e1fc867d5615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RockGolem">
+      <UniqueIdentifier>{1cb7ea78-a07a-4b8d-8110-d95da412e38b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RotEater">
+      <UniqueIdentifier>{ad1d4dee-8b63-4674-86b1-fb19756f0765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Sticks01">
+      <UniqueIdentifier>{679cef36-fe9d-4439-b470-a5b3ab58dfc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\VillageGuard">
+      <UniqueIdentifier>{434a95e7-40d3-40b1-abf6-add292aba180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\WoodKnight">
+      <UniqueIdentifier>{1561d86c-7d54-4912-b672-72ce4595a84b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -405,6 +423,13 @@
     <ClInclude Include="..\Public\Slope.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Moth.h">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RockGolem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -611,6 +636,13 @@
     <ClCompile Include="..\Private\Slope.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Moth.cpp">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RockGolem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

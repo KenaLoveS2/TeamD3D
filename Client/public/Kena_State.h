@@ -385,10 +385,10 @@ private:
 	CGameInstance*			m_pGameInstance = nullptr;
 
 private:
-	class CKena*				m_pKena = nullptr;
-	CStateMachine*			m_pStateMachine = nullptr;
-	CModel*					m_pModel = nullptr;
-	CTransform*				m_pTransform = nullptr;
+	class CKena*					m_pKena = nullptr;
+	CStateMachine*				m_pStateMachine = nullptr;
+	CModel*							m_pModel = nullptr;
+	CTransform*						m_pTransform = nullptr;
 	class CCamera_Player*	m_pCamera = nullptr;
 
 private:
