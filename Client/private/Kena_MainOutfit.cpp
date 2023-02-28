@@ -51,7 +51,9 @@ void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -90,7 +92,7 @@ HRESULT CKena_MainOutfit::Render()
 		{
 			// Boots & Hair
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_HairDepthTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ALPHA, "g_HairAlphaTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_HairAlphaTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ROOT, "g_HairRootTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices" , 6);
 		}
@@ -211,7 +213,7 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 		// Depth
 		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/hair_DEPTH.png"));
 		// Alpha
-		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ALPHA, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
 		// Root
 		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ROOT, TEXT("../Bin/Resources/Anim/Kena/hair_ROOT.png"));
 	}

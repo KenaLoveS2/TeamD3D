@@ -243,11 +243,10 @@ HRESULT CShader::ReCompile()
 		ID3D11InputLayout*   pInputLayout = nullptr;
 
 		ID3DX11EffectPass*   pPass = pTechnique->GetPassByIndex(i);
-		// NULL_CHECK_RETURN(pPass, E_FAIL);
+		NULL_CHECK_RETURN(pPass, E_FAIL);
 
 		D3DX11_PASS_DESC   PassDesc;
 		pPass->GetDesc(&PassDesc);
-
 
 		m_pDevice->CreateInputLayout(m_pElements,
 			m_iNumElements,
@@ -255,7 +254,7 @@ HRESULT CShader::ReCompile()
 			PassDesc.IAInputSignatureSize,
 			&pInputLayout);
 
-		// FAILED_CHECK_RETURN(, E_FAIL);
+		NULL_CHECK_RETURN(pInputLayout, E_FAIL);
 
 		m_InputLayouts.push_back(pInputLayout);
 	}

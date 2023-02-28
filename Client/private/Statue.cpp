@@ -116,7 +116,7 @@ HRESULT CStatue::SetUp_Components()
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 
-		m_iShaderOption = 2;
+		m_iShaderOption = 1;
 	}
 	else
 	{
