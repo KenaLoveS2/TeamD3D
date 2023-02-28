@@ -402,7 +402,9 @@
     <ClInclude Include="..\Public\FloorMesh.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Slope.h" />
+    <ClInclude Include="..\Public\Slope.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -606,7 +608,9 @@
     <ClCompile Include="..\Private\FloorMesh.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Slope.cpp" />
+    <ClCompile Include="..\Private\Slope.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
