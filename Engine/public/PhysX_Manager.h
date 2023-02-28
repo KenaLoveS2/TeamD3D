@@ -10,7 +10,6 @@ enum ACTOR_TYPE {
 	TYPE_END
 };
 
-
 typedef struct ENGINE_DLL tagPhysXUserData
 {
 	CGameObject* pOwner;	
@@ -198,9 +197,10 @@ public:
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
 
 	void Get_ActorMatrix(_uint iPxActorIndex);
-	void Set_GravityFlag(const _tchar *pActorTag, _bool bFlag);
+	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow);
 	
-	void Add_Force(const _tchar *pActorTag, _float3 v);
+	void Add_Force(const _tchar *pActorTag, _float3 vForce);
+	void Add_Force(PxRigidActor* pActor, _float3 vForce);
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pOut = nullptr);

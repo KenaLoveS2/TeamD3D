@@ -52,6 +52,17 @@ public:
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) = 0;
 	virtual void Free() override;
 
+public: // kbj physx
+	typedef struct tagPxIndicies32
+	{
+		PxU32 _0, _1, _2;
+	} PxIndicies;
+
+	HRESULT Create_PxActor();
+
+protected: // kbj physx
+	PxVec3*			m_pPxVertices = nullptr;
+	PxIndicies*		m_pPxIndicies = nullptr;	
 };
 
 END
