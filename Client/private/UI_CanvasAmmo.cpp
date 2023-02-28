@@ -24,6 +24,30 @@ CUI_CanvasAmmo::CUI_CanvasAmmo(const CUI_CanvasAmmo & rhs)
 {
 }
 
+void CUI_CanvasAmmo::ConnectToAimUI(AIM_UI eUIType, _int iParam)
+{
+	CUI_CanvasAim* pCanvas = static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM));
+	if (pCanvas == nullptr)
+		return;
+
+	_int arrowIndex = m_iNumArrowNow - 1;
+	_int bombIndex = m_iNumBombNow - 1;
+
+	switch (eUIType)
+	{
+	case AIM_ARROW:
+		pCanvas->Set_Arrow(arrowIndex, 1);
+		break;
+	case AIM_BOMB:
+		pCanvas->Set_Bomb(bombIndex, 1);
+		break;
+	default:
+		MSG_BOX("Wrong Input: CUI_CanvasAmmo");
+		break;
+	}
+
+
+}
 HRESULT CUI_CanvasAmmo::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -61,7 +85,7 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 
 	/* Bomb */
 	m_iNumBombs = 1;
-	m_iBombNow = m_iNumBombs;
+	m_iNumBombNow = m_iNumBombs;
 
 	return S_OK;
 }
@@ -237,21 +261,32 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc)
 {
+	CUI_CanvasAim* pCanv = static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM));
+
 	switch (eType)
 	{
 	case CUI_ClientManager::AMMO_BOMB:
+		if (m_iNumBombNow == 0)
+			return;
+		m_iNumBombNow -= 1;
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
+
+		/*Connect Wiht Cavnas Aim's Bomb */
+		if (pCanv != nullptr)
+			pCanv->Set_Bomb(m_iNumBombNow, 0);
 		break;
+		
 	case CUI_ClientManager::AMMO_ARROW: /* Shoot An Arrow */
 		if (m_iNumArrowNow == 0)
 			return;
-
 		m_iNumArrowNow -= 1;
 		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
-		static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()
-			->Get_Canvas(CUI_ClientManager::CANVAS_AIM))->Set_Arrow(m_iNumArrowNow, 0);
+		
+		/* Connect With Canvas Aim's Arrow */
+		if(pCanv!=nullptr)
+			pCanv->Set_Arrow(m_iNumArrowNow, 0);
 		break;
 	}
 }

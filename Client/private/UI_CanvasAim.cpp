@@ -20,10 +20,16 @@ CUI_CanvasAim::CUI_CanvasAim(const CUI_CanvasAim & rhs)
 {
 }
 
-void CUI_CanvasAim::Set_Arrow(_int iIndex, _int iTag)
+void CUI_CanvasAim::Set_Arrow(_int iArrowIndex, _int iState)
 {
-	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iIndex]])
-		->Set_State((CUI_NodeAimArrow::STATE)iTag);
+	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iArrowIndex]])
+		->Set_State((CUI_NodeAimArrow::STATE)iState);
+}
+
+void CUI_CanvasAim::Set_Bomb(_int iBombIndex, _int iState)
+{
+	static_cast<CUI_NodeAimBomb*>(m_vecNode[m_Bombs[iBombIndex]])
+		->Set_State((CUI_NodeAimBomb::STATE)iState);
 }
 
 HRESULT CUI_CanvasAim::Initialize_Prototype()
@@ -279,7 +285,7 @@ HRESULT CUI_CanvasAim::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasAim::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasAim::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc)
 {
 	switch (eType)
 	{

@@ -3,13 +3,15 @@
 #include "UI_Canvas.h"
 #include "UI_ClientManager.h"
 
+/* This canvas give Data to Canvas Aim */
+
 BEGIN(Client)
 class CUI_CanvasAmmo final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
 	enum UI_ORDER { UI_BOMBFRAME, UI_BOMBGUAGE, UI_ARROWGUAGE, UI_END };
-
+	enum AIM_UI { AIM_ARROW, AIM_BOMB, AIM_END };
 
 private:
 	CUI_CanvasAmmo(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -22,6 +24,18 @@ public: /* For. Events */
 		else return false;
 	}
 	void	FillArrow() { m_iNumArrowNow += 1; }
+
+	_uint	Is_BombFull() {
+		if (m_iNumBombs == m_iNumBombNow) return true;
+		else return false;
+	}
+	void	FillBomb() { m_iNumBombNow += 1; }
+
+
+public: 
+	void	ConnectToAimUI(AIM_UI eUIType, _int iParam);
+
+
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -36,7 +50,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT);
 
 private: 
 	/* Arrow */
@@ -45,7 +59,7 @@ private:
 
 	/* Bomb */
 	_uint	m_iNumBombs;
-	_uint	m_iBombNow;
+	_uint	m_iNumBombNow;
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

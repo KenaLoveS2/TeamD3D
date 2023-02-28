@@ -23,7 +23,8 @@ private:
 
 
 public:
-	void	Set_Arrow(_int iIndex, _int iTag);
+	void	Set_Arrow(_int iArrowIndex, _int iState);
+	void	Set_Bomb(_int iBombIndex, _int iState);
 
 public: /* For. Events */
 
@@ -50,7 +51,7 @@ private:
 	_int	m_Bombs[BOMB_END];
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT);
 	
 
 public:

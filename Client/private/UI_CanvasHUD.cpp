@@ -248,7 +248,7 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue, CUI_ClientManager::UI_FUNCTION eFunc)
 {
 	switch (eType)
 	{

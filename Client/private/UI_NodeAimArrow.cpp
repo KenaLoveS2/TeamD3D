@@ -133,6 +133,10 @@ HRESULT CUI_NodeAimArrow::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 		return E_FAIL;
 
+	int iCheck = (int)m_eState;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_iCheck", &iCheck, sizeof(int))))
+		return E_FAIL;
+
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
 		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIdx)))

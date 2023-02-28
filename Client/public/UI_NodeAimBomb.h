@@ -14,7 +14,7 @@ private:
 	virtual ~CUI_NodeAimBomb() = default;
 
 public:
-	void	Set_State(STATE eState) { m_eState = STATE_EMPTY; }
+	void	Set_State(STATE eState) { m_eState = eState; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
