@@ -24,6 +24,7 @@ public:
 	virtual void					Push_EventFunctions() override;
 
 protected:
+	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;

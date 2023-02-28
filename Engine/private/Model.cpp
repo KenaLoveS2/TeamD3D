@@ -855,6 +855,11 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 	}
 }
 
+CAnimation * CModel::Get_SelectIndexAnim(_uint iIndex)
+{
+	return m_Animations[iIndex];
+}
+
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)

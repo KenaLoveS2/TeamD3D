@@ -2,8 +2,6 @@
 #include "..\public\Moth.h"
 #include "GameInstance.h"
 
-#include <Model.h>
-
 CMoth::CMoth(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -44,8 +42,6 @@ HRESULT CMoth::Initialize(void* pArg)
 void CMoth::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	//m_pStateMachine->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -115,7 +111,7 @@ void CMoth::ImGui_AnimationProperty()
 
 	if (ImGui::BeginTabItem("State"))
 	{
-		//m_pStateMachine->Imgui_RenderProperty();
+		m_pFSM->Imgui_RenderProperty();
 		ImGui::EndTabItem();
 	}
 
@@ -137,6 +133,20 @@ HRESULT CMoth::Call_EventFunction(const string& strFuncName)
 void CMoth::Push_EventFunctions()
 {
 	CMonster::Push_EventFunctions();
+}
+
+HRESULT CMoth::SetUp_State()
+{
+	m_pFSM = CFSMComponentBuilder()
+		.InitState("IDLE")
+		.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+	{
+		
+	})
+		.Build();
+
+	return S_OK;
 }
 
 HRESULT CMoth::SetUp_Components()
@@ -161,8 +171,6 @@ HRESULT CMoth::SetUp_Components()
 	NaviDesc.iCurrentIndex = 0;
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 
 	return S_OK;
 }

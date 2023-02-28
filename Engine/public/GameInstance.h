@@ -9,6 +9,8 @@
 #include "UI_Manager.h"
 #include "Enviroment_Manager.h"
 #include "PhysX_Manager.h"
+#include "FSMComponent.h"
+#include "Animation.h"
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
