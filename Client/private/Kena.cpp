@@ -91,8 +91,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex--;
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
-	
-	
 	/************** Delegator Test *************/
 	static _float fNum = 0.f;
 	CUI_ClientManager::UI_PRESENT eType1 = CUI_ClientManager::HUD_HP;
@@ -138,8 +136,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 	}
 
 	/************** ~Delegator Test *************/
-
-
 
 	if (m_pRendererCom != nullptr)
 	{

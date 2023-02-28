@@ -244,11 +244,11 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	//float3				specular					= vDiffuse.rgb * fMetalic;
 	//float3				ambient					= g_vAmbientColor.rgb * fAmbientOcclusion;
 	//float3				emissive					= vEmissive.rgb * vEmissiveMask.rgb;
-	//float4				sssDesc					= SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
-	//float3				sssColor					= sssDesc.rgb;
+	float4				sssDesc					= SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
+	float3				sssColor					= sssDesc.rgb;
 	//FinalColor										= float4((diffuse + emissive * vEmissiveMask.r) * vMask.r, vDiffuse.a);
 	//FinalColor.rgb									= lerp(FinalColor.rgb, vDiffuse.rgb, fRoughness);
-	//FinalColor.rgb									= lerp(FinalColor.rgb, sssColor, vSSSMask.r);
+	FinalColor.rgb									= lerp(FinalColor.rgb, sssColor, vSSSMask.r);
 
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal  = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
