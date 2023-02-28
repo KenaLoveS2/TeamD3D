@@ -119,8 +119,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, fBomb);
 
 		/* Arrow Guage test */
-		static _float fArrow = 1.f;
-		m_PlayerDelegator.broadcast(eArrowGuage, fArrow);
+		static _float fArrow = 1.f; 
+		m_PlayerDelegator.broadcast(eArrowGuage, fArrow); 
 
 		/* Aim Test */
 		static _float fAim = 1.f;

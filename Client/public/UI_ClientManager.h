@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CGameInstance;
 class CUI;
+class CUI_Canvas;
 END
 
 /* Only for Preparing Components and GameObjects */
@@ -20,9 +21,11 @@ public:
 	enum UI_PRESENT {
 		HUD_, HUD_HP, HUD_SHIELD, HUD_PIP, HUD_ROT,
 		AMMO_BOMB, AMMO_ARROW,
-		AIM_, 
+		AIM_, AIM_ARROW, AIM_BOMB,
 		UI_PRESENT_END
 	};
+
+	enum UI_CANVAS { CANVAS_HUD, CANVAS_AMMO, CANVAS_AIM, CANVAS_END };
 	enum UI_EVENT { EVENT_BARGUAGE, EVENT_CHANGEIMG, EVENT_ANIMATION, EVENT_END };
 	enum UI_EFFECT {EFFECT_PIPFULL, EFFECT_ARROWFULL, EFFECT_BOMBFULL, EFFECT_END};
 
@@ -44,19 +47,13 @@ private: /* Save Tags to Engine::StringManger */
 	void			Save_NodeStrings(CGameInstance* pGameInstance, const _tchar* pTag);
 
 public:
-	void			Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect)
-	{
-		if (eID < 0 || eID >= m_vecEffects.size() || pEffect == nullptr)
-			return;
-		m_vecEffects[eID] = pEffect;
-	}
-	CUI_NodeEffect*		Get_Effect(UI_EFFECT eID)
-	{
-		if (eID < 0 || eID >= m_vecEffects.size())
-			return nullptr;
-		return m_vecEffects[eID];
-	}
+	void					Set_Canvas(UI_CANVAS eID, CUI_Canvas* pCanvas);
+	CUI_Canvas*				Get_Canvas(UI_CANVAS eID);
+	void					Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect);
+	CUI_NodeEffect*			Get_Effect(UI_EFFECT eID);
+
 private:
+	vector<CUI_Canvas*>		m_vecCanvas;
 	vector<CUI_NodeEffect*>	m_vecEffects;
 
 public:

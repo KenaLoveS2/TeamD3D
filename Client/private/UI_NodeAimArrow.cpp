@@ -45,8 +45,6 @@ HRESULT CUI_NodeAimArrow::Initialize(void * pArg)
 
 void CUI_NodeAimArrow::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	if (!m_bSetInitialRatio)
 	{
 		if (m_pParent != nullptr)
@@ -60,6 +58,9 @@ void CUI_NodeAimArrow::Tick(_float fTimeDelta)
 			m_bSetInitialRatio = true;
 		}
 	}
+
+
+	__super::Tick(fTimeDelta);
 }
 
 void CUI_NodeAimArrow::Late_Tick(_float fTimeDelta)

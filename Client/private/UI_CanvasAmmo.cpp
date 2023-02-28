@@ -4,6 +4,9 @@
 #include "UI_ClientManager.h"
 #include "UI_NodeEffect.h"
 
+/* Canvas */
+#include "UI_CanvasAim.h"
+
 /* Nodes */
 #include "UI_NodeAmmoBombGuage.h"
 #include "UI_NodeAmmoArrowGuage.h"
@@ -55,6 +58,10 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 	/* Arrow */
 	m_iNumArrows = 4;
 	m_iNumArrowNow = m_iNumArrows;
+
+	/* Bomb */
+	m_iNumBombs = 1;
+	m_iBombNow = m_iNumBombs;
 
 	return S_OK;
 }
@@ -237,12 +244,14 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 	case CUI_ClientManager::AMMO_BOMB:
 		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
 		break;
-	case CUI_ClientManager::AMMO_ARROW:
+	case CUI_ClientManager::AMMO_ARROW: /* Shoot An Arrow */
 		if (m_iNumArrowNow == 0)
 			return;
-		else
-			m_iNumArrowNow -= 1;
+
+		m_iNumArrowNow -= 1;
 		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
+		static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()
+			->Get_Canvas(CUI_ClientManager::CANVAS_AIM))->Set_Arrow(m_iNumArrowNow, 0);
 		break;
 	}
 }

@@ -19,6 +19,7 @@ public:
 		_float2				vSize;
 		_float4x4			ViewMatrix;
 		_float4x4			ProjMatrix;
+		_uint				iIndex;
 	} UIDESC;
 
 protected:

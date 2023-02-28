@@ -33,6 +33,9 @@ CUI_ClientManager::CUI_ClientManager()
 {
 	for (_uint i = 0; i < EFFECT_END; ++i)
 		m_vecEffects.push_back(nullptr);
+
+	for (_uint i = 0; i < CANVAS_END; ++i)
+		m_vecCanvas.push_back(nullptr);
 }
 
 HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -458,7 +461,36 @@ void CUI_ClientManager::Save_NodeStrings(CGameInstance* pGameInstance, const _tc
 
 }
 
+void CUI_ClientManager::Set_Canvas(UI_CANVAS eID, CUI_Canvas * pCanvas)
+{
+	if (eID < 0 || eID >= m_vecCanvas.size() || pCanvas == nullptr)
+		return;
+	m_vecCanvas[eID] = pCanvas;
+}
+
+CUI_Canvas * CUI_ClientManager::Get_Canvas(UI_CANVAS eID)
+{
+	if (eID < 0 || eID >= m_vecCanvas.size())
+		return nullptr;
+	return m_vecCanvas[eID];
+}
+
+void CUI_ClientManager::Set_Effect(UI_EFFECT eID, CUI_NodeEffect * pEffect)
+{
+	if (eID < 0 || eID >= m_vecEffects.size() || pEffect == nullptr)
+		return;
+	m_vecEffects[eID] = pEffect;
+}
+
+CUI_NodeEffect * CUI_ClientManager::Get_Effect(UI_EFFECT eID)
+{
+	if (eID < 0 || eID >= m_vecEffects.size())
+		return nullptr;
+	return m_vecEffects[eID];
+}
+
 void CUI_ClientManager::Free()
 {
 	m_vecEffects.clear();
+	m_vecCanvas.clear();
 }

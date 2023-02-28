@@ -4,6 +4,8 @@
 
 /* Nodes */
 #include "UI_NodeAimLine.h"
+#include "UI_NodeAimArrow.h"
+#include "UI_NodeAimBomb.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -16,6 +18,12 @@ CUI_CanvasAim::CUI_CanvasAim(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 CUI_CanvasAim::CUI_CanvasAim(const CUI_CanvasAim & rhs)
 	: CUI_Canvas(rhs)
 {
+}
+
+void CUI_CanvasAim::Set_Arrow(_int iIndex, _int iTag)
+{
+	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iIndex]])
+		->Set_State((CUI_NodeAimArrow::STATE)iTag);
 }
 
 HRESULT CUI_CanvasAim::Initialize_Prototype()
@@ -46,9 +54,21 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
+	/* Ordering */
+	m_Arrows[ARROW_1] = UI_ARROW1;
+	m_Arrows[ARROW_2] = UI_ARROW2;
+	m_Arrows[ARROW_3] = UI_ARROW3;
+	m_Arrows[ARROW_4] = UI_ARROW4;
+
+	m_Bombs[BOMB_1] = UI_BOMB1;
+	m_Bombs[BOMB_2] = UI_BOMB2;
+
+
+
 	/* Test */
 	m_bActive = true;
 
+	/* Temp */
 	m_bStart = false;
 	m_fTime = 0.5f;
 	m_fTimeAcc = 0.f;
@@ -68,6 +88,8 @@ void CUI_CanvasAim::Tick(_float fTimeDelta)
 	}
 
 	/* Code */
+
+	/* Aiming .... */
 	if (m_bStart)
 	{
 		m_fTime = 1.f;
@@ -87,7 +109,6 @@ void CUI_CanvasAim::Tick(_float fTimeDelta)
 			static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(false);
 		}
 	}
-
 
 	/* ~Code */
 
@@ -182,6 +203,13 @@ HRESULT CUI_CanvasAim::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_AimArrow5";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_AimArrow", L"Node_AimArrow5", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
 	str = "Node_AimBomb1";
 	tDesc.fileName.assign(str.begin(), str.end());
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_AimBomb", L"Node_AimBomb1", &tDesc));
@@ -189,6 +217,14 @@ HRESULT CUI_CanvasAim::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
+	str = "Node_AimBomb2";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_AimBomb", L"Node_AimBomb2", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

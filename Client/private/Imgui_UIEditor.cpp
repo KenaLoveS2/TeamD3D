@@ -76,7 +76,10 @@ void CImgui_UIEditor::Imgui_FreeRender()
 						MSG_BOX("Failed To Clone Canvas : UIEditor");
 
 					if (m_pCanvas != nullptr)
+					{
 						m_vecCanvas[selected_canvasType] = m_pCanvas;
+						CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)selected_canvasType, m_pCanvas);
+					}
 				}
 				else
 					m_pCanvas = m_vecCanvas[selected_canvasType];
