@@ -145,6 +145,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 

@@ -234,7 +234,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	if(vMask.r == 0.0f && vMask.g == 0.0f && vMask.b == 0.0f)
 		FinalColor = (vDiffuse) + (vEmissive * vEmissiveMask.r);
 	else 
-		FinalColor = (vDiffuse * vMask.r) + (vEmissive * vEmissiveMask.r);
+		FinalColor = (vDiffuse /** vMask.r*/) + (vEmissive * vEmissiveMask.r);
 
 	/* first algorithm*/
 	//float				fAmbientOcclusion	= vAO_R_M.r;
