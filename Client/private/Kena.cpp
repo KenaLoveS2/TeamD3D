@@ -59,8 +59,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vSSSColor = _float4(0.2f, 0.18f, 0.16f, 1.f);
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-
-	/*
+	
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
@@ -72,9 +71,8 @@ HRESULT CKena::Initialize(void * pArg)
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	*/
-
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	
 	return S_OK;
 }
 

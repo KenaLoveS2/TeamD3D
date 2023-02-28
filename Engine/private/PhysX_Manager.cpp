@@ -455,6 +455,10 @@ void CPhysX_Manager::Set_ActorRotation(PxRigidActor* pActor, _float fDegree, _fl
 void CPhysX_Manager::Set_ActorScaling(const _tchar* pActorTag, _float3 vScale)
 {
 	PxRigidActor* pActor = Find_StaticActor(pActorTag);
+
+	if(pActor == nullptr)
+		pActor = Find_DynamicActor(pActorTag);
+
 	assert(pActor != nullptr && "CPhysX_Manager::Set_ActorPosition");
 
 	PX_USER_DATA* p = (PX_USER_DATA*)pActor->userData;
