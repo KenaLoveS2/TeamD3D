@@ -212,6 +212,7 @@
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Roots.h" />
     <ClInclude Include="..\public\Sky.h" />
+    <ClInclude Include="..\Public\Slope.h" />
     <ClInclude Include="..\Public\Stair.h" />
     <ClInclude Include="..\Public\Statue.h" />
     <ClInclude Include="..\public\Terrain.h" />
@@ -283,6 +284,7 @@
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
+    <ClCompile Include="..\Private\Slope.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
     <ClCompile Include="..\Private\Statue.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />

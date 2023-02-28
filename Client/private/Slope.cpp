@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "..\public\Cliff_Rock.h"
+#include "..\public\Slope.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
-CCliff_Rock::CCliff_Rock(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CEnviromentObj(pDevice,pContext)
+CSlope::CSlope(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CEnviromentObj(pDevice, pContext)
 {
 }
 
-CCliff_Rock::CCliff_Rock(const CCliff_Rock & rhs)
-	:CEnviromentObj(rhs)
+CSlope::CSlope(const CSlope & rhs)
+	: CEnviromentObj(rhs)
 {
 }
 
-HRESULT CCliff_Rock::Initialize_Prototype()
+HRESULT CSlope::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,7 +22,7 @@ HRESULT CCliff_Rock::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCliff_Rock::Initialize(void * pArg)
+HRESULT CSlope::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -35,20 +35,20 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CCliff_Rock::Tick(_float fTimeDelta)
+void CSlope::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CCliff_Rock::Late_Tick(_float fTimeDelta)
+void CSlope::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if(  m_pRendererCom )
-		 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if (m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
-HRESULT CCliff_Rock::Render()
+HRESULT CSlope::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -65,12 +65,12 @@ HRESULT CCliff_Rock::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
 }
 
-HRESULT CCliff_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
+HRESULT CSlope::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
 
@@ -94,14 +94,14 @@ HRESULT CCliff_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pC
 	return S_OK;
 }
 
-HRESULT CCliff_Rock::SetUp_Components()
+HRESULT CSlope::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Shader */			
+	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
@@ -128,9 +128,9 @@ HRESULT CCliff_Rock::SetUp_Components()
 		m_iShaderOption = 4;
 	}
 
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
-	//	(CComponent**)&m_pMasterDiffuseBlendTexCom)))
-	//	return E_FAIL;
+	/*if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
+	(CComponent**)&m_pMasterDiffuseBlendTexCom)))
+	return E_FAIL;*/
 
 	/************************** ex ***********************/
 	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -146,7 +146,7 @@ HRESULT CCliff_Rock::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CCliff_Rock::SetUp_ShaderResources()
+HRESULT CSlope::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -164,33 +164,35 @@ HRESULT CCliff_Rock::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+
 }
 
-CCliff_Rock * CCliff_Rock::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CSlope * CSlope::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CCliff_Rock*		pInstance = new CCliff_Rock(pDevice, pContext);
+	CSlope*		pInstance = new CSlope(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CCliff_Rock");
+		MSG_BOX("Failed to Created : CSlope");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CCliff_Rock::Clone(void * pArg)
+
+CGameObject * CSlope::Clone(void * pArg)
 {
-	CCliff_Rock*		pInstance = new CCliff_Rock(*this);
+	CSlope*		pInstance = new CSlope(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CForkLift");
+		MSG_BOX("Failed to Cloned : CSlope");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CCliff_Rock::Free()
+void CSlope::Free()
 {
 	__super::Free();
 
