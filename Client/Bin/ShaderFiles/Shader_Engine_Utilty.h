@@ -4,6 +4,7 @@
 #define IDENTITY_MATRIX float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 static const float PI = 3.14159265359;
 
+
 float4 ToneMap(float4 color)
 {
 	float4 mappedColor = color;
@@ -52,7 +53,7 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 	float num = NdotV;
 	float denom = NdotV * (1.0 - k) + k;
 
-	return num / denom;
+	return num / (denom + 0.0001);
 }
 
 float GeometrySmith(float3 N, float3 V, float3 L, float roughness)

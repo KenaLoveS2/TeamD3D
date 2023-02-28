@@ -18,10 +18,24 @@
 #include "UI_NodeAmmoBombGuage.h"
 #include "UI_NodeAmmoArrowGuage.h"
 
+/* CanvasAim */
+#include "UI_CanvasAim.h"
+#include "UI_NodeAimLine.h"
+#include "UI_NodeAimArrow.h"
+#include "UI_NodeAimBomb.h"
+
+/* Effect (Common) */
+#include "UI_NodeEffect.h"
+
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
 CUI_ClientManager::CUI_ClientManager()
 {
+	for (_uint i = 0; i < EFFECT_END; ++i)
+		m_vecEffects.push_back(nullptr);
+
+	for (_uint i = 0; i < CANVAS_END; ++i)
+		m_vecCanvas.push_back(nullptr);
 }
 
 HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -82,7 +96,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarMask.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDHPBarMask");
-	
+
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDHPBarNoise"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/HealthbarNoise.png")))))
 		return E_FAIL;
@@ -90,7 +104,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	/* RotActionIcon */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HUDRotIcons"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Rot_%d.png"),4))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/Rot_%d.png"), 4))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HUDRotIcons");
 
@@ -158,15 +172,70 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoArrowGuage");
 
-	/* Arrow Guage Mask */ 
+	/* Arrow Guage Mask */
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AmmoArrowGuageMask"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowAmmo_ProgressMask.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AmmoArrowGuageMask");
 
 
-	RELEASE_INSTANCE(CGameInstance);
+	/********************************************/
+	/*				For. Canvas_Aim				*/
+	/********************************************/
+	/* Aim Frame(Default Aim Circle) */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_DefaultAim"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Aim/Aim_Default.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_DefaultAim");
 
+	/* Aim Line */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AimLine"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Aim/Aim_Line.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimLine");
+
+	/* Aim Arrow */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AimArrow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Aim/Aim_Arrow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimArrow");
+
+	/* Aim Bomb */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_AimBomb"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Aim/Aim_Bomb.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimBomb");
+
+	/********************************************/
+	/*				For. Effects				*/
+	/********************************************/
+
+	/* Pip Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PipFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipFill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_PipFill");
+
+
+	/* Bomb Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_BombFill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BombFill");
+
+	/* Arrow Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ArrowFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowRefill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArrowFill");
+
+
+
+
+
+
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -181,20 +250,21 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskMap");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HPBar");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Sprite_AlphaBlend");
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "DefaultUVMove");	
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "DefaultUVMove");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "BarGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RotationZ");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RotationZ(Loading)");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage_Mask");
 
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
 
 
 	/* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -207,6 +277,7 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
+
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_HUD"), CUI_CanvasHUD::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_HUD");
@@ -272,6 +343,38 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ArrowGuage");
 
 
+	/********************************************/
+	/*				For. Canvas_Aim				*/
+	/********************************************/
+
+	/* Canvas Aim */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Aim"), CUI_CanvasAim::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Aim");
+
+	/* Aim Line */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimLine"), CUI_NodeAimLine::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimLine");
+
+	/* Aim Arrow */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimArrow"), CUI_NodeAimArrow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimArrow");
+
+	/* Aim Bomb */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_AimBomb"), CUI_NodeAimBomb::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_AimBomb");
+
+
+	/********************************************/
+	/*				For. Effects				*/
+	/********************************************/
+	/* Effect */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Effect"), CUI_NodeEffect::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -358,6 +461,36 @@ void CUI_ClientManager::Save_NodeStrings(CGameInstance* pGameInstance, const _tc
 
 }
 
+void CUI_ClientManager::Set_Canvas(UI_CANVAS eID, CUI_Canvas * pCanvas)
+{
+	if (eID < 0 || eID >= m_vecCanvas.size() || pCanvas == nullptr)
+		return;
+	m_vecCanvas[eID] = pCanvas;
+}
+
+CUI_Canvas * CUI_ClientManager::Get_Canvas(UI_CANVAS eID)
+{
+	if (eID < 0 || eID >= m_vecCanvas.size())
+		return nullptr;
+	return m_vecCanvas[eID];
+}
+
+void CUI_ClientManager::Set_Effect(UI_EFFECT eID, CUI_NodeEffect * pEffect)
+{
+	if (eID < 0 || eID >= m_vecEffects.size() || pEffect == nullptr)
+		return;
+	m_vecEffects[eID] = pEffect;
+}
+
+CUI_NodeEffect * CUI_ClientManager::Get_Effect(UI_EFFECT eID)
+{
+	if (eID < 0 || eID >= m_vecEffects.size())
+		return nullptr;
+	return m_vecEffects[eID];
+}
+
 void CUI_ClientManager::Free()
 {
+	m_vecEffects.clear();
+	m_vecCanvas.clear();
 }

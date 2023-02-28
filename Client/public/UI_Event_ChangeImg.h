@@ -15,7 +15,7 @@ private:
 	virtual ~CUI_Event_ChangeImg() = default;
 
 public:
-	virtual	void		Call_Event(CUI* pUI, _uint iImgIndex=1)	override;
+	virtual	void		Call_Event(CUI* pUI, _uint iImgIndex = 1)	override;
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -30,7 +30,7 @@ private:
 
 	_uint					m_iLastSelected;
 	_uint					m_iOriginalRenderPass;
-	
+
 	/* old */
 	//CTexture*				m_pOriginal;
 	//vector<CTexture*>		m_vecTextures;

@@ -16,7 +16,7 @@ private:
 	CUI_CanvasAmmo(const CUI_CanvasAmmo& rhs);
 	virtual ~CUI_CanvasAmmo() = default;
 
-public:
+public: /* For. Events */
 	_uint	Is_ArrowFull() {
 		if (m_iNumArrows == m_iNumArrowNow) return true;
 		else return false;
@@ -38,9 +38,14 @@ private:
 private: /* Bind Functions */
 	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
 
-private: /* Arrow */
+private: 
+	/* Arrow */
 	_uint	m_iNumArrows;
 	_uint	m_iNumArrowNow;
+
+	/* Bomb */
+	_uint	m_iNumBombs;
+	_uint	m_iBombNow;
 
 public:
 	static	CUI_CanvasAmmo*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

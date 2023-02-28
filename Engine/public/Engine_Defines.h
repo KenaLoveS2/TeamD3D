@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "ImGui\imgui.h"
 #include "ImGui\imgui_impl_win32.h"
@@ -50,6 +52,10 @@ using namespace std;
 #include <Json/json_fwd.hpp>
 using Json = nlohmann::json;
 using namespace nlohmann;
+
+#include <PhysX/PxPhysics.h>
+#include <PhysX/PxPhysicsAPI.h>
+using namespace physx;
 
 #include "Engine_Macro.h"
 #include "Engine_Typedef.h"

@@ -26,6 +26,8 @@ public:
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
 
+	HRESULT ReCompile();
+
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 
