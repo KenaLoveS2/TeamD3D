@@ -728,12 +728,12 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		jLoadChild["15_SSS_MASK_path"].get_to<string>(SSS_MASK_path);											strFilePaths_arr[WJTextureType_SSS_MASK] = SSS_MASK_path;
 		jLoadChild["16_SPRINT_EMISSIVE_path"].get_to<string>(SPRINT_EMISSIVE_path);					strFilePaths_arr[WJTextureType_SPRINT_EMISSIVE] = SPRINT_EMISSIVE_path;
 		jLoadChild["17_LIGHTMAP_path"].get_to<string>(HAIR_DEPTH_Path);											strFilePaths_arr[WJTextureType_HAIR_DEPTH] = HAIR_DEPTH_Path;
-		jLoadChild["18_REFLECTION_path"].get_to<string>(HAIR_ALPHA_path);									strFilePaths_arr[WJTextureType_HAIR_ALPHA] = HAIR_ALPHA_path;
+		jLoadChild["18_REFLECTION_path"].get_to<string>(HAIR_ALPHA_path);									strFilePaths_arr[WJTextureType_ALPHA] = HAIR_ALPHA_path;
 		jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								 strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
 		jLoadChild["20_NORMAL_CAMERA_path"].get_to<string>(COMP_MSK_CURV_path);				strFilePaths_arr[WJTextureType_COMP_MSK_CURV] = COMP_MSK_CURV_path;
 		jLoadChild["21_EMISSION_COLOR_path"].get_to<string>(COMP_H_R_AO_path);					strFilePaths_arr[WJTextureType_COMP_H_R_AO] = COMP_H_R_AO_path;
-		jLoadChild["22_METALNESS_path"].get_to<string>(METALNESS_path);									strFilePaths_arr[WJTextureType_METALNESS] = METALNESS_path;
-		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_COMP_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
+		jLoadChild["22_METALNESS_path"].get_to<string>(METALNESS_path);									strFilePaths_arr[WJTextureType_ROUGHNESS] = METALNESS_path;
+		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
 		jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
 	
@@ -868,7 +868,7 @@ void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnv
 	pGameInstace->Add_String(pTextureFilePath);
 	EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = pTextureFilePath;
 
-	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_HAIR_ALPHA]);
+	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_ALPHA]);
 	pGameInstace->Add_String(pTextureFilePath);
 	EnviromentDesc.AI_textureFilePaths.HAIR_ALPHA_path = pTextureFilePath;
 
@@ -884,11 +884,11 @@ void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnv
 	pGameInstace->Add_String(pTextureFilePath);
 	EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = pTextureFilePath;
 
-	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_METALNESS]);
+	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_ROUGHNESS]);
 	pGameInstace->Add_String(pTextureFilePath);
 	EnviromentDesc.AI_textureFilePaths.METALNESS_path = pTextureFilePath;
 
-	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_COMP_AMBIENT_OCCLUSION]);
+	pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_AMBIENT_OCCLUSION]);
 	pGameInstace->Add_String(pTextureFilePath);
 	EnviromentDesc.AI_textureFilePaths.COMP_AMBIENT_OCCLUSION_path = pTextureFilePath;
 
@@ -915,16 +915,16 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	file.close();
 
 	_float4x4	fWroldMatrix;
-	wstring		wstrProtoName = TEXT("");
-	wstring		wstrModelName = TEXT("");
-	wstring		wstrTexturelName = TEXT("");
-	_tchar*		wszLayerTag = L"";
-	string		szLayerTag = "";
-	string		szProtoObjTag = "";
-	string		szModelTag = "";
-	string		szTextureTag = "";
-	string		szCloneTag = "";
-	_tchar*		wszCloneTag = L"";
+	wstring			wstrProtoName = TEXT("");
+	wstring			wstrModelName = TEXT("");
+	wstring			wstrTexturelName = TEXT("");
+	_tchar*			wszLayerTag = L"";
+	string			szLayerTag = "";
+	string			szProtoObjTag = "";
+	string			szModelTag = "";
+	string			szTextureTag = "";
+	string			szCloneTag = "";
+	_tchar*			wszCloneTag = L"";
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
 	vector<string> StrComTagVec;
@@ -970,12 +970,12 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		jLoadChild["15_SSS_MASK_path"].get_to<string>(SSS_MASK_path);											strFilePaths_arr[WJTextureType_SSS_MASK] = SSS_MASK_path;
 		jLoadChild["16_SPRINT_EMISSIVE_path"].get_to<string>(SPRINT_EMISSIVE_path);					strFilePaths_arr[WJTextureType_SPRINT_EMISSIVE] = SPRINT_EMISSIVE_path;
 		jLoadChild["17_LIGHTMAP_path"].get_to<string>(HAIR_DEPTH_Path);											strFilePaths_arr[WJTextureType_HAIR_DEPTH] = HAIR_DEPTH_Path;
-		jLoadChild["18_REFLECTION_path"].get_to<string>(HAIR_ALPHA_path);									strFilePaths_arr[WJTextureType_HAIR_ALPHA] = HAIR_ALPHA_path;
+		jLoadChild["18_REFLECTION_path"].get_to<string>(HAIR_ALPHA_path);									strFilePaths_arr[WJTextureType_ALPHA] = HAIR_ALPHA_path;
 		jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
 		jLoadChild["20_NORMAL_CAMERA_path"].get_to<string>(COMP_MSK_CURV_path);				strFilePaths_arr[WJTextureType_COMP_MSK_CURV] = COMP_MSK_CURV_path;
 		jLoadChild["21_EMISSION_COLOR_path"].get_to<string>(COMP_H_R_AO_path);					strFilePaths_arr[WJTextureType_COMP_H_R_AO] = COMP_H_R_AO_path;
-		jLoadChild["22_METALNESS_path"].get_to<string>(METALNESS_path);									strFilePaths_arr[WJTextureType_METALNESS] = METALNESS_path;
-		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_COMP_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
+		jLoadChild["22_METALNESS_path"].get_to<string>(METALNESS_path);									strFilePaths_arr[WJTextureType_ROUGHNESS] = METALNESS_path;
+		jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(COMP_AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = COMP_AMBIENT_OCCLUSION_path;
 		jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
 		
@@ -1026,7 +1026,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

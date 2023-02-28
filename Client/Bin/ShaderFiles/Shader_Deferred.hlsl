@@ -94,22 +94,15 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
 
 	float			fViewZ = vDepthDesc.y * g_fFar;
-
-	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-	/* 화면에 그려지고 있는 픽셀들의 투영스페이스 상의 위치. */
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
 	vector		vWorldPos;
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
 
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
 	vWorldPos *= fViewZ;
-	/* 로컬위치 * 월드행렬 * 뷰행렬 */
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	/* 로컬위치 * 월드행렬  */
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);

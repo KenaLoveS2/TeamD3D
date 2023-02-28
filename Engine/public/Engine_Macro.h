@@ -101,13 +101,15 @@ enum aiTextureType
 	WJTextureType_SSS_MASK = 8,
 	WJTextureType_SPRINT_EMISSIVE = 9,
 	WJTextureType_HAIR_DEPTH = 10,
-	WJTextureType_HAIR_ALPHA = 11,
-	WJTextureType_HAIR_ROOT = 12,
+	WJTextureType_ALPHA = 11,
+	WJTextureType_HAIR_ROOT = 12, // HEIGHT
 	WJTextureType_COMP_MSK_CURV = 13,
 	WJTextureType_COMP_H_R_AO = 14,
-	WJTextureType_METALNESS = 15,
-	WJTextureType_COMP_AMBIENT_OCCLUSION = 16,
+	WJTextureType_COMP_E_R_AO = 15,
+	WJTextureType_ROUGHNESS = 16,
 	WJTextureType_AMBIENT_OCCLUSION = 17,
+
+	// ROUGHNESS
 
 	/** Unknown texture
 	*

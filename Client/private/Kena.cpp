@@ -246,6 +246,12 @@ void CKena::ImGui_AnimationProperty()
 
 void CKena::ImGui_ShaderValueProperty()
 {
+	if(ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	__super::ImGui_ShaderValueProperty();
 	{
 		static _float2 AmountMinMax{ -10.f, 10.f };

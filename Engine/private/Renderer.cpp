@@ -231,6 +231,18 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	return S_OK;
 }
 
+HRESULT CRenderer::ReCompile()
+{
+	HRESULT hr;
+	hr = m_pShader->ReCompile();
+	hr = m_pShader_PostProcess->ReCompile();
+
+	if (hr == E_FAIL)
+		return  E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Draw_RenderGroup()
 {
 	if (FAILED(Render_Shadow()))
