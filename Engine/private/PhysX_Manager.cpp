@@ -227,8 +227,8 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);
 
-		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial);
-		pSphere->attachShape(*pShape);
+		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
+		// pSphere->attachShape(*pShape);
 
 		if (pUserData)
 		{
@@ -248,9 +248,8 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pSphere = m_pPhysics->createRigidDynamic(Transform);
 
-		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial);
-		
-		pSphere->attachShape(*pShape);
+		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
+		// pSphere->attachShape(*pShape);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		PxRigidBodyExt::updateMassAndInertia(*pSphere, Desc.fDensity);
@@ -277,10 +276,10 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic *pCapsule = m_pPhysics->createRigidStatic(Transform);
 		
-		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
+		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
-		pCapsule->attachShape(*pShape);
+		// pCapsule->attachShape(*pShape);
 		
 		if (pUserData)
 		{
@@ -300,11 +299,11 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);
 		
-		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
+		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
 		
-		pCapsule->attachShape(*pShape);
+		// pCapsule->attachShape(*pShape);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
@@ -455,6 +454,10 @@ void CPhysX_Manager::Set_ActorRotation(PxRigidActor* pActor, _float fDegree, _fl
 void CPhysX_Manager::Set_ActorScaling(const _tchar* pActorTag, _float3 vScale)
 {
 	PxRigidActor* pActor = Find_StaticActor(pActorTag);
+	if (pActor == nullptr)
+	{
+		pActor = Find_DynamicActor(pActorTag);
+	}
 	assert(pActor != nullptr && "CPhysX_Manager::Set_ActorPosition");
 
 	PX_USER_DATA* p = (PX_USER_DATA*)pActor->userData;
@@ -478,19 +481,34 @@ void CPhysX_Manager::Set_ScalingBox(PxRigidActor* pActor, _float3 vScale)
 
 void CPhysX_Manager::Set_ScalingSphere(PxRigidActor* pActor, _float fRadius)
 {
+	PxShape* shapes[16];
+	const PxU32 nbShapes = pActor->getShapes(shapes, 16);
+
 	PxShape* shape;
 	pActor->getShapes(&shape, 1);
 	
-	PxSphereGeometry newGeometry(fRadius);
-	shape->setGeometry(newGeometry);
+	PxSphereGeometry sphere;
+	shape->getSphereGeometry(sphere);
+
+	sphere.radius = fRadius;
+
+	shape->setGeometry(sphere);
 }
 
 void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _float fHalfHeight)
 {
+	PxShape* shapes[16];
+	const PxU32 nbShapes = pActor->getShapes(shapes, 16);
+	
 	PxShape* shape;
 	pActor->getShapes(&shape, 1);
 
-	PxCapsuleGeometry newGeometry(fRadius, fHalfHeight);
-	shape->setGeometry(newGeometry);
+	PxCapsuleGeometry Capsule;
+	shape->getCapsuleGeometry(Capsule);
+
+	Capsule.radius = fRadius;
+	Capsule.halfHeight = fHalfHeight;
+
+	shape->setGeometry(Capsule);	
 }
 
