@@ -384,11 +384,25 @@
     <ClInclude Include="..\Public\Base_Ground.h">
       <Filter>02.GameObjects\Envrioment\Test</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Border.h" />
-    <ClInclude Include="..\Public\Pillar.h" />
-    <ClInclude Include="..\Public\Stair.h" />
-    <ClInclude Include="..\Public\Statue.h" />
-    <ClInclude Include="..\public\Roots.h" />
+    <ClInclude Include="..\Public\Border.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pillar.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Roots.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stair.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Statue.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FloorMesh.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Slope.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -574,11 +588,25 @@
     <ClCompile Include="..\Private\Base_Ground.cpp">
       <Filter>02.GameObjects\Envrioment\Test</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Border.cpp" />
-    <ClCompile Include="..\Private\Pillar.cpp" />
-    <ClCompile Include="..\Private\Stair.cpp" />
-    <ClCompile Include="..\Private\Statue.cpp" />
-    <ClCompile Include="..\private\Roots.cpp" />
+    <ClCompile Include="..\Private\Border.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pillar.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Roots.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stair.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Statue.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FloorMesh.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Slope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
