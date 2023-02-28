@@ -213,7 +213,7 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 		// Depth
 		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/hair_DEPTH.png"));
 		// Alpha
-		m_pModelCom->SetUp_Material(i, WJTextureType_ROUGHNESS, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
+		m_pModelCom->SetUp_Material(i, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Kena/hair_ALPHA.png"));
 		// Root
 		m_pModelCom->SetUp_Material(i, WJTextureType_HAIR_ROOT, TEXT("../Bin/Resources/Anim/Kena/hair_ROOT.png"));
 	}

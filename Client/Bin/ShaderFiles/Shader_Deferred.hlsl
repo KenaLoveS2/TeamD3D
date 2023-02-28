@@ -125,7 +125,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float  distance = length(L);
 	float attenuation = 1 / (distance * distance);
 	float3 radiance = LightColor * attenuation;
-
 	float3 F = FresnelSchlick(dot(H, V), F0);
 	float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
 	float G = GeometrySmith(N, V, L, fRoughness);
@@ -139,7 +138,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
 	kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
 	kD = (float3)1.f - kS;
-	float3 irradiance = float3(1.f, 1.f, 1.f); // È¯°æ¸Ê
+	float3 irradiance = float3(1.f, 1.f, 1.f);
 	float3 diffuse = irradiance * vDiffuse.xyz;
 	float3 ambient = kD * diffuse;
 
@@ -215,7 +214,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor((vDiffuse* vShade), vDepthDesc.b)  + vSpecular;
+	Out.vColor =	CalcHDRColor(vDiffuse* vShade, vDepthDesc.b)  + vSpecular;
 
 	if (Out.vColor.a == 0.0f)
 		discard;
