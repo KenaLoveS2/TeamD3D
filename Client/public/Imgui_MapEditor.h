@@ -36,7 +36,7 @@ private:
 	void											Imgui_TexturePathNaming();
 	void											Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
 	void											Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
-
+	
 private:		/*Logic*/
 	void											Imgui_Save_Func();
 	HRESULT									Imgui_Load_Func();
