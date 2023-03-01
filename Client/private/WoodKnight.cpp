@@ -36,6 +36,8 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
+	m_pTransformCom->Set_Translation(_float4(5.f, 0.f, 0.f, 1.f) , _float4());
+
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
@@ -144,7 +146,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
-
+		m_pModelCom->Set_AnimIndex(IDLE);
 	})
 		.Build();
 

@@ -157,7 +157,6 @@ HRESULT CRockGolem::SetUp_State()
 	.AddState("IDLE")
 	.Tick([this](_float fTimeDelta) 
 	{
-		// eType 이 Common 이면 실행됨
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
 		.Build();

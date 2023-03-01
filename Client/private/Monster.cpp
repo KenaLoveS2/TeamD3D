@@ -51,8 +51,8 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//if (m_pFSM)
-	//	m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
