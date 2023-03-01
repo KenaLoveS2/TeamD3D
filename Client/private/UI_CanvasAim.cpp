@@ -20,10 +20,60 @@ CUI_CanvasAim::CUI_CanvasAim(const CUI_CanvasAim & rhs)
 {
 }
 
-void CUI_CanvasAim::Set_Arrow(_int iIndex, _int iTag)
+void CUI_CanvasAim::Set_Arrow(_int iArrowIndex, _int iState)
 {
-	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iIndex]])
-		->Set_State((CUI_NodeAimArrow::STATE)iTag);
+	static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[iArrowIndex]])
+		->Set_State((CUI_NodeAimArrow::STATE)iState);
+}
+
+void CUI_CanvasAim::Set_Bomb(_int iBombIndex, _int iState)
+{
+	static_cast<CUI_NodeAimBomb*>(m_vecNode[m_Bombs[iBombIndex]])
+		->Set_State((CUI_NodeAimBomb::STATE)iState);
+}
+
+void CUI_CanvasAim::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
+{
+	switch (eType)
+	{
+	case CUI_ClientManager::AMMO_ARROW:
+		if (1 == iLevel)
+		{
+			m_vecNode[UI_LINELEFT]->Set_Active(true);
+			m_vecNode[UI_LINERIGHT]->Set_Active(true);
+			m_vecNode[UI_ARROW1]->Set_Active(true);
+			m_vecNode[UI_ARROW2]->Set_Active(true);
+			m_vecNode[UI_ARROW3]->Set_Active(true);
+			m_vecNode[UI_ARROW4]->Set_Active(true);
+		}
+		else if(2 == iLevel)
+		{
+			/* Todo : 1 ~ 4 Move & All Full State */
+			m_vecNode[UI_ARROW5]->Set_Active(true);
+			for (_uint i = 0; i < ARROW_END; ++i)
+			{
+				static_cast<CUI_Node*>(m_vecNode[m_Arrows[i]])->ReArrangeX_Reverse(i, ARROW_END, 0.f);
+				static_cast<CUI_NodeAimArrow*>(m_vecNode[m_Arrows[i]])
+					->Set_State((CUI_NodeAimArrow::STATE_FULL));
+
+			}
+		}
+		break;
+	case CUI_ClientManager::AMMO_BOMB:
+		if (1 == iLevel)
+			m_vecNode[UI_BOMB1]->Set_Active(true);
+		else if(2 == iLevel)
+		{	/* Todo : 1 Move & All Full State */
+			m_vecNode[UI_BOMB2]->Set_Active(true);
+			for (_uint i = 0; i < BOMB_END; ++i)
+			{
+				static_cast<CUI_Node*>(m_vecNode[m_Bombs[i]])->ReArrangeX_Reverse(i, BOMB_END, 0.f);
+				static_cast<CUI_NodeAimBomb*>(m_vecNode[m_Bombs[i]])
+					->Set_State((CUI_NodeAimBomb::STATE_FULL));
+			}
+		}
+		break;
+	}
 }
 
 HRESULT CUI_CanvasAim::Initialize_Prototype()
@@ -59,13 +109,13 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 	m_Arrows[ARROW_2] = UI_ARROW2;
 	m_Arrows[ARROW_3] = UI_ARROW3;
 	m_Arrows[ARROW_4] = UI_ARROW4;
+	m_Arrows[ARROW_5] = UI_ARROW5;
 
 	m_Bombs[BOMB_1] = UI_BOMB1;
 	m_Bombs[BOMB_2] = UI_BOMB2;
 
 
-
-	/* Test */
+	/* Todo : Player Push Shift Key -> true, else -> false */
 	m_bActive = true;
 
 	/* Temp */
@@ -279,7 +329,7 @@ HRESULT CUI_CanvasAim::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasAim::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasAim::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
 	switch (eType)
 	{

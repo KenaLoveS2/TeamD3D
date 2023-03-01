@@ -19,11 +19,12 @@ public:
 		CGameObject::GAMEOBJECTDESC ObjectDesc;
 		wstring			szProtoObjTag  =  TEXT("");
 		wstring			szModelTag =  TEXT("");
-		wstring			szTextureTag =   TEXT("");
+		//wstring			szTextureTag =   TEXT("");
 		_uint				iRoomIndex = 0;
 		CHAPTER		eChapterType = CHAPTER_END;
 		_int				iCurLevel = 0;				//이건 툴에서만 일단.
-		aiTextureType_FilePath			AI_textureFilePaths;
+		
+		//aiTextureType_FilePath			AI_textureFilePaths;
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
@@ -48,8 +49,8 @@ public:
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 
-	void									Add_TexturePath(const _tchar * TexturePath, aiTextureType Type);
-	aiTextureType_FilePath*	Get_TexturePaths() { return &(m_EnviromentDesc.AI_textureFilePaths); }
+	//void									Add_TexturePath(const _tchar * TexturePath, aiTextureType Type);
+	//aiTextureType_FilePath*	Get_TexturePaths() { return &(m_EnviromentDesc.AI_textureFilePaths); }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);

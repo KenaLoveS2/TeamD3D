@@ -5,6 +5,7 @@
 #include "UI_Event_Guage.h"
 #include "UI_ClientManager.h"
 #include "UI_NodeEffect.h"
+#include "UI_CanvasAmmo.h"
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -55,7 +56,8 @@ HRESULT CUI_NodeAmmoBombGuage::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	/* Move m_fIntervalX when Level Up */
+	m_fIntervalX = -90.f;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
@@ -74,11 +76,20 @@ void CUI_NodeAmmoBombGuage::Tick(_float fTimeDelta)
 	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
 		&& !m_bFullFilled)
 	{
-		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
 		m_bFullFilled = true;
+		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
 		CUI_ClientManager::GetInstance()
 			->Get_Effect(CUI_ClientManager::EFFECT_BOMBFULL)
 			->Start_Effect(this, 0.f, 0.f);
+
+		if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_BombFull()))
+		{
+			static_cast<CUI_CanvasAmmo*>(m_pParent)->FillBomb();
+
+			/* Connect With Canvas Aim's Bomb */
+			static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
+				CUI_CanvasAmmo::AIM_BOMB, 1, this);
+		}
 	}
 
 	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())

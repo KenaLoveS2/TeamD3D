@@ -1,0 +1,234 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[8] =
+{
+    ReferencedTextures[0] = Texture2D'/Engine/EngineMaterials/BlendFunc_DefBase.BlendFunc_DefBase'
+    ReferencedTextures[1] = Texture2D'/Engine/EngineMaterials/BlendFunc_DefBlend.BlendFunc_DefBlend'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_AO_R_M.VillageWarrior_Uv_02_AO_R_M'
+    ReferencedTextures[3] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_BASECOLOR.VillageWarrior_Uv_02_BASECOLOR'
+    ReferencedTextures[4] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_NORMAL.VillageWarrior_Uv_02_NORMAL'
+    ReferencedTextures[5] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_OPACITY.VillageWarrior_Uv_02_OPACITY'
+    ReferencedTextures[6] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+    ReferencedTextures[7] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[16] =
+                {
+                    ParameterInfos[0] = { Name=RefractionTilling }
+                    ParameterInfos[1] = { Name=DissolveEmissiveAmount }
+                    ParameterInfos[2] = { Name=BombGlowRadius }
+                    ParameterInfos[3] = { Name=BombGlowExp }
+                    ParameterInfos[4] = { Name=RefractionSpeedU }
+                    ParameterInfos[5] = { Name=BombGlowHardness }
+                    ParameterInfos[6] = { Name=MaskAONoise }
+                    ParameterInfos[7] = { Name=DissolveAmount }
+                    ParameterInfos[8] = { Name=OpacityNoiseTilling }
+                    ParameterInfos[9] = { Name=BombGlowAmount }
+                    ParameterInfos[10] = { Name=OpacitySpeedU }
+                    ParameterInfos[11] = { Name=DissolveTile }
+                    ParameterInfos[12] = { Name=RefractionSpeedV }
+                    ParameterInfos[13] = { Name=OpacitySpeedV }
+                    ParameterInfos[14] = { Name=BombGlowContrast }
+                    ParameterInfos[15] = { Name=Fringe }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[6] =
+                {
+                    ParameterInfos[0] = { Name=ClothColor3 }
+                    ParameterInfos[1] = { Name=ClothColor }
+                    ParameterInfos[2] = { Name=ClothColor2 }
+                    ParameterInfos[3] = { Name=BombGlowColor }
+                    ParameterInfos[4] = { Name=BombGlowHitLocation }
+                    ParameterInfos[5] = { Name=GlowColor }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[3] =
+                {
+                    ParameterInfos[0] = { Name=OpacityNoise }
+                    ParameterInfos[1] = { Name=DissolveAplha }
+                    ParameterInfos[2] = { Name=RefractionTexture }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[16] =
+        {
+            ScalarValues[0] = 1
+            ScalarValues[1] = 50
+            ScalarValues[2] = 500
+            ScalarValues[3] = 1.26818
+            ScalarValues[4] = 0.033
+            ScalarValues[5] = 1
+            ScalarValues[6] = 0
+            ScalarValues[7] = 0
+            ScalarValues[8] = 1
+            ScalarValues[9] = 0
+            ScalarValues[10] = 0.1
+            ScalarValues[11] = 1
+            ScalarValues[12] = -0.033
+            ScalarValues[13] = 0.2
+            ScalarValues[14] = 0.2
+            ScalarValues[15] = 2
+        }
+        VectorValues[6] =
+        {
+            VectorValues[0] = { R=0.78125, G=0.520246, B=0.425776, A=0 }
+            VectorValues[1] = { R=0.171875, G=0.138381, B=0.102051, A=0 }
+            VectorValues[2] = { R=0.265625, G=0.198598, B=0.125895, A=0 }
+            VectorValues[3] = { R=0, G=7, B=15, A=0 }
+            VectorValues[4] = { R=0, G=0, B=0, A=0 }
+            VectorValues[5] = { R=0, G=0.5, B=1, A=0 }
+        }
+        TextureValues[3] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[1] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[2] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        }
+    }
+    ReferencedTextures[8] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_AO_R_M.VillageWarrior_Uv_02_AO_R_M'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_NORMAL.VillageWarrior_Uv_02_NORMAL'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        ReferencedTextures[3] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_OPACITY.VillageWarrior_Uv_02_OPACITY'
+        ReferencedTextures[4] = Texture2D'/Engine/EngineMaterials/BlendFunc_DefBlend.BlendFunc_DefBlend'
+        ReferencedTextures[5] = Texture2D'/Engine/EngineMaterials/BlendFunc_DefBase.BlendFunc_DefBase'
+        ReferencedTextures[6] = Texture2D'/Game/Mochi/Characters/Enemies/VL_Warrior/Textures/VillageWarrior_Uv_02_BASECOLOR.VillageWarrior_Uv_02_BASECOLOR'
+        ReferencedTextures[7] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[3] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = OpacityNoise
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = DissolveAplha
+        Group = None
+    }
+    CollectedTextureParameters[2] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = RefractionTexture
+        Group = None
+    }
+}
+CollectedScalarParameters[16] =
+{
+    CollectedScalarParameters[0] = { Value=1, Name=RefractionTilling, Group=None }
+    CollectedScalarParameters[1] =
+    {
+        Value = 50
+        Name = DissolveEmissiveAmount
+        Group = None
+    }
+    CollectedScalarParameters[2] = { Value=500, Name=BombGlowRadius, Group=None }
+    CollectedScalarParameters[3] = { Value=1.26818, Name=BombGlowExp, Group=None }
+    CollectedScalarParameters[4] = { Value=0.033, Name=RefractionSpeedU, Group=None }
+    CollectedScalarParameters[5] = { Value=1, Name=BombGlowHardness, Group=None }
+    CollectedScalarParameters[6] = { Value=0, Name=MaskAONoise, Group=None }
+    CollectedScalarParameters[7] = { Value=0, Name=DissolveAmount, Group=None }
+    CollectedScalarParameters[8] = { Value=1, Name=OpacityNoiseTilling, Group=None }
+    CollectedScalarParameters[9] = { Value=0, Name=BombGlowAmount, Group=None }
+    CollectedScalarParameters[10] = { Value=0.1, Name=OpacitySpeedU, Group=None }
+    CollectedScalarParameters[11] = { Value=1, Name=DissolveTile, Group=None }
+    CollectedScalarParameters[12] = { Value=-0.033, Name=RefractionSpeedV, Group=None }
+    CollectedScalarParameters[13] = { Value=0.2, Name=OpacitySpeedV, Group=None }
+    CollectedScalarParameters[14] = { Value=0.2, Name=BombGlowContrast, Group=None }
+    CollectedScalarParameters[15] = { Value=2, Name=Fringe, Group=None }
+}
+CollectedVectorParameters[6] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0.78125, G=0.520246, B=0.425776, A=0 }
+        Name = ClothColor3
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0.171875, G=0.138381, B=0.102051, A=0 }
+        Name = ClothColor
+        Group = None
+    }
+    CollectedVectorParameters[2] =
+    {
+        Value = { R=0.265625, G=0.198598, B=0.125895, A=0 }
+        Name = ClothColor2
+        Group = None
+    }
+    CollectedVectorParameters[3] =
+    {
+        Value = { R=0, G=7, B=15, A=0 }
+        Name = BombGlowColor
+        Group = None
+    }
+    CollectedVectorParameters[4] =
+    {
+        Value = { R=0, G=0, B=0, A=0 }
+        Name = BombGlowHitLocation
+        Group = None
+    }
+    CollectedVectorParameters[5] =
+    {
+        Value = { R=0, G=0.5, B=1, A=0 }
+        Name = GlowColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[4] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = VillageWarrior_Uv_02_AO_R_M
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = VillageWarrior_Uv_02_BASECOLOR
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = VillageWarrior_Uv_02_NORMAL
+    }
+    TextureStreamingData[3] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = VillageWarrior_Uv_02_OPACITY
+    }
+}

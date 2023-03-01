@@ -2,6 +2,7 @@
 #include "..\public\Mesh.h"
 #include "Model.h"
 #include "Bone.h"
+#include "Utile.h"
 
 CMesh::CMesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -327,7 +328,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(HANDLE hFile, CModel* pModel)
 	ZeroMemory(pVertices, sizeof(VTXMODEL) * m_iNumVertices);
 	ReadFile(hFile, pVertices, sizeof(VTXMODEL) * m_iNumVertices, &dwByte, nullptr);
 
-	for (_uint i = 0; i < m_iNumVertices; ++i)
+	for (_uint i = 0; i < m_iNumVertices; ++i)			// pVertices  3°³-> 1°³·Î
 	{
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PivotMatrix));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PivotMatrix));
@@ -412,4 +413,39 @@ void CMesh::Free()
 		Safe_Delete_Array(m_pAnimVertices);
 		Safe_Delete_Array(m_pIndices);
 	}
+}
+// kbj physx
+HRESULT CMesh::Create_PxTriangleData()
+{
+	m_pPxVertices = new PxVec3[m_iNumVertices];
+	ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+
+	if (m_eType == CModel::TYPE_ANIM)
+	{
+		for (_uint i = 0; i < m_iNumVertices; i++)
+		{
+			_float3 vPos = m_pAnimVertices[i].vPosition;
+			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+		}
+	}
+	else if (m_eType == CModel::TYPE_NONANIM)
+	{
+		for (_uint i = 0; i < m_iNumVertices; i++)
+		{
+			_float3 vPos = m_pNonAnimVertices[i].vPosition;
+			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+		}
+	}
+	else return E_FAIL;
+
+	m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
+	ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
+	for (_uint i = 0; i < m_iNumPrimitive; i++)
+	{
+		m_pPxIndicies[i]._0 = m_pIndices[i]._0;
+		m_pPxIndicies[i]._1 = m_pIndices[i]._2;
+		m_pPxIndicies[i]._2 = m_pIndices[i]._1;
+	}
+
+	Create_PxActor();
 }

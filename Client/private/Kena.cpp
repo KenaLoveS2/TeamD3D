@@ -60,6 +60,48 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	/*
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.pActortag = TEXT("TEST");
+	PxBoxDesc.vPos = _float3(0.f, 5.f, 0.f);
+	PxBoxDesc.vSize = { 0.2f, 0.2f, 0.2f };
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 10.f;
+	PxBoxDesc.fAngularDamping = 0.5f;
+
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
+	// m_pTransformCom->Connect_PxActor(TEXT("TEST"));
+	*/
+	/*
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
+	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
+	PxSphereDesc.fRadius = 0.2f;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 10.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+			
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	*/
+	/*
+	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
+	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+	PxCapsuleDesc.fRadius = 0.2f;
+	PxCapsuleDesc.fHalfHeight = 0.5f;
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.fDensity = 10.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	*/
 	return S_OK;
 }
 
@@ -69,7 +111,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-	
+
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	//m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 	
@@ -101,43 +143,53 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eArrowGuage	= CUI_ClientManager::AMMO_ARROW;
 	CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
 
+	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	{
+		static _float fLevel = 0.f;
+		fLevel += 1.f;
+		m_PlayerDelegator.broadcast(eArrowGuage, funcLevelup, fLevel);
+		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
 		/* Pip Guage pop test */
 		_float fPipUse = 0;;
-		m_PlayerDelegator.broadcast(eType2, fPipUse);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fPipUse);
 
 		/* Rot icon chagne test */
 		static _float fIcon = 0;
 		fIcon = _float(_uint(fIcon + 1) % 4);
-		m_PlayerDelegator.broadcast(eType4, fIcon);
+		m_PlayerDelegator.broadcast(eType4, funcDefault, fIcon);
 
 		/* Bomb Guage test */
 		static _float fBomb = 0.f;
-		m_PlayerDelegator.broadcast(eBomb, fBomb);
+		m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
 
 		/* Arrow Guage test */
 		static _float fArrow = 1.f; 
-		m_PlayerDelegator.broadcast(eArrowGuage, fArrow); 
+		m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
 
 		/* Aim Test */
 		static _float fAim = 1.f;
-		m_PlayerDelegator.broadcast(eAim, fAim);
+		m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eType1, fNum);
-		m_PlayerDelegator.broadcast(eType2, fNum);
-		m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
 		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eType1, fNum);
-		m_PlayerDelegator.broadcast(eType2, fNum);
-		m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 
 	/************** ~Delegator Test *************/
@@ -365,11 +417,11 @@ HRESULT CKena::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Kena", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
-	//For.Cloth
+	//For.Cloth			
 	// AO_R_M
 	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_AO_R_M.png"));
 	// EMISSIVE
@@ -399,14 +451,14 @@ HRESULT CKena::SetUp_Components()
 	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
 
 	CNavigation::NAVIDESC		NaviDesc;
 	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
 	NaviDesc.iCurrentIndex = 0;
 
-	FAILED_CHECK_RETURN(__super::Add_Component(LEVEL_GAMEPLAY, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 

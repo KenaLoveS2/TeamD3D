@@ -34,8 +34,8 @@ HRESULT CUI_NodeAmmoBombFrame::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
+	/* Move m_fIntervalX when Level Up */
+	m_fIntervalX = -90.f;
 
 	return S_OK;
 }

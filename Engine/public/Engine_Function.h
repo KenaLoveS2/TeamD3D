@@ -72,5 +72,9 @@ namespace Engine
 		return dwRefCnt;
 	}
 
-
+	template<typename T> void Px_Safe_Release(T& pInstance)
+	{
+		if (pInstance)
+			pInstance->release();
+	}
 }

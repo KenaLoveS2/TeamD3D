@@ -89,5 +89,9 @@ public: /* imgui */
 	virtual void ImGui_ShaderValueProperty() {};
 
 	void Set_Position(_float4& vPosition);
+	void Set_Position(_float3& vPosition);
+
+public:
+	virtual _int Execute_Collision() { return 0; }
 };
 END

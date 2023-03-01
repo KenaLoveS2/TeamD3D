@@ -20,10 +20,12 @@ namespace Client
 	}
 }
 
-extern bool			g_bFullScreen;
-extern bool			g_bNeedResizeSwapChain;
-extern bool			g_bWinActive;
+extern bool				g_bFullScreen;
+extern bool				g_bNeedResizeSwapChain;
+extern bool				g_bWinActive;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
+
+extern unsigned int	g_LEVEL;
 
 using namespace Client;

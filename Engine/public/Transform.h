@@ -64,11 +64,10 @@ public:
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	}
 
-
 	void Set_State(STATE eState, _fvector vState) {
-		_float4		vTmp;
+		_float4 vTmp;
 		XMStoreFloat4(&vTmp, vState);
-		memcpy(&m_WorldMatrix.m[eState][0], &vTmp, sizeof vTmp);			
+		memcpy(&m_WorldMatrix.m[eState][0], &vTmp, sizeof vTmp);
 	}
 
 	void Set_Scaled(STATE eState, _float fScale); /* fScale값으로 길이를 변형한다. */
@@ -81,7 +80,7 @@ public:
 	virtual void	Imgui_RenderProperty() override;
 
 public:
-	void Go_Straight(_float fTimeDelta, class CNavigation* pNaviCom = nullptr);
+	void Go_Straight(_float fTimeDelta);
 	void Go_Backward(_float fTimeDelta);
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
@@ -116,6 +115,10 @@ private:
 	TRANSFORMDESC			m_TransformDesc;
 	_float					m_fInitSpeed = 0.f;
 
+	_bool m_bIsStaticPxActor = false;
+	PxRigidActor* m_pPxActor = nullptr;
+	class CPhysX_Manager* m_pPhysX_Manager = nullptr;
+
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
@@ -133,7 +136,9 @@ public:
 	_float Calc_Distance_XZ(CTransform* pTransform);	
 	_float Calc_Distance_XY(CTransform* pTransform);
 	_float Calc_Distance_YZ(CTransform* pTransform);
-};
 
+	void Connect_PxActor(const _tchar* pActorTag);
+	void Set_Translation(_fvector vPosition, _fvector vDist);
+};
 
 END
