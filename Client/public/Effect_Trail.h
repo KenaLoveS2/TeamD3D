@@ -4,6 +4,8 @@
 
 BEGIN(Client)
 
+#define TESTPLAY
+
 class CEffect_Trail final : public CEffect_Base
 {
 private:

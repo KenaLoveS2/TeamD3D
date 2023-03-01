@@ -36,6 +36,7 @@ public:
 
 	// FreeMoving Setting //
 	void	Set_FreePos(class CEffect_Base* pEffect);
+	void   	Set_MeshType(OUT CEffect_Base::EFFECTDESC& effectType, _int & iSelectMeshType);
 
 	void	TransformView(_int iSelectObject, class CEffect_Base* pEffect);
 	void	TransformView_child(_int iSelectObject, class CEffect_Base* pEffect);
@@ -43,7 +44,7 @@ public:
 public:
 	void	CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject);
 	void	CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _int& iSelectObject);
-	void	CreateEffect_Mesh(_int iSelectObject);
+	void	CreateEffect_Mesh(_int& iSelectObject);
 
 public:
 	void	Show_ChildWindow(class CEffect_Base* pEffect);
@@ -54,6 +55,7 @@ private:
 
 	_bool m_bIsRectLayer = false;
 	_bool m_bIsParticleLayer = false;
+	_bool m_bIsMeshLayer = false;
 
 public:
 	static CImgui_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
