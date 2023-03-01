@@ -163,13 +163,20 @@ HRESULT CEffect_Trail::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
+	_int iCurLevel = 0;
+#ifdef TESTPLAY
+	iCurLevel = LEVEL_TESTPLAY;
+#else 
+	iCurLevel = LEVEL_EFFECT;
+#endif // TESTPLAY
+
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVITrailBufferCom)))
 		return E_FAIL;
 
@@ -186,7 +193,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 	_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 	CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
 		return E_FAIL;
 
 	/* For.MaskTexture */
@@ -196,7 +203,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 	_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 	CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
 		return E_FAIL;
 
 	return S_OK;

@@ -6,6 +6,7 @@
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
 #include "Imgui_ShaderEditor.h"
+#include "Imgui_Effect.h"
 #include "Layer.h"
 #include "GameObject.h"
 #include "Tool_Settings.h"
@@ -31,6 +32,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
