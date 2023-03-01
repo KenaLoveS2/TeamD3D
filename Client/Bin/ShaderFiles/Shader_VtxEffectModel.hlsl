@@ -145,7 +145,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	// DTexture == 40
 	// Blend_Mix
-	float4 fresnel_color = g_vColor;
+	float4 fresnel_color = float4(0, 0.399, 0.801, 1);
 	float4 fresnel = float4(fresnel_glow(3.0, 4.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
 
 	//

@@ -31,12 +31,10 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 
 	if (pArg != nullptr)
 		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
+
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_MESH;
 	m_eEFfectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
-	m_eEFfectDesc.fFrame[0] = 64.f;
-
-	// TEST
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_SPHERE;
+	m_eEFfectDesc.fFrame[0] = 40.f;
 
 	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
 		return E_FAIL;
