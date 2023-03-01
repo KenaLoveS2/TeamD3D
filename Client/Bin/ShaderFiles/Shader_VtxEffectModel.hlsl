@@ -141,7 +141,6 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	float4 d = g_NormalTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f * g_Time * 1.f));   //∞À¡§
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV + d.r);
-	vector albed1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV + d.r);
 	vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
 	// DTexture == 40
@@ -153,7 +152,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float   fOldViewZ = vDepthDesc.y * 300.f;
 	float   fViewZ = In.vProjPos.w;
 
-	Out.vDiffuse = albedo *albed1 *2.f;
+	Out.vDiffuse = albedo *2.f;
 	Out.vDiffuse = saturate(Out.vDiffuse) * fresnel;
 	Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
 	//
