@@ -12,20 +12,13 @@ public:
 				UI_ARROW1, UI_ARROW2, UI_ARROW3, UI_ARROW4, UI_ARROW5,
 				UI_BOMB1, UI_BOMB2,
 				UI_END };
-
-	enum ARROW_ID { ARROW_1, ARROW_2, ARROW_3, ARROW_4, ARROW_5, ARROW_END };
-	enum BOMB_ID { BOMB_1, BOMB_2, BOMB_END };
+	enum ARROW_ID	{ ARROW_1, ARROW_2, ARROW_3, ARROW_4, ARROW_5, ARROW_END };
+	enum BOMB_ID	{ BOMB_1, BOMB_2, BOMB_END };
 
 private:
 	CUI_CanvasAim(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasAim(const CUI_CanvasAim& rhs);
 	virtual ~CUI_CanvasAim() = default;
-
-
-public:
-	void	Set_Arrow(_int iIndex, _int iTag);
-
-public: /* For. Events */
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -33,6 +26,15 @@ public:
 	virtual void			Tick(_float fTimeDelta)			override;
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
+
+
+public: /* For connecting to CAnvas Ammo */
+	void	Set_Arrow(_int iArrowIndex, _int iState);
+	void	Set_Bomb(_int iBombIndex, _int iState);
+	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
+
+
+
 
 private:
 	virtual HRESULT			Bind()							override;
@@ -50,7 +52,7 @@ private:
 	_int	m_Bombs[BOMB_END];
 
 private: /* Bind Functions */
-	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
 	
 
 public:

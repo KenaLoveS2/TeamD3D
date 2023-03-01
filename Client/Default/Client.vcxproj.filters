@@ -199,6 +199,18 @@
     <Filter Include="02.GameObjects\Monster\WoodKnight">
       <UniqueIdentifier>{be0fd327-62ba-4bdd-8310-6fbd06685833}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{d439ed35-6deb-490f-ba56-35a03c5707cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{9b30704f-f9cb-4313-ace5-0e71abdbe4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{424b2212-7764-426a-8f8f-66185f823006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -354,9 +366,6 @@
     <ClInclude Include="..\public\UI_CanvasAmmo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClInclude>
@@ -429,19 +438,7 @@
     <ClInclude Include="..\public\Effect_Trail.h">
       <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAimLine.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_CanvasAim.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_Event_Transform.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAimArrow.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAimBomb.h">
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster.h">
@@ -464,6 +461,18 @@
     </ClInclude>
     <ClInclude Include="..\public\WoodKnight.h">
       <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimBomb.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -599,9 +608,6 @@
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClCompile>
@@ -674,19 +680,7 @@
     <ClCompile Include="..\private\Effect_Trail.cpp">
       <Filter>02.GameObjects\Effect\Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasAim.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
       <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
@@ -709,6 +703,18 @@
     </ClCompile>
     <ClCompile Include="..\private\WoodKnight.cpp">
       <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

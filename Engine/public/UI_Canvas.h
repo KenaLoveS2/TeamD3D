@@ -36,7 +36,10 @@ public:
 
 public:
 	/* Add Sub UI(Canvas Or Node)*/
-	virtual		HRESULT	Add_Node(CUI* pUI)sealed;
+	virtual	HRESULT	Add_Node(CUI* pUI)sealed;
+
+//public: /* Provide Functions */
+//	virtual	void	Call_CanvasFunction(_int iParam1, _int iParam2) {};
 
 protected:
 	vector<string>		m_vecNodeCloneTag;

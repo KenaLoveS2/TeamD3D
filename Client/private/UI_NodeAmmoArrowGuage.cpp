@@ -48,7 +48,6 @@ HRESULT CUI_NodeAmmoArrowGuage::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
@@ -72,6 +71,10 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 		{
 			static_cast<CUI_CanvasAmmo*>(m_pParent)->FillArrow();
 
+			/* Connect With Canvas Aim's Arrow */
+			static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
+				CUI_CanvasAmmo::AIM_ARROW, 1);
+
 			if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
 				m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
 		}
@@ -79,6 +82,7 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 		CUI_ClientManager::GetInstance()
 			->Get_Effect(CUI_ClientManager::EFFECT_ARROWFULL)
 			->Start_Effect(this, 0.f, 35.f);
+
 	}
 
 	/* Full To Zero process ended */

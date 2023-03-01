@@ -78,6 +78,7 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pScene = m_pPhysics->createScene(SceneDesc);	
 	assert(m_pScene != nullptr && "CPhysX_Manager::InitWorld()");
 	
+	/* Release에서는 5줄 주석? */
 	PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
 	assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");		
 	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);

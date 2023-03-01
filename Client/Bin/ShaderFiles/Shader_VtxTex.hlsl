@@ -18,6 +18,8 @@ float4	g_vMinColor = { 0.f, 0.f, 0.f,0.f };
 float	g_fAlpha = 1.f;
 float	g_fAmount = 1.f; /* Guage Data (normalized) */
 
+int		g_iCheck = 0;
+
 
 struct VS_IN
 {
@@ -282,6 +284,21 @@ PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
 
 }
 
+PS_OUT PS_MAIN_AimThings(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_iCheck == 0) /* empty */
+	{
+		Out.vColor.rgb = 0.5;
+		Out.vColor.a *= 0.3;
+	}
+
+	return Out;
+}
+
 PS_OUT PS_MAIN_TRIAL(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -433,6 +450,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_RINGGUAGE_MASK();
+	}
+
+	pass AimThings // 10
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AimThings();
 	}
 
 	pass Trial
