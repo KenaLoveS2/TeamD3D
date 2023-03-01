@@ -143,43 +143,53 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eArrowGuage	= CUI_ClientManager::AMMO_ARROW;
 	CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
 
+	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	{
+		static _float fLevel = 0.f;
+		fLevel += 1.f;
+		m_PlayerDelegator.broadcast(eArrowGuage, funcLevelup, fLevel);
+		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
+	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
 		/* Pip Guage pop test */
 		_float fPipUse = 0;;
-		m_PlayerDelegator.broadcast(eType2, fPipUse);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fPipUse);
 
 		/* Rot icon chagne test */
 		static _float fIcon = 0;
 		fIcon = _float(_uint(fIcon + 1) % 4);
-		m_PlayerDelegator.broadcast(eType4, fIcon);
+		m_PlayerDelegator.broadcast(eType4, funcDefault, fIcon);
 
 		/* Bomb Guage test */
 		static _float fBomb = 0.f;
-		m_PlayerDelegator.broadcast(eBomb, fBomb);
+		m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
 
 		/* Arrow Guage test */
 		static _float fArrow = 1.f; 
-		m_PlayerDelegator.broadcast(eArrowGuage, fArrow); 
+		m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
 
 		/* Aim Test */
 		static _float fAim = 1.f;
-		m_PlayerDelegator.broadcast(eAim, fAim);
+		m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eType1, fNum);
-		m_PlayerDelegator.broadcast(eType2, fNum);
-		m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
 		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eType1, fNum);
-		m_PlayerDelegator.broadcast(eType2, fNum);
-		m_PlayerDelegator.broadcast(eType3, fNum);
+		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 
 	/************** ~Delegator Test *************/

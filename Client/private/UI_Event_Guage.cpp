@@ -137,7 +137,8 @@ void CUI_Event_Guage::Imgui_RenderProperty()
 
 void CUI_Event_Guage::Call_Event(_float fData)
 {
-	m_fGuageNew = fData;
+	if(m_fGuage == m_fGuageNew)
+		m_fGuageNew = fData;
 }
 
 HRESULT CUI_Event_Guage::Save_Data(Json* json)

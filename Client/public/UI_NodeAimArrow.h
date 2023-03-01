@@ -16,7 +16,7 @@ private:
 	virtual ~CUI_NodeAimArrow() = default;
 
 public:
-	void	Set_State(STATE eState) { m_eState = STATE_EMPTY; }
+	void	Set_State(STATE eState) { m_eState = eState; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -35,7 +35,6 @@ private:
 	_float			m_fInitialRatioY;
 private:
 	STATE			m_eState;
-
 
 public:
 	static	CUI_NodeAimArrow*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
