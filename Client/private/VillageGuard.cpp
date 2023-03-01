@@ -36,19 +36,6 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = TEXT("VILLAGEGUARD");
-	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
-	PxSphereDesc.fRadius = 0.8f;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 10.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("VILLAGEGUARD"));
-	//CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
-
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
