@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "..\public\Moth.h"
+#include "..\public\VillageGuard.h"
 #include "GameInstance.h"
 
-CMoth::CMoth(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CVillageGuard::CVillageGuard(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
 {
 }
 
-CMoth::CMoth(const CMoth & rhs)
+CVillageGuard::CVillageGuard(const CVillageGuard & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CMoth::Initialize_Prototype()
+HRESULT CVillageGuard::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	return S_OK;
 }
 
-HRESULT CMoth::Initialize(void* pArg)
+HRESULT CVillageGuard::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
@@ -41,7 +41,7 @@ HRESULT CMoth::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CMoth::Tick(_float fTimeDelta)
+void CVillageGuard::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -50,7 +50,7 @@ void CMoth::Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
-void CMoth::Late_Tick(_float fTimeDelta)
+void CVillageGuard::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
 
@@ -63,7 +63,7 @@ void CMoth::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CMoth::Render()
+HRESULT CVillageGuard::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
@@ -80,7 +80,7 @@ HRESULT CMoth::Render()
 	return S_OK;
 }
 
-HRESULT CMoth::RenderShadow()
+HRESULT CVillageGuard::RenderShadow()
 {
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
@@ -96,14 +96,14 @@ HRESULT CMoth::RenderShadow()
 	return S_OK;
 }
 
-void CMoth::Imgui_RenderProperty()
+void CVillageGuard::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 }
 
-void CMoth::ImGui_AnimationProperty()
+void CVillageGuard::ImGui_AnimationProperty()
 {
-	ImGui::BeginTabBar("Moth Animation & State");
+	ImGui::BeginTabBar("VillageGuard Animation & State");
 
 	if (ImGui::BeginTabItem("Animation"))
 	{
@@ -120,44 +120,44 @@ void CMoth::ImGui_AnimationProperty()
 	ImGui::EndTabBar();
 }
 
-void CMoth::ImGui_ShaderValueProperty()
+void CVillageGuard::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
 
 	// shader Value Á¶Àý
 }
 
-HRESULT CMoth::Call_EventFunction(const string& strFuncName)
+HRESULT CVillageGuard::Call_EventFunction(const string& strFuncName)
 {
 	return CMonster::Call_EventFunction(strFuncName);
 }
 
-void CMoth::Push_EventFunctions()
+void CVillageGuard::Push_EventFunctions()
 {
 	CMonster::Push_EventFunctions();
 }
 
-HRESULT CMoth::SetUp_State()
+HRESULT CVillageGuard::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
-		
+
 	})
 		.Build();
 
 	return S_OK;
 }
 
-HRESULT CMoth::SetUp_Components()
+HRESULT CVillageGuard::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Moth", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_VillageGuard", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
@@ -177,7 +177,7 @@ HRESULT CMoth::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMoth::SetUp_ShaderResources()
+HRESULT CVillageGuard::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
@@ -189,7 +189,7 @@ HRESULT CMoth::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CMoth::SetUp_ShadowShaderResources()
+HRESULT CVillageGuard::SetUp_ShadowShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -209,33 +209,33 @@ HRESULT CMoth::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-CMoth* CMoth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVillageGuard* CVillageGuard::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMoth*	pInstance = new CMoth(pDevice, pContext);
+	CVillageGuard*	pInstance = new CVillageGuard(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Create : CMoth");
+		MSG_BOX("Failed to Create : CVillageGuard");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CMoth::Clone(void* pArg)
+CGameObject* CVillageGuard::Clone(void* pArg)
 {
-	CMoth*	pInstance = new CMoth(*this);
+	CVillageGuard*	pInstance = new CVillageGuard(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Clone : CMoth");
+		MSG_BOX("Failed to Clone : CVillageGuard");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CMoth::Free()
+void CVillageGuard::Free()
 {
 	CMonster::Free();
 }
