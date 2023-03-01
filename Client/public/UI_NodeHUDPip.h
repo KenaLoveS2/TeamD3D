@@ -13,8 +13,10 @@ private:
 	CUI_NodeHUDPip(const CUI_NodeHUDPip& rhs);
 	virtual ~CUI_NodeHUDPip() = default;
 
-public:
+public: /* Event */
 	void			Set_Guage(_float fGuage);
+	_float			Get_Guage();
+	void			ReArrangeGuage();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

@@ -4,17 +4,17 @@
 #include "Json/json.hpp"
 
 CUI_Event_Guage::CUI_Event_Guage()
+	: m_iRenderPass(7)
+	, m_vAcceleration{ 0.f, 0.f }
+	, m_vSpeed{ 0.f, 0.f }
+	, m_vMinColor{ 0.1f, 0.3f, 0.5f, 1.0f }
+	, m_vColor{ 1.0f, 1.0f, 1.0f, 1.0f }
+	, m_fGuage{ 1.f }
+	, m_fGuageNew{ 1.f }
+	, m_fGuageSpeed{ 2.f }
+	, m_bReArrangeSettingOn{ false }
 {
 	m_szEventName = "Guage";
-	m_iRenderPass = 7;
-
-	m_vAcceleration = { 0.f, 0.f };
-	m_vSpeed = { 0.f, 0.f };
-	m_vMinColor = { 0.1f, 0.3f, 0.5f, 1.0f };
-	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_fGuage = 1.f;
-	m_fGuageNew = 1.f;
-	m_fGuageSpeed = 2.f;
 }
 
 _bool CUI_Event_Guage::Is_Zero()
@@ -137,8 +137,14 @@ void CUI_Event_Guage::Imgui_RenderProperty()
 
 void CUI_Event_Guage::Call_Event(_float fData)
 {
-	if(m_fGuage == m_fGuageNew)
+	if (m_bReArrangeSettingOn)
+	{
 		m_fGuageNew = fData;
+		m_bReArrangeSettingOn = false;
+	}
+	else if(m_fGuage == m_fGuageNew)
+		m_fGuageNew = fData;
+
 }
 
 HRESULT CUI_Event_Guage::Save_Data(Json* json)
