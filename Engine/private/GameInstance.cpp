@@ -117,7 +117,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	m_pEnviroment_Manager->Reserve_Manager();
 
-	m_pPhysX_Manager->Initialize(); // kbj physx
+	m_pPhysX_Manager->Initialize(*ppDeviceOut, *ppContextOut); // kbj physx
 
 	return S_OK;
 }
