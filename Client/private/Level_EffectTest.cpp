@@ -5,6 +5,7 @@
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_Effect.h"
+#include "Imgui_ShaderEditor.h"
 
 CLevel_EffectTest::CLevel_EffectTest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -23,6 +24,7 @@ HRESULT CLevel_EffectTest::Initialize()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
+	pGameInstance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance);
 	// ~tool 
 
@@ -82,6 +84,9 @@ HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Mesh"), TEXT("Effect_Cube"))))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

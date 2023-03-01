@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 BEGIN(Engine)
+class CModel;
 class CShader;
 class CTexture;
 class CRenderer;
@@ -21,6 +22,7 @@ public:
 	{
 		// Effect Type = texture, texture_Particle , mesh
 		enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_TRAIL, EFFECT_END };
+		enum MESHTYPE { MESH_PLANE, MESH_CUBE, MESH_CONE, MESH_SPHERE, MESH_CYLINDER, MESH_END };
 		enum PARTICLETYPE { PARTICLE_BOX, PARTICLE_SPHERE, PARTICLE_CONE, PARTICLE_SPREAD, PARTICLE_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
 		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
@@ -29,6 +31,7 @@ public:
 		enum ROTXYZ { ROT_X, ROT_Y, ROT_Z, ROT_END };
 
 		EFFECTTYPE        eEffectType = EFFECT_PLANE;
+		MESHTYPE		  eMeshType = MESH_PLANE;
 		PARTICLETYPE	  eParticleType = PARTICLE_BOX;
 		TEXTURERENDERTYPE eTextureRenderType = TEX_ONE;
 		TEXTURETYPE		  eTextureType = TYPE_END;
@@ -40,6 +43,8 @@ public:
 		_float		fFrame[MAX_TEXTURECNT] = { 0.0f };
 		// Mask Frame ( Cur Texture Idx )
 		_float		fMaskFrame[MAX_TEXTURECNT] = { 0.0f };
+		// Normal Frame ( Cur Texture Idx )
+		_float		fNormalFrame = 0.0f;
 
 		// if ( eTextureType == TEX_SPRITE )
 		_float	fWidthFrame = 0.0f, fHeightFrame = 0.0f;
@@ -75,6 +80,7 @@ public:
 
 		// Option // 
 		_bool	IsBillboard = false;
+		_bool	IsNormal = false;
 		_bool	IsMask = false;
 		_bool	IsTrigger = false;
 		_bool	IsMovingPosition = false;
@@ -104,6 +110,7 @@ public:
 	void						 Set_EffectDescMTexture(_int iSelectIdx, _float fMTextureframe) {
 		m_eEFfectDesc.fMaskFrame[iSelectIdx] = fMTextureframe;
 	}
+	void						 Set_EffectDescNTexture(_float fNTextureframe) { m_eEFfectDesc.fNormalFrame = fNTextureframe; }
 
 	_uint					     Get_ChildCnt() { return (_uint)m_vecChild.size(); }
 	vector<class CEffect_Base*>* Get_vecChild() { return &m_vecChild; }
@@ -140,14 +147,15 @@ public:
 	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
 	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
 
-	virtual HRESULT				 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
+	virtual HRESULT		 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
 	virtual class CEffect_Trail* Get_Trail() { return nullptr; }
 	virtual void				 Delete_Trail(const _tchar* pProtoTag) {}
 
 public:
-	HRESULT				 Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
+	HRESULT	Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextureComCnt);
 
 protected:
+	CModel*						m_pModelCom = nullptr;
 	CShader*				    m_pShaderCom = nullptr;
 	CRenderer*				    m_pRendererCom = nullptr;
 	CVIBuffer_Rect*			    m_pVIBufferCom = nullptr;
@@ -156,11 +164,9 @@ protected:
 
 	CTexture*					m_pDTextureCom[MAX_TEXTURECNT] = { nullptr };
 	CTexture*					m_pMTextureCom[MAX_TEXTURECNT] = { nullptr };
+	CTexture*					m_pNTextureCom = nullptr;
 
-	/* Texture Setting */
-	_uint	m_iTotalDTextureComCnt = 0;
-	_uint	m_iTotalMTextureComCnt = 0;
-	/* ~Texture Setting */
+	EFFECTDESC			        m_eEFfectDesc;
 
 protected:
 	/* Child */
@@ -177,8 +183,10 @@ protected:
 	class CEffect_Base*		    m_pEffectTrail = nullptr;
 	/* ~Trail */
 
-protected:
-	EFFECTDESC			  m_eEFfectDesc;
+	/* Texture Setting */
+	_uint	m_iTotalDTextureComCnt = 0;
+	_uint	m_iTotalMTextureComCnt = 0;
+	/* ~Texture Setting */
 
 public:
 	virtual void          Free() override;
