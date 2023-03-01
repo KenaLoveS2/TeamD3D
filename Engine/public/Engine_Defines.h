@@ -53,6 +53,10 @@ using namespace std;
 using Json = nlohmann::json;
 using namespace nlohmann;
 
+#include <PhysX/PxPhysics.h>
+#include <PhysX/PxPhysicsAPI.h>
+using namespace physx;
+
 #include "Engine_Macro.h"
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"

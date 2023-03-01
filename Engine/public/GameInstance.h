@@ -8,6 +8,9 @@
 #include "Function_Manager.h"
 #include "UI_Manager.h"
 #include "Enviroment_Manager.h"
+#include "PhysX_Manager.h"
+#include "FSMComponent.h"
+#include "Animation.h"
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
@@ -206,6 +209,8 @@ public: /* For.PipeLine */
 		class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
 		class CFunction_Manager*	m_pFunction_Manager = nullptr;
+
+		class CPhysX_Manager* m_pPhysX_Manager = nullptr;
 
 	public:
 		static void Release_Engine();

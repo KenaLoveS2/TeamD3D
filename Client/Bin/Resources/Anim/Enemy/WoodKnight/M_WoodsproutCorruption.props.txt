@@ -1,0 +1,108 @@
+TwoSided = false
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[1] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[6] =
+                {
+                    ParameterInfos[0] = { Name=Contrast }
+                    ParameterInfos[1] = { Name=DissolveEmissiveAmount }
+                    ParameterInfos[2] = { Name=DissolveAmount }
+                    ParameterInfos[3] = { Name=CorruptionGlowAmount }
+                    ParameterInfos[4] = { Name=DissolveTile }
+                    ParameterInfos[5] = { Name=Fringe }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[2] =
+                {
+                    ParameterInfos[0] = { Name=InnerGlow }
+                    ParameterInfos[1] = { Name=GlowColor }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=DissolveAplha }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[6] = { 0.2, 50, 0, 1, 1, 2 }
+        VectorValues[2] =
+        {
+            VectorValues[0] = { R=1.5, G=0.780818, B=0.373253, A=0 }
+            VectorValues[1] = { R=0, G=0.5, B=1, A=0 }
+        }
+        TextureValues[1] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        }
+    }
+    ReferencedTextures[1] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[1] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = DissolveAplha
+        Group = None
+    }
+}
+CollectedScalarParameters[6] =
+{
+    CollectedScalarParameters[0] = { Value=0.2, Name=Contrast, Group=None }
+    CollectedScalarParameters[1] =
+    {
+        Value = 50
+        Name = DissolveEmissiveAmount
+        Group = None
+    }
+    CollectedScalarParameters[2] = { Value=0, Name=DissolveAmount, Group=None }
+    CollectedScalarParameters[3] = { Value=1, Name=CorruptionGlowAmount, Group=None }
+    CollectedScalarParameters[4] = { Value=1, Name=DissolveTile, Group=None }
+    CollectedScalarParameters[5] = { Value=2, Name=Fringe, Group=None }
+}
+CollectedVectorParameters[2] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=1.5, G=0.780818, B=0.373253, A=0 }
+        Name = InnerGlow
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0, G=0.5, B=1, A=0 }
+        Name = GlowColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[0] = {}

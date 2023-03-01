@@ -152,3 +152,8 @@ void CGameObject::Set_Position(_float4& vPosition)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));
 }
+
+void CGameObject::Set_Position(_float3& vPosition)
+{	
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSetW(vPosition, 1.f));
+}

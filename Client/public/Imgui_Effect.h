@@ -19,25 +19,35 @@ public:
 	// "Layer_Effect" => ListBox
 	class CGameObject*	LayerEffects_ListBox(OUT char**& pObjectTag, OUT _uint& iLayerSize, OUT char*& pSelectObjectTag,
 								const char* pLabelTag, _int& iSelectObject, TAGTYPE eTag);
-	void	LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveChildSize, OUT char*& pSelectObjectTag, _int& iSelectObject, class CEffect_Base* pEffect);
+	void				LayerChild_ListBox(OUT char**& pObjectTag, OUT _uint& iHaveChildSize, OUT char*& pSelectObjectTag, const char* pLabelTag, _int& iSelectObject, CEffect_Base* pEffect, vector<CEffect_Base*>* pChild, TAGTYPE eTag);
 
 	// Color // 
 	_float4	Set_ColorValue();
 
 	// MovePosition_Rect // 
 	void	Set_OptionWindow_Rect(class CEffect_Base* pEffect);
-	void	Set_OptionWindow_Particle(class CEffect_Base* pEffect);
+	void	Set_OptionWindow_Particle(_int& iCreateCnt, class CEffect_Base* pEffect);
 
 	// Child Setting //
 	void	Set_Child(class CEffect_Base* pEffect);
+
+	// Trail Setting //
+	void	Set_Trail(class CEffect_Base* pEffect);
+
+	// FreeMoving Setting //
+	void	Set_FreePos(class CEffect_Base* pEffect);
 
 	void	TransformView(_int iSelectObject, class CEffect_Base* pEffect);
 	void	TransformView_child(_int iSelectObject, class CEffect_Base* pEffect);
 
 public:
 	void	CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject);
-	void	CreateEffect_Particle(_int& iCurSelect, _int& iSelectObject);
+	void	CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _int& iSelectObject);
 	void	CreateEffect_Mesh(_int iSelectObject);
+
+public:
+	void	Show_ChildWindow(class CEffect_Base* pEffect);
+	void	Show_TrailWindow(class CEffect_Base* pEffect);
 
 private:
 	CEffect_Base::EFFECTDESC m_eEffectDesc;
