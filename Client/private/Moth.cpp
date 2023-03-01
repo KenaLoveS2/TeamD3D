@@ -77,7 +77,18 @@ HRESULT CMoth::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+
+		if(i == 0)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_NormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SEPARATE_AO_R_M_E);
+		}
+		else
+		{
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT);
+		}
 	}
 	return S_OK;
 }
@@ -157,10 +168,19 @@ HRESULT CMoth::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Moth", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
+	//0 : body
+	//1 : wing
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Moth/T_MothBody_AOmoth.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Moth/T_MothBody_Emissive.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ROUGHNESS, TEXT("../Bin/Resources/Anim/Enemy/Moth/T_MothBody_Roughness.png")), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_MASK, TEXT("../Bin/Resources/Anim/Enemy/Moth/T_MothWing_Mask.png")), E_FAIL);
+	
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 
