@@ -94,8 +94,12 @@ void CModel::Set_PlayTime(_double dPlayTime)
 	m_Animations[m_iCurrentAnimIndex]->Set_PlayTime(dPlayTime);
 }
 
-HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
+HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix,
+	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath)
 {
+	if (JsonMatrialPath == nullptr)
+		JsonMatrialPath = "NULL";
+
 	m_bIsInstancing = bIsInstancing;			/* 현재 모델이 인스턴싱인가?*/
 	m_bIsLodModel = bIsLod;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
@@ -111,35 +115,67 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		if (hFile == INVALID_HANDLE_VALUE) return E_FAIL;
 
 		_uint iMaterialIndex = 0;
-
 		_ulong dwByte = 0;
 		ReadFile(hFile, &m_eType, sizeof(m_eType), &dwByte, nullptr);
-
 		ReadFile(hFile, &m_iNumMaterials, sizeof(_uint), &dwByte, nullptr);
-		for (_uint i = 0; i < m_iNumMaterials; i++)
+		if (!strcmp(JsonMatrialPath, "NULL") )
 		{
-			MODELMATERIAL ModelMatrial;
-			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
+			for (_uint i = 0; i < m_iNumMaterials; i++)
 			{
-				_bool bUseFlag = false;
-				ReadFile(hFile, &bUseFlag, sizeof(_bool), &dwByte, nullptr);
-				if (bUseFlag)
+				MODELMATERIAL ModelMatrial;
+				for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 				{
-					_uint iLen = 0;
-					ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
-					_tchar szPath[MAX_PATH] = { 0, };
-					ReadFile(hFile, szPath, (iLen + 1) * sizeof(_tchar), &dwByte, nullptr);
-					_uint iNumTextures = 0;
-					ReadFile(hFile, &iNumTextures, sizeof(_uint), &dwByte, nullptr);
-
-					ModelMatrial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, szPath, iNumTextures);
+					_bool bUseFlag = false;
+					ReadFile(hFile, &bUseFlag, sizeof(_bool), &dwByte, nullptr);
+					if (bUseFlag)
+					{
+						_uint iLen = 0;
+						ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
+						_tchar szPath[MAX_PATH] = { 0, };
+						ReadFile(hFile, szPath, (iLen + 1) * sizeof(_tchar), &dwByte, nullptr);
+						_uint iNumTextures = 0;
+						ReadFile(hFile, &iNumTextures, sizeof(_uint), &dwByte, nullptr);
+						ModelMatrial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, szPath, iNumTextures);
+					}
+					else
+						ModelMatrial.pTexture[j] = nullptr;
 				}
-				else
-					ModelMatrial.pTexture[j] = nullptr;
-			}
 
-			iMaterialIndex++;
-			m_Materials.push_back(ModelMatrial);
+				iMaterialIndex++;
+				m_Materials.push_back(ModelMatrial);			//  MODELMATERIAL  1개는 18개의 텍스쳐를 생성가능하다.
+																// 결국에 여기를 손봐야한다.
+			}
+		}
+		else
+		{
+			  CUtile::MODELMATERIAL_Create(m_pDevice, m_pContext, JsonMatrialPath, m_Materials);
+		
+			for (_uint i = 0; i < m_iNumMaterials; i++)
+			{
+				// 여기서 json 로드하기
+			
+				for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
+				{
+					_bool bUseFlag = false;
+					ReadFile(hFile, &bUseFlag, sizeof(_bool), &dwByte, nullptr);
+					if (bUseFlag)
+					{
+						_uint iLen = 0;
+						ReadFile(hFile, &iLen, sizeof(_uint), &dwByte, nullptr);
+						_tchar szPath[MAX_PATH] = { 0, };
+						ReadFile(hFile, szPath, (iLen + 1) * sizeof(_tchar), &dwByte, nullptr);
+						_uint iNumTextures = 0;
+						ReadFile(hFile, &iNumTextures, sizeof(_uint), &dwByte, nullptr);
+					}
+					else
+						continue;
+				}
+				iMaterialIndex++;
+			}
+		
+
+				// 결국에 여기를 손봐야한다.
+			
 		}
 
 		ReadFile(hFile, &m_iNumBones, sizeof(_uint), &dwByte, nullptr);
@@ -226,7 +262,7 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 #ifdef _DEBUG
 	/*For.Imgui*/
 
-	m_pInstanceTransform =static_cast<CTransform*>(CGameInstance::GetInstance()->
+	m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 		Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
 
 #endif // _DEBUG
@@ -558,7 +594,7 @@ void CModel::Imgui_RenderProperty()
 			ImGui::BulletText("Event");
 			pAnimation->ImGui_RenderEvents(iSelectEvent);
 		}
-		
+
 		if (bSearchMode == true)
 		{
 			for (_uint i = 0; i < iSearchedCount; ++i)
@@ -575,7 +611,7 @@ void CModel::Imgui_RenderProperty()
 
 	if (m_bIsInstancing == true)
 	{
-		
+
 
 		for (auto &pInstanceMesh : m_InstancingMeshes)
 		{
@@ -647,7 +683,7 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 		return;
 
 	size_t InputVecSize = InstanceMatrixVec.size();
-	
+
 	for (size_t i = 0; i < InputVecSize; ++i)
 	{
 		_float4x4* NewMatrix = new _float4x4;
@@ -961,7 +997,7 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName, _uint iPassIndex)
 {
 	/*For.Instancing*/
-	if (true == m_bIsInstancing && nullptr != m_InstancingMeshes[iMeshIndex])	 
+	if (true == m_bIsInstancing && nullptr != m_InstancingMeshes[iMeshIndex])
 	{
 		if (nullptr != pBoneConstantName)
 		{
@@ -973,7 +1009,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 		m_InstancingMeshes[iMeshIndex]->Render();
 	}
 	/*For.Origin*/
-	else  if (false == m_bIsInstancing	&& nullptr != m_Meshes[iMeshIndex])                               
+	else  if (false == m_bIsInstancing	&& nullptr != m_Meshes[iMeshIndex])
 	{
 		if (nullptr != pBoneConstantName)
 		{
@@ -999,7 +1035,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 	/* Meshes */
 	ReadFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
 	/*For. Instancing*/
-	if (true == m_bIsInstancing)			
+	if (true == m_bIsInstancing)
 	{
 		m_InstancingMeshes.reserve(m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -1011,7 +1047,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		}
 	}
 	/*For. Origin*/
-	else                                     
+	else
 	{
 		m_Meshes.reserve(m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -1025,7 +1061,7 @@ HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 		}
 	}
 
-	/* Materials */
+	/* Materials	 여기를 손봐야한다.		*/
 	ReadFile(hFile, &m_iNumMaterials, sizeof(_uint), &dwByte, nullptr);
 	m_Materials.reserve(m_iNumMaterials);
 
@@ -1131,10 +1167,11 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing)
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath,
+	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing, JsonMatrial)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
@@ -1242,7 +1279,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 		XMStoreFloat4x4(Temp, XMMatrixIdentity());
 
 		m_pInstancingMatrix.push_back(Temp);
-		
+
 		for (auto& pInstMesh : m_InstancingMeshes)
 			pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 	}
@@ -1268,13 +1305,13 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 				++iDeleteIndex;
 			}
 		}
-			
+
 	}
 
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
-	
-	_matrix ParentMulChild, InvParentMulChild,ResultMatrix;
+
+	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
 
@@ -1286,7 +1323,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 
 	ResultMatrix *= InvParentMulChild;
 	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
-	
+
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 }
