@@ -3,41 +3,56 @@
 
 BEGIN(Client)
 
-class CMoth : public CMonster
+class CRotEater : public CMonster
 {
 private:
 	enum ANIMATION
 	{
+		APPEAR,
+		ATTACK_LONGRANGE,
+		AWAKE,
+		AWAKEALT,
 		BIND,
-		BOMB, // 피격
-		BOMB_LANDED, // 피격
-		COMBATIDLE,
-		DEATHSIM,
-		DODGE_L,
-		DODGE_R,
-		DODGE_BACK,
-		DODGE_DOWN,
-		DODGE_UP,
-		MELEEATTACK,
-		MELEEATTACK_RETURN,
-		MOVEDOWN,
-		PARRY,
-		RANGEDATTACK,
-		TAKEDAMAGE,
-		TAUNT1,
-		TAUNT2,
-		TWITCH, // ADDITIVE
-		WAKEUPLOOP,
-		WALK,
-		WISPIN,
+		DEATH,
+		DEATH3,
+		EAT_INTO,
+		FATSWIPE,
+		HEAVYSTAGGER_FRONT,
+		IDLE,
+		IDLE_ADDITIVE,//ADDITIVE
+		JUMPATTACK, // 밑이랑 같음
+		JUMPATTACK1,
+		JUMPBACK, // 회피기 느낌
+		LOOK_LEFT,
+		LOOK_RIGHT,
+		LOOK_UP,
+		MAMA_STAGGER, // 포효
+		PUKE, // 포효
+		RUN,
+		RUNLEFT,
+		RUNRIGHT,
+		STTAGER_BACK,
+		STTAGER_FRONT,
+		STTAGER_LEFT,
+		STTAGER_RIGHT,
+		STAGGERLIGHT_LEFT, //약하게 맞았을때
+		STAGGERLIGHT_RIGHT,
+		SWIPE,
+		TAKEDAMAGE, //ADDITIVE
+		TAUNT,
+		TAUNTHOP,
+		TURN180,
+		TURN90_L,
+		TURN90_R,
+		WALKBACKWARDS,
 		WISPOUT,
 		ANIMATION_END
 	};
 
 private:
-	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMoth(const CMoth& rhs);
-	virtual ~CMoth() = default;
+	CRotEater(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CRotEater(const CRotEater& rhs);
+	virtual ~CRotEater() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -59,9 +74,9 @@ protected:
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
 public:
-	static CMoth*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
-	virtual void					Free() override;
+	static CRotEater*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*			Clone(void* pArg = nullptr)  override;
+	virtual void							Free() override;
 };
 
 END

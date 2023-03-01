@@ -190,6 +190,15 @@
     <Filter Include="02.GameObjects\Monster\RotEater">
       <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Sticks01">
+      <UniqueIdentifier>{9b3c719a-1aa8-4fce-9b69-e04e73c1811c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\VillageGuard">
+      <UniqueIdentifier>{a83df55b-a898-4520-a0de-875ff51deadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\WoodKnight">
+      <UniqueIdentifier>{be0fd327-62ba-4bdd-8310-6fbd06685833}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -444,8 +453,17 @@
     <ClInclude Include="..\public\RockGolem.h">
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClInclude>
-    <ClInclude Include="RotEater.h">
+    <ClInclude Include="..\public\RotEater.h">
       <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sticks01.h">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VillageGuard.h">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WoodKnight.h">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -680,8 +698,17 @@
     <ClCompile Include="..\private\RockGolem.cpp">
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClCompile>
-    <ClCompile Include="RotEater.cpp">
+    <ClCompile Include="..\private\RotEater.cpp">
       <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sticks01.cpp">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VillageGuard.cpp">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WoodKnight.cpp">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

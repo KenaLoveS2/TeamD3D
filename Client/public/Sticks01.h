@@ -3,41 +3,51 @@
 
 BEGIN(Client)
 
-class CMoth : public CMonster
+class CSticks01 : public CMonster
 {
 private:
 	enum ANIMATION
 	{
+		ATTACK,
+		ATTACK2,
 		BIND,
-		BOMB, // 피격
-		BOMB_LANDED, // 피격
+		CHARGE, // 달려가기
+		CHARGEATTACK, // 달려가서 때리기 섞여있음
 		COMBATIDLE,
-		DEATHSIM,
-		DODGE_L,
-		DODGE_R,
-		DODGE_BACK,
-		DODGE_DOWN,
-		DODGE_UP,
-		MELEEATTACK,
-		MELEEATTACK_RETURN,
-		MOVEDOWN,
-		PARRY,
-		RANGEDATTACK,
-		TAKEDAMAGE,
-		TAUNT1,
-		TAUNT2,
-		TWITCH, // ADDITIVE
-		WAKEUPLOOP,
+		COMBOATTACK,
+		DEATH,
+		IDLESITTING,
+		INTOCHARGE, //CHARGE 모션 들어가기 전 상태
+		JUMPATTACK,
+		JUMPBACK,
+		JUMPLEFT,
+		JUMPRIGHT,
+		PARRIED,
+		PATROLIDLE,
+		RECEIVEBOMB,
+		RESURRECT, // 땅에서 올라옴
+		ROCKTHROW,
+		STRAFELEFT,
+		STRAFERIGHT,
+		TAKEDAMAGEBIG,
+		TAKEDAMAGEL,
+		TAKEDAMAGER,
+		TWITCH_B, //ADDITIVE
+		TWITCH_F, //ADDITIVE
+		TWITCH_L, //ADDITIVE
+		TWITCH_R, //ADDITIVE
 		WALK,
-		WISPIN,
-		WISPOUT,
+		WALKBACKWARD,
+		CHEER,
+		PATROLWALK,
+		TAKEDAMAGEB,
 		ANIMATION_END
 	};
 
 private:
-	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMoth(const CMoth& rhs);
-	virtual ~CMoth() = default;
+	CSticks01(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CSticks01(const CSticks01& rhs);
+	virtual ~CSticks01() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -59,9 +69,9 @@ protected:
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
 public:
-	static CMoth*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
-	virtual void					Free() override;
+	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
+	virtual void						Free() override;
 };
 
 END

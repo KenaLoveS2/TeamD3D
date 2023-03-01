@@ -36,6 +36,8 @@ HRESULT CMoth::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
+	m_pModelCom->Set_AllAnimCommonType();
+
 	return S_OK;
 }
 

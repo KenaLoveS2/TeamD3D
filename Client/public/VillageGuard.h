@@ -3,41 +3,65 @@
 
 BEGIN(Client)
 
-class CMoth : public CMonster
+class CVillageGuard : public CMonster
 {
 private:
 	enum ANIMATION
 	{
+		BACKWARDSUMMERSAULT,
 		BIND,
-		BOMB, // 피격
-		BOMB_LANDED, // 피격
-		COMBATIDLE,
-		DEATHSIM,
-		DODGE_L,
-		DODGE_R,
-		DODGE_BACK,
-		DODGE_DOWN,
-		DODGE_UP,
-		MELEEATTACK,
-		MELEEATTACK_RETURN,
-		MOVEDOWN,
-		PARRY,
-		RANGEDATTACK,
-		TAKEDAMAGE,
+		BLOCK_ATTACK, // 막고 때리기
+		BLOCK_EXIT,
+		BLOCK_HIT,
+		BLOCK_INTO,
+		BLOCK_LOOP,
+		BLOCK_STAGGER,
+		BLOCKROLL_R,
+		DASHATTACK,
+		DEATH,
+		HEAVYSTAGGER_B,
+		HEAVYSTAGGER_F,
+		IDLE,
+		IDLEADDITIVE, // ADDITIVE
+		JUMPATTACK,
+		JUMPBACK,
+		LOOKDOWN,
+		LOOKLEFT,
+		LOOKRIGHT,
+		LOOKUP,
+		PARRIED,
+		ROLL_F,
+		ROLL_L,
+		ROLL_R,
+		ROLLATTACK,
+		RUN,
+		SCATTERBOMB,
+		STAGGER_L,
+		STAGGER_R,
+		STRAFE_L,
+		STRAFE_R,
 		TAUNT1,
 		TAUNT2,
-		TWITCH, // ADDITIVE
-		WAKEUPLOOP,
+		TURN_180,
+		TURN_L,
+		TURN_R,
+		TWITCH,
+		TWITCH_L,
+		TWITCH_R,
 		WALK,
+		WALKBACKWARDS,
+		WALLJUMP_ATTACK,
+		WALLJUMP_INTO_R,
+		WALLJUMP_INTO_L,
+		WALLJUMP_ATTACK_L,
 		WISPIN,
-		WISPOUT,
 		ANIMATION_END
 	};
 
 private:
-	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMoth(const CMoth& rhs);
-	virtual ~CMoth() = default;
+	CVillageGuard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CVillageGuard(const CVillageGuard& rhs);
+	virtual ~CVillageGuard() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -59,9 +83,9 @@ protected:
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
 public:
-	static CMoth*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
-	virtual void					Free() override;
+	static CVillageGuard*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
+	virtual void								Free() override;
 };
 
 END

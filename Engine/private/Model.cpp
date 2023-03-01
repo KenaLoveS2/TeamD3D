@@ -911,6 +911,18 @@ void CModel::Call_Event(const string & strFuncName)
 	m_pOwner->Call_EventFunction(strFuncName);
 }
 
+void CModel::Set_AllAnimCommonType()
+{
+	if (m_Animations.empty())
+		return;
+
+	for(auto& pAnim : m_Animations)
+	{
+		if (pAnim != nullptr)
+			pAnim->Set_AnimationType(CAnimation::ANIMTYPE_COMMON);
+	}
+}
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)

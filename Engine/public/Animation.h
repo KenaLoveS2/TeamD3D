@@ -28,6 +28,7 @@ public:
 	_double&						Get_AnimationTickPerSecond() { return m_TickPerSecond; }
 	const char*					Get_Name() const { return m_szName; }
 	_float&							Get_BlendDuration() { return m_fBlendDuration; }
+	void								Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
 	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
 	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
 	void								Set_PlayTime(_double dPlayTime);

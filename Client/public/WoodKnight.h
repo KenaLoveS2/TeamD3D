@@ -3,40 +3,63 @@
 
 BEGIN(Client)
 
-class CRockGolem : public CMonster
+class CWoodKnight : public CMonster
 {
 private:
 	enum ANIMATION
 	{
-		BIND, 
+		ATTACK90_L,
+		ATTACK90_R,
+		ALERT,
+		ATTACK180,
+		BIND,
+		BLOCK_COUNTERATTACK,
+		BLOCK_EXIT,
+		BLOCK_INTO,
+		BLOCK_LOOP,
+		BLOCKATTACK_180,
 		CHARGEATTACK,
-		CHARGESLAM, // 잘작동이 안되는것같음
-		DEPTH,
-		EXPLODE,
+		COMBOATTACK_LUNGE,
+		COMBOATTACK_OVERHEAD,
+		DEATH,
+		DOUBLEATTACK,
+		HITDEFLECT,
 		IDLE,
-		IDLE_ADDITIVE,
-		INTOSLEEP,
-		LOOK_DOWN,	//ADDITIVE
-		LOOK_LEFT,		//ADDITIVE
-		LOOK_RIGHT,	//ADDITIVE
-		LOOK_UP,			//ADDITIVE
-		SLEEPIDLE,
-		TAKEDAMAGE,
-		TAUNT1,
-		TAUNT2,
+		IDLE_ADDITIVE, // ADDITIVE
+		INTOCHARGE,
+		INTOCHARGE_BACKUP,
+		JUMPBACK,
+		LOOK_DOWN,
+		LOOK_LEFT,
+		LOOK_RIGHT,
+		LOOK_UP,
+		OVERHEADSLAMATTACK,
+		PUSHBACK,
+		RANGEDATTACK,
+		RUN,
+		RUN_ROOTMOTION,
+		SLEEP,
+		STAGGER_ALT,
+		STAGGER_B,
+		STAGGER_L,
+		STAGGER_R,
+		STRAFE_L,
+		STRAFE_R,
+		TAKEDAMAGE, //ADDITIVE
+		TAUNT,
 		TURN_180,
-		TURN_90L,
-		TURN_90R,
+		TURNL_90,
+		TURNR_90,
+		UPPERCUTATTACK,
 		WALK,
-		WISPIN,
-		WISPOUT,
+		WALKBACKWARDS,
 		ANIMATION_END
 	};
 
 private:
-	CRockGolem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CRockGolem(const CRockGolem& rhs);
-	virtual ~CRockGolem() = default;
+	CWoodKnight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CWoodKnight(const CWoodKnight& rhs);
+	virtual ~CWoodKnight() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -58,9 +81,9 @@ protected:
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
 public:
-	static CRockGolem*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*			Clone(void* pArg = nullptr)  override;
-	virtual void							Free() override;
+	static CWoodKnight*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
+	virtual void								Free() override;
 };
 
 END
