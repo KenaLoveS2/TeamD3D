@@ -633,6 +633,9 @@ HRESULT CRenderer::Render_DebugObject()
 
 	m_DebugObject.clear();
 
+	if (m_bPhysXRenderFlag)
+		CPhysX_Manager::GetInstance()->Render();
+	
 	return S_OK;	
 }
 #endif
