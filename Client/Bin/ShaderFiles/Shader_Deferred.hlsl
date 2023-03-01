@@ -141,14 +141,13 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
 	// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
-
 	//float3		Lo = (float3)0.f;
 	//float3		P = vWorldPos.xyz;
 	//float3		V = normalize(vLook.xyz);
-	//float3       N = normalize(vNormal.xyz);
-	//float			fAO = vAmbientDesc.r;
-	//float			fRoughness = vAmbientDesc.g;
-	//float			fMetalic = vAmbientDesc.b;
+	//float3     N = normalize(vNormal.xyz);
+	//float		fAO = vAmbientDesc.r;
+	//float		fRoughness = vAmbientDesc.g;
+	//float		fMetalic = vAmbientDesc.b;
 	//float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
 	//float3 LightColor = g_vLightDiffuse.rgb;
 	//LightColor *= min(174.25f / 255.f, length(LightColor));
