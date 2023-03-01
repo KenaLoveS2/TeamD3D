@@ -36,6 +36,8 @@ public:
 	static _float3 ConvertPosition_PxToD3D(PxVec3& vPxPosition);
 	static PxVec3 ConvertPosition_D3DToPx(_float3& vD3dPosition);
 
+	static PxMat44 ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix);
+	static _float4x4 ConvertMatrix_PxToD3D(PxMat44 PxMatrix);
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

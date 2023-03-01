@@ -193,3 +193,59 @@ PxVec3 CUtile::ConvertPosition_D3DToPx(_float3& vD3dPosition)
 
 	return PxPos;
 }
+
+PxMat44 CUtile::ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix)
+{
+	PxMat44 PxMatrix;
+
+	PxMatrix[0][0] = D3dXMatrix._11;
+	PxMatrix[0][1] = D3dXMatrix._12;
+	PxMatrix[0][2] = -D3dXMatrix._13;
+	PxMatrix[0][3] = D3dXMatrix._14;
+
+	PxMatrix[1][0] = D3dXMatrix._21;
+	PxMatrix[1][1] = D3dXMatrix._22;
+	PxMatrix[1][2] = -D3dXMatrix._23;
+	PxMatrix[1][3] = D3dXMatrix._24;
+
+	PxMatrix[2][0] = -D3dXMatrix._31;
+	PxMatrix[2][1] = -D3dXMatrix._32;
+	PxMatrix[2][2] = D3dXMatrix._33;
+	PxMatrix[2][3] = -D3dXMatrix._34;
+
+	PxMatrix[3][0] = D3dXMatrix._41;
+	PxMatrix[3][1] = D3dXMatrix._42;
+	PxMatrix[3][2] = -D3dXMatrix._43;
+	PxMatrix[3][3] = D3dXMatrix._44;
+
+	return PxMatrix;
+}
+
+_float4x4 CUtile::ConvertMatrix_PxToD3D(PxMat44 PxMatrix)
+{	
+	// Convert the matrix from right-handed to left-handed coordinates
+	_float4x4 D3dXMatrix;
+	D3dXMatrix._11 = PxMatrix[0][0];
+	D3dXMatrix._12 = PxMatrix[0][1];
+	D3dXMatrix._13 = -PxMatrix[0][2];
+	D3dXMatrix._14 = PxMatrix[0][3];
+
+	D3dXMatrix._21 = PxMatrix[1][0];
+	D3dXMatrix._22 = PxMatrix[1][1];
+	D3dXMatrix._23 = -PxMatrix[1][2];
+	D3dXMatrix._24 = PxMatrix[1][3];
+
+	D3dXMatrix._31 = -PxMatrix[2][0];
+	D3dXMatrix._32 = -PxMatrix[2][1];
+	D3dXMatrix._33 = PxMatrix[2][2];
+	D3dXMatrix._34 = -PxMatrix[2][3];
+
+	D3dXMatrix._41 = PxMatrix[3][0];
+	D3dXMatrix._42 = PxMatrix[3][1];
+	D3dXMatrix._43 = -PxMatrix[3][2];
+	D3dXMatrix._44 = PxMatrix[3][3];
+
+	return D3dXMatrix;
+}
+
+

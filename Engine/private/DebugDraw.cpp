@@ -278,3 +278,17 @@ void XM_CALLCONV DX::DrawTriangle(PrimitiveBatch<VertexPositionColor>* batch,
 }
 
 
+void XM_CALLCONV DX::DrawLine(PrimitiveBatch<VertexPositionColor>* batch,
+	FXMVECTOR pointA, FXMVECTOR pointB, FXMVECTOR color)
+{
+	VertexPositionColor verts[2];
+	XMStoreFloat3(&verts[0].position, pointA);
+	XMStoreFloat3(&verts[1].position, pointB);
+
+	for (size_t j = 0; j < 2; ++j)
+	{
+		XMStoreFloat4(&verts[j].color, color);
+	}
+
+	batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, verts, 2);
+}

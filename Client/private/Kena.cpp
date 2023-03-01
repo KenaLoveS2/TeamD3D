@@ -71,7 +71,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxBoxDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	// m_pTransformCom->Connect_PxActor(TEXT("TEST"));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
 	*/
 	/*
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
@@ -85,9 +85,8 @@ HRESULT CKena::Initialize(void * pArg)
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	*/
-	/*
+	*/	
+	
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
@@ -100,15 +99,18 @@ HRESULT CKena::Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+		
+
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	*/
+	m_pRendererCom->Set_PhysXRender(true);
+
 	return S_OK;
 }
 
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
+		
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 
