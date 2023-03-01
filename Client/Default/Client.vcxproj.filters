@@ -55,15 +55,6 @@
     <Filter Include="02.GameObjects\Effect">
       <UniqueIdentifier>{5b189f8f-a055-4bd7-ab58-9ab1e12c2df5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Rect_Instance">
-      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Point_Instance">
-      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Effect">
-      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96.StringManager">
       <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
     </Filter>
@@ -178,8 +169,50 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Trail">
+    <Filter Include="02.GameObjects\Effect\Mesh">
+      <UniqueIdentifier>{b5613899-59c1-4221-a4bf-b1aa49f9c356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Texture">
+      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Texture\Point_Instance">
+      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Texture\Rect_Instance">
+      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Texture\Trail">
       <UniqueIdentifier>{5930dbbd-ae58-49f1-8234-88fa722084d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Moth">
+      <UniqueIdentifier>{31ec9960-8b7f-48e4-968c-c8c56244a2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RockGolem">
+      <UniqueIdentifier>{e9cdc3ca-fe1f-4457-bfe8-4e231662a7f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RotEater">
+      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Sticks01">
+      <UniqueIdentifier>{9b3c719a-1aa8-4fce-9b69-e04e73c1811c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\VillageGuard">
+      <UniqueIdentifier>{a83df55b-a898-4520-a0de-875ff51deadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\WoodKnight">
+      <UniqueIdentifier>{be0fd327-62ba-4bdd-8310-6fbd06685833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{d439ed35-6deb-490f-ba56-35a03c5707cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{9b30704f-f9cb-4313-ace5-0e71abdbe4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{424b2212-7764-426a-8f8f-66185f823006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -235,13 +268,13 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Point_Instancing.h">
-      <Filter>02.GameObjects\Effect\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Point_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Rect_Instancing.h">
-      <Filter>02.GameObjects\Effect\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Rect_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect.h">
-      <Filter>02.GameObjects\Effect\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Texture</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasHUD.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
@@ -336,9 +369,6 @@
     <ClInclude Include="..\public\UI_CanvasAmmo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAmmoArrowCnt.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClInclude>
@@ -409,22 +439,46 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Trail.h">
-      <Filter>02.GameObjects\Effect\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeAimLine.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_CanvasAim.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Event_Transform.h">
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Moth.h">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RockGolem.h">
+      <Filter>02.GameObjects\Monster\RockGolem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotEater.h">
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sticks01.h">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VillageGuard.h">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WoodKnight.h">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_NodeAimArrow.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeAimBomb.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh.h">
+      <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -462,13 +516,13 @@
       <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Point_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Rect_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
-      <Filter>02.GameObjects\Effect\Effect</Filter>
+      <Filter>02.GameObjects\Effect\Texture</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasHUD.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
@@ -560,9 +614,6 @@
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeAmmoArrowCnt.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
     </ClCompile>
@@ -633,22 +684,46 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Trail.cpp">
-      <Filter>02.GameObjects\Effect\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasAim.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
       <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Moth.cpp">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RockGolem.cpp">
+      <Filter>02.GameObjects\Monster\RockGolem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotEater.cpp">
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sticks01.cpp">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VillageGuard.cpp">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WoodKnight.cpp">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeAimLine.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh.cpp">
+      <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,6 +781,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

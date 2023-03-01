@@ -74,7 +74,6 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 void CUI_NodeEffect::Tick(_float fTimeDelta)
 {
-	 m_bActive = true;
 	if (!m_bActive)
 		return;
 

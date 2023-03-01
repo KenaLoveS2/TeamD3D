@@ -1,0 +1,46 @@
+{
+  "0_MeshNum": 2,
+  "1_First": [
+    {
+      "0_None_path": "",
+      "10_HAIR_DEPTH_Path": "",
+      "11_ALPHA_path": "",
+      "12_HAIR_ROOT_path": "",
+      "13_COMP_MSK_CURV_path": "",
+      "14_COMP_H_R_AO_path": "",
+      "15_COMP_E_R_AO_path": "",
+      "16_ROUGHNESS_path": "",
+      "17_AMBIENT_OCCLUSION_path": "",
+      "1_DIFFUSE_path": "",
+      "2_SPECULAR_path": "",
+      "3_AMBIENT_path": "",
+      "4_EMISSIVE_path": "",
+      "5_EMISSIVEMASK_path": "",
+      "6_NORMALS_path": "",
+      "7_MASK_path": "",
+      "8_SSS_MASK_path": "",
+      "9_SPRINT_EMISSIVE_path": ""
+    }
+  ],
+  "2_Second": [
+    {
+      "0_None_path": "",
+      "10_HAIR_DEPTH_Path": "",
+      "11_ALPHA_path": "",
+      "12_HAIR_ROOT_path": "",
+      "13_COMP_MSK_CURV_path": "",
+      "14_COMP_H_R_AO_path": "",
+      "15_COMP_E_R_AO_path": "",
+      "16_ROUGHNESS_path": "",
+      "17_AMBIENT_OCCLUSION_path": "",
+      "1_DIFFUSE_path": "",
+      "2_SPECULAR_path": "",
+      "3_AMBIENT_path": "",
+      "4_EMISSIVE_path": "",
+      "5_EMISSIVEMASK_path": "",
+      "6_NORMALS_path": "",
+      "7_MASK_path": "",
+      "8_SSS_MASK_path": "",
+      "9_SPRINT_EMISSIVE_path": ""
+    }
+  ]}

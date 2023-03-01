@@ -11,6 +11,8 @@ CUI_Node::CUI_Node(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 CUI_Node::CUI_Node(const CUI_Node & rhs)
 	: CUI(rhs)
+	,m_fIntervalX(0.f)
+	,m_fIntervalY(0.f)
 {
 }
 
@@ -235,6 +237,23 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	return S_OK;
+}
+
+void CUI_Node::ReArrangeX(_int iIndex, _int iTotal, _float fCenterX)
+{
+	_float fNewX = m_fIntervalX * iIndex - m_fIntervalX * (iTotal - 1) * 0.5f + fCenterX;
+	m_matLocal._41 = fNewX;
+}
+
+void CUI_Node::ReArrangeX_Reverse(_int iIndex, _int iTotal, _float fCenterX)
+{
+	_float fNewX = -m_fIntervalX * iIndex + m_fIntervalX * (iTotal - 1) * 0.5f + fCenterX;
+	m_matLocal._41 = fNewX;
+}
+
+void CUI_Node::ReArrangeX()
+{
+	m_matLocal._41 += m_fIntervalX;
 }
 
 void CUI_Node::Free()

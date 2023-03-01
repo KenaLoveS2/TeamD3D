@@ -35,10 +35,8 @@ HRESULT CUI_NodeAimArrow::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
-
 	m_bSetInitialRatio = false;
+	m_fIntervalX = 18.f;
 
 	return S_OK;
 }
@@ -131,6 +129,10 @@ HRESULT CUI_NodeAimArrow::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
+		return E_FAIL;
+
+	int iCheck = (int)m_eState;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_iCheck", &iCheck, sizeof(int))))
 		return E_FAIL;
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)

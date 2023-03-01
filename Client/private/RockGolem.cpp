@@ -2,8 +2,6 @@
 #include "..\public\RockGolem.h"
 #include "GameInstance.h"
 
-#include <Model.h>
-
 CRockGolem::CRockGolem(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -38,18 +36,20 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = TEXT("ROCKGOLEM");
-	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
-	PxSphereDesc.fRadius = 0.8f;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 10.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
+	//CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	//PxSphereDesc.eType = SPHERE_DYNAMIC;
+	//PxSphereDesc.pActortag = TEXT("ROCKGOLEM");
+	//PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
+	//PxSphereDesc.fRadius = 0.8f;
+	//PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	//PxSphereDesc.fDensity = 10.f;
+	//PxSphereDesc.fAngularDamping = 0.5f;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	//CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
+	//m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
+	//CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
+
+	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
 }
@@ -57,8 +57,6 @@ HRESULT CRockGolem::Initialize(void* pArg)
 void CRockGolem::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	//m_pStateMachine->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -128,7 +126,7 @@ void CRockGolem::ImGui_AnimationProperty()
 
 	if (ImGui::BeginTabItem("State"))
 	{
-		//m_pStateMachine->Imgui_RenderProperty();
+		m_pFSM->Imgui_RenderProperty();
 		ImGui::EndTabItem();
 	}
 
@@ -150,6 +148,21 @@ HRESULT CRockGolem::Call_EventFunction(const string& strFuncName)
 void CRockGolem::Push_EventFunctions()
 {
 	CMonster::Push_EventFunctions();
+}
+
+HRESULT CRockGolem::SetUp_State()
+{
+	m_pFSM = CFSMComponentBuilder()
+	.InitState("IDLE")
+	.AddState("IDLE")
+	.Tick([this](_float fTimeDelta) 
+	{
+		// eType ÀÌ Common ÀÌ¸é ½ÇÇàµÊ
+		m_pModelCom->Set_AnimIndex(IDLE);
+	})
+		.Build();
+
+	return S_OK;
 }
 
 HRESULT CRockGolem::SetUp_Components()
@@ -174,8 +187,6 @@ HRESULT CRockGolem::SetUp_Components()
 	NaviDesc.iCurrentIndex = 0;
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 
 	return S_OK;
 }

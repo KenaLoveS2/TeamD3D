@@ -19,93 +19,93 @@ CEnviromentObj::CEnviromentObj(const CEnviromentObj & rhs)
 {
 }
 
-void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType Type)
-{
-	assert(this != nullptr && "EnviromentObj::Add_TexturePathl");
-		
-	CModel* pModel =		dynamic_cast<CModel*>(Find_Component(TEXT("Com_Model")));
-	assert(nullptr != pModel && "CEnviromentObj::Add_TexturePath Model NonFind");
-
-	if (WJTextureType_NONE == Type)
-	{
-		MSG_BOX("NONE");
-	}
-	else 	if (WJTextureType_DIFFUSE == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.DIFFUSE_path = TexturePath;
-	}
-	else 	if (WJTextureType_SPECULAR == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.SPECULAR_path = TexturePath;
-	}
-	else 	if (WJTextureType_AMBIENT == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_path = TexturePath;
-	}
-	else 	if (WJTextureType_EMISSIVE == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.EMISSIVE_path = TexturePath;
-	}
-	else 	if (WJTextureType_EMISSIVEMASK == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.EMISSIVEMASK_path = TexturePath;
-	}
-	else 	if (WJTextureType_NORMALS == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.NORMALS_path = TexturePath;
-	}
-	else 	if (WJTextureType_MASK == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.MASK_path = TexturePath;
-	}
-	else 	if (WJTextureType_SSS_MASK == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.SSS_MASK_path = TexturePath;
-	}
-	else 	if (WJTextureType_SPRINT_EMISSIVE == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.SPRINT_EMISSIVE_path = TexturePath;
-	}
-	else 	if (WJTextureType_HAIR_DEPTH == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = TexturePath;
-	}
-	else 	if (WJTextureType_ALPHA == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.HAIR_ALPHA_path = TexturePath;
-	}
-	else 	if (WJTextureType_HAIR_ROOT == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.HAIR_ROOT_path = TexturePath;
-	}
-	else 	if (WJTextureType_COMP_MSK_CURV == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.COMP_MSK_CURV_path = TexturePath;
-	}
-	else 	if (WJTextureType_COMP_H_R_AO == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = TexturePath;
-	}
-	else 	if (WJTextureType_ROUGHNESS == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.METALNESS_path = TexturePath;
-	}
-	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.COMP_AMBIENT_OCCLUSION_path = TexturePath;
-	}
-	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
-	{
-		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_OCCLUSION_path = TexturePath;
-	}
-	else
-		assert(!  " CEnviromentObj::Add_TexturePath Out_Of_Range");
-
-	if (FAILED(Set_UpTexture_FilePathToMaterial(pModel, TexturePath, Type)))
-		assert(!"EnviromentObj::Add_TexturePath");
-
-
-}
+//void CEnviromentObj::Add_TexturePath(const _tchar * TexturePath, aiTextureType Type)
+//{
+//	assert(this != nullptr && "EnviromentObj::Add_TexturePathl");
+//		
+//	CModel* pModel =		dynamic_cast<CModel*>(Find_Component(TEXT("Com_Model")));
+//	assert(nullptr != pModel && "CEnviromentObj::Add_TexturePath Model NonFind");
+//
+//	if (WJTextureType_NONE == Type)
+//	{
+//		MSG_BOX("NONE");
+//	}
+//	else 	if (WJTextureType_DIFFUSE == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.DIFFUSE_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_SPECULAR == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.SPECULAR_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_AMBIENT == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_EMISSIVE == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.EMISSIVE_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_EMISSIVEMASK == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.EMISSIVEMASK_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_NORMALS == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.NORMALS_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_MASK == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.MASK_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_SSS_MASK == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.SSS_MASK_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_SPRINT_EMISSIVE == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.SPRINT_EMISSIVE_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_HAIR_DEPTH == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = TexturePath;
+//	}
+//	else 	if (WJTextureType_ALPHA == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.ALPHA_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_HAIR_ROOT == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.HAIR_ROOT_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_COMP_MSK_CURV == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.COMP_MSK_CURV_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_COMP_H_R_AO == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_ROUGHNESS == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.COMP_E_R_AO_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.ROUGHNESS_path = TexturePath;
+//	}
+//	else 	if (WJTextureType_AMBIENT_OCCLUSION == Type)
+//	{
+//		m_EnviromentDesc.AI_textureFilePaths.AMBIENT_OCCLUSION_path = TexturePath;
+//	}
+//	else
+//		assert(!  " CEnviromentObj::Add_TexturePath Out_Of_Range");
+//
+//	if (FAILED(Set_UpTexture_FilePathToMaterial(pModel, TexturePath, Type)))
+//		assert(!"EnviromentObj::Add_TexturePath");
+//
+//
+//}
 
 HRESULT CEnviromentObj::Initialize_Prototype()
 {
@@ -124,11 +124,11 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 
 		m_EnviromentDesc.szProtoObjTag = Desc->szProtoObjTag;
 		m_EnviromentDesc.szModelTag = Desc->szModelTag;
-		m_EnviromentDesc.szTextureTag = Desc->szTextureTag;
+		//m_EnviromentDesc.szTextureTag = Desc->szTextureTag;
 		m_EnviromentDesc.iRoomIndex = Desc->iRoomIndex;
 		m_EnviromentDesc.eChapterType = Desc->eChapterType;
 		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
-		m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
+		//m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	}

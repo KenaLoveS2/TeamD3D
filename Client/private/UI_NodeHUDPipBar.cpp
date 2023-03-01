@@ -34,8 +34,7 @@ HRESULT CUI_NodeHUDPipBar::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
+	m_fIntervalX = 90.f;
 
 	return S_OK;
 }

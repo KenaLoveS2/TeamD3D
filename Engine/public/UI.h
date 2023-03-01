@@ -40,6 +40,7 @@ public: /* Get */
 
 public: /* Set */
 	void					Set_Parent(CUI* pUI);
+	void					Set_Active(_bool bActive) { m_bActive = bActive;}
 	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
 	void					Set_RenderPass(_uint iPass)			{ m_iRenderPass = iPass; }
 	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
@@ -53,6 +54,7 @@ public: /* Set */
 		m_matLocal._43 = vPos.z;
 	}
 
+
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -63,7 +65,6 @@ public:
 public:
 	HRESULT					Add_Event(CUI_Event* pEvent);
 	HRESULT					Delete_Event();
-public:
 	void					Change_DiffuseTexture(CTexture* pTexture, CTexture** ppOrigin = nullptr);
 
 public:

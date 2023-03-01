@@ -31,6 +31,13 @@ AddressU = clamp;
 AddressV = clamp;
 };
 
+sampler MirrorSampler = sampler_state
+{
+	filter = min_mag_mip_Linear;
+AddressU = mirror;
+AddressV = mirror;
+};
+
 RasterizerState RS_Default
 {
 	FillMode = Solid;
@@ -51,11 +58,23 @@ RasterizerState RS_CW
 	FrontCounterClockwise = false;
 };
 
+RasterizerState RS_CULLNONE
+{
+	CullMode = back;
+};
+
 DepthStencilState DS_Default
 {
 	DepthEnable = true;
 	DepthWriteMask = all;	
 	DepthFunc = less_equal;
+};
+
+DepthStencilState DS_TEST
+{
+	DepthEnable = false;
+DepthWriteMask = all;
+DepthFunc = less_equal;
 };
 
 DepthStencilState DS_ZEnable_ZWriteEnable_FALSE

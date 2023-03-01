@@ -34,9 +34,6 @@ HRESULT CUI_NodeAimLine::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
-
 	m_bStart = false;
 	m_bSetInitialRatio = false;
 
