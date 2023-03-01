@@ -226,7 +226,6 @@ HRESULT CKena::Render()
 		if (i == 1)
 		{
 			// Arm & Leg
-			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
@@ -241,8 +240,7 @@ HRESULT CKena::Render()
 		}
 		else if (i ==5 || i == 6)
 		{
-			// Face
-			// SSS OK
+			// HEAD
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
