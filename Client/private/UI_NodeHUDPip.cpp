@@ -5,6 +5,7 @@
 #include "UI_Event_Guage.h"
 #include "UI_ClientManager.h"
 #include "UI_NodeEffect.h"
+#include "UI_CanvasHUD.h"
 
 CUI_NodeHUDPip::CUI_NodeHUDPip(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -32,6 +33,17 @@ void CUI_NodeHUDPip::Set_Guage(_float fGuage)
 		m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
+_float CUI_NodeHUDPip::Get_Guage()
+{
+	return static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Get_GuageNow();
+}
+
+void CUI_NodeHUDPip::ReArrangeGuage()
+{
+	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->ReArrangeSettingOn();
+	m_bFullFilled = false;
+}
+
 HRESULT CUI_NodeHUDPip::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -54,7 +66,7 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	m_fIntervalX = 90.f;
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
@@ -77,14 +89,17 @@ void CUI_NodeHUDPip::Tick(_float fTimeDelta)
 		CUI_ClientManager::GetInstance()
 			->Get_Effect(CUI_ClientManager::EFFECT_PIPFULL)
 			->Start_Effect(this, 0.f, 50.f);
+
+		CUI_CanvasHUD* pCanv = static_cast<CUI_CanvasHUD*>(m_pParent);
+		if (!(pCanv->Is_PipAllFull()))
+			pCanv->PlusPipCount();
 	}
 
 
 	_bool test = static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero();
 	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
-	{
 		m_bFullFilled = false;
-	}
+
 }
 
 void CUI_NodeHUDPip::Late_Tick(_float fTimeDelta)
