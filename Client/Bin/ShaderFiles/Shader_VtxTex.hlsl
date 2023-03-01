@@ -293,7 +293,7 @@ PS_OUT PS_MAIN_AimThings(PS_IN In)
 	if (g_iCheck == 0) /* empty */
 	{
 		Out.vColor.rgb = 0.5;
-		Out.vColor.a *= 0.5;
+		Out.vColor.a *= 0.3;
 	}
 
 	return Out;
