@@ -16,6 +16,8 @@ BEGIN(Client)
 
 class CRot final : public CGameObject
 {
+	friend class CRot_State;
+
 public:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -44,6 +46,7 @@ private:
 	CCollider*					m_pRangeCol = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 	CStateMachine*		m_pStateMachine = nullptr;
+	class CRot_State*		m_pRotState = nullptr;
 
 private:
 	HRESULT					SetUp_Components();

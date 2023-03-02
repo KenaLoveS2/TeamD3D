@@ -263,7 +263,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.a = vDiffuse.a;
 	Out.vSpecular = (float4)1.f;*/
 
-	/* fourth algorithm*/
+	/* fourth algorithm */
 	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic,fRoughness,fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
 	Out.vShade.a = vDiffuse.a;
 	Out.vSpecular = (float4)1.f;

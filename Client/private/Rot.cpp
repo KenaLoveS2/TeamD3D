@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Rot.h"
 #include "GameInstance.h"
+#include "Rot_State.h"
 
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -36,7 +37,15 @@ HRESULT CRot::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
+	m_pRotState = CRot_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom);
+
+	m_pTransformCom->Set_Translation(_float4(5.f, 0.f, 5.f, 1.f), _float4());
+
+	m_pModelCom->Set_AnimIndex(CRot_State::IDLE);
+
 	Push_EventFunctions();
+
+	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
 }
@@ -45,7 +54,7 @@ void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//m_pStateMachine->Tick(fTimeDelta);
+	m_pStateMachine->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
@@ -258,6 +267,7 @@ void CRot::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+	Safe_Release(m_pRotState);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pRangeCol);
 	Safe_Release(m_pModelCom);
