@@ -13,8 +13,9 @@ enum ACTOR_TYPE {
 
 typedef struct ENGINE_DLL tagPhysXUserData
 {
-	CGameObject* pOwner;
 	ACTOR_TYPE eType;
+	
+	CGameObject* pOwner;
 } PX_USER_DATA;
 
 static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner)
@@ -45,7 +46,6 @@ public:
 		for (PxU32 i = 0; i < nbPairs; i++)
 		{
 			const PxContactPair& cp = pairs[i];
-
 
 			// eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
 			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)

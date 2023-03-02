@@ -1,17 +1,18 @@
 #pragma once
 #include "GameObject.h"
 #include "Client_Defines.h"
-#include "Delegator.h"
 #include "UI_ClientManager.h"
+#include "delegator.h"
+#include "Model.h"
 
 BEGIN(Engine)
 class CRenderer;
 class CShader;
-class CModel;
 class CCollider;
 class CRenderer;
 class CNavigation;
 class CStateMachine;
+class CAnimationState;
 END
 
 BEGIN(Client)
@@ -26,19 +27,21 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	const _double&			Get_AnimationPlayTime();
+	_double					Get_AnimationPlayTime();
 
+public:
+	class CKena_State*		Get_State() { return m_pKenaState; }
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
-	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void			Imgui_RenderProperty() override;
-	virtual void			ImGui_AnimationProperty() override;
-	virtual void			ImGui_ShaderValueProperty() override;
-	virtual void			Update_Child() override;
+	virtual void					Imgui_RenderProperty() override;
+	virtual void					ImGui_AnimationProperty() override;
+	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					Update_Child() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void			Push_EventFunctions() override;
 
@@ -49,6 +52,7 @@ private:
 	CCollider*				m_pRangeCol = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
+	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
@@ -86,7 +90,6 @@ private:
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
-
 	_float m_fTest = 0.f;
 
 public:

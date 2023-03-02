@@ -22,7 +22,7 @@ HRESULT CCamera_Player::Initialize_Prototype()
 
 HRESULT CCamera_Player::Initialize(void * pArg)
 {
-	CCamera::CAMERADESC		CameraDesc;
+	CCamera::CAMERADESC      CameraDesc;
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 
 	if (pArg != nullptr)
@@ -43,10 +43,8 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 void CCamera_Player::Tick(_float fTimeDelta)
 {
-	m_CameraDesc.fFovy = XMConvertToRadians(60.f);
-
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
-		//m_bMouseFix = !m_bMouseFix;
+		m_bMouseFix = !m_bMouseFix;
 		m_bMouseFix = false;
 	if (CGameInstance::GetInstance()->Key_Pressing(DIK_LSHIFT))
 		m_bAim = true;
@@ -64,16 +62,16 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		return;
 	}
 
-	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_vector	vKenaRight = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT));
+	_vector   vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	_vector   vKenaRight = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT));
 	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + m_fCurCamHeight);
 
 	m_MouseMoveX = 0;
 	m_MouseMoveY = 0;
-	_float		fBackupAngle = m_fVerticalAngle;
+	_float      fBackupAngle = m_fVerticalAngle;
 
 	/* Limit Up&Down Movement */
-	_vector	vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
+	_vector   vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
 	m_fVerticalAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)), XMVectorSet(0.f, 1.f, 0.f, 0.f))));
 	if (isnan(m_fVerticalAngle))
 		m_fVerticalAngle = fBackupAngle;
@@ -123,7 +121,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		}
 		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
 		{
-			_bool	bPossible = true;
+			_bool   bPossible = true;
 
 			if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
 			{
@@ -174,12 +172,12 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 		if (m_bInitPlayerLook == false)
 		{
-			_matrix	matKena = m_pKenaTransform->Get_WorldMatrix();
-			_float3	vScale = m_pKenaTransform->Get_Scaled();
+			_matrix   matKena = m_pKenaTransform->Get_WorldMatrix();
+			_float3   vScale = m_pKenaTransform->Get_Scaled();
 
-			_vector	vLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f)) * vScale.z;
-			_vector	vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
-			_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+			_vector   vLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f)) * vScale.z;
+			_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+			_vector   vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
 
 			m_pKenaTransform->Set_State(CTransform::STATE_RIGHT, vRight);
 			m_pKenaTransform->Set_State(CTransform::STATE_UP, vUp);
@@ -191,20 +189,20 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 			return;
 		}
-		_vector	vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * m_fDistanceFromTarget + XMVector3Normalize(vKenaRight) * 0.6f;
+		_vector   vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * m_fDistanceFromTarget + XMVector3Normalize(vKenaRight) * 0.6f;
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vShoulderPos);
-		
-		_float3	vScale = m_pTransformCom->Get_Scaled();
-		_vector	vRight = XMVector3Normalize(XMVector3TransformNormal(vKenaRight, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
-		_vector	vUp = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_UP)) * vScale.y;
-		_vector	vLook = XMVector3Normalize(XMVector3TransformNormal(vKenaLook, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.z;
-		_vector	vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+
+		_float3   vScale = m_pTransformCom->Get_Scaled();
+		_vector   vRight = XMVector3Normalize(XMVector3TransformNormal(vKenaRight, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
+		_vector   vUp = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_UP)) * vScale.y;
+		_vector   vLook = XMVector3Normalize(XMVector3TransformNormal(vKenaLook, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.z;
+		_vector   vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 
 		m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vRight);
 		m_pTransformCom->Set_State(CTransform::STATE_UP, vUp);
 		m_pTransformCom->Set_State(CTransform::STATE_LOOK, vLook);
-		
-		_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vCamLook), XMVector3Normalize(XMVectorSetY(vCamLook, 0.f)))));
+
+		_float      fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vCamLook), XMVector3Normalize(XMVectorSetY(vCamLook, 0.f)))));
 		if (m_fVerticalAngle < XMConvertToRadians(90.f))
 			fAngle *= -1.f;
 		else if (fabs(m_fVerticalAngle - XMConvertToRadians(90.f)) < EPSILON)
@@ -259,7 +257,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		}
 		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
 		{
-			_bool	bPossible = true;
+			_bool   bPossible = true;
 
 			if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
 			{
@@ -329,8 +327,8 @@ HRESULT CCamera_Player::Render()
 
 void CCamera_Player::Initialize_Position()
 {
-	_vector	vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_vector	vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
+	_vector   vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	_vector   vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
 
 	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + 2.f);
 
@@ -343,7 +341,7 @@ void CCamera_Player::Initialize_Position()
 
 CCamera_Player * CCamera_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CCamera_Player*	pInstance = new CCamera_Player(pDevice, pContext);
+	CCamera_Player*   pInstance = new CCamera_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -356,7 +354,7 @@ CCamera_Player * CCamera_Player::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 
 CGameObject * CCamera_Player::Clone(void * pArg)
 {
-	CCamera_Player*	pInstance = new CCamera_Player(*this);
+	CCamera_Player*   pInstance = new CCamera_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

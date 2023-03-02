@@ -9,6 +9,7 @@
 
 /* Bind Object */
 #include "Kena.h"
+#include "Kena_State.h"
 
 CUI_CanvasAim::CUI_CanvasAim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -116,7 +117,7 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 
 
 	/* Todo : Player Push Shift Key -> true, else -> false */
-	m_bActive = true;
+	m_bActive = false;
 
 	/* Temp */
 	m_bStart = false;
@@ -132,12 +133,14 @@ void CUI_CanvasAim::Tick(_float fTimeDelta)
 	{
 		if (FAILED(Bind()))
 		{
-			MSG_BOX("Bind Failed");
+			//MSG_BOX("Bind Failed");
 			return;
 		}
 	}
 
 	/* Code */
+	if (!m_bActive)
+		return;
 
 	/* Aiming .... */
 	if (m_bStart)
@@ -168,7 +171,8 @@ void CUI_CanvasAim::Tick(_float fTimeDelta)
 void CUI_CanvasAim::Late_Tick(_float fTimeDelta)
 {
 	/* Code */
-
+	if (!m_bActive)
+		return;
 	/* ~Code */
 
 	__super::Late_Tick(fTimeDelta);
@@ -191,8 +195,8 @@ HRESULT CUI_CanvasAim::Bind()
 	if (pKena == nullptr)
 		return E_FAIL;
 
+	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasAim::Function);
 	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAim::Function);
-
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -329,16 +333,43 @@ HRESULT CUI_CanvasAim::SetUp_ShaderResources()
 	return S_OK;
 }
 
+void CUI_CanvasAim::Default(CUI_ClientManager::UI_PRESENT eType, _float fData)
+{
+	m_bStart = true;
+	m_fTimeAcc = 0.f;
+	m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
+	static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(true);
+	static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(true);
+}
+
+void CUI_CanvasAim::LevelUp(CUI_ClientManager::UI_PRESENT eType, _float fData)
+{
+}
+
+void CUI_CanvasAim::Switch(CUI_ClientManager::UI_PRESENT eType, _float fData)
+{
+	if (fData == 1.f) /* Switch On */
+	{
+		m_bActive = true;
+	}
+	else /* Switch off */
+	{
+		m_bActive = false;
+	}
+}
+
 void CUI_CanvasAim::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
-	switch (eType)
+	switch (eFunc)
 	{
-	case CUI_ClientManager::AIM_:
-		m_bStart = true;
-		m_fTimeAcc = 0.f;
-		m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
-		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(true);
-		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(true);
+	case CUI_ClientManager::FUNC_DEFAULT:
+		Default(eType, fValue);
+		break;
+	case CUI_ClientManager::FUNC_LEVELUP:
+		LevelUp(eType, fValue);
+		break;
+	case CUI_ClientManager::FUNC_SWITCH:
+		Switch(eType, fValue);
 		break;
 	}
 }

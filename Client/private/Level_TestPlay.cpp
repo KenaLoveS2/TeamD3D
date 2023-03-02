@@ -13,6 +13,9 @@
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
 
+#include "UI_ClientManager.h"
+#include "UI.h"
+
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -51,7 +54,13 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -61,6 +70,23 @@ HRESULT CLevel_TestPlay::Initialize()
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(!m_bEnviromentInputShaderValue)
+	{
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+
+		CLayer* pLayer =	p_game_instance->Find_Layer(LEVEL_TESTPLAY, L"Layer_Enviroment");
+
+		for(auto& pGameObject : pLayer->GetGameObjects())
+		{
+			if(pGameObject.second != nullptr)
+				p_game_instance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject.second);
+		}
+
+		RELEASE_INSTANCE(CGameInstance)
+
+		m_bEnviromentInputShaderValue = true;
+	}
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
@@ -131,7 +157,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(60.0f);
+	CameraDesc.fFovy = XMConvertToRadians(90.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
 	CameraDesc.fFar = 300.f;
@@ -243,9 +269,53 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), L"Rot_0", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+	vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+	vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+
+	for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
+	{
+		CUI::tagUIDesc tDesc;
+		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
+
+		CUI_Canvas* pCanvas = nullptr;
+		if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+			(*pCanvasProtoTags)[i].c_str(), (*pCanvasCloneTags)[i].c_str(), &tDesc, (CGameObject**)&pCanvas)))
+			MSG_BOX("Failed To Clone Canvas : UIEditor");
+
+		if (pCanvas != nullptr)
+			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 
