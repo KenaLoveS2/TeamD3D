@@ -25,7 +25,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -49,6 +49,8 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
 	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(0.f, 0.f, 15.f, 1.f));
+
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
@@ -57,8 +59,6 @@ HRESULT CRockGolem::Initialize(void* pArg)
 void CRockGolem::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pTransformCom->Set_Translation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION),_float4(0.f, 0.f, 0.01f,1.f));
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -161,34 +161,78 @@ HRESULT CRockGolem::SetUp_State()
 	.InitState("SLEEPIDLE")
 
 	.AddState("SLEEPIDLE")
-		.OnStart([this]()
-		{
-			m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
-		})
 		.Tick([this](_float fTimeDelta) 
 		{
 			m_pModelCom->Set_AnimIndex(SLEEPIDLE);
-		})
-		.OnExit([this]()
-		{
-			m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 		})
 
 			.AddTransition("sleepIdle to wispin", "WISPIN")
 			.Predicator([this]()
 		{
-			if (DistanceBetweenPlayer() > 10.f)
+			if (DistanceBetweenPlayer() < 10.f)
 				return true;
 			else
 				return false;				
 		})
 
-	.AddState("WISPIN")
-	.OnStart([this]()
-	{
-		
-	})
+	.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(IDLE);
+		})
+			.AddTransition("idle to walk", "WALK")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() < 10.f)
+				return true;
+			else
+				return false;
+		})
 
+	.AddState("WALK")
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WALK);
+			m_pTransformCom->Chase(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta);
+		})
+			.AddTransition("walk to WISPOUT", "WISPOUT")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() > 10.f)
+				return true;
+			else
+				return false;
+		})
+
+			.AddState("WISPIN")
+			.OnStart([this]()
+		{
+				m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WISPIN);
+		})
+			.AddTransition("wispin to IDLE", "IDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(WISPIN);
+		})
+
+			.AddState("WISPOUT")
+			.OnStart([this]()
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WISPOUT);
+		})
+			.AddTransition("wispout to sleepidle ", "SLEEPIDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(WISPOUT);
+		})
 
 		.Build();
 
