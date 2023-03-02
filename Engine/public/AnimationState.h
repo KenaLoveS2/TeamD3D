@@ -65,7 +65,7 @@ public:
 	HRESULT			Generate_Animation(const string& strFilePath);
 	HRESULT			Add_State(CAnimState* pAnim);
 	HRESULT			Add_AnimSharingPart(CModel* pModel, _bool bMeshSync);
-	HRESULT			Save();
+	HRESULT			Save(const string& strFilePath);
 	HRESULT			Load(const string& strFilePath);
 
 private:

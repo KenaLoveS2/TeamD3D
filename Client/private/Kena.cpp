@@ -291,7 +291,13 @@ void CKena::ImGui_AnimationProperty()
 
 	if (ImGui::BeginTabItem("State"))
 	{
+		ImGui::BulletText("Kena State");
 		m_pStateMachine->Imgui_RenderProperty();
+		ImGui::Separator();
+		ImGui::BulletText("Animation State");
+		m_pAnimation->ImGui_RenderProperty();
+		ImGui::Separator();
+
 		ImGui::EndTabItem();
 	}
 
