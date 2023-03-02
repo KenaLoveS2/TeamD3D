@@ -96,6 +96,16 @@ float4 ComputeLighting(float3 worldPos, float3 worldNormal,float3 lightDirection
 	return float4(lighting, 1.0);
 }
 
+float3 diffuseBurley(float3 diffuseLightColor, float3 Albedo, float3 N, float3 V, float3 L, float3 H, float Roughness, float4 specularLightColor)
+{
+	float fd90 = 0.5 + 2.0 * dot(L, N) * dot(V, N) / (dot(H, V) + 0.0001);
+	float lightScatter = saturate(fd90);
+	float viewScatter = saturate(fd90);
+	float3 Fd = (1.0 / PI) * lerp(1.0, fd90, pow(1.0 - dot(L, N), 5.0)) * lerp(1.0, fd90, pow(1.0 - dot(V, N), 5.0));
+	float3 diffuse = Albedo * (1.0 - specularLightColor.rgb) * Fd * lightScatter * viewScatter;
+	return diffuse * diffuseLightColor;
+}
+
 float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
 {
 	float3 N = normalize(Normal);
@@ -106,8 +116,8 @@ float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Met
 	float3 F0 = specularLightColor.rgb;
 
 	float NDF = DistributionGGX(N, H, Roughness);
-	float G = GeometrySmith(N, V, L, Roughness);
-	float3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+	float G = GeometrySmithGGX(N, V, L, Roughness);
+	float3 F = FresnelSchlickRoughness(max(dot(H, V), 0.0), F0,Roughness);
 
 	float3 kS = F;
 	float3 kD = 1.0 - kS;
@@ -118,7 +128,8 @@ float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Met
 
 	float3 specular = numerator / max(denominator, 0.001) * Albedo;
 	float3 ambient = ambientLightColor * Albedo * ao;
-	float3 diffuse = diffuseLightColor * (kD * Albedo / PI);
+	//float3 diffuse = diffuseLightColor * (kD * Albedo / PI);
+	float3 diffuse = diffuseBurley(diffuseLightColor, Albedo, N, V, L, H, Roughness,g_vLightSpecular);
 
 	return float4(ambient + diffuse + specular, 1.f);
 }
