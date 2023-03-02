@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/MI_ShrineOfLife_Rock_01.MI_ShrineOfLife_Rock_01'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/MI_ShrineOfLife_Rock_01.MI_ShrineOfLife_Rock_01'
+        MaterialSlotName = blinn1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1149.76, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.279007, Y=11.6207, Z=167.389 }
+    BoxExtent = { X=106.374, Y=70.4058, Z=185.902 }
+    SphereRadius = 212.623
+}

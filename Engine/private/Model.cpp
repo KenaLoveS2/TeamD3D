@@ -953,6 +953,11 @@ void CModel::Set_AllBonesUnlock()
 		pBone->Set_BoneLocked(false);
 }
 
+void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
+{
+	m_Animations[iAnimIndex]->Reset_Animation();
+}
+
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)
@@ -1390,8 +1395,20 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 #endif
 
 
+void CModel::Create_PxTriangle()
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Create_PxTriangleData();
+	}
+}
 
-
-
+void CModel::Set_PxPosition(_float3 vPosition)
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Set_PxPosition(vPosition);
+	}
+}
 
 

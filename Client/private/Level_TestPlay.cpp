@@ -114,9 +114,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, 1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
+	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
+	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
 	LightDesc.vPosition = _float4(100.f, 100.f, 100.f,1.f);
 	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
@@ -143,7 +143,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_First_map.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Forest_Start_Gate_Demo.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

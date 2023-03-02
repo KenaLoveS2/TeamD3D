@@ -59,10 +59,12 @@ public: // kbj physx
 	} PxIndicies;
 
 	HRESULT Create_PxActor();
+	void Set_PxPosition(_float3 vPos);
 
 protected: // kbj physx
 	PxVec3*			m_pPxVertices = nullptr;
-	PxIndicies*		m_pPxIndicies = nullptr;	
+	PxIndicies*		m_pPxIndicies = nullptr;
+	PxRigidActor*	m_pPxActor = nullptr;
 };
 
 END

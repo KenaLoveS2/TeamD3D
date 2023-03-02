@@ -230,6 +230,7 @@
     <ClInclude Include="..\Public\Stair.h" />
     <ClInclude Include="..\Public\Statue.h" />
     <ClInclude Include="..\public\Sticks01.h" />
+    <ClInclude Include="..\Public\Stone.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Tool_Animation.h" />
     <ClInclude Include="..\public\Tool_Settings.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="..\Private\Stair.cpp" />
     <ClCompile Include="..\Private\Statue.cpp" />
     <ClCompile Include="..\private\Sticks01.cpp" />
+    <ClCompile Include="..\Private\Stone.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Tool_Animation.cpp" />
     <ClCompile Include="..\private\Tool_Settings.cpp" />

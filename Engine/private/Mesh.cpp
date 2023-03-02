@@ -229,6 +229,7 @@ HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod)
 			return E_FAIL;
 #pragma endregion
 	}
+
 	return S_OK;
 }
 
@@ -501,34 +502,40 @@ void CMesh::Free()
 // kbj physx
 HRESULT CMesh::Create_PxTriangleData()
 {
-	m_pPxVertices = new PxVec3[m_iNumVertices];
-	ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+	if (m_pPxVertices == nullptr)
+	{
+		m_pPxVertices = new PxVec3[m_iNumVertices];
+		ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
 
-	if (m_eType == CModel::TYPE_ANIM)
-	{
-		for (_uint i = 0; i < m_iNumVertices; i++)
+		if (m_eType == CModel::TYPE_ANIM)
 		{
-			_float3 vPos = m_pAnimVertices[i].vPosition;
-			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			for (_uint i = 0; i < m_iNumVertices; i++)
+			{
+				_float3 vPos = m_pAnimVertices[i].vPosition;
+				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			}
 		}
-	}
-	else if (m_eType == CModel::TYPE_NONANIM)
-	{
-		for (_uint i = 0; i < m_iNumVertices; i++)
+		else if (m_eType == CModel::TYPE_NONANIM)
 		{
-			_float3 vPos = m_pNonAnimVertices[i].vPosition;
-			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			for (_uint i = 0; i < m_iNumVertices; i++)
+			{
+				_float3 vPos = m_pNonAnimVertices[i].vPosition;
+				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			}
 		}
+		else return E_FAIL;
 	}
-	else return E_FAIL;
-
-	m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
-	ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
-	for (_uint i = 0; i < m_iNumPrimitive; i++)
+	
+	if (m_pPxIndicies == nullptr)
 	{
-		m_pPxIndicies[i]._0 = m_pIndices[i]._0;
-		m_pPxIndicies[i]._1 = m_pIndices[i]._2;
-		m_pPxIndicies[i]._2 = m_pIndices[i]._1;
+		m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
+		ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
+		for (_uint i = 0; i < m_iNumPrimitive; i++)
+		{
+			m_pPxIndicies[i]._0 = m_pIndices[i]._0;
+			m_pPxIndicies[i]._1 = m_pIndices[i]._2;
+			m_pPxIndicies[i]._2 = m_pIndices[i]._1;
+		}
 	}
 
 	Create_PxActor();

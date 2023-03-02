@@ -103,16 +103,15 @@ void CVIBuffer::Free()
 	Safe_Release(m_pIB);
 
 	// kbj physx
-	if (m_isCloned == false)
-	{
-		Safe_Delete_Array(m_pPxVertices);
-		Safe_Delete_Array(m_pPxIndicies);
-	}
+	Safe_Delete_Array(m_pPxVertices);
+	Safe_Delete_Array(m_pPxIndicies);
 }
 
 // kbj physx
 HRESULT CVIBuffer::Create_PxActor()
 {	
+	if (m_pPxActor) return E_FAIL;
+
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
 
 	PxTriangleMeshDesc TriangleMeshDesc;
@@ -123,9 +122,18 @@ HRESULT CVIBuffer::Create_PxActor()
 	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	TriangleMeshDesc.triangles.data = m_pPxIndicies;
 	
-	pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
 
 	return S_OK;
+}
+
+void CVIBuffer::Set_PxPosition(_float3 vPos)
+{
+	if (m_pPxActor == nullptr) return;
+
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	pPhysX->Set_ActorPosition(m_pPxActor, vPos);	
 }
 
 
