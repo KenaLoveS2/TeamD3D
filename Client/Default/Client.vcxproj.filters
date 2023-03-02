@@ -480,13 +480,28 @@
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\RockGolem.h" />
-    <ClInclude Include="..\Public\Bridge.h" />
-    <ClInclude Include="..\Public\Path_Mesh.h" />
-    <ClInclude Include="..\Public\FloorTile.h" />
-    <ClInclude Include="..\Public\Pulse_PlateForm.h" />
-    <ClInclude Include="..\Public\Gate.h" />
-    <ClInclude Include="..\Public\Rot.h" />
-    <ClInclude Include="..\Public\RuinKit.h" />
+    <ClInclude Include="..\Public\FloorMesh.h" />
+    <ClInclude Include="..\public\Bridge.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FloorTile.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Path_Mesh.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pulse_PlateForm.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RuinKit.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gate.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -732,13 +747,28 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\RockGolem.cpp" />
-    <ClCompile Include="..\Private\Bridge.cpp" />
-    <ClCompile Include="..\Private\Path_Mesh.cpp" />
-    <ClCompile Include="..\Private\FloorTile.cpp" />
-    <ClCompile Include="..\Private\Pulse_PlateForm.cpp" />
-    <ClCompile Include="..\Private\Gate.cpp" />
-    <ClCompile Include="..\Private\Rot.cpp" />
-    <ClCompile Include="..\Private\RuinKit.cpp" />
+    <ClCompile Include="..\Private\FloorMesh.cpp" />
+    <ClCompile Include="..\private\Bridge.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FloorTile.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RuinKit.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Path_Mesh.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pulse_PlateForm.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gate.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
