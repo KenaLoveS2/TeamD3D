@@ -265,6 +265,8 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Transform");
+
 
 
 	RELEASE_INSTANCE(CGameInstance);

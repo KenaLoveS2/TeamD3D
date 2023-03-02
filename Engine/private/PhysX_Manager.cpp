@@ -79,11 +79,11 @@ HRESULT CPhysX_Manager::Initialize()
 	assert(m_pScene != nullptr && "CPhysX_Manager::InitWorld()");
 	
 	/* Release에서는 5줄 주석? */
-	PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
-	assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");		
-	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+	//PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
+	//assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");		
+	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, PxCookingParams(PxTolerancesScale()));
 	assert(m_pCooking != nullptr && "CPhysX_Manager::InitWorld()");

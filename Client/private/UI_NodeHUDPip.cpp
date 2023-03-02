@@ -69,7 +69,6 @@ HRESULT CUI_NodeHUDPip::Initialize(void * pArg)
 	m_fIntervalX = 90.f;
 
 	/* Events */
-	/* 이미지가 변경되도록 하는 이벤트 */
 	UIDESC* tDesc = (UIDESC*)pArg;
 	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));

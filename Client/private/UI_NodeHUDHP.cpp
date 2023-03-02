@@ -18,6 +18,16 @@ void CUI_NodeHUDHP::Set_Guage(_float fGuage)
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
+void CUI_NodeHUDHP::Upgrade()
+{
+	/* LevelUp : Guage Length + 150.f */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX + 150.f;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX + 150.f * 0.5f;
+	m_bUpgrade = true;
+}
+
 HRESULT CUI_NodeHUDHP::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -40,8 +50,16 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
+
 	m_bActive = true;
+
+	/* For. Upgrade */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX;
+	m_bUpgrade = false;
+	m_fSpeed = 1.f;
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
@@ -52,6 +70,23 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 void CUI_NodeHUDHP::Tick(_float fTimeDelta)
 {
+	if (m_bUpgrade)
+	{
+		if (m_fDestScaleX > m_matLocal._11)
+		{
+			m_fSpeed = 40.f;
+			m_matLocal._11 += m_fSpeed * fTimeDelta;
+			m_matLocal._41 += m_fSpeed * fTimeDelta * 0.5f;
+
+		}
+		else
+		{
+			m_matLocal._11 = m_fDestScaleX;
+			m_matLocal._41 = m_fDestTransX;
+			m_bUpgrade = false;
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 }
 

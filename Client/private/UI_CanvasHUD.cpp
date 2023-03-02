@@ -372,6 +372,8 @@ void CUI_CanvasHUD::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 	switch (eType)
 	{
 	case CUI_ClientManager::HUD_HP:
+		static_cast<CUI_NodeHUDHP*>(m_vecNode[UI_HPGUAGE])->Upgrade();
+		static_cast<CUI_NodeHUDHPBar*>(m_vecNode[UI_HPBAR])->Upgrade();
 
 		break;
 	case CUI_ClientManager::HUD_SHIELD:
