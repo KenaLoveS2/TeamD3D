@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Destructables/Materials/MI_LeafPile.MI_LeafPile'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Destructables/Materials/MI_LeafPile_Opaque.MI_LeafPile_Opaque'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Destructables/Materials/MI_LeafPile.MI_LeafPile'
+        MaterialSlotName = MI_LeafPile_Env
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 161.91, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/Destructables/Materials/MI_LeafPile_Opaque.MI_LeafPile_Opaque'
+        MaterialSlotName = dome
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 902.951, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=5.40694, Y=4.32274, Z=64.5095 }
+    BoxExtent = { X=190.43, Y=191.177, Z=95.4979 }
+    SphereRadius = 204.357
+}

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfDeath/Material/MI_ShrineOfDeath_Rock.MI_ShrineOfDeath_Rock'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+        MaterialSlotName = Crystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1182.51, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfDeath/Material/MI_ShrineOfDeath_Rock.MI_ShrineOfDeath_Rock'
+        MaterialSlotName = rock
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1463.06, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=162.387 }
+    BoxExtent = { X=123.133, Y=100.954, Z=162.843 }
+    SphereRadius = 209.137
+}

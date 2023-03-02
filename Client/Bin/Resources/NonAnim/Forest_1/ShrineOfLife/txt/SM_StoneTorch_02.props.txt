@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/MI_StoneTorch.MI_StoneTorch'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/MI_StoneTorch.MI_StoneTorch'
+        MaterialSlotName = MI_StoneTorch1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 234.506, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.342381, Y=-1.42948, Z=7.26323 }
+    BoxExtent = { X=36.4609, Y=36.0935, Z=7.39267 }
+    SphereRadius = 37.8141
+}

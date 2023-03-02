@@ -44,6 +44,7 @@
 #include "Gate.h"
 #include "Rot.h"
 #include "RuinKit.h"
+#include "Stone.h"
 
 #include "Door_Anim.h"
 
@@ -359,143 +360,141 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 		
-#pragma region Cliff
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Cap", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Glitter", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Sheer", true, false,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W2", true, false,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W3", true, false,true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, false)))		// 제이슨 미적용
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, false)))		// 제이슨 미적용
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))		// 제이슨 미적용
-	//	return E_FAIL;
-
-#pragma endregion ~Cliff
-
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))// 제이슨 미적용
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true,false,true)))
-	//	return E_FAIL;
-
-#pragma region PulseStone_관련된것
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock", true, false, true)))
-	//	return E_FAIL;
-#pragma endregion PulseStone_관련된것
-
-#pragma region Stone_JSON완료
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneBridge", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "StoneStep_Seperate", true, false, true)))
-	//	return E_FAIL;
-#pragma endregion
-
-#pragma  region Rock
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Big", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Medium", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Rubble", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, false, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Tiny", true, false, true)))
-	//	return E_FAIL;
-#pragma endregion Rock
-
-#pragma region RuinKit
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Railing", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Brick", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, false)))
-	//	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, false, true)))
+//#pragma region Cliff
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Cap", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Glitter", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Sheer", true, false,true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W2", true, false,true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W3", true, false,true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, false)))		// 제이슨 미적용
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, false)))		// 제이슨 미적용
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))		// 제이슨 미적용
+//		return E_FAIL;
+//
+//#pragma endregion ~Cliff
+//
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))// 제이슨 미적용
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true,false,true)))
+//		return E_FAIL;
+//
+//#pragma region PulseStone_관련된것
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock", true, false, true)))
+//		return E_FAIL;
+//#pragma endregion PulseStone_관련된것
+//
+//#pragma region Stone_JSON완료
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneBridge", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "StoneStep_Seperate", true, false, true)))
+//		return E_FAIL;
+//#pragma endregion
+//
+//#pragma  region Rock
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Big", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Medium", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Rubble", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Tiny", true, false, true)))
+//		return E_FAIL;
+//#pragma endregion Rock
+//
+//#pragma region RuinKit
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Railing", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Brick", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, false)))
+//		return E_FAIL;	
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, false,true)))
 		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, false, true)))
-		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, false, true)))
-		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, false,true)))
-		return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, false)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, false)))
-	//	return E_FAIL;
-#pragma endregion RuinKit
+//#pragma endregion RuinKit
+//
+//#pragma region RuinDebris
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinDebris", true, false)))
+//		return E_FAIL;
+//#pragma endregion RuinDebris
+//
+//#pragma  region Start_Forest_Room
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// 돌맹이 무너져있는거
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue", true, false)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/First_Room_Deco", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, false, true)))
+//		return E_FAIL;
+//
+//#pragma endregion ~Start_Forest_Room
+//
+//#pragma  region Tree
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true,true)))			// 제이슨 미적용
+//		return E_FAIL;
+//
+//#pragma endregion ~Tree
+//
 
-#pragma region RuinDebris
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinDebris", true, false)))
-		return E_FAIL;
-#pragma endregion RuinDebris
-
-#pragma  region Start_Forest_Room
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// 돌맹이 무너져있는거
-		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, false, true)))
-		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
-		return E_FAIL;
-
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue", true, false)))
-		return E_FAIL;
-
-#pragma endregion ~Start_Forest_Room
-
-#pragma  region Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))			// 제이슨 미적용
-		return E_FAIL;
-
-#pragma endregion ~Tree
-
-#pragma  region Test
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "MainStreet_COL")))
-	//	return E_FAIL;
-
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Base_Stairs_Pos")))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Field")))
-	//	return E_FAIL;
-
-#pragma endregion ~Test
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
@@ -682,10 +681,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_RuinKit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
+		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
@@ -738,8 +738,17 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Stairs", true, false, true)))
 		return E_FAIL;
+
 #pragma endregion ~Start_Forest_Room
 
+
+
+
+
+
+#pragma  region 상호작용 모델
+
+#pragma endregion ~상호작용
 #pragma  region Tree
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true)))			// 제이슨 미적용
 		return E_FAIL;
