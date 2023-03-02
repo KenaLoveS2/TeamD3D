@@ -64,6 +64,23 @@ HRESULT CLevel_TestPlay::Initialize()
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(!m_bEnviromentInputShaderValue)
+	{
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+
+		CLayer* pLayer =	p_game_instance->Find_Layer(LEVEL_TESTPLAY, L"Layer_Enviroment");
+
+		for(auto& pGameObject : pLayer->GetGameObjects())
+		{
+			if(pGameObject.second != nullptr)
+				p_game_instance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject.second);
+		}
+
+		RELEASE_INSTANCE(CGameInstance)
+
+		m_bEnviromentInputShaderValue = true;
+	}
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)

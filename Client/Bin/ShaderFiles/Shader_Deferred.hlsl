@@ -102,7 +102,7 @@ float3 diffuseBurley(float3 diffuseLightColor, float3 Albedo, float3 N, float3 V
 	float lightScatter = saturate(fd90);
 	float viewScatter = saturate(fd90);
 	float3 Fd = (1.0 / PI) * lerp(1.0, fd90, pow(1.0 - dot(L, N), 5.0)) * lerp(1.0, fd90, pow(1.0 - dot(V, N), 5.0));
-	float3 diffuse = Albedo * (1.0 - specularLightColor.rgb) * Fd * lightScatter * viewScatter;
+	float3 diffuse = Albedo * specularLightColor.rgb  * Fd * lightScatter * viewScatter;
 	return diffuse * diffuseLightColor;
 }
 

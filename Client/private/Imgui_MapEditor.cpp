@@ -1020,8 +1020,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 {
 	string      strLoadDirectory = "../Bin/Data/EnviromentObj_Json_Dir/";
 	strLoadDirectory += JsonFileName;
-
-
+	
 	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
@@ -1096,7 +1095,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		//jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(ROUGHNESS_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = ROUGHNESS_path;
 		//jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
-		
 		vector<_float4x4>	vecInstnaceMatrixVec;
 		_int MatrixNumber = 0;
 		_float4x4 fInsMaxtrix;

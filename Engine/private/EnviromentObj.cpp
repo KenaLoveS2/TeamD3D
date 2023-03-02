@@ -221,6 +221,7 @@ void CEnviromentObj::Imgui_RenderComponentProperties()
 	__super::Imgui_RenderComponentProperties();
 }
 
+
 HRESULT CEnviromentObj::Set_UpTexture_FilePathToMaterial(CModel * pModel , const _tchar * TexturePath, aiTextureType Type)
 {
 	_uint iNumMeshes = pModel->Get_NumMeshes();

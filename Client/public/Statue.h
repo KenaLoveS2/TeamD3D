@@ -9,7 +9,6 @@ class CModel;
 class CTexture;
 END
 
-
 BEGIN(Client)
 class CStatue final : public CEnviromentObj
 {
@@ -24,11 +23,12 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CModel*				m_pModelCom = nullptr;
+	CShader*									m_pShaderCom = nullptr;
+	CRenderer*								m_pRendererCom = nullptr;
+	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 
