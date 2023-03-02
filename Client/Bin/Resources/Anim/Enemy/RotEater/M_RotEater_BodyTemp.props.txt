@@ -1,0 +1,285 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[7] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_AO_R_M.rot_eater_body_uv_AO_R_M'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_BASECOLOR.rot_eater_body_uv_BASECOLOR'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_body1Shape_color.rot_eater_body_uv_body1Shape_color'
+    ReferencedTextures[3] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_EMISSIVE.rot_eater_body_uv_EMISSIVE'
+    ReferencedTextures[4] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_NORMAL.rot_eater_body_uv_NORMAL'
+    ReferencedTextures[5] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+    ReferencedTextures[6] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[19] =
+                {
+                    ParameterInfos[0] = { Name=RefractionTilling }
+                    ParameterInfos[1] = { Name=DissolveEmissiveAmount }
+                    ParameterInfos[2] = { Name=BombGlowRadius }
+                    ParameterInfos[3] = { Name=BombGlowExp }
+                    ParameterInfos[4] = { Name=BellyGlow }
+                    ParameterInfos[5] = { Name=RefractionSpeedU }
+                    ParameterInfos[6] = { Name=BombGlowHardness }
+                    ParameterInfos[7] = { Name=MaskAONoise }
+                    ParameterInfos[8] = { Name=DissolveAmount }
+                    ParameterInfos[9] = { Name=OpacityNoiseTilling }
+                    ParameterInfos[10] = { Name=BombGlowAmount }
+                    ParameterInfos[11] = { Name=EmissiveAmount }
+                    ParameterInfos[12] = { Name=OpacitySpeedU }
+                    ParameterInfos[13] = { Name=Desaturate }
+                    ParameterInfos[14] = { Name=DissolveTile }
+                    ParameterInfos[15] = { Name=RefractionSpeedV }
+                    ParameterInfos[16] = { Name=OpacitySpeedV }
+                    ParameterInfos[17] = { Name=BombGlowContrast }
+                    ParameterInfos[18] = { Name=Fringe }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[5] =
+                {
+                    ParameterInfos[0] = { Name=DissolveColor }
+                    ParameterInfos[1] = { Name=BombGlowColor }
+                    ParameterInfos[2] = { Name=BombGlowHitLocation }
+                    ParameterInfos[3] = { Name=GlowColor }
+                    ParameterInfos[4] = { Name=Color }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[8] =
+                {
+                    ParameterInfos[0] = { Name=OpacityNoise }
+                    ParameterInfos[1] = { Name=Emissive }
+                    ParameterInfos[2] = { Name=Normal }
+                    ParameterInfos[3] = { Name=BellyGlowMask }
+                    ParameterInfos[4] = { Name=Albedo }
+                    ParameterInfos[5] = { Name=DissolveAplha }
+                    ParameterInfos[6] = { Name=RefractionTexture }
+                    ParameterInfos[7] = { Name=AO_R_M }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[19] =
+        {
+            ScalarValues[0] = 1
+            ScalarValues[1] = 50
+            ScalarValues[2] = 500
+            ScalarValues[3] = 1.26818
+            ScalarValues[4] = 0
+            ScalarValues[5] = 0.033
+            ScalarValues[6] = 1
+            ScalarValues[7] = 0
+            ScalarValues[8] = 0
+            ScalarValues[9] = 1
+            ScalarValues[10] = 0
+            ScalarValues[11] = 5
+            ScalarValues[12] = 0.1
+            ScalarValues[13] = 0
+            ScalarValues[14] = 1
+            ScalarValues[15] = -0.033
+            ScalarValues[16] = 0.2
+            ScalarValues[17] = 0.2
+            ScalarValues[18] = 2
+        }
+        VectorValues[5] =
+        {
+            VectorValues[0] = { R=1, G=0, B=0, A=0 }
+            VectorValues[1] = { R=0, G=7, B=15, A=0 }
+            VectorValues[2] = { R=0, G=0, B=0, A=0 }
+            VectorValues[3] = { R=0, G=0.5, B=1, A=0 }
+            VectorValues[4] = { R=1, G=1, B=1, A=0 }
+        }
+        TextureValues[8] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[1] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_EMISSIVE.rot_eater_body_uv_EMISSIVE'
+            TextureValues[2] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_NORMAL.rot_eater_body_uv_NORMAL'
+            TextureValues[3] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_body1Shape_color.rot_eater_body_uv_body1Shape_color'
+            TextureValues[4] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_BASECOLOR.rot_eater_body_uv_BASECOLOR'
+            TextureValues[5] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[6] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[7] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_AO_R_M.rot_eater_body_uv_AO_R_M'
+        }
+    }
+    ReferencedTextures[7] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_AO_R_M.rot_eater_body_uv_AO_R_M'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_NORMAL.rot_eater_body_uv_NORMAL'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        ReferencedTextures[3] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+        ReferencedTextures[4] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_BASECOLOR.rot_eater_body_uv_BASECOLOR'
+        ReferencedTextures[5] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_body1Shape_color.rot_eater_body_uv_body1Shape_color'
+        ReferencedTextures[6] = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_EMISSIVE.rot_eater_body_uv_EMISSIVE'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[8] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = OpacityNoise
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_EMISSIVE.rot_eater_body_uv_EMISSIVE'
+        Name = Emissive
+        Group = None
+    }
+    CollectedTextureParameters[2] =
+    {
+        Texture = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_NORMAL.rot_eater_body_uv_NORMAL'
+        Name = Normal
+        Group = None
+    }
+    CollectedTextureParameters[3] =
+    {
+        Texture = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_body1Shape_color.rot_eater_body_uv_body1Shape_color'
+        Name = BellyGlowMask
+        Group = None
+    }
+    CollectedTextureParameters[4] =
+    {
+        Texture = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_BASECOLOR.rot_eater_body_uv_BASECOLOR'
+        Name = Albedo
+        Group = None
+    }
+    CollectedTextureParameters[5] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = DissolveAplha
+        Group = None
+    }
+    CollectedTextureParameters[6] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = RefractionTexture
+        Group = None
+    }
+    CollectedTextureParameters[7] =
+    {
+        Texture = Texture2D'/Game/Mochi/Characters/Enemies/RotEater/Textures/New/rot_eater_body_uv_AO_R_M.rot_eater_body_uv_AO_R_M'
+        Name = AO_R_M
+        Group = None
+    }
+}
+CollectedScalarParameters[19] =
+{
+    CollectedScalarParameters[0] = { Value=1, Name=RefractionTilling, Group=None }
+    CollectedScalarParameters[1] =
+    {
+        Value = 50
+        Name = DissolveEmissiveAmount
+        Group = None
+    }
+    CollectedScalarParameters[2] = { Value=500, Name=BombGlowRadius, Group=None }
+    CollectedScalarParameters[3] = { Value=1.26818, Name=BombGlowExp, Group=None }
+    CollectedScalarParameters[4] = { Value=0, Name=BellyGlow, Group=None }
+    CollectedScalarParameters[5] = { Value=0.033, Name=RefractionSpeedU, Group=None }
+    CollectedScalarParameters[6] = { Value=1, Name=BombGlowHardness, Group=None }
+    CollectedScalarParameters[7] = { Value=0, Name=MaskAONoise, Group=None }
+    CollectedScalarParameters[8] = { Value=0, Name=DissolveAmount, Group=None }
+    CollectedScalarParameters[9] = { Value=1, Name=OpacityNoiseTilling, Group=None }
+    CollectedScalarParameters[10] = { Value=0, Name=BombGlowAmount, Group=None }
+    CollectedScalarParameters[11] = { Value=5, Name=EmissiveAmount, Group=None }
+    CollectedScalarParameters[12] = { Value=0.1, Name=OpacitySpeedU, Group=None }
+    CollectedScalarParameters[13] = { Value=0, Name=Desaturate, Group=None }
+    CollectedScalarParameters[14] = { Value=1, Name=DissolveTile, Group=None }
+    CollectedScalarParameters[15] = { Value=-0.033, Name=RefractionSpeedV, Group=None }
+    CollectedScalarParameters[16] = { Value=0.2, Name=OpacitySpeedV, Group=None }
+    CollectedScalarParameters[17] = { Value=0.2, Name=BombGlowContrast, Group=None }
+    CollectedScalarParameters[18] = { Value=2, Name=Fringe, Group=None }
+}
+CollectedVectorParameters[5] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=1, G=0, B=0, A=0 }
+        Name = DissolveColor
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0, G=7, B=15, A=0 }
+        Name = BombGlowColor
+        Group = None
+    }
+    CollectedVectorParameters[2] =
+    {
+        Value = { R=0, G=0, B=0, A=0 }
+        Name = BombGlowHitLocation
+        Group = None
+    }
+    CollectedVectorParameters[3] =
+    {
+        Value = { R=0, G=0.5, B=1, A=0 }
+        Name = GlowColor
+        Group = None
+    }
+    CollectedVectorParameters[4] =
+    {
+        Value = { R=1, G=1, B=1, A=0 }
+        Name = Color
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[6] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 0.5
+        UVChannelIndex = 0
+        TextureName = Noise_cloudsmed
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = rot_eater_body_uv_AO_R_M
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = rot_eater_body_uv_BASECOLOR
+    }
+    TextureStreamingData[3] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = rot_eater_body_uv_body1Shape_color
+    }
+    TextureStreamingData[4] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = rot_eater_body_uv_EMISSIVE
+    }
+    TextureStreamingData[5] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = rot_eater_body_uv_NORMAL
+    }
+}

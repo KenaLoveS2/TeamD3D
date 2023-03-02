@@ -17,10 +17,10 @@ public:
 	static void CharToWideChar(const char* pCharStr, _tchar* pOut);
 	static void WideCharToChar(const _tchar* pWideStr, char* pOut);
 
-
 	static  _tchar* StringToWideChar(string str);
-	static  string	  WstringToString(wstring wstr);
 
+
+	static  string	  WstringToString(wstring wstr);
 
 	static _tchar* Create_String(const _tchar *pText);
 	static char* Create_String(const char *pText);
@@ -31,6 +31,18 @@ public:
 	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);
 
 	static char*   SeparateText(char* pCharStr);
+	static _float  FloatLerp(_float fNum1, _float fNum2, _float fRatio);
+
+	static _float3 ConvertPosition_PxToD3D(PxVec3& vPxPosition);
+	static PxVec3 ConvertPosition_D3DToPx(_float3& vD3dPosition);
+
+	static PxMat44 ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix);
+	static _float4x4 ConvertMatrix_PxToD3D(PxMat44 PxMatrix);
+	
+	static  void 	MODELMATERIAL_Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
+		const char* jSonPath, vector<MODELMATERIAL>& Vec);
+
+	static _float4 Calc_RayDirByMousePos(HWND hWnd, ID3D11DeviceContext *pContext, _float4 vRayPos);
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

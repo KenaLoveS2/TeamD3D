@@ -660,7 +660,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDir), XMVector3Normalize(vKenaLook))));;
 	if (isnan(fAngle))
 	{
-		m_pTransform->Go_Straight(fTimeDelta, nullptr);
+		m_pTransform->Go_Straight(fTimeDelta);
 		return;
 	}
 

@@ -11,6 +11,8 @@ CUI_Node::CUI_Node(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 CUI_Node::CUI_Node(const CUI_Node & rhs)
 	: CUI(rhs)
+	,m_fIntervalX(0.f)
+	,m_fIntervalY(0.f)
 {
 }
 
@@ -100,7 +102,7 @@ bool	Getter_forNode(void* data, int index, const char** output)
 void CUI_Node::Imgui_RenderProperty()
 {
 	ImGui::Separator();
-	
+
 	//if (ImGui::Button("Save Node"))
 	//	Save_Data();
 
@@ -168,7 +170,7 @@ HRESULT CUI_Node::Save_Data()
 
 	for (auto e : m_vecEvents)
 		e->Save_Data(&json);
-	
+
 	wstring filePath = L"../Bin/Data/UI/";
 	filePath += this->Get_ObjectCloneName();
 	//filePath += this->Get_Name();
@@ -232,9 +234,26 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 
 	this->Set_LocalMatrix(matLocal);
 
-
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	return S_OK;
+}
+
+void CUI_Node::ReArrangeX(_int iIndex, _int iTotal, _float fCenterX)
+{
+	_float fNewX = m_fIntervalX * iIndex - m_fIntervalX * (iTotal - 1) * 0.5f + fCenterX;
+	m_matLocal._41 = fNewX;
+}
+
+void CUI_Node::ReArrangeX_Reverse(_int iIndex, _int iTotal, _float fCenterX)
+{
+	_float fNewX = -m_fIntervalX * iIndex + m_fIntervalX * (iTotal - 1) * 0.5f + fCenterX;
+	m_matLocal._41 = fNewX;
+}
+
+void CUI_Node::ReArrangeX()
+{
+	m_matLocal._41 += m_fIntervalX;
 }
 
 void CUI_Node::Free()

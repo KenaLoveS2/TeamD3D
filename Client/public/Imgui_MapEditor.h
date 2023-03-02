@@ -23,14 +23,16 @@ public:
 	virtual void Imgui_FreeRender();
 
 public:
-	static				void					Load_MapObjects(_uint iLevel);
+	static				void					Load_MapObjects(_uint iLevel, string JsonFileName );
 	static				void					Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, array<string, (_int)WJTextureType_UNKNOWN> vecStr);
+	//static				void					Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, array<string, (_int)WJTextureType_UNKNOWN> vecStr);
 	static				void					Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
+
 private:
 	void											Imgui_SelectOption();						// 컴포넌트 기능 선택
 	void											Imgui_Save_Load_Json();
 	void											Imgui_CreateEnviromentObj();
+	void											Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
 	void											Imgui_SelectObject_Add_TexturePath();
 	void											Imgui_Control_ViewerCamTransform();
 	void											Imgui_TexturePathNaming();
@@ -43,6 +45,9 @@ private:		/*Logic*/
 	void											Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
 	void											Imgui_Create_Option_Reset();
 	
+
+	void											JsonTest();
+
 private: /*For_Tool*/
 	string										m_strChapter[MAX_CHATERNUM];
 	wstring										m_wstrProtoName = TEXT("");
@@ -58,6 +63,7 @@ private: /*For_Tool*/
 	_bool														m_bModelChange = false;
 	_int															m_iTexturePathNum = false;
 
+	_int															m_iSelectMeshIndex = -1;
 
 
 private:	/*Use_Data*/
@@ -75,6 +81,6 @@ END
 //
 //string	strDiffuse, SPECULAR_path, AMBIENT_path, EMISSIVE_path,
 //EMISSIVEMASK_path, NORMALS_path, MASK_path, SSS_MASK_path,
-//SPRINT_EMISSIVE_path, LIGHTMAP_path, HAIR_ALPHA_path, HAIR_ROOT_path,
-//COMP_MSK_CURV_path, COMP_H_R_AO_path, METALNESS_path, COMP_AMBIENT_OCCLUSION_path,
+//SPRINT_EMISSIVE_path, LIGHTMAP_path, ALPHA_path, HAIR_ROOT_path,
+//COMP_MSK_CURV_path, COMP_H_R_AO_path, COMP_E_R_AO_path, ROUGHNESS_path,
 //AMBIENT_OCCLUSION_path;

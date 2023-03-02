@@ -26,6 +26,8 @@ public:
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
 
+	HRESULT ReCompile();
+
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 
@@ -57,6 +59,8 @@ private:
 
 	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
 
+	_bool m_bPhysXRenderFlag = false;
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_Shadow();
@@ -79,6 +83,8 @@ public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CRenderer* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
+
+	void Set_PhysXRender(_bool bFlag) { m_bPhysXRenderFlag = bFlag; }
 };
 
 END

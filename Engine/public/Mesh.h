@@ -57,6 +57,8 @@ public:
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
+
+	HRESULT Create_PxTriangleData(); // kbj physx
 };
 
 END

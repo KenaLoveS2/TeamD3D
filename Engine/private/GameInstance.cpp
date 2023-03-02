@@ -39,6 +39,7 @@ CGameInstance::CGameInstance()
 	, m_pPostFX(CPostFX::GetInstance())
 	, m_pFunction_Manager(CFunction_Manager::GetInstance())
 	, m_pEnviroment_Manager(CEnviroment_Manager::GetInstance())
+	, m_pPhysX_Manager(CPhysX_Manager::GetInstance()) // kbj PhysX
 {
 	Safe_AddRef(m_pEnviroment_Manager);
 	Safe_AddRef(m_pTarget_Manager);
@@ -58,6 +59,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pCamera_Manager);
 	Safe_AddRef(m_pPostFX);
 	Safe_AddRef(m_pFunction_Manager);
+	Safe_AddRef(m_pPhysX_Manager); // kbj PhysX
 }
 
 _uint CGameInstance::Get_CurLevelIndex()
@@ -115,6 +117,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	m_pEnviroment_Manager->Reserve_Manager();
 
+	m_pPhysX_Manager->Initialize(*ppDeviceOut, *ppContextOut); // kbj physx
+
 	return S_OK;
 }
 
@@ -135,6 +139,8 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 
 	m_pPipeLine->Tick();
 
+	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
+	
 	m_pSound_Manager->Tick(fTimeDelta);
 
 	m_pFrustum->Transform_ToWorldSpace();
@@ -522,6 +528,48 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();	
 }
 
+_float4 CGameInstance::Get_CamRight_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamRight_Float4();
+}
+
+_float4 CGameInstance::Get_CamUp_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamUp_Float4();
+}
+
+_float4 CGameInstance::Get_CamLook_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamLook_Float4();
+}
+
+_float3 CGameInstance::Get_CamRight_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamRight_Float3();
+}
+
+_float3 CGameInstance::Get_CamUp_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamUp_Float3();
+}
+
+_float3 CGameInstance::Get_CamLook_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamLook_Float3();
+}
+
+_float3 CGameInstance::Get_CamPosition_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamPosition_Float3();
+}
+
 _float CGameInstance::Get_TimeDelta(const _tchar * pTimerTag)
 {
 	if (nullptr == m_pTimer_Manager)
@@ -798,6 +846,7 @@ HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _fl
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
+	CPhysX_Manager::GetInstance()->DestroyInstance(); // kbj physx	
 	CPostFX::GetInstance()->DestroyInstance();
 	CObject_Manager::GetInstance()->DestroyInstance();
 	CFunction_Manager::GetInstance()->DestroyInstance();
@@ -838,6 +887,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pInput_Device);
+	Safe_Release(m_pPhysX_Manager); // kbj physx
 	Safe_Release(m_pGraphic_Device);
 }
 

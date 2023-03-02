@@ -106,14 +106,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/;../public/ImGui/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../public/ImGui/;../public/PhysX/;../public/PhysX/characterkinematic/;../public/PhysX/collision/;../public/PhysX/common/;../public/PhysX/cooking/;../public/PhysX/cudamanager/;../public/PhysX/extensions/;../public/PhysX/filebuf/;../public/PhysX/foundation/;../public/PhysX/geometry/;../public/PhysX/geomutils/;../public/PhysX/gpu/;../public/PhysX/pvd/;../public/PhysX/solver/;../public/PhysX/task/;../public/PhysX/vehicle/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;fmod_vc.lib;DSH_SimulationController_static_64.lib;DSH_SceneQuery_static_64.lib;DSH_PhysXVehicle_static_64.lib;DSH_PhysXTask_static_64.lib;DSH_PhysXPvdSDK_static_64.lib;DSH_PhysXFoundation_64.lib;DSH_PhysXExtensions_static_64.lib;DSH_PhysXCooking_64.lib;DSH_PhysXCommon_64.lib;DSH_PhysXCharacterKinematic_static_64.lib;DSH_PhysX_64.lib;DSH_LowLevelDynamics_static_64.lib;DSH_LowLevelAABB_static_64.lib;DSH_LowLevel_static_64.lib;DSH_FastXml_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysXLib_D/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -153,7 +153,7 @@ call Copy.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/;../public/ImGui/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../public/ImGui/;../public/PhysX/;../public/PhysX/characterkinematic/;../public/PhysX/collision/;../public/PhysX/common/;../public/PhysX/cooking/;../public/PhysX/cudamanager/;../public/PhysX/extensions/;../public/PhysX/filebuf/;../public/PhysX/foundation/;../public/PhysX/geometry/;../public/PhysX/geomutils/;../public/PhysX/gpu/;../public/PhysX/pvd/;../public/PhysX/solver/;../public/PhysX/task/;../public/PhysX/vehicle/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,8 +161,8 @@ call Copy.bat</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;fmodL_vc.lib;RST_SimulationController_static_64.lib;RST_SceneQuery_static_64.lib;RST_PhysXVehicle_static_64.lib;RST_PhysXTask_static_64.lib;RST_PhysXPvdSDK_static_64.lib;RST_PhysXFoundation_64.lib;RST_PhysXExtensions_static_64.lib;RST_PhysXCooking_64.lib;RST_PhysXCommon_64.lib;RST_PhysXCharacterKinematic_static_64.lib;RST_PhysX_64.lib;RST_LowLevelDynamics_static_64.lib;RST_LowLevelAABB_static_64.lib;RST_LowLevel_static_64.lib;RST_FastXml_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysXLib_R/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -242,6 +242,8 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
+    <ClInclude Include="..\public\PhysX_Defines.h" />
+    <ClInclude Include="..\public\PhysX_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\public\PostFX.h" />
     <ClInclude Include="..\public\QuadTree.h" />
@@ -271,6 +273,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Instancing.h" />
     <ClInclude Include="..\public\VIBuffer_Terrain.h" />
+    <ClInclude Include="..\public\VIBuffer_Trail.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -314,6 +317,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Model.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\private\Object_Manager.cpp" />
+    <ClCompile Include="..\private\PhysX_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\private\PostFX.cpp" />
     <ClCompile Include="..\private\QuadTree.cpp" />
@@ -406,6 +410,7 @@ call Copy.bat</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\public\VIBuffer_Trail.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -414,6 +419,7 @@ call Copy.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PhysX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl" />
   </ItemGroup>
   <ItemGroup>

@@ -101,42 +101,30 @@ HRESULT CCrystal::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
+	if (m_EnviromentDesc.iCurLevel == 0)
+		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 	/* For.Com_Shader */
 	if (m_pModelCom->Get_IStancingModel())
 	{
-		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
-		m_iShaderOption = 2;
+		m_iShaderOption = 1;
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 		m_iShaderOption = 4;
 	}
 
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
-	//	(CComponent**)&m_pMasterDiffuseBlendTexCom)))
-	//	return E_FAIL;
-
-	/************************** ex ***********************/
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-	//for (_uint i = 0; i < iNumMeshes; ++i)
-	//{
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_MSK_CURV, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_MASK, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_H_R_AO, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_AMBIENT_OCCLUSION, ex(path));
-	//}
-	/******************************************************/
 
 	return S_OK;
 }
@@ -179,7 +167,7 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CForkLift");
+		MSG_BOX("Failed to Cloned : CCrystal");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -195,5 +183,5 @@ void CCrystal::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
-	Safe_Release(m_pMasterDiffuseBlendTexCom);
+
 }

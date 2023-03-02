@@ -4,6 +4,7 @@
 #include "Navigation.h"
 #include "GameInstance.h"
 #include "VIBuffer_Terrain.h"
+#include "PhysX_Manager.h"
 
 CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -153,8 +154,10 @@ void CTransform::Imgui_RenderProperty()
 		else if (bottom)
 			matrixTranslation[1] -= viewport.Height * 0.5f;	
 		/******* ~Docking *******/
-
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
+		
+		_float4x4 Matrix;
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&Matrix));
+		Set_WorldMatrix_float4x4(Matrix);
 
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
@@ -204,21 +207,16 @@ void CTransform::Imgui_RenderProperty()
 	}
 }
 
-void CTransform::Go_Straight(_float fTimeDelta, CNavigation* pNaviCom)
+void CTransform::Go_Straight(_float fTimeDelta)
 {	
 	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vLook = Get_State(CTransform::STATE_LOOK);
 
 	/* 이렇게 얻어온 VlOOK은 Z축 스케일을 포함하낟. */
-	vPosition += XMVector3Normalize(vLook) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	_vector vDist = XMVector3Normalize(vLook) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition += vDist;
 
-	if(nullptr == pNaviCom)
-		Set_State(CTransform::STATE_TRANSLATION, vPosition);
-	else
-	{
-		if(true == pNaviCom->isMove_OnNavigation(vPosition))
-			Set_State(CTransform::STATE_TRANSLATION, vPosition);
-	}
+	Set_Translation(vPosition, vDist);
 }
 
 void CTransform::Go_Backward(_float fTimeDelta)
@@ -227,9 +225,10 @@ void CTransform::Go_Backward(_float fTimeDelta)
 	_vector	vLook = Get_State(CTransform::STATE_LOOK);
 
 	/* 이렇게 얻어온 VlOOK은 Z축 스케일을 포함하낟. */
-	vPosition -= XMVector3Normalize(vLook) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	_vector vDist = XMVector3Normalize(vLook) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition -= vDist;
 
-	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	Set_Translation(vPosition, -vDist);
 }
 
 void CTransform::Go_Left(_float fTimeDelta)
@@ -237,10 +236,10 @@ void CTransform::Go_Left(_float fTimeDelta)
 	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vRight = Get_State(CTransform::STATE_RIGHT);
 
-	/* 이렇게 얻어온 VlOOK은 Z축 스케일을 포함하낟. */
-	vPosition -= XMVector3Normalize(vRight) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	_vector vDist = XMVector3Normalize(vRight) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition -= vDist;
 
-	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	Set_Translation(vPosition, -vDist);
 }
 
 void CTransform::Go_Right(_float fTimeDelta)
@@ -248,49 +247,50 @@ void CTransform::Go_Right(_float fTimeDelta)
 	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vRight = Get_State(CTransform::STATE_RIGHT);
 
-	/* 이렇게 얻어온 VlOOK은 Z축 스케일을 포함하낟. */
-	vPosition += XMVector3Normalize(vRight) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	_vector vDist = XMVector3Normalize(vRight) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition += vDist;
 
-	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	Set_Translation(vPosition, vDist);
 }
 
 void CTransform::Go_Direction(_fvector vDirection, _float fTimeDelta, CNavigation * pNavigCom)
 {
 	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
+	_vector vDist = XMVector3Normalize(vDirection) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
 
-	vPosition += XMVector3Normalize(vDirection) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition += vDist;
 
-	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	Set_Translation(vPosition, vDist);
 }
 
 void CTransform::Go_DirectionNoY(_fvector vDirection, _float fTimeDelta, CNavigation * pNavigCom)
 {
 	_vector	vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vDirectionNoY = XMVectorSetY(vDirection, 0.f);
+	_vector vDist = XMVector3Normalize(vDirectionNoY) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPosition += vDist;
 
-	vPosition += XMVector3Normalize(vDirectionNoY) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
-
-	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	Set_Translation(vPosition, vDist);
 }
 
 void CTransform::Go_AxisY(_float fTimeDelta)
 {
 	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vDist = XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPos += vDist;
 
-	vPos += XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
-
-	Set_State(CTransform::STATE_TRANSLATION, vPos);
+	Set_Translation(vPos, vDist);
 }
 
 void CTransform::Go_AxisNegY(_float fTimeDelta)
 {
 	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-
+	_vector vDist = XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
 	vPos -= XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
 
-	Set_State(CTransform::STATE_TRANSLATION, vPos);
+	Set_Translation(vPos, -vDist);
 }
 
 void CTransform::Speed_Boost(_bool bKeyState, _float fValue)
@@ -384,8 +384,10 @@ void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 
 	if(fDistance > fLimit)
 	{
-		vPosition += XMVector3Normalize(vDir) * m_TransformDesc.fSpeedPerSec * fTimeDelta;	
-		Set_State(CTransform::STATE_TRANSLATION, vPosition);
+		_vector vDist = XMVector3Normalize(vDir) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+		vPosition += vDist;
+		
+		Set_Translation(vPosition, vDist);
 	}
 }
 
@@ -534,5 +536,66 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
+void CTransform::Connect_PxActor(const _tchar * pActorTag)
+{
+	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
 
+	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
+	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActor");
 
+	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+	m_bIsStaticPxActor = pUserData->eType <= TRIANGLE_MESH_STATIC;
+}
+
+void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
+{
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition);
+			Set_State(CTransform::STATE_TRANSLATION, vPosition);
+		}
+		else
+		{
+			m_pPhysX_Manager->Add_Force(m_pPxActor, vDist);
+		}
+	}
+	else
+	{
+		Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	}
+}
+
+void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix) 
+{
+	m_WorldMatrix = fWorldMatrix;
+
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{					
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));			
+		}
+		else
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+	}
+}
+
+void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix) 
+{
+	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+		else
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+	}		
+}

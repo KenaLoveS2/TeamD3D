@@ -16,6 +16,7 @@ private:
 
 public:
 	void	Set_Guage(_float fGuage);
+	_bool	Is_Full() { return m_bFullFilled; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

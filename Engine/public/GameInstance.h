@@ -8,6 +8,9 @@
 #include "Function_Manager.h"
 #include "UI_Manager.h"
 #include "Enviroment_Manager.h"
+#include "PhysX_Manager.h"
+#include "FSMComponent.h"
+#include "Animation.h"
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
@@ -109,6 +112,14 @@ public: /* For.PipeLine */
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 		_float4 Get_CamPosition();
 
+		_float4		Get_CamRight_Float4();
+		_float4		Get_CamUp_Float4();
+		_float4		Get_CamLook_Float4();
+		_float3		Get_CamRight_Float3();
+		_float3		Get_CamUp_Float3();
+		_float3		Get_CamLook_Float3();
+		_float3		Get_CamPosition_Float3();
+
 	public: /* For.Timer_Manager */
 		_float Get_TimeDelta(const _tchar* pTimerTag);
 		HRESULT Ready_Timer(const _tchar* pTimerTag);
@@ -206,6 +217,8 @@ public: /* For.PipeLine */
 		class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 		class CPostFX* m_pPostFX = nullptr;
 		class CFunction_Manager*	m_pFunction_Manager = nullptr;
+
+		class CPhysX_Manager* m_pPhysX_Manager = nullptr;
 
 	public:
 		static void Release_Engine();

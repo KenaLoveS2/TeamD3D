@@ -9,10 +9,10 @@ public:
 	CUI_Canvas(const CUI_Canvas& rhs);
 	virtual ~CUI_Canvas() = default;
 public:
-	CUI*	Get_SelectedNode() { 
+	CUI*	Get_SelectedNode() {
 		if (m_iSelectedNode < 0 || m_iSelectedNode >= m_vecNode.size())
 			return nullptr;
-		return m_vecNode[m_iSelectedNode]; 
+		return m_vecNode[m_iSelectedNode];
 	}
 
 public:
@@ -23,8 +23,8 @@ public:
 	virtual HRESULT			Render()						override;
 
 protected: /* For Clones. */
-	virtual HRESULT			Bind()					{ return S_OK; }
-	virtual HRESULT			Ready_Nodes()			{ return S_OK; }
+	virtual HRESULT			Bind() { return S_OK; }
+	virtual HRESULT			Ready_Nodes() { return S_OK; }
 
 public:
 	virtual void			Imgui_RenderProperty();
@@ -36,11 +36,14 @@ public:
 
 public:
 	/* Add Sub UI(Canvas Or Node)*/
-	virtual		HRESULT	Add_Node(CUI* pUI)sealed;	
+	virtual	HRESULT	Add_Node(CUI* pUI)sealed;
+
+//public: /* Provide Functions */
+//	virtual	void	Call_CanvasFunction(_int iParam1, _int iParam2) {};
 
 protected:
 	vector<string>		m_vecNodeCloneTag;
-	vector<CUI*>		m_vecNode; 
+	vector<CUI*>		m_vecNode;
 	_bool				m_bBindFinished;
 
 	/* For Tool */

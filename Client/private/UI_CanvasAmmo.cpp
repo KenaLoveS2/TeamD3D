@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasAmmo.h"
 #include "GameInstance.h"
+#include "UI_ClientManager.h"
+#include "UI_NodeEffect.h"
+
+/* Canvas */
+#include "UI_CanvasAim.h"
 
 /* Nodes */
 #include "UI_NodeAmmoBombGuage.h"
@@ -19,6 +24,40 @@ CUI_CanvasAmmo::CUI_CanvasAmmo(const CUI_CanvasAmmo & rhs)
 {
 }
 
+void CUI_CanvasAmmo::ConnectToAimUI(AIM_UI eUIType, _int iParam, CUI* pUI)
+{
+	CUI_CanvasAim* pCanvas = static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM));
+	if (pCanvas == nullptr)
+		return;
+
+	_int arrowIndex = m_iNumArrowNow - 1;
+	_int bombIndex = m_iNumBombNow - 1; /* Bombs order is different from arrow order */
+	if (pUI != nullptr)
+	{
+		if (m_vecNode[m_Bombs[BOMB_1]] == pUI)
+			bombIndex = BOMB_1;
+		else
+			bombIndex = BOMB_2;
+	}
+	
+
+	switch (eUIType)
+	{
+	case AIM_ARROW:
+		if (arrowIndex >= 0)
+			pCanvas->Set_Arrow(arrowIndex, 1); /* 1 == full */
+		break;
+	case AIM_BOMB:
+		if (bombIndex >= 0)
+			pCanvas->Set_Bomb(bombIndex, 1); /* 1 == full */
+		break;
+	default:
+		MSG_BOX("Wrong Input: CUI_CanvasAmmo");
+		break;
+	}
+
+
+}
 HRESULT CUI_CanvasAmmo::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -47,12 +86,16 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
-	m_bActive = true;
-
 	/* Arrow */
-	m_iNumArrows	= 4;
-	m_iNumArrowNow	= m_iNumArrows;
+	m_iNumArrows = 4;
+	m_iNumArrowNow = m_iNumArrows;
+
+	/* Bomb */
+	m_iNumBombs		= 1;
+	m_iNumBombNow	= m_iNumBombs;
+	m_Bombs[BOMB_1] = UI_BOMBGUAGE1;
+	m_Bombs[BOMB_2] = UI_BOMBGUAGE2;
+
 
 	return S_OK;
 }
@@ -67,6 +110,10 @@ void CUI_CanvasAmmo::Tick(_float fTimeDelta)
 			return;
 		}
 	}
+
+	/* Code */
+
+	/* ~Code */
 
 	__super::Tick(fTimeDelta);
 
@@ -83,17 +130,18 @@ void CUI_CanvasAmmo::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_CanvasAmmo::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	/* Arrow Count */
 	_float4 vPos;
-	
+
 	wchar_t cnt[10];
 	_itow_s(m_iNumArrowNow, cnt, 10);
 
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Render_Font(TEXT("Font_Comic"), cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f -20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	pGameInstance->Render_Font(TEXT("Font_Comic"), cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f - 20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	RELEASE_INSTANCE(CGameInstance);
 
 
@@ -104,16 +152,12 @@ HRESULT CUI_CanvasAmmo::Render()
 HRESULT CUI_CanvasAmmo::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
-
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Player", L"Kena"));
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (pKena == nullptr)
+		return E_FAIL;
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -132,16 +176,30 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 	fileName(CloneTag) needed while it cloned when loading the data.
 	(The cloneTag is stored after the clone process.)
 	*/
-	str = "Node_BombFrame";
-	tDesc.fileName.assign(str.begin(), str.end()); 
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombFrame", L"Node_BombFrame", &tDesc));
+	str = "Node_BombFrame1";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombFrame", L"Node_BombFrame1", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-	str = "Node_BombGuage";
+	str = "Node_BombGuage1";
 	tDesc.fileName.assign(str.begin(), str.end());
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombGuage", L"Node_BombGuage", &tDesc));
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombGuage", L"Node_BombGuage1", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_BombFrame2";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombFrame", L"Node_BombFrame2", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_BombGuage2";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BombGuage", L"Node_BombGuage2", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
@@ -152,6 +210,25 @@ HRESULT CUI_CanvasAmmo::Ready_Nodes()
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+
+	/* Effects are stored in the canvas of UI that need it. */
+	/* But Call through ClientManager because Node doesn't have to know the canvas belong to.*/
+	str = "Node_EffectBomb";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectBomb", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_BOMBFULL, static_cast<CUI_NodeEffect*>(pUI));
+
+	str = "Node_EffectArrow";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", L"Node_EffectArrow", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	CUI_ClientManager::GetInstance()->Set_Effect(CUI_ClientManager::EFFECT_ARROWFULL, static_cast<CUI_NodeEffect*>(pUI));
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -184,7 +261,6 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources();
 
-	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -209,21 +285,101 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
+{	
+	switch (eFunc)
+	{
+	case CUI_ClientManager::FUNC_DEFAULT:
+		Default(eType, fValue);
+		break;
+	case CUI_ClientManager::FUNC_LEVELUP:
+		LevelUp(eType, (_int)fValue);
+		break;
+	}
+}
+
+void CUI_CanvasAmmo::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+{
+	CUI_CanvasAim* pCanv = static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM));
+	if (nullptr == pCanv)
+		return;
+
+	/* Shoot a Bomb or Arrow */
+	_uint iIndex = 0;
+	switch (eType)
+	{
+	case CUI_ClientManager::AMMO_BOMB:
+		if (m_iNumBombNow == 0)
+			return;
+		m_iNumBombNow -= 1;
+		if (m_iNumBombs == 2)
+			if (static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[BOMB_2]])->Is_Full())
+				iIndex = BOMB_2;
+			else
+				iIndex = BOMB_1;
+		else
+			iIndex = m_iNumBombNow;
+
+		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iIndex]])->Set_Guage(0.f);
+
+		/*Connect Wiht Cavnas Aim's Bomb */
+		pCanv->Set_Bomb(iIndex, 0);
+		break;
+
+	case CUI_ClientManager::AMMO_ARROW:
+		if (m_iNumArrowNow == 0)
+			return;
+		m_iNumArrowNow -= 1;
+		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
+
+		/* Connect With Canvas Aim's Arrow */
+		pCanv->Set_Arrow(m_iNumArrowNow, 0);
+		break;
+	}
+
+}
+
+void CUI_CanvasAmmo::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 {
 	switch (eType)
 	{
 	case CUI_ClientManager::AMMO_BOMB:
-		static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[UI_BOMBGUAGE])->Set_Guage(fValue);
+		if (1 == iLevel)
+		{
+			m_vecNode[UI_BOMBFRAME1]->Set_Active(true);
+			m_vecNode[UI_BOMBGUAGE1]->Set_Active(true);
+		}
+		else if (2 == iLevel)
+		{
+			m_iNumBombs = 2;
+			m_iNumBombNow = m_iNumBombs;
+
+			/* Todo : All Full State  & Move */
+			m_vecNode[UI_BOMBFRAME2]->Set_Active(true);
+			m_vecNode[UI_BOMBGUAGE2]->Set_Active(true);
+			static_cast<CUI_Node*>(m_vecNode[m_Bombs[BOMB_2]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Bombs[BOMB_2]-1])->ReArrangeX(); /* Frame */
+
+		}
 		break;
 	case CUI_ClientManager::AMMO_ARROW:
-		if (m_iNumArrowNow == 0)
-			return;
-		else
-			m_iNumArrowNow -= 1;
-		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(-1.f);
+		if (1 == iLevel)
+		{
+			/* When player gets arrow, ammo Opens. */
+			m_bActive = true;
+			m_vecNode[UI_ARROWGUAGE]->Set_Active(true);
+		}
+		else if(2 == iLevel)
+		{
+			m_iNumArrows = 5;
+			m_iNumArrowNow = m_iNumArrows;
+		}
 		break;
 	}
+
+	/* Connect To Aim */
+	static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()
+		->Get_Canvas(CUI_ClientManager::CANVAS_AIM))->LevelUp(eType, iLevel);
 }
 
 CUI_CanvasAmmo * CUI_CanvasAmmo::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

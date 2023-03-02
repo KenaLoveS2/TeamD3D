@@ -14,11 +14,12 @@ public:
 	enum	TEXTURE_TYPE { TEXTURE_DIFFUSE, TEXTURE_MASK, TEXTURE_END };
 	typedef struct tagUIDesc
 	{
-		wstring				fileName; 
+		wstring				fileName;
 		_float3				vPos;
 		_float2				vSize;
 		_float4x4			ViewMatrix;
 		_float4x4			ProjMatrix;
+		_uint				iIndex;
 	} UIDESC;
 
 protected:
@@ -28,17 +29,31 @@ protected:
 
 
 public: /* Get */
-	_fmatrix				Get_WorldMatrix();
-	_fmatrix				Get_InitMatrix();
-	_uint					Get_RenderPass() { return m_iRenderPass; }
-	CTexture*				Get_DiffuseTexture() { return m_pTextureCom[TEXTURE_DIFFUSE]; }
-	
+	_fmatrix				Get_WorldMatrix()			{ return m_pTransformCom->Get_WorldMatrix(); }
+	_fmatrix				Get_InitMatrix()			{ return XMLoadFloat4x4(&m_matInit); }
+	_fmatrix				Get_LocalMatrix()			{ return XMLoadFloat4x4(&m_matLocal); }
+	_float4x4				Get_LocalMatrixFloat4x4()	{ return m_matLocal; }
+	_float3					Get_WorldScale()			{ return m_pTransformCom->Get_Scaled(); }
+	_float3					Get_OriginalSettingScale()	{ return m_vOriginalSettingScale; }
+	_uint					Get_RenderPass()			{ return m_iRenderPass; }
+	CTexture*				Get_DiffuseTexture()		{ return m_pTextureCom[TEXTURE_DIFFUSE]; }
+
 public: /* Set */
 	void					Set_Parent(CUI* pUI);
+	void					Set_Active(_bool bActive) { m_bActive = bActive;}
 	HRESULT					Set_Texture(TEXTURE_TYPE eType, wstring textureComTag);
-	void					Set_RenderPass(_uint iPass) { m_iRenderPass = iPass; }
+	void					Set_RenderPass(_uint iPass)			{ m_iRenderPass = iPass; }
 	void					Set_LocalMatrix(_float4x4 matLocal) { m_matLocal = matLocal; }
-	void					Set_TextureIndex(_uint iIdx) { m_iTextureIdx = iIdx; }
+	void					Set_TextureIndex(_uint iIdx) {  /* For Diffuse Texture */
+		if(m_pTextureCom[TEXTURE_DIFFUSE]!=nullptr)
+			m_iTextureIdx = iIdx; 
+	}
+	void					Set_LocalTranslation(_float4 vPos)	{ 
+		m_matLocal._41 = vPos.x;
+		m_matLocal._42 = vPos.y;
+		m_matLocal._43 = vPos.z;
+	}
+
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -50,7 +65,6 @@ public:
 public:
 	HRESULT					Add_Event(CUI_Event* pEvent);
 	HRESULT					Delete_Event();
-public:
 	void					Change_DiffuseTexture(CTexture* pTexture, CTexture** ppOrigin = nullptr);
 
 public:
@@ -79,7 +93,7 @@ protected:
 
 	_uint					m_iTextureIdx; /* Diffuse Texture's index (for render) */
 
-	/* For. Node (mostly) */
+										   /* For. Node (mostly) */
 	_float4x4				m_matInit;
 	_float4x4				m_matParentInit;
 	_float4x4				m_matLocal;
@@ -89,9 +103,14 @@ protected:
 	_uint					m_iOriginalRenderPass;
 
 
+	/* For. Event */
+	/* it's not a real original scale. it's the scale after the scale setting.*/
+	_float3					m_vOriginalSettingScale;
+
 protected: /* Event */
-	//_uint					m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
+		   //_uint					m_iEventNum; /* Mostly, One UI gets One Events, but for extension */
 	vector<CUI_Event*>		m_vecEvents;
+
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) = 0;
 	virtual void			Free()	override;

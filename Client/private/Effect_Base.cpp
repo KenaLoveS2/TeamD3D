@@ -2,6 +2,7 @@
 #include "..\public\Effect_Base.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Effect_Trail.h"
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -31,6 +32,21 @@ void CEffect_Base::Set_Matrix()
 
 	m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
+}
+
+void CEffect_Base::Set_TrailDesc()
+{
+	if (m_pParent == nullptr)
+		return;
+
+	EFFECTDESC effectDesc = m_pParent->Get_EffectDesc();
+
+	m_eEFfectDesc.bActive = effectDesc.bActive;
+	m_eEFfectDesc.bAlpha = effectDesc.bAlpha;
+	m_eEFfectDesc.fLife = effectDesc.fLife;
+	m_eEFfectDesc.fWidth = effectDesc.fWidth;
+	m_eEFfectDesc.fSegmentSize = effectDesc.fSegmentSize;
+	m_eEFfectDesc.fAlpha = effectDesc.fAlpha;
 }
 
 void CEffect_Base::BillBoardSetting(_float3 vScale)
@@ -108,7 +124,6 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 		if (m_iTotalDTextureComCnt == iDTextureComCnt)
 			return S_OK;
 
-		// 현재 내 컴포넌트 카운트보다 입력된 카운트가 적을때 차 만큼 컴포넌트 삭제 
 		if (m_iTotalDTextureComCnt > iDTextureComCnt)
 		{
 			_int iDeleteComponentCnt = m_iTotalDTextureComCnt - iDTextureComCnt;
@@ -126,7 +141,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 				Safe_Release(m_pDTextureCom[m_iTotalDTextureComCnt]);
 			}
 		}
-		else if(m_iTotalDTextureComCnt < iDTextureComCnt)// 현재 내 컴포넌트 카운트 보다 입력된 카운트가 클때 => 컴포넌트 추가 
+		else if (m_iTotalDTextureComCnt < iDTextureComCnt)
 		{
 			for (_uint i = m_iTotalDTextureComCnt; i < iDTextureComCnt; ++i)
 			{
@@ -190,37 +205,43 @@ void CEffect_Base::Free()
 {
 	__super::Free();
 
-	if (m_isCloned)
+	// Shader, Renderer Release
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+
+	// Texture
+	if (nullptr != m_pDTextureCom)
 	{
-		// Shader, Renderer Release
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRendererCom);
-
-		// Texture
-		if (nullptr != m_pDTextureCom)
-		{
-			// Diffuse Release
-			for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
-				Safe_Release(m_pDTextureCom[i]);
-		}
-
-		if (nullptr != m_pMTextureCom)
-		{
-			// Mask Release
-			for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
-				Safe_Release(m_pMTextureCom[i]);
-		}
-
-		// VIBuffer Release
-		if (nullptr != m_pVIBufferCom)
-			Safe_Release(m_pVIBufferCom);
-
-		if (nullptr != m_pVIInstancingBufferCom)
-			Safe_Release(m_pVIInstancingBufferCom);
-
-		for (auto& pChild : m_vecChild)
-			Safe_Release(pChild);
-		m_vecChild.clear();
-
+		// Diffuse Release
+		for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
+			Safe_Release(m_pDTextureCom[i]);
 	}
+
+	if (nullptr != m_pMTextureCom)
+	{
+		// Mask Release
+		for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
+			Safe_Release(m_pMTextureCom[i]);
+	}
+
+	if (nullptr != m_pNTextureCom)
+		Safe_Release(m_pNTextureCom);
+
+	// VIBuffer Release
+	if (nullptr != m_pVIBufferCom)
+		Safe_Release(m_pVIBufferCom);
+
+	if (nullptr != m_pVIInstancingBufferCom)
+		Safe_Release(m_pVIInstancingBufferCom);
+
+	if (nullptr != m_pVITrailBufferCom)
+		Safe_Release(m_pVITrailBufferCom);
+
+	// Mesh Release
+	if (nullptr != m_pModelCom)
+		Safe_Release(m_pModelCom);
+
+	for (auto& pChild : m_vecChild)
+		Safe_Release(pChild);
+	m_vecChild.clear();
 }

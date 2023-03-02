@@ -4,6 +4,7 @@
 #define IDENTITY_MATRIX float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 static const float PI = 3.14159265359;
 
+
 float4 ToneMap(float4 color)
 {
 	float4 mappedColor = color;
@@ -44,15 +45,28 @@ float DistributionGGX(float3 N, float3 H, float roughness)
 	return num / denom;
 }
 
+float GeometrySmithGGX(float3 N, float3 V, float3 L, float roughness)
+{
+	float alpha = roughness * roughness;
+	float alpha2 = alpha * alpha;
+
+	float NdotV = max(dot(N, V), 0.0);
+	float NdotL = max(dot(N, L), 0.0);
+	float k = alpha2 / 2.0;
+
+	float Gv = NdotV / (NdotV + (1.0 - NdotV) * k);
+	float Gl = NdotL / (NdotL + (1.0 - NdotL) * k);
+
+	return Gv * Gl;
+}
+
 float GeometrySchlickGGX(float NdotV, float roughness)
 {
-	float r = (roughness + 1.0);
-	float k = (r*r) / 8.0;
+	float a = roughness * roughness;
+	float k = a / 2.0;
 
-	float num = NdotV;
 	float denom = NdotV * (1.0 - k) + k;
-
-	return num / denom;
+	return NdotV / denom;
 }
 
 float GeometrySmith(float3 N, float3 V, float3 L, float roughness)

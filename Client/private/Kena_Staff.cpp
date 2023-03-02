@@ -29,29 +29,17 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 
-// 	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-// 	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Staff.ao");
 	return S_OK;
 }
 
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-// 	m_pModelCom->Set_AnimIndex(188);
-// 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-// 	int a = 0;
-// 	CModel*	pModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-// 	CBone*	pHandSocket = pModel->Get_BonePtr("kena_rt_middle_d_jnt");
-// 	_matrix	matWorld = pHandSocket->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pPlayer->Get_WorldMatrix();
-// 	matWorld = m_pPlayer->Get_WorldMatrix();
-// 	matWorld.r[3] = (pHandSocket->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pPlayer->Get_WorldMatrix()).r[3];
-// 	m_pTransformCom->Set_WorldMatrix(matWorld);
 
 	if (m_pRendererCom != nullptr)
 	{

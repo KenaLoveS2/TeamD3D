@@ -8,7 +8,7 @@ CUI_NodeHUDHPBar::CUI_NodeHUDHPBar(ID3D11Device * pDevice, ID3D11DeviceContext *
 }
 
 CUI_NodeHUDHPBar::CUI_NodeHUDHPBar(const CUI_NodeHUDHPBar & rhs)
-	:CUI_Node(rhs)
+	: CUI_Node(rhs)
 {
 }
 
@@ -34,24 +34,51 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	/* Test */
 	m_bActive = true;
 
+	/* For. Upgrade */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX;
+	m_bUpgrade = false;
+	m_fSpeed = 1.f;
 
 	return S_OK;
 }
 
 void CUI_NodeHUDHPBar::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
+	if (m_bUpgrade)
+	{
+		if (m_fDestScaleX > m_matLocal._11)
+		{
+			m_fSpeed = 40.f;
+			m_matLocal._11 += m_fSpeed * fTimeDelta;
+			m_matLocal._41 += m_fSpeed * fTimeDelta * 0.5f;
+
+		}
+		else
+		{
+			m_matLocal._11 = m_fDestScaleX;
+			m_matLocal._41 = m_fDestTransX;
+			m_bUpgrade = false;
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 }
 
 void CUI_NodeHUDHPBar::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 
 }
 
@@ -73,6 +100,16 @@ HRESULT CUI_NodeHUDHPBar::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CUI_NodeHUDHPBar::Upgrade()
+{
+	/* LevelUp : Guage Length + 150.f */
+	m_fSourScaleX = m_matLocal._11;
+	m_fDestScaleX = m_fSourScaleX + 150.f;
+	m_fSourTransX = m_matLocal._41;
+	m_fDestTransX = m_fSourTransX + 150.f * 0.5f;
+	m_bUpgrade = true;
 }
 
 HRESULT CUI_NodeHUDHPBar::SetUp_Components()

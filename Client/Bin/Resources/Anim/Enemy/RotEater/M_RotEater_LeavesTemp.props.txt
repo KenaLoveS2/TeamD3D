@@ -1,0 +1,124 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[1] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[6] =
+                {
+                    ParameterInfos[0] = { Name=DissolveEmissiveAmount }
+                    ParameterInfos[1] = { Name=LeafGlowAmount }
+                    ParameterInfos[2] = { Name=BlueAmount }
+                    ParameterInfos[3] = { Name=DissolveAmount }
+                    ParameterInfos[4] = { Name=DissolveTile }
+                    ParameterInfos[5] = { Name=Fringe }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[4] =
+                {
+                    ParameterInfos[0] = { Name=Subsurface }
+                    ParameterInfos[1] = { Name=LeafGlowColor }
+                    ParameterInfos[2] = { Name=GlowColor }
+                    ParameterInfos[3] = { Name=BaseColor }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=DissolveAplha }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[6] = { 50, 1, 0, 0, 1, 2 }
+        VectorValues[4] =
+        {
+            VectorValues[0] = { R=0.230469, G=0.164226, B=0, A=0 }
+            VectorValues[1] = { R=0.864583, G=0.576389, B=0, A=0 }
+            VectorValues[2] = { R=0, G=0.5, B=1, A=0 }
+            VectorValues[3] = { R=0, G=0, B=0, A=0 }
+        }
+        TextureValues[1] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        }
+    }
+    ReferencedTextures[1] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[1] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = DissolveAplha
+        Group = None
+    }
+}
+CollectedScalarParameters[6] =
+{
+    CollectedScalarParameters[0] =
+    {
+        Value = 50
+        Name = DissolveEmissiveAmount
+        Group = None
+    }
+    CollectedScalarParameters[1] = { Value=1, Name=LeafGlowAmount, Group=None }
+    CollectedScalarParameters[2] = { Value=0, Name=BlueAmount, Group=None }
+    CollectedScalarParameters[3] = { Value=0, Name=DissolveAmount, Group=None }
+    CollectedScalarParameters[4] = { Value=1, Name=DissolveTile, Group=None }
+    CollectedScalarParameters[5] = { Value=2, Name=Fringe, Group=None }
+}
+CollectedVectorParameters[4] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0.230469, G=0.164226, B=0, A=0 }
+        Name = Subsurface
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0.864583, G=0.576389, B=0, A=0 }
+        Name = LeafGlowColor
+        Group = None
+    }
+    CollectedVectorParameters[2] =
+    {
+        Value = { R=0, G=0.5, B=1, A=0 }
+        Name = GlowColor
+        Group = None
+    }
+    CollectedVectorParameters[3] =
+    {
+        Value = { R=0, G=0, B=0, A=0 }
+        Name = BaseColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[0] = {}

@@ -10,7 +10,7 @@ CUI_NodeHUDRot::CUI_NodeHUDRot(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 }
 
 CUI_NodeHUDRot::CUI_NodeHUDRot(const CUI_NodeHUDRot & rhs)
-	:CUI_Node(rhs)
+	: CUI_Node(rhs)
 {
 }
 
@@ -53,14 +53,13 @@ HRESULT CUI_NodeHUDRot::Initialize(void * pArg)
 	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
 	m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
 
-
 	return S_OK;
 }
 
 void CUI_NodeHUDRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	}
+}
 
 void CUI_NodeHUDRot::Late_Tick(_float fTimeDelta)
 {

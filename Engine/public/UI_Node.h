@@ -9,8 +9,6 @@ protected:
 	CUI_Node(const CUI_Node& rhs);
 	virtual ~CUI_Node() = default;
 
-
-
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -21,6 +19,14 @@ public:
 	virtual void			Imgui_RenderProperty();
 	virtual HRESULT			Save_Data();
 	virtual HRESULT			Load_Data(wstring fileName);
+public:
+	void					ReArrangeX(_int iIndex, _int iTotal, _float fCenterX);
+	void					ReArrangeX_Reverse(_int iIndex, _int iTotal, _float fCenterX);
+	void					ReArrangeX();
+
+protected:
+	_float					m_fIntervalX;
+	_float					m_fIntervalY;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

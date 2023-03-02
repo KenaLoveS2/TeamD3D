@@ -11,8 +11,10 @@ private:
 
 public:
 	virtual	void		Call_Event(_float fData)				override;
-	_bool				Is_FullFilled() { if (m_fGuage >= 1.f) return true; else return false; }
-	_bool				Is_Zero(); 
+	_bool				Is_FullFilled() { if (m_fGuage >= 0.99f) return true; else return false; }
+	_bool				Is_Zero();
+	_float				Get_GuageNow() { return m_fGuageNew; }
+	void				ReArrangeSettingOn() { m_bReArrangeSettingOn = true; }
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -25,8 +27,8 @@ public:
 
 private:
 	_uint				m_iRenderPass;
-	_float2				m_vAcceleration; 
-	_float2				m_vSpeed;	
+	_float2				m_vAcceleration;
+	_float2				m_vSpeed;
 	_float4				m_vMinColor;
 	_float4				m_vColor;
 
@@ -34,6 +36,8 @@ private:
 	_float				m_fGuage;	/* Normalized Data */
 	_float				m_fGuageNew;
 	_float				m_fGuageSpeed;
+
+	_bool				m_bReArrangeSettingOn;
 public:
 	static CUI_Event_Guage*	Create();
 	static CUI_Event_Guage*	Create(wstring fileName);

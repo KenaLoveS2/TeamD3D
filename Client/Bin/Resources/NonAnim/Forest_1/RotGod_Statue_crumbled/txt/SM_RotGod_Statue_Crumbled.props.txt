@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGod_Statue_Tree.MI_RotGod_Statue_Tree'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGod_Statue_Rock.MI_RotGod_Statue_Rock'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGod_Statue_Tree.MI_RotGod_Statue_Tree'
+        MaterialSlotName = MI_RotGod_Statue_Tree
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 891.257, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGod_Statue_Rock.MI_RotGod_Statue_Rock'
+        MaterialSlotName = MI_RotGod_Statue_Rock
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 860.886, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-26.1658, Y=-71.4602, Z=119.068 }
+    BoxExtent = { X=506.584, Y=365.661, Z=212.299 }
+    SphereRadius = 540.88
+}
