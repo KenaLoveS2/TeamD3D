@@ -109,13 +109,13 @@ void CMonster::Push_EventFunctions()
 
 _bool CMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
 {
-	return m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
+	return m_pModelCom->Find_Animation(eAnim)->Get_PlayRate() >= FinishRate;
 }
 
 _bool CMonster::AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate)
 {
-	if (m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() > StartRate &&
-		m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() <= FinishRate)
+	if (m_pModelCom->Find_Animation(eAnim)->Get_PlayRate() > StartRate &&
+		m_pModelCom->Find_Animation(eAnim)->Get_PlayRate() <= FinishRate)
 	{
 		return true;
 	}

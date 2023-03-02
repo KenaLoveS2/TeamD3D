@@ -953,16 +953,6 @@ void CModel::Set_AllBonesUnlock()
 		pBone->Set_BoneLocked(false);
 }
 
-CAnimation * CModel::Get_SelectIndexAnim(_uint iIndex)
-{
-	return m_Animations[iIndex];
-}
-
-void CModel::Reset_PlayTime(_uint iIndex)
-{
-	m_Animations[iIndex]->Reset_Animation();
-}
-
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)

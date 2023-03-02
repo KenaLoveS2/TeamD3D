@@ -50,7 +50,7 @@ public:
 	void				Call_Event(const string& strFuncName);
 	void				Compute_CombindTransformationMatrix();
 	void				Update_BonesMatrix(CModel* pModel);
-	void						Set_AllAnimCommonType();
+	void				Set_AllAnimCommonType();
 
 public:	
 	HRESULT 				Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
