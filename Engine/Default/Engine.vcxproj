@@ -241,6 +241,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
+    <ClInclude Include="..\public\PhysX_Defines.h" />
     <ClInclude Include="..\public\PhysX_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\public\PostFX.h" />
@@ -416,6 +417,7 @@ call Copy.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PhysX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl" />
   </ItemGroup>
   <ItemGroup>

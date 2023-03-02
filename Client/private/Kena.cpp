@@ -71,7 +71,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxBoxDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	// m_pTransformCom->Connect_PxActor(TEXT("TEST"));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
 	*/
 	/*
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
@@ -85,9 +85,8 @@ HRESULT CKena::Initialize(void * pArg)
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	*/
-	/*
+	*/	
+	
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
@@ -100,15 +99,18 @@ HRESULT CKena::Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+		
+
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	*/
+	m_pRendererCom->Set_PhysXRender(true);
+
 	return S_OK;
 }
 
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
+		
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 
@@ -134,9 +136,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
 	/************** Delegator Test *************/
-	static _float fNum = 0.f;
-	CUI_ClientManager::UI_PRESENT eType1		= CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_PRESENT eType2		= CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eHP		= CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT ePip			= CUI_ClientManager::HUD_PIP;
 	CUI_ClientManager::UI_PRESENT eType3		= CUI_ClientManager::HUD_SHIELD;
 	CUI_ClientManager::UI_PRESENT eType4		= CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_PRESENT eBomb			= CUI_ClientManager::AMMO_BOMB;
@@ -145,19 +146,23 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
-
+	static _float fNum = 3.f;
+	_float fZero = 0.f;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
 	{
 		static _float fLevel = 0.f;
 		fLevel += 1.f;
 		m_PlayerDelegator.broadcast(eArrowGuage, funcLevelup, fLevel);
 		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
+		m_PlayerDelegator.broadcast(ePip, funcLevelup, fLevel);
+		m_PlayerDelegator.broadcast(eHP, funcLevelup, fLevel);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
 		/* Pip Guage pop test */
-		_float fPipUse = 0;;
-		m_PlayerDelegator.broadcast(eType2, funcDefault, fPipUse);
+		fNum -= 1.f;
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+
 
 		/* Rot icon chagne test */
 		static _float fIcon = 0;
@@ -180,15 +185,15 @@ void CKena::Late_Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
 		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
 		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eType1, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(eType2, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
 	}
 
@@ -221,7 +226,6 @@ HRESULT CKena::Render()
 		if (i == 1)
 		{
 			// Arm & Leg
-			// SSS OK
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
@@ -236,8 +240,7 @@ HRESULT CKena::Render()
 		}
 		else if (i ==5 || i == 6)
 		{
-			// Face
-			// SSS OK
+			// HEAD
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);

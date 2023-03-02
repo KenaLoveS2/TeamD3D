@@ -62,6 +62,16 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 	/* Test */
 	m_bActive = true;
 
+	m_Pips[PIP_1] = UI_PIPGAUGE1;
+	m_Pips[PIP_2] = UI_PIPGAUGE2;
+	m_Pips[PIP_3] = UI_PIPGAUGE3;
+
+	m_iNumPips = 1;
+	m_iNumPipsNow = m_iNumPips;
+
+	m_vecNode[UI_PIPBAR1]->Set_Active(true);
+	m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
+	
 	return S_OK;
 }
 
@@ -168,19 +178,49 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-	str = "Node_PipBar";
+	/************ Pip : Max 3 *************/
+	str = "Node_PipBar1"; 
 	tDesc.fileName.assign(str.begin(), str.end());
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipBar", L"Node_PipBar", &tDesc));
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipBar", L"Node_PipBar1", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
 
-	str = "Node_PipGuage";
+	str = "Node_PipGuage1";
 	tDesc.fileName.assign(str.begin(), str.end());
-	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipGuage", L"Node_PipGuage", &tDesc));
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipGuage", L"Node_PipGuage1", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipBar2";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipBar", L"Node_PipBar2", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipGuage2";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipGuage", L"Node_PipGuage2", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipBar3";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipBar", L"Node_PipBar3", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+
+	str = "Node_PipGuage3";
+	tDesc.fileName.assign(str.begin(), str.end());
+	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PipGuage", L"Node_PipGuage3", &tDesc));
+	if (FAILED(Add_Node(pUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(str);
+	/************	~ Pip *************/
 
 	/* Effects are stored in the canvas of UI that need it. */
 	/* But Call through ClientManager because Node doesn't have to know the canvas belong to.*/
@@ -250,6 +290,21 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 
 void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
+	switch (eFunc)
+	{
+	case CUI_ClientManager::FUNC_DEFAULT:
+		Default(eType, fValue);
+		break;
+	case CUI_ClientManager::FUNC_LEVELUP:
+		LevelUp(eType, (_int)fValue);
+		break;
+	}
+}
+
+void CUI_CanvasHUD::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+{
+	_int iIndex = 0;
+	_float fVal = fValue;
 	switch (eType)
 	{
 	case CUI_ClientManager::HUD_HP:
@@ -259,10 +314,99 @@ void CUI_CanvasHUD::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientMana
 		static_cast<CUI_NodeHUDShield*>(m_vecNode[UI_SHIELD])->Set_Guage(fValue);
 		break;
 	case CUI_ClientManager::HUD_PIP:
-		static_cast<CUI_NodeHUDPip*>(m_vecNode[UI_PIPGAUGE])->Set_Guage(fValue);
+		/* PIP_3	PIP_2	PIP_1 */	
+		/* guage add -> */
+		/* guage use <- */
+		if (fValue == 0.f) /* Use All */
+		{
+			if (m_iNumPipsNow == 0)
+				return;
+
+			/* if m_iNuMPipsNow == 3, use at PIP_1 -> index == 0*/
+			/* pipsNow/index : 3,0 / 2,1 / 1,2 */
+			iIndex = m_iNumPips - m_iNumPipsNow;
+			m_iNumPipsNow -= 1;
+			
+			CUI_NodeHUDPip* pCurPip = static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex]]);
+			pCurPip->Set_Guage(fVal);
+
+			/* when using pip energy, consume dir and charge dir is opposite. */
+			/* so they need to be reorganized */
+			if (iIndex - 1 >= 0)
+			{
+				CUI_NodeHUDPip* pNextPip = static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex-1]]);
+				_float fGuage = pNextPip->Get_Guage();
+				if (fGuage > 0.001f)
+				{
+					pCurPip->ReArrangeGuage(); /* Let Guage can be changed */
+					pCurPip->Set_Guage(pNextPip->Get_Guage());
+					pNextPip->Set_Guage(0.f);
+				}
+			}
+
+		}
+		else /* Gradually add */
+		{
+			if (m_iNumPipsNow == m_iNumPips)
+				return;
+
+			/* If m_iNumPipsNow == 0 , guage on at PIP_3 -> index==2 */
+			/* pipsNow/index : 0,2 / 1,1 / 2,0*/
+			iIndex = (m_iNumPips - 1) - m_iNumPipsNow;
+
+			fVal = fValue - m_iNumPipsNow;
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex]])->Set_Guage(fVal);
+
+
+		}
+	
 		break;
 	case CUI_ClientManager::HUD_ROT:
 		static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(fValue);
+		break;
+	}
+}
+
+void CUI_CanvasHUD::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
+{
+	switch (eType)
+	{
+	case CUI_ClientManager::HUD_HP:
+		break;
+	case CUI_ClientManager::HUD_SHIELD:
+		/* rather make it longer, change color or stat upgrade would be better */
+		break;
+	case CUI_ClientManager::HUD_PIP:
+		if (2 == iLevel)
+		{
+			m_vecNode[UI_PIPBAR2]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE2]->Set_Active(true);
+
+			m_iNumPips = 2;
+			m_iNumPipsNow = m_iNumPips;
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]-1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+		}
+		else if (3 == iLevel)
+		{
+			m_vecNode[UI_PIPBAR3]->Set_Active(true);
+			m_vecNode[UI_PIPGAUGE3]->Set_Active(true);
+
+			m_iNumPips = 3;
+			m_iNumPipsNow = m_iNumPips;
+
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_1] - 1])->ReArrangeX(); /* Frame */
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2]])->ReArrangeX();
+			static_cast<CUI_Node*>(m_vecNode[m_Pips[PIP_2] - 1])->ReArrangeX(); /* Frame */
+
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_1]])->Set_Guage(1.f);
+			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[PIP_2]])->Set_Guage(1.f);
+		}
+		break;
 		break;
 	}
 }
