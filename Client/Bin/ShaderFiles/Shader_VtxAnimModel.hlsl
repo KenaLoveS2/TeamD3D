@@ -145,7 +145,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}
+}//0
 
 PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 {
@@ -171,7 +171,7 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	Out.vAmbient = g_vAmbientEyeColor;
 
 	return Out;
-}
+}//1
 
 PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 {
@@ -187,18 +187,8 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4		FinalColor = float4(0, 0, 0, 1);
-	FinalColor = vDiffuse + vEmissive;
 
-	/* first algorithm*/
-	//float			fAmbientOcclusion = vAO_R_M.r;
-	//float			fRoughness = vAO_R_M.g;
-	//float			fMetalic = vAO_R_M.b;
-	//float3			diffuse = vDiffuse.rgb * (1.f - fMetalic);
-	//float3			specular = vDiffuse.rgb * fMetalic;
-	//float3			ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
-	//float3			emissive = vEmissive.rgb;
-	//float4 color = float4(diffuse + emissive, vDiffuse.a);
-	//color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);
+	FinalColor = vDiffuse + vEmissive;
 
 	if (0.1f > vDiffuse.a)
 		discard;
@@ -209,7 +199,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}
+}//2
 
 PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 {
@@ -231,24 +221,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	float4		FinalColor = float4(1, 1, 1, 1);
 
-	if(vMask.r == 0.0f && vMask.g == 0.0f && vMask.b == 0.0f)
-		FinalColor = (vDiffuse) + (vEmissive * vEmissiveMask.r);
-	else 
-		FinalColor = (vDiffuse /** vMask.r*/) + (vEmissive * vEmissiveMask.r);
-
-	/* first algorithm*/
-	//float				fAmbientOcclusion	= vAO_R_M.r;
-	//float				fRoughness				= vAO_R_M.g;
-	//float				fMetalic					= vAO_R_M.b;
-	//float3				diffuse						= vDiffuse.rgb * (1.f - fMetalic);
-	//float3				specular					= vDiffuse.rgb * fMetalic;
-	//float3				ambient					= g_vAmbientColor.rgb * fAmbientOcclusion;
-	//float3				emissive					= vEmissive.rgb * vEmissiveMask.rgb;
-	float4				sssDesc					= SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz , g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
-	float3				sssColor					= sssDesc.rgb;
-	//FinalColor										= float4((diffuse + emissive * vEmissiveMask.r) * vMask.r, vDiffuse.a);
-	//FinalColor.rgb									= lerp(FinalColor.rgb, vDiffuse.rgb, fRoughness);
-	FinalColor.rgb									= lerp(FinalColor.rgb, sssColor, vSSSMask.r);
+	FinalColor = vDiffuse + vEmissive * vEmissiveMask.r;
 
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal  = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -256,14 +229,14 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}
+}//3
 
 PS_OUT PS_MAIN_FACE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vAO_R_M = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vSSSMask = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAO_R_M	  = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vSSSMask	  = g_SSSMaskTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
@@ -273,26 +246,13 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	float4		FinalColor = float4(0, 0, 0, 1);
 	FinalColor = vDiffuse;
 
-	/* first algorithm*/
-	/*float			fAmbientOcclusion = vAO_R_M.r;
-	float			fRoughness = vAO_R_M.g;
-	float			fMetalic = vAO_R_M.b;
-	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
-	float3		ambient = g_vAmbientColor.rgb * fAmbientOcclusion;
-	float			smoothness = 1.f - fRoughness;
-	float4 sssDesc = SSS(In.vPosition.xyz, vNormal, In.vViewDir.xyz ,g_vSSSColor, In.vTexUV, g_fSSSAmount, g_DiffuseTexture, g_SSSMaskTexture);
-	float3 sssColor = sssDesc.rgb;
-	float4 color = float4(diffuse, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, smoothness);
-	color.rgb =  lerp(color.rgb, sssColor, vSSSMask.r);*/
-
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}
+}//4
 
 PS_OUT PS_MAIN_STAFF(PS_IN In)
 {
@@ -309,22 +269,13 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float4		FinalColor = float4(0, 0, 0, 1);
 	FinalColor = vDiffuse + vEmissive;
 
-	/* first algorithm*/
-	/*float			fAmbientOcclusion = vAO_R_M.r;
-	float			fRoughness = vAO_R_M.g;
-	float			fMetalic = vAO_R_M.b;
-	float3		diffuse = vDiffuse.rgb * (1.f - fMetalic);
-	float3		emissive = vEmissive.rgb;
-	float4		color = float4(diffuse + emissive, vDiffuse.a);
-	color.rgb = lerp(color.rgb, vDiffuse.rgb, fRoughness);*/
-
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}
+}//5
 
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
@@ -349,17 +300,13 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	// Compute the position of the current pixel in hair space
 	float3 pixelPosition = float3(In.vPosition.xy, In.vTexUV.r) * g_fHairLength;
 	float3 hairDirection = normalize(pixelPosition - rootPosition);
 
-	// Compute the angle between the current hair segment and the view direction
 	float viewAngle = dot(hairDirection, viewDirection);
 
-	// Compute the thickness of the current hair segment based on the view angle
 	float thickness = saturate(g_fHairThickness / (1.0f + viewAngle));
 
-	// Apply thickness to the hair color
 	vDiffuse.rgb *= thickness;
 
 	float fFinalAlpha = fAlpha * saturate((fDepth - rootPosition.z)/(1.f - rootPosition.z));
@@ -371,7 +318,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}
+}//6
 
 PS_OUT PS_MAIN_EYELASH(PS_IN In)
 {
@@ -379,10 +326,8 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	vector		vLashColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAlbedo = vLashColor;
 
-	// Step 1: Sample base color and alpha value
 	float alpha = vLashColor.r;
 
-	// Step 2: Calculate the distance of the pixel from the nearest lash
 	float distance = 1.0;
 	for (float i = 0.0; i < g_fLashDensity; i += 1.0)
 	{
@@ -392,7 +337,6 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 		distance = min(distance, lashAlpha);
 	}
 
-	// Step 3: Apply the final color based on the distance
 	float4 finalColor = float4(lerp(vAlbedo, vLashColor, distance * g_fLashIntensity));
 
 	Out.vDiffuse = finalColor;
@@ -401,7 +345,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
-}
+}//7
 
 technique11 DefaultTechnique
 {

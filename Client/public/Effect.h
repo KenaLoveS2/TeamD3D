@@ -31,7 +31,7 @@ public:
 	void			 Set_FreePos();
 	_bool			 Play_FreePos(_float4& vPos);
 	vector<_float4>* Get_FreePos();
-	void			Set_Lerp(_bool bLerp) { m_bLerp = bLerp; }
+	void			 Set_Lerp(_bool bLerp) { m_bLerp = bLerp; }
 
 private:
 	HRESULT SetUp_Components();

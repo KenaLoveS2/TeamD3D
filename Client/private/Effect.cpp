@@ -200,6 +200,7 @@ HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * Proto
 	for (_int i = 0; i < iCreateCnt; ++i)
 	{
 		// ProtoTag
+		//wstring strChildProtoTag = szChildProto;
 		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
 		pGameInstance->Add_String(szChildProtoTag);
 
@@ -217,7 +218,7 @@ HRESULT CEffect::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * Proto
 		_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
 		pGameInstance->Add_String(szChildClondTag);
 
-		pEffectBase = dynamic_cast<CEffect*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
 		eEffectDesc.bUseChild = false;
@@ -255,13 +256,20 @@ HRESULT CEffect::Edit_Child(const _tchar * ProtoTag)
 
 HRESULT CEffect::SetUp_Components()
 {
+	_int iCurLevel = 0;
+#ifdef TESTPLAY
+	iCurLevel = LEVEL_TESTPLAY;
+#else 
+	iCurLevel = LEVEL_EFFECT;
+#endif // TESTPLAY
+
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Shader_VtxEffectTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -285,7 +293,7 @@ HRESULT CEffect::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -298,7 +306,7 @@ HRESULT CEffect::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 	return S_OK;

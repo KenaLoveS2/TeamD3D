@@ -6,6 +6,35 @@ BEGIN(Client)
 class CMoth : public CMonster
 {
 private:
+	enum ANIMATION
+	{
+		BIND,
+		BOMB, // 피격
+		BOMB_LANDED, // 피격
+		COMBATIDLE,
+		DEATHSIM,
+		DODGE_L,
+		DODGE_R,
+		DODGE_BACK,
+		DODGE_DOWN,
+		DODGE_UP,
+		MELEEATTACK,
+		MELEEATTACK_RETURN,
+		MOVEDOWN,
+		PARRY,
+		RANGEDATTACK,
+		TAKEDAMAGE,
+		TAUNT1,
+		TAUNT2,
+		TWITCH, // ADDITIVE
+		WAKEUPLOOP,
+		WALK,
+		WISPIN,
+		WISPOUT,
+		ANIMATION_END
+	};
+
+private:
 	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMoth(const CMoth& rhs);
 	virtual ~CMoth() = default;
@@ -24,6 +53,7 @@ public:
 	virtual void					Push_EventFunctions() override;
 
 protected:
+	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;

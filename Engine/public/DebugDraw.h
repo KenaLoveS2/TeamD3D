@@ -45,4 +45,7 @@ namespace DX
     void XM_CALLCONV DrawTriangle(DirectX::PrimitiveBatch<DirectX::VertexPositionColor>* batch,
         DirectX::FXMVECTOR pointA, DirectX::FXMVECTOR pointB, DirectX::FXMVECTOR pointC,
         DirectX::GXMVECTOR color = DirectX::Colors::White);
+
+	void XM_CALLCONV DrawLine(PrimitiveBatch<VertexPositionColor>* batch,
+		FXMVECTOR pointA, FXMVECTOR pointB, FXMVECTOR color = DirectX::Colors::White);
 }

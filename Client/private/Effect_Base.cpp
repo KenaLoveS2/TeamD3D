@@ -224,6 +224,9 @@ void CEffect_Base::Free()
 			Safe_Release(m_pMTextureCom[i]);
 	}
 
+	if (nullptr != m_pNTextureCom)
+		Safe_Release(m_pNTextureCom);
+
 	// VIBuffer Release
 	if (nullptr != m_pVIBufferCom)
 		Safe_Release(m_pVIBufferCom);
@@ -233,6 +236,10 @@ void CEffect_Base::Free()
 
 	if (nullptr != m_pVITrailBufferCom)
 		Safe_Release(m_pVITrailBufferCom);
+
+	// Mesh Release
+	if (nullptr != m_pModelCom)
+		Safe_Release(m_pModelCom);
 
 	for (auto& pChild : m_vecChild)
 		Safe_Release(pChild);

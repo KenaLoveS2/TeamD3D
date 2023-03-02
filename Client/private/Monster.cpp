@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 
-
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
 {
@@ -41,6 +40,7 @@ HRESULT CMonster::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
 	Push_EventFunctions();
 
@@ -50,6 +50,9 @@ HRESULT CMonster::Initialize(void* pArg)
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -97,6 +100,22 @@ void CMonster::Push_EventFunctions()
 {
 }
 
+_bool CMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
+{
+	return m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
+}
+
+_bool CMonster::AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate)
+{
+	if (m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() > StartRate &&
+		m_pModelCom->Get_SelectIndexAnim(eAnim)->Get_PlayRate() <= FinishRate)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void CMonster::Free()
 {
 	__super::Free();
@@ -105,5 +124,5 @@ void CMonster::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pRangeCol);
 	Safe_Release(m_pNavigationCom);
-	Safe_Release(m_pStateMachine);
+	Safe_Release(m_pFSM);
 }

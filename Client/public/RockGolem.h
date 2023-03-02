@@ -6,6 +6,34 @@ BEGIN(Client)
 class CRockGolem : public CMonster
 {
 private:
+	enum ANIMATION
+	{
+		BIND, 
+		CHARGEATTACK,
+		CHARGESLAM, // 잘작동이 안되는것같음
+		DEPTH,
+		EXPLODE,
+		IDLE,
+		IDLE_ADDITIVE,
+		INTOSLEEP,
+		LOOK_DOWN,	//ADDITIVE
+		LOOK_LEFT,		//ADDITIVE
+		LOOK_RIGHT,	//ADDITIVE
+		LOOK_UP,			//ADDITIVE
+		SLEEPIDLE,
+		TAKEDAMAGE,
+		TAUNT1,
+		TAUNT2,
+		TURN_180,
+		TURN_90L,
+		TURN_90R,
+		WALK,
+		WISPIN,
+		WISPOUT,
+		ANIMATION_END
+	};
+
+private:
 	CRockGolem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CRockGolem(const CRockGolem& rhs);
 	virtual ~CRockGolem() = default;
@@ -24,6 +52,7 @@ public:
 	virtual void					Push_EventFunctions() override;
 
 protected:
+	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;

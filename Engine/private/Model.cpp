@@ -891,6 +891,11 @@ void CModel::Set_AnimIndex(_uint iAnimIndex, _int iBlendAnimIndex)
 	}
 }
 
+CAnimation * CModel::Get_SelectIndexAnim(_uint iIndex)
+{
+	return m_Animations[iIndex];
+}
+
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)
@@ -904,6 +909,18 @@ HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & str
 void CModel::Call_Event(const string & strFuncName)
 {
 	m_pOwner->Call_EventFunction(strFuncName);
+}
+
+void CModel::Set_AllAnimCommonType()
+{
+	if (m_Animations.empty())
+		return;
+
+	for(auto& pAnim : m_Animations)
+	{
+		if (pAnim != nullptr)
+			pAnim->Set_AnimationType(CAnimation::ANIMTYPE_COMMON);
+	}
 }
 
 void CModel::Play_Animation(_float fTimeDelta)
