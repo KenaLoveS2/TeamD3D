@@ -56,8 +56,11 @@ void CPhysX_Manager::Free()
 	Clear();
 
 	Safe_Release(m_pInputLayout);
+
+#ifdef _DEBUG
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
+#endif // _DEBUG
 }
 
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -108,7 +111,6 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	return S_OK;
 }
-
 
 void CPhysX_Manager::Init_Rendering()
 {	
@@ -480,7 +482,7 @@ PxRigidActor* CPhysX_Manager::Find_DynamicActor(const _tchar* pActorTag)
 	return Pair->second;
 }
 
-_bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pOut)
+_bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject** pObjectOut)
 {
 	PxRaycastBuffer hit;
 	PxReal distance = fRange;
@@ -489,10 +491,72 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 	direction.normalize();	
 	
 	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
-	if (hitResult && pOut)
-		*pOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
-
+	if (hitResult)
+	{
+		if(pPositionOut)
+			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
+		
+		if (pObjectOut)
+		{
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)hit.block.actor->userData;
+			pUserData && (*pObjectOut = pUserData->pOwner);
+		}
+	}
+		
 	return hitResult;
+}
+
+_bool CPhysX_Manager::IsMouseOver(HWND hWnd, CGameObject* pTargetObject, _float fRange,  _float3* pPositionOut)
+{
+	POINT tMouse = CUtile::GetClientCursorPos(hWnd);
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+
+	_matrix WorldlMatrix = pTargetObject->Get_TransformCom()->Get_WorldMatrix();
+	_matrix WorldlMatrixInverse = pTargetObject->Get_TransformCom()->Get_WorldMatrix_Inverse();
+	_matrix ViewMatrixInverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	_matrix ProjMatrixInverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+
+	D3D11_VIEWPORT ViewportDesc;
+	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+	_uint iNumViewports = 1;
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	_float4 vMousePos;
+	vMousePos.x = tMouse.x / (ViewportDesc.Width * 0.5f) - 1.f;
+	vMousePos.y = tMouse.y / -(ViewportDesc.Height * 0.5f) + 1.f;
+	vMousePos.z = 0.f;
+	vMousePos.w = 1.f;
+	
+	vMousePos = XMVector3TransformCoord(vMousePos, ProjMatrixInverse);
+	_float4 vRayPos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	_float4 vRayDir = vMousePos - vRayPos;
+	
+	vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrixInverse);
+	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInverse);
+	vRayDir = XMVector3Normalize(vRayDir);
+
+	PxRaycastBuffer hit;
+	PxReal distance = fRange;
+	PxVec3 origin = CUtile::ConvertPosition_D3DToPx(_float3(vRayPos.x, vRayPos.y, vRayPos.z));
+	PxVec3 direction = CUtile::ConvertPosition_D3DToPx(_float3(vRayDir.x, vRayDir.y, vRayDir.z));
+	direction.normalize();
+
+	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
+	if (hitResult)
+	{
+		PX_USER_DATA* pUserData = (PX_USER_DATA*)hit.block.actor->userData;
+		if (pUserData)
+		{
+			if (pPositionOut)
+				*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
+									
+			if(pUserData->pOwner == pTargetObject)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void CPhysX_Manager::Set_ActorPosition(const _tchar* pActorTag, _float3 vPosition)

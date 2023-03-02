@@ -42,6 +42,8 @@ public:
 	static  void 	MODELMATERIAL_Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
 		const char* jSonPath, vector<MODELMATERIAL>& Vec);
 
+	static _float4 Calc_RayDirByMousePos(HWND hWnd, ID3D11DeviceContext *pContext, _float4 vRayPos);
+
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)
 	{

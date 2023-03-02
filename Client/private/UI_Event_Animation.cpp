@@ -10,7 +10,6 @@ CUI_Event_Animation::CUI_Event_Animation(CUI* pUI)
 	m_iRenderPass = 4;
 	m_pParent = pUI;
 
-
 	m_bStart = false;
 	m_bFinished = false;
 	m_bLoop = true;
