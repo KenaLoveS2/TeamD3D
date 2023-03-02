@@ -451,7 +451,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		CString_Manager::GetInstance()->Add_String(pTag);
 		m_DynamicActors.emplace(pTag, pCapsule);
 
-		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);		
 	}	
