@@ -685,7 +685,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 	{
 		fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamLook)));
 
-		if (fDir > 0.f)	/* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 1��и� */
+		if (fDir > 0.f)	/* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 1��и�?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight + vCamLook * -1.f)));
 
@@ -732,7 +732,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 				}
 			}
 		}
-		else /* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 4��и� */
+		else /* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 4��и�?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight * -1.f + vCamLook * -1.f)));
 
@@ -784,7 +784,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 	{
 		fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamLook)));
 
-		if (fDir > 0.f)	/* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 2��и� */
+		if (fDir > 0.f)	/* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 2��и�?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight + vCamLook)));
 
@@ -831,7 +831,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 				}
 			}
 		}
-		else /* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 3��и� */
+		else /* ī�޶� Right ���� �� ���� �ٶ󺸰� ����. 3��и�?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight * -1.f + vCamLook)));
 
