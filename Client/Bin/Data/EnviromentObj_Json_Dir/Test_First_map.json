@@ -1,0 +1,79 @@
+{
+  "0_LayerTag": "Layer_Enviroment",
+  "1_Data": [
+    {
+      
+      "0_ProtoTag": "Prototype_GameObject_Tree",
+      "1_ModelTag": "Prototype_Component_Model_CeDarTree_02",
+      "25_Instancing_Transform_matrix": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 8.665971755981445, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -6.0, 0.0, 0.0, 1.0 ],
+      "3_CloneTag": "Tree_Test",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 2,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 5.345485687255859, 0.0, 34.96125411987305, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Statue",
+      "1_ModelTag": "Prototype_Component_Model_RotGod_Statue_Crumbled",
+      "3_CloneTag": "RotGod_Statue_Crumble",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.5, 0.0, 14.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_a",
+      "3_CloneTag": "Stair_FirstGate_1",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.330899238586426, 0.33000612258911133, 4.522819995880127, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_a",
+      "3_CloneTag": "Stair_FirstGate_5",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.133687973022461, 1.526168942451477, 2.6188812255859375, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Gate",
+      "1_ModelTag": "Prototype_Component_Model_RuinsKit_Gate_01",
+      "3_CloneTag": "Gate_In_Forest",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 14.956225395202637, 2.606750965118408, -0.24424317479133606, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_a",
+      "3_CloneTag": "Stair_FirstGate_3",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.197489738464355, 0.658115029335022, 3.802349090576172, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_c",
+      "3_CloneTag": "Stair_FirstGate_2",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.118501663208008, 2.0, 2.037524938583374, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_c",
+      "3_CloneTag": "Stair_FirstGate_0",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.379505157470703, 0.0, 5.344120502471924, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Stair",
+      "1_ModelTag": "Prototype_Component_Model_StoneStairs_c",
+      "3_CloneTag": "Stair_FirstGate_4",
+      "4_RoomIndex": 0,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 15.214873313903809, 0.9629998207092285, 3.148104429244995, 1.0 ]
+    }
+  ]
+}

@@ -120,6 +120,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_First_map.json");
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

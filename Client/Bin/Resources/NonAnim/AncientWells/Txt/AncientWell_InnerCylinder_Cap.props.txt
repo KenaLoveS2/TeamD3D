@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_InnerCylinder.MI_AncientWell_InnerCylinder'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_InnerCylinder.MI_AncientWell_InnerCylinder'
+        MaterialSlotName = MI_AncientWell_InnerCylinder1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1874.3, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.0395203, Y=-0.0879822, Z=-132.058 }
+    BoxExtent = { X=397.403, Y=398.399, Z=103.606 }
+    SphereRadius = 411.181
+}
