@@ -13,8 +13,9 @@ enum ACTOR_TYPE {
 
 typedef struct ENGINE_DLL tagPhysXUserData
 {
-	CGameObject* pOwner;
 	ACTOR_TYPE eType;
+	
+	CGameObject* pOwner;
 } PX_USER_DATA;
 
 static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner)

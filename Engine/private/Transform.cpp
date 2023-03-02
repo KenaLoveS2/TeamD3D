@@ -154,8 +154,10 @@ void CTransform::Imgui_RenderProperty()
 		else if (bottom)
 			matrixTranslation[1] -= viewport.Height * 0.5f;	
 		/******* ~Docking *******/
-
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_WorldMatrix));
+		
+		_float4x4 Matrix;
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&Matrix));
+		Set_WorldMatrix_float4x4(Matrix);
 
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
@@ -565,3 +567,35 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 	}
 }
 
+void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix) 
+{
+	m_WorldMatrix = fWorldMatrix;
+
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{					
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));			
+		}
+		else
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+	}
+}
+
+void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix) 
+{
+	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+		else
+		{
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
+		}
+	}		
+}

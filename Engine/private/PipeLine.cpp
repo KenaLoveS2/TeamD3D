@@ -27,6 +27,60 @@ _matrix CPipeLine::Get_TransformMatrix_Inverse(TRANSFORMSTATE eState) const
 	return XMLoadFloat4x4(&m_TransformMatrices_Inverse[eState]);
 }
 
+_float4 CPipeLine::Get_CamRight_Float4()
+{
+	_float4 vRight;
+	memcpy(&vRight, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[0][0], sizeof(_float4));
+	
+	return vRight;
+}
+
+_float4 CPipeLine::Get_CamUp_Float4()
+{
+	_float4 vUp;
+	memcpy(&vUp, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[1][0], sizeof(_float4));
+
+	return vUp;
+}
+
+_float4 CPipeLine::Get_CamLook_Float4()
+{
+	_float4 vRight;
+	memcpy(&vRight, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[2][0], sizeof(_float4));
+
+	return vRight;
+}
+
+_float3 CPipeLine::Get_CamRight_Float3()
+{
+	_float3 vRight;
+	memcpy(&vRight, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[0][0], sizeof(_float3));
+
+	return vRight;
+}
+
+_float3 CPipeLine::Get_CamUp_Float3()
+{
+	_float3 vUp;
+	memcpy(&vUp, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[1][0], sizeof(_float3));
+
+	return vUp;
+}
+
+_float3 CPipeLine::Get_CamLook_Float3()
+{
+	_float3 vLook;
+	memcpy(&vLook, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[2][0], sizeof(_float3));
+
+	return vLook;
+}
+
+_float3 CPipeLine::Get_CamPosition_Float3()
+{	
+	return _float3(m_vCamPosition.x, m_vCamPosition.y, m_vCamPosition.z);
+}
+
+
 void CPipeLine::Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix)
 {
 	XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);

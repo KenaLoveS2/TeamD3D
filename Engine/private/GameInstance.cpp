@@ -528,6 +528,48 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();	
 }
 
+_float4 CGameInstance::Get_CamRight_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamRight_Float4();
+}
+
+_float4 CGameInstance::Get_CamUp_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamUp_Float4();
+}
+
+_float4 CGameInstance::Get_CamLook_Float4()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_CamLook_Float4();
+}
+
+_float3 CGameInstance::Get_CamRight_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamRight_Float3();
+}
+
+_float3 CGameInstance::Get_CamUp_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamUp_Float3();
+}
+
+_float3 CGameInstance::Get_CamLook_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamLook_Float3();
+}
+
+_float3 CGameInstance::Get_CamPosition_Float3()
+{
+	if (nullptr == m_pPipeLine) return _float3(0.0f, 0.f, 0.f);
+	return m_pPipeLine->Get_CamPosition_Float3();
+}
+
 _float CGameInstance::Get_TimeDelta(const _tchar * pTimerTag)
 {
 	if (nullptr == m_pTimer_Manager)

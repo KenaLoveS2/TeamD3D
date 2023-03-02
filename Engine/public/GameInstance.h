@@ -112,6 +112,14 @@ public: /* For.PipeLine */
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 		_float4 Get_CamPosition();
 
+		_float4		Get_CamRight_Float4();
+		_float4		Get_CamUp_Float4();
+		_float4		Get_CamLook_Float4();
+		_float3		Get_CamRight_Float3();
+		_float3		Get_CamUp_Float3();
+		_float3		Get_CamLook_Float3();
+		_float3		Get_CamPosition_Float3();
+
 	public: /* For.Timer_Manager */
 		_float Get_TimeDelta(const _tchar* pTimerTag);
 		HRESULT Ready_Timer(const _tchar* pTimerTag);
