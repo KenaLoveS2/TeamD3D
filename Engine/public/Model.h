@@ -14,21 +14,24 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	_uint				Get_NumMeshes() const { return m_iNumMeshes; }
-	_matrix			Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
+	_uint					Get_NumMeshes() const { return m_iNumMeshes; }
+	_matrix				Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
 	_float4x4			Get_PivotFloat4x4() const { return m_PivotMatrix; }
-	class CBone*		Get_BonePtr(const char* pBoneName);
+	class CBone*	Get_BonePtr(const char* pBoneName);
 	_double			Get_PlayTime();
-	const _bool&		Get_PausePlay() const { return m_bPausePlay; }
+	const _bool&	Get_PausePlay() const { return m_bPausePlay; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
 	const _uint&		Get_LastAnimIndex() const { return m_iPreAnimIndex; }
-	const _bool&		Get_AnimationFinish() const;
-	void				Set_PlayTime(_double dPlayTime);
-	void				Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
-	void				Set_AnimIndex(_uint iAnimIndex);
-	void				Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
-	void				Set_BoneLocked(const char* pBoneName, _bool bLock);
-	void				Set_AllBonesUnlock();
+	const _bool&	Get_AnimationFinish() const;
+	void					Set_PlayTime(_double dPlayTime);
+	void					Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
+	void					Set_AnimIndex(_uint iAnimIndex);
+	void					Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
+	void					Set_BoneLocked(const char* pBoneName, _bool bLock);
+	void					Set_AllBonesUnlock();
+
+	void					ResetAnimIdx_PlayTime(_uint iAnimIndex);
+
 	CModel::TYPE		Get_Type()const { return m_eType; }
 	CAnimation*		Find_Animation(const string& strAnimName);
 	CAnimation*		Find_Animation(_uint iAnimIndex);

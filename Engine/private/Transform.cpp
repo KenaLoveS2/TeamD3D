@@ -382,6 +382,8 @@ void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
+	LookAt(vTargetPos);
+
 	if(fDistance > fLimit)
 	{
 		_vector vDist = XMVector3Normalize(vDir) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
