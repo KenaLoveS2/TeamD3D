@@ -220,6 +220,15 @@
     <Filter Include="02.GameObjects\Rot\State">
       <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
+      <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Main">
+      <UniqueIdentifier>{78d16e73-091a-4ce3-806c-46b8ecd91d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub">
+      <UniqueIdentifier>{d756033d-9e9e-445c-afef-a8e5ea191ed1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -498,6 +507,15 @@
     <ClInclude Include="..\public\Rot_State.h">
       <Filter>02.GameObjects\Rot\State</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasQuest.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuestMain.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuestSub.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -754,6 +772,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Rot_State.cpp">
       <Filter>02.GameObjects\Rot\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasQuest.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuestMain.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuestSub.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

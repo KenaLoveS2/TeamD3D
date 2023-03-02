@@ -13,6 +13,9 @@
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
 
+#include "UI_ClientManager.h"
+#include "UI.h"
+
 CLevel_TestPlay::CLevel_TestPlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -55,6 +58,9 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -266,6 +272,33 @@ HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+	vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+	vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+
+	for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
+	{
+		CUI::tagUIDesc tDesc;
+		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
+
+		CUI_Canvas* pCanvas = nullptr;
+		if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+			(*pCanvasProtoTags)[i].c_str(), (*pCanvasCloneTags)[i].c_str(), &tDesc, (CGameObject**)&pCanvas)))
+			MSG_BOX("Failed To Clone Canvas : UIEditor");
+
+		if (pCanvas != nullptr)
+			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 

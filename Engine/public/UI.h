@@ -53,7 +53,7 @@ public: /* Set */
 		m_matLocal._42 = vPos.y;
 		m_matLocal._43 = vPos.z;
 	}
-
+	void					Be_Active(_bool bActive) { m_bActive = bActive; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

@@ -2,6 +2,9 @@
 #include "Base.h"
 #include "Client_Defines.h"
 #include "Transform.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
+
 
 BEGIN(Engine)
 class CGameInstance;
@@ -478,6 +481,10 @@ private:	/* Changer */
 private:
 	void	Move(_float TimeDelta, CTransform::DIRECTION eDir);
 	CTransform::DIRECTION		DetectDirectionInput();
+
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
+
 
 public:
 	static	CKena_State*	Create(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CTransform* pTransform, class CCamera_Player* pCamera);
