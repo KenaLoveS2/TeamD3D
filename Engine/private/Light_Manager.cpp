@@ -164,7 +164,7 @@ void CLight_Manager::Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& 
 	static bool alpha_half_preview = false;
 	static bool drag_and_drop = true;
 	static bool options_menu = true;
-	static bool hdr = true;
+	static bool hdr = false;
 
 	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
@@ -190,22 +190,22 @@ void CLight_Manager::Set_ColorValue(eColor eType, char* pLightTag, OUT _float4& 
 	if(eType == COLOR_DIFFUSE)
 	{
 		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(DiffColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(DColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
+		ImGui::ColorPicker4(DiffColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(DColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}
 	else if (eType == COLOR_AMBIENT)
 	{
 		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(AmColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(AColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
+		ImGui::ColorPicker4(AmColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(AColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}
 	else if (eType == COLOR_SPECULAR)
 	{
 		_float4 color = _float4(vColor.x, vColor.y, vColor.z, vColor.w);
-		ImGui::ColorPicker4(SpecColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4(SColor, (float*)&color, ImGuiColorEditFlags_HDR | misc_flags);
+		ImGui::ColorPicker4(SpecColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4(SColor, (float*)&color, ImGuiColorEditFlags_NoInputs | misc_flags);
 		vColor = _float4(color.x, color.y, color.z, color.w);
 	}	
 }

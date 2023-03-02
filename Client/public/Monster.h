@@ -18,6 +18,18 @@ BEGIN(Client)
 class CMonster  : public CGameObject
 {
 protected:
+	enum MonsterShaderPass
+	{ DEFAULT,
+		AO_R_M,
+		AO_R_M_E,
+		AO_R_M_G,
+		AO_R_M_O,
+		AO_R_M_EEM,
+		SEPARATE_AO_R_M_E,
+		MASK,
+		PASS_END};
+
+protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMonster(const CMonster& rhs);
 	virtual ~CMonster() = default;

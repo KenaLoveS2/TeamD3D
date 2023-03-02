@@ -214,6 +214,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
       <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{887106e4-ce83-47df-9ddf-22641f4ba36f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -441,9 +444,6 @@
     <ClInclude Include="..\public\Effect_Trail.h">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Transform.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
@@ -479,6 +479,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -686,9 +689,6 @@
     <ClCompile Include="..\private\Effect_Trail.cpp">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Transform.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
@@ -724,6 +724,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -784,6 +787,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
