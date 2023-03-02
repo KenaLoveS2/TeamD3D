@@ -57,12 +57,8 @@ public:
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
 	}
 
-	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
-m_WorldMatrix = fWorldMatrix;
-	}
-	void	Set_WorldMatrix(_fmatrix WorldMatrix){
-		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
-	}
+	void Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix);
+	void Set_WorldMatrix(_fmatrix WorldMatrix);
 
 	void Set_State(STATE eState, _fvector vState) {
 		_float4 vTmp;
