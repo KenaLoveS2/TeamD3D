@@ -25,6 +25,7 @@ public:
 
 public:
 	void	Set_ParticleIdx(_int iIndex) { m_iIndex = iIndex; }
+	_int	Get_ParticleIdx() { return m_iIndex; }
 
 private:
 	HRESULT					SetUp_Components();

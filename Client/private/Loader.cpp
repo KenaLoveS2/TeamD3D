@@ -1115,11 +1115,6 @@ HRESULT CLoader::Loading_ForTestEffect()
 #pragma endregion Model Component
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
-	///* For.Prototype_GameObject_Sky */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mesh"),
-	//	CEffect_Mesh::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))

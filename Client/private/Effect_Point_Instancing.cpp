@@ -105,12 +105,12 @@ CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing::Get_PointInstan
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PointDesc();
 }
 
-void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC eEffectDesc)
+void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC* eEffectDesc)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
 
-	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PointDesc(&eEffectDesc);
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PointDesc(eEffectDesc);
 }
 
 CVIBuffer_Point_Instancing::INSTANCEDATA* CEffect_Point_Instancing::Get_InstanceData()
@@ -129,12 +129,12 @@ CVIBuffer_Point_Instancing::INSTANCEDATA CEffect_Point_Instancing::Get_InstanceD
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_InstanceData_Idx(iIndex);
 }
 
-void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA eInstanceData)
+void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
 
-	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_InstanceData(&eInstanceData);
+	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_InstanceData(eInstanceData);
 }
 
 void CEffect_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
@@ -183,8 +183,11 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (pArg != nullptr)
+		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
 	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
 		return E_FAIL;
