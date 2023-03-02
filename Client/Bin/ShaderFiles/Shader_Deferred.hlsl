@@ -66,6 +66,63 @@ float3 CalculateSpecular(float3 viewDirection, float3 lightDirection, float3 nor
 	return lightColor * specular;
 }
 
+float4 ComputeLighting(float3 worldPos, float3 worldNormal,float3 lightDirection, float3 viewDir, float3 lightPos, float3 lightColor, float roughness, float3 albedo, float3 ambientLightColor)
+{
+	float3 N = worldNormal;
+	float3 V = normalize(viewDir)  * -1.f;
+	float ndl = max(0, dot(lightDirection, worldNormal));
+	float3 L = normalize(lightDirection)  * -1.f;
+	
+	// Calculate the lighting contributions
+	float3 ambientLight = ambientLightColor * albedo;
+	float3 diffuseLight = lightColor * albedo * max(dot(N, L), 0.0);
+	float3 specularLight = float3(0, 0, 0);
+
+	if (dot(N, L) > 0.0)
+	{
+		// Calculate the specular lighting using the Smith GGX geometry function and the GGX distribution function
+		float3 H = normalize(V + L);
+		float NdotH = max(dot(N, H), 0.0);
+		float NdotV = max(dot(N, V), 0.0);
+		float3 F0 = float3(0.04, 0.04, 0.04);
+		float3 F = FresnelSchlick(NdotV, F0);
+		float D = DistributionGGX(N, H, roughness);
+		float G = GeometrySmith(N, V, L, roughness);
+		specularLight = (F * D * G) / (4.0 * NdotV * dot(L, N));
+	}
+
+	// Combine the lighting contributions and return the final color
+	float3 lighting = ambientLight + diffuseLight + specularLight;
+	return float4(lighting, 1.0);
+}
+
+float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
+{
+	float3 N = normalize(Normal);
+	float3 V = normalize(View) * -1.f;
+	float3 L = normalize(LightDir) * -1.f;
+	float3 H = normalize(V + L);
+
+	float3 F0 = specularLightColor.rgb;
+
+	float NDF = DistributionGGX(N, H, Roughness);
+	float G = GeometrySmith(N, V, L, Roughness);
+	float3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+
+	float3 kS = F;
+	float3 kD = 1.0 - kS;
+	kD *= 1.0 - Metallic;
+
+	float3 numerator = NDF * G * F;
+	float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0);
+
+	float3 specular = numerator / max(denominator, 0.001) * Albedo;
+	float3 ambient = ambientLightColor * Albedo * ao;
+	float3 diffuse = diffuseLightColor * (kD * Albedo / PI);
+
+	return float4(ambient + diffuse + specular, 1.f);
+}
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;	
@@ -121,110 +178,85 @@ struct PS_OUT_LIGHT
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
-	//PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
-
-	//vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	//vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	//vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-	//vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
-
-	//float			fViewZ = vDepthDesc.y * g_fFar;
-	//vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-	//vector		vWorldPos;
-	//vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-	//vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
-	//vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
-	//vWorldPos.w = 1.0f;
-	//vWorldPos *= fViewZ;
-	//vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	//vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-	//vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
-	//vector		vLook = normalize(vWorldPos - g_vCamPosition);
-	//// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
-	////float3		Lo = (float3)0.f;
-	////float3		P = vWorldPos.xyz;
-	////float3		V = normalize(vLook.xyz);
-	////float3     N = normalize(vNormal.xyz);
-	////float		fAO = vAmbientDesc.r;
-	////float		fRoughness = vAmbientDesc.g;
-	////float		fMetalic = vAmbientDesc.b;
-	////float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
-	////float3 LightColor = g_vLightDiffuse.rgb;
-	////LightColor *= min(174.25f / 255.f, length(LightColor));
-	////LightColor *= 255.f;
-	////float3 L = normalize(g_vLightDir.xyz);
-	////float3 H = normalize(V + L);
-	////float  cosTheta = max(dot(H, V), 0.0f);
-	////float  distance = length(g_vLightPos - vWorldPos); 
-	////float attenuation = 1 / (distance * distance);
-	////float3 radiance = LightColor * attenuation;
-	////float3 F = FresnelSchlick(dot(H, V), F0);
-	////float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
-	////float G = GeometrySmith(N, V, L, fRoughness);
-	////float3 numerator = NDF * G * F;
-	////float denomenator = (4 * max(0.0f, dot(N, L)) * max(0.0f, dot(N, V)));
-	////float3 specular = numerator / (denomenator + 0.0001f);
-	////float3 kS = F;
-	////float3 kD = (float3)1.f - kS;
-	////kD *= 1.f - fMetalic;
-	////float nl = max(0.f, dot(N, L));
-	////Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
-	////kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
-	////kD = (float3)1.f - kS;
-	////float3 irradiance = float3(1.f, 1.f, 1.f); // 환경맵
-	////float3 diffuse = irradiance * vDiffuse.xyz;
-	////float3 ambient = kD * diffuse;
-	////float4 color = float4(ambient + Lo, 1.f);
-	////float gamma = 2.2f;
-	////color = color / (color + (float4)1.f);
-	////color = pow(color, (float4)(1.f / gamma));
-	////Out.vShade = color;
-	////Out.vShade.a = vDiffuse.a;
-	////Out.vSpecular = float4(specular, 0.f);
-	////Out.vSpecular.a = 0.f;
-
-	//float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
-	//float3 specular = CalculateSpecular(vLook.xyz, g_vLightDir.xyz, vNormal.xyz, vAmbientDesc.g, vAmbientDesc.b, vDiffuse.rgb, g_vLightSpecular.rgb);
-	//Out.vShade = float4(diffuse, vDiffuse.a);
-	//Out.vSpecular = float4(specular, 0.f);
-
 	PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
 
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * 300.f;
-
-	/* 0 ~ 1 => -1 ~ 1 */
+	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-
-	Out.vShade = saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal)));
-	Out.vShade.a = 1.f;
-
-	/* 화면에 그려지고 있는 픽셀들의 투영스페이스 상의 위치. */
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
 	vector		vWorldPos;
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
 	vWorldPos *= fViewZ;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 */
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-
-	/* 로컬위치 * 월드행렬  */
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
-	vector		vLook = vWorldPos - g_vCamPosition;
+	vector		vLook = normalize(vWorldPos - g_vCamPosition);
 
-	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 30.f);
+	float			fAO = vAmbientDesc.r;
+	float			fRoughness = vAmbientDesc.g;
+	float			fMetalic = vAmbientDesc.b;
 
-	Out.vSpecular.a = 0.f;
+	// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
+	/* first algorithm */
+	//float3		Lo = (float3)0.f;
+	//float3		P = vWorldPos.xyz;
+	//float3		V = normalize(vLook.xyz);
+	//float3		N = normalize(vNormal.xyz);
+	//float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
+	//float3 LightColor = g_vLightDiffuse.rgb;
+	////LightColor *= min(174.25f/* / 255.f*/, length(LightColor));
+	//float3 L = normalize(g_vLightDir.xyz);
+	//float3 H = normalize(V + L);
+	//float  cosTheta = max(dot(H, V), 0.0f);
+	//float  distance = length(g_vLightPos - vWorldPos); 
+	//float attenuation = 1 / (distance * distance);
+	//float3 radiance = LightColor * attenuation;
+	//float3 F = FresnelSchlick(dot(H, V), F0);
+	//float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
+	//float G = GeometrySmith(N, V, L, fRoughness);
+	//float3 numerator = NDF * G * F;
+	//float denomenator = (4 * max(0.0f, dot(N, L)) * max(0.0f, dot(N, V)));
+	//float3 specular = numerator / (denomenator + 0.0001f);
+	//float3 kS = F;
+	//float3 kD = (float3)1.f - kS;
+	//kD *= 1.f - fMetalic;
+	//float nl = max(0.f, dot(N, L));
+	//Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
+	//kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
+	//kD = (float3)1.f - kS;
+	//float3 irradiance = float3(1.f, 1.f, 1.f); // 환경맵
+	//float3 diffuse = irradiance * vDiffuse.xyz;
+	//float3 ambient = kD * diffuse;
+	//float4 color = float4(ambient + Lo, 1.f);
+	////float gamma = 2.2f;
+	////color = color / (color + (float4)1.f);
+	////color = pow(color, (float4)(1.f / gamma));
+	//Out.vShade = color;
+	//Out.vShade.a = vDiffuse.a;
+	//Out.vSpecular = float4(specular, 0.f);
+	//Out.vSpecular.a = 0.f;
 
+	/* second algorithm */
+	//float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
+	//float3 specular = CalculateSpecular(vLook.xyz, g_vLightDir.xyz, vNormal.xyz, vAmbientDesc.g, vAmbientDesc.b, vDiffuse.rgb, g_vLightSpecular.rgb);
+	//Out.vShade = float4(diffuse, vDiffuse.a);
+	//Out.vSpecular = float4(specular, 0.f);
+
+	/* third algorithm*/
+	/*Out.vShade = ComputeLighting(vWorldPos.xyz, vNormal.xyz, g_vLightDir.xyz, vLook.xyz, g_vLightPos.xyz, g_vLightDiffuse.rgb, fRoughness, vDiffuse.rgb, g_vLightAmbient.rgb);
+	Out.vShade.a = vDiffuse.a;
+	Out.vSpecular = (float4)1.f;*/
+
+	
+	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic,fRoughness,fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
+	Out.vShade.a = vDiffuse.a;
+	Out.vSpecular = (float4)1.f;
 	return Out;
 }
 
@@ -286,8 +318,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	//Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) + vSpecular * 0.001f; //원본
-	Out.vColor = CalcHDRColor(vDiffuse*vShade, vDepthDesc.b);					// 
+	//Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) /*+ vSpecular * 0.001f*/;
+	Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
+
 	if (Out.vColor.a == 0.0f)
 		discard;
 

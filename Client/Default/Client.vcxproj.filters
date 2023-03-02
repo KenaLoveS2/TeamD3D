@@ -214,6 +214,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
       <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{887106e4-ce83-47df-9ddf-22641f4ba36f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -432,14 +435,14 @@
     <ClInclude Include="..\Public\Statue.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FloorMesh.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Slope.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Trail.h">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Transform.h">
-      <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
@@ -477,30 +480,8 @@
     <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster.h" />
-    <ClInclude Include="..\public\Moth.h" />
-    <ClInclude Include="..\public\RockGolem.h" />
-    <ClInclude Include="..\Public\FloorMesh.h" />
-    <ClInclude Include="..\public\Bridge.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FloorTile.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Path_Mesh.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Pulse_PlateForm.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rot.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RuinKit.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Gate.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -699,14 +680,14 @@
     <ClCompile Include="..\Private\Statue.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\FloorMesh.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Slope.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Trail.cpp">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Transform.cpp">
-      <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
@@ -744,30 +725,8 @@
     <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster.cpp" />
-    <ClCompile Include="..\private\Moth.cpp" />
-    <ClCompile Include="..\private\RockGolem.cpp" />
-    <ClCompile Include="..\Private\FloorMesh.cpp" />
-    <ClCompile Include="..\private\Bridge.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FloorTile.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RuinKit.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Path_Mesh.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Pulse_PlateForm.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Gate.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -30,17 +30,27 @@ public:
 	virtual HRESULT		Load_Data(wstring fileName)				override;
 
 private:
+	TAG			m_eTag;
 	_bool		m_bStart;
 	_bool		m_bFinished;
 
+	/* For. Scale */
 	_float3		m_vSourScale;
-	_float4		m_vSourTranslation;
-
 	_float3		m_vDestScale;
-	_float4		m_vDestTranslation;
-
+	_float3		m_vScaleNow;
 	_float		m_fScaleSpeed;
+
+	/* For. Translation */
+	_float4		m_vSourTranslation;
+	_float4		m_vDestTranslation;
+	_float4		m_vTranslationNow;
 	_float		m_fTransSpeed;
+
+	/* For. Rotation */
+	_float3		m_vRotAxis;
+	_float		m_fRotAngle;
+	_float		m_fRotAngleNow;
+	_float		m_fRotSpeed;
 
 public:
 	static CUI_Event_Transform*		Create(CUI* pUI);
