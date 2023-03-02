@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/StoneStep/Material/MI_StoneStep.MI_StoneStep'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/StoneStep/Material/MI_StoneStep.MI_StoneStep'
+        MaterialSlotName = StoneStep
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 72.1832, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.0834751, Y=-0.136662, Z=0.736407 }
+    BoxExtent = { X=10.5026, Y=19.2381, Z=2.35816 }
+    SphereRadius = 21.3734
+}

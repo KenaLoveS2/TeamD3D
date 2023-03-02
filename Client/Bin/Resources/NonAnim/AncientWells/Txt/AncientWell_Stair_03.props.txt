@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_Stairs.MI_AncientWell_Stairs'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_Stairs.MI_AncientWell_Stairs'
+        MaterialSlotName = MI_AncientWell_Stairs2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1221.19, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=-3.05176e-05, Z=-1.52588e-05 }
+    BoxExtent = { X=156.795, Y=293.218, Z=28.3187 }
+    SphereRadius = 321.445
+}

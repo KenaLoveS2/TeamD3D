@@ -2,6 +2,7 @@
 #include "..\public\Kena_Staff.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "Bone.h"
 
 CKena_Staff::CKena_Staff(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CKena_Parts(pDevice, pContext)
@@ -26,20 +27,14 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Staff.ao");
 	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
+
 	return S_OK;
 }
 
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	CModel*	pKenaModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-	m_pModelCom->Set_AnimIndex(pKenaModel->Get_AnimIndex(), pKenaModel->Get_BlendAnimIndex());
-	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
-	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -50,7 +45,6 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -67,7 +61,7 @@ HRESULT CKena_Staff::Render()
 	{
 		if (i > 1)
 			continue;
-
+		
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		/********************* For. Kena PostProcess By WJ*****************/

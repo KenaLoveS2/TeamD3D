@@ -9,12 +9,12 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
 	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	PX_UNUSED(attributes0);
+	/*PX_UNUSED(attributes0);
 	PX_UNUSED(attributes1);
 	PX_UNUSED(filterData0);
 	PX_UNUSED(filterData1);
 	PX_UNUSED(constantBlockSize);
-	PX_UNUSED(constantBlock);
+	PX_UNUSED(constantBlock);*/
 
 	pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eDETECT_CCD_CONTACT
@@ -22,7 +22,7 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_CONTACT_POINTS
 		| PxPairFlag::eCONTACT_EVENT_POSE;
-
+		
 	/*
 	eCONTACT_DEFAULT: 연락처 생성을 위한 기본 동작입니다. 이것은 다른 모든 플래그를 기본값으로 설정하는 것과 같습니다.
 	eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
@@ -39,11 +39,52 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	eCONTACT_EVENT_POSE: 두 배우의 접점 포즈 적용을 알립니다.
 	eNEXT_FREE: 값을 반복하는 데 사용됩니다 PxPairFlag.
 	*/
-	
+
 	return PxFilterFlag::eDEFAULT;
 }
 
 
+PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+	PX_UNUSED(attributes0);
+	PX_UNUSED(attributes1);
+	PX_UNUSED(filterData0);
+	PX_UNUSED(filterData1);
+	PX_UNUSED(constantBlockSize);
+	PX_UNUSED(constantBlock);
+
+	// all initial and persisting reports for everything, with per-point data
+	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
+		| PxPairFlag::eNOTIFY_TOUCH_FOUND
+		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+		| PxPairFlag::eNOTIFY_CONTACT_POINTS
+		| PxPairFlag::eMODIFY_CONTACTS;
+
+	return PxFilterFlag::eDEFAULT;
+}
+
+PxFilterFlags TestSimulationFilterShader( PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+	/*
+	if (ECOLLISION_TYPE::COLL_IGNORE == CPhysX_Manager::CheckCollisionTable(static_cast<ECOLLISION_TYPE>(filterData0.word0), static_cast<ECOLLISION_TYPE>(filterData1.word0)))
+	{
+		return PxFilterFlag::eSUPPRESS;
+	}
+
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlags();
+	}
+	*/
+	// PxPairFlag::eNOTIFY_TOUCH_FOUND 추가하면 OnContact 실행됨
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	return PxFilterFlags();
+}
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
@@ -54,10 +95,13 @@ CPhysX_Manager::CPhysX_Manager()
 void CPhysX_Manager::Free()
 {
 	Clear();
-
+#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
+
+
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
+#endif // _DEBUG
 }
 
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -84,6 +128,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	SceneDesc.cpuDispatcher = m_pDispatcher;	
 	SceneDesc.filterShader = CustomFilterShader;
 	SceneDesc.simulationEventCallback = &m_EventCallback;
+	SceneDesc.broadPhaseType = PxBroadPhaseType::eABP;
 	m_pScene = m_pPhysics->createScene(SceneDesc);	
 	assert(m_pScene != nullptr && "CPhysX_Manager::InitWorld()");
 	
@@ -97,6 +142,9 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, PxCookingParams(PxTolerancesScale()));
 	assert(m_pCooking != nullptr && "CPhysX_Manager::InitWorld()");
+	PxCookingParams params(m_PxTolerancesScale);
+	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
+	m_pCooking->setParams(params);
 	
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
@@ -108,7 +156,6 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	return S_OK;
 }
-
 
 void CPhysX_Manager::Init_Rendering()
 {	
@@ -125,14 +172,14 @@ void CPhysX_Manager::Init_Rendering()
 	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeSize);
 	m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, pShaderByteCode, iShaderByteCodeSize, &m_pInputLayout);
 
-
 	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
 	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eWORLD_AXES, 1.0f);
-	// m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 2.0f);
-	// m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_EDGES, 1);
-	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1);
-	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 2);
-	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_NORMAL, 2);
+	// m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 2.0f);
+	// m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_EDGES, 1);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 2.f);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_NORMAL, 2.f);
+
 #endif
 }
 
@@ -140,8 +187,8 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 {	
 	static const PxF32 const PxTimeDelta = 1.0f / 60.0f;
 	
-	PX_UNUSED(false);
-	m_pScene->simulate(PxTimeDelta);
+	// PX_UNUSED(false);
+	m_pScene->simulate(fTimeDelta);
 	m_pScene->fetchResults(true);
 
 	Update_Trasnform(fTimeDelta);
@@ -227,7 +274,7 @@ void CPhysX_Manager::Clear()
 	}
 }
 
-void CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc)
 {	
 	_float halfExtent = 0.1f;
 	PxU32 size = 1;
@@ -239,11 +286,13 @@ void CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc)
 	PxTriangleMesh* pMesh = m_pPhysics->createTriangleMesh(ReadBuffer);
 
 	PxTransform Transform(PxIdentity);
-	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
+	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);	
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
 
 	pBody->attachShape(*shape);
 	m_pScene->addActor(*pBody);
+
+	return pBody;
 }
 
 void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
@@ -252,8 +301,8 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	{	
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);
-	
-		PxShape* pShpae = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, true);
+		
+		PxShape* pShpae = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, false);
 		pBox->attachShape(*pShpae);
 		
 		if (pUserData)
@@ -281,7 +330,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		PxRigidBodyExt::updateMassAndInertia(*pBox, Desc.fDensity);
-			
+		
 		if (pUserData)
 		{
 			pUserData->eType = Desc.eType;
@@ -304,8 +353,9 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);
 
-		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
-		// pSphere->attachShape(*pShape);
+		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
+		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
+		pSphere->attachShape(*pShape);
 
 		if (pUserData)
 		{
@@ -316,7 +366,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 
 		_tchar *pTag = CUtile::Create_String(Desc.pActortag);
 		CString_Manager::GetInstance()->Add_String(pTag);
-		m_DynamicActors.emplace(pTag, pSphere);
+		m_StaticActors.emplace(pTag, pSphere);
 
 		m_pScene->addActor(*pSphere);
 	}
@@ -325,8 +375,9 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pSphere = m_pPhysics->createRigidDynamic(Transform);
 
-		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
-		// pSphere->attachShape(*pShape);
+		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
+		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
+		pSphere->attachShape(*pShape);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		PxRigidBodyExt::updateMassAndInertia(*pSphere, Desc.fDensity);
@@ -352,12 +403,15 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic *pCapsule = m_pPhysics->createRigidStatic(Transform);
+				
+		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
+		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial, true);
 		
-		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
-		// pCapsule->attachShape(*pShape);
 		
+		pCapsule->attachShape(*pShape);
+
 		if (pUserData)
 		{
 			pUserData->eType = Desc.eType;
@@ -376,11 +430,12 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);
 		
-		PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
+		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
+		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial, true);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
-		
-		// pCapsule->attachShape(*pShape);
+
+		pCapsule->attachShape(*pShape);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
@@ -395,6 +450,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		_tchar *pTag = CUtile::Create_String(Desc.pActortag);
 		CString_Manager::GetInstance()->Add_String(pTag);
 		m_DynamicActors.emplace(pTag, pCapsule);
+
+		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);		
 	}	
@@ -480,7 +537,7 @@ PxRigidActor* CPhysX_Manager::Find_DynamicActor(const _tchar* pActorTag)
 	return Pair->second;
 }
 
-_bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pOut)
+_bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject** pObjectOut)
 {
 	PxRaycastBuffer hit;
 	PxReal distance = fRange;
@@ -489,15 +546,80 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 	direction.normalize();	
 	
 	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
-	if (hitResult && pOut)
-		*pOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
-
+	if (hitResult)
+	{
+		if(pPositionOut)
+			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
+		
+		if (pObjectOut)
+		{
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)hit.block.actor->userData;
+			pUserData && (*pObjectOut = pUserData->pOwner);
+		}
+	}
+		
 	return hitResult;
+}
+
+_bool CPhysX_Manager::IsMouseOver(HWND hWnd, CGameObject* pTargetObject, _float fRange,  _float3* pPositionOut)
+{
+	POINT tMouse = CUtile::GetClientCursorPos(hWnd);
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+
+	_matrix WorldlMatrix = pTargetObject->Get_TransformCom()->Get_WorldMatrix();
+	_matrix WorldlMatrixInverse = pTargetObject->Get_TransformCom()->Get_WorldMatrix_Inverse();
+	_matrix ViewMatrixInverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	_matrix ProjMatrixInverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+
+	D3D11_VIEWPORT ViewportDesc;
+	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+	_uint iNumViewports = 1;
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	_float4 vMousePos;
+	vMousePos.x = tMouse.x / (ViewportDesc.Width * 0.5f) - 1.f;
+	vMousePos.y = tMouse.y / -(ViewportDesc.Height * 0.5f) + 1.f;
+	vMousePos.z = 0.f;
+	vMousePos.w = 1.f;
+	
+	vMousePos = XMVector3TransformCoord(vMousePos, ProjMatrixInverse);
+	_float4 vRayPos = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	_float4 vRayDir = vMousePos - vRayPos;
+	
+	vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrixInverse);
+	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInverse);
+	vRayDir = XMVector3Normalize(vRayDir);
+
+	PxRaycastBuffer hit;
+	PxReal distance = fRange;
+	PxVec3 origin = CUtile::ConvertPosition_D3DToPx(_float3(vRayPos.x, vRayPos.y, vRayPos.z));
+	PxVec3 direction = CUtile::ConvertPosition_D3DToPx(_float3(vRayDir.x, vRayDir.y, vRayDir.z));
+	direction.normalize();
+
+	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
+	if (hitResult)
+	{
+		PX_USER_DATA* pUserData = (PX_USER_DATA*)hit.block.actor->userData;
+		if (pUserData)
+		{
+			if (pPositionOut)
+				*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
+									
+			if(pUserData->pOwner == pTargetObject)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void CPhysX_Manager::Set_ActorPosition(const _tchar* pActorTag, _float3 vPosition)
 {
 	PxRigidActor* pActor = Find_StaticActor(pActorTag);
+	if(pActor == nullptr)
+		pActor = Find_DynamicActor(pActorTag);
+
 	assert(pActor != nullptr && "CPhysX_Manager::Set_ActorPosition");
 
 	Set_ActorPosition(pActor, vPosition);

@@ -121,7 +121,7 @@ CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pConte
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
 	{
-		MSG_BOX("Failed to Created : CTexture");
+ 		MSG_BOX("Failed to Created : CTexture");
 		Safe_Release(pInstance);
 	}
 	return pInstance;

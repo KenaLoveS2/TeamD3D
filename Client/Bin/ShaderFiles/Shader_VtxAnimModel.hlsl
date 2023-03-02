@@ -43,7 +43,7 @@ float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV,
 	// Calculate the distance that light travels through the material
 	float scatterDistance = sqrt(surfaceDistance) * amount;
 	// Calculate the diffuse term for the subsurface scattering
-	float diffuse = saturate(dot(normal, -dir)); // ¿©±â¼­ µð·º¼ÇÀÌ Á¶¸í ¹æÇâÀÌ¿´À½ ±×·¯¹Ç·Î ÀÌ°Íµµ µðÆÛµå·Î ¹Ù²î¾î¾ßÇÔ.
+	float diffuse = saturate(dot(normal, -dir)); // ï¿½ï¿½ï¿½â¼­ ï¿½ð·º¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½Ç·ï¿½ ï¿½Ì°Íµï¿½ ï¿½ï¿½ï¿½Ûµï¿½ï¿?ï¿½Ù²ï¿½ï¿½ï¿½ï¿½ï¿½.
 	vector vDiffuse = Texturediffuse.Sample(LinearSampler, vUV);
 	// Calculate the subsurface scattering term
 	float4 scattering = (1 - exp(-scatterDistance)) * vDiffuse * diffuse;

@@ -34,7 +34,7 @@ private:
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*						m_pTextureCom[TYPE_END] = { nullptr };
 	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
-	CNavigation*				m_pNavigationCom = nullptr;
+	//CNavigation*				m_pNavigationCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();

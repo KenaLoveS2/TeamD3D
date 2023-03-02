@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Roots.MI_StoneDoor_Roots'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Roots.MI_StoneDoor_Roots'
+        MaterialSlotName = Material #5
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1464.19, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-11.3037, Y=-22.0099, Z=676.788 }
+    BoxExtent = { X=291.51, Y=406.062, Z=540.793 }
+    SphereRadius = 667.607
+}

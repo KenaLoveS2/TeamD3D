@@ -66,12 +66,13 @@ private:
 
 	list<PX_USER_DATA*> m_UserDataes;
 
-#pragma region Render Variable
-#ifdef _DEBUG
-private:
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pContext = nullptr;
 
+
+#pragma region Render Variable
+#ifdef _DEBUG
+private:	
 	PrimitiveBatch<VertexPositionColor>*				m_pBatch = nullptr;
 	BasicEffect*										m_pEffect = nullptr;
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
@@ -94,7 +95,7 @@ public:
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
 	void Clear();
 
-	void Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc);
+	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc);
 	
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
@@ -107,8 +108,9 @@ public:
 	void Add_Force(PxRigidActor* pActor, _float3 vForce);
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
-	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pOut = nullptr);
-		
+	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
+	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
+
 	void Set_ActorPosition(const _tchar* pActorTag, _float3 vPosition);
 	void Set_ActorRotation(const _tchar* pActorTag, _float fDegree, _float3 vAxis);
 	void Set_ActorPosition(PxRigidActor* pActor, _float3 vPosition);

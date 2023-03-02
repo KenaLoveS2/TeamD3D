@@ -57,12 +57,8 @@ public:
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
 	}
 
-	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
-m_WorldMatrix = fWorldMatrix;
-	}
-	void	Set_WorldMatrix(_fmatrix WorldMatrix){
-		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
-	}
+	void Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix);
+	void Set_WorldMatrix(_fmatrix WorldMatrix);
 
 	void Set_State(STATE eState, _fvector vState) {
 		_float4 vTmp;
@@ -118,6 +114,7 @@ private:
 	_bool m_bIsStaticPxActor = false;
 	PxRigidActor* m_pPxActor = nullptr;
 	class CPhysX_Manager* m_pPhysX_Manager = nullptr;
+	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -137,8 +134,9 @@ public:
 	_float Calc_Distance_XY(CTransform* pTransform);
 	_float Calc_Distance_YZ(CTransform* pTransform);
 
-	void Connect_PxActor(const _tchar* pActorTag);
+	void Connect_PxActor(const _tchar* pActorTag, _float3 vPivot = {0.f, 0.f, 0.f});
 	void Set_Translation(_fvector vPosition, _fvector vDist);
+	void Set_PxPivot(_float3 vPivot) { m_vPxPivot = vPivot; }
 };
 
 END

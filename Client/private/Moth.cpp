@@ -36,7 +36,7 @@ HRESULT CMoth::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-	m_pTransformCom->Set_Translation(_float4(-5.f, 0.f, 0.f, 1.f), _float4());
+	m_pTransformCom->Set_Translation(_float4(0.f, 0.f, 5.f, 1.f), _float4());
 
 	m_pModelCom->Set_AllAnimCommonType();
 

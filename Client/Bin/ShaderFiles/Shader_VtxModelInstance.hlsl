@@ -9,7 +9,6 @@ float				g_fFar = 300.f;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_ERAOTexture;
 
 struct VS_IN
 {
@@ -277,6 +276,7 @@ struct PS_OUT_TESS
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
+	float4		vAmbient : SV_TARGET3;
 };
 
 PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
@@ -288,7 +288,6 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
@@ -296,14 +295,12 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-
-	Out.vDiffuse = CalcHDRColor(vDiffuse, vERAO.r);
+	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
 	return Out;
 }
-
-
 
 struct PS_IN
 {
@@ -321,6 +318,7 @@ struct PS_OUT
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
+	float4		vAmbient : SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -332,7 +330,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
@@ -340,10 +337,11 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = CalcHDRColor(vDiffuse, vERAO.r);
+	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	//Out.vModelViewer = vDiffuse;
+	Out.vAmbient = (vector)1.f;
 	return Out;
 }
 
@@ -374,5 +372,4 @@ technique11 DefaultTechnique
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
 	}
-
 }

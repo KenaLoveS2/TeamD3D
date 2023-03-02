@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/MerchantStall/Materials/MI_MerchantStall_Cloth.MI_MerchantStall_Cloth'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Forge/Materials/MI_Forge_chimney_03_Tree.MI_Forge_chimney_03_Tree'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Village/MerchantStall/Materials/MI_MerchantStall_Cloth.MI_MerchantStall_Cloth'
+        MaterialSlotName = cloth_M
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2390.06, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Forge/Materials/MI_Forge_chimney_03_Tree.MI_Forge_chimney_03_Tree'
+        MaterialSlotName = chimney_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 6033.52, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-338.495, Y=-781.394, Z=397.107 }
+    BoxExtent = { X=398.01, Y=817.866, Z=561.142 }
+    SphereRadius = 1003.46
+}

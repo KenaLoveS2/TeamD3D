@@ -143,6 +143,44 @@ void CBone::Free()
 	Safe_Release(m_pParent);
 }
 
+void CBone::Set_BoneLocked(LOCKTO eLockTo)
+{
+	if (eLockTo == CBone::LOCKTO_CHILD)
+	{
+		m_bLock = true;
+
+		for (auto pBone : m_vecChild)
+			pBone->Set_BoneLocked(eLockTo);
+	}
+	else if (eLockTo == CBone::LOCKTO_PARENT)
+	{
+		m_bLock = true;
+
+		if (m_pParent != nullptr)
+			m_pParent->Set_BoneLocked(eLockTo);
+	}
+	else if (eLockTo == CBone::LOCKTO_ALONE)
+		m_bLock = true;
+	else if (eLockTo == CBone::UNLOCKTO_CHILD)
+	{
+		m_bLock = false;
+
+		for (auto pBone : m_vecChild)
+			pBone->Set_BoneLocked(eLockTo);
+	}
+	else if (eLockTo == CBone::UNLOCKTO_PARENT)
+	{
+		m_bLock = false;
+
+		if (m_pParent != nullptr)
+			m_pParent->Set_BoneLocked(eLockTo);
+	}
+	else if (eLockTo == CBone::UNLOCKTO_ALONE)
+		m_bLock = false;
+	else
+		return;
+}
+
 HRESULT CBone::SetParent(CBone* pParent)
 {
 	if (m_pParent)

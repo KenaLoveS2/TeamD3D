@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+    Materials[1] = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+    Materials[2] = Material3'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/M_ShrineOfLife.M_ShrineOfLife'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+        MaterialSlotName = MI_ShrineOfLife_Leaf
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 85.1388, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+        MaterialSlotName = M_BombCrystal_Trigger
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 340.063, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Inorganic/Structures/Village/ShrineOfLife/Materials/M_ShrineOfLife.M_ShrineOfLife'
+        MaterialSlotName = M_ShrineOfLife
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 799.361, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-21.4995, Y=9.87599, Z=221.415 }
+    BoxExtent = { X=164.286, Y=113.455, Z=240.51 }
+    SphereRadius = 278.114
+}

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_TopOuter.MI_AncientWell_TopOuter'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_TopMid.MI_AncientWell_TopMid'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_TopOuter.MI_AncientWell_TopOuter'
+        MaterialSlotName = MI_AncientWell_TopOuter
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2523.34, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/AncientWell/Materials/MI_AncientWell_TopMid.MI_AncientWell_TopMid'
+        MaterialSlotName = MI_AncientWell_TopMid
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1229.02, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=0 }
+    BoxExtent = { X=1234.39, Y=1248.99, Z=75.3029 }
+    SphereRadius = 1281.12
+}
