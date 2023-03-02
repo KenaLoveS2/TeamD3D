@@ -214,8 +214,11 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
       <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events\Transform">
-      <UniqueIdentifier>{887106e4-ce83-47df-9ddf-22641f4ba36f}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Rot">
+      <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Rot\State">
+      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
@@ -453,6 +456,9 @@
     <ClInclude Include="..\public\Effect_Trail.h">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
@@ -489,8 +495,17 @@
     <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Transform.h">
-      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    <ClInclude Include="..\public\Bridge.h" />
+    <ClInclude Include="..\public\FloorTile.h" />
+    <ClInclude Include="..\public\Gate.h" />
+    <ClInclude Include="..\public\Path_Mesh.h" />
+    <ClInclude Include="..\public\Pulse_PlateForm.h" />
+    <ClInclude Include="..\public\RuinKit.h" />
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot_State.h">
+      <Filter>02.GameObjects\Rot\State</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
@@ -707,6 +722,9 @@
     <ClCompile Include="..\private\Effect_Trail.cpp">
       <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
@@ -743,8 +761,17 @@
     <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Transform.cpp">
-      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    <ClCompile Include="..\private\Bridge.cpp" />
+    <ClCompile Include="..\private\FloorTile.cpp" />
+    <ClCompile Include="..\private\Gate.cpp" />
+    <ClCompile Include="..\private\Path_Mesh.cpp" />
+    <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
+    <ClCompile Include="..\private\RuinKit.cpp" />
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot_State.cpp">
+      <Filter>02.GameObjects\Rot\State</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>

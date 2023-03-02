@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulseStone/Materials/MI_PulseStone_Rock.MI_PulseStone_Rock'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulseStone/Materials/MI_PulseStone_Crystal2.MI_PulseStone_Crystal2'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulseStone/Materials/MI_PulseStone_Rock.MI_PulseStone_Rock'
+        MaterialSlotName = MI_PulseStone_Rock
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 203.392, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulseStone/Materials/MI_PulseStone_Crystal2.MI_PulseStone_Crystal2'
+        MaterialSlotName = Crystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 265.263, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.52228, Y=-1.42251, Z=9.88128 }
+    BoxExtent = { X=41.6909, Y=51.7901, Z=26.7962 }
+    SphereRadius = 52.9757
+}

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Uprooted_01.MI_FallenTree_Uprooted_01'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Uprooted_02.MI_FallenTree_Uprooted_02'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Uprooted_01.MI_FallenTree_Uprooted_01'
+        MaterialSlotName = MI_FallenTree_Uprooted_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3964.12, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Uprooted_02.MI_FallenTree_Uprooted_02'
+        MaterialSlotName = MI_FallenTree_Uprooted_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3927.03, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-36564.4, Y=15527, Z=-4090.28 }
+    BoxExtent = { X=1640.86, Y=2251.64, Z=1163.69 }
+    SphereRadius = 2900.83
+}

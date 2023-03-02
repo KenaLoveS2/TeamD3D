@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\public\Kena.h"
 #include "GameInstance.h"
-#include "FSMComponent.h"
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Camera_Player.h"

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/PulsePlateEnclosure/Material/MI_PulsePlateEnclosure.MI_PulsePlateEnclosure'
+    Materials[1] = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/PulsePlateEnclosure/Material/MI_PulsePlateEnclosure.MI_PulsePlateEnclosure'
+        MaterialSlotName = blinn3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2690.15, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Interactables/BombCrystal/Material/M_BombCrystal_Trigger.M_BombCrystal_Trigger'
+        MaterialSlotName = blinn4
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 714.195, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.14801, Y=-18.4802, Z=50.228 }
+    BoxExtent = { X=602.74, Y=620.925, Z=61.1386 }
+    SphereRadius = 651.674
+}

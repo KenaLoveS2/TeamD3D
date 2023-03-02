@@ -156,12 +156,38 @@ void CRockGolem::Push_EventFunctions()
 HRESULT CRockGolem::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-	.InitState("IDLE")
-	.AddState("IDLE")
-	.Tick([this](_float fTimeDelta) 
+	.InitState("SLEEPIDLE")
+
+	.AddState("SLEEPIDLE")
+		.OnStart([this]()
+		{
+			m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		})
+		.Tick([this](_float fTimeDelta) 
+		{
+			m_pModelCom->Set_AnimIndex(SLEEPIDLE);
+		})
+		.OnExit([this]()
+		{
+			m_pTransformCom->Rotation(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		})
+
+			.AddTransition("sleepIdle to wispin", "WISPIN")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() > 10.f)
+				return true;
+			else
+				return false;				
+		})
+
+	.AddState("WISPIN")
+	.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(IDLE);
+		
 	})
+
+
 		.Build();
 
 	return S_OK;

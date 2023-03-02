@@ -47,7 +47,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 	{
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); //
 #ifdef _DEBUG
 		//m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
 #endif
@@ -86,34 +86,34 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
 		return E_FAIL;
 
 	/* For.Com_Brush*/
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
 	/* For.Com_Filter */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		return E_FAIL;
 
-	/* For.Com_Navigation */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-		(CComponent**)&m_pNavigationCom)))
-		return E_FAIL;	
+	///* For.Com_Navigation */
+	//if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+	//	(CComponent**)&m_pNavigationCom)))
+	//	return E_FAIL;	
 
 	return S_OK;
 }
@@ -179,7 +179,7 @@ void CTerrain::Free()
 	for (auto& pTextureCom : m_pTextureCom)	
 		Safe_Release(pTextureCom);	
 
-	Safe_Release(m_pNavigationCom);
+	//Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
