@@ -538,15 +538,21 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
-void CTransform::Connect_PxActor(const _tchar * pActorTag)
+void CTransform::Connect_PxActor(const _tchar * pActorTag, _float3 vPivot)
 {
 	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
 
 	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
+	if (m_pPxActor == nullptr)
+	{
+		m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+	}
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActor");
 
 	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
 	m_bIsStaticPxActor = pUserData->eType <= TRIANGLE_MESH_STATIC;
+
+	m_vPxPivot = vPivot;
 }
 
 void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
@@ -555,7 +561,8 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 	{
 		if (m_bIsStaticPxActor)
 		{
-			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition);
+			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
 		}
 		else
@@ -575,14 +582,8 @@ void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)
 
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
-		if (m_bIsStaticPxActor)
-		{					
-			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));			
-		}
-		else
-		{
-			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
-		}
+		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
+		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
 	}
 }
 
@@ -591,13 +592,7 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
-		if (m_bIsStaticPxActor)
-		{
-			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
-		}
-		else
-		{
-			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION));
-		}
+		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
+		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
 	}		
 }

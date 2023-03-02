@@ -1395,8 +1395,20 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 #endif
 
 
+void CModel::Create_PxTriangle()
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Create_PxTriangleData();
+	}
+}
 
-
-
+void CModel::Set_PxPosition(_float3 vPosition)
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Set_PxPosition(vPosition);
+	}
+}
 
 
