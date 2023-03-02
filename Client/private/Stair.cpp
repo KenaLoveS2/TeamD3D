@@ -33,12 +33,24 @@ HRESULT CStair::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
+	m_pModelCom->Create_PxTriangle();
+	m_pModelCom->Set_PxPosition(_float3(5.f, 0.f, 0.f));
+
 	return S_OK;
 }
 
 void CStair::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (!m_bBool)
+	{
+		m_vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		m_vPos.y -= 1.f;
+		m_bBool = true;
+	}
+
+	m_pModelCom->Set_PxPosition(m_vPos);
 }
 
 void CStair::Late_Tick(_float fTimeDelta)
