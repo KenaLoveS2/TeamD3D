@@ -28,7 +28,10 @@ public:
 	void						Set_AnimIndex(_uint iAnimIndex, _int iBendAnimIndex = -1);
 	class	CAnimation* Get_SelectIndexAnim(_uint iIndex);
 	void						Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
+
 	CModel::TYPE		Get_Type()const { return m_eType; }
+	void						Reset_PlayTime(_uint iIndex);
+
 	/*for.Instancing*/
 	const	_bool		Get_IStancingModel() const { return m_bIsInstancing; }
 	vector<_float4x4*>*	Get_InstancePos() { return &m_pInstancingMatrix; }

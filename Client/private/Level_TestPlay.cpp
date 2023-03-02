@@ -51,6 +51,9 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
@@ -233,6 +236,23 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WoodKnight"), L"WoodKnight_0", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), L"Rot_0", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))

@@ -14,6 +14,7 @@
 #include "Kena_MainOutfit.h"
 
 /* NPCs */
+#include "Rot.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -374,21 +375,21 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W3", true, false,true)))
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, false)))		// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, false)))		// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, false)))		// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, false)))		// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))		// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))		// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	return E_FAIL;
 
 #pragma endregion ~Cliff
 
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true,false,true)))
 	//	return E_FAIL;
 
-#pragma region PulseStone_°ü·ÃµÈ°Í
+#pragma region PulseStone_ï¿½ï¿½ï¿½ÃµÈ°ï¿½
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true, false, true)))
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
@@ -397,9 +398,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock", true, false, true)))
 	//	return E_FAIL;
-#pragma endregion PulseStone_°ü·ÃµÈ°Í
+#pragma endregion PulseStone_ï¿½ï¿½ï¿½ÃµÈ°ï¿½
 
-#pragma region Stone_JSON¿Ï·á
+#pragma region Stone_JSONï¿½Ï·ï¿½
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, false, true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, false, true)))
@@ -464,10 +465,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 #pragma endregion Rock
 
-
-
 #pragma  region Start_Forest_Room
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// µ¹¸ÍÀÌ ¹«³ÊÁ®ÀÖ´Â°Å
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´Â°ï¿½
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, false, true)))
 		return E_FAIL;
@@ -477,12 +476,10 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion ~Start_Forest_Room
 
 #pragma  region Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))			// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true)))			// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return E_FAIL;
 
 #pragma endregion ~Tree
-
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -555,7 +552,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModelInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelInstance.hlsl"), VTXMODEL_INSTAICING_DECLARATION::Elements, VTXMODEL_INSTAICING_DECLARATION::iNumElements))))
 		return E_FAIL;
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
@@ -670,11 +666,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
@@ -714,11 +705,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMonsterModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxAnimRotModel */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxAnimRotModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimRotModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
 
 #pragma  region Start_Forest_Room
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// µ¹¸ÍÀÌ ¹«³ÊÁ®ÀÖ´Â°Å
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´Â°ï¿½
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, false, true)))
 		return E_FAIL;
@@ -729,7 +725,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma endregion ~Start_Forest_Room
 
 #pragma  region Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true)))			// Á¦ÀÌ½¼ ¹ÌÀû¿ë
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true)))			// ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return E_FAIL;
 #pragma endregion ~Tree
 
@@ -777,6 +773,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* Prototype_Component_Model_WoodKnight */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_HeroRot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -955,11 +961,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
@@ -1081,6 +1082,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WoodKnight"),
 		CWoodKnight::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
+		CRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));

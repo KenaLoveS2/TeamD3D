@@ -44,6 +44,11 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	Push_EventFunctions();
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+
+	m_pKena = pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+
+	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
 
@@ -51,8 +56,8 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM)
+	//	m_pFSM->Tick(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -73,6 +78,8 @@ HRESULT CMonster::RenderShadow()
 void CMonster::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+
+	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -114,6 +121,13 @@ _bool CMonster::AnimIntervalChecker(_uint eAnim, _double StartRate, _double Fini
 	}
 
 	return false;
+}
+
+_float CMonster::DistanceBetweenPlayer()
+{
+	_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	return _float3::Distance(vPos, vPlayerPos);
 }
 
 void CMonster::Free()
