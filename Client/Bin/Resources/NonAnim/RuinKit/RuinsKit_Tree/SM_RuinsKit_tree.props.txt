@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_RuinsKit_Tree.MI_RuinsKit_Tree'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+        MaterialSlotName = MI_TreeLeaves5
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 270.75, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_RuinsKit_Tree.MI_RuinsKit_Tree'
+        MaterialSlotName = MI_RuinsKit_Tree1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 756.956, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=6.17984, Y=-70.7878, Z=487.273 }
+    BoxExtent = { X=333.72, Y=211.09, Z=489.658 }
+    SphereRadius = 548.011
+}
