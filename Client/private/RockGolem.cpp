@@ -183,7 +183,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("idle to walk", "WALK")
 			.Predicator([this]()
 		{
-			if (DistanceBetweenPlayer() < 10.f)
+			if (DistanceBetweenPlayer() <= 10.f)
 				return true;
 			else
 				return false;
