@@ -55,15 +55,19 @@ void CPhysX_Manager::Free()
 {
 	Clear();
 
+#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
+#endif
 }
 
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+#ifdef _DEBUG
 	m_pDevice = pDevice;
 	m_pContext = pContext;
+#endif
 
 	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PxDefaultAllocatorCallback, m_PxDefaultErrorCallback);
 	assert(m_pFoundation != nullptr && "CPhysX_Manager::InitWorld()");
