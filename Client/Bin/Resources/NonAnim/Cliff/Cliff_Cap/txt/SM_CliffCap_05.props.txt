@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/Caps/W2/MI_Cliff_Cap_05.MI_Cliff_Cap_05'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/Caps/W2/MI_Cliff_Cap_05.MI_Cliff_Cap_05'
+        MaterialSlotName = PM3D_Cube3D1_6
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1640.46, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=6.10352e-05, Z=-6.10352e-05 }
+    BoxExtent = { X=592.984, Y=175.396, Z=635.118 }
+    SphereRadius = 852.11
+}

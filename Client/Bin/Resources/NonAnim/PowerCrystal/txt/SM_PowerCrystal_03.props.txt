@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals.MI_PowerCrystals'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals1.MI_PowerCrystals1'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals.MI_PowerCrystals'
+        MaterialSlotName = Material #25
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1250.43, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PowerCrystals/MI_PowerCrystals1.MI_PowerCrystals1'
+        MaterialSlotName = Material #26
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1243.36, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.0270691, Y=-0.31942, Z=0 }
+    BoxExtent = { X=168.545, Y=127.405, Z=178.4 }
+    SphereRadius = 229.605
+}

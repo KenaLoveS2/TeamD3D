@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
+    <ClInclude Include="..\Public\Bridge.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Crystal.h" />
@@ -188,7 +189,8 @@
     <ClInclude Include="..\public\Effect_Point_Instancing.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
-    <ClInclude Include="..\Public\FloorMesh.h" />
+    <ClInclude Include="..\Public\FloorTile.h" />
+    <ClInclude Include="..\Public\Gate.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
     <ClInclude Include="..\Public\Kena_MainOutfit.h" />
@@ -211,10 +213,14 @@
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Moth.h" />
+    <ClInclude Include="..\Public\Path_Mesh.h" />
     <ClInclude Include="..\Public\Pillar.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
+    <ClInclude Include="..\Public\Pulse_PlateForm.h" />
     <ClInclude Include="..\public\RockGolem.h" />
     <ClInclude Include="..\public\Roots.h" />
+    <ClInclude Include="..\Public\Rot.h" />
+    <ClInclude Include="..\Public\RuinKit.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
     <ClInclude Include="..\Public\Stair.h" />
@@ -258,6 +264,7 @@
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
+    <ClCompile Include="..\Private\Bridge.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
@@ -269,7 +276,8 @@
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
-    <ClCompile Include="..\Private\FloorMesh.cpp" />
+    <ClCompile Include="..\Private\FloorTile.cpp" />
+    <ClCompile Include="..\Private\Gate.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
@@ -292,10 +300,14 @@
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Moth.cpp" />
+    <ClCompile Include="..\Private\Path_Mesh.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
+    <ClCompile Include="..\Private\Pulse_PlateForm.cpp" />
     <ClCompile Include="..\private\RockGolem.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
+    <ClCompile Include="..\Private\Rot.cpp" />
+    <ClCompile Include="..\Private\RuinKit.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />

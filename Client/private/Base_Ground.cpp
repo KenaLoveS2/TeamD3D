@@ -61,7 +61,7 @@ HRESULT CBase_Ground::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
+		m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
@@ -125,9 +125,9 @@ HRESULT CBase_Ground::SetUp_Components()
 	}
 
 
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
-	//	(CComponent**)&m_pMasterDiffuseBlendTexCom)))
-	//	return E_FAIL;
+	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
+		(CComponent**)&m_pMasterDiffuseBlendTexCom)))
+		return E_FAIL;
 
 	/************************** ex ***********************/
 	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -197,5 +197,5 @@ void CBase_Ground::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
-	//Safe_Release(m_pMasterDiffuseBlendTexCom);
+	Safe_Release(m_pMasterDiffuseBlendTexCom);
 }

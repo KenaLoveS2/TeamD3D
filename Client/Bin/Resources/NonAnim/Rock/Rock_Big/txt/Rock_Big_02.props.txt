@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Rocks/_Materials/MI_Rock_Big_02.MI_Rock_Big_02'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Rocks/_Materials/MI_Rock_Big_02.MI_Rock_Big_02'
+        MaterialSlotName = MI_Rock_Big_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1876.6, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=2.79599, Y=-10.8507, Z=-1.59573 }
+    BoxExtent = { X=392.871, Y=408.033, Z=486.702 }
+    SphereRadius = 559.869
+}

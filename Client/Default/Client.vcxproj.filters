@@ -402,9 +402,6 @@
     <ClInclude Include="..\Public\Statue.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\FloorMesh.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Slope.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -426,6 +423,16 @@
     <ClInclude Include="..\public\UI_NodeAimBomb.h">
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Moth.h" />
+    <ClInclude Include="..\public\RockGolem.h" />
+    <ClInclude Include="..\Public\Bridge.h" />
+    <ClInclude Include="..\Public\Path_Mesh.h" />
+    <ClInclude Include="..\Public\FloorTile.h" />
+    <ClInclude Include="..\Public\Pulse_PlateForm.h" />
+    <ClInclude Include="..\Public\Gate.h" />
+    <ClInclude Include="..\Public\Rot.h" />
+    <ClInclude Include="..\Public\RuinKit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -626,9 +633,6 @@
     <ClCompile Include="..\Private\Statue.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\FloorMesh.cpp">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Slope.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
@@ -650,6 +654,16 @@
     <ClCompile Include="..\private\UI_NodeAimLine.cpp">
       <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Moth.cpp" />
+    <ClCompile Include="..\private\RockGolem.cpp" />
+    <ClCompile Include="..\Private\Bridge.cpp" />
+    <ClCompile Include="..\Private\Path_Mesh.cpp" />
+    <ClCompile Include="..\Private\FloorTile.cpp" />
+    <ClCompile Include="..\Private\Pulse_PlateForm.cpp" />
+    <ClCompile Include="..\Private\Gate.cpp" />
+    <ClCompile Include="..\Private\Rot.cpp" />
+    <ClCompile Include="..\Private\RuinKit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

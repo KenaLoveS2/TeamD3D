@@ -83,7 +83,7 @@ void CImgui_MapEditor::Imgui_SelectOption()
 						sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
 
 						if (ImGui::Selectable(szViewName, bObjectSelected))
-							m_wstrModelName = ProtoPair.first;
+							m_wstrProtoName = ProtoPair.first;
 					}
 				}
 				else
