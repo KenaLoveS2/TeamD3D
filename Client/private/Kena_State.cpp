@@ -4,6 +4,7 @@
 #include "Kena.h"
 #include "Camera_Player.h"
 #include "Utile.h"
+#include "UI_ClientManager.h"
 
 CKena_State::CKena_State()
 {
@@ -208,6 +209,12 @@ void CKena_State::Start_Run(_float fTimeDelta)
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
 {
 	m_pModel->Set_AnimIndex(AIM_INTO);
+
+	/* Switch On Aim */
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	_float fTag = 1.f;
+	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
@@ -218,6 +225,12 @@ void CKena_State::Start_Aim_Loop(_float fTimeDelta)
 void CKena_State::Start_Aim_Return(_float fTimeDelta)
 {
 	m_pModel->Set_AnimIndex(AIM_RETURN);
+
+	/* Siwtch Off Aim */
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	_float fTag = 0.f;
+	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Run(_float fTimeDelta)
@@ -275,6 +288,7 @@ void CKena_State::Tick_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Into(_float fTimeDelta)
 {
+
 }
 
 void CKena_State::Tick_Aim_Loop(_float fTimeDelta)
@@ -343,6 +357,7 @@ void CKena_State::End_Aim_Loop(_float fTimeDelta)
 
 void CKena_State::End_Aim_Return(_float fTimeDelta)
 {
+
 }
 
 void CKena_State::End_Aim_Run_Forward(_float fTimeDelta)
@@ -488,11 +503,8 @@ _bool CKena_State::KeyInput_Space()
 _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
-	{
-
 		return true;
-	}
-
+	
 	return false;
 }
 

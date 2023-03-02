@@ -428,13 +428,7 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 HRESULT CUI_ClientManager::Ready_Clone_GameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/* Todo : File Load */
-
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
