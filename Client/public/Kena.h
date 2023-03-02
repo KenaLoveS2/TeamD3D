@@ -3,15 +3,16 @@
 #include "Client_Defines.h"
 #include "UI_ClientManager.h"
 #include "delegator.h"
+#include "Model.h"
 
 BEGIN(Engine)
 class CRenderer;
 class CShader;
-class CModel;
 class CCollider;
 class CRenderer;
 class CNavigation;
 class CStateMachine;
+class CAnimationState;
 END
 
 BEGIN(Client)
@@ -26,7 +27,7 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	const _double&			Get_AnimationPlayTime();
+	_double					Get_AnimationPlayTime();
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
@@ -51,6 +52,7 @@ private:
 	CCollider*				m_pRangeCol = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
+	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;

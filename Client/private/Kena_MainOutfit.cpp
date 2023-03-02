@@ -26,23 +26,16 @@ HRESULT CKena_MainOutfit::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	CModel*	pParentModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-	m_pModelCom->Animation_Synchronization(pParentModel, "SK_Kena_Clothing.ao");
-
 	m_vMulAmbientColor = _float4(2.f, 2.f, 2.f, 1.f);
 	m_fSSSAmount = 0.09f;
 	m_vSSSColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+
 	return S_OK;
 }
 
 void CKena_MainOutfit::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	CModel*	pKenaModel = dynamic_cast<CModel*>(m_pPlayer->Find_Component(L"Com_Model"));
-	m_pModelCom->Set_AnimIndex(pKenaModel->Get_AnimIndex(), pKenaModel->Get_BlendAnimIndex());
-	m_pModelCom->Set_PlayTime(m_pPlayer->Get_AnimationPlayTime());
-	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
