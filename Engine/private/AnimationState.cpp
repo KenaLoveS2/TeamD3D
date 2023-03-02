@@ -138,12 +138,6 @@ void CAnimationState::Tick(_float fTimeDelta)
 	/* TODO : Additive Ratio Controller */
 }
 
-void CAnimationState::Late_Tick(_float fTimeDelta)
-{
-	for (auto pModel : m_vecPart)
-		pModel->Update_BonesMatrix(m_pModel);
-}
-
 HRESULT CAnimationState::State_Animation(const string & strStateName)
 {
 	const auto	iter = find_if(m_mapAnimState.begin(), m_mapAnimState.end(), [&strStateName](const pair<const string, CAnimState*>& Pair) {
@@ -311,8 +305,8 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 	}
 	m_pModel->Compute_CombindTransformationMatrix();
 	
- 	//for (auto pModel : m_vecPart)
- 	//	pModel->Compute_CombindTransformationMatrix();
+ 	for (auto pModel : m_vecNonSyncPart)
+ 		pModel->Update_BonesMatrix(m_pModel);
 }
 
 void CAnimationState::ImGui_RenderProperty()
@@ -336,13 +330,20 @@ HRESULT CAnimationState::Add_State(CAnimState * pAnim)
 	return S_OK;
 }
 
-HRESULT CAnimationState::Add_AnimSharingPart(CModel * pModel)
+HRESULT CAnimationState::Add_AnimSharingPart(CModel * pModel, _bool bMeshSync)
 {
 	NULL_CHECK_RETURN(pModel, E_FAIL);
 
-	//m_pModel->Synchronization_MeshBone(pModel);
+	if (bMeshSync == true)
+	{
+		m_pModel->Synchronization_MeshBone(pModel);
 
-	m_vecPart.push_back(pModel);
+		m_vecSyncPart.push_back(pModel);
+	}
+	else
+	{
+		m_vecNonSyncPart.push_back(pModel);
+	}
 
 	return S_OK;
 }
@@ -357,7 +358,8 @@ HRESULT CAnimationState::Load(const string & strFilePath)
 	m_pCurAnim = nullptr;
 	m_pPreAnim = nullptr;
 
-	m_vecPart.clear();
+	m_vecSyncPart.clear();
+	m_vecNonSyncPart.clear();
 
 	for (auto& pAnimState : m_mapAnimState)
 		Safe_Release(pAnimState.second);

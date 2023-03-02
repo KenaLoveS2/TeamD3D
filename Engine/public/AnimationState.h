@@ -58,21 +58,22 @@ public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath);
 	HRESULT			Initialize_FromFile(const string& strFilePath);
 	void				Tick(_float fTimeDelta);
-	void				Late_Tick(_float fTimeDelta);
 	HRESULT			State_Animation(const string& strStateName);
 	void				Play_Animation(_float fTimeDelta);
 	void				ImGui_RenderProperty();
 
 	HRESULT			Generate_Animation(const string& strFilePath);
 	HRESULT			Add_State(CAnimState* pAnim);
-	HRESULT			Add_AnimSharingPart(CModel* pModel);
+	HRESULT			Add_AnimSharingPart(CModel* pModel, _bool bMeshSync);
 	HRESULT			Save();
 	HRESULT			Load(const string& strFilePath);
 
 private:
 	CGameObject*	m_pOwner = nullptr;
 	CModel*			m_pModel = nullptr;
-	vector<CModel*>	m_vecPart;
+	vector<CModel*>	m_vecSyncPart;
+	vector<CModel*>	m_vecNonSyncPart;
+
 
 private:
 	map<const string, CAnimState*>		m_mapAnimState;
@@ -85,7 +86,8 @@ private:
 public:
 	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath = "");
 	virtual void					Free() override {
-		m_vecPart.clear();
+		m_vecSyncPart.clear();
+		m_vecNonSyncPart.clear();
 
 		for (auto& pAnimState : m_mapAnimState)
 			Safe_Release(pAnimState.second);

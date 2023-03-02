@@ -84,7 +84,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
-	m_pAnimation->Late_Tick(fTimeDelta);
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
 		m_iAnimationIndex++;
@@ -336,7 +335,7 @@ HRESULT CKena::Ready_Parts()
 
 	m_vecPart.push_back(pPart);
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
-	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")));
+	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), false);
 
 	/* MainOutfit */
 	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
@@ -349,7 +348,7 @@ HRESULT CKena::Ready_Parts()
 
 	m_vecPart.push_back(pPart);
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
-	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")));
+	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
 	RELEASE_INSTANCE(CGameInstance);
 
