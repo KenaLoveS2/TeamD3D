@@ -517,6 +517,9 @@
     <ClInclude Include="..\public\PhysX_Manager.h">
       <Filter>00.System\01.PhysX</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PhysX_Defines.h">
+      <Filter>00.System\01.PhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -779,6 +782,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl">
       <Filter>01.Utility\13. HDR</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_PhysX.hlsl">
+      <Filter>00.System\01.PhysX</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -36,6 +36,8 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
+	m_pTransformCom->Set_Translation(_float4(15.f, 0.f, 0.f, 1.f), _float4());
+
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
@@ -75,7 +77,20 @@ HRESULT CVillageGuard::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+
+		if(i == 0)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",AO_R_M_O);
+		}
+		else
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E);
+		}
+
 	}
 	return S_OK;
 }
@@ -144,7 +159,7 @@ HRESULT CVillageGuard::SetUp_State()
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
-
+		m_pModelCom->Set_AnimIndex(IDLE);
 	})
 		.Build();
 
@@ -155,9 +170,21 @@ HRESULT CVillageGuard::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_VillageGuard", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageWarrior_Uv_02_AO_R_M.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageWarrior_Uv_02_OPACITY.png")), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_body_uv_AO.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_body_uv_Emissive.png")), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/TaroBoss_02_AO_R_M.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/TaroBoss_02_EMISSIVE.png")), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_AO.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_EMISSIVE2.png")), E_FAIL);
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));

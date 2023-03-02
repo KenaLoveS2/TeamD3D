@@ -27,9 +27,10 @@ HRESULT CLight::Render(CVIBuffer_Rect * pVIBuffer, CShader * pShader)
 
 	if (LIGHTDESC::TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
+		if (FAILED(pShader->Set_RawValue("g_vLightPos", &m_LightDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
 		if (FAILED(pShader->Set_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
 			return E_FAIL;
-
 		iPassIndex = 1;
 	}
 
@@ -39,7 +40,6 @@ HRESULT CLight::Render(CVIBuffer_Rect * pVIBuffer, CShader * pShader)
 			return E_FAIL;
 		if (FAILED(pShader->Set_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
 			return E_FAIL;
-
 		iPassIndex = 2;
 	}
 	

@@ -2,6 +2,8 @@
 #include "..\public\PhysX_Manager.h"
 #include "Utile.h"
 #include "String_Manager.h"
+#include "PipeLine.h"
+#include "DebugDraw.h"
 
 PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -52,10 +54,17 @@ CPhysX_Manager::CPhysX_Manager()
 void CPhysX_Manager::Free()
 {
 	Clear();
+
+	Safe_Release(m_pInputLayout);
+	Safe_Delete(m_pBatch);
+	Safe_Delete(m_pEffect);
 }
 
-HRESULT CPhysX_Manager::Initialize()
+HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+	m_pDevice = pDevice;
+	m_pContext = pContext;
+
 	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PxDefaultAllocatorCallback, m_PxDefaultErrorCallback);
 	assert(m_pFoundation != nullptr && "CPhysX_Manager::InitWorld()");
 	
@@ -78,13 +87,14 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pScene = m_pPhysics->createScene(SceneDesc);	
 	assert(m_pScene != nullptr && "CPhysX_Manager::InitWorld()");
 	
-	/* Release에서는 5줄 주석? */
-	//PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
-	//assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");		
-	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-	//pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-	
+#ifdef _DEBUG
+	PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
+	assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");
+	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+	pPvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+#endif // _DEBUG
+		
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, PxCookingParams(PxTolerancesScale()));
 	assert(m_pCooking != nullptr && "CPhysX_Manager::InitWorld()");
 	
@@ -94,7 +104,36 @@ HRESULT CPhysX_Manager::Initialize()
 	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);	
 	m_pScene->addActor(*pGroundPlane);
 	
+	Init_Rendering();
+
 	return S_OK;
+}
+
+
+void CPhysX_Manager::Init_Rendering()
+{	
+#ifdef _DEBUG
+
+	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
+
+	m_pEffect = new BasicEffect(m_pDevice);
+	m_pEffect->SetVertexColorEnabled(true);
+
+	const void*		pShaderByteCode;
+	size_t			iShaderByteCodeSize;
+
+	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeSize);
+	m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, pShaderByteCode, iShaderByteCodeSize, &m_pInputLayout);
+
+
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eWORLD_AXES, 1.0f);
+	// m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 2.0f);
+	// m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_EDGES, 1);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 2);
+	m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_NORMAL, 2);
+#endif
 }
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
@@ -106,6 +145,43 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pScene->fetchResults(true);
 
 	Update_Trasnform(fTimeDelta);
+}
+
+void CPhysX_Manager::Render()
+{	
+#ifdef _DEBUG
+	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
+
+	PxU32 NbTriangles = RenderBuffer.getNbTriangles();
+	PxU32 NbLines = RenderBuffer.getNbLines();
+	PxU32 NbTexts = RenderBuffer.getNbTexts();
+	PxU32 NbPoints = RenderBuffer.getNbPoints();
+
+	m_pEffect->SetWorld(XMMatrixIdentity());
+	CPipeLine* pPipeLine = GET_INSTANCE(CPipeLine);
+	m_pEffect->SetView(pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+	m_pEffect->SetProjection(pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+	RELEASE_INSTANCE(CPipeLine);
+
+	m_pEffect->Apply(m_pContext);
+	m_pContext->IASetInputLayout(m_pInputLayout);
+
+	m_pBatch->Begin();
+
+	for (PxU32 i = 0; i < NbLines; i++)
+	{
+		const PxDebugLine& pose = RenderBuffer.getLines()[i];
+
+		PxVec3 PxPos_0 = pose.pos0;
+		PxVec3 PxPos_1 = pose.pos1;
+
+		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1));
+	}
+
+	m_pBatch->End();
+
+	return;
+#endif // _DEBUG
 }
 
 void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
@@ -512,4 +588,3 @@ void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _f
 
 	shape->setGeometry(Capsule);	
 }
-

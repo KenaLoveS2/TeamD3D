@@ -788,5 +788,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

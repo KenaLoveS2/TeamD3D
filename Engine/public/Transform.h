@@ -58,7 +58,7 @@ public:
 	}
 
 	void	Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)	{
-		m_WorldMatrix = fWorldMatrix;
+m_WorldMatrix = fWorldMatrix;
 	}
 	void	Set_WorldMatrix(_fmatrix WorldMatrix){
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
