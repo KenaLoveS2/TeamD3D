@@ -119,6 +119,8 @@ public:
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix);
 #endif
+	void Create_PxTriangle();
+	void Set_PxPosition(_float3 vPosition);
 };
 
 END

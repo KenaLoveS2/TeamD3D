@@ -95,7 +95,7 @@ public:
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
 	void Clear();
 
-	void Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc);
+	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc);
 	
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);

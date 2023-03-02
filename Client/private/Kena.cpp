@@ -59,11 +59,10 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vSSSColor = _float4(0.2f, 0.18f, 0.16f, 1.f);
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-
 	/*
 	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
 	PxBoxDesc.eType = BOX_DYNAMIC;
-	PxBoxDesc.pActortag = TEXT("TEST");
+	PxBoxDesc.pActortag = TEXT("TEST_BOX");
 	PxBoxDesc.vPos = _float3(0.f, 5.f, 0.f);
 	PxBoxDesc.vSize = { 0.2f, 0.2f, 0.2f };
 	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -71,46 +70,52 @@ HRESULT CKena::Initialize(void * pArg)
 	PxBoxDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_BOX"));
 	*/
-	/*
+
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
 	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
 	PxSphereDesc.fRadius = 0.2f;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 10.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.1f;
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	*/	
-	
+
+	/*
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
-	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+	PxCapsuleDesc.vPos = _float3(1.f, -1.f, 1.f);
 	PxCapsuleDesc.fRadius = 0.2f;
 	PxCapsuleDesc.fHalfHeight = 0.5f;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 10.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-
+	
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
-		
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"), _float3(0.f, 0.5f, 0.f));
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_CAPSULE"), false);	
+	*/
 
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
 	m_pRendererCom->Set_PhysXRender(true);
-
 	return S_OK;
 }
 
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+		/*
+	if (GetKeyState(VK_SPACE) & 0x8000)
+		CPhysX_Manager::GetInstance()->Set_ActorScaling(TEXT("TEST_BOX"), _float3(1.f, 1.f, 0.f));
 		
+	if (GetKeyState(VK_SPACE) & 0x8000)
+		CPhysX_Manager::GetInstance()->Set_ActorScaling(TEXT("TEST_BOX"), _float3(1.f, 1.f, 0.f));
+		*/
+
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 
