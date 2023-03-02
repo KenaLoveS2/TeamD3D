@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Json/json.hpp"
 #include <fstream>
+#include <codecvt>
 
 CUI_NodeQuestMain::CUI_NodeQuestMain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice,pContext)
@@ -129,8 +130,15 @@ HRESULT CUI_NodeQuestMain::Save_Data()
 {
 	Json	json;
 
-	wstring korean = L"한국어";
-	json["test"] = korean;
+	//std::string std = "한글테스트";
+	//std::wstring_convert<codecvt_utf8_utf16<int16_t>, int16_t> convert;
+	//auto p = reinterpret_cast<const int16_t*>(std.data());
+	//json["test"] = convert.to_bytes(p, p + std.size());
+
+	//Json	jString = {
+	//	{"name", "John"},
+	//	{"what", "fckyou"}
+	//};
 
 	_smatrix matWorld = m_matLocal;
 	_float fValue = 0.f;
@@ -190,8 +198,6 @@ HRESULT CUI_NodeQuestMain::Load_Data(wstring fileName)
 	file >> jLoad;
 	file.close();
 
-	string str = "";
-	jLoad["test"].get_to<string>(str);
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	m_iOriginalRenderPass = m_iRenderPass;

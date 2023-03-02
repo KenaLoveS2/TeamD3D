@@ -488,7 +488,10 @@ _bool CKena_State::KeyInput_Space()
 _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
+	{
+
 		return true;
+	}
 
 	return false;
 }
