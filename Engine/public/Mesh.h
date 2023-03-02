@@ -29,6 +29,7 @@ public:
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
 	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
+	HRESULT Synchronization_BonePtr(CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
 private:

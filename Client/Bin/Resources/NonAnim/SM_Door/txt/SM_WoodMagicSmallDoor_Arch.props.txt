@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+        MaterialSlotName = M_Door_Arc_Left
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1423.5, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+        MaterialSlotName = MI_StoneDoor_Arch
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1495.68, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Gateway/StoneDoor/Materials/MI_StoneDoor_Arch.MI_StoneDoor_Arch'
+        MaterialSlotName = M_Door_Arc_Right
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1443.65, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=3.46519, Y=15.8218, Z=356.491 }
+    BoxExtent = { X=74.1854, Y=408.869, Z=387.948 }
+    SphereRadius = 465.34
+}

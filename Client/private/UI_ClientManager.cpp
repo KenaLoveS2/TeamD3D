@@ -24,6 +24,11 @@
 #include "UI_NodeAimArrow.h"
 #include "UI_NodeAimBomb.h"
 
+/* CanvasQuest */
+#include "UI_CanvasQuest.h"
+#include "UI_NodeQuestMain.h"
+#include "UI_NodeQuestSub.h"
+
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
 
@@ -206,6 +211,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimBomb");
 
+
 	/********************************************/
 	/*				For. Effects				*/
 	/********************************************/
@@ -230,9 +236,23 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArrowFill");
 
 
+	/********************************************/
+	/*				For. Canvas_Quest			*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_QuestBG"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/T_CurrentObjectiveBG.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_QuestBG");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_QuestMain"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/primaryobjective.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_QuestMain");
 
-
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_QuestSub"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/subobjective.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_QuestSub");
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -372,6 +392,27 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 	/********************************************/
+	/*				For. Canvas_Quest			*/
+	/********************************************/
+
+	/* Canvas Quest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Quest"), CUI_CanvasQuest::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Quest");
+
+	/* Main Quest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestMain"), CUI_NodeQuestMain::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestMain");
+
+	/* Sub Quest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestSub"), CUI_NodeQuestSub::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestSub");
+
+
+
+	/********************************************/
 	/*				For. Effects				*/
 	/********************************************/
 	/* Effect */
@@ -387,13 +428,7 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 HRESULT CUI_ClientManager::Ready_Clone_GameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/* Todo : File Load */
-
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

@@ -95,10 +95,10 @@ CPhysX_Manager::CPhysX_Manager()
 void CPhysX_Manager::Free()
 {
 	Clear();
-
+#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 
-#ifdef _DEBUG
+
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
 #endif // _DEBUG

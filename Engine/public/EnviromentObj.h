@@ -7,6 +7,12 @@ BEGIN(Engine)
 class ENGINE_DLL CEnviromentObj : public CGameObject
 {
 public:
+	enum SHADER_PASS
+	{
+		ONLY_MRAO = 6,
+		PASS_END
+	};
+
 	enum COMPONENTS_OPTION {
 		COMPONENTS_CONTROL_MOVE, COMPONENTS_INTERACTION, COMPONENTS_END
 	};

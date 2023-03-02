@@ -46,7 +46,6 @@ public:
 		{
 			const PxContactPair& cp = pairs[i];
 
-
 			// eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
 			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{

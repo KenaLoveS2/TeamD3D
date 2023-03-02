@@ -36,25 +36,10 @@ HRESULT CMoth::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
-	PxBoxDesc.eType = BOX_DYNAMIC;
-	PxBoxDesc.pActortag = TEXT("MOTH_BOX");
-	PxBoxDesc.vPos = _float3(0.f, 5.f, 0.f);
-	PxBoxDesc.vSize = { 0.5f, 0.5f, 0.5f };
-	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxBoxDesc.fDensity = 5.f;
-	PxBoxDesc.fAngularDamping = 0.1f;
-
-	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("MOTH_BOX"));
-
-	// Set_Position(_float4(5.f, 0.f, 5.f, 1.f));
-	m_pTransformCom->Set_Translation(_float4(), _float4(5.f, 0.f, 5.f, 1.f));
+	m_pTransformCom->Set_Translation(_float4(0.f, 0.f, 5.f, 1.f), _float4());
 
 	m_pModelCom->Set_AllAnimCommonType();
-		
-	
-	
+
 	return S_OK;
 }
 

@@ -53,6 +53,7 @@ public:
 public:
 	_bool	AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
+	_float   DistanceBetweenPlayer();
 
 protected:
 	CRenderer*					m_pRendererCom = nullptr;
@@ -61,6 +62,7 @@ protected:
 	CCollider*						m_pRangeCol = nullptr;
 	CNavigation*				m_pNavigationCom = nullptr;
 	CFSMComponent*		m_pFSM = nullptr;
+	class CGameObject*		m_pKena = nullptr;
 
 protected:
 	virtual	HRESULT			SetUp_State() PURE;

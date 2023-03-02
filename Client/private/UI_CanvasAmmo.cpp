@@ -13,6 +13,7 @@
 
 /* Bind Object */
 #include "Kena.h"
+#include "Kena_State.h"
 
 CUI_CanvasAmmo::CUI_CanvasAmmo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -106,7 +107,7 @@ void CUI_CanvasAmmo::Tick(_float fTimeDelta)
 	{
 		if (FAILED(Bind()))
 		{
-			MSG_BOX("Bind Failed");
+			//MSG_BOX("Bind Failed");
 			return;
 		}
 	}
@@ -157,6 +158,7 @@ HRESULT CUI_CanvasAmmo::Bind()
 
 	if (pKena == nullptr)
 		return E_FAIL;
+	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
 
 	m_bBindFinished = true;

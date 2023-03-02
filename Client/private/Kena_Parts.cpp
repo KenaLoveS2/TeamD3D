@@ -48,7 +48,7 @@ void CKena_Parts::Tick(_float fTimeDelta)
 
 void CKena_Parts::Late_Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 
 	m_pTransformCom->Set_WorldMatrix(m_pPlayer->Get_WorldMatrix());
 }
@@ -79,9 +79,9 @@ void CKena_Parts::ImGui_ShaderValueProperty()
 
 void CKena_Parts::Model_Synchronization(_bool bPausePlay)
 {
-	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
-	m_pModelCom->Reset_Animation();
-	m_pModelCom->Set_PausePlay(bPausePlay);
+// 	m_pModelCom->Set_AnimIndex(m_pPlayer->Get_AnimationIndex());
+// 	m_pModelCom->Reset_Animation();
+// 	m_pModelCom->Set_PausePlay(bPausePlay);
 }
 
 void CKena_Parts::Free()

@@ -25,7 +25,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -36,18 +36,20 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-	//CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	//PxSphereDesc.eType = SPHERE_DYNAMIC;
-	//PxSphereDesc.pActortag = TEXT("ROCKGOLEM");
-	//PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
-	//PxSphereDesc.fRadius = 0.8f;
-	//PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	//PxSphereDesc.fDensity = 10.f;
-	//PxSphereDesc.fAngularDamping = 0.5f;
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = TEXT("ROCKGOLEM");
+	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
+	PxSphereDesc.fRadius = 1.f;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 10.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
 
-	//CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
-	//m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
-	//CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
+	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(0.f, 0.f, 15.f, 1.f));
 
 	m_pModelCom->Set_AllAnimCommonType();
 
@@ -156,12 +158,82 @@ void CRockGolem::Push_EventFunctions()
 HRESULT CRockGolem::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-	.InitState("IDLE")
+	.InitState("SLEEPIDLE")
+
+	.AddState("SLEEPIDLE")
+		.Tick([this](_float fTimeDelta) 
+		{
+			m_pModelCom->Set_AnimIndex(SLEEPIDLE);
+		})
+
+			.AddTransition("sleepIdle to wispin", "WISPIN")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() < 10.f)
+				return true;
+			else
+				return false;				
+		})
+
 	.AddState("IDLE")
-	.Tick([this](_float fTimeDelta) 
-	{
-		m_pModelCom->Set_AnimIndex(IDLE);
-	})
+		.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(IDLE);
+		})
+			.AddTransition("idle to walk", "WALK")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() <= 10.f)
+				return true;
+			else
+				return false;
+		})
+
+	.AddState("WALK")
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WALK);
+			m_pTransformCom->Chase(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta);
+		})
+			.AddTransition("walk to WISPOUT", "WISPOUT")
+			.Predicator([this]()
+		{
+			if (DistanceBetweenPlayer() > 10.f)
+				return true;
+			else
+				return false;
+		})
+
+			.AddState("WISPIN")
+			.OnStart([this]()
+		{
+				m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WISPIN);
+		})
+			.AddTransition("wispin to IDLE", "IDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(WISPIN);
+		})
+
+			.AddState("WISPOUT")
+			.OnStart([this]()
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(WISPOUT);
+		})
+			.AddTransition("wispout to sleepidle ", "SLEEPIDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(WISPOUT);
+		})
+
 		.Build();
 
 	return S_OK;

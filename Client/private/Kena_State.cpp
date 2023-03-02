@@ -4,6 +4,8 @@
 #include "Kena.h"
 #include "Camera_Player.h"
 #include "Utile.h"
+#include "UI_ClientManager.h"
+#include "AnimationState.h"
 
 CKena_State::CKena_State()
 {
@@ -197,17 +199,23 @@ HRESULT CKena_State::SetUp_State_Aim()
 
 void CKena_State::Start_Idle(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(IDLE);
+	m_pKena->m_pAnimation->State_Animation("IDLE");
 }
 
 void CKena_State::Start_Run(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(RUN);
+	m_pKena->m_pAnimation->State_Animation("BOW_AIM_RIGHT_ADD");
 }
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
 {
 	m_pModel->Set_AnimIndex(AIM_INTO);
+
+	/* Switch On Aim */
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	_float fTag = 1.f;
+	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
@@ -218,6 +226,12 @@ void CKena_State::Start_Aim_Loop(_float fTimeDelta)
 void CKena_State::Start_Aim_Return(_float fTimeDelta)
 {
 	m_pModel->Set_AnimIndex(AIM_RETURN);
+
+	/* Siwtch Off Aim */
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	_float fTag = 0.f;
+	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Run(_float fTimeDelta)
@@ -226,42 +240,34 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_RIGHT);
 }
 
 void CKena_State::Tick_Idle(_float fTimeDelta)
@@ -275,6 +281,7 @@ void CKena_State::Tick_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Into(_float fTimeDelta)
 {
+
 }
 
 void CKena_State::Tick_Aim_Loop(_float fTimeDelta)
@@ -287,7 +294,7 @@ void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
 {
-	Move(fTimeDelta, CTransform::DIR_LOOK);
+	//Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Forward_Left(_float fTimeDelta)
@@ -343,6 +350,7 @@ void CKena_State::End_Aim_Loop(_float fTimeDelta)
 
 void CKena_State::End_Aim_Return(_float fTimeDelta)
 {
+
 }
 
 void CKena_State::End_Aim_Run_Forward(_float fTimeDelta)
@@ -489,7 +497,7 @@ _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
 		return true;
-
+	
 	return false;
 }
 
@@ -673,11 +681,11 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 
 	_float		fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight)));
 
-	if (fDir > 0.f)	/* Ä«¸Þ¶ó Look ±âÁØ ¿À¸¥ÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. */
+	if (fDir > 0.f)	/* Ä«ï¿½Þ¶ï¿½ Look ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. */
 	{
 		fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamLook)));
 
-		if (fDir > 0.f)	/* Ä«¸Þ¶ó Right ±âÁØ ¾Õ ÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. 1»çºÐ¸é */
+		if (fDir > 0.f)	/* Ä«ï¿½Þ¶ï¿½ Right ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. 1ï¿½ï¿½Ð¸ï¿?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight + vCamLook * -1.f)));
 
@@ -724,7 +732,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 				}
 			}
 		}
-		else /* Ä«¸Þ¶ó Right ±âÁØ µÚ ÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. 4»çºÐ¸é */
+		else /* Ä«ï¿½Þ¶ï¿½ Right ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. 4ï¿½ï¿½Ð¸ï¿?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight * -1.f + vCamLook * -1.f)));
 
@@ -772,11 +780,11 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 			}
 		}
 	}
-	else	/* Ä«¸Þ¶ó Look ±âÁØ ¿ÞÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. */
+	else	/* Ä«ï¿½Þ¶ï¿½ Look ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. */
 	{
 		fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamLook)));
 
-		if (fDir > 0.f)	/* Ä«¸Þ¶ó Right ±âÁØ ¾Õ ÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. 2»çºÐ¸é */
+		if (fDir > 0.f)	/* Ä«ï¿½Þ¶ï¿½ Right ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. 2ï¿½ï¿½Ð¸ï¿?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight + vCamLook)));
 
@@ -823,7 +831,7 @@ void CKena_State::Move(_float fTimeDelta, CTransform::DIRECTION eDir)
 				}
 			}
 		}
-		else /* Ä«¸Þ¶ó Right ±âÁØ µÚ ÂÊÀ» ¹Ù¶óº¸°í ÀÖÀ½. 3»çºÐ¸é */
+		else /* Ä«ï¿½Þ¶ï¿½ Right ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½ï¿½ï¿½ï¿½. 3ï¿½ï¿½Ð¸ï¿?*/
 		{
 			fDir = XMVectorGetX(XMVector3Dot(XMVector3Normalize(vKenaLook), XMVector3Normalize(vCamRight * -1.f + vCamLook)));
 

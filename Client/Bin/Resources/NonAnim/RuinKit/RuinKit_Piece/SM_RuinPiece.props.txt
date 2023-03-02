@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RuinBlock/MI_RuinPiece.MI_RuinPiece'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RuinBlock/MI_RuinPiece.MI_RuinPiece'
+        MaterialSlotName = RuinPiece
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 337.574, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=2.09862, Y=-18.2279, Z=15.0201 }
+    BoxExtent = { X=32.9982, Y=153.368, Z=21.944 }
+    SphereRadius = 154.024
+}
