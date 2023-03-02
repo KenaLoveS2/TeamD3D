@@ -52,6 +52,14 @@ void CStateMachine::Tick(_float fTimeDelta)
 
 	assert(CurState != m_mapState.end());
 
+	if (m_wstrRootStateName == m_wstrCurrentStateName)
+	{
+		if (CurState->second.State_Start != nullptr)
+			CurState->second.State_Start(fTimeDelta);
+
+		m_wstrRootStateName += L"_DONE";
+	}
+
 	for (auto& Changer : m_mapChanger[m_wstrCurrentStateName])
 	{
 		if (Changer.Changer_Func() == true)

@@ -246,6 +246,21 @@ void CMesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
 	if (0 == m_iNumBones)
 		XMStoreFloat4x4(&pBoneMatrices[0], XMMatrixIdentity());
 
+//  	if (17 == m_iNumBones)
+//  	{
+//  		//_matrix	matPivot = PivotMatrix * XMMatrixTranslation(0.07f, 0.7f, 0.35f);
+//  
+//  		for (auto& pBone : m_Bones)
+//  		{
+//  			// BoneMatrix = 오프셋매트릭스 * 컴바인드매트릭스;
+//  			XMStoreFloat4x4(&pBoneMatrices[iNumBones++],
+// 				pBone->Get_OffsetMatrix()
+// 				* pBone->Get_CombindMatrix()
+//  				* PivotMatrix);
+//  		}
+//  		return;
+//  	}
+
 	for (auto& pBone : m_Bones)
 	{
 		// BoneMatrix = 오프셋매트릭스 * 컴바인드매트릭스;
@@ -294,6 +309,75 @@ HRESULT CMesh::SetUp_BonePtr(HANDLE & hFile, DWORD & dwByte, CModel * pModel)
 		m_Bones.push_back(pBone);
 		Safe_AddRef(pBone);
 	}
+
+	return S_OK;
+}
+
+HRESULT CMesh::Synchronization_BonePtr(CModel * pModel)
+{
+	NULL_CHECK_RETURN(pModel, E_FAIL);
+
+	char**		ppBoneName = new char*[m_iNumBones];
+	_uint		iLength = 0;
+
+	for (_uint i = 0; i < m_iNumBones; ++i)
+	{
+		iLength = (_uint)strlen(m_Bones[i]->Get_Name()) + 1;
+		ppBoneName[i] = new char[iLength];
+		strcpy_s(ppBoneName[i], iLength, m_Bones[i]->Get_Name());
+	}
+
+	//for (auto pBone : m_Bones)
+	//	Safe_Release(pBone);
+
+	_uint j = 0;
+	CBone*	pRootBone = nullptr;
+	for (auto iter = m_Bones.begin(); iter != m_Bones.end();)
+	{
+		Safe_Release(*iter);
+
+		CBone*	pBone = pModel->Get_BonePtr(ppBoneName[j++]);
+		if (pBone == nullptr)
+		{
+// 			if (pRootBone != nullptr)
+// 			{
+// 				m_Bones[j - 1]->SetParent(pRootBone);
+// 				pRootBone->Add_Child(m_Bones[j - 1]);
+// 				pRootBone = nullptr;
+// 			}
+			iter = m_Bones.erase(iter);
+			continue;
+		}
+
+		if (iter == m_Bones.begin())
+			pRootBone = pBone;
+
+		//Safe_Release(*iter);
+		*iter = pBone;
+		Safe_AddRef(pBone);
+
+		iter++;
+	}
+
+// 	for (_uint i = 0; i < m_iNumBones; ++i)
+// 	{
+// 		CBone*	pBone = pModel->Get_BonePtr(ppBoneName[i]);
+// 		if (pBone == nullptr)
+// 			continue;
+// 
+// 		Safe_Release(m_Bones[i]);
+// 		m_Bones[i] = pBone;
+// 
+// 		//m_Bones.push_back(pBone);
+// 		Safe_AddRef(pBone);
+// 
+// 	}
+
+	for (_uint i = 0; i < m_iNumBones; ++i)
+		Safe_Delete_Array(ppBoneName[i]);
+	Safe_Delete_Array(ppBoneName);
+
+	m_iNumBones = (_uint)m_Bones.size();
 
 	return S_OK;
 }
