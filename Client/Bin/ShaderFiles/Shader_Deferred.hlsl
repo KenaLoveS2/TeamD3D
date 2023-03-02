@@ -66,6 +66,63 @@ float3 CalculateSpecular(float3 viewDirection, float3 lightDirection, float3 nor
 	return lightColor * specular;
 }
 
+float4 ComputeLighting(float3 worldPos, float3 worldNormal,float3 lightDirection, float3 viewDir, float3 lightPos, float3 lightColor, float roughness, float3 albedo, float3 ambientLightColor)
+{
+	float3 N = worldNormal;
+	float3 V = normalize(viewDir);
+	float ndl = max(0, dot(lightDirection, worldNormal));
+	float3 L = normalize(lightDirection);
+	
+	// Calculate the lighting contributions
+	float3 ambientLight = ambientLightColor * albedo;
+	float3 diffuseLight = lightColor * albedo * max(dot(N, L), 0.0);
+	float3 specularLight = float3(0, 0, 0);
+
+	if (dot(N, L) > 0.0)
+	{
+		// Calculate the specular lighting using the Smith GGX geometry function and the GGX distribution function
+		float3 H = normalize(V + L);
+		float NdotH = max(dot(N, H), 0.0);
+		float NdotV = max(dot(N, V), 0.0);
+		float3 F0 = float3(0.04, 0.04, 0.04);
+		float3 F = FresnelSchlick(NdotV, F0);
+		float D = DistributionGGX(N, H, roughness);
+		float G = GeometrySmith(N, V, L, roughness);
+		specularLight = (F * D * G) / (4.0 * NdotV * dot(N, L));
+	}
+
+	// Combine the lighting contributions and return the final color
+	float3 lighting = ambientLight + diffuseLight + specularLight;
+	return float4(lighting, 1.0);
+}
+
+float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
+{
+	float3 N = normalize(Normal);
+	float3 V = normalize(View) * -1.f;
+	float3 L = normalize(LightDir) * -1.f;
+	float3 H = normalize(V + L);
+
+	float3 F0 = specularLightColor.rgb;
+
+	float NDF = DistributionGGX(N, H, Roughness);
+	float G = GeometrySmith(N, V, L, Roughness);
+	float3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+
+	float3 kS = F;
+	float3 kD = 1.0 - kS;
+	kD *= 1.0 - Metallic;
+
+	float3 numerator = NDF * G * F;
+	float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0);
+
+	float3 specular = numerator / max(denominator, 0.001) * Albedo;
+	float3 ambient = ambientLightColor * Albedo * ao;
+	float3 diffuse = diffuseLightColor * (kD * Albedo / PI);
+
+	return float4(ambient + diffuse + specular, specularLightColor.a);
+}
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;	
@@ -140,18 +197,20 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
+
+	float			fAO = vAmbientDesc.r;
+	float			fRoughness = vAmbientDesc.g;
+	float			fMetalic = vAmbientDesc.b;
+
 	// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
+	/* first algorithm */
 	//float3		Lo = (float3)0.f;
 	//float3		P = vWorldPos.xyz;
 	//float3		V = normalize(vLook.xyz);
-	//float3     N = normalize(vNormal.xyz);
-	//float		fAO = vAmbientDesc.r;
-	//float		fRoughness = vAmbientDesc.g;
-	//float		fMetalic = vAmbientDesc.b;
+	//float3		N = normalize(vNormal.xyz);
 	//float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
 	//float3 LightColor = g_vLightDiffuse.rgb;
-	//LightColor *= min(174.25f / 255.f, length(LightColor));
-	//LightColor *= 255.f;
+	////LightColor *= min(174.25f/* / 255.f*/, length(LightColor));
 	//float3 L = normalize(g_vLightDir.xyz);
 	//float3 H = normalize(V + L);
 	//float  cosTheta = max(dot(H, V), 0.0f);
@@ -175,18 +234,29 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	//float3 diffuse = irradiance * vDiffuse.xyz;
 	//float3 ambient = kD * diffuse;
 	//float4 color = float4(ambient + Lo, 1.f);
-	//float gamma = 2.2f;
-	//color = color / (color + (float4)1.f);
-	//color = pow(color, (float4)(1.f / gamma));
+	////float gamma = 2.2f;
+	////color = color / (color + (float4)1.f);
+	////color = pow(color, (float4)(1.f / gamma));
 	//Out.vShade = color;
 	//Out.vShade.a = vDiffuse.a;
 	//Out.vSpecular = float4(specular, 0.f);
 	//Out.vSpecular.a = 0.f;
 
-	float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
-	float3 specular = CalculateSpecular(vLook.xyz, g_vLightDir.xyz, vNormal.xyz, vAmbientDesc.g, vAmbientDesc.b, vDiffuse.rgb, g_vLightSpecular.rgb);
-	Out.vShade = float4(diffuse, vDiffuse.a);
-	Out.vSpecular = float4(specular, 0.f);
+	/* second algorithm */
+	//float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
+	//float3 specular = CalculateSpecular(vLook.xyz, g_vLightDir.xyz, vNormal.xyz, vAmbientDesc.g, vAmbientDesc.b, vDiffuse.rgb, g_vLightSpecular.rgb);
+	//Out.vShade = float4(diffuse, vDiffuse.a);
+	//Out.vSpecular = float4(specular, 0.f);
+
+	/* third algorithm*/
+	/*Out.vShade = ComputeLighting(vWorldPos.xyz, vNormal.xyz, g_vLightDir.xyz, vLook.xyz, g_vLightPos.xyz, g_vLightDiffuse.rgb, fRoughness, vDiffuse.rgb, g_vLightAmbient.rgb);
+	Out.vShade.a = vDiffuse.a;
+	Out.vSpecular = (float4)1.f;*/
+
+	//float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float4 specularLightColor)
+	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic,fRoughness,fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
+	Out.vShade.a = vDiffuse.a;
+	Out.vSpecular = (float4)1.f;
 	return Out;
 }
 
@@ -248,7 +318,8 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) + vSpecular * 0.001f;
+	//Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) /*+ vSpecular * 0.001f*/;
+	Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
 
 	if (Out.vColor.a == 0.0f)
 		discard;
