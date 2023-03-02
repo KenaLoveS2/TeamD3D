@@ -372,6 +372,7 @@ void CUI_CanvasHUD::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 	switch (eType)
 	{
 	case CUI_ClientManager::HUD_HP:
+
 		break;
 	case CUI_ClientManager::HUD_SHIELD:
 		/* rather make it longer, change color or stat upgrade would be better */
