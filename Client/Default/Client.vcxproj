@@ -216,6 +216,7 @@
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\RockGolem.h" />
     <ClInclude Include="..\public\Roots.h" />
+    <ClInclude Include="..\public\Rot.h" />
     <ClInclude Include="..\public\RotEater.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\RockGolem.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
+    <ClCompile Include="..\private\Rot.cpp" />
     <ClCompile Include="..\private\RotEater.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />
@@ -358,6 +360,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />

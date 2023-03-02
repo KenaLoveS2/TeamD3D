@@ -214,6 +214,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
       <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Rot">
+      <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -480,6 +483,7 @@
     <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -725,6 +729,7 @@
     <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>02.GameObjects\Effect\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -786,6 +791,9 @@
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
