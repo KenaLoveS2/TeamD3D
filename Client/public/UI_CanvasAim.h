@@ -33,14 +33,16 @@ public: /* For connecting to CAnvas Ammo */
 	void	Set_Bomb(_int iBombIndex, _int iState);
 	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
 
-
-
-
 private:
 	virtual HRESULT			Bind()							override;
 	virtual HRESULT			Ready_Nodes()					override;
 	virtual HRESULT			SetUp_Components()				override;
 	virtual HRESULT			SetUp_ShaderResources()			override;
+
+private:
+	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fData);
+	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _float fData);
+	void	Switch(CUI_ClientManager::UI_PRESENT eType, _float fData);
 
 private:  /* Test .... Transform Event를 따로 뺄지 말지 생각중 */
 	_bool		m_bStart;

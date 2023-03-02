@@ -12,6 +12,7 @@
 
 /* Bind Object */
 #include "Kena.h"
+#include "Kena_State.h"
 
 CUI_CanvasHUD::CUI_CanvasHUD(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -81,10 +82,14 @@ void CUI_CanvasHUD::Tick(_float fTimeDelta)
 	{
 		if (FAILED(Bind()))
 		{
-			MSG_BOX("Bind Failed");
+		//	MSG_BOX("Bind Failed");
 			return;
 		}
 	}
+
+	if (!m_bActive)
+		return;
+
 
 	__super::Tick(fTimeDelta);
 
@@ -95,7 +100,8 @@ void CUI_CanvasHUD::Tick(_float fTimeDelta)
 void CUI_CanvasHUD::Late_Tick(_float fTimeDelta)
 {
 	/* Code */
-
+	if (!m_bActive)
+		return;
 	/* ~Code */
 
 	__super::Late_Tick(fTimeDelta);
@@ -119,6 +125,7 @@ HRESULT CUI_CanvasHUD::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
+	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
 	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
 
 

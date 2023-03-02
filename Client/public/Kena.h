@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include "Client_Defines.h"
-#include "Delegator.h"
 #include "UI_ClientManager.h"
+#include "delegator.h"
 #include "Model.h"
 
 BEGIN(Engine)
@@ -29,6 +29,8 @@ private:
 public:
 	_double					Get_AnimationPlayTime();
 
+public:
+	class CKena_State*		Get_State() { return m_pKenaState; }
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
@@ -88,7 +90,6 @@ private:
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
-
 	_float m_fTest = 0.f;
 
 public:
