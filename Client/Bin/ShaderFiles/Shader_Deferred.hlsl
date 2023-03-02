@@ -69,9 +69,9 @@ float3 CalculateSpecular(float3 viewDirection, float3 lightDirection, float3 nor
 float4 ComputeLighting(float3 worldPos, float3 worldNormal,float3 lightDirection, float3 viewDir, float3 lightPos, float3 lightColor, float roughness, float3 albedo, float3 ambientLightColor)
 {
 	float3 N = worldNormal;
-	float3 V = normalize(viewDir);
+	float3 V = normalize(viewDir)  * -1.f;
 	float ndl = max(0, dot(lightDirection, worldNormal));
-	float3 L = normalize(lightDirection);
+	float3 L = normalize(lightDirection)  * -1.f;
 	
 	// Calculate the lighting contributions
 	float3 ambientLight = ambientLightColor * albedo;
@@ -88,7 +88,7 @@ float4 ComputeLighting(float3 worldPos, float3 worldNormal,float3 lightDirection
 		float3 F = FresnelSchlick(NdotV, F0);
 		float D = DistributionGGX(N, H, roughness);
 		float G = GeometrySmith(N, V, L, roughness);
-		specularLight = (F * D * G) / (4.0 * NdotV * dot(N, L));
+		specularLight = (F * D * G) / (4.0 * NdotV * dot(L, N));
 	}
 
 	// Combine the lighting contributions and return the final color
@@ -120,7 +120,7 @@ float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Met
 	float3 ambient = ambientLightColor * Albedo * ao;
 	float3 diffuse = diffuseLightColor * (kD * Albedo / PI);
 
-	return float4(ambient + diffuse + specular, specularLightColor.a);
+	return float4(ambient + diffuse + specular, 1.f);
 }
 
 struct VS_IN
@@ -253,7 +253,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.a = vDiffuse.a;
 	Out.vSpecular = (float4)1.f;*/
 
-	//float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float4 specularLightColor)
+	
 	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic,fRoughness,fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
 	Out.vShade.a = vDiffuse.a;
 	Out.vSpecular = (float4)1.f;

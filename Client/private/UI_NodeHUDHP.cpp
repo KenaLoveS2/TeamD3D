@@ -70,6 +70,9 @@ HRESULT CUI_NodeHUDHP::Initialize(void * pArg)
 
 void CUI_NodeHUDHP::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	if (m_bUpgrade)
 	{
 		if (m_fDestScaleX > m_matLocal._11)
@@ -92,6 +95,9 @@ void CUI_NodeHUDHP::Tick(_float fTimeDelta)
 
 void CUI_NodeHUDHP::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 }

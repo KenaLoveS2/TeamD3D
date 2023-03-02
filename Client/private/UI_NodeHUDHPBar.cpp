@@ -49,6 +49,9 @@ HRESULT CUI_NodeHUDHPBar::Initialize(void * pArg)
 
 void CUI_NodeHUDHPBar::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	if (m_bUpgrade)
 	{
 		if (m_fDestScaleX > m_matLocal._11)
@@ -71,10 +74,11 @@ void CUI_NodeHUDHPBar::Tick(_float fTimeDelta)
 
 void CUI_NodeHUDHPBar::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 
 }
 
