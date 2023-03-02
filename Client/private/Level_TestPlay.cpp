@@ -70,6 +70,23 @@ HRESULT CLevel_TestPlay::Initialize()
 void CLevel_TestPlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(!m_bEnviromentInputShaderValue)
+	{
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+
+		CLayer* pLayer =	p_game_instance->Find_Layer(LEVEL_TESTPLAY, L"Layer_Enviroment");
+
+		for(auto& pGameObject : pLayer->GetGameObjects())
+		{
+			if(pGameObject.second != nullptr)
+				p_game_instance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject.second);
+		}
+
+		RELEASE_INSTANCE(CGameInstance)
+
+		m_bEnviromentInputShaderValue = true;
+	}
 }
 
 void CLevel_TestPlay::Late_Tick(_float fTimeDelta)
@@ -140,7 +157,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(60.0f);
+	CameraDesc.fFovy = XMConvertToRadians(90.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
 	CameraDesc.fFar = 300.f;

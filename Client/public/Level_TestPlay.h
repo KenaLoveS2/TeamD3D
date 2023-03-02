@@ -27,6 +27,9 @@ private:
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 
 public:
+	_bool		m_bEnviromentInputShaderValue = false;
+
+public:
 	static CLevel_TestPlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };

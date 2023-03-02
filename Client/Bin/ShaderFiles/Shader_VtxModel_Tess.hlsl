@@ -8,7 +8,7 @@ float				g_fFar = 300.f;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_ERAOTexture;
+Texture2D<float4>		g_MRAOTexture;
 
 struct VS_IN
 {
@@ -96,10 +96,6 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	Out.vProjPos = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
-
-	//Out.vProjPos = Out.vPosition;
-	//Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
-	//Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
 	return Out;
 }
@@ -259,7 +255,6 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
 	vector vTangent = (tri[0].vTangent + tri[1].vTangent + tri[2].vTangent) / 3.f;
 	float3 vBinormal = (tri[0].vBinormal + tri[1].vBinormal + tri[2].vBinormal) / 3.f;
 
-
 	Out.vPosition = mul(vector(p, 1.f), matWVP);
 	Out.vTexUV = tri[0].vTexUV * fW + tri[1].vTexUV * fU + tri[2].vTexUV * fV;
 	Out.vNormal = normalize(mul(vector(n, 0.f), g_WorldMatrix));
@@ -285,6 +280,7 @@ struct PS_OUT_TESS
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
+	float4		vAmbient : SV_TARGET3;
 };
 
 PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
@@ -292,22 +288,50 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0.1f > vDiffuse.a)
 		discard;
+	
+	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+	return Out;
+}
+
+PS_OUT_TESS PS_MAIN_TESS_COMP_MRAO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse         = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc	  = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
 
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
+	vector vAORM = (vector)1.f;
 
-	Out.vDiffuse = CalcHDRColor(vDiffuse, vERAO.r);
+	vAORM.r = vMRAODesc.b;
+	vAORM.g = vMRAODesc.g;
+	vAORM.b = vMRAODesc.r;
+	vAORM.a = vMRAODesc.a;
+
+	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
 	return Out;
 }
 
@@ -327,6 +351,7 @@ struct PS_OUT
 	float4		vDiffuse  : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth   : SV_TARGET2;
+	float4		vAmbient :SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -334,22 +359,20 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0.1f > vDiffuse.a)
 		discard;
-
-	vector		vERAO = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-
+	
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = CalcHDRColor(vDiffuse, vERAO.r);
+	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
-
+	Out.vAmbient = (vector)1.f;
 	return Out;
 }
 
@@ -480,5 +503,18 @@ technique11 DefaultTechnique
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
+	}
+
+	pass OnlyMRAO//6
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_TESS_COMP_MRAO();
 	}
 }

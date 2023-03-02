@@ -91,7 +91,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-	PxCapsuleDesc.fRadius = 0.2f;
+	PxCapsuleDesc.fRadius = 1.f;
 	PxCapsuleDesc.fHalfHeight = 0.5f;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 10.f;
@@ -99,7 +99,6 @@ HRESULT CKena::Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
-		
 
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
 	m_pRendererCom->Set_PhysXRender(true);

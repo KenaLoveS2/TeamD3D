@@ -1037,6 +1037,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma endregion Model Component
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
+
 	///* For.Prototype_GameObject_Sky */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mesh"),
 	//	CEffect_Mesh::Create(m_pDevice, m_pContext))))
