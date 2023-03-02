@@ -223,6 +223,7 @@
     <ClInclude Include="..\public\Roots.h" />
     <ClInclude Include="..\public\Rot.h" />
     <ClInclude Include="..\public\RotEater.h" />
+    <ClInclude Include="..\public\Rot_State.h" />
     <ClInclude Include="..\public\RuinKit.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="..\private\Roots.cpp" />
     <ClCompile Include="..\private\Rot.cpp" />
     <ClCompile Include="..\private\RotEater.cpp" />
+    <ClCompile Include="..\private\Rot_State.cpp" />
     <ClCompile Include="..\private\RuinKit.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />

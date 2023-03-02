@@ -14,6 +14,7 @@
 #include "Kena_MainOutfit.h"
 
 /* NPCs */
+#include "Rot.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -64,7 +65,6 @@
 #include "LodObject.h"
 #include "ModelViewerObject.h"
 #include "Moth.h"
-#include "Rot.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -465,8 +465,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//	return E_FAIL;
 #pragma endregion Rock
 
-
-
 #pragma  region Start_Forest_Room
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))			// ������ �������ִ°�
 		return E_FAIL;
@@ -482,8 +480,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 #pragma endregion ~Tree
-
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -556,7 +552,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Shader_VtxModelInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelInstance.hlsl"), VTXMODEL_INSTAICING_DECLARATION::Elements, VTXMODEL_INSTAICING_DECLARATION::iNumElements))))
 		return E_FAIL;
-
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
@@ -669,11 +664,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/*Anim*/
@@ -971,11 +961,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
@@ -1097,6 +1082,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WoodKnight"),
 		CWoodKnight::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
+		CRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
