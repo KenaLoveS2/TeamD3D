@@ -217,6 +217,9 @@
     <Filter Include="01.Utility\02.GameObject\UI\04. Event">
       <UniqueIdentifier>{116ed6cd-4a15-472f-b360-4d90da663ed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\15. ASM">
+      <UniqueIdentifier>{03a8e1d0-55e5-4cd1-80e4-b1a7d1fe1140}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\GameInstance.h">
@@ -505,6 +508,7 @@
     <ClInclude Include="..\Public\Instancing_Mesh.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AnimationState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -751,6 +755,7 @@
     <ClCompile Include="..\Private\Instancing_Mesh.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\AnimationState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">

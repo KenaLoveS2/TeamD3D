@@ -4,6 +4,7 @@
 #include "Kena.h"
 #include "Camera_Player.h"
 #include "Utile.h"
+#include "AnimationState.h"
 
 CKena_State::CKena_State()
 {
@@ -197,12 +198,12 @@ HRESULT CKena_State::SetUp_State_Aim()
 
 void CKena_State::Start_Idle(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(IDLE);
+	m_pKena->m_pAnimation->State_Animation("IDLE");
 }
 
 void CKena_State::Start_Run(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(RUN);
+	m_pKena->m_pAnimation->State_Animation("BOW_AIM_RIGHT_ADD");
 }
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
@@ -226,42 +227,34 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(BOW_AIM_REFPOSE, BOW_RETURN_ADD);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_FORWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_BACKWARD, AIM_RUN_RIGHT);
 }
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_LEFT);
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RUN_RIGHT);
 }
 
 void CKena_State::Tick_Idle(_float fTimeDelta)

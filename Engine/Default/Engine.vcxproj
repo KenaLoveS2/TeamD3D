@@ -179,6 +179,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Defines.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Engine_Utilty.h" />
     <ClInclude Include="..\public\Animation.h" />
+    <ClInclude Include="..\public\AnimationState.h" />
     <ClInclude Include="..\public\Base.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -274,6 +275,7 @@ call Copy.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Animation.cpp" />
+    <ClCompile Include="..\private\AnimationState.cpp" />
     <ClCompile Include="..\private\Base.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />

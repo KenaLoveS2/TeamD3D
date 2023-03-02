@@ -2,6 +2,7 @@
 #include "..\public\Kena.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+#include "AnimationState.h"
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Camera_Player.h"
@@ -51,7 +52,7 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 
-	m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
+	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
 	Push_EventFunctions();
 
@@ -71,12 +72,11 @@ void CKena::Tick(_float fTimeDelta)
 	m_pStateMachine->Tick(fTimeDelta);
 	
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	//m_pModelCom->Set_AnimIndex(m_iAnimationIndex);
 	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pAnimation->Play_Animation(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -84,6 +84,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
+	m_pAnimation->Late_Tick(fTimeDelta);
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
 		m_iAnimationIndex++;
@@ -303,8 +304,8 @@ void CKena::ImGui_ShaderValueProperty()
 
 void CKena::Update_Child()
 {
-	for (auto& pPart : m_vecPart)
-		pPart->Model_Synchronization(m_pModelCom->Get_PausePlay());
+	//for (auto& pPart : m_vecPart)
+	//	pPart->Model_Synchronization(m_pModelCom->Get_PausePlay());
 }
 
 HRESULT CKena::Call_EventFunction(const string & strFuncName)
@@ -335,6 +336,7 @@ HRESULT CKena::Ready_Parts()
 
 	m_vecPart.push_back(pPart);
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")));
 
 	/* MainOutfit */
 	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
@@ -347,6 +349,7 @@ HRESULT CKena::Ready_Parts()
 
 	m_vecPart.push_back(pPart);
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
+	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")));
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -447,6 +450,61 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 
 HRESULT CKena::SetUp_State()
 {
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom);
+
+	CAnimState*			pAnimState = nullptr;
+	CAdditiveAnimation*	pAdditiveAnim = nullptr;
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "IDLE";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::IDLE);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "BOW_AIM_RIGHT_ADD";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_AIR_LOOP);
+	//pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+
+ 	pAdditiveAnim = new CAdditiveAnimation;
+ 	pAdditiveAnim->m_bOneKeyFrame = true;
+ 	pAdditiveAnim->m_bControlRatio = false;
+ 	pAdditiveAnim->m_fAdditiveRatio = 1.f;
+ 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_AIR_REFPOSE);
+ 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIM_UP_LEFT_ADD);
+ 	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_end_jnt", CBone::LOCKTO_PARENT });
+ 	
+ 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+
+//   	pAdditiveAnim = new CAdditiveAnimation;
+// 	pAdditiveAnim->m_bOneKeyFrame = false;
+//   	pAdditiveAnim->m_bControlRatio = false;
+//   	pAdditiveAnim->m_fAdditiveRatio = 1.f;
+//   	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_REFPOSE_ADD);
+//   	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_RECHARGE_ADD);
+// 	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
+//   	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_low_jnt", CBone::LOCKTO_CHILD });
+//  	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_mid_jnt", CBone::UNLOCKTO_CHILD });
+//  // 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_rt_upArm_jnt", CBone::LOCKTO_PARENT });
+//  // 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_lf_upArm_jnt", CBone::LOCKTO_PARENT });
+//   
+//   	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+ 
+// 	pAdditiveAnim = new CAdditiveAnimation;
+// 	pAdditiveAnim->m_bControlRatio = false;
+// 	pAdditiveAnim->m_fAdditiveRatio = 1.f;
+// 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_REFPOSE_ADD);
+// 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_RIGHT_ADD);
+// 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
+// 
+// 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+
+	m_pAnimation->Add_State(pAnimState);
+
 	return S_OK;
 }
 
@@ -494,6 +552,7 @@ void CKena::Free()
 		Safe_Release(pPart);
 	m_vecPart.clear();
 
+	Safe_Release(m_pAnimation);
 	Safe_Release(m_pStateMachine);
 	Safe_Release(m_pKenaState);
 	Safe_Release(m_pNavigationCom);
