@@ -2,6 +2,7 @@
 #include "..\public\AnimationState.h"
 #include "Json/json.hpp"
 #include <fstream>
+#include "Utile.h"
 #include "GameObject.h"
 #include "Model.h"
 
@@ -300,15 +301,13 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					pJoint->Set_BoneLocked(Pair.second);
 				}
 			}
-			if (pAdditiveAnim->m_fAdditiveRatio > 1.f)
-				pAdditiveAnim->m_fAdditiveRatio = 1.f;
+
+			CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, 1.f);
 
 			if (pAdditiveAnim->m_bOneKeyFrame == true)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, matBonesTransformation, m_pCurAnim->m_pMainAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformation, m_pCurAnim->m_pMainAnim);
 			else
 				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, matBonesTransformation, pAdditiveAnim->m_pRefAnim);
-
-			pAdditiveAnim->m_fAdditiveRatio += fTimeDelta;
 		}
 	}
 	m_pModel->Compute_CombindTransformationMatrix();
@@ -321,57 +320,323 @@ void CAnimationState::ImGui_RenderProperty()
 {
 	static _bool	bSave = false;
 	static char	szFilePath[MAX_PATH] = "";
-	if (ImGui::Button("Save"))
-		bSave = true;
-	ImGui::SameLine();
-	if (ImGui::Button("Load"))
+	static _int	iSelectState = -1;
+	char**			ppStateName = nullptr;
+
+	if (m_pCurAnim != nullptr)
 	{
-		bSave = false;
-		strcpy_s(szFilePath, "");
-		ImGuiFileDialog::Instance()->OpenDialog("Load Directory", "Load Directory", ".json", "../Bin/Data/Animation/", ".json", 1, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGui::Text("Current AnimState : %s", m_pCurAnim->m_strStateName.c_str());
+		ImGui::Text("Loop : %d", m_pCurAnim->m_bLoop);
+		ImGui::Text("Lerp Duration : %f", m_pCurAnim->m_fLerpDuration);
+		ImGui::Text("Main Animation : %s", m_pCurAnim->m_pMainAnim->Get_Name());
+		if (m_pCurAnim->m_pBlendAnim != nullptr)
+			ImGui::Text("Blend Animation : %s", m_pCurAnim->m_pBlendAnim->Get_Name());
+		else
+			ImGui::Text("Blend Animation : N/A");
+		if (m_pCurAnim->m_vecAdditiveAnim.empty() == false)
+		{
+			_uint j = 0;
+			for (auto pAdditiveAnim : m_pCurAnim->m_vecAdditiveAnim)
+			{
+				ImGui::Text("Reference Animation[%d] : %s", j, pAdditiveAnim->m_pRefAnim->Get_Name());
+				ImGui::Text("Additive Animation[%d] : %s", j++, pAdditiveAnim->m_pAdditiveAnim->Get_Name());
+			}
+		}
+	}
+	else
+		ImGui::Text("Current AnimState : N/A");
+
+	ImGui::Separator();
+	
+	if (m_mapAnimState.empty() == false)
+	{
+		ppStateName = new char*[(_int)m_mapAnimState.size()];
+		_uint k = 0;
+		for (auto& Pair : m_mapAnimState)
+		{
+			_uint	iLength = (_uint)Pair.first.length() + 1;
+			ppStateName[k] = new char[iLength];
+			strcpy_s(ppStateName[k++], iLength, Pair.first.c_str());
+		}
+
+		ImGui::ListBox("State List", &iSelectState, ppStateName, (_int)m_mapAnimState.size());
+
+		if (iSelectState != -1)
+		{
+			CAnimState*		pSelectState = m_mapAnimState[string(ppStateName[iSelectState])];
+			if (pSelectState != nullptr)
+			{
+				ImGui::Text("State Name : %s", pSelectState->m_strStateName.c_str());
+				ImGui::Text("Loop : %d", pSelectState->m_bLoop);
+				ImGui::Text("Lerp Duration : %f", pSelectState->m_fLerpDuration);
+				ImGui::Text("Main Animation : %s", pSelectState->m_pMainAnim->Get_Name());
+				if (pSelectState->m_pBlendAnim != nullptr)
+					ImGui::Text("Blend Animation : %s", pSelectState->m_pBlendAnim->Get_Name());
+				else
+					ImGui::Text("Blend Animation : N/A");
+				if (pSelectState->m_vecAdditiveAnim.empty() == false)
+				{
+					_uint j = 0;
+					for (auto pAdditiveAnim : pSelectState->m_vecAdditiveAnim)
+					{
+						ImGui::Text("Reference Animation[%d] : %s", j, pAdditiveAnim->m_pRefAnim->Get_Name());
+						ImGui::Text("Additive Animation[%d] : %s", j, pAdditiveAnim->m_pAdditiveAnim->Get_Name());
+
+						char	szOneKeyFrame[8] = "";
+						if (pAdditiveAnim->m_bOneKeyFrame == true)
+							sprintf_s(szOneKeyFrame, "TRUE");
+						else
+							sprintf_s(szOneKeyFrame, "FALSE");
+						ImGui::Text("One Frame Animation[%d] : %s", j, szOneKeyFrame);
+						
+						char	szControlRatio[8] = "";
+						if (pAdditiveAnim->m_bControlRatio == true)
+							sprintf_s(szControlRatio, "TRUE");
+						else
+							sprintf_s(szControlRatio, "FALSE");
+						ImGui::Text("Control Ratio[%d] : %s", j, szControlRatio);
+
+						char	szKey[32] = "";
+						sprintf_s(szKey, "Additive Ratio[%d]", j);
+						ImGui::DragFloat(szKey, &pAdditiveAnim->m_fAdditiveRatio, 0.005f, 0.f, 1.f);
+						CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, 1.f);
+
+						j++;
+					}
+				}
+				if (ImGui::Button("Delete"))
+				{
+					for (_uint i = 0; i < (_uint)m_mapAnimState.size(); ++i)
+						Safe_Delete_Array(ppStateName[i]);
+					Safe_Delete_Array(ppStateName);
+
+					auto iter = m_mapAnimState.begin();
+					for (_int x = 0; x < iSelectState; ++x)
+						++iter;
+
+					Safe_Release(iter->second);
+					iter = m_mapAnimState.erase(iter);
+
+					iSelectState = -1;
+
+					return;
+				}
+			}
+		}
+
+		for (_uint i = 0; i < (_uint)m_mapAnimState.size(); ++i)
+			Safe_Delete_Array(ppStateName[i]);
+		Safe_Delete_Array(ppStateName);
 	}
 
-	if (bSave == true)
+	ImGui::Separator();
+
+	if (ImGui::CollapsingHeader("Add State"))
 	{
-		ImGui::InputTextWithHint("File Path", "Click Here for Choose Directory", szFilePath, MAX_PATH, ImGuiInputTextFlags_AutoSelectAll);
-		if (ImGui::Button("Choose Directory"))
-			ImGuiFileDialog::Instance()->OpenDialog("Save Directory", "Save Directory", ".json", "../Bin/Data/Animation/", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		static _bool		bLoop = true;
+		static _float		fLerpDuration = 0.2f;
+		static	string		strStateName = "";
+		static	string		strMainAnim = "";
+		static	string		strBlendAnim = "";
+		static _int		iAddCnt = 0;
+		static	string		strRefAnim[5] = { "", "", "", "", "" };
+		static	string		strAddAnim[5] = { "", "", "", "", "" };
+		static _bool		bControlRatio[5] = { true, true, true, true, true };
+		static _bool		bOneFrame[5] = { true, true, true, true, true };
+
+		ImGui::Text("Loop");
 		ImGui::SameLine();
-		if (ImGui::Button("Confirm"))
+		if (ImGui::RadioButton("TRUE", bLoop))
+			bLoop = true;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("FALSE", !bLoop))
+			bLoop = false;
+		ImGui::InputFloat("Lerp Duration", &fLerpDuration, 0.01f, 0.05f);
+		ImGui::InputText("State Name", &strStateName);
+		ImGui::InputText("Main Animation", &strMainAnim);
+		ImGui::InputText("Blend Animation", &strBlendAnim);
+		ImGui::InputInt("Additive Animation Count", &iAddCnt, 1, 1);
+		CUtile::Saturate<_int>(iAddCnt, 0, 5);
+		for (_int i = 0; i < iAddCnt; ++i)
 		{
-			Save(string(szFilePath));
+			char	szRef[32] = "";
+			char	szAdd[32] = "";
+			char	szYes[8] = "";
+			char	szNo[8] = "";
+			char	szyes[16] = "";
+			char	szno[16] = "";
+			sprintf_s(szRef, "Reference Animation[%d]", i);
+			sprintf_s(szAdd, "Additive Animation[%d]", i);
+			sprintf_s(szYes, "YES[%d]", i);
+			sprintf_s(szNo, "NO[%d]", i);
+			sprintf_s(szyes, "One Key[%d]", i);
+			sprintf_s(szno, "More Key[%d]", i);
+			ImGui::InputText(szRef, &strRefAnim[i]);
+			ImGui::InputText(szAdd, &strAddAnim[i]);
+			ImGui::Text("Constrol Ratio[%d]", i);
+			ImGui::SameLine();
+			if (ImGui::RadioButton(szYes, bControlRatio[i]))
+				bControlRatio[i] = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton(szNo, !bControlRatio[i]))
+				bControlRatio[i] = false;
+			ImGui::Text("One Frame Animation[%d]", i);
+			ImGui::SameLine();
+			if (ImGui::RadioButton(szyes, bOneFrame[i]))
+				bOneFrame[i] = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton(szno, !bOneFrame[i]))
+				bOneFrame[i] = false;
+		}
+		
+		if (ImGui::Button("Add"))
+		{
+			_bool			bFalseFlag = false;
+			CAnimation*	pAnim = nullptr;
+			CAnimState*	pAnimState = new CAnimState;
+			pAnimState->m_bLoop = bLoop;
+			pAnimState->m_fLerpDuration = fLerpDuration;
+			pAnimState->m_strStateName = strStateName;
+
+			pAnim = m_pModel->Find_Animation(strMainAnim);
+			if (pAnim != nullptr)
+				pAnimState->m_pMainAnim = pAnim;
+			else
+				bFalseFlag = true;
+
+			pAnim = m_pModel->Find_Animation(strBlendAnim);
+			if (pAnim != nullptr)
+				pAnimState->m_pBlendAnim = pAnim;
+
+			if (iAddCnt != 0 && bFalseFlag == false)
+			{
+				CAdditiveAnimation*		pAdditiveAnim = new CAdditiveAnimation;
+				for (_int i = 0; i < iAddCnt; ++i)
+				{
+					pAnim = m_pModel->Find_Animation(strRefAnim[i]);
+					if (pAnim != nullptr)
+						pAdditiveAnim->m_pRefAnim = pAnim;
+					else
+						bFalseFlag = true;
+
+					pAnim = m_pModel->Find_Animation(strAddAnim[i]);
+					if (pAnim != nullptr)
+						pAdditiveAnim->m_pAdditiveAnim = pAnim;
+					else
+						bFalseFlag = true;
+
+					pAdditiveAnim->m_bControlRatio = bControlRatio[i];
+					pAdditiveAnim->m_bOneKeyFrame = bOneFrame[i];
+
+					if (bFalseFlag == true)
+						Safe_Release(pAdditiveAnim);
+					else
+						pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+				}
+			}
+
+			if (bFalseFlag == true)
+				Safe_Release(pAnimState);
+			else
+				m_mapAnimState.emplace(strStateName, pAnimState);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			bLoop = true;
+			fLerpDuration = 0.2f;
+			strStateName = "";
+			strMainAnim = "";
+			strBlendAnim = "";
+			for (_int i = 0; i < 5; ++i)
+			{
+				strRefAnim[i] = "";
+				strAddAnim[i] = "";
+				bControlRatio[i] = true;
+				bOneFrame[i] = true;
+			}
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Save & Load"))
+	{
+		if (ImGui::Button("Save"))
+		{
+			bSave = true;
+			iSelectState = -1;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load"))
+		{
+			bSave = false;
+			iSelectState = -1;
 			strcpy_s(szFilePath, "");
+			ImGuiFileDialog::Instance()->OpenDialog("Load Directory", "Load Directory", ".json", "../Bin/Data/Animation/", ".json", 1, nullptr, ImGuiFileDialogFlags_Modal);
 		}
-	}
-	if (ImGuiFileDialog::Instance()->Display("Save Directory"))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
+		ImGui::SameLine();
+		if (ImGui::Button("Print Animation Names"))
+			ImGuiFileDialog::Instance()->OpenDialog("Print Animation Names", "Save Directory", ".json", "../Bin/Data/Animation/", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+
+		if (bSave == true)
 		{
-			string		strDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
-			wstring	wstrObjectTag = m_pOwner->Get_ObjectCloneName();
-			string		strObjectTag = "";
-			strObjectTag.assign(wstrObjectTag.begin(), wstrObjectTag.end());
-
-			strDirectory = strDirectory + "\\" + strObjectTag + ".json";
-
-			strcpy_s(szFilePath, strDirectory.c_str());
-
-			ImGuiFileDialog::Instance()->Close();
+			ImGui::InputTextWithHint("File Path", "Click Here for Choose Directory", szFilePath, MAX_PATH, ImGuiInputTextFlags_AutoSelectAll);
+			if (ImGui::Button("Choose Directory"))
+				ImGuiFileDialog::Instance()->OpenDialog("Save Directory", "Save Directory", ".json", "../Bin/Data/Animation/", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+			ImGui::SameLine();
+			if (ImGui::Button("Confirm"))
+			{
+				Save(string(szFilePath));
+				strcpy_s(szFilePath, "");
+			}
 		}
-		else if (!ImGuiFileDialog::Instance()->IsOk())
-			ImGuiFileDialog::Instance()->Close();
-	}
-	if (ImGuiFileDialog::Instance()->Display("Load Directory"))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
+		if (ImGuiFileDialog::Instance()->Display("Save Directory"))
 		{
-			string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
+			if (ImGuiFileDialog::Instance()->IsOk())
+			{
+				string		strDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+				wstring	wstrObjectTag = m_pOwner->Get_ObjectCloneName();
+				string		strObjectTag = "";
+				strObjectTag.assign(wstrObjectTag.begin(), wstrObjectTag.end());
 
-			Load(strFilePath);
-			ImGuiFileDialog::Instance()->Close();
+				strDirectory = strDirectory + "\\" + strObjectTag + ".json";
+
+				strcpy_s(szFilePath, strDirectory.c_str());
+
+				ImGuiFileDialog::Instance()->Close();
+			}
+			else if (!ImGuiFileDialog::Instance()->IsOk())
+				ImGuiFileDialog::Instance()->Close();
 		}
-		else if (!ImGuiFileDialog::Instance()->IsOk())
-			ImGuiFileDialog::Instance()->Close();
+		if (ImGuiFileDialog::Instance()->Display("Load Directory"))
+		{
+			if (ImGuiFileDialog::Instance()->IsOk())
+			{
+				string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
+
+				Load(strFilePath);
+				ImGuiFileDialog::Instance()->Close();
+			}
+			else if (!ImGuiFileDialog::Instance()->IsOk())
+				ImGuiFileDialog::Instance()->Close();
+		}
+		if (ImGuiFileDialog::Instance()->Display("Print Animation Names"))
+		{
+			if (ImGuiFileDialog::Instance()->IsOk())
+			{
+				string		strDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+				wstring	wstrObjectTag = m_pOwner->Get_ObjectCloneName();
+				string		strObjectTag = "";
+				strObjectTag.assign(wstrObjectTag.begin(), wstrObjectTag.end());
+
+				strDirectory = strDirectory + "\\" + strObjectTag + " Animation Names.json";
+
+				m_pModel->Print_Animation_Names(strDirectory);
+
+				ImGuiFileDialog::Instance()->Close();
+			}
+			else if (!ImGuiFileDialog::Instance()->IsOk())
+				ImGuiFileDialog::Instance()->Close();
+		}
 	}
 }
 

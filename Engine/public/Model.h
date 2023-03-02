@@ -54,6 +54,7 @@ public:
 	void				Compute_CombindTransformationMatrix();
 	void				Update_BonesMatrix(CModel* pModel);
 	void				Set_AllAnimCommonType();
+	void				Print_Animation_Names(const string& strFilePath);
 
 public:	
 	HRESULT 				Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 

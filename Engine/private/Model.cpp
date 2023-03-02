@@ -1006,6 +1006,22 @@ void CModel::Set_AllAnimCommonType()
 	}
 }
 
+void CModel::Print_Animation_Names(const string & strFilePath)
+{
+	Json	jAnimName;
+
+	string strAnimName = "";
+	for (auto pAnimation : m_Animations)
+	{
+		strAnimName = pAnimation->Get_Name();
+		jAnimName.push_back(strAnimName);
+	}
+
+	ofstream	file(strFilePath.c_str());
+	file << jAnimName;
+	file.close();
+}
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)
