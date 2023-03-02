@@ -88,49 +88,48 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 
 		if (jAnimState["5. Additive Animation"].is_array() == true)
 		{
-			if (jAnimState["5. Additive Animation"].empty() == false)
+			CAdditiveAnimation*		pAdditive = nullptr;
+			for (auto jAdditive : jAnimState["5. Additive Animation"])
 			{
-				CAdditiveAnimation*		pAdditive = nullptr;
-				for (auto jAdditive : jAnimState["5. Additive Animation"])
+				pAdditive = new CAdditiveAnimation;
+
+				jAdditive["0. Ratio Control"].get_to<_bool>(pAdditive->m_bControlRatio);
+
+				jAdditive["1. Reference Animation"].get_to<string>(strMainAnim);
+				pAnim = m_pModel->Find_Animation(strMainAnim);
+				NULL_CHECK_RETURN(pAnim, E_FAIL);
+				pAdditive->m_pRefAnim = pAnim;
+
+				jAdditive["2. Additive Animation"].get_to<string>(strBlendAnim);
+				pAnim = m_pModel->Find_Animation(strBlendAnim);
+				NULL_CHECK_RETURN(pAnim, E_FAIL);
+				pAdditive->m_pAdditiveAnim = pAnim;
+
+				for (auto jJoint : jAdditive["3. Joint Index"])
 				{
-					pAdditive = new CAdditiveAnimation;
+					jJoint["0. Bone Name"].get_to<string>(strJoint);
+					jJoint["1. Lock To"].get_to<string>(strLockTo);
+					CBone::LOCKTO	eLockto = CBone::LOCKTO_END;
 
-					jAdditive["0. Ratio Control"].get_to<_bool>(pAdditive->m_bControlRatio);
+					if (strLockTo == "Lock Child")
+						eLockto = CBone::LOCKTO_CHILD;
+					else if (strLockTo == "Lock Parent")
+						eLockto = CBone::LOCKTO_PARENT;
+					else if (strLockTo == "Lock Alone")
+						eLockto = CBone::LOCKTO_ALONE;
+					else if (strLockTo == "Unlock Child")
+						eLockto = CBone::UNLOCKTO_CHILD;
+					else if (strLockTo == "Unlock Parent")
+						eLockto = CBone::UNLOCKTO_PARENT;
+					else if (strLockTo == "Unlock Alone")
+						eLockto = CBone::UNLOCKTO_ALONE;
+					else
+						return E_FAIL;
 
-					jAdditive["1. Reference Animation"].get_to<string>(strMainAnim);
-					pAnim = m_pModel->Find_Animation(strMainAnim);
-					NULL_CHECK_RETURN(pAnim, E_FAIL);
-					pAdditive->m_pRefAnim = pAnim;
-
-					jAdditive["2. Additive Animation"].get_to<string>(strBlendAnim);
-					pAnim = m_pModel->Find_Animation(strBlendAnim);
-					NULL_CHECK_RETURN(pAnim, E_FAIL);
-					pAdditive->m_pAdditiveAnim = pAnim;
-
-					for (auto jJoint : jAdditive["3. Joint Index"])
-					{
-						jJoint["0. Bone Name"].get_to<string>(strJoint);
-						jJoint["1. Lock To"].get_to<string>(strLockTo);
-						CBone::LOCKTO	eLockto = CBone::LOCKTO_END;
-
-						if (strLockTo == "Lock Child")
-							eLockto = CBone::LOCKTO_CHILD;
-						else if (strLockTo == "Lock Parent")
-							eLockto = CBone::LOCKTO_PARENT;
-						else if (strLockTo == "Lock Alone")
-							eLockto = CBone::LOCKTO_ALONE;
-						else if (strLockTo == "Unlock Child")
-							eLockto = CBone::UNLOCKTO_CHILD;
-						else if (strLockTo == "Unlock Parent")
-							eLockto = CBone::UNLOCKTO_PARENT;
-						else if (strLockTo == "Unlock Alone")
-							eLockto = CBone::UNLOCKTO_ALONE;
-						else
-							return E_FAIL;
-
-						pAdditive->m_listLockedJoint.push_back(pair<string, CBone::LOCKTO>{strJoint, eLockto});
-					}
+					pAdditive->m_listLockedJoint.push_back(pair<string, CBone::LOCKTO>{strJoint, eLockto});
 				}
+
+				pAnimState->m_vecAdditiveAnim.push_back(pAdditive);
 			}
 		}
 		m_mapAnimState.emplace(pAnimState->m_strStateName, pAnimState);
