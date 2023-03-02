@@ -50,8 +50,8 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Key_Pressing(DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta);
+	//if (pGameInstance->Key_Pressing(DIK_W))
+	//	m_pTransformCom->Go_Straight(fTimeDelta);
 
 	if (pGameInstance->Key_Pressing(DIK_S))
 		m_pTransformCom->Go_Backward(fTimeDelta);

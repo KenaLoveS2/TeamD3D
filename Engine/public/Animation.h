@@ -39,11 +39,17 @@ public:
 	HRESULT						Initialize(void* pArg);
 	void								ImGui_RenderEvents(_int& iSelectEvent);
 
-	void								Update_Bones(_float fTimeDelta, CAnimation* pBlendAnim = nullptr);
-	void								Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, CAnimation* pBlendAnim = nullptr);
-	void								Update_Bones_Addtive(_float ffTimeDelta, _float fRatio);
-	void								Reverse_Play(_float fTimeDelta);
-	void								Reset_Animation();
+	void							Update_Bones(_float fTimeDelta);
+	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
+	void							Update_Bones_Additive(_float fTimeDelta, _float fRatio, CAnimation* pRefAnim);
+
+	/* For CAnimationState */
+	void							Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, CAnimation* pRefAnim);
+
+	void							Reverse_Play(_float fTimeDelta);
+	void							Reset_Animation();
 
 private:
 	class CModel*					m_pModel = nullptr;
