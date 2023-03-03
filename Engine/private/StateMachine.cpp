@@ -113,6 +113,16 @@ void CStateMachine::Imgui_RenderProperty()
 	_int iInput = static_cast<_int>(m_iDebugQueSize);
 	ImGui::InputInt("Debug History Size(unsigned)", &iInput);
 	if (iInput >= 0) m_iDebugQueSize = iInput;
+
+	if (ImGui::Button("Reset State"))
+	{
+		wstring	wstrRootName = m_wstrRootStateName;
+		wstrRootName.erase(wstrRootName.find_last_of(L"_"), string::npos);
+		m_wstrLastStateName = m_wstrCurrentStateName;
+		m_wstrCurrentStateName = wstrRootName;
+
+		m_wstrDebugList.clear();
+	}
 }
 
 void CStateMachine::StateHistoryUpdate(const wstring & wstrLastStateName)

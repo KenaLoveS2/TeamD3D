@@ -11,13 +11,14 @@ CKena_State::CKena_State()
 {
 }
 
-HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CTransform * pTransform, CCamera_Player * pCamera)
+HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
 {
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	m_pKena = pKena;
 	m_pStateMachine = pStateMachine;
 	m_pModel = pModel;
+	m_pAnimationState = pAnimation;
 	m_pTransform = pTransform;
 	m_pCamera = pCamera;
 
@@ -30,6 +31,11 @@ HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CM
 	FAILED_CHECK_RETURN(SetUp_State_Idle(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Run(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Aim(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Attack1(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Attack2(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Attack3(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Attack4(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
 
 	return S_OK;
 }
@@ -48,11 +54,11 @@ void CKena_State::ImGui_RenderProperty()
 {
 }
 
-CKena_State * CKena_State::Create(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CTransform * pTransform, CCamera_Player * pCamera)
+CKena_State * CKena_State::Create(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
 {
 	CKena_State*	pInstance = new CKena_State;
 
-	if (FAILED(pInstance->Initialize(pKena, pStateMachine, pModel, pTransform, pCamera)))
+	if (FAILED(pInstance->Initialize(pKena, pStateMachine, pModel, pAnimation, pTransform, pCamera)))
 	{
 		MSG_BOX("Failed to Create : CKena_State");
 		Safe_Release(pInstance);
@@ -72,7 +78,9 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
 
 		.Finish_Setting();
@@ -197,19 +205,204 @@ HRESULT CKena_State::SetUp_State_Aim()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Attack1()
+{
+	m_pStateMachine->Add_State(L"ATTACK_1")
+		.Init_Start(this, &CKena_State::Start_Attack_1)
+		.Init_Tick(this, &CKena_State::Tick_Attack_1)
+		.Init_End(this, &CKena_State::End_Attack_1)
+		.Init_Changer(L"ATTACK_1_RETURN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"ATTACK_1_FROM_RUN")
+		.Init_Start(this, &CKena_State::Start_Attack_1_From_Run)
+		.Init_Tick(this, &CKena_State::Tick_Attack_1_From_Run)
+		.Init_End(this, &CKena_State::End_Attack_1_From_Run)
+
+		.Add_State(L"ATTACK_1_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Attack_1_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Attack_1_Into_Run)
+		.Init_End(this, &CKena_State::End_Attack_1_Into_Run)
+
+		.Add_State(L"ATTACK_1_INTO_WALK")
+		.Init_Start(this, &CKena_State::Start_Attack_1_Into_Walk)
+		.Init_Tick(this, &CKena_State::Tick_Attack_1_Into_Walk)
+		.Init_End(this, &CKena_State::End_Attack_1_Into_Walk)
+
+		.Add_State(L"ATTACK_1_RETURN")
+		.Init_Start(this, &CKena_State::Start_Attack_1_Return)
+		.Init_Tick(this, &CKena_State::Tick_Attack_1_Return)
+		.Init_End(this, &CKena_State::End_Attack_1_Return)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Attack2()
+{
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Attack3()
+{
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Attack4()
+{
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Pulse()
+{
+	m_pStateMachine->Add_State(L"INTO_PULSE")
+		.Init_Start(this, &CKena_State::Start_Into_Pulse)
+		.Init_Tick(this, &CKena_State::Tick_Into_Pulse)
+		.Init_End(this, &CKena_State::End_Into_Pulse)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"INTO_PULSE_FROM_RUN")
+		.Init_Start(this, &CKena_State::Start_Into_Pulse_From_Run)
+		.Init_Tick(this, &CKena_State::Tick_Into_Pulse_From_Run)
+		.Init_End(this, &CKena_State::End_Into_Pulse_From_Run)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"PULSE")
+		.Init_Start(this, &CKena_State::Start_Pulse)
+		.Init_Tick(this, &CKena_State::Tick_Pulse)
+		.Init_End(this, &CKena_State::End_Pulse)
+		.Init_Changer(L"PULSE_INTO_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"PULSE_LOOP")
+		.Init_Start(this, &CKena_State::Start_Pulse_Loop)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Loop)
+		.Init_End(this, &CKena_State::End_Pulse_Loop)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::KeyInput_Direction)
+
+		.Add_State(L"PULSE_INTO_COMBAT_END")
+		.Init_Start(this, &CKena_State::Start_Pulse_Into_Combat_End)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Into_Combat_End)
+		.Init_End(this, &CKena_State::End_Pulse_Into_Combat_End)
+
+		.Add_State(L"PULSE_INTO_IDLE")
+		.Init_Start(this, &CKena_State::Start_Pulse_Into_Idle)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Into_Idle)
+		.Init_End(this, &CKena_State::End_Pulse_Into_Idle)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"PULSE_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Pulse_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Into_Run)
+		.Init_End(this, &CKena_State::End_Pulse_Into_Run)
+
+		.Add_State(L"PULSE_PARRY")
+		.Init_Start(this, &CKena_State::Start_Pulse_Parry)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Parry)
+		.Init_End(this, &CKena_State::End_Pulse_Parry)
+
+		.Add_State(L"PULSE_WALK")
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK_FRONT_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"PULSE_WALK_FRONT_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"PULSE_WALK_BACK_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"PULSE_WALK_BACK_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"PULSE_WALK_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"PULSE_WALK_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"PULSE_WALK_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"PULSE_WALK_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_FRONT_LEFT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Front_Left)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_FRONT_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Front_Right)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_BACK_LEFT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Back_Left)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_BACK_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Back_Right)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_LEFT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Left)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_WALK_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk_Right)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Walk)
+		.Init_End(this, &CKena_State::End_Pulse_Walk)
+		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
+		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"PULSE_SQUAT_SPRINT")
+		.Init_Start(this, &CKena_State::Start_Pulse_Squat_Sprint)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Squat_Sprint)
+		.Init_End(this, &CKena_State::End_Pulse_Squat_Sprint)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 void CKena_State::Start_Idle(_float fTimeDelta)
 {
-	m_pKena->m_pAnimation->State_Animation("IDLE");
+	m_pAnimationState->State_Animation("IDLE");
 }
 
 void CKena_State::Start_Run(_float fTimeDelta)
 {
-	m_pKena->m_pAnimation->State_Animation("BOW_AIM_RIGHT_ADD");
+	m_pAnimationState->State_Animation("RUN");
 }
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_INTO);
+	m_pAnimationState->State_Animation("AIM_INTO");
 
 	/* Switch On Aim */
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
@@ -220,12 +413,12 @@ void CKena_State::Start_Aim_Into(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_LOOP);
+	m_pAnimationState->State_Animation("AIM_LOOP");
 }
 
 void CKena_State::Start_Aim_Return(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RETURN);
+	m_pAnimationState->State_Animation("AIM_RETURN");
 
 	/* Siwtch Off Aim */
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
@@ -240,34 +433,152 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_FORWARD");
 }
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_FORWARD_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_FORWARD_RIGHT");
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_BACKWARD");
 }
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_BACKWARD_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_BACKWARD_RIGHT");
 }
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
 {
+	m_pAnimationState->State_Animation("AIM_RUN_RIGHT");
+}
+
+void CKena_State::Start_Attack_1(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ATTACK_1");
+}
+
+void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ATTACK_1_FROM_RUN");
+}
+
+void CKena_State::Start_Attack_1_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ATTACK_1_INTO_RUN");
+}
+
+void CKena_State::Start_Attack_1_Into_Walk(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ATTACK_1_INTO_WALK");
+}
+
+void CKena_State::Start_Attack_1_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ATTACK_1_RETURN");
+}
+
+void CKena_State::Start_Into_Pulse(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("INTO_PULSE");
+}
+
+void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("INTO_PULSE_FROM_RUN");
+}
+
+void CKena_State::Start_Pulse(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE");
+}
+
+void CKena_State::Start_Pulse_Loop(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_LOOP");
+}
+
+void CKena_State::Start_Pulse_Into_Combat_End(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_INTO_COMBAT_END");
+}
+
+void CKena_State::Start_Pulse_Into_Idle(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_INTO_IDLE");
+}
+
+void CKena_State::Start_Pulse_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_INTO_RUN");
+}
+
+void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_PARRY");
+}
+
+void CKena_State::Start_Pulse_Walk_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_FORWARD");
+}
+
+void CKena_State::Start_Pulse_Walk_Front_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_FRONT_LEFT");
+}
+
+void CKena_State::Start_Pulse_Walk_Front_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_FRONT_RIGHT");
+}
+
+void CKena_State::Start_Pulse_Walk_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_BACKWARD");
+}
+
+void CKena_State::Start_Pulse_Walk_Back_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_BACK_LEFT");
+}
+
+void CKena_State::Start_Pulse_Walk_Back_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_BACK_RIGHT");
+}
+
+void CKena_State::Start_Pulse_Walk_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_LEFT");
+}
+
+void CKena_State::Start_Pulse_Walk_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_WALK_RIGHT");
+}
+
+void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_SQUAT_SPRINT");
 }
 
 void CKena_State::Tick_Idle(_float fTimeDelta)
@@ -294,7 +605,7 @@ void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
 {
-	//Move(fTimeDelta, CTransform::DIR_LOOK);
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Forward_Left(_float fTimeDelta)
@@ -330,6 +641,66 @@ void CKena_State::Tick_Aim_Run_Left(_float fTimeDelta)
 void CKena_State::Tick_Aim_Run_Right(_float fTimeDelta)
 {
 	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Attack_1(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Attack_1_From_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Attack_1_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Attack_1_Into_Walk(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Attack_1_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Into_Pulse(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Into_Pulse_From_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Into_Combat_End(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Into_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Parry(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Walk(_float fTimeDleta)
+{
+}
+
+void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
+{
 }
 
 void CKena_State::End_Idle(_float fTimeDelta)
@@ -385,9 +756,69 @@ void CKena_State::End_Aim_Run_Right(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Attack_1(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Attack_1_From_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Attack_1_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Attack_1_Into_Walk(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Attack_1_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Into_Pulse(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Into_Pulse_From_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Into_Combat_End(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Into_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Parry(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Walk(_float fTimeDleta)
+{
+}
+
+void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)
+{
+}
+
 _bool CKena_State::Animation_Finish()
 {
-	return m_pModel->Get_AnimationFinish();
+	return m_pAnimationState->Get_AnimationFinish();
 }
 
 _bool CKena_State::Direction_Change()
@@ -485,6 +916,14 @@ _bool CKena_State::KeyInput_SD()
 	return false;
 }
 
+_bool CKena_State::KeyInput_E()
+{
+	if (m_pGameInstance->Key_Pressing(DIK_E))
+		return true;
+
+	return false;
+}
+
 _bool CKena_State::KeyInput_Space()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_SPACE))
@@ -541,9 +980,25 @@ _bool CKena_State::KeyDown_LCtrl()
 	return false;
 }
 
+_bool CKena_State::MouseDown_Left()
+{
+	if (m_pGameInstance->Mouse_Down(DIM_LB))
+		return true;
+
+	return false;
+}
+
 _bool CKena_State::MouseDown_Middle()
 {
 	if (m_pGameInstance->Mouse_Down(DIM_MB))
+		return true;
+
+	return false;
+}
+
+_bool CKena_State::MouseDown_Right()
+{
+	if (m_pGameInstance->Mouse_Down(DIM_RB))
 		return true;
 
 	return false;

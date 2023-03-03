@@ -45,9 +45,9 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pCamera->Set_Player(this, m_pTransformCom);
 	CGameInstance::GetInstance()->Work_Camera(L"PLAYER_CAM");
 
-	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pTransformCom, m_pCamera);
-
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+
+	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 
@@ -87,26 +87,21 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
 	*/	
 	
-	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_STATIC;
-	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
-	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-	PxCapsuleDesc.fRadius = 1.f;
-	PxCapsuleDesc.fHalfHeight = 0.2f;
-	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxCapsuleDesc.fDensity = 10.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
-
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	
-	_matrix Temp = XMMatrixRotationX(XMConvertToRadians(90.f)) * XMMatrixTranslation(0.f, 1.f, 0.f);
-	
-	_float4x4 PivotMatrix;
-	XMStoreFloat4x4(&PivotMatrix, Temp);
-	m_pTransformCom->Add_PxActorStatic(TEXT("TEST_CAPSULE"), PivotMatrix);
-
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	m_pRendererCom->Set_PhysXRender(true);
+// 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+// 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+// 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
+// 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+// 	PxCapsuleDesc.fRadius = 1.f;
+// 	PxCapsuleDesc.fHalfHeight = 0.2f;
+// 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+// 	PxCapsuleDesc.fDensity = 10.f;
+// 	PxCapsuleDesc.fAngularDamping = 0.5f;
+// 
+// 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+// 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+// 
+// 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+// 	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
@@ -117,15 +112,16 @@ void CKena::Tick(_float fTimeDelta)
 		
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
-	m_pAnimation->Play_Animation(fTimeDelta);
+	if (m_pModelCom->Get_Preview() == false)
+		m_pAnimation->Play_Animation(fTimeDelta);
+	else
+		m_pModelCom->Play_Animation(fTimeDelta);
 
-	m_pTransformCom->Tick(fTimeDelta);
+	m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -298,7 +294,13 @@ void CKena::ImGui_AnimationProperty()
 
 	if (ImGui::BeginTabItem("State"))
 	{
+		ImGui::BulletText("Kena State");
 		m_pStateMachine->Imgui_RenderProperty();
+		ImGui::Separator();
+		ImGui::BulletText("Animation State");
+		m_pAnimation->ImGui_RenderProperty();
+		ImGui::Separator();
+
 		ImGui::EndTabItem();
 	}
 
@@ -530,6 +532,250 @@ HRESULT CKena::SetUp_State()
 	m_pAnimation->Add_State(pAnimState);
 
 	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "RUN";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_INTO";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_INTO);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_LOOP";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_LOOP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RETURN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RETURN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_FORWARD";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_FORWARD);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_FORWARD_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_FORWARD_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_BACKWARD";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_BACKWARD);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_BACKWARD_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_BACKWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_BACKWARD_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_BACKWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIM_RUN_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "ATTACK_1";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::ATTACK_1);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "ATTACK_1_FROM_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::ATTACK_1_FROM_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "ATTACK_1_INTO_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::ATTACK_1_INTO_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "ATTACK_1_INTO_WALK";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::ATTACK_1_INTO_WALK);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "ATTACK_1_RETURN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::ATTACK_1_RETURN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "INTO_PULSE";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::INTO_PULSE);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "INTO_PULSE_FROM_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::INTO_PULSE_FROM_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_LOOP";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_LOOP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_INTO_COMBAT_END";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_INTO_COMBAT_END);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_INTO_IDLE";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_INTO_IDLE);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_INTO_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_INTO_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_PARRY";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_PARRY);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_FORWARD";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_FORWARD);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_FRONT_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_FRONT_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_BACKWARD";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_BACKWARD);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_BACK_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_BACK_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_BACK_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_BACK_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_LEFT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_WALK_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_WALK_RIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_SQUAT_SPRINT";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_SQUAT_SPRINT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "BOW_AIM_RIGHT_ADD";
 	pAnimState->m_bLoop = true;
 	pAnimState->m_fLerpDuration = 0.2f;
@@ -546,29 +792,6 @@ HRESULT CKena::SetUp_State()
 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_end_jnt", CBone::LOCKTO_PARENT });
  	
  	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
-
-//   	pAdditiveAnim = new CAdditiveAnimation;
-// 	pAdditiveAnim->m_bOneKeyFrame = false;
-//   	pAdditiveAnim->m_bControlRatio = false;
-//   	pAdditiveAnim->m_fAdditiveRatio = 1.f;
-//   	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_REFPOSE_ADD);
-//   	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_RECHARGE_ADD);
-// 	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
-//   	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_low_jnt", CBone::LOCKTO_CHILD });
-//  	//pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_mid_jnt", CBone::UNLOCKTO_CHILD });
-//  // 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_rt_upArm_jnt", CBone::LOCKTO_PARENT });
-//  // 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_lf_upArm_jnt", CBone::LOCKTO_PARENT });
-//   
-//   	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
- 
-// 	pAdditiveAnim = new CAdditiveAnimation;
-// 	pAdditiveAnim->m_bControlRatio = false;
-// 	pAdditiveAnim->m_fAdditiveRatio = 1.f;
-// 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_REFPOSE_ADD);
-// 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIR_AIM_RIGHT_ADD);
-// 	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
-// 
-// 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 
 	m_pAnimation->Add_State(pAnimState);
 
