@@ -47,6 +47,9 @@ void CSticks01::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
+
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -127,8 +130,6 @@ void CSticks01::ImGui_AnimationProperty()
 void CSticks01::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
-
-	// shader Value Á¶Àý
 }
 
 HRESULT CSticks01::Call_EventFunction(const string& strFuncName)
@@ -146,10 +147,12 @@ HRESULT CSticks01::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
 		.AddState("IDLE")
+
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(WALK);
 	})
+
 		.Build();
 
 	return S_OK;

@@ -166,73 +166,73 @@ HRESULT CRockGolem::SetUp_State()
 			m_pModelCom->Set_AnimIndex(SLEEPIDLE);
 		})
 
-			.AddTransition("sleepIdle to wispin", "WISPIN")
-			.Predicator([this]()
-		{
-			if (DistanceBetweenPlayer() < 10.f)
-				return true;
-			else
-				return false;				
-		})
-
-	.AddState("IDLE")
-		.Tick([this](_float fTimeDelta)
-		{
-			m_pModelCom->Set_AnimIndex(IDLE);
-		})
-			.AddTransition("idle to walk", "WALK")
-			.Predicator([this]()
-		{
-			if (DistanceBetweenPlayer() <= 10.f)
-				return true;
-			else
-				return false;
-		})
-
-	.AddState("WALK")
-			.Tick([this](_float fTimeDelta)
-		{
-			m_pModelCom->Set_AnimIndex(WALK);
-			m_pTransformCom->Chase(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta);
-		})
-			.AddTransition("walk to WISPOUT", "WISPOUT")
-			.Predicator([this]()
-		{
-			if (DistanceBetweenPlayer() > 10.f)
-				return true;
-			else
-				return false;
-		})
-
-			.AddState("WISPIN")
-			.OnStart([this]()
-		{
-				m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
-		})
-			.Tick([this](_float fTimeDelta)
-		{
-			m_pModelCom->Set_AnimIndex(WISPIN);
-		})
-			.AddTransition("wispin to IDLE", "IDLE")
-			.Predicator([this]()
-		{
-			return AnimFinishChecker(WISPIN);
-		})
-
-			.AddState("WISPOUT")
-			.OnStart([this]()
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
-		})
-			.Tick([this](_float fTimeDelta)
-		{
-			m_pModelCom->Set_AnimIndex(WISPOUT);
-		})
-			.AddTransition("wispout to sleepidle ", "SLEEPIDLE")
-			.Predicator([this]()
-		{
-			return AnimFinishChecker(WISPOUT);
-		})
+	//		.AddTransition("sleepIdle to wispin", "WISPIN")
+	//		.Predicator([this]()
+	//	{
+	//		if (DistanceBetweenPlayer() < 10.f)
+	//			return true;
+	//		else
+	//			return false;				
+	//	})
+	//
+	//.AddState("IDLE")
+	//	.Tick([this](_float fTimeDelta)
+	//	{
+	//		m_pModelCom->Set_AnimIndex(IDLE);
+	//	})
+	//		.AddTransition("idle to walk", "WALK")
+	//		.Predicator([this]()
+	//	{
+	//		if (DistanceBetweenPlayer() <= 10.f)
+	//			return true;
+	//		else
+	//			return false;
+	//	})
+	//
+	//.AddState("WALK")
+	//		.Tick([this](_float fTimeDelta)
+	//	{
+	//		m_pModelCom->Set_AnimIndex(WALK);
+	//		m_pTransformCom->Chase(m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta);
+	//	})
+	//		.AddTransition("walk to WISPOUT", "WISPOUT")
+	//		.Predicator([this]()
+	//	{
+	//		if (DistanceBetweenPlayer() > 10.f)
+	//			return true;
+	//		else
+	//			return false;
+	//	})
+	//
+	//		.AddState("WISPIN")
+	//		.OnStart([this]()
+	//	{
+	//			m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
+	//	})
+	//		.Tick([this](_float fTimeDelta)
+	//	{
+	//		m_pModelCom->Set_AnimIndex(WISPIN);
+	//	})
+	//		.AddTransition("wispin to IDLE", "IDLE")
+	//		.Predicator([this]()
+	//	{
+	//		return AnimFinishChecker(WISPIN);
+	//	})
+	//
+	//		.AddState("WISPOUT")
+	//		.OnStart([this]()
+	//	{
+	//		m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
+	//	})
+	//		.Tick([this](_float fTimeDelta)
+	//	{
+	//		m_pModelCom->Set_AnimIndex(WISPOUT);
+	//	})
+	//		.AddTransition("wispout to sleepidle ", "SLEEPIDLE")
+	//		.Predicator([this]()
+	//	{
+	//		return AnimFinishChecker(WISPOUT);
+	//	})
 
 		.Build();
 
