@@ -98,7 +98,12 @@ HRESULT CKena::Initialize(void * pArg)
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+	
+	_matrix Temp = XMMatrixRotationX(XMConvertToRadians(90.f)) * XMMatrixTranslation(0.f, 1.f, 0.f);
+	
+	_float4x4 PivotMatrix;
+	XMStoreFloat4x4(&PivotMatrix, Temp);
+	m_pTransformCom->Add_PxActorStatic(TEXT("TEST_CAPSULE"), PivotMatrix);
 
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
 	m_pRendererCom->Set_PhysXRender(true);
@@ -119,6 +124,8 @@ void CKena::Tick(_float fTimeDelta)
 		pPart->Tick(fTimeDelta);
 
 	m_pAnimation->Play_Animation(fTimeDelta);
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)

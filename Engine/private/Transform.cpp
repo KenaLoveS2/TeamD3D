@@ -15,8 +15,7 @@ CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
-{
-	
+{	
 }
 
 void CTransform::Set_Scaled(STATE eState, _float fScale)
@@ -538,16 +537,12 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
-void CTransform::Connect_PxActor(const _tchar * pActorTag, _float3 vPivot)
+void CTransform::Connect_PxActorDynamic(const _tchar * pActorTag, _float3 vPivot)
 {
 	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
 
-	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
-	if (m_pPxActor == nullptr)
-	{
-		m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
-	}
-	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActor");
+	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
+	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
 
 	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
 	m_bIsStaticPxActor = pUserData->eType <= TRIANGLE_MESH_STATIC;
@@ -555,15 +550,32 @@ void CTransform::Connect_PxActor(const _tchar * pActorTag, _float3 vPivot)
 	m_vPxPivot = vPivot;
 }
 
+void CTransform::Add_PxActorStatic(const _tchar * pActorTag, _float4x4 PivotMatrix)
+{
+	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
+
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+	assert(pActor != nullptr && "CTransform::Add_PxActorStatic");
+
+	StaticActorData Data;
+	Data.pActor = pActor;
+	Data.PivotMatrix = PivotMatrix;
+
+	m_StaticActorList.push_back(Data);
+}
+
 void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 {
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
 		if (m_bIsStaticPxActor)
-		{
+		{	
+			/*
 			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
+			*/
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
+		
 		}
 		else
 		{
@@ -595,4 +607,16 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
 	}		
+}
+
+void CTransform::Tick(_float fTimeDelta)
+{
+	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
+	_float4x4 RetMatrix, Pivot;
+
+	for (auto& iter : m_StaticActorList)
+	{		
+		XMStoreFloat4x4(&RetMatrix, XMLoadFloat4x4(&iter.PivotMatrix) * World);
+		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
+	}	
 }
