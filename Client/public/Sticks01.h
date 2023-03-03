@@ -44,6 +44,25 @@ private:
 		ANIMATION_END
 	};
 
+	enum ATTACKTYPE
+	{
+		AT_CHARGEATTACK,
+		AT_JUMPATTACK,
+		AT_ATTACK1,
+		AT_ATTACK2,
+		AT_COMBOATTACK,
+		AT_ROCKTHROW,
+		ATTACKTYPE_END
+	};
+
+	enum AFTERATTACKTYPE
+	{
+		AF_CHEER,
+		AF_STRAFELEFT,
+		AF_STRAFERIGHT,
+		AFTYPE_END
+	};
+
 private:
 	CSticks01(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSticks01(const CSticks01& rhs);
@@ -68,6 +87,31 @@ protected:
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
+private:
+	void Set_AttackType();
+	void Reset_Attack();
+	void Tick_Attack(_float fTimeDelta);
+
+	void Set_AFType();
+	void Reset_AF();
+
+private:
+	_int		m_iAttackType = ATTACKTYPE_END;
+	_bool	m_bRealAttack = false;
+	_bool	m_bChargeAttack = false;
+	_bool	m_bJumpAttack = false;
+	_bool   m_bAttack1 = false;
+	_bool	m_bAttack2 = false;
+	_bool	m_bComboAttack = false;
+	_bool	m_bThrowRock = false;
+
+	_int		m_iAfterAttackType = AFTYPE_END;
+	_bool	m_bCheer = false;
+	_bool	m_bStrafeLeft = false;
+	_bool	m_bStrafeRight = false;
+
+	_bool	m_bHit = false;
+	
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
