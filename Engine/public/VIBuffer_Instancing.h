@@ -12,12 +12,14 @@ public:
 	virtual ~CVIBuffer_Instancing() = default;
 
 public:
+	_uint	Get_InstanceNum() { return m_iNumInstance; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
 	virtual HRESULT Tick(_float fTimeDelta) = 0;
 	virtual HRESULT Render();
 	
-
 protected:
 	_uint						m_iNumInstance = 0; /* 몇개의 도형?!*/ 
 	_uint						m_iInstanceStride = 0;
