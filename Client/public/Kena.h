@@ -47,10 +47,10 @@ public:
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pRangeCol = nullptr;
-	CNavigation*			m_pNavigationCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CModel*						m_pModelCom = nullptr;
+	CCollider*					m_pRangeCol = nullptr;
+	CNavigation*				m_pNavigationCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;

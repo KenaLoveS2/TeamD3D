@@ -39,6 +39,27 @@ HRESULT CSticks01::Initialize(void* pArg)
 	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
 
 	m_pModelCom->Set_AllAnimCommonType();
+	
+	return S_OK;
+}
+
+HRESULT CSticks01::Late_Initialize(void * pArg)
+{
+	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+	PxCapsuleDesc.eType = CAPSULE_STATIC;
+	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+	PxCapsuleDesc.fRadius = 1.f;
+	PxCapsuleDesc.fHalfHeight = 0.2f;
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.fDensity = 10.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(m_szCloneObjectTag);
+
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }

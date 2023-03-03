@@ -52,6 +52,11 @@ HRESULT CMonster::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CMonster::Late_Initialize(void * pArg)
+{
+	return S_OK;
+}
+
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
