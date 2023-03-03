@@ -20,6 +20,7 @@ public:
 	class CBone*	Get_BonePtr(const char* pBoneName);
 	_double			Get_PlayTime();
 	const _bool&	Get_PausePlay() const { return m_bPausePlay; }
+	const _bool&	Get_Preview() const { return m_bPreview; }
 	const _uint&		Get_AnimIndex() const { return m_iCurrentAnimIndex; }
 	const _uint&		Get_LastAnimIndex() const { return m_iPreAnimIndex; }
 	const _bool&	Get_AnimationFinish() const;
@@ -93,6 +94,7 @@ private:
 	_float						m_fBlendDuration = 0.2f;
 	_float						m_fBlendCurTime = 0.2f;
 
+	_bool						m_bPreview = false;
 	_bool						m_bPausePlay = false;
 
 /*For.Mesh_Instancing*/

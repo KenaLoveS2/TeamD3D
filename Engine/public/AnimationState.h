@@ -53,6 +53,7 @@ private:
 public:
 	CAnimState*		Get_CurrentAnim() { return m_pCurAnim; }
 	CAnimState*		Get_PreAnim() { return m_pPreAnim; }
+	const _bool&		Get_AnimationFinish();
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath);

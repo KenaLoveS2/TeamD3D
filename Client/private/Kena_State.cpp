@@ -204,12 +204,12 @@ void CKena_State::Start_Idle(_float fTimeDelta)
 
 void CKena_State::Start_Run(_float fTimeDelta)
 {
-	m_pKena->m_pAnimation->State_Animation("BOW_AIM_RIGHT_ADD");
+	m_pKena->m_pAnimation->State_Animation("RUN");
 }
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_INTO);
+	m_pKena->m_pAnimation->State_Animation("AIM_INTO");
 
 	/* Switch On Aim */
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
@@ -220,12 +220,12 @@ void CKena_State::Start_Aim_Into(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_LOOP);
+	m_pKena->m_pAnimation->State_Animation("AIM_LOOP");
 }
 
 void CKena_State::Start_Aim_Return(_float fTimeDelta)
 {
-	m_pModel->Set_AnimIndex(AIM_RETURN);
+	m_pKena->m_pAnimation->State_Animation("AIM_RETURN");
 
 	/* Siwtch Off Aim */
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
@@ -240,34 +240,42 @@ void CKena_State::Start_Aim_Run(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Run_Forward(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_FORWARD");
 }
 
 void CKena_State::Start_Aim_Run_Forward_Left(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_FORWARD_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Forward_Right(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_FORWARD_RIGHT");
 }
 
 void CKena_State::Start_Aim_Run_Backward(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_BACKWARD");
 }
 
 void CKena_State::Start_Aim_Run_Backward_Left(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_BACKWARD_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Backward_Right(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_BACKWARD_RIGHT");
 }
 
 void CKena_State::Start_Aim_Run_Left(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_LEFT");
 }
 
 void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
 {
+	m_pKena->m_pAnimation->State_Animation("AIM_RUN_RIGHT");
 }
 
 void CKena_State::Tick_Idle(_float fTimeDelta)
@@ -294,7 +302,7 @@ void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
 {
-	//Move(fTimeDelta, CTransform::DIR_LOOK);
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Run_Forward_Left(_float fTimeDelta)
@@ -387,7 +395,7 @@ void CKena_State::End_Aim_Run_Right(_float fTimeDelta)
 
 _bool CKena_State::Animation_Finish()
 {
-	return m_pModel->Get_AnimationFinish();
+	return m_pKena->m_pAnimation->Get_AnimationFinish();
 }
 
 _bool CKena_State::Direction_Change()

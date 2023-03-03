@@ -424,6 +424,7 @@ void CModel::Imgui_RenderProperty()
 			if (ImGui::Button("Play"))
 			{
 				m_bPausePlay = false;
+				m_bPreview = true;
 				pAnimation->Reset_Animation();
 
 				if (bSearchMode == true)
@@ -472,13 +473,23 @@ void CModel::Imgui_RenderProperty()
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel"))
 			{
+				m_bPreview = false;
 				iSelectAnimation = -1;
 				bReName = false;
 				pAnimation = nullptr;
 
-				for (_uint i = 0; i < m_iNumAnimations; ++i)
-					Safe_Delete_Array(ppAnimationTag[i]);
-				Safe_Delete_Array(ppAnimationTag);
+				if (bSearchMode == true)
+				{
+					for (_uint i = 0; i < iSearchedCount; ++i)
+						Safe_Delete_Array(ppAnimationTag[i]);
+					Safe_Delete_Array(ppAnimationTag);
+				}
+				else
+				{
+					for (_uint i = 0; i < m_iNumAnimations; ++i)
+						Safe_Delete_Array(ppAnimationTag[i]);
+					Safe_Delete_Array(ppAnimationTag);
+				}
 
 				return;
 			}

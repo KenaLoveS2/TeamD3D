@@ -292,8 +292,8 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 {
 	if (isRootBone == true)
 	{
-		matBonesTransfomation = m_pBone->Get_TransformMatrix();
-		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+		//matBonesTransfomation = m_pBone->Get_TransformMatrix();
+		//m_pBone->Set_TransformMatrix(matBonesTransfomation);
 		return;
 	}
 
