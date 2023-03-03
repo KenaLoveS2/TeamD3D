@@ -113,6 +113,9 @@ void CSticks01::Imgui_RenderProperty()
 	if (ImGui::Button("TAKEDAMAGE"))
 		m_bHit = true;
 
+	if (ImGui::Button("BIND"))
+		m_bBind = true;
+
 	if (m_pFSM)
 		m_pFSM->Imgui_RenderProperty();
 }
@@ -184,6 +187,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		Reset_AF();
 	})
+		.AddTransition("COMBATIDLE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
 		.AddTransition("COMBATIDLE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -215,12 +223,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
+		.AddTransition("CHEER to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
 		.AddTransition("CHEER to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
 		return m_bHit;
 	})
-
 		.AddTransition("CHEER to CHARGE", "CHARGE")
 		.Predicator([this]()
 	{
@@ -239,18 +251,21 @@ HRESULT CSticks01::SetUp_State()
 		m_pTransformCom->Go_Left(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
+		.AddTransition("STRAFELEFT to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
 		.AddTransition("STRAFELEFT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
 		return m_bHit;
 	})
-
 		.AddTransition("STRAFELEFT to CHARGE", "CHARGE")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime,3.f);
 	})
-
 
 		.AddState("STRAFERIGHT")
 		.OnStart([this]()
@@ -264,6 +279,12 @@ HRESULT CSticks01::SetUp_State()
 		m_pTransformCom->Go_Right(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
+		.AddTransition("STRAFERIGHT to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+
 		.AddTransition("STRAFERIGHT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -290,12 +311,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		Reset_Attack();
 	})
+		.AddTransition("CHARGE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
 		.AddTransition("CHARGE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
 		return m_bHit;
 	})
-
 		.AddTransition("CHARGE to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
 	{
@@ -337,7 +362,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("CHARGEATTACK to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("CHARGEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("CHARGEATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -354,7 +388,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("JUMPATTACK to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("JUMPATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("JUMPATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -371,7 +414,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("ATTACK to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("ATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("ATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -388,7 +440,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("ATTACK2 to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("ATTACK2 to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("ATTACK2 to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -405,7 +466,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("COMBOATTACK to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("COMBOATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("COMBOATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -422,7 +492,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt(m_pKenaPos);
 	})
-
+		.AddTransition("ROCKTHROW to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("ROCKTHROW to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bHit;
+	})
 		.AddTransition("ROCKTHROW to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
 	{
@@ -434,13 +513,20 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
 		m_pModelCom->Set_AnimIndex(BIND);
-
+		m_bHit = false;
 		// 묶인 상태에서 맞았을때는 ADDITIVE 실행 
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		// Additive Animation		
 	})
+		.OnExit([this]()
+	{
+		// 맞는 애니메이션일때도 맞는가?
+		m_bBind = false;
+		Reset_Attack();
+	})
+
 		.AddTransition("BIND to CHARGE", "CHARGE")
 		.Predicator([this]()
 	{
@@ -477,7 +563,7 @@ HRESULT CSticks01::SetUp_State()
 		.OnStart([this]()
 	{
 		// 앞 뒤 구별 ㄱ
-			// 맞는 애니메이션일때도 데미지가 들어오면 start에서 m_bHit = false;
+		// 맞는 애니메이션일때도 데미지가 들어오면 start에서 m_bHit = false;
 		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEL);
 		m_pModelCom->Set_AnimIndex(TAKEDAMAGEL);
 	})
@@ -485,11 +571,23 @@ HRESULT CSticks01::SetUp_State()
 	{
 		// 맞는 애니메이션일때도 맞는가?
 		m_bHit = false;
+		Reset_Attack();
+	})
+		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
 	})
 		.AddTransition("TAKEDAMAGE to CHARGE", "CHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(TAKEDAMAGEL);
+	})
+
+		.AddState("DEATH")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
 	})
 
 				.Build();

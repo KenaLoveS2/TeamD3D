@@ -111,6 +111,7 @@ private:
 	_bool	m_bStrafeRight = false;
 
 	_bool	m_bHit = false;
+	_bool	m_bBind = false;
 	
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
