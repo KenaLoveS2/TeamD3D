@@ -28,8 +28,8 @@ HRESULT CLevel_EffectTest::Initialize()
 	RELEASE_INSTANCE(CGameInstance);
 	// ~tool 
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
@@ -80,12 +80,14 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 	return S_OK;
 }
 
-HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
+HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Mesh"), TEXT("Effect_Cube"))))
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaPulseCloud"), TEXT("KenaPulseCloud"))))
 	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaPulse"), TEXT("KenaPulse"))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

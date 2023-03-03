@@ -14,7 +14,7 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
-// #define TESTPLAY
+#define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -99,6 +99,9 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
+	HRESULT Load_E_Desc(const _tchar* pFilePath);
+
+public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {
 		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC));
 	}
@@ -118,6 +121,8 @@ public:
 
 	class CEffect_Base*			 Get_Parent() { return m_pParent; }
 	void						 Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
+	class CGameObject*			 Get_Owner() { return m_pOwner; }
+	void						 Set_Owner(class CGameObject* pOwner) { m_pOwner = pOwner; }
 
 	void						 Set_Matrix();
 	void						 Set_InitMatrix(_fmatrix WorldMatrix) {
@@ -146,7 +151,7 @@ public:
 	void				 BillBoardSetting(_float3 vScale);
 
 public:
-	virtual HRESULT      Initialize_Prototype() override;
+	virtual HRESULT      Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT		 Initialize(void* pArg) override;
 	virtual void		 Tick(_float fTimeDelta) override;
 	virtual void		 Late_Tick(_float fTimeDelta) override;
@@ -186,6 +191,8 @@ protected:
 	vector<class CEffect_Base*> m_vecChild;
 
 	class CEffect_Base*			m_pParent = nullptr;
+	class CGameObject*			m_pOwner = nullptr;
+
 	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 
@@ -195,8 +202,8 @@ protected:
 	/* ~Trail */
 
 	/* Texture Setting */
-	_uint	m_iTotalDTextureComCnt = 0;
-	_uint	m_iTotalMTextureComCnt = 0;
+	_uint	m_iTotalDTextureComCnt = 1;
+	_uint	m_iTotalMTextureComCnt = 1;
 	/* ~Texture Setting */
 
 	/* FreeMoving */

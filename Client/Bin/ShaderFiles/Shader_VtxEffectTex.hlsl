@@ -166,7 +166,7 @@ PS_OUT PS_MAIN(PS_IN In)
 			vector maskTex3 = g_MTexture_3.Sample(LinearSampler, In.vTexUV);
 			vector maskTex4 = g_MTexture_4.Sample(LinearSampler, In.vTexUV);
 
-			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* maskTex4* 2.0f);
+			vector maskTex = saturate(maskTex0 * maskTex1* maskTex2* maskTex3* maskTex4* 4.0f);
 			Out.vColor = Out.vColor * maskTex * g_vColor;
 		}
 	}
@@ -174,16 +174,16 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor = Out.vColor * g_vColor;
 
 	////
-	//float2		vTexUV;
-	//vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	//vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w)/2.f+ 0.5f;
+	vTexUV.y = -(In.vProjPos.y / In.vProjPos.w)/2.f + 0.5f;
 
-	//vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-	//float		fOldViewZ = vDepthDesc.y * 300.f;
-	//float		fViewZ = In.vProjPos.w;
+	float		fOldViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = In.vProjPos.w;
 
-	//Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 0.5f);
 	////
 
 	return Out;
