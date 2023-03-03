@@ -48,14 +48,10 @@ public:
 
 			// eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
 			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				const char* pSourName = pairHeader.actors[0]->getName();
-				const char* pDestName = pairHeader.actors[1]->getName();
-
+			{	
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-
-				
+								
 				pSourUserData && pSourUserData->pOwner->Execute_Collision();
 				pDestUserData && pDestUserData->pOwner->Execute_Collision();
 			}

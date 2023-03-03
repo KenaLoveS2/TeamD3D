@@ -1134,6 +1134,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
 
+		pLoadObject->Late_Initialize();
+
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;
