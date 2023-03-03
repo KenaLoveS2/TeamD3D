@@ -122,7 +122,7 @@ void CKena::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
-	m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
+	//m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
