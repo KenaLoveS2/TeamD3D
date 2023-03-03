@@ -4,9 +4,9 @@
 
 BEGIN(Client)
 
-class CEffect final : public CEffect_Base
+class CEffect abstract : public CEffect_Base
 {
-private:
+protected:
 	CEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect(const CEffect& rhs);
 	virtual ~CEffect() = default;
@@ -37,12 +37,10 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
-private:
+protected:
 	_float m_fTimeDelta = 0.0f;	
 
 public:
-	static  CEffect*     Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void         Free() override;
 };
 

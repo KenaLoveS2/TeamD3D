@@ -5,6 +5,7 @@
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Camera_Player.h"
+#include "Effect_Base.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -50,6 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
@@ -84,7 +86,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxSphereDesc.fAngularDamping = 0.5f;
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	m_pTransformCom->Connect_PxActor_Gravity(TEXT("TEST_SPERE"));
 
 	/*
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
@@ -117,6 +119,9 @@ void CKena::Tick(_float fTimeDelta)
 	
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
 
 	if (m_pModelCom->Get_Preview() == false)
 		m_pAnimation->Play_Animation(fTimeDelta);
@@ -210,6 +215,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
@@ -422,6 +430,23 @@ HRESULT CKena::Ready_Parts()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Effects()
+{
+	CEffect_Base*	pEffectBase = nullptr;
+	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+
+	pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
+	pEffectBase->Set_Owner(this);
+
+	m_mapEffect.emplace("KenaPulse", pEffectBase);
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -841,6 +866,10 @@ void CKena::Free()
 	for (auto& pPart : m_vecPart)
 		Safe_Release(pPart);
 	m_vecPart.clear();
+
+	for (auto& Pair : m_mapEffect)
+		Safe_Release(Pair.second);
+	m_mapEffect.clear();
 
 	Safe_Release(m_pAnimation);
 	Safe_Release(m_pStateMachine);

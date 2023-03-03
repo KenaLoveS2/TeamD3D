@@ -56,7 +56,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(m_szCloneObjectTag);
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
 	m_pRendererCom->Set_PhysXRender(true);
