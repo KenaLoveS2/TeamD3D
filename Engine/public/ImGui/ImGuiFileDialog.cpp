@@ -2561,6 +2561,8 @@ namespace IGFD
 				path += std::string(1u, PATH_SEP) + selectedDirectory;
 		}
 
+		path.erase(remove(path.begin(), path.end(), '\0'), path.end());
+
 		return path;
 	}
 
@@ -2577,6 +2579,7 @@ namespace IGFD
 	std::string IGFD::FileManager::GetResultingFilePathName(FileDialogInternal& vFileDialogInternal)
 	{
 		std::string result = GetResultingPath();
+		result.erase(remove(result.begin(), result.end(), '\0'), result.end());
 
 		std::string filename = GetResultingFileName(vFileDialogInternal);
 		if (!filename.empty())
@@ -2584,7 +2587,8 @@ namespace IGFD
 #ifdef _IGFD_UNIX_
 			if (puFsRoot != result)
 #endif // _IGFD_UNIX_
-				result += std::string(1u, PATH_SEP);
+				//result.append("\\");
+				//result += std::string(1u, PATH_SEP);
 
 			result += filename;
 		}

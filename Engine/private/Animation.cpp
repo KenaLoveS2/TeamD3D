@@ -323,10 +323,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				m_Channels[i]->Reset_KeyFrameIndex();
 
  			if (m_Channels[i]->Get_BoneLocked() == true)
- 			{
- 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
  				continue;
- 			}
 
  			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
  				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
@@ -345,7 +342,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				continue;
 
 			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false);
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
 			else
 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
 		}
