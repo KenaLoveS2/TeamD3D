@@ -60,6 +60,7 @@ public: // kbj physx
 
 	HRESULT Create_PxActor();
 	void Set_PxPosition(_float3 vPos);
+	void Set_PxMatrix(_float4x4& Matrix);
 
 protected: // kbj physx
 	PxVec3*			m_pPxVertices = nullptr;

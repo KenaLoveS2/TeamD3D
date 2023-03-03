@@ -36,6 +36,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
+	/*
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("ROCKGOLEM");
@@ -47,11 +48,25 @@ HRESULT CRockGolem::Initialize(void* pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
 	m_pTransformCom->Connect_PxActor(TEXT("ROCKGOLEM"));
-	CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("ROCKGOLEM"), true);
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(0.f, 0.f, 15.f, 1.f));
+	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(0.f, 0.f, 15.f, 1.f));
+	*/
+
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.pActortag = TEXT("ROCK_GOL");
+	PxBoxDesc.vPos = _float3(5.f, 0.f, 5.f);
+	PxBoxDesc.vSize = { 1.f, 1.f, 1.f };
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 10.f;
+	PxBoxDesc.fAngularDamping = 0.5f;
+
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(TEXT("ROCK_GOL"));
 
 	m_pModelCom->Set_AllAnimCommonType();
+	
 
 	return S_OK;
 }

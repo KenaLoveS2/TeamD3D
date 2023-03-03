@@ -32,9 +32,17 @@ HRESULT CStair::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
+	
+	return S_OK;
+}
+
+HRESULT CStair::Late_Initialize(void * pArg)
+{
+	if (FAILED(__super::Late_Initialize(pArg)))
+		return E_FAIL;
 
 	m_pModelCom->Create_PxTriangle();
-	m_pModelCom->Set_PxPosition(_float3(5.f, 0.f, 0.f));
+	m_pModelCom->Set_PxMatrix(m_pTransformCom->Get_WorldMatrixFloat4x4());
 
 	return S_OK;
 }
@@ -43,14 +51,15 @@ void CStair::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	/*
 	if (!m_bBool)
 	{
 		m_vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		m_vPos.y -= 1.f;
 		m_bBool = true;
-	}
-
+	}	
 	m_pModelCom->Set_PxPosition(m_vPos);
+	*/
 }
 
 void CStair::Late_Tick(_float fTimeDelta)
