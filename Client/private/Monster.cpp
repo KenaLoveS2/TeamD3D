@@ -52,12 +52,17 @@ HRESULT CMonster::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CMonster::Late_Initialize(void * pArg)
+{
+	return S_OK;
+}
+
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//if (m_pFSM)
-	//	m_pFSM->Tick(fTimeDelta);
+	if (m_pKena)
+		m_pKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -123,12 +128,35 @@ _bool CMonster::AnimIntervalChecker(_uint eAnim, _double StartRate, _double Fini
 	return false;
 }
 
+_bool CMonster::DistanceTrigger(_float distance)
+{
+	_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	_float fDistance = _float3::Distance(vPos, vPlayerPos);
+
+	if (distance >= fDistance)
+		return true;
+	else
+		return false;
+}
+
+_bool CMonster::TimeTrigger(_float Time1, _float Time2)
+{
+	if (Time1 >= Time2)
+		return true;
+	else
+		return false;	
+}
+
 _float CMonster::DistanceBetweenPlayer()
 {
 	_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	return _float3::Distance(vPos, vPlayerPos);
+
+	return  _float3::Distance(vPos, vPlayerPos);
 }
+
 
 void CMonster::Free()
 {
