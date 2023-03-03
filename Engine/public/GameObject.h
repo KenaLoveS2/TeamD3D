@@ -44,6 +44,9 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+
+	virtual HRESULT Late_Initialize(void* pArg = nullptr) { return S_OK; };
+
 	virtual void Tick(_float fTimeDelta);
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();

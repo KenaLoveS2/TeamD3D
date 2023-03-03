@@ -230,6 +230,7 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 {
 	PX_USER_DATA* pUserData = nullptr;
 	PxRigidDynamic* pActor = nullptr;
+	/*
 	_float4x4 WorldMatrix;
 	for (auto Pair : m_DynamicActors)
 	{
@@ -239,8 +240,8 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		WorldMatrix = Get_ActorMatrix(pActor);
 		pUserData->pOwner->Set_WorldMatrix(WorldMatrix);
 	}
-
-	/*
+	*/
+	
 	for (auto Pair : m_DynamicActors)
 	{
 		pActor = (PxRigidDynamic*)Pair.second;
@@ -250,8 +251,7 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
 
 		pUserData->pOwner->Set_Position(vObjectPos);
-	}
-	*/
+	}	
 }
 
 void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
