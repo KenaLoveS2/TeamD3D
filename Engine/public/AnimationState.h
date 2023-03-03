@@ -84,6 +84,8 @@ private:
 	_float				m_fCurLerpTime = 0.f;
 	_float				m_fLerpDuration = 0.f;
 
+	_smatrix			m_matBonesTransformation[800];
+
 public:
 	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath = "");
 	virtual void					Free() override {

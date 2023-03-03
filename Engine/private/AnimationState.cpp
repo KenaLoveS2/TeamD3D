@@ -226,8 +226,6 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 	CAnimation*	pBlendAnim = m_pCurAnim->m_pBlendAnim;
 	CBone*		pJoint = nullptr;
 
-	_smatrix		matBonesTransformation[800];
-
 	/* Lerp */
 	if (m_fCurLerpTime < m_fLerpDuration)
 	{
@@ -245,7 +243,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 		pPreAnim = m_pPreAnim->m_pMainAnim;
 		pPreBlendAnim = m_pPreAnim->m_pBlendAnim;
-		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, matBonesTransformation, pPreBlendAnim);
+		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pPreBlendAnim);
 
 		if (pPreAnim == pMainAnim || pPreAnim == pBlendAnim)
 			pPreAnim->Reverse_Play(fTimeDelta);
@@ -272,7 +270,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
 			}
 		}
 
@@ -292,7 +290,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 		//if (pBlendAnim != nullptr && pBlendAnim == pPreAnim)
 		//	pBlendAnim->Reverse_Play(fTimeDelta);
 
-		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, pBlendAnim);
 		/* TODO : Check 'Is Additive Process needs Lerp' */		
 
 		m_fCurLerpTime += fTimeDelta;
@@ -311,7 +309,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				pJoint->Set_BoneLocked(Pair.second);
 			}
 		}
-		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pBlendAnim);
 	}
 	//m_pModel->Compute_CombindTransformationMatrix();
 
@@ -336,9 +334,9 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 			CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, 1.f);
 
 			if (pAdditiveAnim->m_bOneKeyFrame == true)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformation, m_pCurAnim->m_pMainAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_pCurAnim->m_pMainAnim);
 			else
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
 		}
 	}
 	m_pModel->Compute_CombindTransformationMatrix();
