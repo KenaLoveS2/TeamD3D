@@ -86,7 +86,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxSphereDesc.fAngularDamping = 0.5f;
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
+	m_pTransformCom->Connect_PxActor_Gravity(TEXT("TEST_SPERE"));
 
 	/*
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
