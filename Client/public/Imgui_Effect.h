@@ -2,6 +2,14 @@
 #include "ImguiObject.h"
 #include "Effect_Base.h"
 
+BEGIN(Engine)
+class CComponent;
+class CGameObject;
+class CLayer;
+END
+
+BEGIN(Client)
+
 class CImgui_Effect final : public CImguiObject
 {
 public:
@@ -50,6 +58,10 @@ public:
 	void	Show_ChildWindow(class CEffect_Base* pEffect);
 	void	Show_TrailWindow(class CEffect_Base* pEffect);
 
+public:
+	HRESULT Save_EffectData();
+	HRESULT Load_EffectData();
+
 private:
 	CEffect_Base::EFFECTDESC m_eEffectDesc;
 
@@ -62,3 +74,4 @@ public:
 	virtual void          Free() override;
 };
 
+END
