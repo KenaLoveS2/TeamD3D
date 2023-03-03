@@ -97,33 +97,48 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float2 vTexUV;
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
-
-	float4 d = g_NormalTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f * g_Time * 1.f));   //°ËÁ¤
-	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV + d.r);
-	vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f * g_Time));
+	float2 distort_amount = float2(g_vColor * normalmap.xy);
+	//	vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
 	// DTexture == 40
 	// Blend_Mix
-	//float4(0, 0.399, 0.801, 1)
 	float4 fresnel_color = g_vColor;
-	float4 fresnel = float4(fresnel_glow(3.0, 4.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
+	float4 fresnel = float4(fresnel_glow(3.0, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
 
-	//
-	float   fOldViewZ = vDepthDesc.y * 300.f;
-	float   fViewZ = In.vProjPos.w;
+	// find the offset colour for this location (this is where the magic happens) 
+	distort_amount.x = 1.0 - distort_amount.x;
 
-	Out.vDiffuse = albedo * fresnel;
-	// Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+	distort_amount -= 0.5;//128.0;
+	if (distort_amount.x > 0.5) { distort_amount.x -= 1.0; }// wrap around
+	if (distort_amount.y > 0.5) { distort_amount.y -= 1.0; }// wrap around
+	distort_amount /= 4.0;
 
-	float fRim = dot(In.vViewDir.xyz, -In.vNormal.xyz);
-	Out.vDiffuse.a = saturate(pow(1 - fRim, 3));
+	vector albedo0 = g_DTexture_0.Sample(LinearSampler, In.vTexUV + distort_amount);
+	vector albedo1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV + distort_amount);
+	vector albedo2 = g_DTexture_2.Sample(LinearSampler, In.vTexUV / 2.f + distort_amount);
 
-	//
+	//vector albedo = albedo0 + albedo2 * 2.f;
+	//albedo = saturate(albedo);
+	vector albedo = albedo0 + albedo2;
+	float4 fresnel_albbedo1 = float4(fresnel_glow(3.0, 2.5, float3(1.f, 1.f, 1.f), In.vNormal.rgb, -In.vViewDir), 0.5f);
+	albedo1 = albedo1 * fresnel_albbedo1;
+	Out.vDiffuse = albedo1 + saturate(albedo) * fresnel;
+
+	float2		vTexUV;
+
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+
+	float		fOldViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = In.vProjPos.w;
+
+	Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.0f, 0.0f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
 
 	return Out;
 }

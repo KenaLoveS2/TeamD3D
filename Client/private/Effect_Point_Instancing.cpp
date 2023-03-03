@@ -169,7 +169,7 @@ void CEffect_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_RandomPSize(PSizeMinMax);
 }
 
-HRESULT CEffect_Point_Instancing::Initialize_Prototype(_tchar* pProtoTag)
+HRESULT CEffect_Point_Instancing::Initialize_Prototype(_tchar* pProtoTag, const _tchar* pFilePath)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;

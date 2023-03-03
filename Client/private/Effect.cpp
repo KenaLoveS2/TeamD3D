@@ -510,30 +510,6 @@ vector<_float4>* CEffect::Get_FreePos()
 	return &m_vecFreePos;
 }
 
-CEffect * CEffect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-{
-	CEffect*		pInstance = new CEffect(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created : CEffect");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-CGameObject * CEffect::Clone(void * pArg)
-{
-	CEffect*		pInstance = new CEffect(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CEffect");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
 void CEffect::Free()
 {
 	__super::Free();

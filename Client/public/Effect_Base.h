@@ -99,6 +99,9 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
+	HRESULT Load_E_Desc(const _tchar* pFilePath);
+
+public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {
 		memcpy(&m_eEFfectDesc, &eEffectDesc, sizeof(EFFECTDESC));
 	}
@@ -146,7 +149,7 @@ public:
 	void				 BillBoardSetting(_float3 vScale);
 
 public:
-	virtual HRESULT      Initialize_Prototype() override;
+	virtual HRESULT      Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT		 Initialize(void* pArg) override;
 	virtual void		 Tick(_float fTimeDelta) override;
 	virtual void		 Late_Tick(_float fTimeDelta) override;
@@ -195,8 +198,8 @@ protected:
 	/* ~Trail */
 
 	/* Texture Setting */
-	_uint	m_iTotalDTextureComCnt = 0;
-	_uint	m_iTotalMTextureComCnt = 0;
+	_uint	m_iTotalDTextureComCnt = 1;
+	_uint	m_iTotalMTextureComCnt = 1;
 	/* ~Texture Setting */
 
 	/* FreeMoving */

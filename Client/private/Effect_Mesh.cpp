@@ -13,7 +13,7 @@ CEffect_Mesh::CEffect_Mesh(const CEffect_Mesh & rhs)
 {
 }
 
-HRESULT CEffect_Mesh::Initialize_Prototype()
+HRESULT CEffect_Mesh::Initialize_Prototype(const _tchar* pFilePath)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -29,12 +29,8 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (pArg != nullptr)
-		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
-
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_MESH;
 	m_eEFfectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
-	m_eEFfectDesc.fFrame[0] = 40.f;
 
 	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
 		return E_FAIL;
@@ -393,7 +389,7 @@ HRESULT CEffect_Mesh::SetUp_Components()
 #endif // TESTPLAY
 
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), 
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
@@ -409,28 +405,31 @@ HRESULT CEffect_Mesh::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
-	m_iTotalDTextureComCnt = 1;
-	m_iTotalMTextureComCnt = 1;
-
 	/* For.DiffuseTexture */
-	_tchar szDTexture[64] = L"";
-	wsprintf(szDTexture, L"Com_DTexture_%d", 0);
+	for (_uint i = 0; i < m_iTotalDTextureComCnt; i++)
+	{
+		_tchar szDTexture[64] = L"";
+		wsprintf(szDTexture, L"Com_DTexture_%d", i);
 
-	_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
-	CGameInstance::GetInstance()->Add_String(szDTextureComTag);
+		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
+		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
-		return E_FAIL;
+		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+			return E_FAIL;
+	}
 
 	/* For.MaskTexture */
-	_tchar szMTexture[64] = L"";
-	wsprintf(szMTexture, L"Com_MTexture_%d", 0);
+	for (_uint i = 0; i < m_iTotalDTextureComCnt; i++)
+	{
+		_tchar szMTexture[64] = L"";
+		wsprintf(szMTexture, L"Com_MTexture_%d", i);
 
-	_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
-	CGameInstance::GetInstance()->Add_String(szMTextureComTag);
+		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
+		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
-		return E_FAIL;
+		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+			return E_FAIL;
+	}
 
 	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_NormalEffect"), L"Com_NTexture", (CComponent**)&m_pNTextureCom, this)))
 		return E_FAIL;
@@ -474,7 +473,7 @@ HRESULT CEffect_Mesh::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseNormal", &m_eEFfectDesc.IsNormal, sizeof(bool))))
 		return E_FAIL;
 
-	if(m_eEFfectDesc.IsNormal == true) 
+	if (m_eEFfectDesc.IsNormal == true)
 	{
 		if (FAILED(m_pNTextureCom->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", (_uint)m_eEFfectDesc.fNormalFrame)))
 			return E_FAIL;
@@ -516,30 +515,6 @@ HRESULT CEffect_Mesh::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-}
-
-CEffect_Mesh * CEffect_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-{
-	CEffect_Mesh*		pInstance = new CEffect_Mesh(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created : CEffect_Mesh");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-CGameObject * CEffect_Mesh::Clone(void * pArg)
-{
-	CEffect_Mesh*		pInstance = new CEffect_Mesh(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CEffect_Mesh");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
 }
 
 void CEffect_Mesh::Free()

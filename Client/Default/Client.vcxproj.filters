@@ -169,21 +169,6 @@
     <Filter Include="02.GameObjects\Envrioment\Test">
       <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Mesh">
-      <UniqueIdentifier>{b5613899-59c1-4221-a4bf-b1aa49f9c356}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Texture">
-      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Texture\Point_Instance">
-      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Texture\Rect_Instance">
-      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Texture\Trail">
-      <UniqueIdentifier>{5930dbbd-ae58-49f1-8234-88fa722084d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Moth">
       <UniqueIdentifier>{31ec9960-8b7f-48e4-968c-c8c56244a2ed}</UniqueIdentifier>
     </Filter>
@@ -228,6 +213,36 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub">
       <UniqueIdentifier>{d756033d-9e9e-445c-afef-a8e5ea191ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base">
+      <UniqueIdentifier>{f1bb0089-0473-4bd9-b217-56e4bf98b3ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type">
+      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Point_Instance">
+      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Rect_Instance">
+      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Trail">
+      <UniqueIdentifier>{5930dbbd-ae58-49f1-8234-88fa722084d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type">
+      <UniqueIdentifier>{b5613899-59c1-4221-a4bf-b1aa49f9c356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object">
+      <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena Effect">
+      <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
+      <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Tool">
+      <UniqueIdentifier>{09cd37fc-43e2-44dd-80ec-927535bb78dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,13 +298,13 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Point_Instancing.h">
-      <Filter>02.GameObjects\Effect\Texture\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Rect_Instancing.h">
-      <Filter>02.GameObjects\Effect\Texture\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Rect_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect.h">
-      <Filter>02.GameObjects\Effect\Texture</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasHUD.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
@@ -299,9 +314,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Imgui_UIEditor.h">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Base.h">
-      <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
@@ -454,7 +466,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Trail.h">
-      <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Event_Transform.h">
       <Filter>02.GameObjects\UI</Filter>
@@ -493,14 +505,8 @@
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Effect_Mesh.h">
-      <Filter>02.GameObjects\Effect\Mesh</Filter>
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Bridge.h" />
-    <ClInclude Include="..\public\FloorTile.h" />
-    <ClInclude Include="..\public\Gate.h" />
-    <ClInclude Include="..\public\Path_Mesh.h" />
-    <ClInclude Include="..\public\Pulse_PlateForm.h" />
-    <ClInclude Include="..\public\RuinKit.h" />
     <ClInclude Include="..\public\Rot.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -535,7 +541,40 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stone.h" />
+    <ClInclude Include="..\public\Effect_Base.h">
+      <Filter>02.GameObjects\Effect\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh_T.h">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulse.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bridge.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FloorTile.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gate.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Path_Mesh.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pulse_PlateForm.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RuinKit.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h" />
+    <ClInclude Include="..\public\Effect_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -572,13 +611,13 @@
       <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Texture\Point_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp">
-      <Filter>02.GameObjects\Effect\Texture\Rect_Instance</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Rect_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
-      <Filter>02.GameObjects\Effect\Texture</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasHUD.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
@@ -588,9 +627,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Imgui_UIEditor.cpp">
       <Filter>02.GameObjects\UI\01. Tool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Base.cpp">
-      <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
@@ -737,7 +773,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Trail.cpp">
-      <Filter>02.GameObjects\Effect\Texture\Trail</Filter>
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Event_Transform.cpp">
       <Filter>02.GameObjects\UI</Filter>
@@ -776,14 +812,8 @@
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Mesh.cpp">
-      <Filter>02.GameObjects\Effect\Mesh</Filter>
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Bridge.cpp" />
-    <ClCompile Include="..\private\FloorTile.cpp" />
-    <ClCompile Include="..\private\Gate.cpp" />
-    <ClCompile Include="..\private\Path_Mesh.cpp" />
-    <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
-    <ClCompile Include="..\private\RuinKit.cpp" />
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -821,7 +851,40 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stone.cpp" />
+    <ClCompile Include="..\private\Effect_Base.cpp">
+      <Filter>02.GameObjects\Effect\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulse.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bridge.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FloorTile.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gate.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Path_Mesh.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pulse_PlateForm.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RuinKit.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
+    <ClCompile Include="..\private\Effect_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
