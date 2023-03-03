@@ -46,7 +46,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_STATIC;
+	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
 	PxCapsuleDesc.fRadius = 1.f;

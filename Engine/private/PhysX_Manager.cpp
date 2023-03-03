@@ -782,11 +782,14 @@ void CPhysX_Manager::Imgui_Render()
 
 		if (iStaticSelectObject != -1)
 		{
-			PxRigidActor*	pGameObject = Find_StaticGameObject(iStaticSelectObject);
+			PxRigidActor*	pRigidActor = Find_StaticGameObject(iStaticSelectObject);
 
 			ImGui::BulletText("Current Static Object : ");
 			ImGui::SameLine();
 			ImGui::Text(ppObjectTag[iStaticSelectObject]);
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
+			if (pUserData)
+				pUserData->pOwner->Imgui_RenderProperty();
 		}
 
 		for (_uint i = 0; i < nStaticObjectCount; ++i)
@@ -808,11 +811,14 @@ void CPhysX_Manager::Imgui_Render()
 
 		if (iDynamicSelectObject != -1)
 		{
-			PxRigidActor*	pGameObject = Find_DynamicGameObject(iDynamicSelectObject);
+			PxRigidActor*	pRigidActor = Find_DynamicGameObject(iDynamicSelectObject);
 
 			ImGui::BulletText("Current Dynamic Object : ");
 			ImGui::SameLine();
 			ImGui::Text(ppObjectTag[iDynamicSelectObject]);
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
+			if (pUserData)
+				pUserData->pOwner->Imgui_RenderProperty();
 		}
 
 		for (_uint i = 0; i < nDynamicObjectCount; ++i)
