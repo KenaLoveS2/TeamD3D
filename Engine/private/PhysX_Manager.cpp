@@ -185,8 +185,6 @@ void CPhysX_Manager::Init_Rendering()
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {	
-	static const PxF32 const PxTimeDelta = 1.0f / 60.0f;
-	
 	// PX_UNUSED(false);
 	m_pScene->simulate(fTimeDelta);
 	m_pScene->fetchResults(true);
@@ -224,10 +222,7 @@ void CPhysX_Manager::Render()
 
 		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1));
 	}
-
 	m_pBatch->End();
-
-	return;
 #endif // _DEBUG
 }
 
@@ -235,7 +230,17 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 {
 	PX_USER_DATA* pUserData = nullptr;
 	PxRigidDynamic* pActor = nullptr;
+	_float4x4 WorldMatrix;
+	for (auto Pair : m_DynamicActors)
+	{
+		pActor = (PxRigidDynamic*)Pair.second;
+		pUserData = (PX_USER_DATA*)pActor->userData;
 
+		WorldMatrix = Get_ActorMatrix(pActor);
+		pUserData->pOwner->Set_WorldMatrix(WorldMatrix);
+	}
+
+	/*
 	for (auto Pair : m_DynamicActors)
 	{
 		pActor = (PxRigidDynamic*)Pair.second;
@@ -246,6 +251,7 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 
 		pUserData->pOwner->Set_Position(vObjectPos);
 	}
+	*/
 }
 
 void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity)
@@ -457,39 +463,40 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	}	
 }
 
-void CPhysX_Manager::Get_ActorMatrix(_uint iPxActorIndex)
+_float4x4 CPhysX_Manager::Get_ActorMatrix(const _tchar *pActorTag)
 {
-	/*
-	PxRigidActor* pActor = Get_ActorPtr(iPxActorIndex);
-	const PxU32 nbShapes = pActor->getNbShapes();
-	PX_ASSERT(nbShapes <= 128);
-
-	PxShape* shapes[128];
-	pActor->getGlobalPose();
-	pActor->getShapes(shapes, nbShapes);
-
-	PxTransform actorTransform = pActor->getGlobalPose();
-	PxVec3 actorPosition = actorTransform.p;
-	PxQuat actorOrientation = actorTransform.q;
-
-	// pActor->getGlobalPose().transform.p;
-
-	for (PxU32 j = 0; j < nbShapes; j++)
-	{
-		const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *pActor));
-		PxGeometryHolder h = shapes[j]->getGeometry();
-
-		if (shapes[j]->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
-			continue;
-
-		// render object
-		_float4x4 mw;
-		mw(0, 0) = shapePose(0, 0); mw(0, 1) = shapePose(0, 1); mw(0, 2) = shapePose(0, 2); mw(0, 3) = shapePose(0, 3);
-		mw(1, 0) = shapePose(1, 0); mw(1, 1) = shapePose(1, 1); mw(1, 2) = shapePose(1, 2); mw(1, 3) = shapePose(1, 3);
-		mw(2, 0) = shapePose(2, 0); mw(2, 1) = shapePose(2, 1); mw(2, 2) = shapePose(2, 2); mw(2, 3) = shapePose(2, 3);
-		mw(3, 0) = shapePose(3, 0); mw(3, 1) = shapePose(3, 1); mw(3, 2) = shapePose(3, 2); mw(3, 3) = shapePose(3, 3);
+	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
+	if (pActor == nullptr) 	{
+		pActor = (PxRigidDynamic*)Find_StaticActor(pActorTag);
 	}
-	*/
+	assert(pActor != nullptr && "CPhysX_Manager::Get_ActorMatrix");
+
+	return Get_ActorMatrix(pActor);	
+}
+
+_float4x4 CPhysX_Manager::Get_ActorMatrix(PxRigidActor* pActor)
+{
+	PxMat44 PxMatrix(pActor->getGlobalPose());
+	
+	return CUtile::ConvertMatrix_PxToD3D(PxMatrix);
+}
+
+void CPhysX_Manager::Set_ActorMatrix(const _tchar *pActorTag, _float4x4 Matrix)
+{
+	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
+	if (pActor == nullptr) {
+		pActor = (PxRigidDynamic*)Find_StaticActor(pActorTag);
+	}
+	if (pActor == nullptr) return;
+
+	return Set_ActorMatrix(pActor, Matrix);
+}
+
+void CPhysX_Manager::Set_ActorMatrix(PxRigidActor* pActor, _float4x4 Matrix)
+{	
+	PxTransform NewTransform(CUtile::ConvertMatrix_D3DToPx(Matrix));
+
+	pActor->setGlobalPose(NewTransform);
 }
 
 void CPhysX_Manager::Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow)
@@ -710,3 +717,5 @@ void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _f
 
 	shape->setGeometry(Capsule);	
 }
+
+
