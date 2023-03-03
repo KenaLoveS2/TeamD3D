@@ -524,6 +524,9 @@
     <ClInclude Include="..\public\PhysX_Defines.h">
       <Filter>00.System\01.PhysX</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui_PhysX.h">
+      <Filter>00.System\01.PhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -775,6 +778,9 @@
       <Filter>01.Utility\03.Components\02.VIBuffer\Trail</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PhysX_Manager.cpp">
+      <Filter>00.System\01.PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_PhysX.cpp">
       <Filter>00.System\01.PhysX</Filter>
     </ClCompile>
   </ItemGroup>

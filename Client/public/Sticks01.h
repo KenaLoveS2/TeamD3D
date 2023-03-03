@@ -113,6 +113,9 @@ private:
 
 	_bool	m_bHit = false;
 	_bool	m_bBind = false;
+
+
+	_float3 m_vScale;
 	
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

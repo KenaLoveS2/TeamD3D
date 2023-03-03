@@ -227,6 +227,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\public\ImGui\ImZoomSlider.h" />
     <ClInclude Include="..\public\Imgui_Manager.h" />
+    <ClInclude Include="..\public\ImGui_PhysX.h" />
     <ClInclude Include="..\public\Imgui_PropertyEditor.h" />
     <ClInclude Include="..\public\Imgui_ShaderEditor.h" />
     <ClInclude Include="..\public\Input_Device.h" />
@@ -304,6 +305,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\ImguiObject.cpp" />
     <ClCompile Include="..\private\Imgui_Manager.cpp" />
+    <ClCompile Include="..\private\ImGui_PhysX.cpp" />
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp" />
     <ClCompile Include="..\private\Imgui_ShaderEditor.cpp" />
     <ClCompile Include="..\private\Input_Device.cpp" />

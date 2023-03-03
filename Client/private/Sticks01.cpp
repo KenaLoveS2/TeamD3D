@@ -74,6 +74,8 @@ void CSticks01::Tick(_float fTimeDelta)
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
 
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_vScale);
+
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -130,6 +132,11 @@ HRESULT CSticks01::RenderShadow()
 void CSticks01::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
+
+	float fScale[3] = { m_vScale.x, m_vScale.y, m_vScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.1f, 0.f, 10.0f);
+	m_vScale.x = fScale[0]; m_vScale.y = fScale[1]; m_vScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_vScale);
 
 	if (ImGui::Button("TAKEDAMAGE"))
 		m_bHit = true;

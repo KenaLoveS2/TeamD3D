@@ -4,10 +4,11 @@
 #include "String_Manager.h"
 #include "PipeLine.h"
 #include "DebugDraw.h"
+#include "GameInstance.h"
 
 PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+                                 PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+                                 PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
 	/*PX_UNUSED(attributes0);
 	PX_UNUSED(attributes1);
@@ -740,4 +741,82 @@ void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _f
 	shape->setGeometry(Capsule);	
 }
 
+void CPhysX_Manager::Imgui_Render()
+{
+	_uint	 nStaticObjectCount = static_cast<_uint>(m_StaticActors.size());
+	_uint nDynamicObjectCount = static_cast<_uint>(m_DynamicActors.size());
 
+	ImGui::BulletText("Object to change PhyX variables");
+
+	{
+		static _int iStaticSelectObject = -1;
+		char** ppObjectTag = new char*[nStaticObjectCount];
+
+		_uint iTagLength = 0;
+		_uint i = 0;
+
+		for (auto& Pair : m_StaticActors)
+			ppObjectTag[i++] = CUtile::WideCharToChar(const_cast<_tchar*>(Pair.first));
+
+		ImGui::ListBox("StaticObject List", &iStaticSelectObject, ppObjectTag, nStaticObjectCount);
+
+		if (iStaticSelectObject != -1)
+		{
+			PxRigidActor*	pGameObject = Find_StaticGameObject(iStaticSelectObject);
+
+			ImGui::BulletText("Current Static Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iStaticSelectObject]);
+		}
+
+		for (_uint i = 0; i < nStaticObjectCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+
+	{
+		static _int iDynamicSelectObject = -1;
+		char** ppObjectTag = new char*[nDynamicObjectCount];
+
+		_uint iTagLength = 0;
+		_uint i = 0;
+
+		for (auto& Pair : m_DynamicActors)
+			ppObjectTag[i++] = CUtile::WideCharToChar(const_cast<_tchar*>(Pair.first));
+
+		ImGui::ListBox("DynamicObject List", &iDynamicSelectObject, ppObjectTag, nDynamicObjectCount);
+
+		if (iDynamicSelectObject != -1)
+		{
+			PxRigidActor*	pGameObject = Find_DynamicGameObject(iDynamicSelectObject);
+
+			ImGui::BulletText("Current Dynamic Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iDynamicSelectObject]);
+		}
+
+		for (_uint i = 0; i < nDynamicObjectCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+}
+
+PxRigidActor* CPhysX_Manager::Find_StaticGameObject(_int iIndex)
+{
+	auto	iter = m_StaticActors.begin();
+
+	for (_int i = 0; i < iIndex; ++i)
+		++iter;
+
+	return iter->second;
+}
+
+PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
+{
+	auto	iter = m_DynamicActors.begin();
+
+	for (_int i = 0; i < iIndex; ++i)
+		++iter;
+
+	return iter->second;
+}

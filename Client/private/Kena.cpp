@@ -102,6 +102,7 @@ HRESULT CKena::Initialize(void * pArg)
 	*/
 
 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+
 	m_pRendererCom->Set_PhysXRender(true);
 	
 	return S_OK;
@@ -121,8 +122,6 @@ void CKena::Tick(_float fTimeDelta)
 		m_pAnimation->Play_Animation(fTimeDelta);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
-
-	//m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
