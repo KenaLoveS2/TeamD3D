@@ -1438,4 +1438,10 @@ void CModel::Set_PxPosition(_float3 vPosition)
 	}
 }
 
-
+void CModel::Set_PxMatrix(_float4x4& Matrix)
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Set_PxMatrix(Matrix);
+	}
+}

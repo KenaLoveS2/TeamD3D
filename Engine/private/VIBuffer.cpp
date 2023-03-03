@@ -136,4 +136,10 @@ void CVIBuffer::Set_PxPosition(_float3 vPos)
 	pPhysX->Set_ActorPosition(m_pPxActor, vPos);	
 }
 
+void CVIBuffer::Set_PxMatrix(_float4x4& Matrix)
+{
+	if (m_pPxActor == nullptr) return;
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
 
+	pPhysX->Set_ActorMatrix(m_pPxActor, Matrix);
+}

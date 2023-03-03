@@ -538,7 +538,6 @@ HRESULT CMesh::Create_PxTriangleData()
 		}
 	}
 
-	Create_PxActor();
-
-	return S_OK;
+	return Create_PxActor();
 }
+

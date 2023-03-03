@@ -25,13 +25,14 @@ public:
 	void	Set_VIBufferProtoTag(_tchar* pProtoTag) {
 		m_szVIBufferProtoTag = pProtoTag;
 	}
+	const _tchar*	Get_VIBufferProtoTag() { return m_szVIBufferProtoTag; }
 
 	CVIBuffer_Point_Instancing::POINTDESC*				    Get_PointInstanceDesc();
-	void													Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC eEffectDesc);
+	void													Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC* eEffectDesc);
 
 	CVIBuffer_Point_Instancing::INSTANCEDATA*				Get_InstanceData();
 	CVIBuffer_Point_Instancing::INSTANCEDATA				Get_InstanceData_Idx(_int iIndex);
-	void													Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA eInstanceData);
+	void													Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData);
 
 	void			Set_PointSetRange(_float fRange) {}
 
@@ -39,6 +40,11 @@ public:
 	HRESULT			Set_Pos(_float3 fMin, _float3 fMax);
 	void			Set_PSize(_float2 PSize);
 	void			Set_RandomPSize(_float2 PSizeMinMax);
+
+	vector<class CEffect_Trail*> Get_TrailEffect() { return m_vecTrailEffect; }
+	void Set_TrailEffect(vector<class CEffect_Trail*> vecTrail) {
+		memcpy(&m_vecTrailEffect, &vecTrail, sizeof(vecTrail.size()));
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype(_tchar* pProtoTag);
