@@ -92,7 +92,7 @@ HRESULT CKena::Initialize(void * pArg)
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
 	PxCapsuleDesc.fRadius = 1.f;
-	PxCapsuleDesc.fHalfHeight = 0.5f;
+	PxCapsuleDesc.fHalfHeight = 0.2f;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 10.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
