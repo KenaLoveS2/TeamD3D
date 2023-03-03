@@ -63,7 +63,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	PxBoxDesc.fAngularDamping = 0.5f;
 
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActorDynamic(TEXT("ROCK_GOL"));
+	m_pTransformCom->Connect_PxActor_Gravity(TEXT("ROCK_GOL"), _float3(0.f, 0.f, 0.f));
 
 	m_pModelCom->Set_AllAnimCommonType();
 	

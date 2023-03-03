@@ -16,6 +16,7 @@ CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 {	
+	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
 }
 
 void CTransform::Set_Scaled(STATE eState, _float fScale)
@@ -537,31 +538,38 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
-void CTransform::Connect_PxActorDynamic(const _tchar * pActorTag, _float3 vPivot)
+void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist)
 {
-	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
+	m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
 
+	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+	m_bIsStaticPxActor = true;
+
+	m_vPxPivot = vPivotDist;
+}
+
+void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist)
+{
 	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
 
 	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
-	m_bIsStaticPxActor = pUserData->eType <= TRIANGLE_MESH_STATIC;
+	m_bIsStaticPxActor = false;
 
-	m_vPxPivot = vPivot;
+	m_vPxPivot = vPivotDist;
 }
 
-void CTransform::Add_PxActorStatic(const _tchar * pActorTag, _float4x4 PivotMatrix)
-{
-	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
-
-	PxRigidActor* pActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+void CTransform::Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
+{		
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
 	assert(pActor != nullptr && "CTransform::Add_PxActorStatic");
 
-	StaticActorData Data;
+	ActorData Data;
 	Data.pActor = pActor;
 	Data.PivotMatrix = PivotMatrix;
 
-	m_StaticActorList.push_back(Data);
+	m_ActorList.push_back(Data);
 }
 
 void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
@@ -570,10 +578,8 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 	{
 		if (m_bIsStaticPxActor)
 		{	
-			/*
 			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
-			*/
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
 		
 		}
@@ -611,10 +617,12 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, m_WorldMatrix);
+
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
 	_float4x4 RetMatrix, Pivot;
 
-	for (auto& iter : m_StaticActorList)
+	for (auto& iter : m_ActorList)
 	{		
 		XMStoreFloat4x4(&RetMatrix, XMLoadFloat4x4(&iter.PivotMatrix) * World);
 		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);

@@ -74,34 +74,42 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
 	*/
 	/*
+	
+	*/
+	
+ 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+ 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+ 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
+ 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+ 	PxCapsuleDesc.fRadius = 1.f;
+ 	PxCapsuleDesc.fHalfHeight = 0.2f;
+ 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+ 	PxCapsuleDesc.fDensity = 10.f;
+ 	PxCapsuleDesc.fAngularDamping = 0.5f;
+ 
+ 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor_Gravity(TEXT("TEST_CAPSULE"), _float3(0.f, 0.f, 0.f));
+
+
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
-	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
+	PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fRadius = 0.2f;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fDensity = 10.f;
 	PxSphereDesc.fAngularDamping = 0.5f;
-			
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	*/	
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));
 	
-// 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-// 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-// 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
-// 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-// 	PxCapsuleDesc.fRadius = 1.f;
-// 	PxCapsuleDesc.fHalfHeight = 0.2f;
-// 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-// 	PxCapsuleDesc.fDensity = 10.f;
-// 	PxCapsuleDesc.fAngularDamping = 0.5f;
-// 
-// 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-// 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
-// 
-// 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-// 	m_pRendererCom->Set_PhysXRender(true);
+	_matrix mx = XMMatrixTranslation(0.f, 2.f, 0.f);
+	_float4x4 vTemp;
+	XMStoreFloat4x4(&vTemp, mx);
+	m_pTransformCom->Add_Collider(TEXT("TEST_SPERE"), vTemp);
+
+
+ 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+ 	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
@@ -121,7 +129,8 @@ void CKena::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
-	m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
+	// m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
