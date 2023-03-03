@@ -49,6 +49,50 @@ void CEffect_Base::Set_TrailDesc()
 	m_eEFfectDesc.fAlpha = effectDesc.fAlpha;
 }
 
+HRESULT CEffect_Base::Set_InitTrail(const _tchar * pPrototypeTag, _int iCnt)
+{
+	CEffect_Base*   pEffectTrail = nullptr;
+	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (this->Get_HaveTrail() == false)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+
+	wstring		strGameObjectTag = L"Prototype_GameObject_";
+	size_t TagLength = strGameObjectTag.length();
+
+	wstring     strTrailProtoTag = pPrototypeTag;
+	strTrailProtoTag += L"Trail";
+
+	_tchar*     szTrailProtoTag = CUtile::Create_String(strTrailProtoTag.c_str());
+	pGameInstance->Add_String(szTrailProtoTag);
+	size_t ProtoLength = strTrailProtoTag.length();
+
+	wstring     strTrailCloneTag = strTrailProtoTag.substr(TagLength, ProtoLength - TagLength);
+	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
+	pGameInstance->Add_String(szTrailCloneTag);
+
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
+	if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Trail", szTrailProtoTag, szTrailCloneTag)))
+		return E_FAIL;
+	m_pEffectTrail = dynamic_cast<CEffect_Trail*>(pGameInstance->Get_GameObjectPtr(iCurLevel, L"Layer_Trail", szTrailCloneTag));
+	if (m_pEffectTrail == nullptr)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+	m_pEffectTrail->Set_Parent(this);
+	m_pEffectTrail->Set_HaveTrail(true);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 void CEffect_Base::BillBoardSetting(_float3 vScale)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -82,13 +126,11 @@ HRESULT CEffect_Base::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	if (nullptr != pArg)
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-	else
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-	}
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (pArg != nullptr)
+		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
 	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
 		return E_FAIL;
@@ -111,6 +153,54 @@ HRESULT CEffect_Base::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CEffect_Base::Set_InitChild(_int iCreateCnt, char * ProtoTag)
+{
+	CEffect_Base*    pEffectBase = nullptr;
+	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_tchar      szChildProto[128];
+	CUtile::CharToWideChar(ProtoTag, szChildProto);
+
+	for (_int i = 0; i < iCreateCnt; ++i)
+	{
+		// ProtoTag
+		//wstring strChildProtoTag = szChildProto;
+		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
+		pGameInstance->Add_String(szChildProtoTag);
+
+		// CloneTag
+		wstring		strGameObjectTag = L"Prototype_GameObject_";
+		size_t		TagLength = strGameObjectTag.length();
+
+		wstring		strProtoTag = szChildProtoTag;
+		size_t      ProtoLength = strProtoTag.length();
+
+		wstring     strChildCloneTag = strProtoTag.substr(TagLength, ProtoLength - TagLength);
+		const _tchar* szClone = strChildCloneTag.c_str();
+		strChildCloneTag += '_';
+		strChildCloneTag += to_wstring(m_iHaveChildCnt);
+
+		_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
+		pGameInstance->Add_String(szChildClondTag);
+
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		
+		CGameObject* pGameObject = pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), L"Layer_Effect", szClone);
+		CEffect_Base::EFFECTDESC EffectDesc = dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc();
+
+		pEffectBase->Set_EffectDesc(EffectDesc);
+		pEffectBase->Set_Parent(this);
+		pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
+
+		m_vecChild.push_back(pEffectBase);
+		m_iHaveChildCnt++;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

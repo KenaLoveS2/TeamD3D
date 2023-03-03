@@ -101,7 +101,10 @@ public:
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
 
-	void Get_ActorMatrix(_uint iPxActorIndex);
+	_float4x4 Get_ActorMatrix(const _tchar *pActorTag);
+	_float4x4 Get_ActorMatrix(PxRigidActor* pActor);
+	void Set_ActorMatrix(const _tchar *pActorTag, _float4x4 Matrix);
+	void Set_ActorMatrix(PxRigidActor* pActor, _float4x4 Matrix);
 	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow = false);
 	
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);

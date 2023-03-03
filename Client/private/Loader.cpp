@@ -326,6 +326,19 @@ HRESULT CLoader::Loading_ForGamePlay()
 	//	CEffect::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 
+	
+	// kbj test
+	/* For.Prototype_Component_Shader_VtxAnimMonsterModel */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimMonsterModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMonsterModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_RockGolem",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.mdat"), PivotMatrix))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RockGolem"),
+		CRockGolem::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+		
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
 	m_isFinished = true;
@@ -1285,11 +1298,6 @@ HRESULT CLoader::Loading_ForTestEffect()
 #pragma endregion Model Component
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
-	///* For.Prototype_GameObject_Sky */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mesh"),
-	//	CEffect_Mesh::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))

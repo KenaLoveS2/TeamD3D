@@ -14,6 +14,7 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
+// #define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -69,7 +70,7 @@ public:
 		_vector vPixedDir = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 		/* Trail  */
-		_bool   IsTrail = false; 
+		_bool   IsTrail = false;
 		_bool   bActive = true;
 		_bool   bAlpha = false;
 		_float  fLife = 0.0f;
@@ -134,6 +135,14 @@ public:
 	void    Set_TrailDesc();
 
 public:
+	virtual void			 Set_FreePos() {}
+	virtual _bool			 Play_FreePos(_float4& vPos) { return true; }
+	virtual vector<_float4>* Get_FreePos() { return nullptr; }
+	void Set_InitPos(vector<_float4> vecFreePos) { memcpy(&m_vecFreePos, &vecFreePos, sizeof(vecFreePos.size())); }
+
+	HRESULT	Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
+
+public:
 	void				 BillBoardSetting(_float3 vScale);
 
 public:
@@ -145,6 +154,8 @@ public:
 
 public:
 	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
+
+	HRESULT Set_InitChild(_int iCreateCnt, char* ProtoTag);
 	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
 
 	virtual HRESULT		 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
@@ -171,10 +182,10 @@ protected:
 protected:
 	/* Child */
 	_uint m_iHaveChildCnt = 0;
+	_float4x4					m_InitWorldMatrix;
 	vector<class CEffect_Base*> m_vecChild;
 
 	class CEffect_Base*			m_pParent = nullptr;
-	_float4x4					m_InitWorldMatrix;
 	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 
@@ -187,6 +198,17 @@ protected:
 	_uint	m_iTotalDTextureComCnt = 0;
 	_uint	m_iTotalMTextureComCnt = 0;
 	/* ~Texture Setting */
+
+	/* FreeMoving */
+	_float m_fFreePosTimeDelta = 0.0f;
+	vector<_float4>  m_vecFreePos;
+
+	_vector m_vPrePos;
+	_vector m_vCurPos;
+
+	_float m_fLerp = 0;
+	_bool  m_bLerp = false;
+	/* FreeMoving */
 
 public:
 	virtual void          Free() override;

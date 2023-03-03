@@ -58,7 +58,7 @@ public:
 	virtual void Free();
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
 
-	HRESULT Create_PxTriangleData(); // kbj physx
+	HRESULT Create_PxTriangleData(); // kbj physx	
 };
 
 END
