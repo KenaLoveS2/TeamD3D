@@ -19,6 +19,7 @@ public:
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
 	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex) { return &m_mapShaderValueModel[iLevelIndex]; }
 
+
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
 	HRESULT Clear(_uint iLevelIndex);

@@ -424,6 +424,7 @@ void CModel::Imgui_RenderProperty()
 			if (ImGui::Button("Play"))
 			{
 				m_bPausePlay = false;
+				m_bPreview = true;
 				pAnimation->Reset_Animation();
 
 				if (bSearchMode == true)
@@ -472,13 +473,23 @@ void CModel::Imgui_RenderProperty()
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel"))
 			{
+				m_bPreview = false;
 				iSelectAnimation = -1;
 				bReName = false;
 				pAnimation = nullptr;
 
-				for (_uint i = 0; i < m_iNumAnimations; ++i)
-					Safe_Delete_Array(ppAnimationTag[i]);
-				Safe_Delete_Array(ppAnimationTag);
+				if (bSearchMode == true)
+				{
+					for (_uint i = 0; i < iSearchedCount; ++i)
+						Safe_Delete_Array(ppAnimationTag[i]);
+					Safe_Delete_Array(ppAnimationTag);
+				}
+				else
+				{
+					for (_uint i = 0; i < m_iNumAnimations; ++i)
+						Safe_Delete_Array(ppAnimationTag[i]);
+					Safe_Delete_Array(ppAnimationTag);
+				}
 
 				return;
 			}
@@ -1006,6 +1017,22 @@ void CModel::Set_AllAnimCommonType()
 	}
 }
 
+void CModel::Print_Animation_Names(const string & strFilePath)
+{
+	Json	jAnimName;
+
+	string strAnimName = "";
+	for (auto pAnimation : m_Animations)
+	{
+		strAnimName = pAnimation->Get_Name();
+		jAnimName.push_back(strAnimName);
+	}
+
+	ofstream	file(strFilePath.c_str());
+	file << jAnimName;
+	file.close();
+}
+
 void CModel::Play_Animation(_float fTimeDelta)
 {
 	if (TYPE_NONANIM == m_eType)
@@ -1411,4 +1438,10 @@ void CModel::Set_PxPosition(_float3 vPosition)
 	}
 }
 
-
+void CModel::Set_PxMatrix(_float4x4& Matrix)
+{
+	for (auto &iter : m_Meshes)
+	{
+		iter->Set_PxMatrix(Matrix);
+	}
+}

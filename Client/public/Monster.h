@@ -40,6 +40,7 @@ public:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -53,7 +54,9 @@ public:
 public:
 	_bool	AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
-	_float   DistanceBetweenPlayer();
+	_bool   DistanceTrigger(_float distance);
+	_bool	TimeTrigger(_float Time1, _float Time2);
+	_float	DistanceBetweenPlayer();
 
 protected:
 	CRenderer*					m_pRendererCom = nullptr;
@@ -63,6 +66,13 @@ protected:
 	CNavigation*				m_pNavigationCom = nullptr;
 	CFSMComponent*		m_pFSM = nullptr;
 	class CGameObject*		m_pKena = nullptr;
+	_float4							m_pKenaPos;
+
+protected:
+	_bool							m_bSpawn = false;
+
+
+	_float							m_fIdletoAttackTime = 0.f;
 
 protected:
 	virtual	HRESULT			SetUp_State() PURE;

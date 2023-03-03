@@ -157,3 +157,8 @@ void CGameObject::Set_Position(_float3& vPosition)
 {	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSetW(vPosition, 1.f));
 }
+
+void CGameObject::Set_WorldMatrix(_float4x4& vPosition)
+{
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&vPosition));
+}

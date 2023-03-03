@@ -49,7 +49,7 @@ HRESULT CCamera_Dynamic::Initialize(void * pArg)
 void CCamera_Dynamic::Tick(_float fTimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
+#ifdef  FOR_MAPTOOL
 	if (pGameInstance->Key_Pressing(DIK_W))
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
@@ -61,12 +61,25 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Key_Pressing(DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
+#else
+	if (pGameInstance->Key_Pressing(DIK_UP))
+		m_pTransformCom->Go_Straight(fTimeDelta);
 
+	if (pGameInstance->Key_Pressing(DIK_DOWN))
+		m_pTransformCom->Go_Backward(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_LEFT))
+		m_pTransformCom->Go_Left(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_RIGHT))
+		m_pTransformCom->Go_Right(fTimeDelta);
+#endif
 	if (pGameInstance->Key_Pressing(DIK_SPACE))
 		m_pTransformCom->Go_AxisY(fTimeDelta);
 
 	if (pGameInstance->Key_Pressing(DIK_C))
 		m_pTransformCom->Go_AxisNegY(fTimeDelta);
+
 
 	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
 	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);
