@@ -20,7 +20,7 @@ private:
 	virtual ~CEffect_Rect_Instancing() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr) ;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;

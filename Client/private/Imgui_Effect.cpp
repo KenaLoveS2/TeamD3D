@@ -6,10 +6,12 @@
 #include "Layer.h"
 #include "Camera.h"
 
-#include "Effect.h"
+
 #include "Effect_Point_Instancing.h"
-#include "Effect_Mesh.h"
+
 #include "Effect_Trail.h"
+#include "Effect_Mesh_T.h"
+#include "Effect_T.h"
 
 // Json
 #include "Json/json.hpp"
@@ -54,8 +56,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 	static _int iCreateRectCnt = 0;
 	static _int iCreateMeshtCnt[5] = { 0, 0, 0, 0, 0 };
 	static _int iCreateCnt = 1;
+	static _int iCreateEffectType = 0;
 
 	static _int  iSelectEffectType = 0;
+	static _int  iPreSelectEffectType = 0;
 	static _int  iSelectEffectMeshType = 0;
 	static _bool bIsCreate = false;
 	static _bool bReset = false;
@@ -80,7 +84,12 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 	// 1. Texture Type Select
 	const char* szEffectType[] = { " ~SELECT_EFFECT TYPE~ ", " EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
-	ImGui::BulletText("EffectType : "); ImGui::Combo("##EffectType", &iSelectEffectType, szEffectType, IM_ARRAYSIZE(szEffectType));
+	ImGui::BulletText("EffectType : "); 
+	ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 1); ImGui::SameLine();
+	ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType, 2); ImGui::SameLine();
+	ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 3);
+
+	//ImGui::Combo("##EffectType", &iSelectEffectType, szEffectType, IM_ARRAYSIZE(szEffectType));
 	CGameObject* pGameObject = nullptr;
 
 	if (pGameInstance->Find_Layer(iCurLevel, L"Layer_Effect") != nullptr)
@@ -89,27 +98,34 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::BulletText("EffectLayer Tag : ");
 		pGameObject = LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "##EffectLayer Tag", iSelectObj, TAGTYPE::TAG_CLONE);
 
-		if (nullptr != pGameObject && -1 != iSelectEffectType && bReset == true)
+		if (nullptr != pGameObject && -1 != iSelectEffectType )
 		{
-			if (dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc().eEffectType == CEffect_Base::tagEffectDesc::EFFECT_PLANE)
-			{
-				iSelectEffectType = EFFECT_PLANE;
-				bIsCreate = true;
-				m_bIsRectLayer = true;
-			}
-			else if (dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc().eEffectType == CEffect_Base::tagEffectDesc::EFFECT_PARTICLE)
-			{
-				iSelectEffectType = EFFECT_PARTICLE;
-				bIsCreate = true;
-				m_bIsParticleLayer = true;
-			}
-			else
-			{
-				iSelectEffectType = EFFECT_MESH;
-				bIsCreate = true;
-				m_bIsMeshLayer = true;
-			}
+			CEffect_Base::tagEffectDesc::EFFECTTYPE eEffectType = dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc().eEffectType;
 
+			if (bReset == true)
+			{
+				if (iSelectEffectType == 0)
+				{
+					iPreSelectEffectType = iSelectEffectType = EFFECT_PLANE;
+					bIsCreate = true;
+					m_bIsRectLayer = true;
+					bReset = false;
+				}
+				if (iSelectEffectType == 1)
+				{
+					iPreSelectEffectType = iSelectEffectType = EFFECT_PARTICLE;
+					bIsCreate = true;
+					m_bIsParticleLayer = true;
+					bReset = false;
+				}
+				if (iSelectEffectType == 2)
+				{
+					iPreSelectEffectType = iSelectEffectType = EFFECT_MESH;
+					bIsCreate = true;
+					m_bIsMeshLayer = true;
+					bReset = false;
+				}
+			}
 		}
 		for (size_t i = 0; i < iLayerSize; ++i)
 			Safe_Delete_Array(pObjectTag[i]);
@@ -142,6 +158,9 @@ void CImgui_Effect::Imgui_RenderWindow()
 	ImGui::SameLine();
 	if (ImGui::Button("Reset_Data"))
 	{
+		iSelectEffectType = 0;
+		bReset = true;
+		pGameObject = nullptr;
 		m_bIsRectLayer = false;
 		m_bIsParticleLayer = false;
 		m_bIsMeshLayer = false;
@@ -209,6 +228,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 			ImGuiFileDialog::Instance()->OpenDialog("Select EffectDescLoad", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 	}
 
+	CGameObject* pEffectBase = nullptr;
 	switch (iSelectEffectType)
 	{
 	case 0:
@@ -230,7 +250,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
 			pGameInstance->Add_String(szDefaultTag);
 
-			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect::Create(m_pDevice, m_pContext))))
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_T::Create(m_pDevice, m_pContext))))
 			{
 				RELEASE_INSTANCE(CGameInstance);
 				return;
@@ -244,7 +264,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 				_tchar* szEffectCloneTag = CUtile::Create_String(szDefault);
 				pGameInstance->Add_String(szEffectCloneTag);
 
-				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag)))
+				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag, nullptr, &pEffectBase)))
 				{
 					RELEASE_INSTANCE(CGameInstance);
 					return;
@@ -256,11 +276,12 @@ void CImgui_Effect::Imgui_RenderWindow()
 			bIsCreate = true;
 			m_bIsRectLayer = true;
 			strcpy_s(szEffectTag, "");
-		}
 
+		}
 		ImGui::Separator();
 		if (iSelectObj != -1 && bIsCreate == true && m_bIsRectLayer == true)
 			CreateEffect_Plane(iCurSelect, iSelectObj);
+
 		break;
 
 	case EFFECT_PARTICLE:
@@ -348,7 +369,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
 			pGameInstance->Add_String(szDefaultTag);
 
-			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_Mesh::Create(m_pDevice, m_pContext))))
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
 			{
 				RELEASE_INSTANCE(CGameInstance);
 				return;
@@ -440,9 +461,9 @@ void CImgui_Effect::Imgui_RenderWindow()
 				jPrototypeObjects["0.Prototype Proto Tag"] = szPrototypeTag;
 
 				_int iEffectType = 0;
-				if (dynamic_cast<CEffect*>(pObject->second))
+				if (dynamic_cast<CEffect_T*>(pObject->second))
 					iEffectType = 0;
-				if (dynamic_cast<CEffect_Mesh*>(pObject->second))
+				if (dynamic_cast<CEffect_Mesh_T*>(pObject->second))
 					iEffectType = 2;
 				if (dynamic_cast<CEffect_Trail*>(pObject->second))
 					iEffectType = 3;
@@ -804,9 +825,9 @@ void CImgui_Effect::Imgui_RenderWindow()
 				jPrototypeObjects["0.Prototype Proto Tag"] = szPrototypeTag;
 
 				_int iEffectType = 0;
-				if (dynamic_cast<CEffect*>(pObject->second))
+				if (dynamic_cast<CEffect_T*>(pObject->second))
 					iEffectType = 0;
-				if (dynamic_cast<CEffect_Mesh*>(pObject->second))
+				if (dynamic_cast<CEffect_Mesh_T*>(pObject->second))
 					iEffectType = 2;
 				if (dynamic_cast<CEffect_Trail*>(pObject->second))
 					iEffectType = 3;
@@ -873,13 +894,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 			// Clone GameObject 
 			Json	jCloneObjects;
-			//char     szPrototypeTag[MAX_PATH] = "";
-			//char     szClonetypeTag[MAX_PATH] = "";
-			//CUtile::WideCharToChar(pGameObject->Get_ProtoObjectName(), szPrototypeTag);
-			//CUtile::WideCharToChar(pGameObject->Get_ObjectCloneName(), szClonetypeTag);
-
-			//jCloneObjects["0.CloneObject Proto Tag"] = szPrototypeTag;
-			//jCloneObjects["1.CloneObject Clone Tag"] = szClonetypeTag;
 
 #pragma  region	EFFECTDESC
 			CEffect_Base* pEffect = dynamic_cast<CEffect_Base*>(pGameObject);
@@ -972,6 +986,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 			jCloneObjects["FreeMove"] = eSaveEffectDesc.bFreeMove;
 #pragma  endregion	EFFECTDESC
 
+			_int iDTextureCnt = 0, iMTextureCnt = 0;
+			jCloneObjects["Have DTextureCnt"] = pEffect->Get_TotalDTextureCnt();
+			jCloneObjects["Have MTextureCnt"] = pEffect->Get_TotalMTextureCnt();
+
 			// FreeMove
 			if (eSaveEffectDesc.bFreeMove == true)
 			{
@@ -994,7 +1012,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 				char     szPrototypeTag[MAX_PATH] = "";
 				char     szClonetypeTag[MAX_PATH] = "";
 
-				//jPrototypeObjects["Trail EffectType"] = dynamic_cast<CEffect_Base*>(pObject->second)->Get_EffectDesc().eEffectType;
 				if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
 				{
 					vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_TrailEffect();
@@ -1226,7 +1243,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 				switch (iEffectType)
 				{
 				case 0:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect::Create(m_pDevice, m_pContext))))
+					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_T::Create(m_pDevice, m_pContext))))
 					{
 						RELEASE_INSTANCE(CGameInstance);
 						return;
@@ -1246,7 +1263,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 					}
 					break;
 				case 2:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Mesh::Create(m_pDevice, m_pContext))))
+					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
 					{
 						RELEASE_INSTANCE(CGameInstance);
 						return;
@@ -1621,7 +1638,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 				switch (iEffectType)
 				{
 				case 0:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect::Create(m_pDevice, m_pContext))))
+					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_T::Create(m_pDevice, m_pContext))))
 					{
 						RELEASE_INSTANCE(CGameInstance);
 						return;
@@ -1641,7 +1658,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 					}
 					break;
 				case 2:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Mesh::Create(m_pDevice, m_pContext))))
+					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
 					{
 						RELEASE_INSTANCE(CGameInstance);
 						return;
@@ -2883,10 +2900,10 @@ void CImgui_Effect::Set_FreePos(CEffect_Base * pEffect)
 	static _int iCurPlayIdx = 0;
 
 	vector<_float4>* vecPosition = nullptr;
-	if (dynamic_cast<CEffect*>(pEffect))
-		vecPosition = dynamic_cast<CEffect*>(pEffect)->Get_FreePos();
-	if (dynamic_cast<CEffect_Mesh*>(pEffect))
-		vecPosition = dynamic_cast<CEffect_Mesh*>(pEffect)->Get_FreePos();
+	if (dynamic_cast<CEffect_T*>(pEffect))
+		vecPosition = dynamic_cast<CEffect_T*>(pEffect)->Get_FreePos();
+	if (dynamic_cast<CEffect_Mesh_T*>(pEffect))
+		vecPosition = dynamic_cast<CEffect_Mesh_T*>(pEffect)->Get_FreePos();
 
 	vecSize = (_uint)vecPosition->size();
 
@@ -2898,10 +2915,10 @@ void CImgui_Effect::Set_FreePos(CEffect_Base * pEffect)
 		m_eEffectDesc.bStart = true;
 		fPlayBackTime = m_eEffectDesc.fPlayBbackTime;
 
-		if (dynamic_cast<CEffect*>(pEffect))
-			dynamic_cast<CEffect*>(pEffect)->Set_FreePos();
-		if (dynamic_cast<CEffect_Mesh*>(pEffect))
-			dynamic_cast<CEffect_Mesh*>(pEffect)->Set_FreePos();
+		if (dynamic_cast<CEffect_T*>(pEffect))
+			dynamic_cast<CEffect_T*>(pEffect)->Set_FreePos();
+		if (dynamic_cast<CEffect_Mesh_T*>(pEffect))
+			dynamic_cast<CEffect_Mesh_T*>(pEffect)->Set_FreePos();
 	}
 	if (bStop == true)
 		m_eEffectDesc.fPlayBbackTime = 0.0f;
@@ -2917,10 +2934,10 @@ void CImgui_Effect::Set_FreePos(CEffect_Base * pEffect)
 	// 		for (_int i = 0; i < iCurIdx; ++i)
 	// 			iter++;
 	// 
-	// 		_bool bNextTime = dynamic_cast<CEffect*>(pEffect)->Play_FreePos(*iter);
+	// 		_bool bNextTime = dynamic_cast<CEffect_T*>(pEffect)->Play_FreePos(*iter);
 	// 		if (bNextTime)
 	// 		{
-	// 			dynamic_cast<CEffect*>(pEffect)->Set_Lerp(false);
+	// 			dynamic_cast<CEffect_T*>(pEffect)->Set_Lerp(false);
 	// 			iCurIdx++;
 	// 		}
 	// 	}
@@ -3006,10 +3023,10 @@ void CImgui_Effect::Set_FreePos(CEffect_Base * pEffect)
 		for (_int i = 0; i < iSelectObject; ++i)
 			iter++;
 
-		if (dynamic_cast<CEffect*>(pEffect))
-			dynamic_cast<CEffect*>(pEffect)->Set_Position(*iter);
-		if (dynamic_cast<CEffect_Mesh*>(pEffect))
-			dynamic_cast<CEffect_Mesh*>(pEffect)->Set_Position(*iter);
+		if (dynamic_cast<CEffect_T*>(pEffect))
+			dynamic_cast<CEffect_T*>(pEffect)->Set_Position(*iter);
+		if (dynamic_cast<CEffect_Mesh_T*>(pEffect))
+			dynamic_cast<CEffect_Mesh_T*>(pEffect)->Set_Position(*iter);
 		iCurPlayIdx = iSelectObject;
 	}
 	for (size_t i = 0; i < vecSize; ++i)
@@ -3182,7 +3199,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	CEffect* pEffect = nullptr;
+	CEffect_Base* pEffect = nullptr;
 
 	// 2. Texture Create
 	if (iSelectObject != -1)
@@ -3200,7 +3217,7 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 
 		if (iCurSelect != iSelectObject)
 		{
-			pEffect = dynamic_cast<CEffect*>(iter->second);
+			pEffect = dynamic_cast<CEffect_Base*>(iter->second);
 			if (pEffect == nullptr)
 				return;
 
@@ -3758,7 +3775,7 @@ void CImgui_Effect::CreateEffect_Mesh(_int& iSelectObject)
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	CEffect_Mesh* pEffect = nullptr;
+	CEffect_Mesh_T* pEffect = nullptr;
 	// 2. Texture Create
 	if (iSelectObject != -1)
 	{
@@ -3775,7 +3792,7 @@ void CImgui_Effect::CreateEffect_Mesh(_int& iSelectObject)
 
 		if (iSelectObject != -1)
 		{
-			pEffect = dynamic_cast<CEffect_Mesh*>(iter->second);
+			pEffect = dynamic_cast<CEffect_Mesh_T*>(iter->second);
 			if (pEffect == nullptr)
 				return;
 
