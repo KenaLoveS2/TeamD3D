@@ -88,7 +88,7 @@ HRESULT CKena::Initialize(void * pArg)
 	*/	
 	
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+	PxCapsuleDesc.eType = CAPSULE_STATIC;
 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
 	PxCapsuleDesc.fRadius = 1.f;

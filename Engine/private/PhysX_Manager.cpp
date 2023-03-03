@@ -185,8 +185,10 @@ void CPhysX_Manager::Init_Rendering()
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {	
+	static const _float fPxTimeDelta = 1.f / 60.f;
 	// PX_UNUSED(false);
-	m_pScene->simulate(fTimeDelta);
+
+	m_pScene->simulate(fPxTimeDelta);
 	m_pScene->fetchResults(true);
 
 	Update_Trasnform(fTimeDelta);
@@ -308,8 +310,13 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);
 		
-		PxShape* pShpae = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, false);
-		pBox->attachShape(*pShpae);
+		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, false);
+		PxTransform relativePose(PxVec3(0, 0, 0));
+		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		
+		pBox->attachShape(*pShape);
 		
 		if (pUserData)
 		{
@@ -330,8 +337,12 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pBox = m_pPhysics->createRigidDynamic(Transform);
 
-		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, true);
-		
+		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, true);		
+		PxTransform relativePose(PxVec3(0, 0, 0));
+		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+
 		pBox->attachShape(*pShape);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
@@ -349,6 +360,9 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		m_DynamicActors.emplace(pTag, pBox);
 		
 		m_pScene->addActor(*pBox);
+		PxTransform Temp = pBox->getGlobalPose();
+
+		int i = 0;
 	}	
 }
 
@@ -358,11 +372,14 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);
-
+		
 		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
 		pSphere->attachShape(*pShape);
-
+		
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+		
 		if (pUserData)
 		{
 			pUserData->eType = Desc.eType;
@@ -383,6 +400,11 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 
 		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
+		PxTransform relativePose(PxVec3(0, 0, 0));
+		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+
 		pSphere->attachShape(*pShape);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
