@@ -28,8 +28,8 @@ HRESULT CLevel_EffectTest::Initialize()
 	RELEASE_INSTANCE(CGameInstance);
 	// ~tool 
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;

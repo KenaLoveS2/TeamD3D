@@ -14,7 +14,7 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
-// #define TESTPLAY
+#define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -121,6 +121,8 @@ public:
 
 	class CEffect_Base*			 Get_Parent() { return m_pParent; }
 	void						 Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
+	class CGameObject*			 Get_Owner() { return m_pOwner; }
+	void						 Set_Owner(class CGameObject* pOwner) { m_pOwner = pOwner; }
 
 	void						 Set_Matrix();
 	void						 Set_InitMatrix(_fmatrix WorldMatrix) {
@@ -189,6 +191,8 @@ protected:
 	vector<class CEffect_Base*> m_vecChild;
 
 	class CEffect_Base*			m_pParent = nullptr;
+	class CGameObject*			m_pOwner = nullptr;
+
 	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 

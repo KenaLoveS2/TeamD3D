@@ -425,10 +425,7 @@ HRESULT CEffect_Base::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (pArg != nullptr)
-		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
-
-	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
 	return S_OK;

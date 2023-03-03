@@ -32,7 +32,7 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_MESH;
 	m_eEFfectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
 
-	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))

@@ -4,13 +4,11 @@
 CE_KenaPulse::CE_KenaPulse(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
 {
-	// ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 CE_KenaPulse::CE_KenaPulse(const CE_KenaPulse & rhs)
 	:CEffect_Mesh(rhs)
 {
-	// memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 HRESULT CE_KenaPulse::Initialize_Prototype(const _tchar* pFilePath)
@@ -35,9 +33,6 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	if (m_pParent != nullptr)
-		this->Set_InitMatrix(m_pParent->Get_TransformCom()->Get_WorldMatrix());
-
 	return S_OK;
 }
 
@@ -49,6 +44,26 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pOwner != nullptr)
+	{
+		// Kena == m_pOwner
+		_matrix  matParent = m_pOwner->Get_TransformCom()->Get_WorldMatrix();
+		_matrix  matScaleSet = XMMatrixIdentity();
+		_vector vRight, vUp, vLook;
+
+		memcpy(&vRight, &matParent.r[0], sizeof(_vector));
+		memcpy(&vUp, &matParent.r[1], sizeof(_vector));
+		memcpy(&vLook, &matParent.r[2], sizeof(_vector));
+
+		memcpy(&matScaleSet.r[0], &XMVector3Normalize(vRight), sizeof(_vector));
+		memcpy(&matScaleSet.r[1], &XMVector3Normalize(vUp), sizeof(_vector));
+		memcpy(&matScaleSet.r[2], &XMVector3Normalize(vLook), sizeof(_vector));
+		memcpy(&matScaleSet.r[3], &matParent.r[3], sizeof(_vector));
+
+		m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;
+		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
+	}
 }
 
 HRESULT CE_KenaPulse::Render()
