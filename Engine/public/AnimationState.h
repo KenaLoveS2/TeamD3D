@@ -53,6 +53,7 @@ private:
 public:
 	CAnimState*		Get_CurrentAnim() { return m_pCurAnim; }
 	CAnimState*		Get_PreAnim() { return m_pPreAnim; }
+	const _bool&		Get_AnimationFinish();
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath);
@@ -65,7 +66,7 @@ public:
 	HRESULT			Generate_Animation(const string& strFilePath);
 	HRESULT			Add_State(CAnimState* pAnim);
 	HRESULT			Add_AnimSharingPart(CModel* pModel, _bool bMeshSync);
-	HRESULT			Save();
+	HRESULT			Save(const string& strFilePath);
 	HRESULT			Load(const string& strFilePath);
 
 private:
@@ -82,6 +83,8 @@ private:
 
 	_float				m_fCurLerpTime = 0.f;
 	_float				m_fLerpDuration = 0.f;
+
+	_smatrix			m_matBonesTransformation[800];
 
 public:
 	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath = "");
