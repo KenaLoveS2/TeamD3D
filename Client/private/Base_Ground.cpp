@@ -44,7 +44,14 @@ void CBase_Ground::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom)
+	static _bool bRendering = true;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if (pGameInstance->Key_Down(DIK_F2))
+		bRendering = !bRendering;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (m_pRendererCom && bRendering==true)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

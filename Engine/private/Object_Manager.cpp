@@ -380,6 +380,9 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 
 	if (ImGui::TreeNode("ObjectViewer"))
 	{
+		static string FindProtoObjectlTag = "";		// ! == No Find
+		ImGui::InputText("Find_ProtoObjectlTag", &FindProtoObjectlTag);
+
 		for (auto& LayerPair : targetLevel) // for layer loop
 		{
 			char szLayerTag[128];
@@ -390,24 +393,44 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelect
 				if (ImGui::BeginListBox("##"))
 				{
 					CGameObject *pObj = nullptr;
+
 					for (auto& Pair : LayerPair.second->GetGameObjects())
 					{
 						pObj = Pair.second;
 						if (pObj != nullptr)
 							CUtile::WideCharToChar((pObj->Get_ObjectCloneName()), szobjectTag);
-
+						
 						const bool bSelected = pSelectedObject == pObj;
+						
 						if (bSelected)
 						{
 							ImGui::SetItemDefaultFocus();
 							bFound = true;
 						}
-						if (ImGui::Selectable(szobjectTag, bSelected))
+
+						if (FindProtoObjectlTag != "")
 						{
-							m_wstrSelecteObject_LayerTag = LayerPair.first;
-							pSelectedObject = pObj;
-							bFound = true;
+							string str = szobjectTag;
+							if (str.find(FindProtoObjectlTag) != std::string::npos)
+							{
+								if (ImGui::Selectable(szobjectTag, bSelected))
+								{
+									m_wstrSelecteObject_LayerTag = LayerPair.first;
+									pSelectedObject = pObj;
+									bFound = true;
+								}
+							}
 						}
+						else
+						{
+							if (ImGui::Selectable(szobjectTag, bSelected))
+							{
+								m_wstrSelecteObject_LayerTag = LayerPair.first;
+								pSelectedObject = pObj;
+								bFound = true;
+							}
+						}
+					
 					}
 					ImGui::EndListBox();
 				}
