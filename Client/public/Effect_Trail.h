@@ -4,7 +4,6 @@
 
 BEGIN(Client)
 
-#define TESTPLAY
 
 class CEffect_Trail final : public CEffect_Base
 {
@@ -26,6 +25,7 @@ public:
 
 public:
 	void	Set_ParticleIdx(_int iIndex) { m_iIndex = iIndex; }
+	_int	Get_ParticleIdx() { return m_iIndex; }
 
 private:
 	HRESULT					SetUp_Components();

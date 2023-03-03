@@ -41,14 +41,6 @@ private:
 private:
 	_float           m_fTimeDelta = 0.0f;
 	_float           m_fDistotionTime = 0.0f;
-	_float           m_fFreePosTimeDelta = 0.0f;
-	vector<_float4>  m_vecFreePos;
-
-	_vector m_vPrePos;
-	_vector m_vCurPos;
-
-	_float m_fLerp = 0;
-	_bool  m_bLerp = false;
 
 public:
 	static  CEffect_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
