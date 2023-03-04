@@ -199,7 +199,8 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 	
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG") || 
+			!strcmp(m_Channels[i]->Get_Name(), "Sticks_01_RIG"))
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
 		else
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
@@ -315,7 +316,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
 		if (pBlendAnim == nullptr)
 		{
@@ -449,13 +450,10 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 
 	Call_Event(fLastPlayTime, fTimeDelta);
 
-	if (m_isLooping == false)
-		CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
-	else
-	{
-		if (m_PlayTime > m_Duration)
-			m_isFinished = true;
-	}
+	CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
+
+	if (m_PlayTime >= m_Duration)
+		m_isFinished = true;
 
 	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{

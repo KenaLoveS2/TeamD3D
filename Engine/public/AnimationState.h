@@ -9,9 +9,11 @@ class CGameObject;
 
 struct ENGINE_DLL  CAdditiveAnimation : public CBase
 {
-	_bool			m_bOneKeyFrame = false;
-	_bool			m_bControlRatio = false;
-	_float			m_fAdditiveRatio = 1.f;
+	enum RATIOTYPE { RATIOTYPE_MAX, RATIOTYPE_AUTO, RATIOTYPE_CONTROL, RATIOTYPE_END };
+	RATIOTYPE	m_eControlRatio = RATIOTYPE_MAX;
+	_bool			m_bPlayReverse = false;
+	_float			m_fAdditiveRatio = 0.f;
+	_float			m_fMaxAdditiveRatio = 1.f;
 	CAnimation*	m_pRefAnim = nullptr;
 	CAnimation*	m_pAdditiveAnim = nullptr;
 	list<pair<string, CBone::LOCKTO>>	m_listLockedJoint;
@@ -45,6 +47,7 @@ class ENGINE_DLL CAnimationState : public CBase
 {
 public:
 	using JOINTSET = pair<string, CBone::LOCKTO>;
+	enum ANIMBODY { ANIMBODY_UPPER, ANIMBODY_LOWER, ANIMBODY_ALL, ANIMBODY_END };
 
 private:
 	CAnimationState();
@@ -56,10 +59,10 @@ public:
 	const _bool&		Get_AnimationFinish();
 
 public:
-	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath);
+	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strDivisionBone, const string& strFilePath);
 	HRESULT			Initialize_FromFile(const string& strFilePath);
 	void				Tick(_float fTimeDelta);
-	HRESULT			State_Animation(const string& strStateName);
+	HRESULT			State_Animation(const string& strStateName, ANIMBODY eAnimBody = ANIMBODY_ALL);
 	void				Play_Animation(_float fTimeDelta);
 	void				ImGui_RenderProperty();
 
@@ -80,6 +83,7 @@ private:
 	map<const string, CAnimState*>		m_mapAnimState;
 	CAnimState*		m_pCurAnim = nullptr;
 	CAnimState*		m_pPreAnim = nullptr;
+	string				m_strDivisionBone = "";
 
 	_float				m_fCurLerpTime = 0.f;
 	_float				m_fLerpDuration = 0.f;
@@ -87,7 +91,7 @@ private:
 	_smatrix			m_matBonesTransformation[800];
 
 public:
-	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strFilePath = "");
+	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strDivisionBone = "", const string& strFilePath = "");
 	virtual void					Free() override {
 		m_vecSyncPart.clear();
 		m_vecNonSyncPart.clear();

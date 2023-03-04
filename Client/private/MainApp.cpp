@@ -78,17 +78,6 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Render_Level();
 
-//#ifdef _DEBUG
-//	++m_iNumCallDraw;
-//	if (m_TimeAcc >= 1.f)
-//	{
-//		wsprintf(m_szFPS, TEXT("FPS : %d"), m_iNumCallDraw);
-//		m_iNumCallDraw = 0;
-//		m_TimeAcc = 0.f;
-//	}
-//	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));
-//#endif
-
 	m_pGameInstance->Present();
 
 	return S_OK;

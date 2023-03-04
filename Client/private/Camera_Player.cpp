@@ -45,7 +45,6 @@ void CCamera_Player::Tick(_float fTimeDelta)
 {
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
-		m_bMouseFix = false;
 	if (CGameInstance::GetInstance()->Key_Pressing(DIK_LSHIFT))
 		m_bAim = true;
 	else

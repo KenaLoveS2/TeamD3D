@@ -94,12 +94,12 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_GAMEPLAY:
 		pLoader->Loading_ForGamePlay();
 		break;
+	case LEVEL_TESTPLAY:
+		pLoader->Loading_ForTestPlay();
+		break;
 #ifdef _DEBUG
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
-		break;
-	case LEVEL_TESTPLAY:
-		pLoader->Loading_ForTestPlay();
 		break;
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();

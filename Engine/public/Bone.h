@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class CBone final : public CBase
+class ENGINE_DLL CBone final : public CBase
 {
 public:
 	enum LOCKTO { LOCKTO_CHILD, LOCKTO_PARENT, LOCKTO_ALONE, UNLOCKTO_CHILD, UNLOCKTO_PARENT, UNLOCKTO_ALONE, LOCKTO_END };
