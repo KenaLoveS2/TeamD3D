@@ -126,6 +126,19 @@ void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
 	m_pVIBufferCom->Change_HeightMap(pHeightMapFilePath);
 }
 
+_bool CTerrain::CreateEnvrObj_PickingPos(_float4 & vPos)
+{
+	if (ImGui::IsMouseClicked(0))
+	{
+		if (m_pVIBufferCom->Picking_Terrain(g_hWnd, m_pTransformCom, &vPos))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 HRESULT CTerrain::SetUp_Components()
 {
 	/* For.Com_Renderer */

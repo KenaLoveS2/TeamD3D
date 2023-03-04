@@ -21,7 +21,7 @@ public:
 
 public: /*Picking*/
 	_bool				PickingFilter_Pixel(HWND hWnd, class CTransform * pTransform, _float3& fIndexs);
-	_bool					Picking_Terrain(HWND hWnd, class CTransform * pTransform, _float4* vBrushPos=nullptr);
+	_bool					Picking_Terrain(HWND hWnd, class CTransform * pTransform, _float4* vPickingPos=nullptr);
 
 public:
 	HRESULT					Change_HeightMap(const _tchar* pHeightMapFilePath);

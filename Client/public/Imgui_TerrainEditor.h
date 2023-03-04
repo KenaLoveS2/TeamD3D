@@ -22,12 +22,15 @@ private:
 		FILTER_FIRST, FILTER_SECOND, FILTER_THIRD, FLTER_END
 	};
 
+
 private:
 	CImgui_TerrainEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 public:
 	static void LoadFilterData(string jsonFileName);			// 나중에 그냥 불러올때
 
+
+	CTerrain* Get_SelectedTerrin() { return m_pSelectedTerrain; }
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);
 	virtual void Imgui_FreeRender();
@@ -44,7 +47,6 @@ private:
 	
 
 
-	
 	void		Draw_FilterTexture();
 	void		UnDraw_FilterTexture();
 

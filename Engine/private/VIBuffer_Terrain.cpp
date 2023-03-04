@@ -385,7 +385,7 @@ _bool CVIBuffer_Terrain::PickingFilter_Pixel(HWND hWnd, CTransform * pTransform,
 	return false;
 }
 
-_bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_float4* vBrushPos)
+_bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_float4* vPickingPos)
 {
 	CGameInstance* pGameIntance = GET_INSTANCE(CGameInstance);
 
@@ -450,9 +450,11 @@ _bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_flo
 
 				_float3 vOutPos= 	m_pVerticesPos[dwVtxIdx[1]] + m_pVerticesPos[dwVtxIdx[0]] + m_pVerticesPos[dwVtxIdx[2]];
 
-				if (vBrushPos != nullptr)
-					*vBrushPos = _float4(vOutPos.x, vOutPos.y, vOutPos.z, 1.f);
-
+				if (vPickingPos != nullptr)
+				{
+					_vector vPos = XMLoadFloat4(&vRayPos) + XMVector3Normalize(XMLoadFloat4(&vRayDir))* fDist;
+					XMStoreFloat4(vPickingPos, vPos);
+				}
 				return  true;
 			}
 
@@ -469,12 +471,13 @@ _bool CVIBuffer_Terrain::Picking_Terrain(HWND hWnd, CTransform * pTransform,_flo
 				fDist))
 			{
 				m_iSelectHeightPixel = dwIndex;
-
 				_float3 vOutPos = m_pVerticesPos[dwVtxIdx[1]] + m_pVerticesPos[dwVtxIdx[0]] + m_pVerticesPos[dwVtxIdx[2]];
 
-				if (vBrushPos != nullptr)
-					*vBrushPos = _float4(vOutPos.x, vOutPos.y, vOutPos.z, 1.f);
-
+				if (vPickingPos != nullptr)
+				{
+					_vector vPos = XMLoadFloat4(&vRayPos) + XMVector3Normalize(XMLoadFloat4(&vRayDir))* fDist;
+					XMStoreFloat4(vPickingPos, vPos);
+				}
 
 				return  true;
 			}
@@ -641,6 +644,8 @@ HRESULT CVIBuffer_Terrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
 
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
+
+	return S_OK;
 }
 
 #pragma region Height 내가 컨트롤 할 수 있게만든것 사용 불가?

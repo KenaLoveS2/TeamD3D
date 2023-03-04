@@ -162,6 +162,8 @@ public: /* For.PipeLine */
 		void Add_ImguiObject(class CImguiObject* pImguiObject, bool bIsSelectViewer = false);
 		void Clear_ImguiObjects();
 		class CGameObject* Get_SelectObjectPtr();
+		class CImguiObject* Get_ImguiObject(const char* pName);
+
 
 	public: // for String manager
 		HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);
@@ -229,3 +231,4 @@ public: /* For.PipeLine */
 };
 
 END
+

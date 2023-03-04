@@ -65,7 +65,7 @@ public: /*For.IMgui*/
 	void					Erase_FilterCom();
 	void					Change_HeightMap(const _tchar* pHeightMapFilePath);
 
-
+	_bool				CreateEnvrObj_PickingPos(_float4& vPos);
 
 public:	
 	

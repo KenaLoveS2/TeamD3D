@@ -763,6 +763,15 @@ CGameObject * CGameInstance::Get_SelectObjectPtr()
 	return m_pImgui_Manager->Get_SelectObjectPtr();
 }
 
+CImguiObject * CGameInstance::Get_ImguiObject(const char * pName)
+{
+	if (m_pImgui_Manager == nullptr) return nullptr;
+
+	return m_pImgui_Manager->Get_ImguiObject(pName);
+}
+
+
+
 HRESULT CGameInstance::Add_String(_uint iLevelIndex, _tchar * pStr)
 {
 	if (m_pString_Manager == nullptr) return E_FAIL;

@@ -583,7 +583,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 
 #pragma  region Tree
-
+/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
 if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true, true)))
 		return E_FAIL;
 

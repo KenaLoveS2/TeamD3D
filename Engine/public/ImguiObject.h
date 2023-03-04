@@ -6,7 +6,9 @@ BEGIN(Engine)
 // imgui코드를 작성하고 CImgui_Manager로 관리하기 위한 부모클래스
 class ENGINE_DLL CImguiObject abstract : public CBase
 {
+
 protected:
+	
 	CImguiObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 public:

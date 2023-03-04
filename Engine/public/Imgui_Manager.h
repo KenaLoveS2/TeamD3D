@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include <typeinfo>  //typeid를 사용을 위해
 
 BEGIN(Engine)
 class CImguiObject;
@@ -29,6 +30,9 @@ public:
 	// imgui object를 새로운 window로 추가한다.
 	void Add_ImguiObject(CImguiObject* pImguiObject,bool bIsSelectViewer=false);			// true 일때 Viewr에 있는 포인터 얻어올려고
 
+	class CImguiObject* Get_ImguiObject(const char* pName);
+
+public:
 	// 현재 사용중인 imgui object를 모두 삭제한다.
 	void Clear_ImguiObjects();
 
@@ -49,3 +53,5 @@ public:
 };
 
 END
+
+

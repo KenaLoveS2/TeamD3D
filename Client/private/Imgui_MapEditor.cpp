@@ -9,6 +9,10 @@
 
 #include "EnviromentObj.h"
 #include "ModelViewerObject.h"
+#include "Terrain.h"
+
+#include "Imgui_Manager.h"
+#include "Imgui_TerrainEditor.h"
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -39,10 +43,11 @@ void CImgui_MapEditor::Imgui_FreeRender()
 	if (ImGui::CollapsingHeader("Selcte_Option"))
 	{
 		Imgui_SelectOption();
+		Imgui_Maptool_Terrain_Selecte();
 		Imgui_CreateEnviromentObj();
 		Imgui_Save_Load_Json();
 
-		Imgui_SelectObject_Add_TexturePath();
+		Imgui_SelectObject_InstancingControl();
 		Imgui_Control_ViewerCamTransform();
 	}
 
@@ -334,14 +339,62 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 {
 	ImGui::NewLine();
 	ImGui::Text("Create_Button");
+
+	ImGui::Checkbox("Picking Create Obj", &m_bUseTerrainPicking);
+
+	if (m_wstrProtoName == L"" || m_wstrModelName == L"")
+		return;
+
+	if (m_bUseTerrainPicking)
+	{
+		m_bIstancingObjPicking = false;
+		_float4 fCreatePos;
+
+		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(fCreatePos))
+		{
+			CGameInstance *pGameInstace = GET_INSTANCE(CGameInstance);
+			CGameObject* pCreateObject = nullptr;
+
+			CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
+			EnviromentDesc.szProtoObjTag = m_wstrProtoName;
+			EnviromentDesc.szModelTag = m_wstrModelName;
+			//EnviromentDesc.szTextureTag = TEXT("");
+			EnviromentDesc.iRoomIndex = m_iCreateObjRoom_Option;
+			EnviromentDesc.eChapterType = static_cast<CEnviromentObj::CHAPTER>(m_iChapterOption);
+			EnviromentDesc.iCurLevel = CGameInstance::GetInstance()->Get_CurLevelIndex();
+			string			strCloneTag = m_strCloneTag;
+			_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
+			CGameInstance::GetInstance()->Add_String(pCloneName);
+
+			if (FAILED(pGameInstace->Clone_GameObject(pGameInstace->Get_CurLevelIndex(),
+				TEXT("Layer_Enviroment"),
+				EnviromentDesc.szProtoObjTag.c_str(),
+				pCloneName, &EnviromentDesc, &pCreateObject)))
+				assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
+			Imgui_AddComponentOption_CreateCamFront(pGameInstace, pCreateObject);
+			Imgui_Create_Option_Reset();
+
+			CTransform* pTransform = dynamic_cast<CTransform*>(pCreateObject->Find_Component(L"Com_Transform"));
+			pTransform->Set_State(CTransform::STATE_TRANSLATION,XMLoadFloat4(&fCreatePos));
+
+			// 인스턴싱 오브젝트일때
+
+
+			RELEASE_INSTANCE(CGameInstance);
+		}
+
+	}
+
+
+
 	if (ImGui::Button("Create_EnviromentObj"))
 	{
 		CGameInstance *pGameInstace = GET_INSTANCE(CGameInstance);
 		CGameObject* pCreateObject = nullptr;
 
 		CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
-		EnviromentDesc.szProtoObjTag = m_wstrProtoName;
-		EnviromentDesc.szModelTag = m_wstrModelName;
+		EnviromentDesc.szProtoObjTag =   m_wstrProtoName;
+		EnviromentDesc.szModelTag =		m_wstrModelName;
 		//EnviromentDesc.szTextureTag = TEXT("");
 		EnviromentDesc.iRoomIndex = m_iCreateObjRoom_Option;
 		EnviromentDesc.eChapterType = static_cast<CEnviromentObj::CHAPTER>(m_iChapterOption);
@@ -392,15 +445,7 @@ void CImgui_MapEditor::Imgui_ViewMeshOption(CGameObject* pSelecteObj)
 
 		ImGui::EndListBox();
 	}
-
-	if (m_iSelectMeshIndex != -1)
-	{
-		_bool b = false;
-	}
-
 }
-
-
 
 void CImgui_MapEditor::Imgui_Save_Load_Json()
 {
@@ -425,7 +470,6 @@ void CImgui_MapEditor::Imgui_Save_Load_Json()
 			ImGuiFileDialog::Instance()->Close();
 	}
 
-
 	ImGui::SameLine();
 
 	if (ImGui::Button("Confirm_Load"))
@@ -441,38 +485,15 @@ void CImgui_MapEditor::Imgui_Save_Load_Json()
 		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel 눌렀을 때
 			ImGuiFileDialog::Instance()->Close();
 	}
-
-
-	//if (ImGui::Button("Load"))
-	//	Imgui_Load_Func();
 }
 
-void CImgui_MapEditor::Imgui_SelectObject_Add_TexturePath()
+void CImgui_MapEditor::Imgui_SelectObject_InstancingControl()
 {
 	CGameObject*	pSelectEnviObj = CGameInstance::GetInstance()->Get_SelectObjectPtr();
 
 	if (nullptr != dynamic_cast<CEnviromentObj*>(pSelectEnviObj))
 	{
-		/*	wstring wstrCloneTag = pSelectEnviObj->Get_ObjectCloneName();
-			string	strClontTag = CUtile::WstringToString(wstrCloneTag);
-
-			ImGui::Text("Cur_Clone_Name : %s", strClontTag.c_str());
-			Imgui_ViewMeshOption(pSelectEnviObj);*/
-
-		/*Imgui_TexturePathNaming();
-		static string	textureFilePath = "";
-		ImGui::InputText("Texture_Path_Name", &textureFilePath);*/
-	
-		//if (ImGui::Button("Add FilePath"))
-		//{
-		//	_tchar * pFilePath = 		CUtile::StringToWideChar(textureFilePath);
-		//	CGameInstance::GetInstance()->Add_String(pFilePath);
-		//	static_cast<CEnviromentObj*>(pSelectEnviObj)->Add_TexturePath(pFilePath, (aiTextureType)m_iTexturePathNum);
-		//}
-
-		//Imgui_TexturePathViewer(pSelectEnviObj);
 		Imgui_Instancing_control(pSelectEnviObj);
-
 	}
 }
 
@@ -500,7 +521,7 @@ void CImgui_MapEditor::Imgui_Control_ViewerCamTransform()
 			m_pViewerObject->Set_ViewerCamZPos(fZPos_Num);
 		ImGui::InputFloat("YPos_Increase&Reduce_Num", &fYPos_Num);
 		ImGui::InputFloat("xAngle_Increase&Reduce_Num", &fXAngle_Num);
-		
+		// Is Picking?
 		m_pViewerObject->Set_ViewerCamMoveRatio(fYPos_Num, fXAngle_Num);
 	
 	
@@ -519,7 +540,6 @@ void CImgui_MapEditor::Imgui_TexturePathNaming()
 	if (m_iTexturePathNum > _uint(WJTextureType_AMBIENT_OCCLUSION))
 		m_iTexturePathNum = _uint(WJTextureType_AMBIENT_OCCLUSION);
 }
-
 
 void CImgui_MapEditor::Imgui_Save_Func()
 {
@@ -757,6 +777,20 @@ void CImgui_MapEditor::Imgui_Create_Option_Reset()/* 초기화*/
 	m_iCreateObjRoom_Option = 0;
 }
 
+void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
+{
+	const	char* pName = 			typeid(typename CImgui_TerrainEditor).name();
+	CImgui_TerrainEditor* pTerrainEditor = 	dynamic_cast<CImgui_TerrainEditor*>(CGameInstance::GetInstance()->Get_ImguiObject(pName));
+
+	if (pTerrainEditor == nullptr)
+		return;
+
+	m_pSelectedTerrain=	pTerrainEditor->Get_SelectedTerrin();
+
+	if (nullptr == m_pSelectedTerrain)
+		return;
+}
+
 void CImgui_MapEditor::JsonTest()
 {
 
@@ -860,83 +894,6 @@ void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameOb
 	}
 
 }
-
-//void CImgui_MapEditor::Insert_TextureFilePath(CGameInstance * pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, 
-//	array<string, (_int)WJTextureType_UNKNOWN> vecStr)
-//{
-//	assert(nullptr != pGameInstace && "CImgui_MapEditor::Load_TextureFilePath");
-//
-//	
-//	//_tchar* pTextureFilePath = L"";
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_DIFFUSE]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.DIFFUSE_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_SPECULAR]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.SPECULAR_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_AMBIENT]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.AMBIENT_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_EMISSIVE]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.EMISSIVE_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_EMISSIVEMASK]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.EMISSIVEMASK_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_NORMALS]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.NORMALS_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_MASK]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.MASK_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_SSS_MASK]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.SSS_MASK_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_SPRINT_EMISSIVE]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.SPRINT_EMISSIVE_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_HAIR_DEPTH]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.HAIR_DEPTH_Path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_ALPHA]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.ALPHA_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_HAIR_ROOT]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.HAIR_ROOT_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_COMP_MSK_CURV]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.COMP_MSK_CURV_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_COMP_H_R_AO]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.COMP_H_R_AO_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_ROUGHNESS]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.COMP_E_R_AO_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_AMBIENT_OCCLUSION]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.ROUGHNESS_path = pTextureFilePath;
-//
-//	//pTextureFilePath = CUtile::StringToWideChar(vecStr[WJTextureType_AMBIENT_OCCLUSION]);
-//	//pGameInstace->Add_String(pTextureFilePath);
-//	//EnviromentDesc.AI_textureFilePaths.AMBIENT_OCCLUSION_path = pTextureFilePath;
-//
-//}
 
 void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 {
@@ -1206,9 +1163,27 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 
 	ImGui::Begin("Instance Obj PosControl");
 
-	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));
+	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));	
+	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
+	_float4 vPickingPos;
+	_matrix TerrainMatrix;
+	if (m_bIstancingObjPicking == true)
+	{
+		m_bUseTerrainPicking = false;
 
-	pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix());
+		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(vPickingPos))
+		{
+			TerrainMatrix = m_pSelectedTerrain->Get_TransformCom()->Get_WorldMatrix();
+			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
+		}
+	}
+	else
+	{
+		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
+	}
+
+
+	
 
 	ImGui::End();
 #endif
