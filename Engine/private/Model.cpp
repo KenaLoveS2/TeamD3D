@@ -1380,7 +1380,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	else
 	{
 		_float4x4* Temp = new _float4x4;
-		XMStoreFloat4x4(Temp, TerrainMatrix);
+		XMStoreFloat4x4(Temp, XMMatrixIdentity());
 	
 		memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
 
