@@ -418,7 +418,6 @@ void CEffect_Base::BillBoardSetting(_float3 vScale)
 	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
 
 	m_pTransformCom->Set_WorldMatrix(m_InitWorldMatrix * worldmatrix);
-	// m_pTransformCom->Set_Scaled(vScale);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype(const _tchar* pFilePath)

@@ -84,38 +84,15 @@ void CEffect::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 		}
 	}
-
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-
-	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	if(CGameInstance::GetInstance()->Key_Down(DIK_UP))
 	{
-		m_eEFfectDesc.fTimeDelta = m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = 0.f;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
-			}
-		}
+		m_eEFfectDesc.fWidthFrame = 3.f;
+		m_eEFfectDesc.fHeightFrame = 3.f;
+		m_eEFfectDesc.iWidthCnt = 6.f;
+		m_eEFfectDesc.iHeightCnt = 6.f;
 	}
-	int a = 0;
+	
+
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
 		static _int iCurIdx = 0;
@@ -148,10 +125,15 @@ void CEffect::Tick(_float fTimeDelta)
 void CEffect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	__super::Compute_CamDistance();
+//	__super::Compute_CamDistance();
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()

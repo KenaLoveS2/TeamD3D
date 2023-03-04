@@ -86,6 +86,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 	if (m_bNoActive == true) // Pulse ³¡
 	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+
 		m_fDissolveTime += fTimeDelta;
 
 		_float3 vScale = Get_InitMatrixScaled();
@@ -102,6 +105,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 	if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
 	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+
 		m_fDissolveTime += fTimeDelta;
 		if (m_fDissolveTime > 1.f)
 		{
