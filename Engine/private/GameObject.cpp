@@ -154,8 +154,9 @@ void CGameObject::Set_Position(_float4& vPosition)
 }
 
 void CGameObject::Set_Position(_float3& vPosition)
-{	
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSetW(vPosition, 1.f));
+{
+	_float3 vPivot = m_pTransformCom->Get_vPxPivot();
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSetW(vPosition - vPivot, 1.f));
 }
 
 void CGameObject::Set_WorldMatrix(_float4x4& vPosition)

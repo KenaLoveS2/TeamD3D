@@ -80,7 +80,7 @@ VS_OUT VS_MAIN_MODEL_VIEWER(VS_IN In)
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = (vector)0.f;
 	Out.vTangent = (vector)0.f;
-	Out.vBinormal = (vector)0.f;
+	Out.vBinormal = (float3)0.f;
 
 	return Out;
 }

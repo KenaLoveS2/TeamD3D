@@ -3,6 +3,7 @@
 
 CBone::CBone()
 {
+	XMStoreFloat4x4(&m_CombindTransformMatrix, XMMatrixIdentity());	
 }
 
 CBone::CBone(const CBone& rhs)

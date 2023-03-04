@@ -199,7 +199,8 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 	
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG") || 
+			!strcmp(m_Channels[i]->Get_Name(), "Sticks_01_RIG"))
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
 		else
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);

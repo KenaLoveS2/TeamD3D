@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Sticks01.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CSticks01::CSticks01(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -36,7 +37,6 @@ HRESULT CSticks01::Initialize(void* pArg)
 	// SetUp_Component(); Monster가 불러줌
 	//	Push_EventFunctions();
 
-	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
 
 	m_pModelCom->Set_AllAnimCommonType();
 	
@@ -45,21 +45,74 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {
-	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_STATIC;
-	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-	PxCapsuleDesc.fRadius = 1.f;
-	PxCapsuleDesc.fHalfHeight = 0.2f;
-	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxCapsuleDesc.fDensity = 10.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
+	// 몸통
+	{
+		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
+		_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fDamping = 10.f;
+	
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
+		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Set_PxPivotScale(vPivotScale);
+		m_pTransformCom->Set_PxPivot(vPivotPos);
+	}
 
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-	m_pRendererCom->Set_PhysXRender(true);
+	// 무기
+	{
+		wstring WeaponPivot;
+		m_vecColliderName.push_back(WeaponPivot);
+		_float3 vWeaponPivot = _float3(-0.55f,0.f, -1.15f);
+		m_vecPivot.push_back(vWeaponPivot);
+		_float3 vWeaponScalePivot = _float3(0.25f, 0.1f, 0.1f);
+
+		m_vecPivotScale.push_back(vWeaponScalePivot);
+
+		m_vecColliderName[0] = m_szCloneObjectTag;
+		m_vecColliderName[0] += L"Weapon";
+
+		CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix =  XMMatrixTranslation(m_vecPivot[0].x, m_vecPivot[0].y, m_vecPivot[0].z)
+			* SocketMatrix;
+
+		_float4x4 pivotMatrix;
+		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = m_vecColliderName[0].c_str();
+		PxSphereDesc.vPos = _float3(0.f,5.f,0.f);
+		PxSphereDesc.fRadius = m_vecPivotScale[0].x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, nullptr);
+
+		m_pTransformCom->Add_Collider(m_vecColliderName[0].c_str(), pivotMatrix);
+		m_pRendererCom->Set_PhysXRender(true);
+	}
+
+	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
 
 	return S_OK;
 }
@@ -67,6 +120,8 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 void CSticks01::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
@@ -136,34 +191,61 @@ void CSticks01::Imgui_RenderProperty()
 
 	if (ImGui::Button("BIND"))
 		m_bBind = true;
-
-	if (m_pFSM)
-		m_pFSM->Imgui_RenderProperty();
 }
 
 void CSticks01::ImGui_AnimationProperty()
 {
-	ImGui::BeginTabBar("Sticks01 Animation & State");
-
-	if (ImGui::BeginTabItem("Animation"))
+	if(ImGui::CollapsingHeader("Sticks01 Animation & State"))
 	{
-		m_pModelCom->Imgui_RenderProperty();
-		ImGui::EndTabItem();
+		if (ImGui::BeginTabItem("Animation"))
+		{
+			m_pModelCom->Imgui_RenderProperty();
+			ImGui::EndTabItem();
+		}
+	
+		if (ImGui::BeginTabItem("State"))
+		{
+			m_pFSM->Imgui_RenderProperty();
+			ImGui::EndTabItem();
+		}
 	}
-
-	if (ImGui::BeginTabItem("State"))
-	{
-		m_pFSM->Imgui_RenderProperty();
-		ImGui::EndTabItem();
-	}
-
-	ImGui::EndTabBar();
 }
 
 void CSticks01::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
 }
+
+void CSticks01::ImGui_PhysXValueProperty()
+{
+	CMonster::ImGui_PhysXValueProperty();
+
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_float3 vPxPivot = 	m_pTransformCom->Get_vPxPivot();
+	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	m_pTransformCom->Set_PxPivot(vPxPivot);
+
+	// WEAPON
+	_float3 vWeaponScalePivot = m_vecPivotScale[0];
+	float fWeaponScale[3] = { vWeaponScalePivot.x, vWeaponScalePivot.y, vWeaponScalePivot.z };
+	ImGui::DragFloat3("WeaponPivotScale", fWeaponScale, 0.01f, 0.01f, 100.0f);
+	m_vecPivotScale[0].x = fWeaponScale[0]; m_vecPivotScale[0].y = fWeaponScale[1]; m_vecPivotScale[0].z = fWeaponScale[2];
+
+	_float3 vWeaponPivot = m_vecPivot[0];
+	float fWeaponPos[3] = { vWeaponPivot.x, vWeaponPivot.y, vWeaponPivot.z };
+	ImGui::DragFloat3("WeaponPivotPos", fWeaponPos, 0.01f, -100.f, 100.0f);
+	m_vecPivot[0].x = fWeaponPos[0]; m_vecPivot[0].y = fWeaponPos[1]; m_vecPivot[0].z = fWeaponPos[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_vecColliderName[0].c_str(), m_vecPivotScale[0]);
+}
+
 
 HRESULT CSticks01::Call_EventFunction(const string& strFuncName)
 {
@@ -681,6 +763,22 @@ HRESULT CSticks01::SetUp_ShadowShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CSticks01::Update_Collider(_float fTimeDelta)
+{
+	m_pTransformCom->Tick(fTimeDelta);
+	CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+	SocketMatrix =	 XMMatrixTranslation(m_vecPivot[0].x, m_vecPivot[0].y, m_vecPivot[0].z)
+							* SocketMatrix;
+	_float4x4 mat;
+	XMStoreFloat4x4(&mat, SocketMatrix);
+	m_pTransformCom->Update_Collider(m_vecColliderName[0].c_str(), mat);
 }
 
 void CSticks01::Set_AttackType()

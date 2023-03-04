@@ -4,10 +4,11 @@
 #include "String_Manager.h"
 #include "PipeLine.h"
 #include "DebugDraw.h"
+#include "GameInstance.h"
 
 PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+                                 PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+                                 PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
 	/*PX_UNUSED(attributes0);
 	PX_UNUSED(attributes1);
@@ -222,7 +223,7 @@ void CPhysX_Manager::Render()
 		PxVec3 PxPos_0 = pose.pos0;
 		PxVec3 PxPos_1 = pose.pos1;
 
-		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1));
+		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1),_float4(0.f,1.f,0.f,1.f));
 	}
 	m_pBatch->End();
 #endif // _DEBUG
@@ -249,10 +250,13 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		PxTransform ActorTrasnform = pActor->getGlobalPose();
-		_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
+		if(pUserData)
+		{
+			PxTransform ActorTrasnform = pActor->getGlobalPose();
+			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
 
-		pUserData->pOwner->Set_Position(vObjectPos);
+			pUserData->pOwner->Set_Position(vObjectPos);
+		}
 	}	
 }
 
@@ -464,6 +468,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pShape->setLocalPose(relativePose);
 
 		pCapsule->attachShape(*pShape);
+		pCapsule->setMass(Desc.fMass);
+		pCapsule->setLinearDamping(Desc.fDamping);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
@@ -481,7 +487,9 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
-		m_pScene->addActor(*pCapsule);		
+		m_pScene->addActor(*pCapsule);
+		PxVec3 temp = pCapsule->getGlobalPose().p;
+		int i = 0;
 	}	
 }
 
@@ -760,4 +768,88 @@ void CPhysX_Manager::Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _f
 	shape->setGeometry(Capsule);	
 }
 
+void CPhysX_Manager::Imgui_Render()
+{
+	_uint	 nStaticObjectCount = static_cast<_uint>(m_StaticActors.size());
+	_uint nDynamicObjectCount = static_cast<_uint>(m_DynamicActors.size());
 
+	ImGui::BulletText("Object to change PhyX variables");
+
+	{
+		static _int iStaticSelectObject = -1;
+		char** ppObjectTag = new char*[nStaticObjectCount];
+
+		_uint iTagLength = 0;
+		_uint i = 0;
+
+		for (auto& Pair : m_StaticActors)
+			ppObjectTag[i++] = CUtile::WideCharToChar(const_cast<_tchar*>(Pair.first));
+
+		ImGui::ListBox("StaticObject List", &iStaticSelectObject, ppObjectTag, nStaticObjectCount);
+
+		if (iStaticSelectObject != -1)
+		{
+			PxRigidActor*	pRigidActor = Find_StaticGameObject(iStaticSelectObject);
+
+			ImGui::BulletText("Current Static Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iStaticSelectObject]);
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
+			if (pUserData)
+				pUserData->pOwner->ImGui_PhysXValueProperty();
+		}
+
+		for (_uint i = 0; i < nStaticObjectCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+
+	{
+		static _int iDynamicSelectObject = -1;
+		char** ppObjectTag = new char*[nDynamicObjectCount];
+
+		_uint iTagLength = 0;
+		_uint i = 0;
+
+		for (auto& Pair : m_DynamicActors)
+			ppObjectTag[i++] = CUtile::WideCharToChar(const_cast<_tchar*>(Pair.first));
+
+		ImGui::ListBox("DynamicObject List", &iDynamicSelectObject, ppObjectTag, nDynamicObjectCount);
+
+		if (iDynamicSelectObject != -1)
+		{
+			PxRigidActor*	pRigidActor = Find_DynamicGameObject(iDynamicSelectObject);
+
+			ImGui::BulletText("Current Dynamic Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iDynamicSelectObject]);
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
+			if (pUserData)
+				pUserData->pOwner->ImGui_PhysXValueProperty();
+		}
+
+		for (_uint i = 0; i < nDynamicObjectCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+}
+
+PxRigidActor* CPhysX_Manager::Find_StaticGameObject(_int iIndex)
+{
+	auto	iter = m_StaticActors.begin();
+
+	for (_int i = 0; i < iIndex; ++i)
+		++iter;
+
+	return iter->second;
+}
+
+PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
+{
+	auto	iter = m_DynamicActors.begin();
+
+	for (_int i = 0; i < iIndex; ++i)
+		++iter;
+
+	return iter->second;
+}
