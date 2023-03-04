@@ -1174,6 +1174,19 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(vPickingPos))
 		{
 			TerrainMatrix = m_pSelectedTerrain->Get_TransformCom()->Get_WorldMatrix();
+			_matrix 	TerrainMatrixInv = XMMatrixInverse(nullptr, TerrainMatrix);
+
+			_float4 vBasePos;
+			XMStoreFloat4(&vBasePos, pSelectObjTransform->Get_State(CTransform::STATE_TRANSLATION));
+		
+			vPickingPos.x -= vBasePos.x;
+			vPickingPos.y -= vBasePos.y;
+			vPickingPos.z -= vBasePos.z;
+			
+
+
+			//XMStoreFloat4(&vPickingPos, XMVector4Transform(XMLoadFloat4(&vPickingPos), pSelectObjTransform->Get_WorldMatrix()));
+
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
 		}
 	}
