@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Utile.h"
+#include "Texture.h"
 
 #include "Terrain.h"
 
@@ -24,8 +25,8 @@ HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 {
 	Ready_FilterBuffer();
 
-	m_pHeightTexture = static_cast<CTransform*>(m_pGameInstance->
-		Clone_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Terrain_HeightMaps"));
+	m_pHeightTexture = static_cast<CTexture*>(m_pGameInstance->
+		Clone_Component(LEVEL_MAPTOOL, L"Prototype_Component_Terrain_HeightMaps"));
 
 	assert(m_pHeightTexture != nullptr  &&" CImgui_TerrainEditor::Initialize");
 
@@ -38,9 +39,9 @@ void CImgui_TerrainEditor::Imgui_FreeRender()
 	if (ImGui::CollapsingHeader("Terrain_Option"))
 	{
 		Terrain_Selecte();
-		Ready_BufferLock_UnLock();
+		Imgui_FilterControl();
 		Imgui_Save_Load();
-		Imgui_Control_Height();
+		Imgui_Change_HeightBmp();
 		Create_Terrain();
 	
 	
@@ -76,11 +77,12 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 	if (m_iFilterCaseNum < _int(FILTER_FIRST))	// 예외처리
 		m_iFilterCaseNum = _int(FILTER_FIRST);
 
+
 }
 
 void CImgui_TerrainEditor::Imgui_Save_Load()
 {
-	ImGui::Checkbox("Write File ", &m_bSaveWrite);
+	ImGui::NewLine();  ImGui::Checkbox("Write File ", &m_bSaveWrite);
 
 	if (m_bSaveWrite)
 		ImGui::InputText("Save_Name : ", &m_strFileName);
@@ -113,14 +115,11 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 		if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel 눌렀을 때
 			ImGuiFileDialog::Instance()->Close();
 	}
-
-
-
-
+	ImGui::NewLine();
 	if (ImGui::Button("Confirm_Fillter_Pixels_Save"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Save Folder", "Select Save Folder", ".Pixeldat", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Pixel_Save Folder", "Select Pixel_Save Folder", ".Pixeldat", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Save Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Pixel_Save Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{
@@ -135,9 +134,9 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Confirm_Fillter_Pixels_Load"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Load Folder", "Select Load Folder", ".Pixeldat", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Pixel Load Folder", "Select Pixel Load Folder", ".Pixeldat", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Load Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Pixel Load Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{
@@ -196,6 +195,8 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Save()
 
 void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 {
+	Clear_Filter_Pixel();
+
 	string      strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
 	if (m_bSaveWrite == true)
 	{
@@ -233,6 +234,8 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 	{
 		ReadFile(hFile, m_pPixel[i], sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height, &dwByte, nullptr);
 	}
+	CloseHandle(hFile);
+
 
 	m_pSelectedTerrain->Erase_FilterCom();
 	for (_uint iPixelIndex = 0; iPixelIndex < 3; ++iPixelIndex)
@@ -305,20 +308,30 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 
 }
 
-void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
+void CImgui_TerrainEditor::Imgui_FilterControl()
 {
-	if (m_pSelected_Tranform == nullptr || m_pSelected_Buffer == nullptr)
-		return;
+	ImGui::Checkbox("Create_FilterMap", &m_bFilterStart); ImGui::SameLine();
+	ImGui::Checkbox("Eraser_FilterMap", &m_bFilterErase);
 
-	if (ImGui::Button("Filter_Create_Start"))
-	{
-		m_bFilterStart = !m_bFilterStart;
-	}
+	if (m_bFilterStart == true)
+		m_bFilterErase = false;
 
-	if (false == m_bFilterStart)
+	if (m_bFilterErase == true)
+		m_bFilterStart = false;
+
+	Draw_FilterTexture();
+	UnDraw_FilterTexture();
+}
+
+void CImgui_TerrainEditor::Draw_FilterTexture()
+{
+	if (m_pSelected_Tranform == nullptr ||  false == m_bFilterStart|| m_pSelected_Buffer == nullptr)
 		return;
 
 	_float3 iIndex = _float3(1.f, 1.f, 1.f);
+
+	m_CurFilterIndexSize =m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
+ 
 
 	if (ImGui::IsMouseDragging(0))
 	{
@@ -327,8 +340,13 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 			m_FilterIndexSet[m_iFilterCaseNum].insert(_ulong(iIndex.x));
 			m_FilterIndexSet[m_iFilterCaseNum].insert(_ulong(iIndex.y));
 			m_FilterIndexSet[m_iFilterCaseNum].insert(_ulong(iIndex.z));
+
+			m_CurFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
 		}
 	}
+
+	if (m_CurFilterIndexSize == m_OldFilterIndexSize)
+		return;
 
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -384,18 +402,151 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
 }
 
-void CImgui_TerrainEditor::Imgui_Control_Height()
+void CImgui_TerrainEditor::UnDraw_FilterTexture()
+{
+	if (m_pSelected_Tranform == nullptr || false == m_bFilterErase || m_pSelected_Buffer == nullptr)
+		return;
+
+	_float3 iIndex = _float3(1.f, 1.f, 1.f);
+
+	m_CurFilterIndexSize = m_OldFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
+
+	if (ImGui::IsMouseDragging(0))
+	{
+		if (m_pSelected_Buffer->PickingFilter_Pixel(g_hWnd, m_pSelected_Tranform, iIndex))
+		{
+			auto std_SetIter = find_if(m_FilterIndexSet[m_iFilterCaseNum].begin(), m_FilterIndexSet[m_iFilterCaseNum].end(), [&](_ulong Value)->bool
+			{
+				return Value == iIndex.x;
+			});
+
+			if (std_SetIter != m_FilterIndexSet[m_iFilterCaseNum].end())
+			{
+				m_pPixel[m_iFilterCaseNum][(*std_SetIter)] = D3DCOLOR_ARGB(255, 255, 255, 255);
+				m_FilterIndexSet[m_iFilterCaseNum].erase(std_SetIter);
+			}
+			std_SetIter = find_if(m_FilterIndexSet[m_iFilterCaseNum].begin(), m_FilterIndexSet[m_iFilterCaseNum].end(), [&](_ulong Value)->bool
+			{
+				return Value == iIndex.y;
+			});
+			if (std_SetIter != m_FilterIndexSet[m_iFilterCaseNum].end())
+			{
+				m_pPixel[m_iFilterCaseNum][(*std_SetIter)] = D3DCOLOR_ARGB(255, 255, 255, 255);
+				m_FilterIndexSet[m_iFilterCaseNum].erase(std_SetIter);
+			}
+			std_SetIter = find_if(m_FilterIndexSet[m_iFilterCaseNum].begin(), m_FilterIndexSet[m_iFilterCaseNum].end(), [&](_ulong Value)->bool
+			{
+				return Value == iIndex.z;
+			});
+			if (std_SetIter != m_FilterIndexSet[m_iFilterCaseNum].end())
+			{
+				m_pPixel[m_iFilterCaseNum][(*std_SetIter)] = D3DCOLOR_ARGB(255, 255, 255, 255);
+				m_FilterIndexSet[m_iFilterCaseNum].erase(std_SetIter);
+			}
+		}
+
+		m_CurFilterIndexSize = (_int)m_FilterIndexSet[m_iFilterCaseNum].size();
+	}
+
+	if (m_CurFilterIndexSize == m_iFilterCaseNum)
+		return;
+
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = 256;
+	TextureDesc.Height = 256;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+		assert(!"issue");
+
+	for (auto iter = m_FilterIndexSet[m_iFilterCaseNum].begin(); iter != m_FilterIndexSet[m_iFilterCaseNum].end(); ++iter)
+	{
+		m_pPixel[m_iFilterCaseNum][(*iter)] = D3DCOLOR_ARGB(0, 0, 0, 0);
+	}
+
+	D3D11_MAPPED_SUBRESOURCE		SubResource;
+	ZeroMemory(&SubResource, sizeof SubResource);
+
+	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+
+	memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height));
+
+	m_pContext->Unmap(pTexture2D, 0);
+
+	m_pSelectedTerrain->Erase_FilterCom();
+
+	wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
+
+	if (m_iFilterCaseNum == 0)
+		wstr += TEXT("Filter_0.dds");
+	else if (m_iFilterCaseNum == 1)
+		wstr += TEXT("Filter_1.dds");
+	else if (m_iFilterCaseNum == 2)
+		wstr += TEXT("Filter_2.dds");
+
+	DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
+	Safe_Release(pTexture2D);
+
+	m_pGameInstance->Delete_ProtoComponent(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"));
+
+	m_pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
+
+	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
+
+}
+
+void CImgui_TerrainEditor::Imgui_Change_HeightBmp()
 {
 	if (m_pSelectedTerrain == nullptr)
 		return;
 
+	m_pHeightTexture->Imgui_ImageViewer();
 
+	if (ImGui::Button("Height Chnage"))
+	{
+		_int iSelctedNum =			m_pHeightTexture->Get_SelectedTextureNum();
 
+		wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
+
+		wstrFilePath += to_wstring(iSelctedNum);
+		wstrFilePath += TEXT(".bmp");
+
+		m_pSelectedTerrain->Change_HeightMap(wstrFilePath.c_str());
+	}
 
 }
 
 void CImgui_TerrainEditor::Create_Terrain()
 {
+
+}
+
+void CImgui_TerrainEditor::Clear_Filter_Pixel()
+{
+	for (_uint Filter_index = 0; Filter_index < (_uint)FLTER_END; ++Filter_index)
+	{
+		for (_uint i = 0; i < 256; ++i)
+		{
+			for (_uint j = 0; j < 256; ++j)
+			{
+				_uint iIndex = i * 256 + j;
+				m_pPixel[Filter_index][iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}
+		}
+		m_FilterIndexSet[Filter_index].clear();
+	}
+
 
 }
 
@@ -625,4 +776,5 @@ void CImgui_TerrainEditor::Free()
 	}
 
 	Safe_Release(pTexture2D);
+	Safe_Release(m_pHeightTexture);
 }

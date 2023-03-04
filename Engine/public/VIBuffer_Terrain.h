@@ -18,12 +18,13 @@ public:
 public:
 	void Culling(_fmatrix WorldMatrix);
 
+
 public: /*Picking*/
 	_bool				PickingFilter_Pixel(HWND hWnd, class CTransform * pTransform, _float3& fIndexs);
-
 	_bool					Picking_Terrain(HWND hWnd, class CTransform * pTransform, _float4* vBrushPos=nullptr);
 
-	HRESULT			Modify_Height(_uint iSize, _float4 vCenter, _float fAmountPerSec);
+public:
+	HRESULT					Change_HeightMap(const _tchar* pHeightMapFilePath);
 
 private:
 	_float3*		m_pVerticesPos = nullptr;

@@ -115,6 +115,26 @@ HRESULT CTexture::Bind_ShaderResource(CShader * pShaderCom, const char * pConsta
 	return pShaderCom->Set_ShaderResourceView(pConstantName, m_pTextures[iTextureIndex]);	
 }
 
+void CTexture::Imgui_ImageViewer()
+{
+	if (ImGui::CollapsingHeader("Select HeightBmp", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		for (_uint i = 0; i < m_iNumTextures; ++i)
+		{
+			if (ImGui::ImageButton((void*)m_pTextures[i], ImVec2(32.f, 32.f)))
+			{
+				m_iSelectedTextureNum = i;
+			}
+			if (i == 0 || (i + 1) % 6)
+				ImGui::SameLine();
+		}
+	
+		ImGui::Text(" Selected Number : %d", m_iSelectedTextureNum);
+	}
+}
+
+
+
 CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures)
 {
 	CTexture*		pInstance = new CTexture(pDevice, pContext);

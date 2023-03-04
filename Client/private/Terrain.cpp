@@ -107,21 +107,23 @@ void CTerrain::Imgui_RenderProperty()
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
 {
-	//Delete_Component(ComTag);
-	//Safe_Release(m_pTextureCom[TYPE_FILTER]);
-	
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), ComTag,
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-		assert(!"Imgui_Tool_Add_Component");
-	
-
-
+		assert(!"Imgui_Tool_Add_Component");	
 }
 
 void CTerrain::Erase_FilterCom()
 {
 	Delete_Component(TEXT("Com_Filter"));
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
+}
+
+void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
+{
+	if (nullptr == pHeightMapFilePath)
+		return;
+
+	m_pVIBufferCom->Change_HeightMap(pHeightMapFilePath);
 }
 
 HRESULT CTerrain::SetUp_Components()

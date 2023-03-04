@@ -63,7 +63,7 @@ private:
 public: /*For.IMgui*/
 	void					Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag);
 	void					Erase_FilterCom();
-
+	void					Change_HeightMap(const _tchar* pHeightMapFilePath);
 
 
 
