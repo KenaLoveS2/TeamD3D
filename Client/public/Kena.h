@@ -59,6 +59,7 @@ private:
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
+	map<const string, class CEffect_Base*>	m_mapEffects;
 
 private:
 	_bool					m_bAttack = false;
