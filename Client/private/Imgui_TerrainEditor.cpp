@@ -23,6 +23,12 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 {
 	Ready_FilterBuffer();
+
+	m_pHeightTexture = static_cast<CTransform*>(m_pGameInstance->
+		Clone_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Terrain_HeightMaps"));
+
+	assert(m_pHeightTexture != nullptr  &&" CImgui_TerrainEditor::Initialize");
+
 	return S_OK;
 }
 
@@ -34,7 +40,7 @@ void CImgui_TerrainEditor::Imgui_FreeRender()
 		Terrain_Selecte();
 		Ready_BufferLock_UnLock();
 		Imgui_Save_Load();
-	
+		Imgui_Control_Height();
 		Create_Terrain();
 	
 	
@@ -228,7 +234,7 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		ReadFile(hFile, m_pPixel[i], sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height, &dwByte, nullptr);
 	}
 
-	m_pSelectedTerrain->Imgui_Test();
+	m_pSelectedTerrain->Erase_FilterCom();
 	for (_uint iPixelIndex = 0; iPixelIndex < 3; ++iPixelIndex)
 	{
 		for (_uint i = 0; i < 256; ++i)
@@ -316,7 +322,7 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 
 	if (ImGui::IsMouseDragging(0))
 	{
-		if (m_pSelected_Buffer->PickingRetrunIndex_scale(g_hWnd, m_pSelected_Tranform, iIndex))
+		if (m_pSelected_Buffer->PickingFilter_Pixel(g_hWnd, m_pSelected_Tranform, iIndex))
 		{
 			m_FilterIndexSet[m_iFilterCaseNum].insert(_ulong(iIndex.x));
 			m_FilterIndexSet[m_iFilterCaseNum].insert(_ulong(iIndex.y));
@@ -356,7 +362,7 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 
 	m_pContext->Unmap(pTexture2D, 0);
 
-	m_pSelectedTerrain->Imgui_Test();
+	m_pSelectedTerrain->Erase_FilterCom();
 
 	wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
 
@@ -367,8 +373,6 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 	else if (m_iFilterCaseNum == 2)
 		wstr += TEXT("Filter_2.dds");
 
-	
-
 	 DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, wstr.c_str());
 	Safe_Release(pTexture2D);
 
@@ -378,6 +382,16 @@ void CImgui_TerrainEditor::Ready_BufferLock_UnLock()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3));
 
 	m_pSelectedTerrain->Imgui_Tool_Add_Component(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"));
+}
+
+void CImgui_TerrainEditor::Imgui_Control_Height()
+{
+	if (m_pSelectedTerrain == nullptr)
+		return;
+
+
+
+
 }
 
 void CImgui_TerrainEditor::Create_Terrain()
@@ -561,7 +575,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		static_cast<CTransform*>(pLoadTerrain->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-
+		pLoadTerrain->Late_Initialize();
 
 		szCloneTag = "";
 		pLoadTerrain = nullptr;

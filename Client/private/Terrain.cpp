@@ -39,12 +39,28 @@ HRESULT CTerrain::Initialize(void * pArg)
 
 	}
 
+	else
+	{
+		m_TerrainDesc.iBaseDiffuse = 4;
+		m_TerrainDesc.iFillterOne_TextureNum = 3;
+		m_TerrainDesc.iFillterTwo_TextureNum = 2;
+		m_TerrainDesc.iFillterThree_TextureNum = 1;
+
+	}
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 	
+
+	return S_OK;
+}
+
+HRESULT CTerrain::Late_Initialize(void * pArg)
+{
+	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	return S_OK;
 }
@@ -102,7 +118,7 @@ void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, co
 
 }
 
-void CTerrain::Imgui_Test()
+void CTerrain::Erase_FilterCom()
 {
 	Delete_Component(TEXT("Com_Filter"));
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
@@ -159,10 +175,6 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 
-	///* For.Com_Navigation */
-	//if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-	//	(CComponent**)&m_pNavigationCom)))
-	//	return E_FAIL;	
 
 	return S_OK;
 }
@@ -202,7 +214,10 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &_float4(15.f, 0.f, 15.f, 1.f), sizeof(_float4))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

@@ -96,8 +96,25 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector		vDest = (vSourDiffuse* vFilter1.r * vFilter2.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r);
 	vector		vTemp = (vSourDiffuse* vFilter.r * vFilter2.r) + vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse2 * (1.f - vFilter2.r);
 
+	//vector vBrush = (vector)0.f;
+	///* 브러쉬의 영역 내부인지 확인 */
+	//if (g_fBrushRange >= abs(In.vWorldPos.x - g_vBrushPos.x)
+	//	&& g_fBrushRange >= abs(In.vWorldPos.z - g_vBrushPos.z))
+	//{
+	//	/* 브러쉬 영역 내부에서의 정점의 상대위치 / 길이 => 정규화 LT(0,0)~RB(1,1) UV좌표 */
+	//	float2	vUV;
+
+	//	float	fFullRange = g_fBrushRange * 2.f;
+	//	vUV.x = (In.vWorldPos.x - (g_vBrushPos.x - g_fBrushRange)) / fFullRange;
+	//	vUV.y = ((g_vBrushPos.z + g_fBrushRange) - In.vWorldPos.z) / fFullRange;
+
+	//	vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
+	//}
+
+
+
 	vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)
-		+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r)+vDestDiffuse2 * (1.f - vFilter2.r);
+		+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r);
 
 	//vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)		//원본
 	//	+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) ;
@@ -115,10 +132,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	//	vMtrlDiffuse = vSourDiffuse;
 	//}
 
-	if (vTemp.a > 1.f)
-	{
-		vMtrlDiffuse = vSourDiffuse;
-	}
+	//if (vTemp.a > 1.f)
+	//{
+	//	vMtrlDiffuse = vSourDiffuse;
+	//}
 
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;

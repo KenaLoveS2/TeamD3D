@@ -14,13 +14,16 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pHeightMapFilePath);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner);
-
+	HRESULT			initialize_World(class CTransform* pTransform);
 public:
 	void Culling(_fmatrix WorldMatrix);
 
 public: /*Picking*/
-	_bool				PickingRetrunIndex_scale(HWND hWnd, class CTransform * pTransform, _float3& fIndexs);
+	_bool				PickingFilter_Pixel(HWND hWnd, class CTransform * pTransform, _float3& fIndexs);
 
+	_bool					Picking_Terrain(HWND hWnd, class CTransform * pTransform, _float4* vBrushPos=nullptr);
+
+	HRESULT			Modify_Height(_uint iSize, _float4 vCenter, _float fAmountPerSec);
 
 private:
 	_float3*		m_pVerticesPos = nullptr;
@@ -28,7 +31,7 @@ private:
 	_uint			m_iNumVerticesZ = 0;
 
 	FACEINDICES32*	m_pIndices = nullptr;
-
+	_int			m_iSelectHeightPixel = -1;
 private:
 	class CQuadTree*		m_pQuadTree = nullptr;
 

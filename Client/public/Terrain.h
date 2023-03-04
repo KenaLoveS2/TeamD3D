@@ -41,12 +41,15 @@ private:
 
 public:
 	TERRAIN_DESC	*		Get_TerrainDesc() { return &m_TerrainDesc; }
+	
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Late_Initialize(void* pArg = nullptr)override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	
 	virtual HRESULT Render() override;
 	virtual void Imgui_RenderProperty() override;
 
@@ -59,7 +62,14 @@ private:
 
 public: /*For.IMgui*/
 	void					Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag);
-	void					Imgui_Test();
+	void					Erase_FilterCom();
+
+
+
+
+public:	
+	
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
@@ -68,6 +78,9 @@ private:
 	TERRAIN_DESC					m_TerrainDesc;
 	_bool								m_bLoadData = false;
 
+private: /*For.Brush*/
+	_float								m_fBrushRange = 5.f;
+	_float4								m_vBrushPos;
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

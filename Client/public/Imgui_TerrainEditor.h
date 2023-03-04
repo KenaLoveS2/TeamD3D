@@ -40,6 +40,9 @@ private:
 	void		Imgui_FilterPixel_Load();
 	void		Ready_FilterBuffer();
 	void		Ready_BufferLock_UnLock();
+	void		Imgui_Control_Height();
+
+
 
 	void		Create_Terrain();
 	void		Save_Terrain();
@@ -60,10 +63,15 @@ private:
 	class CVIBuffer_Terrain*		m_pSelected_Buffer = nullptr;
 	class CTransform*					m_pSelected_Tranform = nullptr;
 
+
+	class CTransform*					m_pHeightTexture = nullptr;
+
 private: /*For.ToolStart*/
 	_bool									m_bFilterStart = false;
 	_bool									m_bSaveWrite = false;
 	string									m_strFileName = "";
+
+	_bool								m_bControlHeight = false;
 public:
 	static	CImgui_TerrainEditor*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);
 	virtual void				Free() override;

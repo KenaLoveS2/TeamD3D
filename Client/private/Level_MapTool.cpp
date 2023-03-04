@@ -97,9 +97,9 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
-	//	return E_FAIL;
-
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
+		return E_FAIL;
+*/
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain2"))))
 	//	return E_FAIL;
 
