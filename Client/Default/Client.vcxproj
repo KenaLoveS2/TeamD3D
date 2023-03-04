@@ -205,6 +205,7 @@
     <ClInclude Include="..\Public\Imgui_MapEditor.h" />
     <ClInclude Include="..\Public\Kena_Staff.h" />
     <ClInclude Include="..\Public\Kena_State.h" />
+    <ClInclude Include="..\public\Kena_Status.h" />
     <ClInclude Include="..\Public\Level_EffectTest.h" />
     <ClInclude Include="..\public\Level_GamePlay.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
@@ -218,6 +219,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\Monster_Status.h" />
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\Path_Mesh.h" />
     <ClInclude Include="..\Public\Pillar.h" />
@@ -306,6 +308,7 @@
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\Private\Kena_Staff.cpp" />
     <ClCompile Include="..\Private\Kena_State.cpp" />
+    <ClCompile Include="..\private\Kena_Status.cpp" />
     <ClCompile Include="..\Private\Level_EffectTest.cpp" />
     <ClCompile Include="..\private\Level_GamePlay.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
@@ -319,6 +322,7 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\Monster_Status.cpp" />
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\Path_Mesh.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />

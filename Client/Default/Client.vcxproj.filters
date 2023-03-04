@@ -214,6 +214,12 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub">
       <UniqueIdentifier>{d756033d-9e9e-445c-afef-a8e5ea191ed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Status">
+      <UniqueIdentifier>{59fd36c9-ad52-4114-98b6-6cc992257140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Status">
+      <UniqueIdentifier>{e6d00557-2a0f-4585-8226-ecf7b21293d1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Base">
       <UniqueIdentifier>{f1bb0089-0473-4bd9-b217-56e4bf98b3ea}</UniqueIdentifier>
     </Filter>
@@ -541,6 +547,13 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Stone.h" />
+    <ClInclude Include="..\public\Monster_Status.h">
+      <Filter>02.GameObjects\Monster\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Kena_Status.h">
+      <Filter>02.GameObjects\Player\Status</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Effect_Base.h">
       <Filter>02.GameObjects\Effect\Base</Filter>
     </ClInclude>
@@ -850,6 +863,13 @@
     </ClCompile>
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp" />
+    <ClCompile Include="..\private\Monster_Status.cpp">
+      <Filter>02.GameObjects\Monster\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Kena_Status.cpp">
+      <Filter>02.GameObjects\Player\Status</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Effect_Base.cpp">
       <Filter>02.GameObjects\Effect\Base</Filter>
