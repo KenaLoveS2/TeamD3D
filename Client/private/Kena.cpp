@@ -5,6 +5,7 @@
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Camera_Player.h"
+#include "Effect_Base.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -50,6 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
@@ -73,36 +75,37 @@ HRESULT CKena::Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
 	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
 	*/
-	/*
+	
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
-	PxSphereDesc.vPos = _float3(0.f, 5.f, 0.f);
-	PxSphereDesc.fRadius = 0.2f;
+	PxSphereDesc.vPos = _float3(0.f, 10.f, 0.f);
+	PxSphereDesc.fRadius = 1.f;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fDensity = 10.f;
 	PxSphereDesc.fAngularDamping = 0.5f;
 			
 	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_SPERE"));
-	*/	
-	
-// 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-// 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-// 	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
-// 	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-// 	PxCapsuleDesc.fRadius = 1.f;
-// 	PxCapsuleDesc.fHalfHeight = 0.2f;
-// 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-// 	PxCapsuleDesc.fDensity = 10.f;
-// 	PxCapsuleDesc.fAngularDamping = 0.5f;
-// 
-// 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-// 	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
-// 
-// 	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-// 	m_pRendererCom->Set_PhysXRender(true);
+	m_pTransformCom->Connect_PxActor_Gravity(TEXT("TEST_SPERE"));
 
+	/*
+	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+	PxCapsuleDesc.eType = CAPSULE_STATIC;
+	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
+	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
+	PxCapsuleDesc.fRadius = 1.f;
+	PxCapsuleDesc.fHalfHeight = 0.2f;
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.fDensity = 10.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
+	*/
+
+	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
+	m_pRendererCom->Set_PhysXRender(true);
+	
 	return S_OK;
 }
 
@@ -116,12 +119,15 @@ void CKena::Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
+
 	if (m_pModelCom->Get_Preview() == false)
 		m_pAnimation->Play_Animation(fTimeDelta);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
-	m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
+	//m_pTransformCom->Set_Translation(XMVectorSet(0.f, 0.f, 0.f, 1.f), _float4(1.f, 0.f, 0.f, 0.f));
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -210,6 +216,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
@@ -422,6 +431,23 @@ HRESULT CKena::Ready_Parts()
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Effects()
+{
+	CEffect_Base*	pEffectBase = nullptr;
+	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+
+	pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
+	pEffectBase->Set_Owner(this);
+
+	m_mapEffect.emplace("KenaPulse", pEffectBase);
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -932,6 +958,10 @@ void CKena::Free()
 	for (auto& pPart : m_vecPart)
 		Safe_Release(pPart);
 	m_vecPart.clear();
+
+	for (auto& Pair : m_mapEffect)
+		Safe_Release(Pair.second);
+	m_mapEffect.clear();
 
 	Safe_Release(m_pAnimation);
 	Safe_Release(m_pStateMachine);

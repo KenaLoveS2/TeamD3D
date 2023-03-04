@@ -105,6 +105,8 @@ public:
 	_float4x4 Get_ActorMatrix(PxRigidActor* pActor);
 	void Set_ActorMatrix(const _tchar *pActorTag, _float4x4 Matrix);
 	void Set_ActorMatrix(PxRigidActor* pActor, _float4x4 Matrix);
+	void Set_ActorMatrixExecptTranslation(const _tchar *pActorTag, _float4x4 Matrix);
+	void Set_ActorMatrixExecptTranslation(PxRigidActor* pActor, _float4x4 Matrix);
 	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow = false);
 	
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);

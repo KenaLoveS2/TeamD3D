@@ -4,15 +4,15 @@
 
 BEGIN(Client)
 
-class CEffect_Mesh final : public CEffect_Base
+class CEffect_Mesh abstract : public CEffect_Base
 {
-private:
+protected:
 	CEffect_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect_Mesh(const CEffect_Mesh& rhs);
 	virtual ~CEffect_Mesh() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
@@ -38,14 +38,12 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
-private:
+protected:
 	_float           m_fTimeDelta = 0.0f;
 	_float           m_fDistotionTime = 0.0f;
 
 public:
-	static  CEffect_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*  Clone(void* pArg = nullptr) override;
-	virtual void          Free() override;
+	virtual void	Free()override;
 };
 
 END
