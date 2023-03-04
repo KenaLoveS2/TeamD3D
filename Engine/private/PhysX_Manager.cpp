@@ -789,7 +789,7 @@ void CPhysX_Manager::Imgui_Render()
 			ImGui::Text(ppObjectTag[iStaticSelectObject]);
 			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 			if (pUserData)
-				pUserData->pOwner->Imgui_RenderProperty();
+				pUserData->pOwner->ImGui_PhysXValueProperty();
 		}
 
 		for (_uint i = 0; i < nStaticObjectCount; ++i)
@@ -818,7 +818,7 @@ void CPhysX_Manager::Imgui_Render()
 			ImGui::Text(ppObjectTag[iDynamicSelectObject]);
 			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 			if (pUserData)
-				pUserData->pOwner->Imgui_RenderProperty();
+				pUserData->pOwner->ImGui_PhysXValueProperty();
 		}
 
 		for (_uint i = 0; i < nDynamicObjectCount; ++i)

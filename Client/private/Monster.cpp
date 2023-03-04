@@ -103,6 +103,11 @@ void CMonster::ImGui_ShaderValueProperty()
 	}
 }
 
+void CMonster::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
+}
+
 HRESULT CMonster::Call_EventFunction(const string & strFuncName)
 {
 	return S_OK;

@@ -68,13 +68,11 @@ void CSticks01::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM)
+	//	m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
-
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_vScale);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -133,43 +131,49 @@ void CSticks01::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	float fScale[3] = { m_vScale.x, m_vScale.y, m_vScale.z };
-	ImGui::DragFloat3("PxScale", fScale, 0.1f, 0.f, 10.0f);
-	m_vScale.x = fScale[0]; m_vScale.y = fScale[1]; m_vScale.z = fScale[2];
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_vScale);
-
 	if (ImGui::Button("TAKEDAMAGE"))
 		m_bHit = true;
 
 	if (ImGui::Button("BIND"))
 		m_bBind = true;
-
-	if (m_pFSM)
-		m_pFSM->Imgui_RenderProperty();
 }
 
 void CSticks01::ImGui_AnimationProperty()
 {
-	ImGui::BeginTabBar("Sticks01 Animation & State");
-
-	if (ImGui::BeginTabItem("Animation"))
+	if(ImGui::CollapsingHeader("Sticks01 Animation & State"))
 	{
-		m_pModelCom->Imgui_RenderProperty();
-		ImGui::EndTabItem();
+		if (ImGui::BeginTabItem("Animation"))
+		{
+			m_pModelCom->Imgui_RenderProperty();
+			ImGui::EndTabItem();
+		}
+	
+		if (ImGui::BeginTabItem("State"))
+		{
+			m_pFSM->Imgui_RenderProperty();
+			ImGui::EndTabItem();
+		}
 	}
-
-	if (ImGui::BeginTabItem("State"))
-	{
-		m_pFSM->Imgui_RenderProperty();
-		ImGui::EndTabItem();
-	}
-
-	ImGui::EndTabBar();
 }
 
 void CSticks01::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
+}
+
+void CSticks01::ImGui_PhysXValueProperty()
+{
+	CMonster::ImGui_PhysXValueProperty();
+
+	float fScale[3] = { m_vPhysXScale.x, m_vPhysXScale.y, m_vPhysXScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	m_vPhysXScale.x = fScale[0]; m_vPhysXScale.y = fScale[1]; m_vPhysXScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_vPhysXScale);
+
+	float fPos[3] = { m_vPhysXPos.x, m_vPhysXPos.y, m_vPhysXPos.z };
+	ImGui::DragFloat3("PxPos", fPos, 0.01f, 0.f, 100.0f);
+	m_vPhysXPos.x = fPos[0]; m_vPhysXPos.y = fPos[1]; m_vPhysXPos.z = fPos[2];
+	CPhysX_Manager::GetInstance()->Set_ActorPosition(m_szCloneObjectTag, m_vPhysXPos);
 }
 
 HRESULT CSticks01::Call_EventFunction(const string& strFuncName)

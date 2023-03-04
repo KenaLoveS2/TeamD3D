@@ -79,6 +79,7 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
@@ -114,9 +115,6 @@ private:
 	_bool	m_bHit = false;
 	_bool	m_bBind = false;
 
-
-	_float3 m_vScale;
-	
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

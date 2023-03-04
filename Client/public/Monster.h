@@ -48,6 +48,7 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
@@ -70,8 +71,6 @@ protected:
 
 protected:
 	_bool							m_bSpawn = false;
-
-
 	_float							m_fIdletoAttackTime = 0.f;
 
 protected:
