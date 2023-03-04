@@ -410,11 +410,15 @@ private:
 	HRESULT					SetUp_State_Attack2();
 	HRESULT					SetUp_State_Attack3();
 	HRESULT					SetUp_State_Attack4();
+	HRESULT					SetUp_State_Bow();
 	HRESULT					SetUp_State_Pulse();
 
 private:
+	/* IDLE */
 	void						Start_Idle(_float fTimeDelta);
+	/* RUN */
 	void						Start_Run(_float fTimeDelta);
+	/* AIM */
 	void						Start_Aim_Into(_float fTimeDelta);
 	void						Start_Aim_Loop(_float fTimeDelta);
 	void						Start_Aim_Return(_float fTimeDelta);
@@ -427,11 +431,20 @@ private:
 	void						Start_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Start_Aim_Run_Left(_float fTimeDelta);
 	void						Start_Aim_Run_Right(_float fTimeDelta);
+	/* ATTACK 1 */
 	void						Start_Attack_1(_float fTimeDelta);
 	void						Start_Attack_1_From_Run(_float fTimeDelta);
 	void						Start_Attack_1_Into_Run(_float fTimeDelta);
 	void						Start_Attack_1_Into_Walk(_float fTimeDelta);
 	void						Start_Attack_1_Return(_float fTimeDelta);
+	/* BOW */
+	void						Start_Bow_Charge(_float fTimeDelta);
+	void						Start_Bow_Charge_Full(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Release(_float fTimeDelta);
+	void						Start_Bow_Recharge(_float fTimeDelta);
+	void						Start_Bow_Return(_float fTimeDelta);
+	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
 	void						Start_Pulse(_float fTimeDelta);
@@ -451,8 +464,11 @@ private:
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
 
 private:
+	/* IDLE */
 	void						Tick_Idle(_float fTimeDelta);
+	/* RUN */
 	void						Tick_Run(_float fTimeDelta);
+	/* AIM */
 	void						Tick_Aim_Into(_float fTimeDelta);
 	void						Tick_Aim_Loop(_float fTimeDelta);
 	void						Tick_Aim_Return(_float fTimeDelta);
@@ -464,11 +480,20 @@ private:
 	void						Tick_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Tick_Aim_Run_Left(_float fTimeDelta);
 	void						Tick_Aim_Run_Right(_float fTimeDelta);
+	/* ATTACK 1 */
 	void						Tick_Attack_1(_float fTimeDelta);
 	void						Tick_Attack_1_From_Run(_float fTimeDelta);
 	void						Tick_Attack_1_Into_Run(_float fTimeDelta);
 	void						Tick_Attack_1_Into_Walk(_float fTimeDelta);
 	void						Tick_Attack_1_Return(_float fTimeDelta);
+	/* BOW */
+	void						Tick_Bow_Charge(_float fTimeDelta);
+	void						Tick_Bow_Charge_Full(_float fTimeDelta);
+	void						Tick_Bow_Charge_Loop(_float fTimeDelta);
+	void						Tick_Bow_Release(_float fTimeDelta);
+	void						Tick_Bow_Recharge(_float fTimeDelta);
+	void						Tick_Bow_Return(_float fTimeDelta);
+	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
 	void						Tick_Pulse(_float fTimeDelta);
@@ -481,8 +506,11 @@ private:
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
 
 private:
+	/* IDLE */
 	void						End_Idle(_float fTimeDelta);
+	/* RUN */
 	void						End_Run(_float fTimeDelta);
+	/* AIM */
 	void						End_Aim_Into(_float fTimeDelta);
 	void						End_Aim_Loop(_float fTimeDelta);
 	void						End_Aim_Return(_float fTimeDelta);
@@ -494,11 +522,20 @@ private:
 	void						End_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						End_Aim_Run_Left(_float fTimeDelta);
 	void						End_Aim_Run_Right(_float fTimeDelta);
+	/* ATTACK 1 */
 	void						End_Attack_1(_float fTimeDelta);
 	void						End_Attack_1_From_Run(_float fTimeDelta);
 	void						End_Attack_1_Into_Run(_float fTimeDelta);
 	void						End_Attack_1_Into_Walk(_float fTimeDelta);
 	void						End_Attack_1_Return(_float fTimeDelta);
+	/* BOW */
+	void						End_Bow_Charge(_float fTimeDelta);
+	void						End_Bow_Charge_Full(_float fTimeDelta);
+	void						End_Bow_Charge_Loop(_float fTimeDelta);
+	void						End_Bow_Release(_float fTimeDelta);
+	void						End_Bow_Recharge(_float fTimeDelta);
+	void						End_Bow_Return(_float fTimeDelta);
+	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
 	void						End_Pulse(_float fTimeDelta);
@@ -528,6 +565,7 @@ private:	/* Changer */
 	_bool	KeyInput_Space();
 	_bool	KeyInput_LShift();
 	_bool	KeyInput_LCtrl();
+	_bool	MouseInput_Left();
 
 	_bool	KeyDown_E();
 	_bool	KeyDown_Q();
@@ -539,6 +577,7 @@ private:	/* Changer */
 
 	_bool	KeyUp_E();
 	_bool	KeyUp_LShift();
+	_bool	MouseUp_Left();
 
 private:
 	void	Move(_float TimeDelta, CTransform::DIRECTION eDir);
