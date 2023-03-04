@@ -571,9 +571,11 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\Effect_T.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -881,9 +883,11 @@
     <ClCompile Include="..\Private\Stone.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

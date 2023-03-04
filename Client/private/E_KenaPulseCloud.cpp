@@ -30,32 +30,31 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	//if (pArg != nullptr)
-	//	memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
-
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	if (m_pParent != nullptr)
-		this->Set_InitMatrix(m_pParent->Get_TransformCom()->Get_WorldMatrix());
-
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
 void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 }
 
 HRESULT CE_KenaPulseCloud::Render()
 {
+	if (m_pParent != nullptr)
+	{
+		if (dynamic_cast<CEffect_Base*>(m_pParent)->Get_EffectDesc().bActive == false)
+			return E_FAIL;
+	}
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

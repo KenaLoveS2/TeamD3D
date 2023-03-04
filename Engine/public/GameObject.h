@@ -76,6 +76,7 @@ protected:
 protected:	
 	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr, CGameObject* pOwner = nullptr);
 
+public:
 	void Compute_CamDistance();
 
 public:	

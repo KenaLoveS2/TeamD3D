@@ -268,8 +268,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
-		if (FAILED(Render_PostProcess()))
-			return E_FAIL;
 	}
 	else
 	{
@@ -281,8 +279,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
-	}
-
+	}	
+	if (FAILED(Render_PostProcess()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -523,6 +522,12 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_AlphaBlend()
 {
+	for (auto& pGameObject : m_RenderObjects[RENDER_ALPHABLEND])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Compute_CamDistance();
+	}
+
 	m_RenderObjects[RENDER_ALPHABLEND].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
 	{
 		return pSour->Get_CamDistance() > pDest->Get_CamDistance();
