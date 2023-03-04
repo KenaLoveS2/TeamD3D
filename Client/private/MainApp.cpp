@@ -45,7 +45,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
-	//Ready_BufferLock_UnLock();
+	Ready_BufferLock_UnLock();
 
 	srand((_uint)time(NULL));
 
@@ -353,7 +353,7 @@ HRESULT CMainApp::Ready_BufferLock_UnLock()
 
 	m_pContext->Unmap(pTexture2D, 0);
 
-	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter.dds"))))
+	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Terrain_Texture/Filter/FilterNew.dds"))))
 		return E_FAIL;
 
 	Safe_Delete_Array(pPixel);

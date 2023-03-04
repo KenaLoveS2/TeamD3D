@@ -13,8 +13,12 @@ float			g_fBrushRange = 5.f;
 //Texture2D<float4>		g_FilterTwoTexture;
 //Texture2D<float4>		g_FilterThreeTexture;
 
+Texture2D<float4>		g_BaseTexture;
+//Texture2D<float4>		g_DiffuseTexture[7];
 
-Texture2D<float4>		g_DiffuseTexture[7];
+Texture2D<float4>		g_DiffuseTexture_0;
+Texture2D<float4>		g_DiffuseTexture_1;
+Texture2D<float4>		g_DiffuseTexture_2;
 
 /* 지형 셰이딩 */
 Texture2D<float4>		g_BrushTexture;
@@ -77,11 +81,11 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	
-	vector		vSourDiffuse = g_DiffuseTexture[3].Sample(LinearSampler, In.vTexUV * 30.f);
-	vector		vDestDiffuse0 = g_DiffuseTexture[0].Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 30.f);
 
-	vector vDestDiffuse1 = g_DiffuseTexture[1].Sample(LinearSampler, In.vTexUV * 30.f);
-	vector vDestDiffuse2 = g_DiffuseTexture[4].Sample(LinearSampler, In.vTexUV * 30.f);
+	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 30.f);
 
 	vector		vFilter = g_FilterTexture[0].Sample(LinearSampler, In.vTexUV);			// 원본
 	vector		vFilter1 = g_FilterTexture[1].Sample(LinearSampler, In.vTexUV);

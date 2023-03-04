@@ -16,10 +16,31 @@ class CTerrain final : public CGameObject
 {
 public:
 	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_FILTER, TYPE_END };
+
+	typedef struct tag_TerrainDesc
+	{
+		wstring		wstrDiffuseTag;
+		wstring		wstrNormalTag;
+		wstring		wstrFilterTag;
+		_int			iBaseDiffuse = 0;
+		_int			iFillterOne_TextureNum = 0;
+		_int			iFillterTwo_TextureNum = 0;
+		_int			iFillterThree_TextureNum = 0;
+		tag_TerrainDesc()
+		{
+			wstrDiffuseTag = L"";	wstrFilterTag = L""; wstrNormalTag = L"";
+		}
+
+	}TERRAIN_DESC;
+
+
 private:
 	CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTerrain(const CTerrain& rhs);
 	virtual ~CTerrain() = default;
+
+public:
+	TERRAIN_DESC	*		Get_TerrainDesc() { return &m_TerrainDesc; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -42,6 +63,10 @@ public: /*For.IMgui*/
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	TERRAIN_DESC					m_TerrainDesc;
+	_bool								m_bLoadData = false;
 
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

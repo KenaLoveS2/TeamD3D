@@ -24,6 +24,21 @@ HRESULT CTerrain::Initialize_Prototype()
 
 HRESULT CTerrain::Initialize(void * pArg)
 {
+	if (pArg != nullptr)
+	{
+		TERRAIN_DESC* Desc = reinterpret_cast<TERRAIN_DESC*>(pArg);
+
+		m_TerrainDesc.wstrDiffuseTag = Desc->wstrDiffuseTag;
+		m_TerrainDesc.wstrFilterTag = Desc->wstrFilterTag;
+		m_TerrainDesc.wstrNormalTag = Desc->wstrNormalTag;
+		m_bLoadData = true;
+		m_TerrainDesc.iBaseDiffuse = Desc->iBaseDiffuse;
+		m_TerrainDesc.iFillterOne_TextureNum = Desc->iFillterOne_TextureNum;
+		m_TerrainDesc.iFillterTwo_TextureNum = Desc->iFillterTwo_TextureNum;
+		m_TerrainDesc.iFillterThree_TextureNum = Desc->iFillterThree_TextureNum;
+
+	}
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -47,7 +62,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); //
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); 
 #ifdef _DEBUG
 
 #endif
@@ -110,20 +125,39 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-		return E_FAIL;
+	if(false == m_bLoadData )
+	{ 
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+		/* For.Com_Filter */
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+
+		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Terrain");
+		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Filter");
+		m_TerrainDesc.wstrNormalTag = TEXT("");
+	}
+	else
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+		/* For.Com_Filter */
+		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+	}
+
 
 	/* For.Com_Brush*/
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Normal"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
-	///* For.Com_Filter */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-		return E_FAIL;
 
 	///* For.Com_Navigation */
 	//if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
@@ -150,11 +184,21 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_BaseTexture",m_TerrainDesc.iBaseDiffuse)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_0", m_TerrainDesc.iFillterOne_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_1", m_TerrainDesc.iFillterTwo_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_2", m_TerrainDesc.iFillterThree_TextureNum)))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 0)))
 		return E_FAIL;
+
 	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
 		return E_FAIL;
 

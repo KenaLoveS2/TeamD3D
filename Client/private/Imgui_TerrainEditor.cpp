@@ -411,7 +411,18 @@ void CImgui_TerrainEditor::Save_Terrain()
 	_float		fElement = 0.f;
 	string		szLayerTag = "Layer_BackGround";
 	string		szProtoObjTag = "";
-	char*		szCloneTag;
+	string		strDiffuseTag = "";
+	string		strFillter = "";
+	string		strNormal = "";
+
+	wstring			wstrCloneTag = L"";
+	string		szCloneTag;
+
+	wstring		wstrDiffuseTag = L"";
+	wstring		wstrFillterTag = L"";
+	wstring		wstrNormalTag = L"";
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0;
+	CTerrain::TERRAIN_DESC* SaveDesc = nullptr;
 
 	jTerrainSave["0_LayerTag"] = szLayerTag;
 
@@ -420,11 +431,34 @@ void CImgui_TerrainEditor::Save_Terrain()
 		if (dynamic_cast<CTerrain*>(pObject.second) == nullptr)
 			continue;
 
+		SaveDesc = dynamic_cast<CTerrain*>(pObject.second)->Get_TerrainDesc();
+
+		wstrDiffuseTag = SaveDesc->wstrDiffuseTag;
+		wstrFillterTag = SaveDesc->wstrFilterTag;
+		wstrNormalTag = SaveDesc->wstrNormalTag;
+		iDiffuseNum = SaveDesc->iBaseDiffuse;
+		iFillterOne_TextureNum = SaveDesc->iFillterOne_TextureNum;
+		iFillterTwo_TextureNum = SaveDesc->iFillterTwo_TextureNum;
+		iFillterThree_TextureNum = SaveDesc->iFillterThree_TextureNum;
 		Json jChild;
 
-		szCloneTag = CUtile::WideCharToChar(const_cast<_tchar*>(pObject.second->Get_ObjectCloneName()));
-
+		wstrCloneTag =(pObject.second->Get_ObjectCloneName());
+		szCloneTag =	CUtile::WstringToString(wstrCloneTag);
 		jChild["1_CloneTag"] = szCloneTag;
+	
+		strDiffuseTag = CUtile::WstringToString(wstrDiffuseTag);
+		jChild["2_DiffuseTag"] = strDiffuseTag;
+
+		strFillter = CUtile::WstringToString(wstrFillterTag);
+		jChild["3_FillterTag"] = strFillter;
+
+		strNormal = CUtile::WstringToString(wstrNormalTag);
+		jChild["4_NormalTag"] = strNormal;
+
+		jChild["5_Diffuse_TextureNum"] = iDiffuseNum;
+		jChild["6_FillterOne_TextureNum"] = iFillterOne_TextureNum;
+		jChild["7_FillterTwo_TextureNum"] = iFillterTwo_TextureNum;
+		jChild["8_FillterThree_TextureNum"] = iFillterThree_TextureNum;
 
 		CTransform* pTransform = static_cast<CTransform*>(pObject.second->Find_Component(L"Com_Transform"));
 		assert(pTransform != nullptr && "CImgui_MapEditor::Imgui_Save_Func()");
@@ -434,7 +468,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
-			jChild["2_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
+			jChild["9_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
 		}
 
 		jTerrainSave["Terrain_Data"].push_back(jChild);
@@ -465,7 +499,15 @@ void CImgui_TerrainEditor::Load_Terrain()
 	_tchar*		wszLayerTag = L"";
 	string		szLayerTag = "";
 	string		szCloneTag;
+	string		szDiffuseTag;
+	string		szNormalTag;
+	string		szFillterTag;
+
 	_tchar*		wszCloneTag = L"";
+	_tchar*		wszDiffuseTag = L"";
+	_tchar*		wszNormalTag = L"";
+	_tchar*		wszFillterTag = L"";
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0;
 
 	jLoadTerrain["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -477,9 +519,37 @@ void CImgui_TerrainEditor::Load_Terrain()
 		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
 		m_pGameInstance->Add_String(wszCloneTag);
 	
+		jLoadChild["2_DiffuseTag"].get_to<string>(szDiffuseTag);
+		wszDiffuseTag = CUtile::StringToWideChar(szDiffuseTag);
+		m_pGameInstance->Add_String(wszDiffuseTag);
+		
+		jLoadChild["3_FillterTag"].get_to<string>(szFillterTag);
+		wszFillterTag = CUtile::StringToWideChar(szFillterTag);
+		m_pGameInstance->Add_String(wszFillterTag);
+		
+		jLoadChild["4_NormalTag"].get_to<string>(szNormalTag);
+		wszNormalTag = CUtile::StringToWideChar(szNormalTag);
+		m_pGameInstance->Add_String(wszNormalTag);
+
+		jLoadChild["5_Diffuse_TextureNum"].get_to<int>(iDiffuseNum);
+		jLoadChild["6_FillterOne_TextureNum"].get_to<int>(iFillterOne_TextureNum);
+		jLoadChild["7_FillterTwo_TextureNum"].get_to<int>(iFillterTwo_TextureNum);
+		jLoadChild["8_FillterThree_TextureNum"].get_to<int>(iFillterThree_TextureNum);
+
+		CTerrain::tag_TerrainDesc terrainDesc;
+
+		terrainDesc.wstrDiffuseTag = wszDiffuseTag;
+		terrainDesc.wstrNormalTag = wszNormalTag;
+		terrainDesc.wstrFilterTag = wszFillterTag;
+		terrainDesc.iBaseDiffuse = iDiffuseNum;
+		terrainDesc.iFillterOne_TextureNum = iFillterOne_TextureNum;
+		terrainDesc.iFillterTwo_TextureNum = iFillterTwo_TextureNum;
+		terrainDesc.iFillterThree_TextureNum = iFillterThree_TextureNum;
+
+
 		float	fElement = 0.f;
 		int		k = 0;
-		for (float fElement : jLoadChild["2_Transform State"])
+		for (float fElement : jLoadChild["9_Transform State"])
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
@@ -487,10 +557,10 @@ void CImgui_TerrainEditor::Load_Terrain()
 		if (FAILED(m_pGameInstance->Clone_GameObject(g_LEVEL,
 			wszLayerTag,
 			TEXT("Prototype_GameObject_Terrain"),
-			wszCloneTag, nullptr, &pLoadTerrain)))
+			wszCloneTag, &terrainDesc, &pLoadTerrain)))
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
-
+		static_cast<CTransform*>(pLoadTerrain->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 
 
 		szCloneTag = "";
@@ -502,7 +572,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 
 void CImgui_TerrainEditor::Ready_FilterBuffer()
 {
-	for (_uint Filter_index = 0; Filter_index < FLTER_END; ++Filter_index)
+	for (_uint Filter_index = 0; Filter_index < (_uint)FLTER_END; ++Filter_index)
 	{
 		m_pPixel[Filter_index] = new _ulong[256 * 256];
 		for (_uint i = 0; i < 256; ++i)

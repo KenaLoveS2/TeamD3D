@@ -244,6 +244,9 @@
     <Filter Include="02.GameObjects\Effect\Base\Texture Type\Tool">
       <UniqueIdentifier>{09cd37fc-43e2-44dd-80ec-927535bb78dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Terrain\Editor">
+      <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -550,9 +553,6 @@
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stone.h">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Bridge.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
@@ -574,6 +574,12 @@
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\Effect_T.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_TerrainEditor.h">
+      <Filter>02.GameObjects\Terrain\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -878,12 +884,15 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stone.cpp">
-      <Filter>02.GameObjects\Envrioment</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp">
+      <Filter>02.GameObjects\Terrain\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
