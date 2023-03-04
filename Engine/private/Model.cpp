@@ -1340,7 +1340,7 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 }
 
 #ifdef _DEBUG
-void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
+void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos,_fmatrix TerrainMatrix,_bool bPickingTerrain)
 {
 	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
 	{
@@ -1363,13 +1363,28 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix)
 
 		ImGui::EndListBox();
 	}
-
 	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
-	if (ImGui::Button("Instancing Num Increase"))
+
+	if (bPickingTerrain == false)
+	{
+		if (ImGui::Button("Instancing Num Increase"))
+		{
+			_float4x4* Temp = new _float4x4;
+			XMStoreFloat4x4(Temp, XMMatrixIdentity());
+			m_pInstancingMatrix.push_back(Temp);
+
+			for (auto& pInstMesh : m_InstancingMeshes)
+				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+		}
+	}
+	else
 	{
 		_float4x4* Temp = new _float4x4;
 		XMStoreFloat4x4(Temp, XMMatrixIdentity());
+	
+		memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
 
+		
 		m_pInstancingMatrix.push_back(Temp);
 
 		for (auto& pInstMesh : m_InstancingMeshes)

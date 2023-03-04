@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Virtuos/Environment/MaskMakerHut_TreeRopeandCloth/MI_TreeRopeand_Rope.MI_TreeRopeand_Rope'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Virtuos/Environment/MaskMakerHut_TreeRopeandCloth/MI_TreeRopeand_Rope.MI_TreeRopeand_Rope'
+        MaterialSlotName = lambert1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 208.89, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=19.8125, Y=38.8843, Z=-148.139 }
+    BoxExtent = { X=499.777, Y=560.537, Z=182.145 }
+    SphereRadius = 608.437
+}

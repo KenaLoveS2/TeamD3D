@@ -47,6 +47,17 @@ CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const _tchar
 	return pComponent;	
 }
 
+void CComponent_Manager::Delete_ProtoComponent(_uint iLevelIndex, const _tchar * pProtoTypeTag)
+{
+	auto	iter = find_if(m_pPrototypes[iLevelIndex].begin(), m_pPrototypes[iLevelIndex].end(), CTag_Finder(pProtoTypeTag));
+
+	if (iter == m_pPrototypes[iLevelIndex].end())
+		return;
+
+	Safe_Release(iter->second);
+	iter = m_pPrototypes[iLevelIndex].erase(iter);
+}
+
 
 CComponent * CComponent_Manager::Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag)
 {

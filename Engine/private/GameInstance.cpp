@@ -480,6 +480,13 @@ map<const _tchar*, class CComponent*>* CGameInstance::Get_ComponentProtoType()
 	return m_pComponent_Manager->Get_ComponentProtoType();
 }
 
+void CGameInstance::Delete_ProtoComponent(_uint iLevelIndex, const _tchar * pProtoTypeTag)
+{
+	assert(nullptr != m_pComponent_Manager && "CGameInstance::Get_ComponentProtoType()");
+
+	m_pComponent_Manager->Delete_ProtoComponent(iLevelIndex, pProtoTypeTag);
+}
+
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)
@@ -755,6 +762,15 @@ CGameObject * CGameInstance::Get_SelectObjectPtr()
 	if (m_pImgui_Manager == nullptr) return nullptr;
 	return m_pImgui_Manager->Get_SelectObjectPtr();
 }
+
+CImguiObject * CGameInstance::Get_ImguiObject(const char * pName)
+{
+	if (m_pImgui_Manager == nullptr) return nullptr;
+
+	return m_pImgui_Manager->Get_ImguiObject(pName);
+}
+
+
 
 HRESULT CGameInstance::Add_String(_uint iLevelIndex, _tchar * pStr)
 {
