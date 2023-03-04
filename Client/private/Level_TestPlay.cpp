@@ -42,28 +42,52 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	{
+		MSG_BOX("Layer_BackGround");
 		return E_FAIL;
-
+	}
+		
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	{
+		MSG_BOX("Layer_Enviroment");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+	{
+		MSG_BOX("Layer_Camera");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	{
+		MSG_BOX("Layer_Player");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Layer_Monster");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+	{
+		MSG_BOX("Layer_Rot");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	{
+		MSG_BOX("Layer_Effect");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
+	{
+		MSG_BOX("Layer_Canvas");
 		return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

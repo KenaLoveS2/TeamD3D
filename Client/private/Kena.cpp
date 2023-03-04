@@ -51,7 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
@@ -62,51 +62,36 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
-	/*
-	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
-	PxBoxDesc.eType = BOX_DYNAMIC;
-	PxBoxDesc.pActortag = TEXT("TEST");
-	PxBoxDesc.vPos = _float3(0.f, 5.f, 0.f);
-	PxBoxDesc.vSize = { 0.2f, 0.2f, 0.2f };
-	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxBoxDesc.fDensity = 10.f;
-	PxBoxDesc.fAngularDamping = 0.5f;
+	return S_OK;
+}
 
-	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("TEST"));
-	*/
-	
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = TEXT("TEST_SPERE");
-	PxSphereDesc.vPos = _float3(0.f, 10.f, 0.f);
-	PxSphereDesc.fRadius = 1.f;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 10.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-			
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this));	
-	m_pTransformCom->Connect_PxActor_Gravity(TEXT("TEST_SPERE"));
+HRESULT CKena::Late_Initialize(void * pArg)
+{
+	_float3 vPos = _float3(0.f, 3.f, 0.f);
+	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
 
-	/*
+	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-	PxCapsuleDesc.eType = CAPSULE_STATIC;
-	PxCapsuleDesc.pActortag = TEXT("TEST_CAPSULE");
-	PxCapsuleDesc.vPos = _float3(1.f, 5.f, 1.f);
-	PxCapsuleDesc.fRadius = 1.f;
-	PxCapsuleDesc.fHalfHeight = 0.2f;
+	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+	PxCapsuleDesc.vPos = vPos;
+	PxCapsuleDesc.fRadius = vPivotScale.x;
+	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxCapsuleDesc.fDensity = 10.f;
+	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
+	PxCapsuleDesc.fMass = 1.f;
+	PxCapsuleDesc.fDamping = 1.f;
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
-	m_pTransformCom->Connect_PxActor(TEXT("TEST_CAPSULE"));
-	*/
 
-	// CPhysX_Manager::GetInstance()->Set_GravityFlag(TEXT("TEST_SPERE"), true);
-
+	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	m_pRendererCom->Set_PhysXRender(true);
-	
+	m_pTransformCom->Set_PxPivotScale(vPivotScale);
+	m_pTransformCom->Set_PxPivot(vPivotPos);
+
 	return S_OK;
 }
 
@@ -116,7 +101,8 @@ void CKena::Tick(_float fTimeDelta)
 		
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-	
+	m_pTransformCom->Tick(fTimeDelta);
+
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -377,6 +363,26 @@ void CKena::ImGui_ShaderValueProperty()
 		ImGui::NewLine();
 		pPart->ImGui_ShaderValueProperty();
 	}
+}
+
+void CKena::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
+
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
+
+	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	m_pTransformCom->Set_PxPivot(vPxPivot);
 }
 
 void CKena::Update_Child()

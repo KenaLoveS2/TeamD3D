@@ -223,7 +223,7 @@ void CPhysX_Manager::Render()
 		PxVec3 PxPos_0 = pose.pos0;
 		PxVec3 PxPos_1 = pose.pos1;
 
-		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1));
+		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1),_float4(0.f,1.f,0.f,1.f));
 	}
 	m_pBatch->End();
 #endif // _DEBUG
@@ -250,10 +250,13 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		PxTransform ActorTrasnform = pActor->getGlobalPose();
-		_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
+		if(pUserData)
+		{
+			PxTransform ActorTrasnform = pActor->getGlobalPose();
+			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
 
-		pUserData->pOwner->Set_Position(vObjectPos);
+			pUserData->pOwner->Set_Position(vObjectPos);
+		}
 	}	
 }
 
@@ -465,6 +468,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pShape->setLocalPose(relativePose);
 
 		pCapsule->attachShape(*pShape);
+		pCapsule->setMass(Desc.fMass);
+		pCapsule->setLinearDamping(Desc.fDamping);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
@@ -482,7 +487,9 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
-		m_pScene->addActor(*pCapsule);		
+		m_pScene->addActor(*pCapsule);
+		PxVec3 temp = pCapsule->getGlobalPose().p;
+		int i = 0;
 	}	
 }
 

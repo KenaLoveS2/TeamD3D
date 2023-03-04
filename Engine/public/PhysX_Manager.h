@@ -41,7 +41,7 @@ public:
 
 		// Dynamic Parameter
 		_float3 vVelocity;
-		_float fDensity, fAngularDamping;		
+		_float fDensity, fAngularDamping, fMass, fDamping;		
 	} PX_CAPSULE_DESC;
 		
 private:

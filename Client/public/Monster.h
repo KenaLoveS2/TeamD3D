@@ -51,13 +51,14 @@ public:
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
+	virtual void					Update_Collider(_float fTimeDelta);
 
 public:
-	_bool	AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
-	_bool   AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
-	_bool   DistanceTrigger(_float distance);
-	_bool	TimeTrigger(_float Time1, _float Time2);
-	_float	DistanceBetweenPlayer();
+	_bool							AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
+	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
+	_bool							DistanceTrigger(_float distance);
+	_bool							TimeTrigger(_float Time1, _float Time2);
+	_float							DistanceBetweenPlayer();
 
 protected:
 	CRenderer*					m_pRendererCom = nullptr;

@@ -117,6 +117,10 @@ void CMonster::Push_EventFunctions()
 {
 }
 
+void CMonster::Update_Collider(_float fTimeDelta)
+{
+}
+
 _bool CMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
 {
 	return m_pModelCom->Find_Animation(eAnim)->Get_PlayRate() >= FinishRate;
