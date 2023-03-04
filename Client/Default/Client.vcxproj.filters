@@ -536,6 +536,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stone.h" />
+    <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -822,6 +823,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stone.cpp" />
+    <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

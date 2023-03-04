@@ -226,7 +226,6 @@ HRESULT CModelViewerObject::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)			 // 카메라 위치 설정하기
 		return E_FAIL;
 
-	//_matrix matWorld =		m_pTransformCom->Get_WorldMatrix();
 
 	//matWorld *= XMLoadFloat4x4(&m_ViewerCamView);
 	//m_pTransformCom->Set_WorldMatrix(matWorld);

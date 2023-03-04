@@ -49,7 +49,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); //
 #ifdef _DEBUG
-		//m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+
 #endif
 	}
 }
@@ -66,16 +66,31 @@ HRESULT CTerrain::Render()
 
 	m_pVIBufferCom->Render();
 
-//#ifdef _DEBUG
-//	m_pNavigationCom->Render();
-//#endif
-
 	return S_OK;
 }
 
 void CTerrain::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
+}
+
+void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
+{
+	//Delete_Component(ComTag);
+	//Safe_Release(m_pTextureCom[TYPE_FILTER]);
+	
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), ComTag,
+		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+		assert(!"Imgui_Tool_Add_Component");
+	
+
+
+}
+
+void CTerrain::Imgui_Test()
+{
+	Delete_Component(TEXT("Com_Filter"));
+	Safe_Release(m_pTextureCom[TYPE_FILTER]);
 }
 
 HRESULT CTerrain::SetUp_Components()
@@ -101,11 +116,11 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Brush*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Normal"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
-	/* For.Com_Filter */
+	///* For.Com_Filter */
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		return E_FAIL;
@@ -137,9 +152,10 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
 		return E_FAIL;
+
 	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 0)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResource(m_pShaderCom, "g_FilterTexture", 0)))
+	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &_float4(15.f, 0.f, 15.f, 1.f), sizeof(_float4))))

@@ -18,13 +18,17 @@ public:
 public:
 	void Culling(_fmatrix WorldMatrix);
 
+public: /*Picking*/
+	_bool				PickingRetrunIndex_scale(HWND hWnd, class CTransform * pTransform, _float3& fIndexs);
+
+
 private:
 	_float3*		m_pVerticesPos = nullptr;
 	_uint			m_iNumVerticesX = 0;
 	_uint			m_iNumVerticesZ = 0;
 
 	FACEINDICES32*	m_pIndices = nullptr;
-		
+
 private:
 	class CQuadTree*		m_pQuadTree = nullptr;
 

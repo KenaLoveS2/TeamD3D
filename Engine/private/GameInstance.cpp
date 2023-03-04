@@ -480,6 +480,13 @@ map<const _tchar*, class CComponent*>* CGameInstance::Get_ComponentProtoType()
 	return m_pComponent_Manager->Get_ComponentProtoType();
 }
 
+void CGameInstance::Delete_ProtoComponent(_uint iLevelIndex, const _tchar * pProtoTypeTag)
+{
+	assert(nullptr != m_pComponent_Manager && "CGameInstance::Get_ComponentProtoType()");
+
+	m_pComponent_Manager->Delete_ProtoComponent(iLevelIndex, pProtoTypeTag);
+}
+
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)

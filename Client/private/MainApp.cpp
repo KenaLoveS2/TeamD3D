@@ -45,6 +45,8 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
+	//Ready_BufferLock_UnLock();
+
 	srand((_uint)time(NULL));
 
 	return S_OK;
@@ -300,6 +302,65 @@ CMainApp * CMainApp::Create()
 		Safe_Release(pInstance);
 	}
 	return pInstance;
+}
+
+HRESULT CMainApp::Ready_BufferLock_UnLock()
+{
+	ID3D11Texture2D*			pTexture2D = nullptr;
+
+	D3D11_TEXTURE2D_DESC		TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = 256;		// 2의 배수로 맞춰야됀다.
+	TextureDesc.Height = 256;		// 2의 배수로 맞춰야됀다.
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+		return E_FAIL;
+
+	_ulong*		pPixel = new _ulong[TextureDesc.Width * TextureDesc.Height];
+
+	for (_uint i = 0; i < TextureDesc.Height; ++i)
+	{
+		for (_uint j = 0; j < TextureDesc.Width; ++j)
+		{
+			_uint iIndex = i*TextureDesc.Height + j;
+
+			//if (j < 128)
+			pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			/*	else
+			pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);*/
+		}
+	}
+
+	D3D11_MAPPED_SUBRESOURCE		SubResource;
+	ZeroMemory(&SubResource, sizeof SubResource);
+
+	// D3D11_MAP_WRITE_NO_OVERWRITE 툴작업할때는 이녀석으로 하는게 좋음
+
+	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+
+	memcpy(SubResource.pData, pPixel, sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height);
+
+	m_pContext->Unmap(pTexture2D, 0);
+
+	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter.dds"))))
+		return E_FAIL;
+
+	Safe_Delete_Array(pPixel);
+
+	Safe_Release(pTexture2D);
+
+	return S_OK;
 }
 
 void CMainApp::Free()

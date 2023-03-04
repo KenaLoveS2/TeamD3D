@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\public\VIBuffer_Terrain.h"
+#include "GameInstance.h"
+
 #include "Frustum.h"
 
 #include "QuadTree.h"
@@ -19,6 +21,8 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
 	, m_iNumVerticesZ(rhs.m_iNumVerticesZ)
 	, m_pIndices(rhs.m_pIndices)
 	, m_pQuadTree(rhs.m_pQuadTree)
+
+
 {
 	Safe_AddRef(m_pQuadTree);
 
@@ -78,7 +82,8 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		//	11111111 11111011 11111011 11111011
 		//& 00000000 00000000 00000000 11111111
 
-			pVertices[iIndex].vPosition = m_pVerticesPos[iIndex] = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.f, (_float)i);
+			//pVertices[iIndex].vPosition = m_pVerticesPos[iIndex] = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.f, (_float)i);
+			pVertices[iIndex].vPosition = m_pVerticesPos[iIndex] = _float3((_float)j, 0.f, (_float)i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
@@ -266,6 +271,100 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 	m_iNumIndices = iNumFaces * 3;
 
 	RELEASE_INSTANCE(CFrustum);
+}
+
+_bool CVIBuffer_Terrain::PickingRetrunIndex_scale(HWND hWnd, CTransform * pTransform, _float3 & fIndexs)
+{
+	CGameInstance* pGameIntance = GET_INSTANCE(CGameInstance);
+
+	POINT		ptMouse{};
+
+	GetCursorPos(&ptMouse);
+	ScreenToClient(hWnd, &ptMouse);
+
+	_float4		vPoint;
+
+	D3D11_VIEWPORT		ViewPortDesc;
+	_uint								iNumViewports = 1;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	m_pContext->RSGetViewports(&iNumViewports, &ViewPortDesc);
+
+
+	vPoint.x = ptMouse.x / (ViewPortDesc.Width * 0.5f) - 1.f;
+	vPoint.y = ptMouse.y / -(ViewPortDesc.Height * 0.5f) + 1.f;
+	vPoint.z = 1.f;
+	vPoint.w = 1.f;
+
+	_matrix		matProj;
+	matProj = pGameIntance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+	XMStoreFloat4(&vPoint, XMVector3TransformCoord(XMLoadFloat4(&vPoint), matProj));
+
+	_matrix		matView;
+	matView = pGameIntance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	XMStoreFloat4(&vPoint, XMVector3TransformCoord(XMLoadFloat4(&vPoint), matView));
+
+	_float4		vRayPos;
+	memcpy(&vRayPos, &matView.r[3], sizeof(_float4));
+	_float4		vRayDir;
+	XMStoreFloat4(&vRayDir, (XMLoadFloat4(&vPoint) - XMLoadFloat4(&vRayPos)));
+
+	_matrix		matWorld;
+	matWorld = pTransform	->Get_WorldMatrix_Inverse();
+	XMVector3TransformCoord(XMLoadFloat4(&vRayPos), matWorld);
+	XMVector3TransformNormal(XMLoadFloat4(&vRayDir), matWorld);
+
+	RELEASE_INSTANCE(CGameInstance);
+	_ulong	dwVtxIdx[3]{};
+	_float fDist;
+
+	for (_ulong i = 0; i < m_iNumVerticesZ - 1; ++i)
+	{
+		for (_ulong j = 0; j < m_iNumVerticesX - 1; ++j)
+		{
+			_ulong dwIndex = i * (m_iNumVerticesX)+j;
+
+			dwVtxIdx[0] = dwIndex + (m_iNumVerticesX);
+			dwVtxIdx[1] = dwIndex + (m_iNumVerticesX)+1;
+			dwVtxIdx[2] = dwIndex + 1;
+
+			if (TriangleTests::Intersects(XMLoadFloat4(&vRayPos),
+				XMVector3Normalize(XMLoadFloat4(&vRayDir)),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[1]]),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[0]]),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[2]]),
+				fDist))
+			{
+				// 여기서 바꿔야함
+				dwIndex = i * (m_iNumVerticesX - 1) + j;
+
+				fIndexs.x = _float(dwIndex + (m_iNumVerticesX - 1));
+				fIndexs.y = _float(dwIndex + (m_iNumVerticesX - 1) + 1);
+				fIndexs.z = _float(dwIndex + 1);
+				return  true;
+			}
+
+
+			dwVtxIdx[0] = dwIndex + (m_iNumVerticesX);
+			dwVtxIdx[1] = dwIndex + 1;
+			dwVtxIdx[2] = dwIndex;
+
+			if (TriangleTests::Intersects(XMLoadFloat4(&vRayPos),
+				XMVector3Normalize(XMLoadFloat4(&vRayDir)),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[1]]),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[0]]),
+				XMLoadFloat3(&m_pVerticesPos[dwVtxIdx[2]]),
+				fDist))
+			{
+				dwIndex = i * (m_iNumVerticesX - 1) + j;
+				fIndexs.x = _float(dwIndex + (m_iNumVerticesX - 1));
+				fIndexs.y = _float(dwIndex + (m_iNumVerticesX - 1) + 1);
+				fIndexs.z = _float(dwIndex + 1);
+
+				return  true;
+			}
+		}
+	}
+	return false;
 }
 
 CVIBuffer_Terrain * CVIBuffer_Terrain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pHeightMapFilePath)

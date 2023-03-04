@@ -193,6 +193,7 @@
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\public\Gate.h" />
+    <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
     <ClInclude Include="..\Public\Kena_MainOutfit.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
+    <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />

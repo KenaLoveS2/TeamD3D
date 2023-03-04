@@ -604,59 +604,6 @@ void CImgui_MapEditor::Imgui_Save_Func()
 			jChild["7_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
 		}
 
-		/*	aiTextureType_FilePath* TextureFilePaths = static_cast<CEnviromentObj*>(pObject.second)->Get_TexturePaths();
-
-			string	strDiffuse = CUtile::WstringToString(TextureFilePaths->DIFFUSE_path);
-			jChild["8_DIFFUSE_path"] = strDiffuse;
-
-			string	SPECULAR_path = CUtile::WstringToString(TextureFilePaths->SPECULAR_path);
-			jChild["9_SPECULAR_path"] = SPECULAR_path;
-
-			string	AMBIENT_path = CUtile::WstringToString(TextureFilePaths->AMBIENT_path);
-			jChild["10_AMBIENT_path"] = AMBIENT_path;
-
-			string	EMISSIVE_path = CUtile::WstringToString(TextureFilePaths->EMISSIVE_path);
-			jChild["11_EMISSIVE_path"] = EMISSIVE_path;
-
-			string	EMISSIVEMASK_path = CUtile::WstringToString(TextureFilePaths->EMISSIVEMASK_path);
-			jChild["12_EMISSIVEMASK_path"] = EMISSIVEMASK_path;
-
-			string	NORMALS_path = CUtile::WstringToString(TextureFilePaths->NORMALS_path);
-			jChild["13_NORMALS_path"] = NORMALS_path;
-
-			string	MASK_path = CUtile::WstringToString(TextureFilePaths->MASK_path);
-			jChild["14_MASK_path"] = MASK_path;
-
-			string	SSS_MASK_path = CUtile::WstringToString(TextureFilePaths->SSS_MASK_path);
-			jChild["15_SSS_MASK_path"] = SSS_MASK_path;
-
-			string	SPRINT_EMISSIVE_path = CUtile::WstringToString(TextureFilePaths->SPRINT_EMISSIVE_path);
-			jChild["16_SPRINT_EMISSIVE_path"] = SPRINT_EMISSIVE_path;
-
-			string	HAIR_DEPTH_Path = CUtile::WstringToString(TextureFilePaths->HAIR_DEPTH_Path);
-			jChild["17_LIGHTMAP_path"] = HAIR_DEPTH_Path;
-
-			string	ALPHA_path = CUtile::WstringToString(TextureFilePaths->ALPHA_path);
-			jChild["18_REFLECTION_path"] = ALPHA_path;
-
-			string	HAIR_ROOT_path = CUtile::WstringToString(TextureFilePaths->HAIR_ROOT_path);
-			jChild["19_BASE_COLOR_path"] = HAIR_ROOT_path;
-
-			string	COMP_MSK_CURV_path = CUtile::WstringToString(TextureFilePaths->COMP_MSK_CURV_path);
-			jChild["20_NORMAL_CAMERA_path"] = COMP_MSK_CURV_path;
-
-			string	COMP_H_R_AO_path = CUtile::WstringToString(TextureFilePaths->COMP_H_R_AO_path);
-			jChild["21_EMISSION_COLOR_path"] = COMP_H_R_AO_path;
-
-			string	COMP_E_R_AO_path = CUtile::WstringToString(TextureFilePaths->COMP_E_R_AO_path);
-			jChild["22_METALNESS_path"] = COMP_E_R_AO_path;
-
-			string	ROUGHNESS_path = CUtile::WstringToString(TextureFilePaths->ROUGHNESS_path);
-			jChild["23_DIFFUSE_ROUGHNESS_path"] = ROUGHNESS_path;
-
-			string	AMBIENT_OCCLUSION_path = CUtile::WstringToString(TextureFilePaths->AMBIENT_OCCLUSION_path);
-			jChild["24_AMBIENT_OCCLUSION_path"] = AMBIENT_OCCLUSION_path;*/
-
 		CModel* pModel = static_cast<CModel*>(pObject.second->Find_Component(L"Com_Model"));
 		
 		if (pModel != nullptr &&  true == pModel->Get_IStancingModel())
@@ -721,9 +668,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
 	vector<string> StrComponentVec;
-	array<string,(_int)WJTextureType_UNKNOWN> strFilePaths_arr;
 
-	strFilePaths_arr.fill("");
 
 	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -753,30 +698,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
-		//for (string strTag : jLoadChild["8_TextureFilePath"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
-		//	StrFilePathVec.push_back(strTag);
-
-		//aiTextureType_FilePath* TextureFilePaths = static_cast<CEnviromentObj*>(pObject.second)->Get_TexturePaths();
-
-		//jLoadChild["8_DIFFUSE_path"].get_to<string>(strDiffuse);															strFilePaths_arr[WJTextureType_DIFFUSE] = strDiffuse;
-		//jLoadChild["9_SPECULAR_path"].get_to<string>(SPECULAR_path);											strFilePaths_arr[WJTextureType_SPECULAR] = SPECULAR_path;
-		//jLoadChild["10_AMBIENT_path"].get_to<string>(AMBIENT_path);												strFilePaths_arr[WJTextureType_AMBIENT] = AMBIENT_path;
-		//jLoadChild["11_EMISSIVE_path"].get_to<string>(EMISSIVE_path);												strFilePaths_arr[WJTextureType_EMISSIVE] = EMISSIVE_path;
-		//jLoadChild["12_EMISSIVEMASK_path"].get_to<string>(EMISSIVEMASK_path);							strFilePaths_arr[WJTextureType_EMISSIVEMASK] = EMISSIVEMASK_path;
-		//jLoadChild["13_NORMALS_path"].get_to<string>(NORMALS_path);											strFilePaths_arr[WJTextureType_NORMALS] = NORMALS_path;
-		//jLoadChild["14_MASK_path"].get_to<string>(MASK_path);														strFilePaths_arr[WJTextureType_MASK] = MASK_path;
-		//jLoadChild["15_SSS_MASK_path"].get_to<string>(SSS_MASK_path);											strFilePaths_arr[WJTextureType_SSS_MASK] = SSS_MASK_path;
-		//jLoadChild["16_SPRINT_EMISSIVE_path"].get_to<string>(SPRINT_EMISSIVE_path);					strFilePaths_arr[WJTextureType_SPRINT_EMISSIVE] = SPRINT_EMISSIVE_path;
-		//jLoadChild["17_LIGHTMAP_path"].get_to<string>(HAIR_DEPTH_Path);											strFilePaths_arr[WJTextureType_HAIR_DEPTH] = HAIR_DEPTH_Path;
-		//jLoadChild["18_REFLECTION_path"].get_to<string>(ALPHA_path);									strFilePaths_arr[WJTextureType_ALPHA] = ALPHA_path;
-		//jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								 strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
-		//jLoadChild["20_NORMAL_CAMERA_path"].get_to<string>(COMP_MSK_CURV_path);				strFilePaths_arr[WJTextureType_COMP_MSK_CURV] = COMP_MSK_CURV_path;
-		//jLoadChild["21_EMISSION_COLOR_path"].get_to<string>(COMP_H_R_AO_path);					strFilePaths_arr[WJTextureType_COMP_H_R_AO] = COMP_H_R_AO_path;
-		//jLoadChild["22_METALNESS_path"].get_to<string>(COMP_E_R_AO_path);									strFilePaths_arr[WJTextureType_ROUGHNESS] = COMP_E_R_AO_path;
-		//jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(ROUGHNESS_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = ROUGHNESS_path;
-		//jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
-
-	
+		
 		vector<_float4x4>	vecInstnaceMatrixVec;
 		_int MatrixNumber = 0;
 		_float4x4 fInsMaxtrix;
@@ -820,7 +742,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;
 		StrComponentVec.clear();
-		strFilePaths_arr.fill("");
+	
 		vecInstnaceMatrixVec.clear();
 	}
 

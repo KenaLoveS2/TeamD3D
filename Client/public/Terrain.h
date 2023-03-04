@@ -36,6 +36,9 @@ private:
 	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
 	//CNavigation*				m_pNavigationCom = nullptr;
 
+public: /*For.IMgui*/
+	void					Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag);
+	void					Imgui_Test();
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
