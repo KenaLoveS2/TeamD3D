@@ -521,6 +521,26 @@ void CPhysX_Manager::Set_ActorMatrix(PxRigidActor* pActor, _float4x4 Matrix)
 	pActor->setGlobalPose(NewTransform);
 }
 
+void CPhysX_Manager::Set_ActorMatrixExecptTranslation(const _tchar *pActorTag, _float4x4 Matrix)
+{
+	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);
+	if (pActor == nullptr) {
+		pActor = (PxRigidDynamic*)Find_StaticActor(pActorTag);
+	}
+	if (pActor == nullptr) return;
+
+	return Set_ActorMatrixExecptTranslation(pActor, Matrix);
+}
+
+void CPhysX_Manager::Set_ActorMatrixExecptTranslation(PxRigidActor* pActor, _float4x4 Matrix)
+{
+	PxTransform NewTransform(CUtile::ConvertMatrix_D3DToPx(Matrix));
+
+	NewTransform.p = pActor->getGlobalPose().p;
+		
+	pActor->setGlobalPose(NewTransform);
+}
+
 void CPhysX_Manager::Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow)
 {	
 	PxRigidDynamic* pActor = (PxRigidDynamic*)Find_DynamicActor(pActorTag);

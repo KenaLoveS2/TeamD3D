@@ -12,7 +12,7 @@ CEffect_Rect_Instancing::CEffect_Rect_Instancing(const CEffect_Rect_Instancing &
 {
 }
 
-HRESULT CEffect_Rect_Instancing::Initialize_Prototype()
+HRESULT CEffect_Rect_Instancing::Initialize_Prototype(const _tchar* pFilePath)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;

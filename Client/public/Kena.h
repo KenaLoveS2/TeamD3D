@@ -47,10 +47,10 @@ public:
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pRangeCol = nullptr;
-	CNavigation*			m_pNavigationCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CModel*						m_pModelCom = nullptr;
+	CCollider*					m_pRangeCol = nullptr;
+	CNavigation*				m_pNavigationCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
@@ -59,6 +59,9 @@ private:
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
+
+	// CloneTag, Effect
+	map<const string, class CEffect_Base*>   m_mapEffect;
 
 private:
 	_bool					m_bAttack = false;
@@ -82,6 +85,7 @@ private:
 
 private:
 	HRESULT					Ready_Parts();
+	HRESULT					Ready_Effects();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();

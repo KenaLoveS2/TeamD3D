@@ -9,6 +9,7 @@
 BEGIN(Engine)
 class CGameInstance;
 class CStateMachine;
+class CAnimationState;
 class CModel;
 END
 
@@ -148,7 +149,7 @@ public:
 		INTO_HEAVY_FINISHER,
 
 		/* PULSE */
-		INTO_PULSE, INTO_PULSE_FRON_RUN,
+		INTO_PULSE, INTO_PULSE_FROM_RUN,
 
 		INTO_RUN_GRAB_STAFF,
 
@@ -379,7 +380,7 @@ private:
 	virtual ~CKena_State() = default;
 
 public:
-	HRESULT					Initialize(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CTransform* pTransform, class CCamera_Player* pCamera);
+	HRESULT					Initialize(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);
 	void						ImGui_RenderProperty();
@@ -388,10 +389,11 @@ private:
 	CGameInstance*			m_pGameInstance = nullptr;
 
 private:
-	class CKena*					m_pKena = nullptr;
-	CStateMachine*				m_pStateMachine = nullptr;
-	CModel*							m_pModel = nullptr;
-	CTransform*						m_pTransform = nullptr;
+	class CKena*				m_pKena = nullptr;
+	CStateMachine*			m_pStateMachine = nullptr;
+	CModel*					m_pModel = nullptr;
+	CAnimationState*		m_pAnimationState = nullptr;
+	CTransform*				m_pTransform = nullptr;
 	class CCamera_Player*	m_pCamera = nullptr;
 
 private:
@@ -404,6 +406,11 @@ private:
 	HRESULT					SetUp_State_Idle();
 	HRESULT					SetUp_State_Run();
 	HRESULT					SetUp_State_Aim();
+	HRESULT					SetUp_State_Attack1();
+	HRESULT					SetUp_State_Attack2();
+	HRESULT					SetUp_State_Attack3();
+	HRESULT					SetUp_State_Attack4();
+	HRESULT					SetUp_State_Pulse();
 
 private:
 	void						Start_Idle(_float fTimeDelta);
@@ -420,6 +427,28 @@ private:
 	void						Start_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Start_Aim_Run_Left(_float fTimeDelta);
 	void						Start_Aim_Run_Right(_float fTimeDelta);
+	void						Start_Attack_1(_float fTimeDelta);
+	void						Start_Attack_1_From_Run(_float fTimeDelta);
+	void						Start_Attack_1_Into_Run(_float fTimeDelta);
+	void						Start_Attack_1_Into_Walk(_float fTimeDelta);
+	void						Start_Attack_1_Return(_float fTimeDelta);
+	void						Start_Into_Pulse(_float fTimeDelta);
+	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
+	void						Start_Pulse(_float fTimeDelta);
+	void						Start_Pulse_Loop(_float fTimeDelta);
+	void						Start_Pulse_Into_Combat_End(_float fTimeDelta);
+	void						Start_Pulse_Into_Idle(_float fTimeDelta);
+	void						Start_Pulse_Into_Run(_float fTimeDelta);
+	void						Start_Pulse_Parry(_float fTimeDelta);
+	void						Start_Pulse_Walk_Forward(_float fTimeDelta);
+	void						Start_Pulse_Walk_Front_Left(_float fTimeDelta);
+	void						Start_Pulse_Walk_Front_Right(_float fTimeDelta);
+	void						Start_Pulse_Walk_Backward(_float fTimeDelta);
+	void						Start_Pulse_Walk_Back_Left(_float fTimeDelta);
+	void						Start_Pulse_Walk_Back_Right(_float fTimeDelta);
+	void						Start_Pulse_Walk_Left(_float fTimeDelta);
+	void						Start_Pulse_Walk_Right(_float fTimeDelta);
+	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
 
 private:
 	void						Tick_Idle(_float fTimeDelta);
@@ -435,6 +464,21 @@ private:
 	void						Tick_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Tick_Aim_Run_Left(_float fTimeDelta);
 	void						Tick_Aim_Run_Right(_float fTimeDelta);
+	void						Tick_Attack_1(_float fTimeDelta);
+	void						Tick_Attack_1_From_Run(_float fTimeDelta);
+	void						Tick_Attack_1_Into_Run(_float fTimeDelta);
+	void						Tick_Attack_1_Into_Walk(_float fTimeDelta);
+	void						Tick_Attack_1_Return(_float fTimeDelta);
+	void						Tick_Into_Pulse(_float fTimeDelta);
+	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
+	void						Tick_Pulse(_float fTimeDelta);
+	void						Tick_Pulse_Loop(_float fTimeDelta);
+	void						Tick_Pulse_Into_Combat_End(_float fTimeDelta);
+	void						Tick_Pulse_Into_Idle(_float fTimeDelta);
+	void						Tick_Pulse_Into_Run(_float fTimeDelta);
+	void						Tick_Pulse_Parry(_float fTimeDelta);
+	void						Tick_Pulse_Walk(_float fTimeDleta);
+	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
 
 private:
 	void						End_Idle(_float fTimeDelta);
@@ -450,6 +494,21 @@ private:
 	void						End_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						End_Aim_Run_Left(_float fTimeDelta);
 	void						End_Aim_Run_Right(_float fTimeDelta);
+	void						End_Attack_1(_float fTimeDelta);
+	void						End_Attack_1_From_Run(_float fTimeDelta);
+	void						End_Attack_1_Into_Run(_float fTimeDelta);
+	void						End_Attack_1_Into_Walk(_float fTimeDelta);
+	void						End_Attack_1_Return(_float fTimeDelta);
+	void						End_Into_Pulse(_float fTimeDelta);
+	void						End_Into_Pulse_From_Run(_float fTimeDelta);
+	void						End_Pulse(_float fTimeDelta);
+	void						End_Pulse_Loop(_float fTimeDelta);
+	void						End_Pulse_Into_Combat_End(_float fTimeDelta);
+	void						End_Pulse_Into_Idle(_float fTimeDelta);
+	void						End_Pulse_Into_Run(_float fTimeDelta);
+	void						End_Pulse_Parry(_float fTimeDelta);
+	void						End_Pulse_Walk(_float fTimeDleta);
+	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
 
 private:	/* Changer */
 	_bool	Animation_Finish();
@@ -465,6 +524,7 @@ private:	/* Changer */
 	_bool	KeyInput_WD();
 	_bool	KeyInput_SA();
 	_bool	KeyInput_SD();
+	_bool	KeyInput_E();
 	_bool	KeyInput_Space();
 	_bool	KeyInput_LShift();
 	_bool	KeyInput_LCtrl();
@@ -473,7 +533,9 @@ private:	/* Changer */
 	_bool	KeyDown_Q();
 	_bool	KeyDown_R();
 	_bool	KeyDown_LCtrl();
+	_bool	MouseDown_Left();
 	_bool	MouseDown_Middle();
+	_bool	MouseDown_Right();
 
 	_bool	KeyUp_E();
 	_bool	KeyUp_LShift();
@@ -487,7 +549,7 @@ public:
 
 
 public:
-	static	CKena_State*	Create(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CTransform* pTransform, class CCamera_Player* pCamera);
+	static	CKena_State*	Create(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	virtual void				Free() override;
 };
 

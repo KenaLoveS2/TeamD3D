@@ -161,6 +161,8 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 	if (pPrototypeTag != nullptr)
 		pGameObject->Set_ProtoTag(pPrototypeTag);
 
+	pGameObject->Late_Initialize();
+
 	return pGameObject;	
 }
 
@@ -198,6 +200,8 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 
 	if (ppOut)
 		*ppOut = pGameObject;
+
+	pGameObject->Late_Initialize();
 
 	return S_OK;
 }
