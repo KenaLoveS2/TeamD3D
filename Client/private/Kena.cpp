@@ -444,11 +444,12 @@ HRESULT CKena::Ready_Effects()
 	CEffect_Base*	pEffectBase = nullptr;
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
+	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
-	pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
-	pEffectBase->Set_Owner(this);
+	// pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
+	pEffectBase->Set_Parent(this);
 
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 

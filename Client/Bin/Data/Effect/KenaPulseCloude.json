@@ -1,0 +1,106 @@
+{
+    "0.Save Level": 5,
+    "1.Save2Load Level": 4,
+    "2.Layer Tag": "Layer_Effect",
+    "Pulse Test": [
+        {
+            "Object Data": [
+                {
+                    "Child Count": 0,
+                    "Desc": [
+                        {
+                            "Alpha": 0.0,
+                            "Angle": 0.0,
+                            "Billboard": true,
+                            "Blend Type": 1,
+                            "Color": [
+                                0.2151602804660797,
+                                0.44557538628578186,
+                                0.49794238805770874,
+                                1.0
+                            ],
+                            "CreateRange": 0.0,
+                            "DiffuseTexture Index": [
+                                8.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Effect Type": 0,
+                            "FreeMove": false,
+                            "Have Trail": false,
+                            "Height Frame": 3.0,
+                            "HeightCnt": 8,
+                            "Init Pos": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "MaskTexture Index": [
+                                48.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Mesh Type": 0,
+                            "MoveDir Type": 0,
+                            "MoveDurationTime": 0.0,
+                            "MovingPosition": false,
+                            "NormalTexture Index": 0.0,
+                            "Particle Type": 0,
+                            "Pixed Dir": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Range": 0.0,
+                            "Rotation Type": 0,
+                            "Scale": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "SeparateHeight": 8,
+                            "SeparateWidth": 8,
+                            "Spread": false,
+                            "Start": false,
+                            "Texture Type": 0,
+                            "TextureRender Type": 1,
+                            "Trigger": false,
+                            "Use Child": false,
+                            "Use Mask": true,
+                            "Use Normal": false,
+                            "Width Frame": 3.0,
+                            "WidthCnt": 8
+                        }
+                    ],
+                    "Have DTextureCnt": 1,
+                    "Have MTextureCnt": 1,
+                    "WorldMatrix": [
+                        2.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        2.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        2.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

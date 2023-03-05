@@ -1269,6 +1269,11 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/NormalTexture/N_Effect_%d.png"),11))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_NormalEffect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
 	/* For.Prototype_Component_Shader_VtxEffectTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxEffectTex"),
@@ -1327,6 +1332,22 @@ HRESULT CLoader::Loading_ForTestEffect()
 #pragma endregion Model Component
 
 #pragma endregion EFFECT
+	/* For.Prototype_Component_Shader_VtxAnimModel*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Kena */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_Staff", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
@@ -1334,15 +1355,53 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
 		return E_FAIL;
 
-	///* For.Prototype_GameObject_KenaPulseCloud */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
-	//	CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloudDesc_Tool.json"))))
-	//	return E_FAIL;
+	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
+	/* For.Prototype_Component_Collider_AABB*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_AABB"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+		return E_FAIL;
+	/* For.Prototype_Component_Collider_OBB*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_OBB"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
+		return E_FAIL;
+	/* For.Prototype_Component_Collider_SPHERE*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Collider_SPHERE"),
+		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+		return E_FAIL;
 
-	///* For.Prototype_GameObject_KenaPulse */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
-	//	CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/kenapulse_t.json"))))
-	//	return E_FAIL;
+	lstrcpy(m_szLoadingText, TEXT("Loading Navigation Info..."));
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Navigation.dat")))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player_Camera */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
+		CKena::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
+		CKena_Staff::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
+		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaPulse */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
+		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaPulseCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
+		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 

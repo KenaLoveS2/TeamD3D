@@ -30,17 +30,17 @@ HRESULT CEffect::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (pArg != nullptr)
-		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
+	//if (pArg != nullptr)
+	//	memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
+	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
 
-	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
-	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
+//	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
@@ -84,44 +84,14 @@ void CEffect::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 		}
 	}
-
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-
-	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	if(CGameInstance::GetInstance()->Key_Down(DIK_UP))
 	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
-		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
-			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
-					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = 0.f;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
-			}
-		}
+		m_eEFfectDesc.fWidthFrame = 3.f;
+		m_eEFfectDesc.fHeightFrame = 3.f;
+		m_eEFfectDesc.iWidthCnt = 6.f;
+		m_eEFfectDesc.iHeightCnt = 6.f;
 	}
-
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
-	}
+	
 
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
@@ -155,20 +125,15 @@ void CEffect::Tick(_float fTimeDelta)
 void CEffect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	__super::Compute_CamDistance();
+//	__super::Compute_CamDistance();
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
-
-	if (nullptr != m_pParent)
-		Set_Matrix();
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()
@@ -183,10 +148,6 @@ HRESULT CEffect::Render()
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
 	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
 		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
-	else
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
 
 	m_pVIBufferCom->Render();
 	return S_OK;

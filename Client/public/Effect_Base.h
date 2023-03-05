@@ -14,7 +14,7 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
-#define TESTPLAY
+//#define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -119,16 +119,17 @@ public:
 	_uint					     Get_ChildCnt() { return (_uint)m_vecChild.size(); }
 	vector<class CEffect_Base*>* Get_vecChild() { return &m_vecChild; }
 
-	class CEffect_Base*			 Get_Parent() { return m_pParent; }
-	void						 Set_Parent(class CEffect_Base* pParrent) { m_pParent = pParrent; }
-	class CGameObject*			 Get_Owner() { return m_pOwner; }
-	void						 Set_Owner(class CGameObject* pOwner) { m_pOwner = pOwner; }
+	class CGameObject*			 Get_Parent() { return m_pParent; }
+	void						 Set_Parent(class CGameObject* pParrent) { m_pParent = pParrent; }
 
 	void						 Set_Matrix();
 	void						 Set_InitMatrix(_fmatrix WorldMatrix) {
 		XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix);
 	}
 	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+
+	void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
+	_bool   Get_Active() { return m_eEFfectDesc.bActive; }
 
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
@@ -190,9 +191,7 @@ protected:
 	_float4x4					m_InitWorldMatrix;
 	vector<class CEffect_Base*> m_vecChild;
 
-	class CEffect_Base*			m_pParent = nullptr;
-	class CGameObject*			m_pOwner = nullptr;
-
+	class CGameObject*			m_pParent = nullptr;
 	_float4x4					m_WorldWithParentMatrix;
 	/* ~Child */
 
