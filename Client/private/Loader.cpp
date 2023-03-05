@@ -99,14 +99,14 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_TESTPLAY:
 		pLoader->Loading_ForTestPlay();
 		break;
-#ifdef _DEBUG
+
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
 		break;
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-#endif
+
 	}
 	
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());

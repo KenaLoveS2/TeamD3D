@@ -1154,7 +1154,7 @@ void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
-#ifdef _DEBUG
+
 	if (pSelectEnviObj == nullptr)
 		return;
 	
@@ -1192,7 +1192,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	}
 
 	ImGui::End();
-#endif
+
 }
 
 void CImgui_MapEditor::imgui_ObjectList_Clear()
