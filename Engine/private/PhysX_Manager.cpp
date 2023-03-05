@@ -194,7 +194,8 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 }
 
 void CPhysX_Manager::Render()
-{	
+{
+	return;
 #ifdef _DEBUG
 	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
 
@@ -214,7 +215,8 @@ void CPhysX_Manager::Render()
 
 	m_pBatch->Begin();
 
-	for (PxU32 i = 0; i < NbLines; i++)
+	PxU32 temp = 10;
+	for (PxU32 i = 0; i < NbLines; i += temp)
 	{
 		const PxDebugLine& pose = RenderBuffer.getLines()[i];
 
@@ -298,8 +300,11 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	PxTransform Transform(PxIdentity);
 	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);	
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
-
+	shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+	
 	pBody->attachShape(*shape);
+	
 	m_pScene->addActor(*pBody);
 
 	return pBody;
@@ -516,8 +521,6 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
-		PxVec3 temp = pCapsule->getGlobalPose().p;
-		int i = 0;
 	}	
 }
 

@@ -52,7 +52,6 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
-
 	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
 	Push_EventFunctions();
@@ -98,7 +97,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-		
+
+	if(GetKeyState(VK_SPACE) & 0x8000)
+	{
+		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
+	}
+
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);

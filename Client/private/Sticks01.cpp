@@ -122,8 +122,8 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	//if (m_pFSM)
+	//	m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
