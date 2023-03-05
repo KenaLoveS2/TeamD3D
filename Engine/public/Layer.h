@@ -18,6 +18,7 @@ public:
 public:
 	HRESULT Add_GameObject(const _tchar* pCloneObjectTag, class CGameObject* pGameObject);
 	HRESULT Initialize();
+	HRESULT Late_Initialize();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 	void	SwitchOnOff_Shadow(_bool bSwitch);

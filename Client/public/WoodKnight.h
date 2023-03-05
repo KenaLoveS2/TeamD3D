@@ -56,6 +56,12 @@ private:
 		ANIMATION_END
 	};
 
+	enum COLLIDERTYPE
+	{
+		COLL_WEAPON = 0,
+		COLL_END
+	};
+
 private:
 	CWoodKnight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CWoodKnight(const CWoodKnight& rhs);
@@ -64,6 +70,7 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -71,6 +78,7 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
@@ -79,6 +87,14 @@ protected:
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+
+private:
+	void	Update_Collider(_float fTimeDelta) override;
+
+private:
+	vector<wstring> m_vecColliderName;
+	vector<_float3> m_vecPivot;
+	vector<_float3> m_vecPivotScale;
 
 public:
 	static CWoodKnight*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

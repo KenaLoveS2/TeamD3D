@@ -574,8 +574,8 @@ void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivo
 
 void CTransform::Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
 {		
-	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
-	assert(pActor != nullptr && "CTransform::Add_PxActorDynamic");
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicCollider(pActorTag);
+	assert(pActor != nullptr && "CTransform::Add_PxColliderDynamic");
 
 	ActorData Data;
 	Data.pActor = pActor;

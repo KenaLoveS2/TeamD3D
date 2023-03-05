@@ -37,7 +37,6 @@ HRESULT CSticks01::Initialize(void* pArg)
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
 
-
 	m_pModelCom->Set_AllAnimCommonType();
 	
 	return S_OK;
@@ -83,8 +82,8 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 		m_vecPivotScale.push_back(vWeaponScalePivot);
 
-		m_vecColliderName[0] = m_szCloneObjectTag;
-		m_vecColliderName[0] += L"Weapon";
+		m_vecColliderName[COLL_WEAPON] = m_szCloneObjectTag;
+		m_vecColliderName[COLL_WEAPON] += L"Weapon";
 
 		CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
@@ -92,7 +91,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		SocketMatrix =  XMMatrixTranslation(m_vecPivot[0].x, m_vecPivot[0].y, m_vecPivot[0].z)
+		SocketMatrix =  XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
 			* SocketMatrix;
 
 		_float4x4 pivotMatrix;
@@ -100,15 +99,15 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
-		PxSphereDesc.pActortag = m_vecColliderName[0].c_str();
+		PxSphereDesc.pActortag = m_vecColliderName[COLL_WEAPON].c_str();
 		PxSphereDesc.vPos = _float3(0.f,5.f,0.f);
-		PxSphereDesc.fRadius = m_vecPivotScale[0].x;
+		PxSphereDesc.fRadius = m_vecPivotScale[COLL_WEAPON].x;
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
-		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, nullptr);
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false));
 
-		m_pTransformCom->Add_Collider(m_vecColliderName[0].c_str(), pivotMatrix);
+		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
@@ -233,19 +232,47 @@ void CSticks01::ImGui_PhysXValueProperty()
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
 
-	// WEAPON
-	_float3 vWeaponScalePivot = m_vecPivotScale[0];
-	float fWeaponScale[3] = { vWeaponScalePivot.x, vWeaponScalePivot.y, vWeaponScalePivot.z };
-	ImGui::DragFloat3("WeaponPivotScale", fWeaponScale, 0.01f, 0.01f, 100.0f);
-	m_vecPivotScale[0].x = fWeaponScale[0]; m_vecPivotScale[0].y = fWeaponScale[1]; m_vecPivotScale[0].z = fWeaponScale[2];
+	_uint nActorListCount = static_cast<_uint>(m_pTransformCom->Get_ActorList()->size());
 
-	_float3 vWeaponPivot = m_vecPivot[0];
-	float fWeaponPos[3] = { vWeaponPivot.x, vWeaponPivot.y, vWeaponPivot.z };
-	ImGui::DragFloat3("WeaponPivotPos", fWeaponPos, 0.01f, -100.f, 100.0f);
-	m_vecPivot[0].x = fWeaponPos[0]; m_vecPivot[0].y = fWeaponPos[1]; m_vecPivot[0].z = fWeaponPos[2];
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_vecColliderName[0].c_str(), m_vecPivotScale[0]);
+	ImGui::BulletText("ColliderLists");
+	{
+		static _int iSelect = -1;
+		char** ppObjectTag = new char*[nActorListCount];
+		_uint iTagLength = 0;
+		_uint i = 0;
+		for (auto& Pair : *m_pTransformCom->Get_ActorList())
+			ppObjectTag[i++] = CUtile::WideCharToChar(Pair.pActorTag);
+		ImGui::ListBox("Collider List", &iSelect, ppObjectTag, nActorListCount);
+		if (iSelect != -1)
+		{
+			ImGui::BulletText("Current Collider Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iSelect]);
+		}
+		for (_uint i = 0; i < nActorListCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+
+	{
+		// WEAPON
+		_float3 vWeaponScalePivot = m_vecPivotScale[COLL_WEAPON];
+		float fWeaponScale[3] = { vWeaponScalePivot.x, vWeaponScalePivot.y, vWeaponScalePivot.z };
+		ImGui::DragFloat3("WeaponPivotScale", fWeaponScale, 0.01f, 0.01f, 100.0f);
+		m_vecPivotScale[COLL_WEAPON].x = fWeaponScale[0];
+		m_vecPivotScale[COLL_WEAPON].y = fWeaponScale[1];
+		m_vecPivotScale[COLL_WEAPON].z = fWeaponScale[2];
+
+		_float3 vWeaponPivot = m_vecPivot[0];
+		float fWeaponPos[3] = { vWeaponPivot.x, vWeaponPivot.y, vWeaponPivot.z };
+		ImGui::DragFloat3("WeaponPivotPos", fWeaponPos, 0.01f, -100.f, 100.0f);
+		m_vecPivot[COLL_WEAPON].x = fWeaponPos[0];
+		m_vecPivot[COLL_WEAPON].y = fWeaponPos[1];
+		m_vecPivot[COLL_WEAPON].z = fWeaponPos[2];
+
+		CPhysX_Manager::GetInstance()->Set_ActorScaling(m_vecColliderName[COLL_WEAPON].c_str(), m_vecPivotScale[COLL_WEAPON]);
+	}
 }
-
 
 HRESULT CSticks01::Call_EventFunction(const string& strFuncName)
 {
