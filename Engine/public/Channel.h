@@ -21,6 +21,7 @@ public:
 	void		Set_BoneTranfromMatrix(_fmatrix matTransform);
 	_matrix	Get_BoneTransformMatrix();
 	_bool		Get_BoneLocked();
+	const _uint&		Get_KeyFrameCount() const { return m_iNumKeyframes; }
 
 public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);
@@ -28,14 +29,14 @@ public:
 	
 	void Update_TransformMatrix(_float PlayTime, _bool isRootBone = false);
 	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone = false);
-	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone, CChannel* pRefChannel);
+	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone = false);
 
 	/* For CAnimationState */
 	void Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix& matBonesTransfomation, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
 	void Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRadio, _smatrix& matBonesTransfomation, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
-	void Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAdditiveRatio, _smatrix& matBonesTransfomation, _bool isRootBone, CChannel* pRefChannel);
+	void Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAdditiveRatio, _smatrix& matBonesTransfomation, _bool isRootBone = false);
 
-	void Reset_KeyFrameIndex() { m_iCurrentKeyFrameIndex = 0; }
+	void Reset_KeyFrameIndex();
 	void Set_KeyFrameIndex(_double dPlayTime);
 	const char* Get_Name() const { return m_szName; }
 
@@ -44,8 +45,9 @@ public:
 
 private:
 	class CModel*		m_pModel = nullptr;
-	char			m_szName[MAX_PATH] = "";
-	class CBone*	m_pBone = nullptr;
+	char				m_szName[MAX_PATH] = "";
+	class CBone*		m_pBone = nullptr;
+	_float4			m_vRootBonePos = { 0.f, 0.f, 0.f, 1.f };
 
 	_uint				m_iNumKeyframes = 0;
 	vector<KEYFRAME>	m_KeyFrames;

@@ -18,14 +18,14 @@ const _bool & CAnimationState::Get_AnimationFinish()
 		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->IsFinished();
 }
 
-HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strDivisionBone, const string & strFilePath)
+HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	NULL_CHECK_RETURN(pOwner, E_FAIL);
 	NULL_CHECK_RETURN(pModelCom, E_FAIL);
 
 	m_pOwner = pOwner;
 	m_pModel = pModelCom;
-	m_strDivisionBone = strDivisionBone;
+	m_strRootBone = strRootBone;
 
 	if (strFilePath != "")
 		return S_FALSE;
@@ -56,12 +56,14 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 
 		jAnimState["1. Looping"].get_to<_bool>(pAnimState->m_bLoop);
 
-		jAnimState["2. Main Animation"].get_to<string>(strMainAnim);
+		jAnimState["2. Lerp Duration"].get_to<_float>(pAnimState->m_fLerpDuration);
+
+		jAnimState["3. Main Animation"].get_to<string>(strMainAnim);
 		pAnim = m_pModel->Find_Animation(strMainAnim);
 		NULL_CHECK_RETURN(pAnim, E_FAIL);
 		pAnimState->m_pMainAnim = pAnim;
 
-		jAnimState["3. Blend Animation"].get_to<string>(strBlendAnim);
+		jAnimState["4. Blend Animation"].get_to<string>(strBlendAnim);
 		if (strBlendAnim != "N/A")
 		{
 			pAnim = m_pModel->Find_Animation(strBlendAnim);
@@ -69,9 +71,9 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 			pAnimState->m_pBlendAnim = pAnim;
 		}
 
-		if (jAnimState["4. Joint Index"].is_array() == true)
+		if (jAnimState["5. Joint Index"].is_array() == true)
 		{
-			for (auto jJoint : jAnimState["4. Joint Index"])
+			for (auto jJoint : jAnimState["5. Joint Index"])
 			{
 				jJoint["0. Bone Name"].get_to<string>(strJoint);
 				jJoint["1. Lock To"].get_to<string>(strLockTo);
@@ -96,10 +98,10 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 			}
 		}
 
-		if (jAnimState["5. Additive Animation"].is_array() == true)
+		if (jAnimState["6. Additive Animation"].is_array() == true)
 		{
 			CAdditiveAnimation*		pAdditive = nullptr;
-			for (auto jAdditive : jAnimState["5. Additive Animation"])
+			for (auto jAdditive : jAnimState["6. Additive Animation"])
 			{
 				pAdditive = new CAdditiveAnimation;
 
@@ -256,7 +258,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 		pPreAnim = m_pPreAnim->m_pMainAnim;
 		pPreBlendAnim = m_pPreAnim->m_pBlendAnim;
-		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pPreBlendAnim);
+		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim);
 
 		if (pPreAnim == pMainAnim || pPreAnim == pBlendAnim)
 			pPreAnim->Reverse_Play(fTimeDelta);
@@ -283,7 +285,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 			}
 		}
 
@@ -303,7 +305,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 		//if (pBlendAnim != nullptr && pBlendAnim == pPreAnim)
 		//	pBlendAnim->Reverse_Play(fTimeDelta);
 
-		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 		/* TODO : Check 'Is Additive Process needs Lerp' */		
 
 		m_fCurLerpTime += fTimeDelta;
@@ -322,7 +324,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				pJoint->Set_BoneLocked(Pair.second);
 			}
 		}
-		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 	}
 	//m_pModel->Compute_CombindTransformationMatrix();
 
@@ -349,7 +351,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 			CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
 
 			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
 			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 			{
 				if (pAdditiveAnim->m_bPlayReverse == false)
@@ -370,10 +372,10 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_pCurAnim->m_pMainAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 			}
 			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 		}
 	}
 	m_pModel->Compute_CombindTransformationMatrix();
@@ -755,15 +757,16 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 	{
 		jAnimState["0. State Name"] = Pair.first;
 		jAnimState["1. Looping"] = Pair.second->m_bLoop;
-		jAnimState["2. Main Animation"] = string(Pair.second->m_pMainAnim->Get_Name());
+		jAnimState["2. Lerp Duration"] = Pair.second->m_fLerpDuration;
+		jAnimState["3. Main Animation"] = string(Pair.second->m_pMainAnim->Get_Name());
 
 		if (Pair.second->m_pBlendAnim != nullptr)
-			jAnimState["3. Blend Animation"] = string(Pair.second->m_pBlendAnim->Get_Name());
+			jAnimState["4. Blend Animation"] = string(Pair.second->m_pBlendAnim->Get_Name());
 		else
-			jAnimState["3. Blend Animation"] = string("N/A");
+			jAnimState["4. Blend Animation"] = string("N/A");
 
 		if (Pair.second->m_listLockedJoint.empty() == true)
-			jAnimState["4. Joint Index"] = string("N/A");
+			jAnimState["5. Joint Index"] = string("N/A");
 
 		for (auto& Joint : Pair.second->m_listLockedJoint)
 		{
@@ -784,12 +787,12 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 			else
 				return E_FAIL;
 
-			jAnimState["4. Joint Index"].push_back(jJoint);
+			jAnimState["5. Joint Index"].push_back(jJoint);
 			jJoint.clear();
 		}
 
 		if (Pair.second->m_vecAdditiveAnim.empty() == true)
-			jAnimState["5. Additive Animation"] = string("N/A");
+			jAnimState["6. Additive Animation"] = string("N/A");
 
 		for (auto pAdditiveAnim : Pair.second->m_vecAdditiveAnim)
 		{
@@ -824,7 +827,7 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 				jJoint.clear();
 			}
 
-			jAnimState["5. Additive Animation"].push_back(jAdditiveAnim);
+			jAnimState["6. Additive Animation"].push_back(jAdditiveAnim);
 			jAdditiveAnim.clear();
 		}
 
@@ -858,10 +861,10 @@ HRESULT CAnimationState::Load(const string & strFilePath)
 	return S_OK;
 }
 
-CAnimationState * CAnimationState::Create(CGameObject * pOwner, CModel * pModelCom, const string & strDivisionBone, const string & strFilePath)
+CAnimationState * CAnimationState::Create(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	CAnimationState*	pInstance = new CAnimationState;
-	HRESULT				hr = pInstance->Initialize(pOwner, pModelCom, strDivisionBone, strFilePath);
+	HRESULT				hr = pInstance->Initialize(pOwner, pModelCom, strRootBone, strFilePath);
 
 	if (hr == E_FAIL)
 	{
