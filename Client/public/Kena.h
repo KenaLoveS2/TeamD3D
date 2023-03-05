@@ -34,6 +34,7 @@ public:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -41,6 +42,7 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual void					Update_Child() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void			Push_EventFunctions() override;
@@ -59,6 +61,7 @@ private:
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
+	map<const string, class CEffect_Base*>	m_mapEffects;
 
 	// CloneTag, Effect
 	map<const string, class CEffect_Base*>   m_mapEffect;

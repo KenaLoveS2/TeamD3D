@@ -16,6 +16,7 @@
 #include "VIBuffer_Point_Instancing.h"
 #include "VIBuffer_Trail.h"
 #include "StateMachine.h"
+#include "Status.h"
 
 /* 다양한 컴포넌트(원형)들을 담고 있는다. -> 사본컴포넌트들은 사용해야할 객체들이 보유한다. */
 /* 사본을 생성하여 리턴한다. */
@@ -35,6 +36,7 @@ public:
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	map<const _tchar*, class CComponent*>*		Get_ComponentProtoType() { return m_pPrototypes; }
 
+	void		Delete_ProtoComponent(_uint iLevelIndex, const _tchar* pProtoTypeTag);
 
 private:
 	_uint											m_iNumLevels = 0;

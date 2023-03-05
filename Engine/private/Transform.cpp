@@ -15,8 +15,8 @@ CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
-{
-	
+{	
+	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
 }
 
 void CTransform::Set_Scaled(STATE eState, _float fScale)
@@ -157,7 +157,7 @@ void CTransform::Imgui_RenderProperty()
 		
 		_float4x4 Matrix;
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&Matrix));
-		Set_WorldMatrix_float4x4(Matrix);
+		/*Set_WorldMatrix_float4x4(Matrix);*/
 
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
@@ -202,8 +202,9 @@ void CTransform::Imgui_RenderProperty()
 			reinterpret_cast<float*>(&matProj),
 			mCurrentGizmoOperation,
 			mCurrentGizmoMode,
-			reinterpret_cast<float*>(&m_WorldMatrix),
+			reinterpret_cast<float*>(&Matrix),
 			nullptr, useSnap ? &snap[0] : nullptr);
+		Set_WorldMatrix_float4x4(Matrix);
 	}
 }
 
@@ -401,6 +402,17 @@ HRESULT CTransform::Bind_ShaderResource(CShader * pShaderCom, const char * pCons
 	return pShaderCom->Set_Matrix(pConstantName, &m_WorldMatrix);		
 }
 
+CTransform::ActorData*  CTransform::FindActorData(const _tchar * pActorTag)
+{
+	for(auto& iter : m_ActorList)
+	{
+		if(!wcscmp(iter.pActorTag,pActorTag))
+			return &iter;
+	}
+
+	return nullptr;
+}
+
 CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CTransform*		pInstance = new CTransform(pDevice, pContext);
@@ -538,21 +550,49 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
-void CTransform::Connect_PxActor(const _tchar * pActorTag, _float3 vPivot)
+void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist)
 {
-	m_pPhysX_Manager = CPhysX_Manager::GetInstance();
-
-	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
-	if (m_pPxActor == nullptr)
-	{
-		m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
-	}
-	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActor");
+	m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
+	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
 
 	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
-	m_bIsStaticPxActor = pUserData->eType <= TRIANGLE_MESH_STATIC;
+	m_bIsStaticPxActor = true;
 
-	m_vPxPivot = vPivot;
+	m_vPxPivot = vPivotDist;
+}
+
+void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist)
+{
+	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
+	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
+
+	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+	m_bIsStaticPxActor = false;
+
+	m_vPxPivot = vPivotDist;
+}
+
+void CTransform::Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
+{		
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
+	assert(pActor != nullptr && "CTransform::Add_PxActorDynamic");
+
+	ActorData Data;
+	Data.pActor = pActor;
+	wcscpy_s(Data.pActorTag, MAX_PATH, pActorTag);
+	Data.PivotMatrix = PivotMatrix;
+
+	m_ActorList.push_back(Data);
+}
+
+void CTransform::Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
+{
+	ActorData* pActorData = FindActorData(pActorTag);
+
+	if (pActorData == nullptr)
+		return;
+
+	pActorData->PivotMatrix = PivotMatrix;
 }
 
 void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
@@ -560,10 +600,11 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
 		if (m_bIsStaticPxActor)
-		{
+		{	
 			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
+		
 		}
 		else
 		{
@@ -595,4 +636,30 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
 	}		
+}
+
+void CTransform::Tick(_float fTimeDelta)
+{
+	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
+	_float4x4 RetMatrix, Pivot;
+
+	_matrix m;
+	XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) *  World);
+	m = XMLoadFloat4x4(&RetMatrix);
+	m.r[0] = XMVector3Normalize(m.r[0]);
+	m.r[1] = XMVector3Normalize(m.r[1]);
+	m.r[2] = XMVector3Normalize(m.r[2]);
+	m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+
+	for (auto& iter : m_ActorList)
+	{
+		XMStoreFloat4x4(&RetMatrix, XMLoadFloat4x4(&iter.PivotMatrix) * World);
+		m = XMLoadFloat4x4(&RetMatrix);
+		m.r[0] = XMVector3Normalize(m.r[0]);
+		m.r[1] = XMVector3Normalize(m.r[1]);
+		m.r[2] = XMVector3Normalize(m.r[2]);
+		
+		XMStoreFloat4x4(&RetMatrix, m);
+		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
+	}	
 }

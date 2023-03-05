@@ -15,6 +15,7 @@ END
 BEGIN(Client)
 class CImgui_MapEditor  final : public CImguiObject
 {
+
 private:
 	CImgui_MapEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	
@@ -33,7 +34,7 @@ private:
 	void											Imgui_Save_Load_Json();
 	void											Imgui_CreateEnviromentObj();
 	void											Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
-	void											Imgui_SelectObject_Add_TexturePath();
+	void											Imgui_SelectObject_InstancingControl();
 	void											Imgui_Control_ViewerCamTransform();
 	void											Imgui_TexturePathNaming();
 	void											Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
@@ -44,9 +45,11 @@ private:		/*Logic*/
 	HRESULT									Imgui_Load_Func();
 	void											Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace ,class CGameObject* pGameObject);
 	void											Imgui_Create_Option_Reset();
-	
-
 	void											JsonTest();
+public:
+	void											Imgui_Maptool_Terrain_Selecte();
+
+
 
 private: /*For_Tool*/
 	string										m_strChapter[MAX_CHATERNUM];
@@ -64,6 +67,12 @@ private: /*For_Tool*/
 	_int															m_iTexturePathNum = false;
 
 	_int															m_iSelectMeshIndex = -1;
+
+
+private: /*Use.Terrain*/
+	class					CTerrain*						m_pSelectedTerrain = nullptr;
+	_bool													m_bUseTerrainPicking = false;
+	_bool													m_bIstancingObjPicking = false;
 
 
 private:	/*Use_Data*/

@@ -105,17 +105,30 @@ public:
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
 
+	struct ActorData
+	{
+		PxRigidActor* pActor;
+		 _tchar pActorTag[MAX_PATH];
+		_float4x4 PivotMatrix;
+	};
+
+	list<ActorData>* Get_ActorList() { return &m_ActorList; }
+
 private:	
-	_float4x4				m_WorldMatrix;
-
+	_float4x4							m_WorldMatrix;
 	TRANSFORMDESC			m_TransformDesc;
-	_float					m_fInitSpeed = 0.f;
+	_float								m_fInitSpeed = 0.f;
 
-	_bool m_bIsStaticPxActor = false;
-	PxRigidActor* m_pPxActor = nullptr;
 	class CPhysX_Manager* m_pPhysX_Manager = nullptr;
-	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
+	_bool							   m_bIsStaticPxActor = false;
+	PxRigidActor*				   m_pPxActor = nullptr;
 
+	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
+	_float3 m_vPxPivotScale = { 1.f,1.f,1.f };
+
+	ActorData* FindActorData(const _tchar* pActorTag);
+	list<ActorData> m_ActorList;
+	
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
@@ -134,9 +147,20 @@ public:
 	_float Calc_Distance_XY(CTransform* pTransform);
 	_float Calc_Distance_YZ(CTransform* pTransform);
 
-	void Connect_PxActor(const _tchar* pActorTag, _float3 vPivot = {0.f, 0.f, 0.f});
+	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
+	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
+	void Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
+	void Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
+
 	void Set_Translation(_fvector vPosition, _fvector vDist);
+
 	void Set_PxPivot(_float3 vPivot) { m_vPxPivot = vPivot; }
+	_float3 Get_vPxPivot() { return m_vPxPivot; }
+
+	void Set_PxPivotScale(_float3 vPivotScale) { m_vPxPivotScale = vPivotScale; }
+	_float3 Get_vPxPivotScale() { return m_vPxPivotScale; }
+
+	void Tick(_float fTimeDelta);
 };
 
 END

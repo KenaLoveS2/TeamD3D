@@ -103,6 +103,7 @@ public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	map<const _tchar*, class CComponent*>*		Get_ComponentProtoType();
+	void		Delete_ProtoComponent(_uint iLevelIndex, const _tchar* pProtoTypeTag);
 
 public: /* For.PipeLine */
 		_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
@@ -161,6 +162,8 @@ public: /* For.PipeLine */
 		void Add_ImguiObject(class CImguiObject* pImguiObject, bool bIsSelectViewer = false);
 		void Clear_ImguiObjects();
 		class CGameObject* Get_SelectObjectPtr();
+		class CImguiObject* Get_ImguiObject(const char* pName);
+
 
 	public: // for String manager
 		HRESULT Add_String(_uint iLevelIndex, _tchar* pStr);
@@ -228,3 +231,4 @@ public: /* For.PipeLine */
 };
 
 END
+

@@ -24,12 +24,43 @@ HRESULT CTerrain::Initialize_Prototype()
 
 HRESULT CTerrain::Initialize(void * pArg)
 {
+	if (pArg != nullptr)
+	{
+		TERRAIN_DESC* Desc = reinterpret_cast<TERRAIN_DESC*>(pArg);
+
+		m_TerrainDesc.wstrDiffuseTag = Desc->wstrDiffuseTag;
+		m_TerrainDesc.wstrFilterTag = Desc->wstrFilterTag;
+		m_TerrainDesc.wstrNormalTag = Desc->wstrNormalTag;
+		m_bLoadData = true;
+		m_TerrainDesc.iBaseDiffuse = Desc->iBaseDiffuse;
+		m_TerrainDesc.iFillterOne_TextureNum = Desc->iFillterOne_TextureNum;
+		m_TerrainDesc.iFillterTwo_TextureNum = Desc->iFillterTwo_TextureNum;
+		m_TerrainDesc.iFillterThree_TextureNum = Desc->iFillterThree_TextureNum;
+
+	}
+
+	else
+	{
+		m_TerrainDesc.iBaseDiffuse = 4;
+		m_TerrainDesc.iFillterOne_TextureNum = 3;
+		m_TerrainDesc.iFillterTwo_TextureNum = 2;
+		m_TerrainDesc.iFillterThree_TextureNum = 1;
+
+	}
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 	
+
+	return S_OK;
+}
+
+HRESULT CTerrain::Late_Initialize(void * pArg)
+{
+	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	return S_OK;
 }
@@ -47,9 +78,9 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); //
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); 
 #ifdef _DEBUG
-		//m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+
 #endif
 	}
 }
@@ -66,16 +97,46 @@ HRESULT CTerrain::Render()
 
 	m_pVIBufferCom->Render();
 
-//#ifdef _DEBUG
-//	m_pNavigationCom->Render();
-//#endif
-
 	return S_OK;
 }
 
 void CTerrain::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
+}
+
+void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
+{
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), ComTag,
+		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+		assert(!"Imgui_Tool_Add_Component");	
+}
+
+void CTerrain::Erase_FilterCom()
+{
+	Delete_Component(TEXT("Com_Filter"));
+	Safe_Release(m_pTextureCom[TYPE_FILTER]);
+}
+
+void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
+{
+	if (nullptr == pHeightMapFilePath)
+		return;
+
+	m_pVIBufferCom->Change_HeightMap(pHeightMapFilePath);
+}
+
+_bool CTerrain::CreateEnvrObj_PickingPos(_float4 & vPos)
+{
+	if (ImGui::IsMouseClicked(0))
+	{
+		if (m_pVIBufferCom->Picking_Terrain(g_hWnd, m_pTransformCom, &vPos))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 HRESULT CTerrain::SetUp_Components()
@@ -95,25 +156,40 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-		return E_FAIL;
+	if(false == m_bLoadData )
+	{ 
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+		/* For.Com_Filter */
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+
+		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Terrain");
+		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Filter");
+		m_TerrainDesc.wstrNormalTag = TEXT("");
+	}
+	else
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+		/* For.Com_Filter */
+		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+	}
+
 
 	/* For.Com_Brush*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Normal"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
-	/* For.Com_Filter */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-		return E_FAIL;
 
-	///* For.Com_Navigation */
-	//if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-	//	(CComponent**)&m_pNavigationCom)))
-	//	return E_FAIL;	
 
 	return S_OK;
 }
@@ -135,14 +211,28 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 0)))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResource(m_pShaderCom, "g_FilterTexture", 0)))
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_BaseTexture",m_TerrainDesc.iBaseDiffuse)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &_float4(15.f, 0.f, 15.f, 1.f), sizeof(_float4))))
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_0", m_TerrainDesc.iFillterOne_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_1", m_TerrainDesc.iFillterTwo_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_2", m_TerrainDesc.iFillterThree_TextureNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

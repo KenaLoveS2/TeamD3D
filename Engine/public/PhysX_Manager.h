@@ -41,7 +41,7 @@ public:
 
 		// Dynamic Parameter
 		_float3 vVelocity;
-		_float fDensity, fAngularDamping;		
+		_float fDensity, fAngularDamping, fMass, fDamping;		
 	} PX_CAPSULE_DESC;
 		
 private:
@@ -49,14 +49,14 @@ private:
 	PxDefaultErrorCallback m_PxDefaultErrorCallback;
 	
 	PxDefaultCpuDispatcher* m_pDispatcher = nullptr;
-	PxTolerancesScale m_PxTolerancesScale;
+	PxTolerancesScale			m_PxTolerancesScale;
 
-	PxFoundation*	m_pFoundation = nullptr;
-	PxPhysics*		m_pPhysics = nullptr;
-	PxScene*		m_pScene = nullptr;
-	PxMaterial*		m_pMaterial = nullptr;
-	PxPvd*			m_pPvd = nullptr;
-	PxCooking*		m_pCooking = nullptr;
+	PxFoundation*					m_pFoundation = nullptr;
+	PxPhysics*						m_pPhysics = nullptr;
+	PxScene*							m_pScene = nullptr;
+	PxMaterial*						m_pMaterial = nullptr;
+	PxPvd*								m_pPvd = nullptr;
+	PxCooking*						m_pCooking = nullptr;
 	
 	CustomSimulationEventCallback m_EventCallback;
 	
@@ -69,14 +69,13 @@ private:
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pContext = nullptr;
 
-
 #pragma region Render Variable
 #ifdef _DEBUG
 private:	
-	PrimitiveBatch<VertexPositionColor>*				m_pBatch = nullptr;
-	BasicEffect*										m_pEffect = nullptr;
+	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
+	BasicEffect*												m_pEffect = nullptr;
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
-	_float4												m_vColor;
+	_float4														m_vColor;
 #endif // _DEBUG
 #pragma endregion
 	
@@ -89,6 +88,10 @@ public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Tick(_float fTimeDelta);
 	void Render();
+
+	void	Imgui_Render();
+	PxRigidActor*				Find_StaticGameObject(_int iIndex);
+	PxRigidActor*				Find_DynamicGameObject(_int iIndex);
 	
 	void Update_Trasnform(_float fTimeDelta);
 
@@ -105,6 +108,8 @@ public:
 	_float4x4 Get_ActorMatrix(PxRigidActor* pActor);
 	void Set_ActorMatrix(const _tchar *pActorTag, _float4x4 Matrix);
 	void Set_ActorMatrix(PxRigidActor* pActor, _float4x4 Matrix);
+	void Set_ActorMatrixExecptTranslation(const _tchar *pActorTag, _float4x4 Matrix);
+	void Set_ActorMatrixExecptTranslation(PxRigidActor* pActor, _float4x4 Matrix);
 	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow = false);
 	
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);

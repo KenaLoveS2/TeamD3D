@@ -33,6 +33,9 @@ private:
 	HRESULT Ready_Prototype_GameObject();
 	HRESULT Ready_Gara();
 
+
+	HRESULT CMainApp::Ready_BufferLock_UnLock();
+
 public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);

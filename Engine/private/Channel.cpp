@@ -292,7 +292,7 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 {
 	if (isRootBone == true)
 	{
-		//matBonesTransfomation = m_pBone->Get_TransformMatrix();
+		matBonesTransfomation = m_pBone->Get_TransformMatrix();
 		//m_pBone->Set_TransformMatrix(matBonesTransfomation);
 		return;
 	}
@@ -497,11 +497,7 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, Ratio);
 	}
 
-	//vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRatio);
-	//vRotation = XMQuaternionMultiply(vRotation, XMLoadFloat4(&pRefChannel->m_KeyFrames[pRefChannel->m_iCurrentKeyFrameIndex].vRotation));
-	//vRotation = XMQuaternionMultiply(vRotation, vBaseRot);
 	_vector	vRefRotation = XMLoadFloat4(&pRefChannel->m_KeyFrames[pRefChannel->m_iCurrentKeyFrameIndex].vRotation);
-	//vRefRotation = XMQuaternionMultiply(vRefRotation, vBaseRot);
 	vRotation = XMQuaternionSlerp(vBaseRot, XMQuaternionMultiply(vBaseRot, vRotation), fAdditiveRatio);
 
 	matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
