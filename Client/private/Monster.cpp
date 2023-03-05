@@ -62,7 +62,7 @@ void CMonster::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_pKena)
-		m_pKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)

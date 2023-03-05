@@ -969,6 +969,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_BranchTosser */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.mdat"), PivotMatrix))))
+		return E_FAIL;
+
 	/* Prototype_Component_Model_Rot */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
@@ -977,6 +982,9 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* Prototype_Component_Model_HeroRot */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser/", false, false, false)))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -1254,7 +1262,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 
-	///* For.Prototype_GameObject_Sky */
+	/* For.Prototype_GameObject_Sky */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mesh"),
 	//	CEffect_Mesh::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;

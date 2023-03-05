@@ -195,7 +195,6 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 
 void CPhysX_Manager::Render()
 {
-	return;
 #ifdef _DEBUG
 	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
 
@@ -215,17 +214,21 @@ void CPhysX_Manager::Render()
 
 	m_pBatch->Begin();
 
-	PxU32 temp = 10;
-	for (PxU32 i = 0; i < NbLines; i += temp)
+	for (PxU32 i = 0; i < NbLines; i ++)
 	{
 		const PxDebugLine& pose = RenderBuffer.getLines()[i];
-
+			
 		PxVec3 PxPos_0 = pose.pos0;
 		PxVec3 PxPos_1 = pose.pos1;
 
-		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1),_float4(0.f,1.f,0.f,1.f));
+		DX::DrawLine(m_pBatch,
+			CUtile::ConvertPosition_PxToD3D(PxPos_0),
+			CUtile::ConvertPosition_PxToD3D(PxPos_1),
+			_float4(0.f, 1.f, 0.f, 1.f));
 	}
+
 	m_pBatch->End();
+
 #endif // _DEBUG
 }
 
@@ -727,6 +730,8 @@ void CPhysX_Manager::Set_ActorPosition(const _tchar* pActorTag, _float3 vPositio
 void CPhysX_Manager::Set_ActorRotation(const _tchar* pActorTag, _float fDegree, _float3 vAxis)
 {
 	PxRigidActor* pActor = Find_DynamicActor(pActorTag);
+	if (pActor == nullptr)
+		pActor = Find_DynamicCollider(pActorTag);
 	assert(pActor != nullptr && "CPhysX_Manager::Set_ActorRotation");
 
 	Set_ActorRotation(pActor, fDegree, vAxis);

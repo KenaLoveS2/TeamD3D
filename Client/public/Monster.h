@@ -68,11 +68,7 @@ protected:
 	CNavigation*				m_pNavigationCom = nullptr;
 	CFSMComponent*		m_pFSM = nullptr;
 	class CGameObject*		m_pKena = nullptr;
-	_float4							m_pKenaPos;
-
-protected:
-	_bool							m_bSpawn = false;
-	_float							m_fIdletoAttackTime = 0.f;
+	_float4							m_vKenaPos;
 
 protected:
 	virtual	HRESULT			SetUp_State() PURE;

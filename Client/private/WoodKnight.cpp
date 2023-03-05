@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\WoodKnight.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CWoodKnight::CWoodKnight(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -25,7 +26,7 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -45,12 +46,142 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 
 HRESULT CWoodKnight::Late_Initialize(void * pArg)
 {
+	// 몸통
+	{
+		_float3 vPos = _float3(0.f, 3.f, -15.f);
+		_float3 vPivotScale = _float3(0.45f, 0.6f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 1.1f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fDamping = 10.f;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
+		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Set_PxPivotScale(vPivotScale);
+		m_pTransformCom->Set_PxPivot(vPivotPos);
+	}
+
+	// 무기
+	{
+		wstring WeaponPivot;
+		m_vecColliderName.push_back(WeaponPivot);
+		_float3 vWeaponPivot = _float3(-1.65f, 0.f, -1.75f);
+		m_vecPivot.push_back(vWeaponPivot);
+		_float3 vWeaponScalePivot = _float3(0.25f, 0.6f, 0.1f);
+		m_vecPivotScale.push_back(vWeaponScalePivot);
+		_float3 vWeaponRotPivot = _float3(1.6f, 0.f, 0.f);
+		m_vecPivotRot.push_back(vWeaponRotPivot);
+
+		m_vecColliderName[COLL_WEAPON] = m_szCloneObjectTag;
+		m_vecColliderName[COLL_WEAPON] += L"Weapon";
+
+		CBone* pBone = m_pModelCom->Get_BonePtr("char_sword_jnt2");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix =
+			XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x)
+			* XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
+			* SocketMatrix;
+
+		_float4x4 pivotMatrix;
+		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_vecColliderName[COLL_WEAPON].c_str();
+		PxCapsuleDesc.vPos = _float3(0.f, 5.f, 0.f);
+		PxCapsuleDesc.fRadius = m_vecPivotScale[COLL_WEAPON].x;
+		PxCapsuleDesc.fHalfHeight = m_vecPivotScale[COLL_WEAPON].y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 1.f;
+		PxCapsuleDesc.fDamping = 1.f;
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
+
+		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
+		m_pRendererCom->Set_PhysXRender(true);
+	}
+
+	//// 무기
+	{
+		wstring WeaponPivot;
+		m_vecColliderName.push_back(WeaponPivot);
+		_float3 vWeaponPivot = _float3(0.85f, 0.03f, -1.f);
+		m_vecPivot.push_back(vWeaponPivot);
+		_float3 vWeaponScalePivot = _float3(0.15f, 0.2f, 0.1f);
+		m_vecPivotScale.push_back(vWeaponScalePivot);
+		_float3 vWeaponRotPivot = _float3(-1.1f, 0.f, 0.f);
+		m_vecPivotRot.push_back(vWeaponRotPivot);
+
+		m_vecColliderName[COLL_PUNCH] = m_szCloneObjectTag;
+		m_vecColliderName[COLL_PUNCH] += L"Punch";
+
+		CBone* pBone = m_pModelCom->Get_BonePtr("char_lf_wristWeight_jnt");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix =
+			XMMatrixRotationX(m_vecPivotRot[COLL_PUNCH].x)
+			* XMMatrixRotationY(m_vecPivotRot[COLL_PUNCH].y)
+			* XMMatrixRotationZ(m_vecPivotRot[COLL_PUNCH].z)
+			* XMMatrixTranslation(m_vecPivot[COLL_PUNCH].x, m_vecPivot[COLL_PUNCH].y, m_vecPivot[COLL_PUNCH].z)
+			* SocketMatrix;
+
+		_float4x4 pivotMatrix;
+		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_vecColliderName[COLL_PUNCH].c_str();
+		PxCapsuleDesc.vPos = _float3(0.f, 5.f, 0.f);
+		PxCapsuleDesc.fRadius = m_vecPivotScale[COLL_PUNCH].x;
+		PxCapsuleDesc.fHalfHeight = m_vecPivotScale[COLL_PUNCH].y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 1.f;
+		PxCapsuleDesc.fDamping = 1.f;
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
+
+		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_PUNCH].c_str(), pivotMatrix);
+		m_pRendererCom->Set_PhysXRender(true);
+	}
+	
+	m_pTransformCom->Set_Translation(_float4(0.f, 0.f, -15.f, 1.f), _float4());
+
 	return S_OK;
 }
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
+
+	if (DistanceTrigger(10.f))
+		m_bSpawn = true;
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -148,6 +279,97 @@ void CWoodKnight::ImGui_ShaderValueProperty()
 
 void CWoodKnight::ImGui_PhysXValueProperty()
 {
+
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
+	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	m_pTransformCom->Set_PxPivot(vPxPivot);
+
+	_uint nActorListCount = static_cast<_uint>(m_pTransformCom->Get_ActorList()->size());
+
+	ImGui::BulletText("ColliderLists");
+	{
+		static _int iSelect = -1;
+		char** ppObjectTag = new char*[nActorListCount];
+		_uint iTagLength = 0;
+		_uint i = 0;
+		for (auto& Pair : *m_pTransformCom->Get_ActorList())
+			ppObjectTag[i++] = CUtile::WideCharToChar(Pair.pActorTag);
+		ImGui::ListBox("Collider List", &iSelect, ppObjectTag, nActorListCount);
+		if (iSelect != -1)
+		{
+			ImGui::BulletText("Current Collider Object : ");
+			ImGui::SameLine();
+			ImGui::Text(ppObjectTag[iSelect]);
+		}
+		for (_uint i = 0; i < nActorListCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+
+	{
+		ImGui::Text("WEAPON");
+
+		// WEAPON
+		_float3 vWeaponScalePivot = m_vecPivotScale[COLL_WEAPON];
+		float fWeaponScale[3] = { vWeaponScalePivot.x, vWeaponScalePivot.y, vWeaponScalePivot.z };
+		ImGui::DragFloat3("WeaponPivotScale", fWeaponScale, 0.01f, 0.01f, 100.0f);
+		m_vecPivotScale[COLL_WEAPON].x = fWeaponScale[0];
+		m_vecPivotScale[COLL_WEAPON].y = fWeaponScale[1];
+		m_vecPivotScale[COLL_WEAPON].z = fWeaponScale[2];
+
+		CPhysX_Manager::GetInstance()->Set_ActorScaling(m_vecColliderName[COLL_WEAPON].c_str(), m_vecPivotScale[COLL_WEAPON]);
+
+		_float3 vWeaponRotPivot = m_vecPivotRot[COLL_WEAPON];
+		float fWeaponRotPos[3] = { vWeaponRotPivot.x, vWeaponRotPivot.y, vWeaponRotPivot.z };
+		ImGui::DragFloat3("WeaponPivotRot", fWeaponRotPos, 0.01f, -100.f, 100.0f);
+		m_vecPivotRot[COLL_WEAPON].x = fWeaponRotPos[0];
+		m_vecPivotRot[COLL_WEAPON].y = fWeaponRotPos[1];
+		m_vecPivotRot[COLL_WEAPON].z = fWeaponRotPos[2];
+
+		_float3 vWeaponPivot = m_vecPivot[COLL_WEAPON];
+		float fWeaponPos[3] = { vWeaponPivot.x, vWeaponPivot.y, vWeaponPivot.z };
+		ImGui::DragFloat3("WeaponPivotPos", fWeaponPos, 0.01f, -100.f, 100.0f);
+		m_vecPivot[COLL_WEAPON].x = fWeaponPos[0];
+		m_vecPivot[COLL_WEAPON].y = fWeaponPos[1];
+		m_vecPivot[COLL_WEAPON].z = fWeaponPos[2];
+	}
+
+	{
+		ImGui::Text("PUNCH");
+
+		// PUNCH
+		_float3 vScalePivot = m_vecPivotScale[COLL_PUNCH];
+		float fScale[3] = { vScalePivot.x, vScalePivot.y, vScalePivot.z };
+		ImGui::DragFloat3("PunchPivotScale", fScale, 0.01f, 0.01f, 100.0f);
+		m_vecPivotScale[COLL_PUNCH].x = fScale[0];
+		m_vecPivotScale[COLL_PUNCH].y = fScale[1];
+		m_vecPivotScale[COLL_PUNCH].z = fScale[2];
+
+		CPhysX_Manager::GetInstance()->Set_ActorScaling(m_vecColliderName[COLL_PUNCH].c_str(), m_vecPivotScale[COLL_PUNCH]);
+
+		_float3 vRotPivot = m_vecPivotRot[COLL_PUNCH];
+		float fRotPos[3] = { vRotPivot.x, vRotPivot.y, vRotPivot.z };
+		ImGui::DragFloat3("PunchPivotRot", fRotPos, 0.01f, -100.f, 100.0f);
+		m_vecPivotRot[COLL_PUNCH].x = fRotPos[0];
+		m_vecPivotRot[COLL_PUNCH].y = fRotPos[1];
+		m_vecPivotRot[COLL_PUNCH].z = fRotPos[2];
+
+		_float3 vPivot = m_vecPivot[COLL_PUNCH];
+		float fPos[3] = { vPivot.x, vPivot.y, vPivot.z };
+		ImGui::DragFloat3("PunchPivotPos", fPos, 0.01f, -100.f, 100.0f);
+		m_vecPivot[COLL_PUNCH].x = fPos[0];
+		m_vecPivot[COLL_PUNCH].y = fPos[1];
+		m_vecPivot[COLL_PUNCH].z = fPos[2];
+	}
 }
 
 HRESULT CWoodKnight::Call_EventFunction(const string& strFuncName)
@@ -163,11 +385,177 @@ void CWoodKnight::Push_EventFunctions()
 HRESULT CWoodKnight::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
-		.AddState("IDLE")
+		.InitState("ALERT")
+		.AddState("ALERT")
 		.Tick([this](_float fTimeDelta)
 	{
+		if (!m_bSpawn)
+			m_pModelCom->ResetAnimIdx_PlayTime(ALERT);
+
+		m_pModelCom->Set_AnimIndex(ALERT);
+	})
+		.AddTransition("ALERT to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ALERT);
+	})
+
+		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		m_fIdletoAttackTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
+	})
+		.AddTransition("IDLE to WALK", "WALK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdletoAttackTime, 1.f);
+	})
+
+		.AddState("WALK")
+		.OnStart([this]()
+	{
+		Set_AttackType();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(WALK);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+		Tick_Attack(fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		Reset_Attack();
+	})
+		.AddTransition("WALK to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bChargeAttack;
+	})
+		.AddTransition("WALK to RANGEDATTACK", "RANGEDATTACK")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bRangedAttack;
+	})
+		.AddTransition("WALK to COMBOATTACK_LUNGE", "COMBOATTACK_LUNGE")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bComboAttack_Lunge;
+	})
+		.AddTransition("WALK to COMBOATTACK_OVERHEAD", "COMBOATTACK_OVERHEAD")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bComboAttack_Overhead;
+	})
+		.AddTransition("WALK to DOUBLEATTACK", "DOUBLEATTACK")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bDoubleAttack;
+	})
+		.AddTransition("WALK to UPPERCUTATTACK", "UPPERCUTATTACK")
+		.Predicator([this]()
+	{
+		return m_bRealAttack && m_bUppercutAttack;
+	})
+
+		.AddState("CHARGEATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
+		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("CHARGEATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(CHARGEATTACK);
+	})
+
+		.AddState("RANGEDATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
+		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("RANGEDATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(RANGEDATTACK);
+	})
+
+		.AddState("COMBOATTACK_LUNGE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_LUNGE);
+		m_pModelCom->Set_AnimIndex(COMBOATTACK_LUNGE);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("COMBOATTACK_LUNGE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(COMBOATTACK_LUNGE);
+	})
+
+		.AddState("COMBOATTACK_OVERHEAD")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_OVERHEAD);
+		m_pModelCom->Set_AnimIndex(COMBOATTACK_OVERHEAD);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("COMBOATTACK_OVERHEAD to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(COMBOATTACK_OVERHEAD);
+	})
+
+		.AddState("DOUBLEATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(DOUBLEATTACK);
+		m_pModelCom->Set_AnimIndex(DOUBLEATTACK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("DOUBLEATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DOUBLEATTACK);
+	})
+
+		.AddState("UPPERCUTATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(UPPERCUTATTACK);
+		m_pModelCom->Set_AnimIndex(UPPERCUTATTACK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt(m_vKenaPos);
+	})
+		.AddTransition("UPPERCUTATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(UPPERCUTATTACK);
 	})
 		.Build();
 
@@ -245,6 +633,153 @@ HRESULT CWoodKnight::SetUp_ShadowShaderResources()
 
 void CWoodKnight::Update_Collider(_float fTimeDelta)
 {
+	m_pTransformCom->Tick(fTimeDelta);
+	{
+		CBone* pBone = m_pModelCom->Get_BonePtr("char_sword_jnt2");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix = XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x)
+		   * XMMatrixRotationY(m_vecPivotRot[COLL_WEAPON].y)
+			* XMMatrixRotationZ(m_vecPivotRot[COLL_WEAPON].z)
+			*XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
+			* SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
+	}
+
+	{
+		CBone* pBone = m_pModelCom->Get_BonePtr("char_lf_wristWeight_jnt");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix =
+			XMMatrixRotationX(m_vecPivotRot[COLL_PUNCH].x)
+			* XMMatrixRotationY(m_vecPivotRot[COLL_PUNCH].y)
+			* XMMatrixRotationZ(m_vecPivotRot[COLL_PUNCH].z)
+			* XMMatrixTranslation(m_vecPivot[COLL_PUNCH].x, m_vecPivot[COLL_PUNCH].y, m_vecPivot[COLL_PUNCH].z)
+			* SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(m_vecColliderName[COLL_PUNCH].c_str(), mat);
+	}
+}
+
+void CWoodKnight::Set_AttackType()
+{
+	//	5 DoubleAttack OverheadSlam uppercutattack
+	//	6~8 ComboAttack
+	// 10~15 RangeAttack 또는 ChargeAttack함
+	m_bRealAttack = false;
+	m_bRangedAttack = false;
+	m_bChargeAttack = false;
+	m_bComboAttack_Lunge = false;
+	m_bComboAttack_Overhead = false;
+	m_bDoubleAttack = false;
+	m_bUppercutAttack = false;
+
+	if(DistanceTrigger(10.f) && DistanceTrigger(15.f))
+	{
+		m_iAttackType = AT_RANGEDATTACK;
+		// 계속 번갈아 가면서 함
+		m_iAttackType = AT_CHARGEATTACK;
+	}
+	else if (DistanceTrigger(6.f) && DistanceTrigger(10.f))
+	{
+		m_iAttackType = AT_COMBOATTACK_LUNGE;
+		// 계속 번갈아 가면서 함
+		m_iAttackType = AT_COMBOATTACK_OVERHEAD;
+	}
+	else	if(DistanceTrigger(5.f))
+	{
+		m_iAttackType = AT_DOUBLEATTACK;
+		// 계속 번갈아 가면서 함
+		m_iAttackType = AT_UPPERCUTATTACK;
+	}
+
+	if (m_iAttackType == ATTACKTYPE_END)
+		m_iAttackType = rand() % 6;
+
+	// ATTACKTYPE이 플레이어 거리에 따라 달라짐
+	switch (m_iAttackType)
+	{
+	case AT_RANGEDATTACK:
+		m_bRangedAttack = true;
+		break;
+	case AT_CHARGEATTACK:
+		m_bChargeAttack = true;
+		break;
+	case AT_COMBOATTACK_LUNGE:
+		m_bComboAttack_Lunge = true;
+		break;
+	case AT_COMBOATTACK_OVERHEAD:
+		m_bComboAttack_Overhead = true;
+		break;
+	case AT_DOUBLEATTACK:
+		m_bDoubleAttack = true;
+		break;
+	case AT_UPPERCUTATTACK:
+		m_bUppercutAttack = true;
+	default:
+		break;
+	}
+}
+
+void CWoodKnight::Reset_Attack()
+{
+	m_bRealAttack = false;
+	m_bRangedAttack = false;
+	m_bChargeAttack = false;
+	m_bComboAttack_Lunge = false;
+	m_bComboAttack_Overhead = false;
+	m_bDoubleAttack = false;
+	m_bUppercutAttack = false;
+	m_iAttackType = ATTACKTYPE_END;
+}
+
+void CWoodKnight::Tick_Attack(_float fTimeDelta)
+{
+	switch (m_iAttackType)
+	{
+	case AT_RANGEDATTACK:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
+		if (DistanceTrigger(15.f))
+			m_bRealAttack = true;
+		break;
+	case AT_CHARGEATTACK:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
+		if (DistanceTrigger(15.f))
+			m_bRealAttack = true;
+		break;
+	case AT_COMBOATTACK_LUNGE:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
+		if (DistanceTrigger(10.f))
+			m_bRealAttack = true;
+		break;
+	case AT_COMBOATTACK_OVERHEAD:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
+		if (DistanceTrigger(10.f))
+			m_bRealAttack = true;
+		break;
+	case AT_DOUBLEATTACK:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
+		if (DistanceTrigger(5.f))
+			m_bRealAttack = true;
+		break;
+	case AT_UPPERCUTATTACK:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
+		if (DistanceTrigger(5.f))
+			m_bRealAttack = true;
+	default:
+		break;
+	}
 }
 
 CWoodKnight* CWoodKnight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
