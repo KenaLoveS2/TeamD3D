@@ -30,7 +30,7 @@ public:
 	static void LoadFilterData(string jsonFileName);			// 나중에 그냥 불러올때
 
 
-	CTerrain* Get_SelectedTerrin() { return m_pSelectedTerrain; }
+	CTerrain* Get_SelectedTerrin() { return m_pPickingTerrain; }
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);
 	virtual void Imgui_FreeRender();
@@ -69,7 +69,9 @@ private:			/*Pointer*/
 
 private:
 	class CGameInstance*			m_pGameInstance = nullptr;
-	class	CTerrain*				m_pSelectedTerrain = nullptr;
+	class	CTerrain*						m_pSelectedTerrain = nullptr;
+	class			CTerrain*				m_pPickingTerrain = nullptr;
+
 
 	class CVIBuffer_Terrain*		m_pSelected_Buffer = nullptr;
 	class CTransform*					m_pSelected_Tranform = nullptr;

@@ -540,6 +540,29 @@ void CObject_Manager::Imgui_Push_Group(CGameObject * pSelectedObject)
 	}
 }
 
+void CObject_Manager::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * LayerTag, _int iRoomIndex)
+{
+	CLayer* pLayer = Find_Layer(iCurLevel, LayerTag);
+	if (pLayer == nullptr)
+		return;
+
+	for (auto& pMyPair : pLayer->GetGameObjects())
+	{
+		if(dynamic_cast<CEnviromentObj*>(pMyPair.second)== nullptr )
+			continue;
+
+		if (static_cast<CEnviromentObj*>(pMyPair.second)->Get_RoomIndex() == iRoomIndex)
+		{
+			pLayer->Delete_GameObject(pMyPair.second->Get_ObjectCloneName());
+		}
+
+	}
+
+	
+
+
+}
+
 void CObject_Manager::Imgui_Add_For_EnviroMent_Component()
 {
 	static _int iOption = 0;

@@ -211,6 +211,27 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 	Safe_Delete_Array(pInstanceVertices);
 }
 
+void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> VecInstancingMatrix)
+{
+	/*메쉬_인스턴싱_이펙트 일때 여기 사용*/
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &VecInstancingMatrix[i]->m[0], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+}
+
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
 {
 	if (hFile == nullptr)

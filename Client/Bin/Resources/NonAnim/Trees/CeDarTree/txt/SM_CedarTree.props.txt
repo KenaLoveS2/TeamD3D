@@ -1,0 +1,74 @@
+Materials[5] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Atlas.MI_TreeLeaves_Atlas'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Style2_Wind.MI_TreeTrunk_Style2_Wind'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeCore.MI_TreeCore'
+    Materials[3] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Billboards/MI_CedarTree_Billboard.MI_CedarTree_Billboard'
+    Materials[4] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Atlas_CheapLOD.MI_TreeLeaves_Atlas_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[5] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Atlas.MI_TreeLeaves_Atlas'
+        MaterialSlotName = leaves
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 951.424, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Style2_Wind.MI_TreeTrunk_Style2_Wind'
+        MaterialSlotName = Trunk
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1009.73, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeCore.MI_TreeCore'
+        MaterialSlotName = TreeCore
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2819.29, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[3] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Billboards/MI_CedarTree_Billboard.MI_CedarTree_Billboard'
+        MaterialSlotName = MI_CedarTree_Billboard
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2025.35, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[4] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Atlas_CheapLOD.MI_TreeLeaves_Atlas_CheapLOD'
+        MaterialSlotName = MI_TreeLeaves_Atlas_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1152.5, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=13.1326, Y=29.8687, Z=1696.95 }
+    BoxExtent = { X=525.871, Y=562.435, Z=1731.4 }
+    SphereRadius = 1738.13
+}

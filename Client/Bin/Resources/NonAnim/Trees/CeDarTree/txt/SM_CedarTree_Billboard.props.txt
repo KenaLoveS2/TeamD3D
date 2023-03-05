@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Billboards/MI_CedarTree_Billboard.MI_CedarTree_Billboard'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Billboards/MI_CedarTree_Billboard.MI_CedarTree_Billboard'
+        MaterialSlotName = MI_CedarTree_Billboard
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2025.35, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=1696.95 }
+    BoxExtent = { X=7.06081e-05, Y=592.303, Z=1731.4 }
+    SphereRadius = 1829.91
+}

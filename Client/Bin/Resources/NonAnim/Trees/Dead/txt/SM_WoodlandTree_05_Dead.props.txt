@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Woodland/MI_WoodlandTree_05_Base.MI_WoodlandTree_05_Base'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Woodland/MI_WoodlandTree_05_Base.MI_WoodlandTree_05_Base'
+        MaterialSlotName = MI_WoodlandTree_05_Base
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 383.275, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-45.1689, Y=76.6296, Z=336.231 }
+    BoxExtent = { X=195.728, Y=161.268, Z=384.694 }
+    SphereRadius = 405.603
+}

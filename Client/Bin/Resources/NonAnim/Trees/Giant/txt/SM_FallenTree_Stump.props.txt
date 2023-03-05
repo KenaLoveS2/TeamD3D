@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Stump_02.MI_FallenTree_Stump_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Stump_01.MI_FallenTree_Stump_01'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Vines_Tileable.MI_Vines_Tileable'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Stump_02.MI_FallenTree_Stump_02'
+        MaterialSlotName = MI_FallenTree_Stump_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 11585.4, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_FallenTree_Stump_01.MI_FallenTree_Stump_01'
+        MaterialSlotName = MI_FallenTree_Stump_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 11909.4, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Vines_Tileable.MI_Vines_Tileable'
+        MaterialSlotName = MI_Vines_Tileable
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 11658.7, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-27.5139, Y=2783.46, Z=3016.83 }
+    BoxExtent = { X=3545.03, Y=6412.16, Z=4856.66 }
+    SphereRadius = 7457.81
+}

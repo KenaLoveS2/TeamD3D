@@ -1,0 +1,74 @@
+Materials[5] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_SmallRock.MI_Ancient_Tree_SmallRock'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_Rocks.MI_Ancient_Tree_Rocks'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree.MI_Ancient_Tree'
+    Materials[3] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_Alpha.MI_Ancient_Tree_Alpha'
+    Materials[4] = Material3'/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial'
+}
+SourceModels[0] = {}
+StaticMaterials[5] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_SmallRock.MI_Ancient_Tree_SmallRock'
+        MaterialSlotName = MI_Ancient_Tree_SmallRock
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4912.52, 8515.88, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_Rocks.MI_Ancient_Tree_Rocks'
+        MaterialSlotName = MI_Ancient_Tree_Rocks
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1235.54, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree.MI_Ancient_Tree'
+        MaterialSlotName = MI_Ancient_Tree
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 7462.48, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[3] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_Ancient_Tree_Alpha.MI_Ancient_Tree_Alpha'
+        MaterialSlotName = MI_Ancient_Tree_Alpha
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2517.93, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[4] =
+    {
+        MaterialInterface = Material3'/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial'
+        MaterialSlotName = WorldGridMaterial1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 0, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-10.1235, Y=119.327, Z=1299.49 }
+    BoxExtent = { X=1987.59, Y=1831.33, Z=1503.69 }
+    SphereRadius = 2570.89
+}

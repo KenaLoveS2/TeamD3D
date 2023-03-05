@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Fresnel.MI_TreeLeaves_Fresnel'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Style2_Wind.MI_TreeTrunk_Style2_Wind'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Fresnel_cheapLOD.MI_TreeLeaves_Fresnel_cheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Fresnel.MI_TreeLeaves_Fresnel'
+        MaterialSlotName = MI_WoodlandTree_Branches6
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 464.151, 137.862, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Style2_Wind.MI_TreeTrunk_Style2_Wind'
+        MaterialSlotName = MI_CedarTree_3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 874.382, 872.092, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Fresnel_cheapLOD.MI_TreeLeaves_Fresnel_cheapLOD'
+        MaterialSlotName = MI_TreeLeaves_Fresnel_cheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 470.154, 139.67, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=11.7491, Y=35.736, Z=1496.84 }
+    BoxExtent = { X=377.15, Y=400.825, Z=1539.7 }
+    SphereRadius = 1542.07
+}

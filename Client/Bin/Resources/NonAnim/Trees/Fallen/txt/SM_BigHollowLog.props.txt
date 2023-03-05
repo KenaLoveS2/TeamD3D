@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_BigHollowLog.MI_BigHollowLog'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_BigHollowLog.MI_BigHollowLog'
+        MaterialSlotName = giant_hollow_log
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4715.91, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-3.92548, Y=9.84576, Z=-21.0503 }
+    BoxExtent = { X=726.853, Y=705.754, Z=712.386 }
+    SphereRadius = 955.77
+}
