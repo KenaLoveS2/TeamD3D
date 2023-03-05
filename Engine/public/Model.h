@@ -30,6 +30,7 @@ public:
 	void					Set_PivotMatrix(_fmatrix matPivot) { XMStoreFloat4x4(&m_PivotMatrix, matPivot); }
 	void					Set_BoneLocked(const char* pBoneName, _bool bLock);
 	void					Set_AllBonesUnlock();
+	void					Set_RootBone(const string& strRootBone) { m_strRootBone = strRootBone; }
 
 	void					ResetAnimIdx_PlayTime(_uint iAnimIndex);
 
@@ -83,6 +84,7 @@ private:
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
 	vector<class CBone*>		m_Bones;
+	string							m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;
 	_uint							m_iCurrentAnimIndex = 0;

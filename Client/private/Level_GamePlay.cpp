@@ -49,6 +49,10 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	// Ready_Thread_CloneObject(TEXT(""));
 
+
+	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GAMEPLAY)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

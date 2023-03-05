@@ -54,18 +54,18 @@ public:
 private:
 	class CModel*					m_pModel = nullptr;
 
-	char								m_szName[MAX_PATH];
+	char							m_szName[MAX_PATH];
 	_double						m_Duration = 0.0;
 	_float							m_fBlendDuration = 0.2f;
 	_double						m_TickPerSecond;
-	ANIMTYPE					m_eAnimType = ANIMTYPE_END;
+	ANIMTYPE						m_eAnimType = ANIMTYPE_END;
 
 	_double						m_PlayTime = 0.0;
 
 	_bool							m_isFinished = false;
 	_bool							m_isLooping = false;
 
-	_uint								m_iNumChannels = 0;
+	_uint							m_iNumChannels = 0;
 	vector<class CChannel*>		m_Channels;
 
 private:

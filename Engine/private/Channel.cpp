@@ -2,17 +2,19 @@
 #include "..\public\Channel.h"
 #include "Model.h"
 #include "Bone.h"
+#include "GameObject.h"
 
 CChannel::CChannel()
 {
 }
 
 CChannel::CChannel(const CChannel& rhs)
+	: m_pModel(rhs.m_pModel)
+	, m_pBone(nullptr)
+	, m_iNumKeyframes(rhs.m_iNumKeyframes)
+	, m_KeyFrames(rhs.m_KeyFrames)
 {
 	strcpy_s(m_szName, rhs.m_szName);
-	m_pBone = nullptr;
-	m_iNumKeyframes = rhs.m_iNumKeyframes;
-	m_KeyFrames = rhs.m_KeyFrames;
 }
 
 HRESULT CChannel::Save_Channel(HANDLE & hFile, DWORD & dwByte)
@@ -175,6 +177,20 @@ void CChannel::Update_TransformMatrix(_float PlayTime, _bool isRootBone)
 
 		m_pBone->Set_TransformMatrix(TransformMatrix);
 	}
+	else
+	{
+		CGameObject*	pOwner = m_pModel->Get_Owner();
+		_vector			vBasePos = m_vRootBonePos;
+		m_vRootBonePos = vPosition;
+		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
+		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vBasePos, matTransform);
+
+		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+
+		TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		//TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+		m_pBone->Set_TransformMatrix(TransformMatrix);
+	}
 }
 
 void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone)
@@ -232,6 +248,19 @@ void CChannel::Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool 
 
 		m_pBone->Set_TransformMatrix(TransformMatrix);
 	}
+	else
+	{
+		CGameObject*	pOwner = m_pModel->Get_Owner();
+		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
+		_vector			vPrePos = m_vRootBonePos;
+		m_vRootBonePos = vPosition;
+		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vPrePos, matTransform);
+
+		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+
+		_matrix TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		m_pBone->Set_TransformMatrix(TransformMatrix);
+	}
 }
 
 void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone)
@@ -272,18 +301,9 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, 
 
 void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)
 {
-	if (isRootBone == true)
-	{
-		matBonesTransfomation = m_pBone->Get_TransformMatrix();
-		//m_pBone->Set_TransformMatrix(matBonesTransfomation);
-		return;
-	}
-
 	_vector			vScale;
 	_vector			vRotation;
 	_vector			vPosition;
-
-	_matrix			TransformMatrix;
 
 	if (PlayTime >= m_KeyFrames.back().Time)
 	{
@@ -352,18 +372,28 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 		}
 	}
 
-	matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
-	m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	if (isRootBone == false)
+	{
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
+	else
+	{
+		CGameObject*	pOwner = m_pModel->Get_Owner();
+		_vector			vBasePos = m_vRootBonePos;
+		m_vRootBonePos = vPosition;
+		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
+		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vBasePos, matTransform);
+
+		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
 }
 
 void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRadio, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)
 {
-	if (isRootBone == true)
-	{
-		matBonesTransfomation = m_pBone->Get_TransformMatrix();
-		return;
-	}
-
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
 
@@ -443,18 +473,28 @@ void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRad
 	vPosition = XMVectorLerp(vBasePos, vPosition, fBlendRadio);
 	vPosition = XMVectorSetW(vPosition, 1.f);
 
-	matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vRotation, vPosition);
-	m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	if (isRootBone == false)
+	{
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vRotation, vPosition);
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
+	else
+	{
+		CGameObject*	pOwner = m_pModel->Get_Owner();
+		_vector			vPrePos = m_vRootBonePos;
+		m_vRootBonePos = vPosition;
+		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
+		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vPrePos, matTransform);
+
+		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
 }
 
 void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAdditiveRatio, _smatrix & matBonesTransfomation, _bool isRootBone)
 {
-	if (isRootBone == true)
-	{
-		//matBonesTransfomation = m_pBone->Get_TransformMatrix();
-		return;
-	}
-
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
 
@@ -481,8 +521,30 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 
 	vRotation = XMQuaternionSlerp(vBaseRot, XMQuaternionMultiply(vBaseRot, vRotation), fAdditiveRatio);
 
-	matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
-	m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	if (isRootBone == false)
+	{
+		matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
+	else
+	{
+// 		CGameObject*	pOwner = m_pModel->Get_Owner();
+// 		_vector			vPrePos = m_vRootBonePos;
+// 		m_vRootBonePos = vPosition;
+// 		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
+// 		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vPrePos, matTransform);
+// 
+// 		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+// 
+// 		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+// 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
+	}
+}
+
+void CChannel::Reset_KeyFrameIndex()
+{
+	m_iCurrentKeyFrameIndex = 0;
+	m_vRootBonePos = XMVectorSetW(XMLoadFloat3(&m_KeyFrames[0].vPosition), 1.f);
 }
 
 void CChannel::Set_KeyFrameIndex(_double dPlayTime)

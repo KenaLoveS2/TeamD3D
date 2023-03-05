@@ -296,7 +296,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				pBlendAnim->m_isFinished = false;
 		}
 		else
-			return;
+			fTimeDelta = 0.f;
 	}
 
 	_float		fLastPlayTime = (_float)m_PlayTime;
@@ -319,7 +319,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	{
 		if (pBlendAnim == nullptr)
 		{
-			if (true == m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
 
  			if (m_Channels[i]->Get_BoneLocked() == true)
@@ -332,7 +332,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 		}
 		else
 		{
-			if (true == m_isFinished || true == pBlendAnim->m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 			{
 				m_Channels[i]->Reset_KeyFrameIndex();
 				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
@@ -370,7 +370,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 				pBlendAnim->m_isFinished = false;
 		}
 		else
-			return;
+			fTimeDelta = 0.f;
 	}
 
 	_float		fLastPlayTime = (_float)m_PlayTime;
@@ -393,7 +393,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 	{
 		if (pBlendAnim == nullptr)
 		{
-			if (true == m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
 
 			if (m_Channels[i]->Get_BoneLocked() == true)
@@ -406,7 +406,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 		}
 		else
 		{
-			if (true == m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 			{
 				m_Channels[i]->Reset_KeyFrameIndex();
 				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
