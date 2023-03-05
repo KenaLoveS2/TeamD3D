@@ -68,6 +68,7 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+	
 private:
 	TYPE					m_eType = TYPE_END;
 	wstring					m_wstrModelFilePath = L"";

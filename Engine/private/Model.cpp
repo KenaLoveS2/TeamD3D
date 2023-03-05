@@ -1115,6 +1115,8 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 	return S_OK;
 }
 
+
+
 HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 {
 	DWORD	dwByte = 0;
@@ -1384,7 +1386,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	
 		memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
 
-		
 		m_pInstancingMatrix.push_back(Temp);
 
 		for (auto& pInstMesh : m_InstancingMeshes)
@@ -1412,27 +1413,23 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 				++iDeleteIndex;
 			}
 		}
-
 	}
-
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
+	/*수정 부분*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
 	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
-
 	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
-
 	m_pInstanceTransform->Imgui_RenderProperty();
-
 	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
 
 	ResultMatrix *= InvParentMulChild;
 	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
 
 	for (auto& pInstMesh : m_InstancingMeshes)
-		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
 #endif
 

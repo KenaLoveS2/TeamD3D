@@ -25,7 +25,7 @@ public:
 	}
 public:
 	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
-
+	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
 
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _uint iNumInstance);

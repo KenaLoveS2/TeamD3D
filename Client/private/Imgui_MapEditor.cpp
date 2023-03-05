@@ -786,7 +786,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain=	pTerrainEditor->Get_SelectedTerrin();
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -1168,7 +1168,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
 	_float4 vPickingPos;
 	_matrix TerrainMatrix;
-	if (m_bIstancingObjPicking == true)
+	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
 	{
 		m_bUseTerrainPicking = false;
 

@@ -36,6 +36,7 @@ HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 void CImgui_TerrainEditor::Imgui_FreeRender()
 {
 	ImGui::Text("<Terrain_Tool>");
+	
 	if (ImGui::CollapsingHeader("Terrain_Option"))
 	{
 		Terrain_Selecte();
@@ -59,6 +60,8 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 		m_pSelectedTerrain = nullptr;
 		return;
 	}
+
+	m_pPickingTerrain = m_pSelectedTerrain;
 
 	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; // 초기화
 
@@ -88,9 +91,9 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 		ImGui::InputText("Save_Name : ", &m_strFileName);
 
 	if (ImGui::Button("Terrain_Save"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Save Folder", "Select Save Folder", ".json", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Save_Terrain Folder", "Select Save_Terrain Folder", ".json", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Save Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Save_Terrain Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{
@@ -103,9 +106,9 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Terrain_Load"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Load Folder", "Select Load Folder", ".json", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Load_Terrain Folder", "Select Load_Terrain Folder", ".json", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Load Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Load_Terrain Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{

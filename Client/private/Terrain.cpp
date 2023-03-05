@@ -60,15 +60,17 @@ HRESULT CTerrain::Initialize(void * pArg)
 
 HRESULT CTerrain::Late_Initialize(void * pArg)
 {
+	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
+	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
+	wstrFilePath += TEXT(".bmp");
+	Change_HeightMap(wstrFilePath.c_str());
+
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	if (m_TerrainDesc.iHeightBmpNum == 0)
 		return S_OK;
 
-	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
-	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
-	wstrFilePath += TEXT(".bmp");
-	Change_HeightMap(wstrFilePath.c_str());
+	
 
 	return S_OK;
 }
