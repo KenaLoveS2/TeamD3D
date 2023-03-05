@@ -85,6 +85,7 @@ public: /* For.Object_Manager */
 	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 	void SwitchOnOff_Shadow(_bool bSwitch);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	HRESULT	Late_Initialize(_uint iLevelIndex);
 
 	void Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);

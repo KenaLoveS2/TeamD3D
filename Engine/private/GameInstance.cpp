@@ -435,6 +435,11 @@ CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
 	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
 }
 
+HRESULT CGameInstance::Late_Initialize(_uint iLevelIndex)
+{
+	return m_pObject_Manager->Late_Initialize(iLevelIndex);
+}
+
 vector<map<const _tchar*, class CGameObject*>>& CGameInstance::Get_CopyPrototypes()
 {	
 	if (m_pObject_Manager == nullptr) { 

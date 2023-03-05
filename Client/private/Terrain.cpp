@@ -193,13 +193,10 @@ HRESULT CTerrain::SetUp_Components()
 			return E_FAIL;
 	}
 
-
 	/* For.Com_Brush*/
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Normal"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
-
-
 
 	return S_OK;
 }

@@ -63,6 +63,12 @@ private:
 		AFTYPE_END
 	};
 
+	enum COLLIDERTYPE
+	{
+		COLL_WEAPON = 0,
+		COLL_END
+	};
+
 private:
 	CSticks01(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSticks01(const CSticks01& rhs);

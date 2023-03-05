@@ -11,6 +11,17 @@ HRESULT CLayer::Initialize()
 	return S_OK;
 }
 
+HRESULT CLayer::Late_Initialize()
+{
+	for (auto& Pair : m_GameObjects)
+	{
+		if (Pair.second != nullptr)
+			Pair.second->Late_Initialize();
+	}
+
+	return S_OK;
+}
+
 void CLayer::Tick(_float fTimeDelta)
 {
 	for (auto& Pair : m_GameObjects)
