@@ -161,8 +161,6 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 	if (pPrototypeTag != nullptr)
 		pGameObject->Set_ProtoTag(pPrototypeTag);
 
-	pGameObject->Late_Initialize();
-
 	return pGameObject;	
 }
 
@@ -200,8 +198,6 @@ HRESULT CObject_Manager::Clone_AnimObject(_uint iLevelIndex, const _tchar * pLay
 
 	if (ppOut)
 		*ppOut = pGameObject;
-
-	pGameObject->Late_Initialize();
 
 	return S_OK;
 }
@@ -248,6 +244,17 @@ HRESULT CObject_Manager::Add_AnimObject(_uint iLevelIndex, CGameObject * pGameOb
 
 	m_mapAnimModel[iLevelIndex].emplace(pGameObject->Get_ObjectCloneName(), pGameObject);
 	Safe_AddRef(pGameObject);
+
+	return S_OK;
+}
+
+HRESULT CObject_Manager::Late_Initialize(_uint iLevelIndex)
+{
+	for (auto& Pair : m_pLayers[iLevelIndex])
+	{
+		if (nullptr != Pair.second)
+			Pair.second->Late_Initialize();
+	}
 
 	return S_OK;
 }

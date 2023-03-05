@@ -13,7 +13,8 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		
+		_bool isGravity;
+
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping;
@@ -25,7 +26,8 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos;
 		_float fRadius;
-		
+		_bool isGravity;
+
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping;
@@ -38,10 +40,11 @@ public:
 		_float3 vPos, vRotationAxis;
 		_float fRadius, fHalfHeight;
 		_float fDegree;
+		_bool isGravity;
 
 		// Dynamic Parameter
 		_float3 vVelocity;
-		_float fDensity, fAngularDamping, fMass, fDamping;		
+		_float fDensity, fAngularDamping, fMass, fDamping;
 	} PX_CAPSULE_DESC;
 		
 private:
@@ -63,6 +66,7 @@ private:
 private:
 	map<const _tchar*, PxRigidActor*> m_StaticActors;
 	map<const _tchar*, PxRigidActor*> m_DynamicActors;
+	map<const _tchar*, PxRigidActor*> m_DynamicColliders;
 
 	list<PX_USER_DATA*> m_UserDataes;
 
@@ -116,6 +120,8 @@ public:
 	void Add_Force(PxRigidActor* pActor, _float3 vForce);
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
+	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
+
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
 	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
 
