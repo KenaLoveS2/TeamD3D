@@ -157,7 +157,7 @@ void CTransform::Imgui_RenderProperty()
 		
 		_float4x4 Matrix;
 		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&Matrix));
-		Set_WorldMatrix_float4x4(Matrix);
+		/*Set_WorldMatrix_float4x4(Matrix);*/
 
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
@@ -202,8 +202,9 @@ void CTransform::Imgui_RenderProperty()
 			reinterpret_cast<float*>(&matProj),
 			mCurrentGizmoOperation,
 			mCurrentGizmoMode,
-			reinterpret_cast<float*>(&m_WorldMatrix),
+			reinterpret_cast<float*>(&Matrix),
 			nullptr, useSnap ? &snap[0] : nullptr);
+		Set_WorldMatrix_float4x4(Matrix);
 	}
 }
 
@@ -401,6 +402,17 @@ HRESULT CTransform::Bind_ShaderResource(CShader * pShaderCom, const char * pCons
 	return pShaderCom->Set_Matrix(pConstantName, &m_WorldMatrix);		
 }
 
+CTransform::ActorData*  CTransform::FindActorData(const _tchar * pActorTag)
+{
+	for(auto& iter : m_ActorList)
+	{
+		if(!wcscmp(iter.pActorTag,pActorTag))
+			return &iter;
+	}
+
+	return nullptr;
+}
+
 CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CTransform*		pInstance = new CTransform(pDevice, pContext);
@@ -562,14 +574,25 @@ void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivo
 
 void CTransform::Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
 {		
-	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);
-	assert(pActor != nullptr && "CTransform::Add_PxActorStatic");
+	PxRigidActor* pActor = m_pPhysX_Manager->Find_DynamicCollider(pActorTag);
+	assert(pActor != nullptr && "CTransform::Add_PxColliderDynamic");
 
 	ActorData Data;
 	Data.pActor = pActor;
+	wcscpy_s(Data.pActorTag, MAX_PATH, pActorTag);
 	Data.PivotMatrix = PivotMatrix;
 
 	m_ActorList.push_back(Data);
+}
+
+void CTransform::Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix)
+{
+	ActorData* pActorData = FindActorData(pActorTag);
+
+	if (pActorData == nullptr)
+		return;
+
+	pActorData->PivotMatrix = PivotMatrix;
 }
 
 void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
@@ -617,14 +640,26 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, m_WorldMatrix);
-
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
 	_float4x4 RetMatrix, Pivot;
 
+	_matrix m;
+	XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) *  World);
+	m = XMLoadFloat4x4(&RetMatrix);
+	m.r[0] = XMVector3Normalize(m.r[0]);
+	m.r[1] = XMVector3Normalize(m.r[1]);
+	m.r[2] = XMVector3Normalize(m.r[2]);
+	m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+
 	for (auto& iter : m_ActorList)
-	{		
+	{
 		XMStoreFloat4x4(&RetMatrix, XMLoadFloat4x4(&iter.PivotMatrix) * World);
+		m = XMLoadFloat4x4(&RetMatrix);
+		m.r[0] = XMVector3Normalize(m.r[0]);
+		m.r[1] = XMVector3Normalize(m.r[1]);
+		m.r[2] = XMVector3Normalize(m.r[2]);
+		
+		XMStoreFloat4x4(&RetMatrix, m);
 		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
 	}	
 }

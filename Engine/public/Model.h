@@ -127,7 +127,7 @@ public:
 #ifdef _DEBUG
 	/*For.Mesh_Instancing*/
 public:
-	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix);
+	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
 #endif
 	
 public:

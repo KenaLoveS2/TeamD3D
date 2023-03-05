@@ -38,7 +38,7 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+// 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
@@ -139,9 +139,6 @@ void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 			pChild->Late_Tick(fTimeDelta);
 	}
 
-	if (nullptr != m_pParent)
-		Set_Matrix();
-
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
@@ -153,9 +150,6 @@ HRESULT CEffect_Mesh::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
-	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.eBlendType);
 
 	return S_OK;
 }

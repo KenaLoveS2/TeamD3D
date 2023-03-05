@@ -13,16 +13,17 @@ enum ACTOR_TYPE {
 
 typedef struct ENGINE_DLL tagPhysXUserData
 {
-	ACTOR_TYPE eType;
+	ACTOR_TYPE	 eType;
 	
 	CGameObject* pOwner;
+	bool					isGravity;
 } PX_USER_DATA;
 
-static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner)
+static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity = true)
 {
 	PX_USER_DATA* pData = new PX_USER_DATA;
 	pData->pOwner = pOwner;
-
+	pData->isGravity = isGravity;
 	return pData;
 }
 

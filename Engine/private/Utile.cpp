@@ -204,7 +204,7 @@ PxVec3 CUtile::ConvertPosition_D3DToPx(_float3& vD3dPosition)
 PxMat44 CUtile::ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix)
 {
 	PxMat44 PxMatrix;
-
+	
 	PxMatrix[0][0] = D3dXMatrix._11;
 	PxMatrix[0][1] = D3dXMatrix._12;
 	PxMatrix[0][2] = -D3dXMatrix._13;
@@ -224,7 +224,7 @@ PxMat44 CUtile::ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix)
 	PxMatrix[3][1] = D3dXMatrix._42;
 	PxMatrix[3][2] = -D3dXMatrix._43;
 	PxMatrix[3][3] = D3dXMatrix._44;
-
+	
 	return PxMatrix;
 }
 

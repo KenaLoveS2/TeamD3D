@@ -63,6 +63,12 @@ private:
 		AFTYPE_END
 	};
 
+	enum COLLIDERTYPE
+	{
+		COLL_WEAPON = 0,
+		COLL_END
+	};
+
 private:
 	CSticks01(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSticks01(const CSticks01& rhs);
@@ -79,6 +85,7 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
@@ -87,6 +94,9 @@ protected:
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+
+private:
+	void	Update_Collider(_float fTimeDelta) override;
 
 private:
 	void Set_AttackType();
@@ -113,7 +123,12 @@ private:
 
 	_bool	m_bHit = false;
 	_bool	m_bBind = false;
-	
+
+private:
+	vector<wstring> m_vecColliderName;
+	vector<_float3> m_vecPivot;
+	vector<_float3> m_vecPivotScale;
+		
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

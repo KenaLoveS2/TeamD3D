@@ -36,6 +36,7 @@ public:
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);
 	map<const _tchar*, class CComponent*>*		Get_ComponentProtoType() { return m_pPrototypes; }
 
+	void		Delete_ProtoComponent(_uint iLevelIndex, const _tchar* pProtoTypeTag);
 
 private:
 	_uint											m_iNumLevels = 0;

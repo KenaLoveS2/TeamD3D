@@ -6,6 +6,8 @@
 #include "Utile.h"
 #include "UI_ClientManager.h"
 #include "AnimationState.h"
+#include "Effect_Base.h"
+#include "E_KenaPulse.h"
 
 CKena_State::CKena_State()
 {
@@ -580,6 +582,12 @@ void CKena_State::Start_Bow_Return(_float fTimeDelta)
 void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("INTO_PULSE");
+	
+	for (auto& Effect : m_pKena->m_mapEffect)
+	{
+		if (Effect.first == "KenaPulse")
+			Effect.second->Set_Active(true);
+	}
 }
 
 void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
@@ -590,6 +598,12 @@ void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
 void CKena_State::Start_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE");
+
+	for (auto& Effect : m_pKena->m_mapEffect)
+	{
+		if (Effect.first == "KenaPulse")
+			dynamic_cast<CE_KenaPulse*>(Effect.second)->Set_NoActive(true);
+	}
 }
 
 void CKena_State::Start_Pulse_Loop(_float fTimeDelta)

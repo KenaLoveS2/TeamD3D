@@ -245,6 +245,18 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			}
 		}
 	}
+	int a = 0;
+	if (m_eEFfectDesc.fAngle != 0.0f)
+	{
+		_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+
+		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	}
 
 	// Child Tick
 	if (m_vecChild.size() != 0)

@@ -53,9 +53,9 @@ public:
 	virtual HRESULT RenderShadow();
 
 	/* For Animation */
-	virtual void		Update_Child() {}
+	virtual void				Update_Child() {}
 	virtual HRESULT		Call_EventFunction(const string& strFuncName) { return S_OK; }
-	virtual void		Push_EventFunctions() {};
+	virtual void				Push_EventFunctions() {};
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -68,6 +68,9 @@ protected:
 	const _tchar*		m_szProtoObjectTag = TEXT("");
 	_int				m_iAnimationIndex = 0;
 
+	_float3			m_vPhysXScale;
+	_float3			m_vPhysXPos;
+
 protected:
 	map<const _tchar*, class CComponent*>			m_Components;
 
@@ -76,6 +79,7 @@ protected:
 protected:	
 	HRESULT Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr, CGameObject* pOwner = nullptr);
 
+public:
 	void Compute_CamDistance();
 
 public:	
@@ -90,6 +94,7 @@ public: /* imgui */
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
 	virtual void ImGui_ShaderValueProperty() {};
+	virtual void ImGui_PhysXValueProperty() {};
 
 	void Set_Position(_float4& vPosition);
 	void Set_Position(_float3& vPosition);

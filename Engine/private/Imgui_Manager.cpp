@@ -172,6 +172,22 @@ void CImgui_Manager::Add_ImguiObject(CImguiObject* pImguiObject, bool bIsSelectV
 		m_pSelectViewer_ImguiObj = pImguiObject;
 }
 
+CImguiObject * CImgui_Manager::Get_ImguiObject(const char * pName)
+{
+	auto Iter = find_if(m_vecWin.begin(), m_vecWin.end(), [&](CImguiObject* pObj)->bool
+	{
+		const char* pClassTag = typeid( *pObj).name();
+
+		return !strcmp(pName, pClassTag);
+	});
+
+	if (Iter != m_vecWin.end())
+		return *Iter;
+
+
+	return nullptr;
+}
+
 void CImgui_Manager::Clear_ImguiObjects()
 {
 	for (auto& ImguiTab : m_vecTab)
