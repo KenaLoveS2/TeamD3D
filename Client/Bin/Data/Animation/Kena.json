@@ -224,7 +224,16 @@
                 "1. Max Additive Ratio": 1.0,
                 "2. Reference Animation": "A_Kena_Aim_RefPose",
                 "3. Additive Animation": "A_Kena_Bow_Release",
-                "4. Joint Index": "N/A"
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_lf_ankle_jnt",
+                        "1. Lock To": "Lock Alone"
+                    },
+                    {
+                        "0. Bone Name": "kena_rt_ankle_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
             }
         ]
     },

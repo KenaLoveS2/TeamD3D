@@ -498,10 +498,15 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
 
+	_vector			vPosition;
 	_vector			vRotation;
 
 	if (PlayTime >= m_KeyFrames.back().Time)
+	{
 		vRotation = XMLoadFloat4(&m_KeyFrames.back().vRotation);
+		vPosition = XMLoadFloat3(&m_KeyFrames.back().vPosition);
+		vPosition = XMVectorSetW(vPosition, 1.f);
+	}
 	else
 	{
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
@@ -511,23 +516,32 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
 
 		_vector			vSourRotation, vDestRotation;
+		_vector			vSourPosition, vDestPosition;
 
 		vSourRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex].vRotation);
+		vSourPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex].vPosition);
 
 		vDestRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vRotation);
+		vDestPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex+ 1].vPosition);
 
 		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, Ratio);
+		vPosition = XMVectorLerp(vSourPosition, vDestPosition, Ratio);
+		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
 
 	vRotation = XMQuaternionSlerp(vBaseRot, XMQuaternionMultiply(vBaseRot, vRotation), fAdditiveRatio);
+	vPosition = XMVectorLerp(vBasePos, vBasePos + vPosition, fAdditiveRatio);
+	vPosition = XMVectorSetW(vPosition, 1.f);
 
 	if (isRootBone == false)
 	{
-		matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
+		matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 	}
 	else
 	{
+		matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vBaseRot, vBasePos);
+		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 // 		CGameObject*	pOwner = m_pModel->Get_Owner();
 // 		_vector			vPrePos = m_vRootBonePos;
 // 		m_vRootBonePos = vPosition;

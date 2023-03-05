@@ -21,6 +21,7 @@ public:
 	void		Set_BoneTranfromMatrix(_fmatrix matTransform);
 	_matrix	Get_BoneTransformMatrix();
 	_bool		Get_BoneLocked();
+	const _uint&		Get_KeyFrameCount() const { return m_iNumKeyframes; }
 
 public:
 	HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel);

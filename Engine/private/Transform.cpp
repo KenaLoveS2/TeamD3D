@@ -243,6 +243,7 @@ void CTransform::Imgui_RenderProperty_ForJH()
 	XMStoreFloat4x4(&matProj, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
 
 	ImGuizmo::Manipulate((_float*)&matView, (_float*)&matProj, CurGuizmoType, ImGuizmo::WORLD, (_float*)&m_WorldMatrix);
+	Set_WorldMatrix_float4x4(m_WorldMatrix);
 }
 
 void CTransform::Go_Straight(_float fTimeDelta)
