@@ -18,14 +18,14 @@ const _bool & CAnimationState::Get_AnimationFinish()
 		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->IsFinished();
 }
 
-HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strDivisionBone, const string & strFilePath)
+HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	NULL_CHECK_RETURN(pOwner, E_FAIL);
 	NULL_CHECK_RETURN(pModelCom, E_FAIL);
 
 	m_pOwner = pOwner;
 	m_pModel = pModelCom;
-	m_strDivisionBone = strDivisionBone;
+	m_strRootBone = strRootBone;
 
 	if (strFilePath != "")
 		return S_FALSE;
@@ -256,7 +256,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 		pPreAnim = m_pPreAnim->m_pMainAnim;
 		pPreBlendAnim = m_pPreAnim->m_pBlendAnim;
-		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pPreBlendAnim);
+		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim);
 
 		if (pPreAnim == pMainAnim || pPreAnim == pBlendAnim)
 			pPreAnim->Reverse_Play(fTimeDelta);
@@ -283,7 +283,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 			}
 		}
 
@@ -303,7 +303,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 		//if (pBlendAnim != nullptr && pBlendAnim == pPreAnim)
 		//	pBlendAnim->Reverse_Play(fTimeDelta);
 
-		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_Blend_ReturnMat(fTimeDelta, m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 		/* TODO : Check 'Is Additive Process needs Lerp' */		
 
 		m_fCurLerpTime += fTimeDelta;
@@ -322,7 +322,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				pJoint->Set_BoneLocked(Pair.second);
 			}
 		}
-		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, pBlendAnim);
+		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 	}
 	//m_pModel->Compute_CombindTransformationMatrix();
 
@@ -349,7 +349,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 			CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
 
 			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
 			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 			{
 				if (pAdditiveAnim->m_bPlayReverse == false)
@@ -370,10 +370,10 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_pCurAnim->m_pMainAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 			}
 			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, pAdditiveAnim->m_pRefAnim);
+				pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 		}
 	}
 	m_pModel->Compute_CombindTransformationMatrix();
@@ -858,10 +858,10 @@ HRESULT CAnimationState::Load(const string & strFilePath)
 	return S_OK;
 }
 
-CAnimationState * CAnimationState::Create(CGameObject * pOwner, CModel * pModelCom, const string & strDivisionBone, const string & strFilePath)
+CAnimationState * CAnimationState::Create(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	CAnimationState*	pInstance = new CAnimationState;
-	HRESULT				hr = pInstance->Initialize(pOwner, pModelCom, strDivisionBone, strFilePath);
+	HRESULT				hr = pInstance->Initialize(pOwner, pModelCom, strRootBone, strFilePath);
 
 	if (hr == E_FAIL)
 	{

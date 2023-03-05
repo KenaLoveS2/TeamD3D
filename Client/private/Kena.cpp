@@ -51,7 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
@@ -545,7 +545,7 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 
 HRESULT CKena::SetUp_State()
 {
-	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_hip_jnt");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG");
 
 	CAnimState*			pAnimState = nullptr;
 	CAdditiveAnimation*	pAdditiveAnim = nullptr;

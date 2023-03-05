@@ -79,7 +79,7 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
-_double CModel::Get_PlayTime()
+const _double& CModel::Get_PlayTime() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }

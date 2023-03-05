@@ -39,14 +39,14 @@ public:
 	HRESULT						Initialize(void* pArg);
 	void								ImGui_RenderEvents(_int& iSelectEvent);
 
-	void							Update_Bones(_float fTimeDelta);
-	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio);
-	void							Update_Bones_Additive(_float fTimeDelta, _float fRatio, CAnimation* pRefAnim);
+	void							Update_Bones(_float fTimeDelta, const string& strRootBone = "");
+	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const string& strRootBone = "");
+	void							Update_Bones_Additive(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
 
 	/* For CAnimationState */
-	void							Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, CAnimation* pRefAnim);
+	void							Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
+	void							Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "");
 
 	void							Reverse_Play(_float fTimeDelta);
 	void							Reset_Animation();
