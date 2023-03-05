@@ -74,6 +74,7 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual void	Imgui_RenderProperty() override;
+	virtual void	Imgui_RenderProperty_ForJH();
 
 public:
 	void Go_Straight(_float fTimeDelta);
