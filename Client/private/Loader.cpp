@@ -858,7 +858,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
-
+/*
 #pragma  region Start_Forest_Room
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
 	return E_FAIL;
@@ -913,7 +913,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
 	return E_FAIL;
 #pragma endregion ~Start_Forest_Room
-
+*/
 #pragma  region Tree
 	/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
@@ -1268,9 +1268,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma  endregion TESTPLAY EFFECT
 
 	/* For.Prototype_GameObject_KenaPulse */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
-		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Pulse.json"))))
-		return E_FAIL;
+	// if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"), CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Pulse.json")))) return E_FAIL;
 	// ~Effect
 
 	/* For.Prototype_GameObject_Player */
