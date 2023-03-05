@@ -36,7 +36,7 @@ HRESULT CTerrain::Initialize(void * pArg)
 		m_TerrainDesc.iFillterOne_TextureNum = Desc->iFillterOne_TextureNum;
 		m_TerrainDesc.iFillterTwo_TextureNum = Desc->iFillterTwo_TextureNum;
 		m_TerrainDesc.iFillterThree_TextureNum = Desc->iFillterThree_TextureNum;
-
+		m_TerrainDesc.iHeightBmpNum = Desc->iHeightBmpNum;
 	}
 
 	else
@@ -61,6 +61,14 @@ HRESULT CTerrain::Initialize(void * pArg)
 HRESULT CTerrain::Late_Initialize(void * pArg)
 {
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
+
+	if (m_TerrainDesc.iHeightBmpNum == 0)
+		return S_OK;
+
+	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
+	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
+	wstrFilePath += TEXT(".bmp");
+	Change_HeightMap(wstrFilePath.c_str());
 
 	return S_OK;
 }

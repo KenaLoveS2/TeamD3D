@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_GodTree_Branch.MI_GodTree_Branch'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_GodTree_Branch.MI_GodTree_Branch'
+        MaterialSlotName = Branch_Low
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 976.162, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-39.0226, Y=333.644, Z=53.9187 }
+    BoxExtent = { X=174.708, Y=376.965, Z=190.674 }
+    SphereRadius = 425.7
+}

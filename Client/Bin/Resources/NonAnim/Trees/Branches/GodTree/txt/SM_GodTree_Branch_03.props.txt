@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Branches/MI_GodTree_Branch_02.MI_GodTree_Branch_02'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Branches/MI_GodTree_Branch_02.MI_GodTree_Branch_02'
+        MaterialSlotName = blinn3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1498.41, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-29.6262, Y=404.725, Z=32.2999 }
+    BoxExtent = { X=129.631, Y=463.699, Z=123.736 }
+    SphereRadius = 478.398
+}

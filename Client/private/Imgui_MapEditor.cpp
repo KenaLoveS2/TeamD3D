@@ -49,6 +49,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 
 		Imgui_SelectObject_InstancingControl();
 		Imgui_Control_ViewerCamTransform();
+		imgui_ObjectList_Clear();
 	}
 
 	ImGui::End();
@@ -1182,11 +1183,6 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
-			
-
-
-			//XMStoreFloat4(&vPickingPos, XMVector4Transform(XMLoadFloat4(&vPickingPos), pSelectObjTransform->Get_WorldMatrix()));
-
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
 		}
 	}
@@ -1195,11 +1191,20 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
 	}
 
-
-	
-
 	ImGui::End();
 #endif
+}
+
+void CImgui_MapEditor::imgui_ObjectList_Clear()
+{
+	if (ImGui::Button("Object_List_Clear"))
+	{
+		CGameInstance *pGameInstance = GET_INSTANCE(CGameInstance);
+		// 나중에 룸인덱스 조정 만들어야됌
+		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment",0);
+		
+		RELEASE_INSTANCE(CGameInstance);
+	}
 }
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)

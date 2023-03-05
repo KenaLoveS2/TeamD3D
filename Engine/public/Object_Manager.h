@@ -78,6 +78,10 @@ public: /*For.Imgui*/
 	void Imgui_DeleteComponentOrObject(OUT class CGameObject*& pSelectedObject);
 	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
 
+public:
+	void	RoomIndex_Object_Clear(_int iCurLevel, const _tchar* LayerTag , _int iRoomIndex);
+
+
 private:
 	void Imgui_Add_For_EnviroMent_Component();
 	
