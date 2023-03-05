@@ -134,22 +134,16 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 	m_pImgui_Manager->Tick_Imgui();
 	
 	m_pObject_Manager->Tick(fTimeDelta);
-	m_pCamera_Manager->Tick(fTimeDelta);
-	m_pLevel_Manager->Tick(fTimeDelta);
-
-	m_pPipeLine->Tick();
-
 	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
-	
+	m_pCamera_Manager->Tick(fTimeDelta);
+	m_pPipeLine->Tick();
+	m_pLevel_Manager->Tick(fTimeDelta);
 	m_pSound_Manager->Tick(fTimeDelta);
-
 	m_pFrustum->Transform_ToWorldSpace();
 	m_pEnviroment_Manager->Tick(fTimeDelta);
-
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
 	m_pLevel_Manager->Late_Tick(fTimeDelta);
-
 	m_pInput_Device->Reset_EveryKey(fTimeDelta);
 }
 

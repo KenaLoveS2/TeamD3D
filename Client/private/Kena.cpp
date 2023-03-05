@@ -206,8 +206,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Late_Tick(fTimeDelta);
+	//for (auto& pEffect : m_mapEffect)
+	//	pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()

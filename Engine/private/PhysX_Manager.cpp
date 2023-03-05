@@ -307,6 +307,8 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	
 	m_pScene->addActor(*pBody);
 
+	shape->release();
+
 	return pBody;
 }
 
