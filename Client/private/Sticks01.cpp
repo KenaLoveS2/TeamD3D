@@ -44,6 +44,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {
+	return S_OK;
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -120,7 +121,7 @@ void CSticks01::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Update_Collider(fTimeDelta);
+	// Update_Collider(fTimeDelta);
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
