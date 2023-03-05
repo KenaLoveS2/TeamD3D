@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 /**********************************/
 
 texture2D		g_DepthTexture, g_NormalTexture;
+texture2D		g_DissolveTexture[4];
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
@@ -21,8 +22,12 @@ float4  g_vColor;
 float4  g_WorldCamPosition;
 // ~Type
 
-uniform float emission_amount= 5.0f;
-uniform float rim_steepness  = 3.0f; //higher values mean a smaller rim.
+// Dissolve
+bool g_bDissolve;
+float g_fDissolveTime;
+
+uniform float emission_amount = 5.0f;
+uniform float rim_steepness = 3.0f; //higher values mean a smaller rim.
 
 struct VS_IN
 {
@@ -97,48 +102,98 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f * g_Time));
-	float2 distort_amount = float2(g_vColor * normalmap.xy);
-	//	vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	float time = frac(g_Time * 0.2f);
 
-	// DTexture == 40
-	// Blend_Mix
-	float4 fresnel_color = g_vColor;
-	float4 fresnel = float4(fresnel_glow(3.0, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(0.f, -time));
 
-	// find the offset colour for this location (this is where the magic happens) 
-	distort_amount.x = 1.0 - distort_amount.x;
+	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
 
-	distort_amount -= 0.5;//128.0;
-	if (distort_amount.x > 0.5) { distort_amount.x -= 1.0; }// wrap around
-	if (distort_amount.y > 0.5) { distort_amount.y -= 1.0; }// wrap around
-	distort_amount /= 4.0;
+	float4 fresnelColor = float4(0.5, 0.5, 0.5, 0.1f);
+	float4 fresnel_color = g_DTexture_2.Sample(LinearSampler, float2(OffsetUV.x * 2.5f, OffsetUV.y* 1.5f));
 
-	vector albedo0 = g_DTexture_0.Sample(LinearSampler, In.vTexUV + distort_amount);
-	vector albedo1 = g_DTexture_1.Sample(LinearSampler, In.vTexUV + distort_amount);
-	vector albedo2 = g_DTexture_2.Sample(LinearSampler, In.vTexUV / 2.f + distort_amount);
+	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
+	float4 fresnel = float4(fresnel_glow(3, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
-	//vector albedo = albedo0 + albedo2 * 2.f;
-	//albedo = saturate(albedo);
-	vector albedo = albedo0 + albedo2;
-	float4 fresnel_albbedo1 = float4(fresnel_glow(3.0, 2.5, float3(1.f, 1.f, 1.f), In.vNormal.rgb, -In.vViewDir), 0.5f);
-	albedo1 = albedo1 * fresnel_albbedo1;
-	Out.vDiffuse = albedo1 + saturate(albedo) * fresnel;
+	float4 BackPulseColor = g_vColor;
+	float4 fresnel_Pulse = float4(fresnel_glow(4.5, 2.5, fresnelColor, In.vNormal.rgb, -In.vViewDir), fresnelColor.a) + fresnel;
 
-	float2		vTexUV;
+	float4 mask = g_DTexture_1.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
+	float4 glow = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	Out.vDiffuse = saturate((mask + glow) * BackPulseColor * 2.f) * fresnel_Pulse + BackPulseColor;
+	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
 
-	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
 
-	float		fOldViewZ = vDepthDesc.y * 300.f;
-	float		fViewZ = In.vProjPos.w;
+	return Out;
+}
 
-	Out.vDiffuse.a = Out.vDiffuse.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
+PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
+
+	float time = frac(g_Time * 0.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(5.5f, 5.f), float2(0.f, -time));
+
+	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
+
+	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
+	float4 fresnel_color = g_DTexture_2.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
+	float4 fresnel = float4(fresnel_glow(4, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+
+	float4 BackPulseColor = g_vColor;
+	float4 fresnelColor = float4(0.5, 0.5, 0.5, 0.5);
+	float4 fresnel_Pulse = float4(fresnel_glow(4.5, 2.5, fresnelColor.rgb, In.vNormal.rgb, -In.vViewDir), fresnelColor.a) + fresnel;
+
+	float4 mask = g_DTexture_1.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
+	float4 glow = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+
+	Out.vDiffuse = saturate((mask + glow) * BackPulseColor * 2.f) * fresnel_Pulse + BackPulseColor;
+	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
+
+	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve0 = g_DissolveTexture[0].Sample(LinearSampler, In.vTexUV);
+		float4 Dissolve1 = g_DissolveTexture[1].Sample(LinearSampler, In.vTexUV);
+		float4 Dissolve2 = g_DissolveTexture[2].Sample(LinearSampler, In.vTexUV);
+		float4 Dissolve3 = g_DissolveTexture[3].Sample(LinearSampler, In.vTexUV);
+		float Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
+		Dissolve = saturate(Dissolve);
+
+		//Dissolve function
+		half dissolve_value = Dissolve.r;
+
+		if (dissolve_value >= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(BackPulseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+
+
+		////Dissolve function
+		//half dissolve_value = Dissolve.r;
+		//float isGlowing = smoothstep(0.1f + fDissolveAmount, 0.1f, Dissolve - fDissolveAmount);
+		//float3 glow = isGlowing * BackPulseColor;
+
+		//if (dissolve_value >= fDissolveAmount)
+		//	discard;
+
+		//else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
+		//{
+		//	//if (Out.vDiffuse.a != 0.0f)
+		//	//	Out.vDiffuse = Out.vDiffuse + float4(glow, Out.vDiffuse.a);
+
+		//	Out.vDiffuse = Out.vDiffuse + float4(glow, Out.vDiffuse.a);
+		//}
+	}
 
 	return Out;
 }
@@ -147,20 +202,8 @@ technique11 DefaultTechnique
 {
 	pass Default //0
 	{
-		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_TEST, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-	pass Effect_Alpha // 1
-	{
-		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_Default, 0);
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -170,29 +213,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Effect_Black // 2
+	pass Effect_Pulse // 1
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_One, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Effect_Mix // 3
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Mix, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 PS_EFFECT_PULSE_MAIN();
 	}
 }

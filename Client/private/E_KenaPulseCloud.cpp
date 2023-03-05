@@ -30,14 +30,10 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	//if (pArg != nullptr)
-	//	memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
-
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	if (m_pParent != nullptr)
-		this->Set_InitMatrix(m_pParent->Get_TransformCom()->Get_WorldMatrix());
+	m_eEFfectDesc.bActive = false;
 
 	return S_OK;
 }
@@ -45,17 +41,44 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		m_eEFfectDesc.fTimeDelta = m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+			m_fTimeDelta = 0.0;
 
+			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			{
+				if (m_eEFfectDesc.fTimeDelta < 1.f)
+					m_eEFfectDesc.fHeightFrame++;
+				else
+					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+				m_eEFfectDesc.fWidthFrame =3.f;
+
+				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					m_eEFfectDesc.fHeightFrame = 3.f;
+			}
+		}
+	}
 }
 
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 }
 
 HRESULT CE_KenaPulseCloud::Render()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

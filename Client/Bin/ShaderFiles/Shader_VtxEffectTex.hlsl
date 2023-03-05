@@ -63,6 +63,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
+	float2 UV = In.vTexUV;
 	if (g_TextureRenderType == 1) // Sprite
 	{
 		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
@@ -118,18 +119,20 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor = albedo0 * albedo1 * albedo2 * albedo3* albedo4*2.0f;
 		Out.vColor = saturate(Out.vColor);
 	}
-	if (g_BlendType == 2 || g_BlendType == 3)
-		Out.vColor = Out.vColor * g_vColor;
-	else
-		Out.vColor = (Out.vColor * g_vColor) + (Out.vColor * (1.f - g_vColor));
+	//if (g_BlendType == 2 || g_BlendType == 3)
+	//	Out.vColor = Out.vColor * g_vColor;
+	//else
+	//	Out.vColor = (Out.vColor * g_vColor) + (Out.vColor * (1.f - g_vColor));
+	Out.vColor = Out.vColor * g_vColor;
+	Out.vColor = saturate(Out.vColor.r* g_vColor) * 4.5f;
+	Out.vColor.rgb = Out.vColor.rgb * 4.f;
 
-	// MTexture
 	if (g_IsUseMask == true)
 	{
 		if (g_iTotalMTextureComCnt == 1)
 		{
-			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-			Out.vColor = Out.vColor * maskTex0* g_vColor;
+			vector maskTex0 = g_MTexture_0.Sample(LinearSampler, UV);
+			Out.vColor = Out.vColor * maskTex0;
 		}
 		if (g_iTotalMTextureComCnt == 2)
 		{
@@ -173,18 +176,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	else
 		Out.vColor = Out.vColor * g_vColor;
 
-	////
-	float2		vTexUV;
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w)/2.f+ 0.5f;
-	vTexUV.y = -(In.vProjPos.y / In.vProjPos.w)/2.f + 0.5f;
-
-	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
-
-	float		fOldViewZ = vDepthDesc.y * 300.f;
-	float		fViewZ = In.vProjPos.w;
-
-	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 0.5f);
-	////
+	/*if (Out.vColor.a < 0.02f)
+		discard;*/
 
 	return Out;
 }
@@ -194,19 +187,7 @@ technique11 DefaultTechnique
 	pass Effect_Dafalut // 0
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-	pass Effect_Alpha // 1
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -214,12 +195,12 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
+	}	
 
-	pass Effect_Black // 2
+	pass Effect_BS_One // 1
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_One, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -228,18 +209,4 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-
-	pass Effect_Mix // 3
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Mix, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-	
 }

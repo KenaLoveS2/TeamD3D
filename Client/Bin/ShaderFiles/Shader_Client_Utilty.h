@@ -22,7 +22,7 @@ float3 disney_D(float3 H, float3 N, float3 L, float alpha, float metallic)
 	float D_ggx = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNH * dotNH - 1.0), 2.0);
 	float D_ggx90 = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNL * dotNL - 1.0), 2.0);
 
-	float3 D = lerp(float3(1.f,1.f,1.f), exp((D_ggx + D_ggx90) * metallic), metallic);
+	float3 D = lerp(float3(1.f, 1.f, 1.f), exp((D_ggx + D_ggx90) * metallic), metallic);
 	return D;
 }
 
@@ -34,7 +34,7 @@ float smith_G1(float3 V, float3 N, float alpha)
 
 float3 F0_from_albedo(float3 albedo, float metallic)
 {
-	return lerp(float3(0.04f,0.04f,0.04f), albedo, metallic);
+	return lerp(float3(0.04f, 0.04f, 0.04f), albedo, metallic);
 }
 
 float3 DisneyBRDF(float3 V, float3 L, float3 N, float3 albedo, float metallic, float roughness, float3 F0)
