@@ -842,10 +842,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-   /* For.Prototype_Component_VIBuffer_Terrain */
-   if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
-      CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_3.bmp")))))
-      return E_FAIL;
+	/* For.Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_3.bmp")))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxAnimMonsterModel */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxAnimMonsterModel"),
@@ -858,70 +858,70 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
+/*
+#pragma  region Start_Forest_Room
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, false)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, false, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, false)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", false, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
+	return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
+	return E_FAIL;
+#pragma endregion ~Start_Forest_Room
+*/
+#pragma  region Tree
+	/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
+		return E_FAIL;
 
-//#pragma  region Start_Forest_Room
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, false)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, false, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, false)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", false, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
-//	return E_FAIL;
-//#pragma endregion ~Start_Forest_Room
-//
-//#pragma  region Tree
-//	/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
-//		return E_FAIL;
-//
-//#pragma endregion ~Tree
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Map_Base")))
-//		return E_FAIL;
+#pragma endregion ~Tree
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Map_Base")))
+		return E_FAIL;
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 
@@ -1268,10 +1268,8 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma  endregion TESTPLAY EFFECT
 
 	/* For.Prototype_GameObject_KenaPulse */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
-	//	CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Pulse.json"))))
-	//	return E_FAIL;
-	//// ~Effect
+	// if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"), CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Pulse.json")))) return E_FAIL;
+	// ~Effect
 
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),

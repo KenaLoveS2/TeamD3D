@@ -66,6 +66,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 HRESULT CKena::Late_Initialize(void * pArg)
 {
+	return S_OK;
+
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
@@ -105,7 +107,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
-	m_pTransformCom->Tick(fTimeDelta);
+	// m_pTransformCom->Tick(fTimeDelta);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
