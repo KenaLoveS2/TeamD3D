@@ -88,8 +88,8 @@ void CEffect::Tick(_float fTimeDelta)
 	{
 		m_eEFfectDesc.fWidthFrame = 3.f;
 		m_eEFfectDesc.fHeightFrame = 3.f;
-		m_eEFfectDesc.iWidthCnt = 6.f;
-		m_eEFfectDesc.iHeightCnt = 6.f;
+		m_eEFfectDesc.iWidthCnt = 6;
+		m_eEFfectDesc.iHeightCnt = 6;
 	}
 	
 

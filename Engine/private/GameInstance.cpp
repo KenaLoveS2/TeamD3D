@@ -134,12 +134,11 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 	m_pImgui_Manager->Tick_Imgui();
 	
 	m_pObject_Manager->Tick(fTimeDelta);
+	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
 	m_pCamera_Manager->Tick(fTimeDelta);
 	m_pLevel_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
-
-	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
 	
 	m_pSound_Manager->Tick(fTimeDelta);
 

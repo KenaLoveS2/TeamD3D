@@ -79,7 +79,7 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
-_double CModel::Get_PlayTime()
+const _double& CModel::Get_PlayTime() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }
@@ -1045,13 +1045,13 @@ void CModel::Play_Animation(_float fTimeDelta)
 	{
 		_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
 
-		m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta);
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio);
+		m_Animations[m_iPreAnimIndex]->Update_Bones(fTimeDelta, m_strRootBone);
+		m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(fTimeDelta, fBlendRatio, m_strRootBone);
 
 		m_fBlendCurTime += fTimeDelta;
 	}
 	else
-		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta);
+		m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_strRootBone);
 
 	for (auto& pBone : m_Bones)
 	{
