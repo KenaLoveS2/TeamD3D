@@ -106,6 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../Public/;../../Reference/Headers/</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm73 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +149,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../Public/;../../Reference/Headers/</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm73 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -200,7 +202,9 @@
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
+    <ClInclude Include="..\Public\Flower.h" />
     <ClInclude Include="..\public\Gate.h" />
+    <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
@@ -308,7 +312,9 @@
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
+    <ClCompile Include="..\Private\Flower.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
+    <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />

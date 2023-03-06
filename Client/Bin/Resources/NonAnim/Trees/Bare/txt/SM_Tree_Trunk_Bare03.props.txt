@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Wind.MI_TreeTrunk_Wind'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Wind.MI_TreeTrunk_Wind'
+        MaterialSlotName = Trunk
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1219.04, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+        MaterialSlotName = Leaves
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 413.487, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-30.5681, Y=-51.8225, Z=1764.26 }
+    BoxExtent = { X=539.499, Y=479.649, Z=1830.86 }
+    SphereRadius = 1844.99
+}

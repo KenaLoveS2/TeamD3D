@@ -43,6 +43,11 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CWoodKnight::Late_Initialize(void * pArg)
+{
+	return S_OK;
+}
+
 void CWoodKnight::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -141,6 +146,10 @@ void CWoodKnight::ImGui_ShaderValueProperty()
 	// shader Value Á¶Àý
 }
 
+void CWoodKnight::ImGui_PhysXValueProperty()
+{
+}
+
 HRESULT CWoodKnight::Call_EventFunction(const string& strFuncName)
 {
 	return CMonster::Call_EventFunction(strFuncName);
@@ -232,6 +241,10 @@ HRESULT CWoodKnight::SetUp_ShadowShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CWoodKnight::Update_Collider(_float fTimeDelta)
+{
 }
 
 CWoodKnight* CWoodKnight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -59,7 +59,7 @@ public:
 	const _bool&		Get_AnimationFinish();
 
 public:
-	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strDivisionBone, const string& strFilePath);
+	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
 	HRESULT			Initialize_FromFile(const string& strFilePath);
 	void				Tick(_float fTimeDelta);
 	HRESULT			State_Animation(const string& strStateName, ANIMBODY eAnimBody = ANIMBODY_ALL);
@@ -83,7 +83,7 @@ private:
 	map<const string, CAnimState*>		m_mapAnimState;
 	CAnimState*		m_pCurAnim = nullptr;
 	CAnimState*		m_pPreAnim = nullptr;
-	string				m_strDivisionBone = "";
+	string				m_strRootBone = "";
 
 	_float				m_fCurLerpTime = 0.f;
 	_float				m_fLerpDuration = 0.f;
@@ -91,7 +91,7 @@ private:
 	_smatrix			m_matBonesTransformation[800];
 
 public:
-	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strDivisionBone = "", const string& strFilePath = "");
+	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath = "");
 	virtual void					Free() override {
 		m_vecSyncPart.clear();
 		m_vecNonSyncPart.clear();

@@ -19,7 +19,6 @@ public:
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex) { return &m_mapAnimModel[iLevelIndex]; }
 	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex) { return &m_mapShaderValueModel[iLevelIndex]; }
 
-
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
 	HRESULT Clear(_uint iLevelIndex);
@@ -37,6 +36,7 @@ public:
 	HRESULT					Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 	HRESULT					Add_ShaderValueObject(_uint iLevelIndex, class CGameObject* pGameObject);
 
+	HRESULT					Late_Initialize(_uint iLevelIndex);
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
@@ -77,6 +77,10 @@ public: /*For.Imgui*/
 	void Imgui_ObjectViewer(_uint iLevel, OUT class CGameObject*& pSelectedObject);
 	void Imgui_DeleteComponentOrObject(OUT class CGameObject*& pSelectedObject);
 	void Imgui_Push_Group(class CGameObject* pSelectedObject);	// 다중 컴포넌트 상속, 삭제
+
+public:
+	void	RoomIndex_Object_Clear(_int iCurLevel, const _tchar* LayerTag , _int iRoomIndex);
+
 
 private:
 	void Imgui_Add_For_EnviroMent_Component();

@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Canopies/Material/MI_TreeLeaves_Canopy_Fresnel.MI_TreeLeaves_Canopy_Fresnel'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Canopies/Material/MI_TreeLeaves_Canopy_Fresnel_CheapLOD.MI_TreeLeaves_Canopy_Fresnel_CheapLOD'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_2.MI_BigBushes_2'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Canopies/Material/MI_TreeLeaves_Canopy_Fresnel.MI_TreeLeaves_Canopy_Fresnel'
+        MaterialSlotName = MI_TreeLeaves_Fresnel
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1910.36, 509743, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Canopies/Material/MI_TreeLeaves_Canopy_Fresnel_CheapLOD.MI_TreeLeaves_Canopy_Fresnel_CheapLOD'
+        MaterialSlotName = MI_TreeLeaves_Canopy_Fresnel_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2104.17, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_2.MI_BigBushes_2'
+        MaterialSlotName = MI_TreeLeaves_Canopy_Fresnel
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2012.08, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=13.9767, Y=-9.44446, Z=934.363 }
+    BoxExtent = { X=1902.43, Y=1961.35, Z=2655.04 }
+    SphereRadius = 2875.9
+}

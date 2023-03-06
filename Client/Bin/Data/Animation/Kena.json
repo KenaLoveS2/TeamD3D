@@ -2,138 +2,155 @@
     {
         "0. State Name": "AIM_INTO",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Aim_Into",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Into",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_LOOP",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Loop",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RETURN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Aim_Return",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Return",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_BACKWARD",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Backward",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_BACKWARD_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Backward",
-        "3. Blend Animation": "A_Kena_Aim_Run_Left",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_BACKWARD_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Backward",
-        "3. Blend Animation": "A_Kena_Aim_Run_Right",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_FORWARD",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Forward",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_FORWARD_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Forward",
-        "3. Blend Animation": "A_Kena_Aim_Run_Left",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_FORWARD_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Forward",
-        "3. Blend Animation": "A_Kena_Aim_Run_Right",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Left",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "AIM_RUN_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Aim_Run_Right",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "ATTACK_1",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Attack1",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Attack1",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "ATTACK_1_FROM_RUN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Attack1_FromRun",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Attack1_FromRun",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "ATTACK_1_INTO_RUN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Attack1_IntoRun",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Attack1_IntoRun",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "ATTACK_1_INTO_WALK",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Attack1_IntoWalk",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Attack1_IntoWalk",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "ATTACK_1_RETURN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Attack1_Return",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Attack1_Return",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "BOW_CHARGE",
-        "1. Looping": true,
-        "2. Main Animation": "A_Kena_Bow_Aim_RefPose",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": [
+        "1. Looping": false,
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
@@ -145,11 +162,12 @@
     },
     {
         "0. State Name": "BOW_CHARGE_FULL",
-        "1. Looping": true,
-        "2. Main Animation": "A_Kena_Bow_Aim_RefPose",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": [
+        "1. Looping": false,
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
@@ -162,22 +180,76 @@
     {
         "0. State Name": "BOW_CHARGE_LOOP",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Bow_Aim_RefPose",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": [
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
                 "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
                 "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
                 "4. Joint Index": "N/A"
-            },
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
             {
-                "0. Ratio Control": 1,
-                "1. Max Additive Ratio": 0.06,
-                "2. Reference Animation": "A_Kena_Bow_ChargeLoop",
-                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RELEASE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Release",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_lf_ankle_jnt",
+                        "1. Lock To": "Lock Alone"
+                    },
+                    {
+                        "0. Bone Name": "kena_rt_ankle_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Return",
                 "4. Joint Index": "N/A"
             }
         ]
@@ -185,153 +257,172 @@
     {
         "0. State Name": "IDLE",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Idle",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Idle",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "INTO_PULSE",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_IntoPulse",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_IntoPulse",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "INTO_PULSE_FROM_RUN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_IntoPulse_FromRun",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_IntoPulse_FromRun",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Pulse",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_INTO_COMBAT_END",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Pulse_IntoCombat_End",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_IntoCombat_End",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_INTO_IDLE",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Pulse_IntoIdle",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_IntoIdle",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_INTO_RUN",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_Pulse_IntoRun",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_IntoRun",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_LOOP",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_Loop",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_PARRY",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_PulseParry",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_PulseParry",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_SQUAT_SPRINT",
         "1. Looping": false,
-        "2. Main Animation": "A_Kena_PulseSquat_Sprint",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_PulseSquat_Sprint",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_BACKWARD",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkBackward",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkBackward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_BACK_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkBackLeft",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkBackLeft",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_BACK_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkBackRight",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkBackRight",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_FORWARD",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkForward",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkForward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_FRONT_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkForward",
-        "3. Blend Animation": "A_Kena_Pulse_WalkLeft",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkForward",
+        "4. Blend Animation": "A_Kena_Pulse_WalkLeft",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_FRONT_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkForward",
-        "3. Blend Animation": "A_Kena_Pulse_WalkRight",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkForward",
+        "4. Blend Animation": "A_Kena_Pulse_WalkRight",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_LEFT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkLeft",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkLeft",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "PULSE_WALK_RIGHT",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Pulse_WalkRight",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Pulse_WalkRight",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     },
     {
         "0. State Name": "RUN",
         "1. Looping": true,
-        "2. Main Animation": "A_Kena_Run",
-        "3. Blend Animation": "N/A",
-        "4. Joint Index": "N/A",
-        "5. Additive Animation": "N/A"
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Run",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     }
 ]

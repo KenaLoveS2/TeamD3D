@@ -34,7 +34,7 @@ HRESULT CKena::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
+	GaemObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
@@ -52,8 +52,6 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
-
-	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
 
 	Push_EventFunctions();
 
@@ -102,6 +100,11 @@ void CKena::Tick(_float fTimeDelta)
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
+
+	if (GetKeyState(VK_SPACE) & 0x8000)
+	{
+		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0.f, 1.f, 0.f));
+	}
 
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
@@ -278,6 +281,8 @@ void CKena::Imgui_RenderProperty()
 
 void CKena::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	ImGui::BeginTabBar("Kena Animation & State");
 
 	if (ImGui::BeginTabItem("Animation"))
@@ -399,6 +404,13 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 void CKena::Push_EventFunctions()
 {
 	Test(true, 0.f);
+}
+
+void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
+{
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = vPos + vDisplacement;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -550,7 +562,8 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 
 HRESULT CKena::SetUp_State()
 {
-	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_hip_jnt");
+	m_pModelCom->Set_RootBone("kena_RIG");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG");
 
 	CAnimState*			pAnimState = nullptr;
 	CAdditiveAnimation*	pAdditiveAnim = nullptr;
@@ -878,6 +891,8 @@ HRESULT CKena::SetUp_State()
 	pAdditiveAnim->m_fMaxAdditiveRatio = 1.f;
 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_REFPOSE);
 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_RELEASE_ADD);
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_lf_ankle_jnt", CBone::LOCKTO_ALONE } );
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_rt_ankle_jnt", CBone::LOCKTO_ALONE });
 
 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 

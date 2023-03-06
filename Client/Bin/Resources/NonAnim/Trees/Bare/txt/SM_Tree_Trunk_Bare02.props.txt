@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Bare_Wind.MI_TreeTrunk_Bare_Wind'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Cheap.MI_TreeTrunk_Cheap'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Bare_Wind.MI_TreeTrunk_Bare_Wind'
+        MaterialSlotName = MI_WoodlandTree_Branches3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 225.021, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeTrunk_Cheap.MI_TreeTrunk_Cheap'
+        MaterialSlotName = MI_TreeTrunk_Cheap
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 243.005, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=7.09613, Y=30.9346, Z=1035.92 }
+    BoxExtent = { X=62.2295, Y=109.002, Z=1063.15 }
+    SphereRadius = 1064.23
+}

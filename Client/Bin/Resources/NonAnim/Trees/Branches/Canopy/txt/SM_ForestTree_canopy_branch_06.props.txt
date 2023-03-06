@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_TreeBranches.MI_TreeBranches'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Opaque.MI_TreeLeaves_Opaque'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+        MaterialSlotName = MI_ForestTree_canopy_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 391.306, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_TreeBranches.MI_TreeBranches'
+        MaterialSlotName = MI_GodTree_Small_01_Base
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 418.936, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Opaque.MI_TreeLeaves_Opaque'
+        MaterialSlotName = lambert1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 400.519, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-349.489, Y=5.94537, Z=415.858 }
+    BoxExtent = { X=380.143, Y=340.793, Z=418.345 }
+    SphereRadius = 541.459
+}

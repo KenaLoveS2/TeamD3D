@@ -173,7 +173,7 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
 	Safe_Delete_Array(ppEvents);
 }
 
-void CAnimation::Update_Bones(_float fTimeDelta)
+void CAnimation::Update_Bones(_float fTimeDelta, const string & strRootBone)
 {
 	if (true == m_isFinished)
 	{
@@ -199,8 +199,7 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 	
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG") || 
-			!strcmp(m_Channels[i]->Get_Name(), "Sticks_01_RIG"))
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime, true);
 		else
 			m_Channels[i]->Update_TransformMatrix((_float)m_PlayTime);
@@ -210,7 +209,7 @@ void CAnimation::Update_Bones(_float fTimeDelta)
 		m_PlayTime = 0.0;
 }
 
-void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
+void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const string & strRootBone)
 {
 	if (true == m_isFinished)
 	{
@@ -236,7 +235,7 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio, true);
 		else
 			m_Channels[i]->Blend_TransformMatrix((_float)m_PlayTime, fBlendRatio);
@@ -246,7 +245,7 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio)
 		m_PlayTime = 0.0;
 }
 
-void CAnimation::Update_Bones_Additive(_float fTimeDelta, _float fRatio, CAnimation * pRefAnim)
+void CAnimation::Update_Bones_Additive(_float fTimeDelta, _float fRatio, const string & strRootBone)
 {
 	if (true == m_isFinished)
 	{
@@ -275,17 +274,17 @@ void CAnimation::Update_Bones_Additive(_float fTimeDelta, _float fRatio, CAnimat
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
-			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio, true, pRefAnim->m_Channels[i]);
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio, true);
 		else
-			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio, false, pRefAnim->m_Channels[i]);
+			m_Channels[i]->Additive_TransformMatrix((_float)m_PlayTime, fRatio);
 	}
 
 	if (m_isFinished && m_isLooping)
 		m_PlayTime = 0.0;
 }
 
-void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, CAnimation * pBlendAnim)
+void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim)
 {
 	if (true == m_isFinished)
 	{
@@ -297,81 +296,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				pBlendAnim->m_isFinished = false;
 		}
 		else
-			return;
-	}
-
-	_float		fLastPlayTime = (_float)m_PlayTime;
-	m_PlayTime += m_TickPerSecond * fTimeDelta;
-
-	if (pBlendAnim != nullptr)
-	{
-		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
-
-		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
-			pBlendAnim->m_isFinished = true;
-	}
-
-	Call_Event(fLastPlayTime, fTimeDelta);
-
-	if (m_PlayTime >= m_Duration)
-		m_isFinished = true;
-
-	for (_uint i = 1; i < m_iNumChannels; ++i)
-	{
-		if (pBlendAnim == nullptr)
-		{
-			if (true == m_isFinished)
-				m_Channels[i]->Reset_KeyFrameIndex();
-
- 			if (m_Channels[i]->Get_BoneLocked() == true)
- 				continue;
-
- 			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
- 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
- 			else
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i]);
-		}
-		else
-		{
-			if (true == m_isFinished || true == pBlendAnim->m_isFinished)
-			{
-				m_Channels[i]->Reset_KeyFrameIndex();
-				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
-			}
-
-			if (m_Channels[i]->Get_BoneLocked() == true)
-				continue;
-
-			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
-			else
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
-		}
-	}
-
-	if (m_isFinished && m_isLooping)
-		m_PlayTime = 0.0;
-
-	if (pBlendAnim != nullptr)
-	{
-		if (pBlendAnim->m_isFinished && pBlendAnim->m_isLooping)
-			pBlendAnim->m_PlayTime = 0.0;
-	}
-}
-
-void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix * matBonesTransformation, CAnimation * pBlendAnim)
-{
-	if (true == m_isFinished)
-	{
-		if (m_isLooping)
-		{
-			m_isFinished = false;
-
-			if (pBlendAnim != nullptr)
-				pBlendAnim->m_isFinished = false;
-		}
-		else
-			return;
+			fTimeDelta = 0.f;
 	}
 
 	_float		fLastPlayTime = (_float)m_PlayTime;
@@ -394,22 +319,20 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 	{
 		if (pBlendAnim == nullptr)
 		{
-			if (true == m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
 
-			if (m_Channels[i]->Get_BoneLocked() == true)
-				continue;
+ 			if (m_Channels[i]->Get_BoneLocked() == true)
+ 				continue;
 
-			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
-			{
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
-			}
-			else
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i]);
+ 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+ 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
+ 			else
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i]);
 		}
 		else
 		{
-			if (true == m_isFinished)
+			if (true == m_isFinished && true == m_isLooping)
 			{
 				m_Channels[i]->Reset_KeyFrameIndex();
 				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
@@ -418,10 +341,82 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			if (m_Channels[i]->Get_BoneLocked() == true)
 				continue;
 
-			if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
+			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
+			else
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
+		}
+	}
+
+	if (m_isFinished && m_isLooping)
+		m_PlayTime = 0.0;
+
+	if (pBlendAnim != nullptr)
+	{
+		if (pBlendAnim->m_isFinished && pBlendAnim->m_isLooping)
+			pBlendAnim->m_PlayTime = 0.0;
+	}
+}
+
+void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim)
+{
+	if (true == m_isFinished)
+	{
+		if (m_isLooping)
+		{
+			m_isFinished = false;
+
+			if (pBlendAnim != nullptr)
+				pBlendAnim->m_isFinished = false;
+		}
+		else
+			fTimeDelta = 0.f;
+	}
+
+	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	if (pBlendAnim != nullptr)
+	{
+		pBlendAnim->m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+		if (pBlendAnim->m_PlayTime >= pBlendAnim->m_Duration)
+			pBlendAnim->m_isFinished = true;
+	}
+
+	Call_Event(fLastPlayTime, fTimeDelta);
+
+	if (m_PlayTime >= m_Duration)
+		m_isFinished = true;
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (pBlendAnim == nullptr)
+		{
+			if (true == m_isFinished && true == m_isLooping)
+				m_Channels[i]->Reset_KeyFrameIndex();
+
+			if (m_Channels[i]->Get_BoneLocked() == true)
+				continue;
+
+			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
+			else
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i]);
+		}
+		else
+		{
+			if (true == m_isFinished && true == m_isLooping)
 			{
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
+				m_Channels[i]->Reset_KeyFrameIndex();
+				pBlendAnim->m_Channels[i]->Reset_KeyFrameIndex();
 			}
+
+			if (m_Channels[i]->Get_BoneLocked() == true)
+				continue;
+
+			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
 			else
 				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
 		}
@@ -437,7 +432,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 	}
 }
 
-void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, CAnimation* pRefAnim)
+void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, const string & strRootBone)
 {
 	if (true == m_isFinished)
 	{
@@ -457,16 +452,19 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 
 	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
+		if (true == m_isFinished && true == m_isLooping)
 			m_Channels[i]->Reset_KeyFrameIndex();
+
+		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
+			continue;
 
 		if (m_Channels[i]->Get_BoneLocked() == true)
 			continue;
 
-		if (!strcmp(m_Channels[i]->Get_Name(), "kena_RIG"))
-			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true, pRefAnim->m_Channels[i]);
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 		else
-			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], false, pRefAnim->m_Channels[i]);
+			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i]);
 	}
 
 	if (m_isFinished && m_isLooping)

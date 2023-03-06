@@ -76,7 +76,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 			((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, 0.f, 0.f, 1.f);
 
 			m_ePointDesc[i].vDir = XMVector3Normalize(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f)) * m_ePointDesc->fCreateRange;
-			m_ePointDesc[i].vDir = XMVector3TransformNormal(m_ePointDesc[i].vDir, XMMatrixRotationY(XMConvertToRadians(rand() % 360 * i)));
+			m_ePointDesc[i].vDir = XMVector3TransformNormal(m_ePointDesc[i].vDir, XMMatrixRotationY(XMConvertToRadians(_float(rand() % 360 * i))));
 
 			if (m_ePointDesc->bMoveY)
 				((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, m_ePointDesc->fMoveY - 0.3f * i, 0.f, 1.f) + m_ePointDesc[i].vDir;

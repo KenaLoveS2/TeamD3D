@@ -36,6 +36,7 @@ HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 void CImgui_TerrainEditor::Imgui_FreeRender()
 {
 	ImGui::Text("<Terrain_Tool>");
+	
 	if (ImGui::CollapsingHeader("Terrain_Option"))
 	{
 		Terrain_Selecte();
@@ -59,6 +60,8 @@ void CImgui_TerrainEditor::Terrain_Selecte()
 		m_pSelectedTerrain = nullptr;
 		return;
 	}
+
+	m_pPickingTerrain = m_pSelectedTerrain;
 
 	m_pSelected_Buffer = nullptr;  m_pSelected_Tranform = nullptr; // 초기화
 
@@ -88,9 +91,9 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 		ImGui::InputText("Save_Name : ", &m_strFileName);
 
 	if (ImGui::Button("Terrain_Save"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Save Folder", "Select Save Folder", ".json", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Save_Terrain Folder", "Select Save_Terrain Folder", ".json", "../Bin/Save Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Save Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Save_Terrain Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{
@@ -103,9 +106,9 @@ void CImgui_TerrainEditor::Imgui_Save_Load()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Terrain_Load"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Load Folder", "Select Load Folder", ".json", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select Load_Terrain Folder", "Select Load_Terrain Folder", ".json", "../Bin/Load Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Load Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Select Load_Terrain Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
 		{
@@ -582,11 +585,10 @@ void CImgui_TerrainEditor::Save_Terrain()
 
 	wstring			wstrCloneTag = L"";
 	string		szCloneTag;
-
 	wstring		wstrDiffuseTag = L"";
 	wstring		wstrFillterTag = L"";
 	wstring		wstrNormalTag = L"";
-	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0;
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0, iHeightBmpNum = 0;
 	CTerrain::TERRAIN_DESC* SaveDesc = nullptr;
 
 	jTerrainSave["0_LayerTag"] = szLayerTag;
@@ -605,25 +607,23 @@ void CImgui_TerrainEditor::Save_Terrain()
 		iFillterOne_TextureNum = SaveDesc->iFillterOne_TextureNum;
 		iFillterTwo_TextureNum = SaveDesc->iFillterTwo_TextureNum;
 		iFillterThree_TextureNum = SaveDesc->iFillterThree_TextureNum;
+		iHeightBmpNum = SaveDesc->iHeightBmpNum;
 		Json jChild;
 
 		wstrCloneTag =(pObject.second->Get_ObjectCloneName());
 		szCloneTag =	CUtile::WstringToString(wstrCloneTag);
 		jChild["1_CloneTag"] = szCloneTag;
-	
 		strDiffuseTag = CUtile::WstringToString(wstrDiffuseTag);
 		jChild["2_DiffuseTag"] = strDiffuseTag;
-
 		strFillter = CUtile::WstringToString(wstrFillterTag);
 		jChild["3_FillterTag"] = strFillter;
-
 		strNormal = CUtile::WstringToString(wstrNormalTag);
 		jChild["4_NormalTag"] = strNormal;
-
 		jChild["5_Diffuse_TextureNum"] = iDiffuseNum;
 		jChild["6_FillterOne_TextureNum"] = iFillterOne_TextureNum;
 		jChild["7_FillterTwo_TextureNum"] = iFillterTwo_TextureNum;
 		jChild["8_FillterThree_TextureNum"] = iFillterThree_TextureNum;
+		jChild["9_Height_TextureNum"] = iHeightBmpNum;
 
 		CTransform* pTransform = static_cast<CTransform*>(pObject.second->Find_Component(L"Com_Transform"));
 		assert(pTransform != nullptr && "CImgui_MapEditor::Imgui_Save_Func()");
@@ -633,7 +633,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
-			jChild["9_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
+			jChild["10_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
 		}
 
 		jTerrainSave["Terrain_Data"].push_back(jChild);
@@ -672,7 +672,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 	_tchar*		wszDiffuseTag = L"";
 	_tchar*		wszNormalTag = L"";
 	_tchar*		wszFillterTag = L"";
-	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0;
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0, iHeightBmpNum = 0;
 
 	jLoadTerrain["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -700,7 +700,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 		jLoadChild["6_FillterOne_TextureNum"].get_to<int>(iFillterOne_TextureNum);
 		jLoadChild["7_FillterTwo_TextureNum"].get_to<int>(iFillterTwo_TextureNum);
 		jLoadChild["8_FillterThree_TextureNum"].get_to<int>(iFillterThree_TextureNum);
-
+		jLoadChild["9_Height_TextureNum"].get_to<int>(iHeightBmpNum);
 		CTerrain::tag_TerrainDesc terrainDesc;
 
 		terrainDesc.wstrDiffuseTag = wszDiffuseTag;
@@ -710,11 +710,11 @@ void CImgui_TerrainEditor::Load_Terrain()
 		terrainDesc.iFillterOne_TextureNum = iFillterOne_TextureNum;
 		terrainDesc.iFillterTwo_TextureNum = iFillterTwo_TextureNum;
 		terrainDesc.iFillterThree_TextureNum = iFillterThree_TextureNum;
-
+		terrainDesc.iHeightBmpNum = iHeightBmpNum;
 
 		float	fElement = 0.f;
 		int		k = 0;
-		for (float fElement : jLoadChild["9_Transform State"])
+		for (float fElement : jLoadChild["10_Transform State"])
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
@@ -726,7 +726,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		static_cast<CTransform*>(pLoadTerrain->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		pLoadTerrain->Late_Initialize();
+		pLoadTerrain->Late_Initialize();	/*머지후 삭제 요망*/
 
 		szCloneTag = "";
 		pLoadTerrain = nullptr;
