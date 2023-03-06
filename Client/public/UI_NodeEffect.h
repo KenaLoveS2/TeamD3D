@@ -22,12 +22,19 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	virtual void			Imgui_RenderProperty();
+	virtual HRESULT			Save_Data();
+	virtual HRESULT			Load_Data(wstring fileName);
+
 private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 
 private:
+	_bool					m_bAnimation;
 	CUI*					m_pTarget;
+
 
 public:
 	static	CUI_NodeEffect*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

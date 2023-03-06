@@ -26,8 +26,10 @@
 
 /* CanvasQuest */
 #include "UI_CanvasQuest.h"
-#include "UI_NodeQuestMain.h"
-#include "UI_NodeQuestSub.h"
+//#include "UI_NodeQuestMain.h"
+//#include "UI_NodeQuestSub.h"
+#include "UI_NodeQuest.h"
+#include "Quest.h"
 
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
@@ -211,31 +213,6 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_AimBomb");
 
-
-	/********************************************/
-	/*				For. Effects				*/
-	/********************************************/
-
-	/* Pip Full */
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PipFill"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipFill_Anim.png")))))
-		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_PipFill");
-
-
-	/* Bomb Full */
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombFill"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_BombFill_Anim.png")))))
-		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BombFill");
-
-	/* Arrow Full */
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ArrowFill"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowRefill_Anim.png")))))
-		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArrowFill");
-
-
 	/********************************************/
 	/*				For. Canvas_Quest			*/
 	/********************************************/
@@ -253,6 +230,35 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/subobjective.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_QuestSub");
+
+
+	/********************************************/
+	/*				For. Effects				*/
+	/********************************************/
+
+	/* Pip Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PipFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_PipFill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_PipFill");
+
+	/* Bomb Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BombFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_BombFill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BombFill");
+
+	/* Arrow Full */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ArrowFill"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/HUD/T_ArrowRefill_Anim.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ArrowFill");
+
+	/* Seperator */
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Seperator"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/05. Quest/T_SeparatorAlpha_01.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Seperator");
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -276,12 +282,15 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RotationZ(Loading)");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "RingGuage_Mask");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "For.AimThings");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "PaintDrop");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTest");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaChange");
 
 
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
 
 
-	/* Event List */
+																					 /* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
@@ -400,22 +409,29 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Quest");
 
-	/* Main Quest */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestMain"), CUI_NodeQuestMain::Create(pDevice, pContext))))
+	///* Main Quest */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestMain"), CUI_NodeQuestMain::Create(pDevice, pContext))))
+	//	return E_FAIL;
+	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestMain");
+
+	///* Sub Quest */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestSub"), CUI_NodeQuestSub::Create(pDevice, pContext))))
+	//	return E_FAIL;
+	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestSub");
+
+	/* Node Quest */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Quest"), CUI_NodeQuest::Create(pDevice, pContext))))
 		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestMain");
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Quest");
 
-	/* Sub Quest */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_QuestSub"), CUI_NodeQuestSub::Create(pDevice, pContext))))
+	/* Real Quest Object (test)*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Quest"), CQuest::Create(pDevice, pContext))))
 		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_QuestSub");
-
-
 
 	/********************************************/
 	/*				For. Effects				*/
 	/********************************************/
-	/* Effect */
+	/* Effect (Sprite Animation) */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Effect"), CUI_NodeEffect::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");

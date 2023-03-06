@@ -230,6 +230,7 @@
     <ClInclude Include="..\Public\Pillar.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Pulse_PlateForm.h" />
+    <ClInclude Include="..\public\Quest.h" />
     <ClInclude Include="..\public\RockGolem.h" />
     <ClInclude Include="..\public\Roots.h" />
     <ClInclude Include="..\public\Rot.h" />
@@ -270,8 +271,7 @@
     <ClInclude Include="..\public\UI_NodeHUDRot.h" />
     <ClInclude Include="..\public\UI_NodeHUDShield.h" />
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
-    <ClInclude Include="..\public\UI_NodeQuestMain.h" />
-    <ClInclude Include="..\public\UI_NodeQuestSub.h" />
+    <ClInclude Include="..\public\UI_NodeQuest.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -336,6 +336,7 @@
     <ClCompile Include="..\Private\Pillar.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
     <ClCompile Include="..\private\RockGolem.cpp" />
     <ClCompile Include="..\private\Roots.cpp" />
     <ClCompile Include="..\private\Rot.cpp" />
@@ -376,8 +377,7 @@
     <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
-    <ClCompile Include="..\private\UI_NodeQuestMain.cpp" />
-    <ClCompile Include="..\private\UI_NodeQuestSub.cpp" />
+    <ClCompile Include="..\private\UI_NodeQuest.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />

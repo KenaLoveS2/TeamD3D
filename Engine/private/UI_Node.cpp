@@ -171,6 +171,7 @@ HRESULT CUI_Node::Save_Data()
 	for (auto e : m_vecEvents)
 		e->Save_Data(&json);
 
+	//vector<wstring>* list = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_ELSE);
 	wstring filePath = L"../Bin/Data/UI/";
 	filePath += this->Get_ObjectCloneName();
 	//filePath += this->Get_Name();

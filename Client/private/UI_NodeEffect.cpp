@@ -2,18 +2,20 @@
 #include "..\public\UI_NodeEffect.h"
 #include "GameInstance.h"
 #include "UI_Event_Animation.h"
-
-/* m_pParent가 UI인 UI */
+#include "Json/json.hpp"
+#include <fstream>
 
 CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_pTarget(nullptr)
+	, m_bAnimation(false)
 {
 }
 
 CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 	: CUI_Node(rhs)
 	, m_pTarget(nullptr)
+	, m_bAnimation(false)
 {
 }
 
@@ -37,7 +39,8 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 	//
 	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,vPos);
 
-	m_vecEvents[0]->Call_Event((_uint)0);
+	if(!m_vecEvents.empty())
+		m_vecEvents[0]->Call_Event((_uint)0);
 }
 
 HRESULT CUI_NodeEffect::Initialize_Prototype()
@@ -64,10 +67,14 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 	//m_bActive = true;
 
-	/* Events */
-	/* 이미지가 변경되도록 하는 이벤트 */
-	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
+	if (m_bAnimation)
+	{
+		/* Events */
+		/* 이미지가 변경되도록 하는 이벤트 */
+		UIDESC* tDesc = (UIDESC*)pArg;
+		m_vecEvents.push_back(CUI_Event_Animation::Create(tDesc->fileName, this));
+
+	}
 
 	return S_OK;
 }
@@ -77,7 +84,7 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
+	if (!m_vecEvents.empty() && static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
 		m_bActive = false;
 
 	__super::Tick(fTimeDelta);
@@ -88,7 +95,10 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (m_pParent != nullptr)
+	__super::Late_Tick(fTimeDelta);
+
+	/* think it's old one but keep it */
+	/*if (m_pParent != nullptr)
 	{
 		_float4x4 matWorldParent;
 		XMStoreFloat4x4(&matWorldParent, m_pParent->Get_WorldMatrix());
@@ -108,13 +118,125 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom && m_bActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
-
+*/
 }
 
 HRESULT CUI_NodeEffect::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+void CUI_NodeEffect::Imgui_RenderProperty()
+{
+	ImGui::Separator();
+	ImGui::Text("Effect Specific Property");
+	ImGui::Checkbox("IsAnimEffect", &m_bAnimation);
+
+	__super::Imgui_RenderProperty();
+}
+
+HRESULT CUI_NodeEffect::Save_Data()
+{
+	Json	json;
+
+	_smatrix matWorld = m_matLocal;
+	_float fValue = 0.f;
+	for (int i = 0; i < 16; ++i)
+	{
+		fValue = 0.f;
+		memcpy(&fValue, (float*)&matWorld + i, sizeof(float));
+		json["localMatrix"].push_back(fValue);
+	}
+
+	json["renderPass"] = m_iOriginalRenderPass;
+
+	_int iIndex;
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_DIFFUSE];
+	else
+		iIndex = -1;
+	json["DiffuseTextureIndex"] = iIndex;
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_MASK];
+	else
+		iIndex = -1;
+	json["MaskTextureIndex"] = iIndex;
+
+
+	json["IsAnimEffect"] = m_bAnimation;
+
+	for (auto e : m_vecEvents)
+		e->Save_Data(&json);
+
+
+	wstring filePath = L"../Bin/Data/UI/";
+	filePath += this->Get_ObjectCloneName();
+	filePath += L"_Property.json";
+
+	string fileName;
+	fileName = fileName.assign(filePath.begin(), filePath.end());
+
+	ofstream	file(fileName);
+	file << json;
+	file.close();
+
+	return S_OK;
+}
+
+HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
+{
+	Json	jLoad;
+
+	wstring name = L"../Bin/Data/UI/";
+	name += fileName;
+	name += L"_Property.json";
+	string filePath;
+	filePath.assign(name.begin(), name.end());
+
+	ifstream file(filePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	m_iOriginalRenderPass = m_iRenderPass;
+	jLoad["IsAnimEffect"].get_to<_bool>(m_bAnimation);
+
+	jLoad["DiffuseTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_DIFFUSE]);
+	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (-1 != m_TextureListIndices[TEXTURE_DIFFUSE])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			(*pTags)[m_TextureListIndices[TEXTURE_DIFFUSE]].c_str(), TEXT("Com_DiffuseTexture"),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+	}
+	if (-1 != m_TextureListIndices[TEXTURE_MASK])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			(*pTags)[m_TextureListIndices[TEXTURE_MASK]].c_str(), TEXT("Com_MaskTexture"),
+			(CComponent**)&m_pTextureCom[1])))
+			return S_OK;
+	}
+
+	int i = 0;
+	_float4x4	matLocal;
+	for (float fElement : jLoad["localMatrix"])
+		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
+
+	this->Set_LocalMatrix(matLocal);
+
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	return S_OK;
 }
