@@ -1,0 +1,110 @@
+Parent = Material3'/Game/Mochi/MaterialLibrary/M_Standard_Env.M_Standard_Env'
+ScalarParameterValues[5] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color_Intensity }
+        ParameterValue = 1.1
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Desaturate }
+        ParameterValue = 0.25
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=RoughnessScale }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Specular }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[3] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Comp_M_R_Ao }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Fallen/Texture/T_BigTreeLog_Comp_M_R_AO.T_BigTreeLog_Comp_M_R_AO'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Fallen/Texture/T_BigTreeLog_D.T_BigTreeLog_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Fallen/Texture/T_BigTreeLog_N.T_BigTreeLog_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[1] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color }
+        ParameterValue = { R=0.278894, G=0.323143, B=0.250158, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = true
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = true
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = true
+    OpacityMaskClipValue = 0.6
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_BigTreeLog_Comp_M_R_AO
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_BigTreeLog_D
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_BigTreeLog_N
+    }
+}

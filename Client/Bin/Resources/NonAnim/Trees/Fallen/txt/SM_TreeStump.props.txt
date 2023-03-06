@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeStump.MI_TreeStump'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeStump.MI_TreeStump'
+        MaterialSlotName = MI_TreeStump
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 604.813, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=7.30501, Y=6.4765, Z=56.3177 }
+    BoxExtent = { X=135.894, Y=167.117, Z=96.5013 }
+    SphereRadius = 209.824
+}

@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Foliage/MI_Tree_Large_Billboards.MI_Tree_Large_Billboards'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Foliage/MI_Tree_Large_Billboards.MI_Tree_Large_Billboards'
+        MaterialSlotName = MI_Tree_Large_Billboards
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = true
+            LocalUVDensities[4] = { 23461.1, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=2215.38 }
+    BoxExtent = { X=1133.39, Y=1133.39, Z=2258.17 }
+    SphereRadius = 2526.64
+}

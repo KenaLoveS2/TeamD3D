@@ -134,12 +134,11 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 	m_pImgui_Manager->Tick_Imgui();
 	
 	m_pObject_Manager->Tick(fTimeDelta);
+	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
 	m_pCamera_Manager->Tick(fTimeDelta);
 	m_pLevel_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
-
-	m_pPhysX_Manager->Tick(fTimeDelta); // kbj physx
 	
 	m_pSound_Manager->Tick(fTimeDelta);
 
@@ -460,6 +459,12 @@ HRESULT CGameInstance::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag
 {
 	if (m_pObject_Manager == nullptr) return E_FAIL;
 	return m_pObject_Manager->Delete_Object(iLevelIndex, pLayerTag, pCloneObjectTag);
+}
+
+void CGameInstance::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * LayerTag, _int iRoomIndex)
+{
+	assert(m_pObject_Manager != nullptr && "CGameInstance::RoomIndex_Object_Clear");
+	return m_pObject_Manager->RoomIndex_Object_Clear(iCurLevel, LayerTag, iRoomIndex);
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)

@@ -53,8 +53,6 @@ HRESULT CKena::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
-	//m_pModelCom->Set_AnimIndex(CKena_State::IDLE);
-
 	Push_EventFunctions();
 
 	m_fSSSAmount = 0.09f;
@@ -283,6 +281,8 @@ void CKena::Imgui_RenderProperty()
 
 void CKena::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	ImGui::BeginTabBar("Kena Animation & State");
 
 	if (ImGui::BeginTabItem("Animation"))
@@ -404,6 +404,13 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 void CKena::Push_EventFunctions()
 {
 	Test(true, 0.f);
+}
+
+void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
+{
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = vPos + vDisplacement;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -556,7 +563,8 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 
 HRESULT CKena::SetUp_State()
 {
-	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_hip_jnt");
+	m_pModelCom->Set_RootBone("kena_RIG");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG");
 
 	CAnimState*			pAnimState = nullptr;
 	CAdditiveAnimation*	pAdditiveAnim = nullptr;
@@ -884,6 +892,8 @@ HRESULT CKena::SetUp_State()
 	pAdditiveAnim->m_fMaxAdditiveRatio = 1.f;
 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_REFPOSE);
 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_RELEASE_ADD);
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_lf_ankle_jnt", CBone::LOCKTO_ALONE } );
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_rt_ankle_jnt", CBone::LOCKTO_ALONE });
 
 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 

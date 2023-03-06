@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_TreeBranches.MI_TreeBranches'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Opaque.MI_TreeLeaves_Opaque'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Wind.MI_TreeLeaves_Wind'
+        MaterialSlotName = MI_TreeLeaves_NoWind
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 410.966, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Branches/Materials/MI_TreeBranches.MI_TreeBranches'
+        MaterialSlotName = Bark
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 406.718, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves_Opaque.MI_TreeLeaves_Opaque'
+        MaterialSlotName = MI_TreeLeaves_Opaque
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 425.229, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=297.576, Y=-252.664, Z=380.352 }
+    BoxExtent = { X=360.357, Y=416.454, Z=379.515 }
+    SphereRadius = 542.879
+}

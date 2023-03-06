@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_TunnelTree_01_Base.MI_TunnelTree_01_Base'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_TunnelTree_02_Base.MI_TunnelTree_02_Base'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_TunnelTree_01_Base.MI_TunnelTree_01_Base'
+        MaterialSlotName = MI_TunnelTree_01_Base1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4069.56, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_TunnelTree_02_Base.MI_TunnelTree_02_Base'
+        MaterialSlotName = MI_TunnelTree_02_Base1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2301.06, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=1.89697, Y=-33.2297, Z=1711.04 }
+    BoxExtent = { X=1326.07, Y=1081.52, Z=1780.43 }
+    SphereRadius = 2242.56
+}

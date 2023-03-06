@@ -13,25 +13,23 @@ public:
 	}GAMEOBJECTDESC;
 
 public:
-	_float Get_CamDistance() const {
-		return m_fCamDistance;
-	}
-	const _int&		Get_AnimationIndex() const { return m_iAnimationIndex; }
-	void	Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
+	_float					Get_CamDistance() const { return m_fCamDistance; }
+	const _int&			Get_AnimationIndex() const { return m_iAnimationIndex; }
+	void					Set_AnimationIndex(_uint iAnimationIndex) { m_iAnimationIndex = iAnimationIndex; }
 
 public:
-	CTransform* Get_TransformCom() { return m_pTransformCom; }
-	_matrix		Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
+	CTransform*			Get_TransformCom() { return m_pTransformCom; }
+	_matrix				Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
 
 public:
 	class CComponent*	Find_Component(const _tchar* pComponentTag);
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
 	const _tchar*		Get_ProtoObjectName() { return m_szProtoObjectTag; }
 
-	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
-	void				Set_ProtoTag(const _tchar* pProtoObjectTag) { m_szProtoObjectTag = pProtoObjectTag; }
+	void					Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	void					Set_ProtoTag(const _tchar* pProtoObjectTag) { m_szProtoObjectTag = pProtoObjectTag; }
 
-	void				Delete_Component(const _tchar* pComponentTag);
+	void					Delete_Component(const _tchar* pComponentTag);
 
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -54,8 +52,9 @@ public:
 
 	/* For Animation */
 	virtual void				Update_Child() {}
-	virtual HRESULT		Call_EventFunction(const string& strFuncName) { return S_OK; }
+	virtual HRESULT			Call_EventFunction(const string& strFuncName) { return S_OK; }
 	virtual void				Push_EventFunctions() {};
+	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) {}
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;

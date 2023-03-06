@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Woodland/MI_WoodlandTree_Branches2.MI_WoodlandTree_Branches2'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Woodland/MI_WoodlandTree_Branches2.MI_WoodlandTree_Branches2'
+        MaterialSlotName = T_BarkTileableTexture_D
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 456.69, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=37.5816, Y=333.391, Z=342.533 }
+    BoxExtent = { X=312.957, Y=499.403, Z=366.99 }
+    SphereRadius = 693.12
+}

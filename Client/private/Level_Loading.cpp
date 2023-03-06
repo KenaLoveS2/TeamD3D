@@ -7,11 +7,11 @@
 #include "Level_GamePlay.h"
 #include "Level_TestPlay.h"
 
-#ifdef _DEBUG
+
 #include "Level_MapTool.h"
 #include "Level_TestPlay.h"
 #include "Level_EffectTest.h"
-#endif
+
 
 CLevel_Loading::CLevel_Loading(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -77,7 +77,7 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 				pLevel = CLevel_TestPlay::Create(m_pDevice, m_pContext);
 				break;
 
-#ifdef _DEBUG
+
 			case LEVEL_MAPTOOL:
 				pLevel = CLevel_MapTool::Create(m_pDevice, m_pContext);
 				break;
@@ -85,7 +85,7 @@ void CLevel_Loading::Late_Tick(_float fTimeDelta)
 			case LEVEL_EFFECT:
 				pLevel = CLevel_EffectTest::Create(m_pDevice, m_pContext);
 				break;
-#endif
+
 			}
 
 			if (nullptr == pLevel)

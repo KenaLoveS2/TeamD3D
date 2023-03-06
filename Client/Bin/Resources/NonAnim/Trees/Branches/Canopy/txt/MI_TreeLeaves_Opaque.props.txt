@@ -1,0 +1,184 @@
+Parent = Material3'/Game/Mochi/MaterialLibrary/_MASTER/M_Foliage_Wind_Master.M_Foliage_Wind_Master'
+ScalarParameterValues[11] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color_Variation }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Color_Intensity }
+        ParameterValue = 0.75
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Metalness_Intensity }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Normal_Intensity }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=SS_Color_Multiplier }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=SS_Color_Saturation }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither }
+        ParameterValue = 50
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither_NearFade }
+        ParameterValue = 256
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=Roughness_Intensity }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=Specular_Intensity }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[4] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Foliage_Mask_TEx }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/T_Trees_Woodland_Msk.T_Trees_Woodland_Msk'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Tex_Color }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/T_Trees_D.T_Trees_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Tex_Comp }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/T_Trees_Comp_M_R_Ao.T_Trees_Comp_M_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=Tex_Normal }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/T_Trees_N.T_Trees_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[1] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color_Overlay }
+        ParameterValue = { R=0.077961, G=0.15, B=0.036863, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = true
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = true
+    TwoSided = true
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[6] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_Leaf_Settings }
+            bOverride = true
+        }
+        StaticSwitchParameters[1] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_Speedtree_Wind }
+            bOverride = true
+        }
+        StaticSwitchParameters[2] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_Mask }
+            bOverride = true
+        }
+        StaticSwitchParameters[3] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_OpacityMask }
+            bOverride = true
+        }
+        StaticSwitchParameters[4] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_PixelDepthOffset }
+            bOverride = true
+        }
+        StaticSwitchParameters[5] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_Roughness_Map }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[2] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_Trees_D
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_Trees_N
+    }
+}
