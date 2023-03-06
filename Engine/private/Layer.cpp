@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Layer.h"
 #include "GameObject.h"
+#include "EnviromentObj.h"
 
 CLayer::CLayer()
 {
@@ -44,6 +45,20 @@ void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
 	{
 		Pair.second ? Pair.second->SwitchOnOff_Shadow(bSwitch) : 0;
 	}
+}
+
+void CLayer::Delete_AllObjLayer(_int iRoomIndex)
+{
+	for (auto& Pair : m_GameObjects)
+	{
+		if (dynamic_cast<CEnviromentObj*>(Pair.second) == nullptr)
+			return;
+
+		if(iRoomIndex ==  static_cast<CEnviromentObj*>(Pair.second)->Get_RoomIndex())
+			Safe_Release(Pair.second);
+	}
+	
+
 }
 
 CComponent * CLayer::Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar * pComponentTag)
