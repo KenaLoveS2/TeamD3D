@@ -36,6 +36,13 @@ private:
 private:
 	class CQuadTree*		m_pQuadTree = nullptr;
 
+	PxVec3**			m_pPxTerrainVtx = nullptr;
+	PxIndicies*			m_pPxTerrainIdx_Divide = nullptr;
+	PxIndicies*			m_pPxTerrainIdx_Remain = nullptr;
+
+	_uint m_iDivideCount = 0;
+	const _uint m_iDivideThreshold = 10000;
+	_bool m_bRemainFlag = false;
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);
@@ -54,7 +61,7 @@ public:
 	_uint Get_NumVerticesZ() {
 		return m_iNumVerticesZ;
 	}
-
+	void Create_Divide_PxData(VTXNORTEX* pVtx, FACEINDICES32* pIdx);
 };
 
 END
