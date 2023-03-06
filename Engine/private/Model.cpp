@@ -215,6 +215,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		{
 			CAnimation *pAnimation = CAnimation::Create(hFile, this);
 			if (pAnimation == nullptr) return E_FAIL;
+			pAnimation->Set_AnimIndex(i);
 
 			m_Animations.push_back(pAnimation);
 		}
@@ -1252,6 +1253,7 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 		CAnimation*	pAnimation = CAnimation::Create(nullptr, this);
 		NULL_CHECK_RETURN(pAnimation, E_FAIL);
 		FAILED_CHECK_RETURN(pAnimation->Load_Animation(hFile, dwByte), E_FAIL);
+		pAnimation->Set_AnimIndex(i);
 
 		m_Animations.push_back(pAnimation);
 	}
