@@ -42,7 +42,12 @@ void CE_KenaPulse::Set_Child()
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
-	pEffectBase->Set_Parent(this);
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulseDot", L"KenaPulseDot"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto* pChild : m_vecChild)
+		pChild->Set_Parent(this);
 
 	RELEASE_INSTANCE(CGameInstance);
 }

@@ -18,6 +18,7 @@ BEGIN(Client)
 class CKena_State final : public CBase
 {
 public:
+	enum MOVEOPTION { MOVEOPTION_COMMON, MOVEOPTION_ONLYTURN, MOVEOPTION_END };
 	enum ANIMATION {
 		PHOTO_ADVENTURE, PHOTO_ADVENTURE_LOOP,
 
@@ -320,8 +321,9 @@ public:
 		/* PARRY ATTACK */
 		SPIN_ATTACK, SPIN_ATTACK_RETURN,
 
+		SPIRIT_DIVE_TRANSITION,
+
 		/* SPRINT */
-		SPRINT_DIVE_TRANSITION,
 		SPRINT, SPRINT_LEAN_LEFT, SPRINT_LEAN_RIGHT,
 		SPRINT_TURN_180,
 		SPRINT_ATTACK,
@@ -380,6 +382,9 @@ private:
 	virtual ~CKena_State() = default;
 
 public:
+	static	CKena_State		NullFunc;
+
+public:
 	HRESULT					Initialize(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);
@@ -411,7 +416,9 @@ private:
 	HRESULT					SetUp_State_Attack3();
 	HRESULT					SetUp_State_Attack4();
 	HRESULT					SetUp_State_Bow();
+	HRESULT					SetUp_State_Dodge();
 	HRESULT					SetUp_State_Pulse();
+	HRESULT					SetUp_State_Sprint();
 
 private:
 	/* IDLE */
@@ -437,6 +444,19 @@ private:
 	void						Start_Attack_1_Into_Run(_float fTimeDelta);
 	void						Start_Attack_1_Into_Walk(_float fTimeDelta);
 	void						Start_Attack_1_Return(_float fTimeDelta);
+	/* ATTACK 2 */
+	void						Start_Attack_2(_float fTimeDelta);
+	void						Start_Attack_2_Into_Run(_float fTimeDelta);
+	void						Start_Attack_2_Into_Walk(_float fTimeDelta);
+	void						Start_Attack_2_Return(_float fTimeDelta);
+	/* ATTACK 3 */
+	void						Start_Attack_3(_float fTimeDelta);
+	void						Start_Attack_3_Into_Run(_float fTimeDelta);
+	void						Start_Attack_3_Return(_float fTimeDelta);
+	/* ATTACK 4 */
+	void						Start_Attack_4(_float fTimeDelta);
+	void						Start_Attack_4_Into_Run(_float fTimeDelta);
+	void						Start_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						Start_Bow_Charge(_float fTimeDelta);
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
@@ -444,6 +464,15 @@ private:
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
+	/* DODGE */
+	void						Start_Backflip(_float fTimeDelta);
+	void						Start_Roll(_float fTimeDelta);
+	void						Start_Roll_Left(_float fTimeDelta);
+	void						Start_Roll_Right(_float fTimeDelta);
+	void						Start_Roll_Into_Idle(_float fTimeDelta);
+	void						Start_Roll_Into_Run(_float fTimeDelta);
+	void						Start_Roll_Into_Walk(_float fTimeDelta);
+	void						Start_Roll_Into_Fall(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -462,6 +491,14 @@ private:
 	void						Start_Pulse_Walk_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Right(_float fTimeDelta);
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SRPINT */
+	void						Start_Into_Sprint(_float fTimeDelta);
+	void						Start_Sprint(_float fTimeDelta);
+	void						Start_Sprint_Stop(_float fTimeDelta);
+	void						Start_Sprint_Lean_Left(_float fTimeDelta);
+	void						Start_Sprint_Lean_Right(_float fTimeDelta);
+	void						Start_Sprint_Turn_180(_float fTimeDelta);
+	void						Start_Sprint_Attack(_float fTimeDelta);
 
 private:
 	/* IDLE */
@@ -486,6 +523,19 @@ private:
 	void						Tick_Attack_1_Into_Run(_float fTimeDelta);
 	void						Tick_Attack_1_Into_Walk(_float fTimeDelta);
 	void						Tick_Attack_1_Return(_float fTimeDelta);
+	/* ATTACK 2 */
+	void						Tick_Attack_2(_float fTimeDelta);
+	void						Tick_Attack_2_Into_Run(_float fTimeDelta);
+	void						Tick_Attack_2_Into_Walk(_float fTimeDelta);
+	void						Tick_Attack_2_Return(_float fTimeDelta);
+	/* ATTACK 3 */
+	void						Tick_Attack_3(_float fTimeDelta);
+	void						Tick_Attack_3_Into_Run(_float fTimeDelta);
+	void						Tick_Attack_3_Return(_float fTimeDelta);
+	/* ATTACK 4 */
+	void						Tick_Attack_4(_float fTimeDelta);
+	void						Tick_Attack_4_Into_Run(_float fTimeDelta);
+	void						Tick_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						Tick_Bow_Charge(_float fTimeDelta);
 	void						Tick_Bow_Charge_Full(_float fTimeDelta);
@@ -493,6 +543,15 @@ private:
 	void						Tick_Bow_Release(_float fTimeDelta);
 	void						Tick_Bow_Recharge(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
+	/* DODGE */
+	void						Tick_Backflip(_float fTimeDelta);
+	void						Tick_Roll(_float fTimeDelta);
+	void						Tick_Roll_Left(_float fTimeDelta);
+	void						Tick_Roll_Right(_float fTimeDelta);
+	void						Tick_Roll_Into_Idle(_float fTimeDelta);
+	void						Tick_Roll_Into_Run(_float fTimeDelta);
+	void						Tick_Roll_Into_Walk(_float fTimeDelta);
+	void						Tick_Roll_Into_Fall(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -502,8 +561,16 @@ private:
 	void						Tick_Pulse_Into_Idle(_float fTimeDelta);
 	void						Tick_Pulse_Into_Run(_float fTimeDelta);
 	void						Tick_Pulse_Parry(_float fTimeDelta);
-	void						Tick_Pulse_Walk(_float fTimeDleta);
+	void						Tick_Pulse_Walk(_float fTimeDelta);
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SRPINT */
+	void						Tick_Into_Sprint(_float fTimeDelta);
+	void						Tick_Sprint(_float fTimeDelta);
+	void						Tick_Sprint_Stop(_float fTimeDelta);
+	void						Tick_Sprint_Lean_Left(_float fTimeDelta);
+	void						Tick_Sprint_Lean_Right(_float fTimeDelta);
+	void						Tick_Sprint_Turn_180(_float fTimeDelta);
+	void						Tick_Sprint_Attack(_float fTimeDelta);
 
 private:
 	/* IDLE */
@@ -528,6 +595,19 @@ private:
 	void						End_Attack_1_Into_Run(_float fTimeDelta);
 	void						End_Attack_1_Into_Walk(_float fTimeDelta);
 	void						End_Attack_1_Return(_float fTimeDelta);
+	/* ATTACK 2 */
+	void						End_Attack_2(_float fTimeDelta);
+	void						End_Attack_2_Into_Run(_float fTimeDelta);
+	void						End_Attack_2_Into_Walk(_float fTimeDelta);
+	void						End_Attack_2_Return(_float fTimeDelta);
+	/* ATTACK 3 */
+	void						End_Attack_3(_float fTimeDelta);
+	void						End_Attack_3_Into_Run(_float fTimeDelta);
+	void						End_Attack_3_Return(_float fTimeDelta);
+	/* ATTACK 4 */
+	void						End_Attack_4(_float fTimeDelta);
+	void						End_Attack_4_Into_Run(_float fTimeDelta);
+	void						End_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						End_Bow_Charge(_float fTimeDelta);
 	void						End_Bow_Charge_Full(_float fTimeDelta);
@@ -535,6 +615,15 @@ private:
 	void						End_Bow_Release(_float fTimeDelta);
 	void						End_Bow_Recharge(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);
+	/* DODGE */
+	void						End_Backflip(_float fTimeDelta);
+	void						End_Roll(_float fTimeDelta);
+	void						End_Roll_Left(_float fTimeDelta);
+	void						End_Roll_Right(_float fTimeDelta);
+	void						End_Roll_Into_Idle(_float fTimeDelta);
+	void						End_Roll_Into_Run(_float fTimeDelta);
+	void						End_Roll_Into_Walk(_float fTimeDelta);
+	void						End_Roll_Into_Fall(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
@@ -544,11 +633,20 @@ private:
 	void						End_Pulse_Into_Idle(_float fTimeDelta);
 	void						End_Pulse_Into_Run(_float fTimeDelta);
 	void						End_Pulse_Parry(_float fTimeDelta);
-	void						End_Pulse_Walk(_float fTimeDleta);
+	void						End_Pulse_Walk(_float fTimeDelta);
 	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SRPINT */
+	void						End_Into_Sprint(_float fTimeDelta);
+	void						End_Sprint(_float fTimeDelta);
+	void						End_Sprint_Stop(_float fTimeDelta);
+	void						End_Sprint_Lean_Left(_float fTimeDelta);
+	void						End_Sprint_Lean_Right(_float fTimeDelta);
+	void						End_Sprint_Turn_180(_float fTimeDelta);
+	void						End_Sprint_Attack(_float fTimeDelta);
 
 private:	/* Changer */
 	_bool	Animation_Finish();
+	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();
 
 	_bool	KeyInput_None();
@@ -570,6 +668,7 @@ private:	/* Changer */
 	_bool	KeyDown_E();
 	_bool	KeyDown_Q();
 	_bool	KeyDown_R();
+	_bool	KeyDown_Space();
 	_bool	KeyDown_LCtrl();
 	_bool	MouseDown_Left();
 	_bool	MouseDown_Middle();
@@ -580,7 +679,7 @@ private:	/* Changer */
 	_bool	MouseUp_Left();
 
 private:
-	void	Move(_float TimeDelta, CTransform::DIRECTION eDir);
+	void	Move(_float TimeDelta, CTransform::DIRECTION eDir, MOVEOPTION eMoveOption = MOVEOPTION_COMMON);
 	CTransform::DIRECTION		DetectDirectionInput();
 
 public:

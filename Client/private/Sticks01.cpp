@@ -43,8 +43,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 }
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
-{
-	return S_OK;
+{	
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -75,6 +74,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 	// ¹«±â
 	{
+		/*
 		wstring WeaponPivot;
 		m_vecColliderName.push_back(WeaponPivot);
 		_float3 vWeaponPivot = _float3(-0.55f,0.f, -1.15f);
@@ -110,6 +110,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);
+		*/
 	}
 
 	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
@@ -122,9 +123,7 @@ void CSticks01::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	// Update_Collider(fTimeDelta);
-
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;

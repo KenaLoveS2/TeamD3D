@@ -2,6 +2,7 @@
 #include "..\public\Effect_Mesh.h"
 #include "GameInstance.h"
 #include "Effect_Trail.h"
+#include "Effect_Trail_T.h"
 
 CEffect_Mesh::CEffect_Mesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -15,7 +16,7 @@ CEffect_Mesh::CEffect_Mesh(const CEffect_Mesh & rhs)
 
 HRESULT CEffect_Mesh::Initialize_Prototype(const _tchar* pFilePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(pFilePath)))
 		return E_FAIL;
 
 	return S_OK;
@@ -245,7 +246,7 @@ HRESULT CEffect_Mesh::Set_Trail(CEffect_Base * pEffect, const _tchar * pProtoTag
 	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
 	pGameInstance->Add_String(szTrailCloneTag);
 
-	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
@@ -413,7 +414,7 @@ HRESULT CEffect_Mesh::SetUp_Components()
 	}
 
 	/* For.MaskTexture */
-	for (_uint i = 0; i < m_iTotalDTextureComCnt; i++)
+	for (_uint i = 0; i < m_iTotalMTextureComCnt; i++)
 	{
 		_tchar szMTexture[64] = L"";
 		wsprintf(szMTexture, L"Com_MTexture_%d", i);
