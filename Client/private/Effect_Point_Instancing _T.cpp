@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include "..\public\Effect_Point_Instancing.h"
+#include "..\public\Effect_Point_Instancing_T.h"
 #include "GameInstance.h"
 #include "Effect_Trail.h"
 #include "Effect_Trail_T.h"
 
-CEffect_Point_Instancing::CEffect_Point_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Point_Instancing_T::CEffect_Point_Instancing_T(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
 {
 }
 
-CEffect_Point_Instancing::CEffect_Point_Instancing(const CEffect_Point_Instancing & rhs)
+CEffect_Point_Instancing_T::CEffect_Point_Instancing_T(const CEffect_Point_Instancing_T & rhs)
 	: CEffect_Base(rhs)
 	, m_szVIBufferProtoTag(rhs.m_szVIBufferProtoTag)
 {
 }
 
-HRESULT CEffect_Point_Instancing::Set_ShapePosition()
+HRESULT CEffect_Point_Instancing_T::Set_ShapePosition()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return E_FAIL;
@@ -23,7 +23,7 @@ HRESULT CEffect_Point_Instancing::Set_ShapePosition()
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_ShapePosition();
 }
 
-HRESULT CEffect_Point_Instancing::Set_Trail(CEffect_Base * pEffect, const _tchar * pProtoTag)
+HRESULT CEffect_Point_Instancing_T::Set_Trail(CEffect_Base * pEffect, const _tchar * pProtoTag)
 {
 	CEffect_Base*   pEffectTrail = nullptr;
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
@@ -80,7 +80,7 @@ HRESULT CEffect_Point_Instancing::Set_Trail(CEffect_Base * pEffect, const _tchar
 	return S_OK;
 }
 
-CEffect_Trail * CEffect_Point_Instancing::Get_Trail()
+CEffect_Trail * CEffect_Point_Instancing_T::Get_Trail()
 {
 	if (m_pEffectTrail == nullptr)
 		return nullptr;
@@ -88,7 +88,7 @@ CEffect_Trail * CEffect_Point_Instancing::Get_Trail()
 	return dynamic_cast<CEffect_Trail*>(m_pEffectTrail);
 }
 
-void CEffect_Point_Instancing::Delete_Trail(const _tchar * pProtoTag)
+void CEffect_Point_Instancing_T::Delete_Trail(const _tchar * pProtoTag)
 {
 	for (auto& iter = m_vecTrailEffect.begin(); iter != m_vecTrailEffect.end();)
 	{
@@ -98,7 +98,7 @@ void CEffect_Point_Instancing::Delete_Trail(const _tchar * pProtoTag)
 	m_vecTrailEffect.clear();
 }
 
-CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing::Get_PointInstanceDesc()
+CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing_T::Get_PointInstanceDesc()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return nullptr;
@@ -106,7 +106,7 @@ CVIBuffer_Point_Instancing::POINTDESC* CEffect_Point_Instancing::Get_PointInstan
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_PointDesc();
 }
 
-void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC* eEffectDesc)
+void CEffect_Point_Instancing_T::Set_PointInstanceDesc(CVIBuffer_Point_Instancing::POINTDESC* eEffectDesc)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
@@ -114,7 +114,7 @@ void CEffect_Point_Instancing::Set_PointInstanceDesc(CVIBuffer_Point_Instancing:
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PointDesc(eEffectDesc);
 }
 
-CVIBuffer_Point_Instancing::INSTANCEDATA* CEffect_Point_Instancing::Get_InstanceData()
+CVIBuffer_Point_Instancing::INSTANCEDATA* CEffect_Point_Instancing_T::Get_InstanceData()
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return nullptr;
@@ -122,7 +122,7 @@ CVIBuffer_Point_Instancing::INSTANCEDATA* CEffect_Point_Instancing::Get_Instance
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_InstanceData();
 }
 
-CVIBuffer_Point_Instancing::INSTANCEDATA CEffect_Point_Instancing::Get_InstanceData_Idx(_int iIndex)
+CVIBuffer_Point_Instancing::INSTANCEDATA CEffect_Point_Instancing_T::Get_InstanceData_Idx(_int iIndex)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return CVIBuffer_Point_Instancing::INSTANCEDATA();
@@ -130,7 +130,7 @@ CVIBuffer_Point_Instancing::INSTANCEDATA CEffect_Point_Instancing::Get_InstanceD
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Get_InstanceData_Idx(iIndex);
 }
 
-void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData)
+void CEffect_Point_Instancing_T::Set_InstanceData(CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
@@ -138,7 +138,7 @@ void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INST
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_InstanceData(eInstanceData);
 }
 
-void CEffect_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
+void CEffect_Point_Instancing_T::Set_RandomSpeeds(_double fMin, _double fMax)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
@@ -146,7 +146,7 @@ void CEffect_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_RandomSpeeds(fMin, fMax);
 }
 
-HRESULT CEffect_Point_Instancing::Set_Pos(_float3 fMin, _float3 fMax)
+HRESULT CEffect_Point_Instancing_T::Set_Pos(_float3 fMin, _float3 fMax)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return E_FAIL;
@@ -154,7 +154,7 @@ HRESULT CEffect_Point_Instancing::Set_Pos(_float3 fMin, _float3 fMax)
 	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_Pos(fMin, fMax);
 }
 
-void CEffect_Point_Instancing::Set_PSize(_float2 PSize)
+void CEffect_Point_Instancing_T::Set_PSize(_float2 PSize)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
@@ -162,7 +162,7 @@ void CEffect_Point_Instancing::Set_PSize(_float2 PSize)
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_PSize(PSize);
 }
 
-void CEffect_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
+void CEffect_Point_Instancing_T::Set_RandomPSize(_float2 PSizeMinMax)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
@@ -170,18 +170,16 @@ void CEffect_Point_Instancing::Set_RandomPSize(_float2 PSizeMinMax)
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_RandomPSize(PSizeMinMax);
 }
 
-HRESULT CEffect_Point_Instancing::Initialize_Prototype(_tchar* pProtoTag, const _tchar* pFilePath)
+HRESULT CEffect_Point_Instancing_T::Initialize_Prototype(_tchar* pProtoTag, const _tchar* pFilePath)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	if (pProtoTag != nullptr)
-		Set_VIBufferProtoTag(pProtoTag);
-
+	Set_VIBufferProtoTag(pProtoTag);
 	return S_OK;
 }
 
-HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
+HRESULT CEffect_Point_Instancing_T::Initialize(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
@@ -189,8 +187,8 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	//if (pArg != nullptr)
-	//	memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
+	if (pArg != nullptr)
+		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
@@ -199,11 +197,10 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
-	this->Set_ShapePosition();
 	return S_OK;
 }
 
-void CEffect_Point_Instancing::Tick(_float fTimeDelta)
+void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -216,10 +213,10 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 	}
 
-	//if (m_eEFfectDesc.IsBillboard == true)
-	//	BillBoardSetting(m_eEFfectDesc.vScale);
-	//else
-	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
@@ -239,10 +236,10 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 				else
 					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
 
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+				m_eEFfectDesc.fWidthFrame = 0.f;
 
 				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+					m_eEFfectDesc.fHeightFrame = 0.f;
 			}
 		}
 	}
@@ -273,7 +270,7 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 	}
 }
 
-void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
+void CEffect_Point_Instancing_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -287,7 +284,7 @@ void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CEffect_Point_Instancing::Render()
+HRESULT CEffect_Point_Instancing_T::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -308,7 +305,7 @@ HRESULT CEffect_Point_Instancing::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Point_Instancing::SetUp_Components()
+HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 {
 	_int iCurLevel = 0;
 #ifdef TESTPLAY
@@ -367,7 +364,7 @@ HRESULT CEffect_Point_Instancing::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
+HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -447,7 +444,31 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CEffect_Point_Instancing::Free()
+CEffect_Point_Instancing_T * CEffect_Point_Instancing_T::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _tchar* pProtoTag)
+{
+	CEffect_Point_Instancing_T*		pInstance = new CEffect_Point_Instancing_T(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pProtoTag)))
+	{
+		MSG_BOX("Failed to Created : CEffect_Point_Instancing_T");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CEffect_Point_Instancing_T::Clone(void * pArg)
+{
+	CEffect_Point_Instancing_T*		pInstance = new CEffect_Point_Instancing_T(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CEffect_Point_Instancing_T");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CEffect_Point_Instancing_T::Free()
 {
 	__super::Free();
 

@@ -23,6 +23,9 @@ public:
 	virtual HRESULT Edit_Child(const _tchar * ProtoTag);
 
 public:
+	void Set_InitRotation();
+
+public:
 	virtual HRESULT				 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag);
 	virtual class CEffect_Trail* Get_Trail();
 	virtual void				 Delete_Trail(const _tchar* pProtoTag);

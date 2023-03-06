@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "..\public\Effect_Trail.h"
+#include "..\public\Effect_Trail_T.h"
 #include "GameInstance.h"
 #include "Camera.h"
 #include "Effect_Point_Instancing.h"
 
-CEffect_Trail::CEffect_Trail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Trail_T::CEffect_Trail_T(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
 {
 }
 
-CEffect_Trail::CEffect_Trail(const CEffect_Trail & rhs)
+CEffect_Trail_T::CEffect_Trail_T(const CEffect_Trail_T & rhs)
 	: CEffect_Base(rhs)
 {
 }
 
-HRESULT CEffect_Trail::Initialize_Prototype()
+HRESULT CEffect_Trail_T::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,7 +22,7 @@ HRESULT CEffect_Trail::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEffect_Trail::Initialize(void * pArg)
+HRESULT CEffect_Trail_T::Initialize(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
@@ -40,7 +40,7 @@ HRESULT CEffect_Trail::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CEffect_Trail::Tick(_float fTimeDelta)
+void CEffect_Trail_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	Set_TrailDesc();
@@ -48,15 +48,15 @@ void CEffect_Trail::Tick(_float fTimeDelta)
 	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
 
-void CEffect_Trail::Late_Tick(_float fTimeDelta)
+void CEffect_Trail_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (m_vecProPos.empty() || m_vecProPos.back() != vPos)
 		m_vecProPos.push_back(vPos);
@@ -66,21 +66,18 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 		while (m_vecProPos.size() > 3)
 			m_vecProPos.erase(m_vecProPos.begin());
 
-		CCamera* pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
-		_vector  vCamPos = pCamera->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
+		_vector vCampos = pGameInstance->Get_CamPosition();
 		_float  fSplineLength = XMVectorGetX(XMVector3Length(m_vecProPos[1] - m_vecProPos[2]));
+		_uint   iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
 
 		_vector vPoint0 = m_vecProPos[0];
 		_vector vPoint1 = m_vecProPos[1];
 		_vector vPoint2 = m_vecProPos[2];
 		_vector vPoint3 = m_vecProPos[2];
-
 		_float  fPreLife = 0.0f;
+
 		if (m_pVITrailBufferCom->Get_InstanceInfo()->size())
 			fPreLife = m_pVITrailBufferCom->Get_InstanceInfo()->back().vPosition.w;
-
-		_uint  iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
 
 		_vector vPrepos = vPoint1;
 
@@ -92,10 +89,10 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			vSplinePos = XMVectorCatmullRom(vPoint0, vPoint1, vPoint2, vPoint3, fWeight);
 
 			vRight = XMVector3Normalize(vSplinePos - vPrepos);
-			vDir = XMVector3Normalize(vCamPos - vSplinePos);
+			vDir = XMVector3Normalize(vCampos - vSplinePos);
 
 			fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
-			if (fRadian < 5.f)
+			if(fRadian < 5.f)
 				continue;
 
 			vUp = XMVector3Cross(vRight, vDir);
@@ -108,12 +105,13 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			vPrepos = vSplinePos;
 		}
 	}
+	RELEASE_INSTANCE(CGameInstance);
 
  	if (nullptr != m_pRendererCom)
  		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
-HRESULT CEffect_Trail::Render()
+HRESULT CEffect_Trail_T::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -121,13 +119,20 @@ HRESULT CEffect_Trail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(4);
-	m_pVITrailBufferCom->Render();
+	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_TRAIL + EFFECTDESC::BLENDSTATE_DEFAULT);
+	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_TRAIL + EFFECTDESC::BLENDSTATE_ALPHA);
+	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_TRAIL + EFFECTDESC::BLENDSTATE_ONEEFFECT);
+	else
+		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_TRAIL + EFFECTDESC::BLENDSTATE_MIX);
 
+	m_pVITrailBufferCom->Render();
 	return S_OK;
 }
 
-HRESULT CEffect_Trail::SetUp_Components()
+HRESULT CEffect_Trail_T::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
@@ -154,36 +159,33 @@ HRESULT CEffect_Trail::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
+	m_iTotalDTextureComCnt = 1;
+	m_iTotalMTextureComCnt = 1;
+
 	/* For.DiffuseTexture */
-	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
-	{
-		_tchar szDTexture[64] = L"";
-		wsprintf(szDTexture, L"Com_DTexture_%d", i);
+	_tchar szDTexture[64] = L"";
+	wsprintf(szDTexture, L"Com_DTexture_%d", 0);
 
-		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
-		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
+	_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
+	CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
-			return E_FAIL;
-	}
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
+		return E_FAIL;
 
 	/* For.MaskTexture */
-	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
-	{
-		_tchar szMTexture[64] = L"";
-		wsprintf(szMTexture, L"Com_MTexture_%d", i);
+	_tchar szMTexture[64] = L"";
+	wsprintf(szMTexture, L"Com_MTexture_%d", 0);
 
-		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
-		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
+	_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
+	CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
-			return E_FAIL;
-	}
+	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
+		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CEffect_Trail::SetUp_ShaderResources()
+HRESULT CEffect_Trail_T::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -221,8 +223,7 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint)))
 		return E_FAIL;
 
-	_uint iTextureRenderType = (_uint)m_eEFfectDesc.eTextureRenderType;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &iTextureRenderType, sizeof(_uint))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
 		return E_FAIL;
@@ -272,7 +273,31 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CEffect_Trail::Free()
+CEffect_Trail_T * CEffect_Trail_T::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
+{
+	CEffect_Trail_T*		pInstance = new CEffect_Trail_T(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created : CEffect_Trail_T");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CEffect_Trail_T::Clone(void * pArg)
+{
+	CEffect_Trail_T*		pInstance = new CEffect_Trail_T(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CEffect_Trail_T");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CEffect_Trail_T::Free()
 {
 	__super::Free();
 }

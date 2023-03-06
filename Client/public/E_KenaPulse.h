@@ -30,6 +30,8 @@ private:
 
 private:
 	class CTexture* m_pDissolveTexture = nullptr;
+
+private:
 	_bool	m_bDesolve = true;
 	_bool	m_bNoActive = false;
 
