@@ -253,6 +253,12 @@
     <Filter Include="02.GameObjects\Terrain\Editor">
       <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena Effect\Pulse">
+      <UniqueIdentifier>{bde732cb-5b68-456a-9c74-370baad4027e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena Effect\Trail">
+      <UniqueIdentifier>{4e3d0e2d-73a3-4184-b391-ad4dea29ddeb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -563,9 +569,6 @@
     <ClInclude Include="..\public\Effect_Mesh_T.h">
       <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulse.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Bridge.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
@@ -584,7 +587,6 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\Effect_T.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
     </ClInclude>
@@ -593,6 +595,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\Stone.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Point_Instancing_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulse.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseDot.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -883,9 +903,6 @@
     <ClCompile Include="..\private\Effect_Mesh_T.cpp">
       <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulse.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Bridge.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
@@ -904,7 +921,6 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
     </ClCompile>
@@ -913,6 +929,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\Stone.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulse.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

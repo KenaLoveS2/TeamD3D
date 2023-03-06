@@ -8,18 +8,24 @@
 // Json
 #include "Json/json.hpp"
 #include <fstream>
+#include "Effect.h"
+#include "Effect_T.h"
+#include "Effect_Mesh_T.h"
+#include "Effect_Trail_T.h"
 // ~Json
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 {
 	ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
+	m_eEFfectDesc.vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	: CGameObject(rhs)
 	, m_iTotalDTextureComCnt(rhs.m_iTotalDTextureComCnt)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
+	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
@@ -40,12 +46,21 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 	jLayer["1.Save2Load Level"].get_to<int>(iSave2LoadLevel);
 	jLayer["2.Layer Tag"].get_to<string>(strLayerTag);
 
+#ifdef TESTPLAY
+	iCurLevel = LEVEL_TESTPLAY;
+#else 
+	iCurLevel = LEVEL_EFFECT;
+#endif // TESTPLAY
+
 	// Clone GameObject
 	_int iEnum = 0, iEffectType = 0;
 	CEffect_Base::EFFECTDESC eLoadEffectDesc;
+	
 	Json	jData;
 	Json	jDesc;
 	Json	jObject;
+	Json	jChildDesc;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	//jData = jLayer["Pulse Test"];
 	for (auto jData : jLayer["Pulse Test"])
@@ -102,6 +117,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 				jDesc["SeparateHeight"].get_to<_int>(eLoadEffectDesc.iSeparateHeight);
 				jDesc["WidthCnt"].get_to<_int>(eLoadEffectDesc.iWidthCnt);
 				jDesc["HeightCnt"].get_to<_int>(eLoadEffectDesc.iHeightCnt);
+				jDesc["DurationTime"].get_to<_float>(eLoadEffectDesc.fTimeDelta);
 
 				jDesc["CreateRange"].get_to<_float>(eLoadEffectDesc.fCreateRange);
 				jDesc["Range"].get_to<_float>(eLoadEffectDesc.fRange);
@@ -138,7 +154,6 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 #pragma  endregion	EFFECTDESC
 				memcpy(&m_eEFfectDesc, &eLoadEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
 			}
-
 				_int iDTextureCnt = 0, iMTextureCnt = 0;
 				jObject["Have DTextureCnt"].get_to<_int>(iDTextureCnt);
 				jObject["Have MTextureCnt"].get_to<_int>(iMTextureCnt);
@@ -175,9 +190,9 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 			string strTrailPrototypeTag = "", strTrailCloneTag = "";
 			if (eLoadEffectDesc.IsTrail == true)
 			{
-				CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 				_int iParticleIndex = 0, iTrailEffectType = 0;
-				jObject["Trail EffectType"].get_to<_int>(iTrailEffectType);
+			//	jObject["Trail EffectType"].get_to<_int>(iTrailEffectType);
+
 				if (iEffectType == 1) // VIBuffer_Point_Instancing Data Save
 				{
 					jObject["Trail ProtoTag"].get_to<string>(strTrailPrototypeTag);
@@ -203,7 +218,6 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 
 					dynamic_cast<CEffect_Base*>(this)->Set_InitTrail(szTrailPrototypeTag, 1);
 				}
-				RELEASE_INSTANCE(CGameInstance);
 			}
 
 			_int iChildCnt = 0;
@@ -220,44 +234,144 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 					jObject["Child ProtoTag"].get_to<string>(strPrototypeTag);
 					jObject["Child CloneTag"].get_to<string>(strCloneTag);
 
+					CEffect_Base::EFFECTDESC eChildEffectDesc;
+					ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
+
+					for (auto jChildDesc : jObject["ChildDesc"])
+					{
+#pragma  region	EFFECTDESC
+						jChildDesc["Effect Type"].get_to<_int>(iEffectType);
+						eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
+
+						iEnum = 0;
+						jChildDesc["Mesh Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eMeshType = (CEffect_Base::EFFECTDESC::MESHTYPE)iEnum;
+
+						jChildDesc["Particle Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eParticleType = (CEffect_Base::EFFECTDESC::PARTICLETYPE)iEnum;
+
+						jChildDesc["TextureRender Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eTextureRenderType = (CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE)iEnum;
+
+						jChildDesc["Texture Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eTextureType = (CEffect_Base::EFFECTDESC::TEXTURETYPE)iEnum;
+
+						jChildDesc["Blend Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eBlendType = (CEffect_Base::EFFECTDESC::BLENDSTATE)iEnum;
+
+						jChildDesc["MoveDir Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eMoveDir = (CEffect_Base::EFFECTDESC::MOVEDIR)iEnum;
+
+						jChildDesc["Rotation Type"].get_to<_int>(iEnum);
+						eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+						_int i = 0;
+						for (_float fFrame : jChildDesc["DiffuseTexture Index"])
+							memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
+						i = 0;
+						for (_float fMaskFrame : jChildDesc["MaskTexture Index"])
+							memcpy(((_float*)&eChildEffectDesc.fMaskFrame) + (i++), &fMaskFrame, sizeof(_float));
+						i = 0;
+						for (_float vColor : jChildDesc["Color"])
+							memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
+						i = 0;
+						for (_float vScale : jChildDesc["vScale"])
+							memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
+
+						jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
+						jChildDesc["Width Frame"].get_to<_float>(eChildEffectDesc.fWidthFrame);
+						jChildDesc["Height Frame"].get_to<_float>(eChildEffectDesc.fHeightFrame);
+
+						jChildDesc["SeparateWidth"].get_to<_int>(eChildEffectDesc.iSeparateWidth);
+						jChildDesc["SeparateHeight"].get_to<_int>(eChildEffectDesc.iSeparateHeight);
+						jChildDesc["WidthCnt"].get_to<_int>(eChildEffectDesc.iWidthCnt);
+						jChildDesc["HeightCnt"].get_to<_int>(eChildEffectDesc.iHeightCnt);
+						jChildDesc["DurationTime"].get_to<_float>(eChildEffectDesc.fTimeDelta);
+
+						jChildDesc["CreateRange"].get_to<_float>(eChildEffectDesc.fCreateRange);
+						jChildDesc["Range"].get_to<_float>(eChildEffectDesc.fRange);
+						jChildDesc["Angle"].get_to<_float>(eChildEffectDesc.fAngle);
+						jChildDesc["MoveDurationTime"].get_to<_float>(eChildEffectDesc.fMoveDurationTime);
+						jChildDesc["Start"].get_to<_bool>(eChildEffectDesc.bStart);
+
+						i = 0;
+						for (_float vInitPos : jChildDesc["Init Pos"])
+							memcpy(((_float*)&eChildEffectDesc.vInitPos) + (i++), &vInitPos, sizeof(_float));
+						i = 0;
+						for (_float vPixedDir : jChildDesc["Pixed Dir"])
+							memcpy(((_float*)&eChildEffectDesc.vPixedDir) + (i++), &vPixedDir, sizeof(_float));
+
+						jChildDesc["Have Trail"].get_to<_bool>(eChildEffectDesc.IsTrail);
+						if (eChildEffectDesc.IsTrail == true)
+						{
+							jChildDesc["Active"].get_to<_bool>(eChildEffectDesc.bActive);
+							jChildDesc["Alpha Trail"].get_to<_bool>(eChildEffectDesc.bAlpha);
+							jChildDesc["Life"].get_to<_float>(eChildEffectDesc.fLife);
+							jChildDesc["Width"].get_to<_float>(eChildEffectDesc.fWidth);
+							jChildDesc["SegmentSize"].get_to<_float>(eChildEffectDesc.fSegmentSize);
+						}
+
+						jChildDesc["Alpha"].get_to<_float>(eChildEffectDesc.fAlpha);
+						jChildDesc["Billboard"].get_to<_bool>(eChildEffectDesc.IsBillboard);
+						jChildDesc["Use Normal"].get_to<_bool>(eChildEffectDesc.IsNormal);
+						jChildDesc["Use Mask"].get_to<_bool>(eChildEffectDesc.IsMask);
+						jChildDesc["Trigger"].get_to<_bool>(eChildEffectDesc.IsTrigger);
+						jChildDesc["MovingPosition"].get_to<_bool>(eChildEffectDesc.IsMovingPosition);
+						jChildDesc["Use Child"].get_to<_bool>(eChildEffectDesc.bUseChild);
+						jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
+						jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
+#pragma  endregion	EFFECTDESC
+					}
+
 					char* szProtoTag = CUtile::Create_String(strPrototypeTag.c_str());
-					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(iChildCnt, szProtoTag);
+					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, szProtoTag);
 				}
 			}
 
+			_int iCnt = 0;
 			// Component Desc ¿˙¿Â
 			if (iEffectType == 1) // VIBuffer_Point_Instancing Data Save
 			{
+				string strVIBufferTag = "";
+				if (jObject.contains("CloneObject Component ProtoTag"))
+ 					jObject["CloneObject Component ProtoTag"].get_to<string>(strVIBufferTag);
+
+				_tchar szVIBufferTag[MAX_PATH] = L"";
+				CUtile::CharToWideChar(strVIBufferTag.c_str(), szVIBufferTag);
+				_tchar* szVIBufferFinalTag = CUtile::Create_String(szVIBufferTag);
+				pGameInstance->Add_String(szVIBufferFinalTag);
+
+				dynamic_cast<CEffect_Point_Instancing*>(this)->Set_VIBufferProtoTag(szVIBufferFinalTag);
+
+				iCnt = 0; 
+				jObject["Instance DataCnt"].get_to<_int>(iCnt);
+
+				CVIBuffer_Point_Instancing* pVIBuffer = nullptr;
+				if (FAILED(pGameInstance->Add_Prototype(iCurLevel, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
+					return E_FAIL;
 
 #pragma region Instance Data
-				_int iInstanceDataCnt = 0, iInstanceDataIdx = 0;
-				//	jObject = jCloneObjects["CloneObject Component"];
-
-				CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = new CVIBuffer_Point_Instancing::INSTANCEDATA[iInstanceDataCnt];
-				ZeroMemory(InstanceData, sizeof(CVIBuffer_Point_Instancing::INSTANCEDATA)*iInstanceDataCnt);
+				CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = nullptr;
+				InstanceData = pVIBuffer->Get_InstanceData();
 
 				_int k = 0;
 				for (_float fPos : jObject["CloneObject Component InstnaceData Position"])
 					memcpy((_float*)&InstanceData->fPos + (k++), &fPos, sizeof(_float));
 
 				jObject["CloneObject Component InstnaceData Speed"].get_to<_double>(InstanceData->pSpeeds);
-
-				_float2 SpeedMinMax = { 0.0f,0.0f };
-				_float2 PSize = { 0.0f,0.0f };
-
 				jObject["CloneObject Component InstnaceData SpeedMinMin"].get_to<_float>(InstanceData->SpeedMinMax.x);
 				jObject["CloneObject Component InstnaceData SpeedMinMax"].get_to<_float>(InstanceData->SpeedMinMax.y);
 				jObject["CloneObject Component InstnaceData PSizeX"].get_to<_float>(InstanceData->fPSize.x);
 				jObject["CloneObject Component InstnaceData PSizeY"].get_to<_float>(InstanceData->fPSize.y);
-
+				
 #pragma endregion Instance Data
 
 #pragma region Point Desc Data
-				CVIBuffer_Point_Instancing::POINTDESC* PointDesc = new CVIBuffer_Point_Instancing::POINTDESC[iInstanceDataCnt];
-				ZeroMemory(PointDesc, sizeof(CVIBuffer_Point_Instancing::POINTDESC)*iInstanceDataCnt);
-				string strPointDataTag = "";
+				CVIBuffer_Point_Instancing::POINTDESC* PointDesc = nullptr;
+				PointDesc = pVIBuffer->Get_PointDesc();
 
-				jObject["0. Point Data"].get_to<string>(strPointDataTag);
+				string strPointDataTag = "";
+				jObject["Point Data"].get_to<string>(strPointDataTag);
 
 				k = 0;
 				for (_float fMin : jObject["CloneObject Component PointDesc Min"])
@@ -309,16 +423,11 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 
 #pragma endregion Point Desc Data
 
-				dynamic_cast<CEffect_Point_Instancing*>(this)->Set_PointInstanceDesc(PointDesc);
-				dynamic_cast<CEffect_Point_Instancing*>(this)->Set_InstanceData(InstanceData);
-				dynamic_cast<CEffect_Point_Instancing*>(this)->Set_ShapePosition();
-
-				Safe_Delete_Array(PointDesc);
-				Safe_Delete_Array(InstanceData);
 			}
 		}
 	}
 #pragma endregion LoadData
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -343,7 +452,7 @@ void CEffect_Base::Set_Matrix()
 
 void CEffect_Base::Set_TrailDesc()
 {
-	if (m_pParent == nullptr)
+	if (m_pParent == nullptr || dynamic_cast<CEffect_Base*>(m_pParent) == false)
 		return;
 
 	EFFECTDESC effectDesc = dynamic_cast<CEffect_Base*>(m_pParent)->Get_EffectDesc();
@@ -381,7 +490,7 @@ HRESULT CEffect_Base::Set_InitTrail(const _tchar * pPrototypeTag, _int iCnt)
 	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
 	pGameInstance->Add_String(szTrailCloneTag);
 
-	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
@@ -457,7 +566,7 @@ void CEffect_Base::Late_Tick(_float fTimeDelta)
 	for (auto& pChild : m_vecChild)
 		pChild->Late_Tick(fTimeDelta);
 
-	if (m_pParent != nullptr)
+	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false) 
 		Set_Matrix();
 }
 
@@ -469,7 +578,7 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::Set_InitChild(_int iCreateCnt, char * ProtoTag)
+HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag)
 {
 	CEffect_Base*    pEffectBase = nullptr;
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
@@ -477,10 +586,11 @@ HRESULT CEffect_Base::Set_InitChild(_int iCreateCnt, char * ProtoTag)
 	_tchar      szChildProto[128];
 	CUtile::CharToWideChar(ProtoTag, szChildProto);
 
+	EFFECTDESC eChildeffectDesc;
+	memcpy(&eChildeffectDesc, &eEffectDesc, sizeof(eEffectDesc));
+
 	for (_int i = 0; i < iCreateCnt; ++i)
 	{
-		// ProtoTag
-		//wstring strChildProtoTag = szChildProto;
 		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
 		pGameInstance->Add_String(szChildProtoTag);
 
@@ -499,11 +609,31 @@ HRESULT CEffect_Base::Set_InitChild(_int iCreateCnt, char * ProtoTag)
 		_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
 		pGameInstance->Add_String(szChildClondTag);
 
-		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag));
+		switch (eChildeffectDesc.eEffectType)
+		{
+		case CEffect_Base::tagEffectDesc::EFFECT_PLANE:
+			if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_T::Create(m_pDevice, m_pContext))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return E_FAIL;
+			}
+			break;
+
+		case CEffect_Base::tagEffectDesc::EFFECT_PARTICLE:
+			break;
+
+		case CEffect_Base::tagEffectDesc::EFFECT_MESH:
+			if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return E_FAIL;
+			}
+			break;
+		}
+
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag, &eChildeffectDesc));
 		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-		
 		pEffectBase->Set_Parent(this);
-	//	pEffectBase->Set_InitMatrix(m_pTransformCom->Get_WorldMatrix());
 
 		m_vecChild.push_back(pEffectBase);
 		m_iHaveChildCnt++;
