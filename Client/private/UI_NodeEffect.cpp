@@ -8,14 +8,16 @@
 CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_pTarget(nullptr)
-	, m_bAnimation(false)
+	, m_eType(TYPE_END)
+	, m_fTime(0.f)
 {
 }
 
 CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 	: CUI_Node(rhs)
 	, m_pTarget(nullptr)
-	, m_bAnimation(false)
+	, m_eType(TYPE_END)
+	, m_fTime(0.f)
 {
 }
 
@@ -41,6 +43,9 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 
 	if(!m_vecEvents.empty())
 		m_vecEvents[0]->Call_Event((_uint)0);
+
+	if (TYPE_SEPERATOR == m_eType)
+		m_fTime = 0.f;
 }
 
 HRESULT CUI_NodeEffect::Initialize_Prototype()
@@ -67,7 +72,7 @@ HRESULT CUI_NodeEffect::Initialize(void * pArg)
 
 	//m_bActive = true;
 
-	if (m_bAnimation)
+	if (TYPE_ANIM == m_eType)
 	{
 		/* Events */
 		/* 이미지가 변경되도록 하는 이벤트 */
@@ -84,8 +89,23 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (!m_vecEvents.empty() && static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
-		m_bActive = false;
+	switch (m_eType)
+	{
+	case TYPE_SEPERATOR:
+		m_fTime += fTimeDelta;
+		if (m_fTime > 1.f)
+			m_fTime = 1.f;
+		break;
+	case TYPE_ANIM:
+		if (static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
+			m_bActive = false;
+		break;
+	default:
+		break;
+	}
+
+
+
 
 	__super::Tick(fTimeDelta);
 }
@@ -133,7 +153,12 @@ void CUI_NodeEffect::Imgui_RenderProperty()
 {
 	ImGui::Separator();
 	ImGui::Text("Effect Specific Property");
-	ImGui::Checkbox("IsAnimEffect", &m_bAnimation);
+	ImGui::Text("0TYPE_NONANIM, 1TYPE_ANIM, 2TYPE_SEPERATOR");
+
+	static int eType;
+	eType = m_eType;
+	if (ImGui::InputInt("EffectType", &eType))
+		m_eType = (TYPE)eType;
 
 	__super::Imgui_RenderProperty();
 }
@@ -166,8 +191,8 @@ HRESULT CUI_NodeEffect::Save_Data()
 		iIndex = -1;
 	json["MaskTextureIndex"] = iIndex;
 
-
-	json["IsAnimEffect"] = m_bAnimation;
+	_uint eType = m_eType;
+	json["AnimType"] = eType;
 
 	for (auto e : m_vecEvents)
 		e->Save_Data(&json);
@@ -205,7 +230,10 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	m_iOriginalRenderPass = m_iRenderPass;
-	jLoad["IsAnimEffect"].get_to<_bool>(m_bAnimation);
+
+	_uint eType;
+	jLoad["AnimType"].get_to<_uint>(eType);
+	m_eType = (TYPE)eType;
 
 	jLoad["DiffuseTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_DIFFUSE]);
 	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
@@ -285,6 +313,10 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
+	if(m_eType == TYPE_SEPERATOR)
+		if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTime, sizeof(_float))))
+			return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

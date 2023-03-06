@@ -31,6 +31,9 @@
 #include "UI_NodeQuest.h"
 #include "Quest.h"
 
+/* CanvasUpgrade */
+#include "UI_CanvasUpgrade.h"
+
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
 
@@ -261,6 +264,15 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Seperator");
 
 
+	/********************************************/
+	/*				For. Upgrade				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Inventory"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/Inventory%d.png",2)))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Inventory");
+
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -285,6 +297,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "PaintDrop");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTest");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaChange");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlphaTestGuage");
 
 
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
@@ -428,6 +441,15 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Quest"), CQuest::Create(pDevice, pContext))))
 		return E_FAIL;
 
+
+	/********************************************/
+	/*				For. Upgrades				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Upgrade"), CUI_CanvasUpgrade::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Upgrade");
+
+
 	/********************************************/
 	/*				For. Effects				*/
 	/********************************************/
@@ -435,6 +457,8 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Effect"), CUI_NodeEffect::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
+
+	
 
 
 	RELEASE_INSTANCE(CGameInstance);

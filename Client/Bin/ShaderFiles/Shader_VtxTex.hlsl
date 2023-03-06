@@ -89,6 +89,23 @@ PS_OUT PS_MAIN_MASKALPHATEST(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_AlphaTestGuage(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_Time < In.vTexUV.x)
+		discard;
+
+	Out.vColor.a = Out.vColor.r;
+
+	if (Out.vColor.a < 0.1)
+		discard;
+
+	return Out;
+}
+
 PS_OUT PS_MAIN_EFFECT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -588,6 +605,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_ALPHACHANGE();
+	}
+
+	pass MaskAlphaTestGuage // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AlphaTestGuage();
 	}
 
 	pass Trial

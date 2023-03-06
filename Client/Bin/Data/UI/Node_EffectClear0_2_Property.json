@@ -1,1 +1,24 @@
-{"DiffuseTextureIndex":27,"IsAnimEffect":false,"MaskTextureIndex":-1,"localMatrix":[600.0,0.0,0.0,0.0,0.0,10.0,0.0,0.0,0.0,0.0,1.0,0.0,52.0,320.0,0.0,1.0],"renderPass":12}
+{
+    "DiffuseTextureIndex": 27,
+    "AnimType": 2,
+    "MaskTextureIndex": -1,
+    "localMatrix": [
+        600.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        10.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        52.0,
+        320.0,
+        0.0,
+        1.0
+    ],
+    "renderPass": 14
+}

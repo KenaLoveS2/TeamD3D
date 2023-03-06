@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include "..\public\UI_CanvasInv.h"
+#include "..\public\UI_CanvasUpgrade.h"
 #include "GameInstance.h"
 
 /* Bind Object */
 #include "Kena.h"
 
-CUI_CanvasInv::CUI_CanvasInv(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 {
 }
 
-CUI_CanvasInv::CUI_CanvasInv(const CUI_CanvasInv & rhs)
+CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	: CUI_Canvas(rhs)
 {
 }
 
-HRESULT CUI_CanvasInv::Initialize_Prototype()
+HRESULT CUI_CanvasUpgrade::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -23,14 +23,14 @@ HRESULT CUI_CanvasInv::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasInv::Initialize(void * pArg)
+HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 {
 	/* Get a Texture Size, and Make an Initial Matrix */
-	XMStoreFloat4x4(&m_matInit, XMMatrixScaling((_float)g_iWinSizeX, (_float)g_iWinSizeX, 1.f));
+	XMStoreFloat4x4(&m_matInit, XMMatrixScaling((_float)g_iWinSizeX, (_float)g_iWinSizeY, 1.f));
 
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3((_float)g_iWinSizeX, (_float)g_iWinSizeX, 1.f));
+		m_pTransformCom->Set_Scaled(_float3((_float)g_iWinSizeX, (_float)g_iWinSizeY, 1.f));
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -50,7 +50,7 @@ HRESULT CUI_CanvasInv::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CUI_CanvasInv::Tick(_float fTimeDelta)
+void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 {
 	if (!m_bBindFinished)
 	{
@@ -60,6 +60,7 @@ void CUI_CanvasInv::Tick(_float fTimeDelta)
 			return;
 		}
 	}
+	m_bActive = true;
 
 	if (!m_bActive)
 		return;
@@ -68,7 +69,7 @@ void CUI_CanvasInv::Tick(_float fTimeDelta)
 
 }
 
-void CUI_CanvasInv::Late_Tick(_float fTimeDelta)
+void CUI_CanvasUpgrade::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
@@ -76,14 +77,14 @@ void CUI_CanvasInv::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CUI_CanvasInv::Render()
+HRESULT CUI_CanvasUpgrade::Render()
 {
 	__super::Render();
 
 	return S_OK;
 }
 
-HRESULT CUI_CanvasInv::Bind()
+HRESULT CUI_CanvasUpgrade::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -94,7 +95,7 @@ HRESULT CUI_CanvasInv::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInv::BindFunction);
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasUpgrade::BindFunction);
 
 	//m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
@@ -105,12 +106,12 @@ HRESULT CUI_CanvasInv::Bind()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasInv::Ready_Nodes()
+HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-HRESULT CUI_CanvasInv::SetUp_Components()
+HRESULT CUI_CanvasUpgrade::SetUp_Components()
 {
 	/* Renderer */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
@@ -127,7 +128,7 @@ HRESULT CUI_CanvasInv::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasInv::SetUp_ShaderResources()
+HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -161,41 +162,41 @@ HRESULT CUI_CanvasInv::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasInv::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
+void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
 }
 
-void CUI_CanvasInv::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+void CUI_CanvasUpgrade::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
 }
 
-void CUI_CanvasInv::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
+void CUI_CanvasUpgrade::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 {
 }
 
-CUI_CanvasInv * CUI_CanvasInv::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_CanvasUpgrade * CUI_CanvasUpgrade::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CUI_CanvasInv*	pInstance = new CUI_CanvasInv(pDevice, pContext);
+	CUI_CanvasUpgrade*	pInstance = new CUI_CanvasUpgrade(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed To Create : CUI_CanvasInv");
+		MSG_BOX("Failed To Create : CUI_CanvasUpgrade");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CUI_CanvasInv::Clone(void * pArg)
+CGameObject * CUI_CanvasUpgrade::Clone(void * pArg)
 {
-	CUI_CanvasInv*	pInstance = new CUI_CanvasInv(*this);
+	CUI_CanvasUpgrade*	pInstance = new CUI_CanvasUpgrade(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed To Clone : CUI_CanvasInv");
+		MSG_BOX("Failed To Clone : CUI_CanvasUpgrade");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CUI_CanvasInv::Free()
+void CUI_CanvasUpgrade::Free()
 {
 	__super::Free();
 }

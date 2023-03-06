@@ -41,6 +41,12 @@ private:
 	_float				m_fInitBombCoolTime = 0.f;
 	_float				m_fCurBombCoolTime = 0.f;
 
+public: /* skill test */
+	enum SKILL { SKILL_STICK, SKILL_SHIELD, SKILL_BOW, SKILL_BOBM, SKILL_END };
+	enum LEVEL { LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_END };
+	enum STATE { STATE_BLOCKED, STATE_LOCKED, STATE_UNLOCKED, STATE_END };
+	STATE		m_Skill[SKILL_END][LEVEL_END];
+
 private:
 	virtual HRESULT	Save_Status(const _tchar* pFilePath) override;
 	virtual HRESULT	Load_Status(const _tchar* pFilePath) override;

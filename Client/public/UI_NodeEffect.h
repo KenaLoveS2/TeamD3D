@@ -6,7 +6,7 @@ BEGIN(Client)
 class CUI_NodeEffect final : public CUI_Node
 {
 public:
-
+	enum	TYPE { TYPE_NONEANIM, TYPE_ANIM, TYPE_SEPERATOR, TYPE_END };
 private:
 	CUI_NodeEffect(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeEffect(const CUI_NodeEffect& rhs);
@@ -32,8 +32,12 @@ private:
 	HRESULT					SetUp_ShaderResources();
 
 private:
-	_bool					m_bAnimation;
+	//_bool					m_bAnimation;
+	TYPE					m_eType;
 	CUI*					m_pTarget;
+
+	/* For. Simple Action  */
+	_float					m_fTime;
 
 
 public:

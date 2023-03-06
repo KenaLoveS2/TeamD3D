@@ -1,6 +1,6 @@
 {
     "DiffuseTextureIndex": 25,
-    "IsAnimEffect": true,
+    "AnimType": 1,
     "Duration": 0.0010000000474974513,
     "FramesX": [
         8

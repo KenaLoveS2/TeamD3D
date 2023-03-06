@@ -211,7 +211,8 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 
 
 	/* Effect */
-	for (_uint i = 0; i < QUEST_END; ++i)
+	//for (_uint i = 0; i < QUEST_END; ++i)
+	_uint i = 0;
 	{
 		string strMEffect = "Node_EffectClear" + to_string(i);
 		CUI::UIDESC tDescEffectM;
@@ -384,10 +385,11 @@ void CUI_CanvasQuest::Check(CUI_ClientManager::UI_PRESENT eType, _float fData)
 	switch (eType)
 	{
 	case CUI_ClientManager::QUEST_LINE:
-		if ((_int)fData >= (_int)m_vecEffects.size())
+		_int iIndex = (_int)fData % 4;
+		if (iIndex >= (_int)m_vecEffects.size())
 			return;
 
-		m_vecEffects[(_int)fData]->Start_Effect(
+		m_vecEffects[iIndex]->Start_Effect(
 			m_vecNode[(_int)fData], 328.f, 5.f);
 		break;
 	}
