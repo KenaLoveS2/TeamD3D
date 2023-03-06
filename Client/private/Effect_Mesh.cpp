@@ -16,7 +16,7 @@ CEffect_Mesh::CEffect_Mesh(const CEffect_Mesh & rhs)
 
 HRESULT CEffect_Mesh::Initialize_Prototype(const _tchar* pFilePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(pFilePath)))
 		return E_FAIL;
 
 	return S_OK;
@@ -414,7 +414,7 @@ HRESULT CEffect_Mesh::SetUp_Components()
 	}
 
 	/* For.MaskTexture */
-	for (_uint i = 0; i < m_iTotalDTextureComCnt; i++)
+	for (_uint i = 0; i < m_iTotalMTextureComCnt; i++)
 	{
 		_tchar szMTexture[64] = L"";
 		wsprintf(szMTexture, L"Com_MTexture_%d", i);

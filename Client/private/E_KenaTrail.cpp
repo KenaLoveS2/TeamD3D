@@ -51,11 +51,11 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 1.f; //5.f
+	m_eEFfectDesc.fWidth = 0.3f; //5.f
 	m_eEFfectDesc.fLife = 0.2f; //1.f
-	m_eEFfectDesc.bAlpha = true;
+	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.001f; // 0.5f
+	m_eEFfectDesc.fSegmentSize = 0.01f; // 0.5f
 	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 

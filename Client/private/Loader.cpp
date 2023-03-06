@@ -1232,6 +1232,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma  region	 TESTPLAY EFFECT
 #pragma region EFFECT
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
+	/* For.Prototype_Component_Texture_Effect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 106))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_NormalEffect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_NormalEffect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/NormalTexture/N_Effect_%d.png"), 11))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Texture_NormalEffect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))

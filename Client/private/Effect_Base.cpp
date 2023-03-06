@@ -28,7 +28,7 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
- 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
+ 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(rhs.m_eEFfectDesc));
 }
 
 HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
