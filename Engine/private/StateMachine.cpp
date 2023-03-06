@@ -60,12 +60,51 @@ void CStateMachine::Tick(_float fTimeDelta)
 		m_wstrRootStateName += L"_DONE";
 	}
 
+	_bool		bChangeFlag = false;
 	for (auto& Changer : m_mapChanger[m_wstrCurrentStateName])
 	{
-		if (Changer.Changer_Func() == true)
+		bChangeFlag = false;
+
+		if (Changer.Changer_Func_First() == true)
 		{
-			m_wstrNextStateName = Changer.wstrNextState;
-			break;
+			if (Changer.Changer_Func_Second != nullptr)
+			{
+				if (Changer.Changer_Func_Second() == true)
+				{
+					if (Changer.Changer_Func_Third != nullptr)
+					{
+						if (Changer.Changer_Func_Third() == true)
+						{
+							bChangeFlag = true;
+						}
+					}
+					else
+					{
+						bChangeFlag = true;
+					}
+				}
+			}
+			else
+			{
+				bChangeFlag = true;
+			}
+
+			if (bChangeFlag == true)
+			{
+				if (Changer.Changer_Func_Progress != nullptr)
+				{
+					if (Changer.Changer_Func_Progress(0.f) == true)
+					{
+						m_wstrNextStateName = Changer.wstrNextState;
+						break;
+					}
+				}
+				else
+				{
+					m_wstrNextStateName = Changer.wstrNextState;
+					break;
+				}
+			}
 		}
 	}
 
@@ -123,6 +162,22 @@ void CStateMachine::Imgui_RenderProperty()
 
 		m_wstrDebugList.clear();
 	}
+}
+
+void CStateMachine::Rebuild()
+{
+	m_wstrRootStateName = L"";
+	m_wstrLastStateName = L"";
+	m_wstrCurrentStateName = L"";
+	m_wstrNextStateName = L"";
+
+	m_mapState.clear();
+
+	for (auto& Pair : m_mapChanger)
+		Pair.second.clear();
+	m_mapChanger.clear();
+
+	m_wstrDebugList.clear();
 }
 
 void CStateMachine::StateHistoryUpdate(const wstring & wstrLastStateName)

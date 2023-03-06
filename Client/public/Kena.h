@@ -69,6 +69,7 @@ private:
 
 private:
 	_bool					m_bAttack = false;
+	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
 
