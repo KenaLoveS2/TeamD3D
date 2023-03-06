@@ -429,9 +429,6 @@
     <ClInclude Include="..\Public\BowTarget.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Cliff_Rock.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Crystal.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -550,7 +547,6 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stone.h" />
     <ClInclude Include="..\public\Monster_Status.h">
       <Filter>02.GameObjects\Monster\Status</Filter>
     </ClInclude>
@@ -592,6 +588,18 @@
       <Filter>02.GameObjects\Terrain\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Flower.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grass.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
   </ItemGroup>
@@ -870,7 +878,6 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stone.cpp" />
     <ClCompile Include="..\private\Monster_Status.cpp">
       <Filter>02.GameObjects\Monster\Status</Filter>
     </ClCompile>
@@ -912,6 +919,15 @@
       <Filter>02.GameObjects\Terrain\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Flower.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grass.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
   </ItemGroup>
