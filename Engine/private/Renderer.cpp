@@ -123,8 +123,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	/* For. SHADOW */
-	m_iShadowWidth = 8192;
-	m_iShadowHeight = 8192;
+	m_iShadowWidth = 2000;
+	m_iShadowHeight = 2000;
 
 	if (FAILED(Initialize_ShadowResources(m_iShadowWidth, m_iShadowHeight)))
 		return E_FAIL;

@@ -12,6 +12,7 @@
 #include "Tool_Settings.h"
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
+#include "Imgui_TerrainEditor.h"
 #include "ImGui_PhysX.h"
 
 #include "UI_ClientManager.h"
@@ -164,8 +165,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
+	//	return E_FAIL;
+
+	CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -175,7 +178,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_First.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_First.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_Second.json");
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
