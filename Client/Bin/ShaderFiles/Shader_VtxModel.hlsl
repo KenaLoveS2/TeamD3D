@@ -118,7 +118,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float4 vColor = albedo1;			//albedo0 * albedo1 * 2.0f;
 	vColor = saturate(vColor);
 
-	if (0.1f > vColor.a)
+	if (0.1f > vColor.a) 
 		discard;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
@@ -128,7 +128,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = vColor;
+	Out.vDiffuse = float4(vColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	return Out;

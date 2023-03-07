@@ -636,20 +636,20 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_AlphaTestGuage();
 	}
 
-	pass Trial // 15
+	pass One_Effect // 15
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TRIAL();
+		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass MaskAlpha
+	pass MaskAlpha // 16
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);

@@ -62,7 +62,9 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 20.f;
 		PxCapsuleDesc.fDamping = 10.f;
-	
+		PxCapsuleDesc.bCCD = true;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -105,6 +107,8 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);

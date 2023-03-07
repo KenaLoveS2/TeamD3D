@@ -18,6 +18,14 @@ namespace Client
 	{
 		g_bFrameLimit = bLimitFlag;
 	}
+
+	enum OBJECT_PROPERTY { 
+		OP_NULL,
+		OP_PLAYER, OP_STICKS,
+
+
+		OBJECT_PROPERTY_END 
+	};
 }
 
 extern bool				g_bFullScreen;

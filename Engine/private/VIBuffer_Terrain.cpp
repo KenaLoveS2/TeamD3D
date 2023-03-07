@@ -186,35 +186,28 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 #pragma region 삼각형 액터 정보 구성
 	
 	// m_iDivideCount = m_iNumVertices / m_iDivideThreshold;
-	if (m_iDivideCount == 0)
+	if (m_pPxVertices == nullptr)
 	{
-		if (m_pPxVertices == nullptr)
+		m_pPxVertices = new PxVec3[m_iNumVertices];
+		ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+		for (_uint i = 0; i < m_iNumVertices; i++)
 		{
-			m_pPxVertices = new PxVec3[m_iNumVertices];
-			ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
-			for (_uint i = 0; i < m_iNumVertices; i++)
-			{
-				_float3 vPos = pVertices[i].vPosition;
-				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
-			}
+			_float3 vPos = pVertices[i].vPosition;
+			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
 		}
-
-		if (m_pPxIndicies == nullptr)
-		{
-			m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
-			ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
-
-			for (_uint i = 0; i < m_iNumPrimitive; i++)
-			{
-				m_pPxIndicies[i]._0 = pIndices[i]._2;
-				m_pPxIndicies[i]._1 = pIndices[i]._1;
-				m_pPxIndicies[i]._2 = pIndices[i]._0;
-			}
-		}	
 	}
-	else
+
+	if (m_pPxIndicies == nullptr)
 	{
-		// Create_Divide_PxData(pVertices, pIndices);
+		m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
+		ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
+
+		for (_uint i = 0; i < m_iNumPrimitive; i++)
+		{
+			m_pPxIndicies[i]._0 = pIndices[i]._0;
+			m_pPxIndicies[i]._1 = pIndices[i]._2;
+			m_pPxIndicies[i]._2 = pIndices[i]._1;
+		}
 	}
 	
 #pragma endregion

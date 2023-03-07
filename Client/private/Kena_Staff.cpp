@@ -62,12 +62,12 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* »óºÎ »À ¼ø¼­ */
+	/* ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	// bow_string_jnt_top
 	// staff_skin8_jnt
 	// staff_skin7_jnt
 
-	/* Weapon Update */
+	///* Weapon Update */
 	//CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 	//_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	//m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());

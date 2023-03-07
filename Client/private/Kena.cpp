@@ -7,6 +7,11 @@
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 
+#include "GroundMark.h"
+#include "Terrain.h"
+#include "Rope_RotRock.h"
+
+
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -34,7 +39,7 @@ HRESULT CKena::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GaemObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
@@ -79,9 +84,11 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f,0.f,0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 1.f;
+	PxCapsuleDesc.fMass = 59.f;
 	PxCapsuleDesc.fDamping = 1.f;
-	
+	PxCapsuleDesc.bCCD = true;
+	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -90,12 +97,17 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
 	m_pTransformCom->Set_PxPivot(vPivotPos);
 
+	CGameInstance* pGameInst = CGameInstance::GetInstance();
+	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
+
 	return S_OK;
 }
 
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Test_Raycast();
 
 	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
 	if(pGameInstnace->Key_Down(DIK_SPACE))
@@ -1392,4 +1404,36 @@ void CKena::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+}
+
+void CKena::Test_Raycast()
+{
+	if (GetKeyState(VK_LSHIFT) & 0x0800)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		CGameInstance* pGameInst = CGameInstance::GetInstance();
+
+		_vector vCamPos = pGameInst->Get_CamPosition();
+		_vector vCamLook = pGameInst->Get_CamLook_Float4();
+		_float3 vOut;
+
+		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
+		{
+			m_pTerrain->Set_BrushPosition(vOut);
+			// m_pGroundMark->Set_Position(vOut);
+
+			if (GetKeyState('R') & 0x0800)
+			{
+				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
+				{
+					m_pRopeRotRock->Set_MoveFlag(true);
+					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
+				}					
+			}			
+		}
+		else
+		{
+
+		}
+	}
 }

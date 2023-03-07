@@ -572,6 +572,40 @@ _float CTransform::Calc_Distance_YZ(_float4 & vTargetPos)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
+_float CTransform::Calc_Distance_XYZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+
+	return XMVectorGetX(XMVector3Length(vPos - vTargetPos));
+}
+
+_float CTransform::Calc_Distance_XZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.y = vPos.y;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
 _float CTransform::Calc_Distance_XYZ(CTransform * pTransform)
 {
 	_float4 vPos = Get_State(STATE_TRANSLATION);
@@ -722,4 +756,43 @@ void CTransform::Tick(_float fTimeDelta)
 		XMStoreFloat4x4(&RetMatrix, m);
 		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
 	}	
+}
+
+_bool CTransform::IsClosed_XYZ(_float4 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XYZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XZ(_float4 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XYZ(_float3 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XYZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XZ(_float3 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XZ(vTargetPos) <= fDIstance;
+}
+
+void CTransform::Set_Position(_fvector vPos)
+{
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{
+			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + vPivot);
+			Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}
+		else			
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + XMLoadFloat3(&m_vPxPivot));
+	}
+	else
+	{
+		Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
 }
