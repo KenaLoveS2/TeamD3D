@@ -38,8 +38,8 @@ private:
 	virtual void			Imgui_RenderProperty() override;
 
 private:
-	_uint		m_iLevel;
-	STATE		m_eState;
+	_uint					m_iLevel;
+	STATE					m_eState;
 
 public:
 	static	CUI_NodePlayerSkill*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
