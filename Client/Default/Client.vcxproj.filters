@@ -244,9 +244,6 @@
     <Filter Include="02.GameObjects\Terrain\Editor">
       <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Quest">
-      <UniqueIdentifier>{24ff8107-6c9e-4c88-86d2-1d7248a4e696}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
       <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
     </Filter>
@@ -264,6 +261,15 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader">
       <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object">
+      <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\Quest">
+      <UniqueIdentifier>{24ff8107-6c9e-4c88-86d2-1d7248a4e696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\PlayerSkill">
+      <UniqueIdentifier>{0ce8bcf4-bf2b-490f-95b5-a7844980277e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -606,7 +612,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Quest.h">
-      <Filter>02.GameObjects\Quest</Filter>
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
@@ -617,12 +623,11 @@
     <ClInclude Include="..\public\UI_CanvasUpgrade.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeSkill.h" />
-    <ClInclude Include="..\public\UI_CanvasInv.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodePlayerSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerSkillInfo.h">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -944,7 +949,7 @@
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Quest.cpp">
-      <Filter>02.GameObjects\Quest</Filter>
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
@@ -955,9 +960,11 @@
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodePlayerSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerSkillInfo.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,15 +1,20 @@
 #include "stdafx.h"
 #include "..\public\UI_NodePlayerSkill.h"
 #include "GameInstance.h"
-
+#include "Json/json.hpp"
+#include <fstream>
 
 CUI_NodePlayerSkill::CUI_NodePlayerSkill(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
+	, m_iLevel{ 0 }
+	, m_eState{ STATE_BLOCKED }
 {
 }
 
 CUI_NodePlayerSkill::CUI_NodePlayerSkill(const CUI_NodePlayerSkill & rhs)
 	: CUI_Node(rhs)
+	, m_iLevel{ 0 }
+	, m_eState{ STATE_BLOCKED }
 {
 }
 
@@ -35,7 +40,7 @@ HRESULT CUI_NodePlayerSkill::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = false;
+	m_bActive = true;
 	return S_OK;
 }
 
@@ -74,6 +79,61 @@ HRESULT CUI_NodePlayerSkill::Render()
 	return S_OK;
 }
 
+HRESULT CUI_NodePlayerSkill::Load_Data(wstring fileName)
+{
+	Json	jLoad;
+
+	wstring name = L"../Bin/Data/UI/";
+	name += fileName;
+	name += L"_Property.json";
+	string filePath;
+	filePath.assign(name.begin(), name.end());
+
+	ifstream file(filePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	m_iOriginalRenderPass = m_iRenderPass;
+
+	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (-1 != m_TextureListIndices[TEXTURE_MASK])
+	{
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			(*pTags)[m_TextureListIndices[TEXTURE_MASK]].c_str(), TEXT("Com_MaskTexture"),
+			(CComponent**)&m_pTextureCom[1])))
+			return S_OK;
+	}
+
+	int i = 0;
+	_float4x4	matLocal;
+	for (float fElement : jLoad["localMatrix"])
+		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
+
+	this->Set_LocalMatrix(matLocal);
+
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+
+	return S_OK;
+}
+
+HRESULT CUI_NodePlayerSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
+{
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureProtoTag, m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+		return E_FAIL;
+
+	m_iLevel = iLevel;
+
+	return S_OK;
+}
+
 HRESULT CUI_NodePlayerSkill::SetUp_Components()
 {
 	/* Renderer */
@@ -107,7 +167,7 @@ HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iLevel)))
 			return E_FAIL;
 	}
 
@@ -119,6 +179,16 @@ HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CUI_NodePlayerSkill::Imgui_RenderProperty()
+{
+	__super::Imgui_RenderProperty();
+
+	ImGui::Separator();
+
+
+
 }
 
 CUI_NodePlayerSkill * CUI_NodePlayerSkill::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

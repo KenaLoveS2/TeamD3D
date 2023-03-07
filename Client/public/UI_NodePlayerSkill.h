@@ -7,7 +7,6 @@ class CUI_NodePlayerSkill final : public CUI_Node
 {
 public:
 	enum STATE { STATE_BLOCKED, STATE_LOCKED, STATE_UNLOCKED, STATE_END };
-	enum CONDITION { CONDITION_PREVSKILL, CONDITION_LEVEL, CONDITION_ROTLEVEL, CONDITION_KARMA, CONDITION_END };
 
 private:
 	CUI_NodePlayerSkill(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -21,15 +20,18 @@ public:
 	virtual void			Tick(_float fTimeDelta)			override;
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
-
+public:
+	virtual HRESULT			Load_Data(wstring fileName);
+public:
+	HRESULT	Setting(_tchar* textureProtoTag, _uint iLevel);
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
+	virtual void			Imgui_RenderProperty() override;
 
 private:
+	_uint		m_iLevel;
 	STATE		m_eState;
-	CONDITION	m_eConditions[CONDITION_END];
-
 
 public:
 	static	CUI_NodePlayerSkill*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

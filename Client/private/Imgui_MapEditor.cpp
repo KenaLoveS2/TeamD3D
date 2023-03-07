@@ -1183,12 +1183,16 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
+#ifdef	_DEBUG
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
+#endif
 		}
 	}
 	else
 	{
+#ifdef	_DEBUG
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
+#endif
 	}
 
 	ImGui::End();

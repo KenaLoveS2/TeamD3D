@@ -228,6 +228,7 @@
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\Path_Mesh.h" />
     <ClInclude Include="..\Public\Pillar.h" />
+    <ClInclude Include="..\public\PlayerSkillInfo.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Pulse_PlateForm.h" />
     <ClInclude Include="..\public\Quest.h" />
@@ -250,7 +251,6 @@
     <ClInclude Include="..\public\UI_CanvasAmmo.h" />
     <ClInclude Include="..\Public\Tree.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
-    <ClInclude Include="..\public\UI_CanvasInv.h" />
     <ClInclude Include="..\public\UI_CanvasUpgrade.h" />
     <ClInclude Include="..\public\UI_CanvasQuest.h" />
     <ClInclude Include="..\public\UI_ClientManager.h" />
@@ -275,7 +275,6 @@
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
     <ClInclude Include="..\public\UI_NodePlayerSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
-    <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -338,6 +337,7 @@
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\Path_Mesh.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />
+    <ClCompile Include="..\private\PlayerSkillInfo.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
@@ -384,7 +384,6 @@
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
     <ClCompile Include="..\private\UI_NodePlayerSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
-    <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />

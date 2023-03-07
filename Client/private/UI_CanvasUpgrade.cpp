@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasUpgrade.h"
 #include "GameInstance.h"
+#include "PlayerSkillInfo.h"
+#include "UI_NodePlayerSkill.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -8,11 +10,15 @@
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 {
+	for (auto skill : m_pPlayerSkills)
+		skill = nullptr;
 }
 
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	: CUI_Canvas(rhs)
 {
+	for (auto skill : m_pPlayerSkills)
+		skill = nullptr;
 }
 
 HRESULT CUI_CanvasUpgrade::Initialize_Prototype()
@@ -35,17 +41,23 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 	{
-		MSG_BOX("Failed To SetUp Components : CanvasQuest");
+		MSG_BOX("Failed To SetUp Components : CanvasUpgrade");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_PlayerSkill()))
+	{
+		MSG_BOX("Failed To Ready PlayerSkill : CanvasUpgrade");
 		return E_FAIL;
 	}
 
 	if (FAILED(Ready_Nodes()))
 	{
-		MSG_BOX("Failed To Ready Nodes : CanvasQuest");
+		MSG_BOX("Failed To Ready Nodes : CanvasUpgrade");
 		return E_FAIL;
 	}
 
-	//m_bActive = true;
+	m_bActive = true;
 
 	return S_OK;
 }
@@ -60,7 +72,6 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 			return;
 		}
 	}
-	m_bActive = true;
 
 	if (!m_bActive)
 		return;
@@ -108,6 +119,30 @@ HRESULT CUI_CanvasUpgrade::Bind()
 
 HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	for (_uint i = 0; i < TYPE_END; ++i)
+	{
+		string strHeader = "Node_PlayerSkill" + m_pPlayerSkills[i]->Get_TypeName();
+
+		for (_uint j = 0; j < CPlayerSkillInfo::LEVEL_END; ++j)
+		{
+			CUI* pUI = nullptr;
+			CUI::UIDESC tDesc;
+			
+			string strCloneTag = strHeader + to_string(j);
+			_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+			tDesc.fileName = wstrCloneTag;
+			pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PlayerSkill", wstrCloneTag, &tDesc));
+			if (FAILED(Add_Node(pUI)))
+				return E_FAIL;
+			m_vecNodeCloneTag.push_back(strCloneTag);
+			pGameInstance->Add_String(wstrCloneTag);
+			if (FAILED(static_cast<CUI_NodePlayerSkill*>(pUI)->Setting(m_pPlayerSkills[i]->Get_TextureProtoTag(), j, )))
+				MSG_BOX("Failed To Setting : CanvasUpgrade");
+		}
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -162,6 +197,25 @@ HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CUI_CanvasUpgrade::Ready_PlayerSkill()
+{
+	/* Load Data of Player Skill */
+
+	m_pPlayerSkills[TYPE_STICK] =
+		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Stick.json"));
+
+	m_pPlayerSkills[TYPE_SHIELD] =
+		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Shield.json"));
+
+	m_pPlayerSkills[TYPE_BOW] =
+		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bow.json"));
+
+	m_pPlayerSkills[TYPE_BOMB] =
+		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bomb.json"));
+
+	return S_OK;
+}
+
 void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
 }
@@ -198,5 +252,12 @@ CGameObject * CUI_CanvasUpgrade::Clone(void * pArg)
 
 void CUI_CanvasUpgrade::Free()
 {
+	if (m_isCloned)
+	{
+		for (_uint i = 0; i < TYPE_END; ++i)
+			Safe_Release(m_pPlayerSkills[i]);
+	}
+	
+
 	__super::Free();
 }

@@ -4,6 +4,7 @@
 #include "UI_ClientManager.h"
 
 BEGIN(Client)
+class CPlayerSkillInfo;
 class CUI_CanvasUpgrade final : public CUI_Canvas
 {
 public:
@@ -11,6 +12,8 @@ public:
 	enum UI_ORDER {
 		UI_END
 	};
+
+	enum SKILLTYPE { TYPE_STICK, TYPE_SHIELD, TYPE_BOW, TYPE_BOMB, TYPE_END };
 
 private:
 	CUI_CanvasUpgrade(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -29,6 +32,9 @@ private:
 	virtual HRESULT			Ready_Nodes()					override;
 	virtual HRESULT			SetUp_Components()				override;
 	virtual HRESULT			SetUp_ShaderResources()			override;
+private:
+	HRESULT					Ready_PlayerSkill();
+	CPlayerSkillInfo*		m_pPlayerSkills[TYPE_END];
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
