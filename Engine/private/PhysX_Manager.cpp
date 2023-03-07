@@ -903,3 +903,14 @@ PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
 
 	return iter->second;
 }
+
+void CPhysX_Manager::Set_DynamicParameter(const _tchar * pActorTag, _float fDensity, _float fAngularDamping, _float fMass, _float fDamping, _float3 vVelocity)
+{
+	PxRigidActor* pActor  = Find_DynamicActor(pActorTag);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fDamping);
+	((PxRigidDynamic*)pActor)->setAngularDamping(fAngularDamping);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+	//PxRigidBodyExt::updateMassAndInertia(*((PxRigidDynamic*)pActor), fDensity);
+}

@@ -135,6 +135,8 @@ public:
 	void Set_ScalingSphere(PxRigidActor* pActor, _float fRadius);
 	void Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _float fHalfHeight);
 
+	void Set_DynamicParameter(const _tchar* pActorTag, _float fDensity, _float fAngularDamping, _float fMass, _float fDamping, _float3 vVelocity);
+
 	void Init_Rendering();		
 };
 END

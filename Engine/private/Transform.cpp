@@ -678,6 +678,9 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	if (m_pPxActor == nullptr)
+		return;
+
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
 	_float4x4 RetMatrix, Pivot;
 

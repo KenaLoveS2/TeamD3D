@@ -320,6 +320,10 @@ HRESULT CRockGolem::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+void CRockGolem::Update_Collider(_float fTimeDelta)
+{
+}
+
 CRockGolem* CRockGolem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRockGolem*	pInstance = new CRockGolem(pDevice, pContext);

@@ -87,6 +87,9 @@ private:
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
 
+	_float3					m_vVelocity;
+	_float					m_fDensity =  0.f;
+
 private:
 	HRESULT					Ready_Parts();
 	HRESULT					Ready_Effects();
@@ -94,7 +97,7 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
-	void					Test(_bool bIsInit, _float fTimeDelta);
+	void							Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

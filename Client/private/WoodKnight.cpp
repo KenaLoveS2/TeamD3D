@@ -37,8 +37,6 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	// SetUp_Component(); Monster가 불러줌
 	//	Push_EventFunctions();
 
-	m_pTransformCom->Set_Translation(_float4(5.f, 0.f, 0.f, 1.f) , _float4());
-
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
@@ -48,7 +46,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 {
 	// 몸통
 	{
-		_float3 vPos = _float3(0.f, 3.f, -15.f);
+		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		_float3 vPivotScale = _float3(0.45f, 0.6f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 1.1f, 0.f);
 
@@ -166,7 +164,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 	
-	m_pTransformCom->Set_Translation(_float4(0.f, 0.f, -15.f, 1.f), _float4());
+	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f),_float4());
 
 	return S_OK;
 }
@@ -186,6 +184,7 @@ void CWoodKnight::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
 }
 
 void CWoodKnight::Late_Tick(_float fTimeDelta)
@@ -249,6 +248,9 @@ HRESULT CWoodKnight::RenderShadow()
 void CWoodKnight::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
+
+	if (ImGui::Button("TAKEDMAGE"))
+		m_bWeaklyHit = true;
 }
 
 void CWoodKnight::ImGui_AnimationProperty()
@@ -279,7 +281,6 @@ void CWoodKnight::ImGui_ShaderValueProperty()
 
 void CWoodKnight::ImGui_PhysXValueProperty()
 {
-
 	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
 	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
@@ -410,12 +411,23 @@ HRESULT CWoodKnight::SetUp_State()
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
+		.AddTransition("IDLE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
+	})
 		.AddTransition("IDLE to WALK", "WALK")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
-
+	
+		
 		.AddState("WALK")
 		.OnStart([this]()
 	{
@@ -431,7 +443,17 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		Reset_Attack();
 	})
-		.AddTransition("WALK to CHARGEATTACK", "CHARGEATTACK")
+		.AddTransition("WALK to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("WALK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
+	})
+		.AddTransition("WALK to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return m_bRealAttack && m_bChargeAttack;
@@ -462,15 +484,45 @@ HRESULT CWoodKnight::SetUp_State()
 		return m_bRealAttack && m_bUppercutAttack;
 	})
 
+		.AddState("INTOCHARGE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
+		m_pModelCom->Set_AnimIndex(INTOCHARGE);
+	})
+		.AddTransition("INTOCHARGE to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE);
+	})
+
+		.AddState("INTOCHARGE_BACKUP")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE_BACKUP);
+		m_pModelCom->Set_AnimIndex(INTOCHARGE_BACKUP);
+	})
+		.AddTransition("INTOCHARGE_BACKUP to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE_BACKUP);
+	})
+
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("CHARGEATTACK to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("CHARGEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("CHARGEATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -484,9 +536,15 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("RANGEDATTACK to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("RANGEDATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("RANGEDATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -500,9 +558,15 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_LUNGE);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK_LUNGE);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("COMBOATTACK_LUNGE to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("COMBOATTACK_LUNGE to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("COMBOATTACK_LUNGE to IDLE", "IDLE")
 		.Predicator([this]()
@@ -516,9 +580,15 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK_OVERHEAD);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK_OVERHEAD);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("COMBOATTACK_OVERHEAD to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("COMBOATTACK_OVERHEAD to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("COMBOATTACK_OVERHEAD to IDLE", "IDLE")
 		.Predicator([this]()
@@ -532,9 +602,15 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(DOUBLEATTACK);
 		m_pModelCom->Set_AnimIndex(DOUBLEATTACK);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("DOUBLEATTACK to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("DOUBLEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("DOUBLEATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -548,15 +624,104 @@ HRESULT CWoodKnight::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(UPPERCUTATTACK);
 		m_pModelCom->Set_AnimIndex(UPPERCUTATTACK);
 	})
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("UPPERCUTATTACK to BIND", "BIND")
+		.Predicator([this]()
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		return m_bBind;
+	})
+		.AddTransition("UPPERCUTATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
 	})
 		.AddTransition("UPPERCUTATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(UPPERCUTATTACK);
 	})
+
+		.AddState("BIND")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
+		m_pModelCom->Set_AnimIndex(BIND);
+		m_bStronglyHit = false;
+		// 묶인 상태에서 맞았을때는 ADDITIVE 실행 
+	})
+		.OnExit([this]()
+	{
+		// 맞는 애니메이션일때도 맞는가?
+		m_bBind = false;
+		Reset_Attack();
+	})
+		.AddTransition("BIND to INTOCHARGE_BACKUP", "INTOCHARGE_BACKUP")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BIND);
+	})
+
+		// 어느 타이밍에 패링이 되는지?
+		.AddState("HITDEFLECT")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(HITDEFLECT);
+		m_pModelCom->Set_AnimIndex(HITDEFLECT);
+	})
+		.AddTransition("HITDEFLECT to INTOCHARGE", "INTOCHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(HITDEFLECT);
+	})
+		.AddState("TAKEDAMAGE")
+		.OnStart([this]()
+	{
+		if(m_PlayerLookAt_Dir == FRONT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_ALT);
+			m_pModelCom->Set_AnimIndex(STAGGER_ALT);
+		}
+		else if (m_PlayerLookAt_Dir == BACK)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_B);
+			m_pModelCom->Set_AnimIndex(STAGGER_B);
+		}
+		else if (m_PlayerLookAt_Dir == LEFT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_L);
+			m_pModelCom->Set_AnimIndex(STAGGER_L);
+		}
+		else if (m_PlayerLookAt_Dir == RIGHT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_R);
+			m_pModelCom->Set_AnimIndex(STAGGER_R);
+		}
+	})
+		.OnExit([this]()
+	{
+		// 맞는 애니메이션일때도 맞는가?
+		m_bStronglyHit = false;
+		Reset_Attack();
+	})
+		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("TAKEDAMAGE to INTOCHARGE", "INTOCHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(STAGGER_ALT) ||
+			AnimFinishChecker(STAGGER_L) || 
+			AnimFinishChecker(STAGGER_B) || 
+			AnimFinishChecker(STAGGER_R);
+	})
+
+		.AddState("DEATH")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+	})
+
 		.Build();
 
 	return S_OK;
@@ -580,6 +745,8 @@ HRESULT CWoodKnight::SetUp_Components()
 	}
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/Props_AO_R_M_1k.png")), E_FAIL);
+
+	m_pModelCom->Set_RootBone("WoodKnight");
 
 	CCollider::COLLIDERDESC	ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
@@ -672,11 +839,31 @@ void CWoodKnight::Update_Collider(_float fTimeDelta)
 	}
 }
 
+void CWoodKnight::AdditiveAnim(_float fTimeDelta)
+{
+	_float fRatio =	Calc_PlayerLookAtDirection();
+	if (fRatio >= 0.f)
+	{
+		fRatio *= 1.5f;
+		m_pModelCom->Set_AdditiveAnimIndexForMonster(LOOK_LEFT);
+		m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, fRatio, "SK_WoodKnight.ao");
+	}
+	else
+	{
+		fRatio *= -1.5f;
+		m_pModelCom->Set_AdditiveAnimIndexForMonster(LOOK_RIGHT);
+		m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, fRatio, "SK_WoodKnight.ao");
+	}
+
+	if(m_bWeaklyHit)
+	{
+		m_pModelCom->Set_AdditiveAnimIndexForMonster(TAKEDAMAGE);
+		m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, fRatio, "SK_WoodKnight.ao");
+	}
+}
+
 void CWoodKnight::Set_AttackType()
 {
-	//	5 DoubleAttack OverheadSlam uppercutattack
-	//	6~8 ComboAttack
-	// 10~15 RangeAttack 또는 ChargeAttack함
 	m_bRealAttack = false;
 	m_bRangedAttack = false;
 	m_bChargeAttack = false;
@@ -685,26 +872,34 @@ void CWoodKnight::Set_AttackType()
 	m_bDoubleAttack = false;
 	m_bUppercutAttack = false;
 
-	if(DistanceTrigger(10.f) && DistanceTrigger(15.f))
+	if(IntervalDistanceTrigger(6.f,10.f))
 	{
-		m_iAttackType = AT_RANGEDATTACK;
-		// 계속 번갈아 가면서 함
-		m_iAttackType = AT_CHARGEATTACK;
-	}
-	else if (DistanceTrigger(6.f) && DistanceTrigger(10.f))
-	{
-		m_iAttackType = AT_COMBOATTACK_LUNGE;
-		// 계속 번갈아 가면서 함
-		m_iAttackType = AT_COMBOATTACK_OVERHEAD;
-	}
-	else	if(DistanceTrigger(5.f))
-	{
-		m_iAttackType = AT_DOUBLEATTACK;
-		// 계속 번갈아 가면서 함
-		m_iAttackType = AT_UPPERCUTATTACK;
-	}
+		m_isFarRange = !m_isFarRange;
 
-	if (m_iAttackType == ATTACKTYPE_END)
+		if(m_isFarRange)
+			m_iAttackType = AT_RANGEDATTACK;
+		else
+			m_iAttackType = AT_CHARGEATTACK;
+	}
+	else if (IntervalDistanceTrigger(3.f, 6.f))
+	{
+		m_isMiddleRange = !m_isMiddleRange;
+
+		if(m_isMiddleRange)
+			m_iAttackType = AT_COMBOATTACK_LUNGE;
+		else
+			m_iAttackType = AT_COMBOATTACK_OVERHEAD;
+	}
+	else	if(IntervalDistanceTrigger(0.f, 3.f))
+	{
+		m_isCloseRange = !m_isCloseRange;
+
+		if(m_isCloseRange)
+			m_iAttackType = AT_DOUBLEATTACK;
+		else
+			m_iAttackType = AT_UPPERCUTATTACK;
+	}
+	else 
 		m_iAttackType = rand() % 6;
 
 	// ATTACKTYPE이 플레이어 거리에 따라 달라짐
@@ -749,33 +944,33 @@ void CWoodKnight::Tick_Attack(_float fTimeDelta)
 	switch (m_iAttackType)
 	{
 	case AT_RANGEDATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
-		if (DistanceTrigger(15.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
+		if (DistanceTrigger(10.f))
 			m_bRealAttack = true;
 		break;
 	case AT_CHARGEATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
-		if (DistanceTrigger(15.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
+		if (DistanceTrigger(10.f))
 			m_bRealAttack = true;
 		break;
 	case AT_COMBOATTACK_LUNGE:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
-		if (DistanceTrigger(10.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 6.f);
+		if (DistanceTrigger(6.f))
 			m_bRealAttack = true;
 		break;
 	case AT_COMBOATTACK_OVERHEAD:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
-		if (DistanceTrigger(10.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 6.f);
+		if (DistanceTrigger(6.f))
 			m_bRealAttack = true;
 		break;
 	case AT_DOUBLEATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
-		if (DistanceTrigger(5.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_UPPERCUTATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
-		if (DistanceTrigger(5.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 	default:
 		break;

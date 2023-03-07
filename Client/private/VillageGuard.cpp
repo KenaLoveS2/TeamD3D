@@ -236,6 +236,10 @@ HRESULT CVillageGuard::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+void CVillageGuard::Update_Collider(_float fTimeDelta)
+{
+}
+
 CVillageGuard* CVillageGuard::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CVillageGuard*	pInstance = new CVillageGuard(pDevice, pContext);

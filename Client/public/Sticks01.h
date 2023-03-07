@@ -97,6 +97,7 @@ protected:
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
+	void	AdditiveAnim(_float fTimeDelta) override;
 
 private:
 	void Set_AttackType();
@@ -124,14 +125,11 @@ private:
 	_bool	m_bStrafeLeft = false;
 	_bool	m_bStrafeRight = false;
 
-	_bool	m_bHit = false;
-	_bool	m_bBind = false;
-
 private:
 	vector<wstring> m_vecColliderName;
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
-		
+
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;

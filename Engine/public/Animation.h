@@ -30,7 +30,7 @@ public:
 	_float&							Get_BlendDuration() { return m_fBlendDuration; }
 	void								Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
 	ANIMTYPE&					Get_AnimationType() { return m_eAnimType; }
-	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
+	const _uint&				Get_ChannelCount() const { return m_iNumChannels; }
 	void								Set_PlayTime(_double dPlayTime);
 	void								Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
 
@@ -39,17 +39,18 @@ public:
 	HRESULT						Initialize(void* pArg);
 	void								ImGui_RenderEvents(_int& iSelectEvent);
 
-	void							Update_Bones(_float fTimeDelta, const string& strRootBone = "");
-	void							Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const string& strRootBone = "");
-	void							Update_Bones_Additive(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
+	void								Update_Bones(_float fTimeDelta, const string& strRootBone = "");
+	void								Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const string& strRootBone = "");
+	void								Update_Bones_Additive(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
+
+	void								Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
 
 	/* For CAnimationState */
-	void							Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
-	void							Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "");
-
-	void							Reverse_Play(_float fTimeDelta);
-	void							Reset_Animation();
+	void								Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
+	void								Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
+	void								Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "");
+	void								Reverse_Play(_float fTimeDelta);
+	void								Reset_Animation();
 
 private:
 	class CModel*					m_pModel = nullptr;

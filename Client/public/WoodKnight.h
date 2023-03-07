@@ -94,7 +94,7 @@ public:
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
-protected:
+private:
 	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
@@ -102,6 +102,7 @@ protected:
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
+	void	AdditiveAnim(_float fTimeDelta) override;
 
 private:
 	void Set_AttackType();
@@ -120,6 +121,10 @@ private:
 	_bool	m_bComboAttack_Overhead = false;
 	_bool	m_bDoubleAttack = false;
 	_bool	m_bUppercutAttack = false;
+
+	_bool	m_isCloseRange = false;
+	_bool	m_isMiddleRange = false;
+	_bool	m_isFarRange = false;
 
 private:
 	vector<wstring> m_vecColliderName;
