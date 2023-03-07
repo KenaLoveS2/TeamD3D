@@ -20,6 +20,11 @@ float	g_fAmount = 1.f; /* Guage Data (normalized) */
 
 int		g_iCheck = 0;
 
+float	g_Time;
+unsigned int g_State = 0;
+
+float g_fDiffuseAlpha = 1.f;
+float g_fMaskAlpha = 0.f;
 
 struct VS_IN
 {
@@ -61,7 +66,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-	/*SV_TARGET0 : ��� ������ ������ �ȼ�w�̴�. AND 0��° ����Ÿ�ٿ� �׸������� �����̴�. */
 	float4		vColor : SV_TARGET0;
 };
 
@@ -74,13 +78,44 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_MASKALPHATEST(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vColor.a = Out.vColor.r;
+
+	if (Out.vColor.a < 0.1)
+		discard;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_AlphaTestGuage(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_Time < In.vTexUV.x)
+		discard;
+
+	Out.vColor.a = Out.vColor.r;
+
+	if (Out.vColor.a < 0.1)
+		discard;
+
+	return Out;
+}
+
 PS_OUT PS_MAIN_EFFECT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	float2		vTexUV; 
+	float2		vTexUV;
 
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
@@ -104,12 +139,22 @@ PS_OUT PS_MAIN_AlphaBlend(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_ALPHACHANGE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	Out.vColor.a *= g_fAlpha;
+
+	return Out;
+}
+
 PS_OUT PS_MAIN_MASKMAP(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector vDiffuse	= g_Texture.Sample(LinearSampler, In.vTexUV);
-	vector vMask	= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 
 	vDiffuse.a = vMask.r;
 
@@ -163,21 +208,21 @@ PS_OUT PS_MAIN_RINGGUAGE(PS_IN In)
 
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	float3 center	= float3(0.5f, 0.5f, 0);
-	float3 top		= float3(0.5f, 0, 0);
-	float3 curUV	= float3(In.vTexUV.xy, 0);
-	float angle		= 0;
+	float3 center = float3(0.5f, 0.5f, 0);
+	float3 top = float3(0.5f, 0, 0);
+	float3 curUV = float3(In.vTexUV.xy, 0);
+	float angle = 0;
 
-	float3 centerToTop		= top - center;
-	float3 centerToCurUV	= curUV - center;
+	float3 centerToTop = top - center;
+	float3 centerToCurUV = curUV - center;
 
-	centerToTop		= normalize(centerToTop);
-	centerToCurUV	= normalize(centerToCurUV);
+	centerToTop = normalize(centerToTop);
+	centerToCurUV = normalize(centerToCurUV);
 
 	angle = acos(dot(centerToTop, centerToCurUV));
 	angle = angle * (180.0f / 3.141592654f); // radian to degree
 
-	/* Check the angle is 0 ~ 180 or 180 ~ 360 */
+											 /* Check the angle is 0 ~ 180 or 180 ~ 360 */
 	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
 
 	float condition = 360 * g_fAmount;
@@ -201,17 +246,17 @@ PS_OUT PS_MAIN_BARGUAGE(PS_IN In)
 	vColor.g = g_vColor.g * (In.vTexUV.x + g_vMinColor.g); // 0.3f
 	vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); // 0.5f
 	vColor.a = g_vColor.a;
-	
+
 	/* Discard pixel depends on original UV.x */
 	if (In.vTexUV.x > g_fAmount)
 		discard;
-	
+
 	In.vTexUV.x += g_fSpeedX;
 
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
 	Out.vColor = vDiffuse * vColor;
-	
+
 	return Out;
 
 }
@@ -225,8 +270,8 @@ PS_OUT PS_MAIN_LOADING(PS_IN In)
 
 	In.vTexUV.x += g_fSpeedX;
 	In.vTexUV.y += g_fSpeedX;
-	
-	vector vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV*10);
+
+	vector vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV * 10);
 
 	vNoise.a = vNoise.r * vNoise.r;
 	if (vNoise.a < 0.6)
@@ -236,7 +281,7 @@ PS_OUT PS_MAIN_LOADING(PS_IN In)
 	vNoise.a = saturate(vNoise.a);
 
 	Out.vColor = vNoise;
-	
+
 
 	return Out;
 }
@@ -246,7 +291,7 @@ PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
 	PS_OUT         Out = (PS_OUT)0;
 
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	float4	vMask	 = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	float4	vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 
 	float3 center = float3(0.5f, 0.5f, 0);
 	float3 top = float3(0.5f, 0, 0);
@@ -266,9 +311,9 @@ PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
 	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
 
 	float4 vColor = g_vColor;
-	vColor.r = g_vColor.r * (In.vTexUV.x); 
-	vColor.g = g_vColor.g * (In.vTexUV.x); 
-	vColor.b = g_vColor.b * (In.vTexUV.x); 
+	vColor.r = g_vColor.r * (In.vTexUV.x);
+	vColor.g = g_vColor.g * (In.vTexUV.x);
+	vColor.b = g_vColor.b * (In.vTexUV.x);
 	vColor.a = g_vColor.a;
 	Out.vColor = vDiffuse * vColor;
 	Out.vColor += g_vMinColor;
@@ -298,6 +343,67 @@ PS_OUT PS_MAIN_AimThings(PS_IN In)
 
 	return Out;
 }
+PS_OUT PS_MAIN_PAINTDROP(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_State == 1) /* Open */
+	{
+		if (Out.vColor.a <= g_Time)
+			discard;
+	}
+	else if (g_State == 2) /* Close */
+	{
+		float2 vNewUV;
+		vNewUV = In.vTexUV;
+
+		vNewUV += 2;
+		vNewUV /= 4;
+		float4 gBigSize = g_Texture.Sample(LinearSampler, vNewUV);
+
+		if (In.vTexUV.y >= 0.6)
+		{
+			if (Out.vColor.a <= g_Time)
+				discard;
+		}
+		else
+		{
+			if (gBigSize.a <= g_Time)
+				discard;
+
+		}
+	}
+
+	Out.vColor.a *= g_fAlpha;
+	return Out;
+	//PS_OUT			Out = (PS_OUT)0;
+
+	//float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	//   
+	//   float fTime = sin(g_Time);
+	//   float2 vDir = float2(0.5, 0.5) - In.vTexUV;
+	//   float fDist = length(vDir);
+	//vDir = normalize(vDir);
+	//   float offset = fTime * fDist * 0.1;
+	//   float4 sum = float4(0.0, 0.0, 0.0, 0.0);
+	//   float weight = 0.0;
+	//   for (int i = 0; i < 10; i++) {
+	//       float2 offsetCoords = In.vTexUV + offset * vDir;
+	//       float4 tex = g_Texture.Sample(LinearSampler, offsetCoords);
+	//       float len = length(tex.rgb);
+	//       float w = pow(1.0 - saturate(len), 2.0);
+	//       sum += tex * w;
+	//       weight += w;
+	//       offset *= 1.1;
+	//   }
+	//   float4 finalColor = sum / weight;
+
+	// 효과 적용
+	//Out.vColor = lerp(vDiffuse, finalColor, 0.2);
+	//return Out;
+}
 
 PS_OUT PS_MAIN_TRIAL(PS_IN In)
 {
@@ -319,7 +425,20 @@ PS_OUT PS_MAIN_TRIAL(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
 
+	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	vDiffuse.a *= g_fDiffuseAlpha;
+	vMask.a *= g_fMaskAlpha;
+
+	Out.vColor = vDiffuse + vMask;
+
+	return Out;
+}
 technique11 DefaultTechnique
 {
 	pass Rect // 0
@@ -386,7 +505,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SPRITE();
 	}
-	 
+
 	pass DefaultUVMove // 5
 	{
 		SetRasterizerState(RS_Default);
@@ -465,7 +584,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_AimThings();
 	}
 
-	pass Trial // 11
+	pass PAINTDROP // 11
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -475,9 +594,49 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_TRIAL();
+		PixelShader = compile ps_5_0 PS_MAIN_PAINTDROP();
 	}
-	pass One_Effect // 12
+
+	pass Mask_AlphaTest // 12
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASKALPHATEST();
+	}
+
+	pass AlphaChange // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ALPHACHANGE();
+	}
+
+	pass MaskAlphaTestGuage // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AlphaTestGuage();
+	}
+
+	pass One_Effect // 15
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
@@ -488,5 +647,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass MaskAlpha // 16
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASKALPHA();
 	}
 }

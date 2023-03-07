@@ -22,14 +22,13 @@ HRESULT CLevel_EffectTest::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	// tool 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	// tool 
 	pGameInstance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	RELEASE_INSTANCE(CGameInstance);
 	// ~tool 
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
@@ -38,6 +37,10 @@ HRESULT CLevel_EffectTest::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Player"))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Late_Initialize(LEVEL_EFFECT)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -71,10 +74,12 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, 1.f, 1.0f, 0.f);
+	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
+	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
+	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
+	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
+	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;

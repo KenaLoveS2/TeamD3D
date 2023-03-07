@@ -35,27 +35,21 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Trail Texture */
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_TrailType"), L"Com_typeTexture", (CComponent**)&m_pTrailTypeTexture, this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailType"), L"Com_typeTexture", (CComponent**)&m_pTrailTypeTexture, this)))
 		return E_FAIL;
 	/* Trail Texture */
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.3f; //5.f
-	m_eEFfectDesc.fLife = 0.2f; //1.f
+	m_eEFfectDesc.fWidth = 0.6f; //5.f
+	m_eEFfectDesc.fLife = 0.15f; //1.f
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.01f; // 0.5f
+	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
 	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
@@ -69,7 +63,9 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 void CE_KenaTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
+	/*
 	ImGui::Begin("Trail Option");
 	ImGui::Checkbox("IsTrail", &m_eEFfectDesc.IsTrail);
 	ImGui::Checkbox("bActive", &m_eEFfectDesc.bActive);
@@ -109,6 +105,7 @@ void CE_KenaTrail::Tick(_float fTimeDelta)
 	m_eEFfectDesc.vColor = vSelectColor;
 
 	ImGui::End();
+	*/
 }
 
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
@@ -141,6 +138,9 @@ HRESULT CE_KenaTrail::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

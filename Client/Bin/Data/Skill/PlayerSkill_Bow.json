@@ -1,0 +1,74 @@
+{
+    "Category" : "Bow",
+    "ImagePath": "../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Bow/Bow%d.png",
+    "Level0":[
+        {
+            "Name": "화살이름0",
+            "Desc": "화살설명0",
+            "Condition": [
+                {
+                    "PrevSkill" : 0,
+                    "RotLevel"  : 1,
+                    "Karma"     : 50
+                }
+            ],
+            "State": 0
+        }
+    ],
+    "Level1":[
+        {
+            "Name": "화살이름1",
+            "Desc": "화살설명1",
+            "Condition": [
+                {
+                    "PrevSkill" : 0,
+                    "RotLevel"  : 1,
+                    "Karma"     : 100
+                }
+            ],
+            "State": 0
+        }
+    ],
+    "Level2":[
+        {
+            "Name": "화살이름2",
+            "Desc": "화살설명2",
+            "Condition": [
+                {
+                    "PrevSkill" : 1,
+                    "RotLevel"  : 2,
+                    "Karma"     : 150
+                }
+            ],
+            "State": 0
+        }
+    ],
+    "Level3":[
+        {
+            "Name": "화살이름3",
+            "Desc": "화살설명3",
+            "Condition": [
+                {
+                    "PrevSkill" : 0,
+                    "RotLevel"  : 3,
+                    "Karma"     : 200
+                }
+            ],
+            "State": 0
+        }
+    ],
+    "Level4":[
+        {
+            "Name": "화살이름4",
+            "Desc": "화살설명4",
+            "Condition": [
+                {
+                    "PrevSkill" : 3,
+                    "RotLevel"  : 4,
+                    "Karma"     : 300
+                }
+            ],
+            "State": 0
+        }
+    ]
+}

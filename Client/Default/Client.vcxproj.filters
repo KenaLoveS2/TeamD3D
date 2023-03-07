@@ -154,9 +154,6 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb">
       <UniqueIdentifier>{2ab0690c-f419-4a38-9612-802b4949f3d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
-      <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Envrioment\Editor">
       <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
     </Filter>
@@ -208,12 +205,6 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Main">
-      <UniqueIdentifier>{78d16e73-091a-4ce3-806c-46b8ecd91d6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub">
-      <UniqueIdentifier>{d756033d-9e9e-445c-afef-a8e5ea191ed1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Status">
       <UniqueIdentifier>{59fd36c9-ad52-4114-98b6-6cc992257140}</UniqueIdentifier>
     </Filter>
@@ -252,6 +243,33 @@
     </Filter>
     <Filter Include="02.GameObjects\Terrain\Editor">
       <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
+      <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade">
+      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05. Spirits">
+      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills">
+      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader">
+      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object">
+      <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\Quest">
+      <UniqueIdentifier>{24ff8107-6c9e-4c88-86d2-1d7248a4e696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\PlayerSkill">
+      <UniqueIdentifier>{0ce8bcf4-bf2b-490f-95b5-a7844980277e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Ground Mark">
       <UniqueIdentifier>{09bcddae-cf1d-4be0-a1b1-8ea5259ae811}</UniqueIdentifier>
@@ -483,9 +501,6 @@
     <ClInclude Include="..\public\Effect_Trail.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_Event_Transform.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
@@ -530,12 +545,6 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeQuestMain.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeQuestSub.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Rot.h" />
     <ClInclude Include="..\public\Bridge.h">
@@ -589,7 +598,6 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\Effect_T.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
     </ClInclude>
@@ -611,6 +619,24 @@
     <ClInclude Include="..\Public\Grass.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuest.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasUpgrade.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodePlayerSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerSkillInfo.h">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\GroundMark.h">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
     </ClInclude>
@@ -620,9 +646,21 @@
     <ClInclude Include="..\public\Enviroment_Interaction.h">
       <Filter>02.GameObjects\Envrioment\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaTrail.h" />
-    <ClInclude Include="..\public\Effect_Trail_T.h" />
-    <ClInclude Include="..\public\Effect_Point_Instancing_T.h" />
+    <ClInclude Include="..\public\Effect_Trail_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Point_Instancing_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseDot.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -823,9 +861,6 @@
     <ClCompile Include="..\private\Effect_Trail.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Event_Transform.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
@@ -870,12 +905,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeQuestMain.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeQuestSub.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest\Sub</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rot.cpp" />
     <ClCompile Include="..\Private\Wall.cpp">
@@ -932,7 +961,6 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
     </ClCompile>
@@ -951,6 +979,24 @@
     <ClCompile Include="..\Private\Grass.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuest.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodePlayerSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerSkillInfo.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\GroundMark.cpp">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
     </ClCompile>
@@ -960,9 +1006,21 @@
     <ClCompile Include="..\private\Enviroment_Interaction.cpp">
       <Filter>02.GameObjects\Envrioment\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaTrail.cpp" />
-    <ClCompile Include="..\private\Effect_Trail_T.cpp" />
-    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp" />
+    <ClCompile Include="..\private\Effect_Trail_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

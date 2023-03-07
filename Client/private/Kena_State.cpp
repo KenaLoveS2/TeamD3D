@@ -1214,7 +1214,6 @@ void CKena_State::Start_Aim_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("AIM_RETURN");
 
-	/* Siwtch Off Aim */
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 	_float fTag = 0.f;
@@ -1350,6 +1349,11 @@ void CKena_State::Start_Attack_4_Return(_float fTimeDelta)
 void CKena_State::Start_Bow_Charge(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOW_CHARGE");
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
@@ -1365,16 +1369,28 @@ void CKena_State::Start_Bow_Charge_Loop(_float fTimeDelta)
 void CKena_State::Start_Bow_Release(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOW_RELEASE");
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOW_RECHARGE");
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOW_RETURN");
+
+
 }
 
 void CKena_State::Start_Idle_Into_Lock_On(_float fTimeDelta)
@@ -2170,10 +2186,15 @@ void CKena_State::End_Bow_Charge_Loop(_float fTimeDelta)
 
 void CKena_State::End_Bow_Release(_float fTimeDelta)
 {
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	//_float fTag = 0.0f;
+	//m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::End_Bow_Recharge(_float fTimeDelta)
 {
+
 }
 
 void CKena_State::End_Bow_Return(_float fTimeDelta)
@@ -2631,7 +2652,7 @@ _bool CKena_State::KeyUp_LShift()
 {
 	if (m_pGameInstance->Key_Up(DIK_LSHIFT))
 		return true;
-
+	
 	return false;
 }
 

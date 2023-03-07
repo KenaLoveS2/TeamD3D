@@ -97,6 +97,7 @@ protected:
 	_float4x4				m_matInit;
 	_float4x4				m_matParentInit;
 	_float4x4				m_matLocal;
+	_float4x4				m_matLocalOriginal;
 
 	/* For. Save_Data */
 	/* Some Data is changed during the game...*/

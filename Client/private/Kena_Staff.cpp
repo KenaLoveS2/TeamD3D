@@ -27,7 +27,7 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	// FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 
@@ -53,6 +53,7 @@ HRESULT CKena_Staff::Ready_Effects()
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
 	if (m_pKenaStaffTrail != nullptr)
 		m_pKenaStaffTrail->Tick(fTimeDelta);
@@ -62,19 +63,19 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* »óºÎ »À ¼ø¼­ */
+	/* ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	// bow_string_jnt_top
 	// staff_skin8_jnt
 	// staff_skin7_jnt
 
-	///* Weapon Update */
-	//CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	//_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	//m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
-	///* ~Weapon Update */
+	/* Weapon Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
+	/* ~Weapon Update */
 
-	//if (m_pKenaStaffTrail != nullptr)
-	//	m_pKenaStaffTrail->Late_Tick(fTimeDelta);
+	if (m_pKenaStaffTrail != nullptr)
+		m_pKenaStaffTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -105,9 +106,32 @@ HRESULT CKena_Staff::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 		}
 
-		//if (i == 3) // M_bowTrails == 3
-		//{
-		//}
+		if (i == 2)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+			/******************************************************************/
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
+		}
+
+		if (i == 3) // M_bowTrails == 3
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			/******************************************************************/
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+		}
+
+		if (i == 4)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
+			/******************************************************************/
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+		}
 	}
 
 	return S_OK;
@@ -149,15 +173,13 @@ void CKena_Staff::ImGui_AnimationProperty()
 
 void CKena_Staff::ImGui_ShaderValueProperty()
 {
-	{
-		_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
-		static _float2 maMinMax{ 0.f, 255.f };
-		ImGui::InputFloat2("Staff_MAMinMax", (float*)&maMinMax);
-		ImGui::DragFloat3("Staff_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
-		m_vMulAmbientColor.x = fColor[0];
-		m_vMulAmbientColor.y = fColor[1];
-		m_vMulAmbientColor.z = fColor[2];
-	}
+	_float fColor[3] = { m_vMulAmbientColor.x, m_vMulAmbientColor.y, m_vMulAmbientColor.z };
+	static _float2 maMinMax{ 0.f, 255.f };
+	ImGui::InputFloat2("Staff_MAMinMax", (float*)&maMinMax);
+	ImGui::DragFloat3("Staff_MAAmount", fColor, 0.01f, maMinMax.x, maMinMax.y);
+	m_vMulAmbientColor.x = fColor[0];
+	m_vMulAmbientColor.y = fColor[1];
+	m_vMulAmbientColor.z = fColor[2];
 }
 
 HRESULT CKena_Staff::SetUp_Components()
@@ -170,14 +192,37 @@ HRESULT CKena_Staff::SetUp_Components()
 
 	/********************* For. Kena PostProcess By WJ*****************/
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-	for(int i = 0; i<2; ++i)
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		// AO_R_M
-		m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
-		// EMISSIVE
-		m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
-		// SPRINT_EMISSIVE
-		m_pModelCom->SetUp_Material(i, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+		if (i <= 1)
+		{
+			// AO_R_M
+			m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_AO_R_M.png"));
+			// EMISSIVE
+			m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_EMISSIVE.png"));
+			// SPRINT_EMISSIVE
+			m_pModelCom->SetUp_Material(i, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_props_sprint_EMISSIVE.png"));
+		}
+
+		if (i == 2 || i == 4)
+		{
+			// Diffuse
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/Trail/Bow_String/T_customNoise.png"));
+			// Mask
+			m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/Trail/Bow_String/T_stringMask.png"));
+			// Noise Texture
+			m_pModelCom->SetUp_Material(i, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Textures/Effect/Trail/Bow_String/T_swipe02.png"));
+			// Gradient
+			m_pModelCom->SetUp_Material(i, WJTextureType_ALPHA, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_4.png"));
+		}
+
+		if (i == 3)
+		{
+			// Diffuse
+			m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_54.png"));
+			// Diffuse2
+			m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_6.png"));
+		}
 	}
 	/******************************************************************/
 
@@ -196,7 +241,8 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
-
+	m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float));
+	
 	return S_OK;
 }
 

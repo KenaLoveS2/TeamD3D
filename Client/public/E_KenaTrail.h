@@ -30,6 +30,7 @@ private:
 	_uint m_iTrailTypeTexture = 0;
 
 	_float2  m_fUV = { 1.f,1.f };
+	_float	 m_fTimeDelta = 0.0f;
 
 public:
 	static  CE_KenaTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

@@ -56,7 +56,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	Push_EventFunctions();
 
@@ -148,16 +148,27 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
 	/************** Delegator Test *************/
-	CUI_ClientManager::UI_PRESENT eHP		= CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_PRESENT ePip			= CUI_ClientManager::HUD_PIP;
-	CUI_ClientManager::UI_PRESENT eType3		= CUI_ClientManager::HUD_SHIELD;
-	CUI_ClientManager::UI_PRESENT eType4		= CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_PRESENT eBomb			= CUI_ClientManager::AMMO_BOMB;
-	CUI_ClientManager::UI_PRESENT eArrowGuage	= CUI_ClientManager::AMMO_ARROW;
-	CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	{
+
+	}
+
 	static _float fNum = 3.f;
 	_float fZero = 0.f;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
@@ -168,6 +179,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
 		m_PlayerDelegator.broadcast(ePip, funcLevelup, fLevel);
 		m_PlayerDelegator.broadcast(eHP, funcLevelup, fLevel);
+
+		m_PlayerDelegator.broadcast(eQuest, funcSwitch, fZero);
+
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -186,12 +200,17 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
 
 		/* Arrow Guage test */
-		static _float fArrow = 1.f; 
+		static _float fArrow = 1.f;
 		m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
 
 		/* Aim Test */
 		static _float fAim = 1.f;
 		m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
+
+		/* Quest Open Test */
+		static _float fQuestIndex = 0.f;
+		m_PlayerDelegator.broadcast(eQuestLine, funcSwitch, fQuestIndex);
+		fQuestIndex += 1.f;
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
@@ -200,6 +219,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
+
+		/* Quest Check Test */
+		static _float fQuestClear = 0.f;
+		m_PlayerDelegator.broadcast(eQuestLine, funcCheck, fQuestClear);
+		fQuestClear += 1.f;
+
+
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
@@ -210,6 +236,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	}
 
 	/************** ~Delegator Test *************/
+
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -222,8 +249,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
-	//for (auto& pEffect : m_mapEffect)
-	//	pEffect.second->Late_Tick(fTimeDelta);
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
