@@ -118,11 +118,6 @@ void CKena::Tick(_float fTimeDelta)
 
 	Test_Raycast();
 
-	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
-	if(pGameInstnace->Key_Down(DIK_SPACE))
-		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
-	RELEASE_INSTANCE(CGameInstance)
-
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
@@ -1411,6 +1406,13 @@ HRESULT CKena::SetUp_State()
 	m_pAnimation->Add_State(pAnimState);
 
 	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_RUNNING";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::DELETE_KENA_LAND_RUNNING);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "BOW_LAND";
 	pAnimState->m_bLoop = false;
 	pAnimState->m_fLerpDuration = 0.2f;
@@ -1429,6 +1431,55 @@ HRESULT CKena::SetUp_State()
 	pAnimState->m_bLoop = false;
 	pAnimState->m_fLerpDuration = 0.2f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::SLIDE_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_1";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_LIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_2";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_LIGHT_ALT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_INTO";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_INTO);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_LOOP";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_LOOP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_FINISH";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_FINISH);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "FALL";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "FALL_INTO_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL_INTO_RUN);
 	m_pAnimation->Add_State(pAnimState);
 
 	return S_OK;
