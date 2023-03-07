@@ -418,6 +418,21 @@ void CTransform::LookAt(_fvector vTargetPos)
 	Set_State(CTransform::STATE_LOOK, vLook);
 }
 
+void CTransform::LookAt_NoUpDown(_fvector vTargetPos)
+{
+	_float3   vScale = Get_Scaled();
+
+	_vector   vPosWithoutY = XMVectorSetY(vTargetPos, m_WorldMatrix._42);
+
+	_vector   vLook = XMVector3Normalize(vPosWithoutY - Get_State(STATE_TRANSLATION)) * vScale.z;
+	_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+	_vector   vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+
+	Set_State(STATE_RIGHT, vRight);
+	Set_State(STATE_UP, vUp);
+	Set_State(STATE_LOOK, vLook);
+}
+
 void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 {
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
@@ -425,7 +440,7 @@ void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
-	LookAt(vTargetPos);
+	LookAt_NoUpDown(vTargetPos);
 
 	if(fDistance > fLimit)
 	{

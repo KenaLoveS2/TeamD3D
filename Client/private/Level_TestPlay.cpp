@@ -141,8 +141,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
-	//	return E_FAIL;
+	// if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain")))) return E_FAIL;
 
 	CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
 

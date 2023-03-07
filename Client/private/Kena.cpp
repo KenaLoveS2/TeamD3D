@@ -290,6 +290,10 @@ void CKena::Imgui_RenderProperty()
 	ImGui::DragFloat3("PxVelocity", vVelocity, 0.01f, 0.1f, 100.0f);
 	m_vVelocity.x = vVelocity[0]; m_vVelocity.y = vVelocity[1]; m_vVelocity.z = vVelocity[2];
 	CPhysX_Manager::GetInstance()->Set_DynamicParameter(m_szCloneObjectTag, m_fDensity, fAngularDamping, fMass, fLinearDamping, m_vVelocity);
+
+	ImGui::Begin("Trans");
+	m_pTransformCom->Imgui_RenderProperty();
+	ImGui::End();
 }
 
 void CKena::ImGui_AnimationProperty()

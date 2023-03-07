@@ -74,7 +74,6 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 	// ¹«±â
 	{
-		/*
 		wstring WeaponPivot;
 		m_vecColliderName.push_back(WeaponPivot);
 		_float3 vWeaponPivot = _float3(-0.55f,0.f, -1.15f);
@@ -110,7 +109,6 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);
-		*/
 	}
 
 	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
@@ -363,7 +361,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("CHEER to BIND", "BIND")
 		.Predicator([this]()
@@ -389,7 +387,7 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(STRAFELEFT);
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Left(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
@@ -417,7 +415,7 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(STRAFERIGHT);
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Right(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
@@ -514,7 +512,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -540,7 +538,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -566,7 +564,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -592,7 +590,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ATTACK2 to BIND", "BIND")
 		.Predicator([this]()
@@ -618,7 +616,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("COMBOATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -644,7 +642,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_vKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ROCKTHROW to BIND", "BIND")
 		.Predicator([this]()

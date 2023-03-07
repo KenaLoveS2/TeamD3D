@@ -32,10 +32,11 @@ public:
 	_float&						Get_BlendDuration() { return m_fBlendDuration; }
 
 	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
-	void								Set_AnimIndex(_uint iAnimIndex) { m_iAnimationIndex = iAnimIndex; }
-	void								Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
-	void								Set_PlayTime(_double dPlayTime);
-	void								Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
+	void							Set_AnimIndex(_uint iAnimIndex) { m_iAnimationIndex = iAnimIndex; }
+	void							Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
+	void							Set_PlayTime(_double dPlayTime);
+	void							Set_Name(const char* pName) { strcpy_s(m_szName, pName); }
+	ANIMTYPE&				Get_AnimationType() { return m_eAnimType; }
 
 public:
 	HRESULT						Initialize_Prototype(HANDLE hFile, class CModel* pModel);

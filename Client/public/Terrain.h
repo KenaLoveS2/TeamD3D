@@ -88,6 +88,8 @@ public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	void Connect_TriangleActor(_float4x4 Matrix);
 };
 
 END

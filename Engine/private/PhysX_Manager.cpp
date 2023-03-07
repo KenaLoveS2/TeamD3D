@@ -201,7 +201,7 @@ void CPhysX_Manager::Render()
 {
 #ifdef _DEBUG
 	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
-
+	
 	PxU32 NbTriangles = RenderBuffer.getNbTriangles();
 	PxU32 NbLines = RenderBuffer.getNbLines();
 	PxU32 NbTexts = RenderBuffer.getNbTexts();
@@ -218,7 +218,8 @@ void CPhysX_Manager::Render()
 
 	m_pBatch->Begin();
 
-	for (PxU32 i = 0; i < NbLines; i ++)
+	static const PxU32 PxSkipCount = 1;
+	for (PxU32 i = 0; i < NbLines; i += PxSkipCount)
 	{
 		if (i >= NbLines) break;
 
@@ -311,16 +312,15 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
 
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
-	shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-	shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-	
-	pBody->attachShape(*shape);
-	
+	shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+	shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+
+	pBody->attachShape(*shape);	
+
 	m_pScene->addActor(*pBody);
 
 	shape->release();
-
-	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
 	return pBody;
 }
 
@@ -354,7 +354,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		}
 
 		m_pScene->addActor(*pBox);
-
+		pShape->release();
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
@@ -394,10 +394,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		}
 		
 		m_pScene->addActor(*pBox);
-		PxTransform Temp = pBox->getGlobalPose();
-		
-
-		int i = 0;
+		pShape->release();
 	}	
 }
 
@@ -427,6 +424,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		m_StaticActors.emplace(pTag, pSphere);
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
@@ -467,6 +465,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		}
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}	
 }
 
@@ -497,6 +496,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		m_StaticActors.emplace(pTag, pCapsule);
 	
 		m_pScene->addActor(*pCapsule);
+		pShape->release();
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
@@ -539,6 +539,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
+		pShape->release();
 	}	
 }
 
