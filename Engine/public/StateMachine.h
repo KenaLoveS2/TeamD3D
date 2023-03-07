@@ -16,7 +16,11 @@ protected:
 	typedef struct tagChanger
 	{
 		wstring							wstrNextState = L"";
-		std::function<_bool(void)>		Changer_Func = nullptr;
+		std::function<_bool(void)>		Changer_Func_First = nullptr;
+		std::function<_bool(void)>		Changer_Func_Second = nullptr;
+		std::function<_bool(void)>		Changer_Func_Third = nullptr;
+		std::function<_bool(_float)>		Changer_Func_Progress = nullptr;
+		_float								fProgress = 0.f;
 	} CHANGER;
 
 protected:
@@ -39,6 +43,7 @@ public:
 	virtual HRESULT			Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual void				Tick(_float fTimeDelta);
 	virtual void				Imgui_RenderProperty() override;
+	void						Rebuild();
 
 public:
 	template<typename T>
@@ -90,20 +95,46 @@ public:
 	}
 
 	template<typename T>
-	CStateMachine&	Init_Changer(const wstring& wstrNextState, T* Obj, _bool(T::*memFunc)())
+	CStateMachine&	Init_Changer(const wstring& wstrNextState,
+		T* Obj,
+		_bool(T::*memFunc1)(),
+		_bool(T::*memFunc2)() = nullptr,
+		_bool(T::*memFunc3)() = nullptr,
+		_bool(T::*memFunc4)(_float) = nullptr,
+		_float fProgress = 0.f)
 	{
 		const auto iter = find_if(m_mapChanger.begin(), m_mapChanger.end(), [&](const pair<const wstring, list<CHANGER>>& Pair) {
 			return m_wstrCurrentStateName == Pair.first;
 		});
 
 		CHANGER		tChanger;
-		//ZeroMemory(&tChanger, sizeof(CHANGER));
 
 		tChanger.wstrNextState = wstrNextState;
-		tChanger.Changer_Func = [Obj, memFunc]()
+		tChanger.Changer_Func_First = [Obj, memFunc1]()
 		{
-			return (Obj->*memFunc)();
+			return (Obj->*memFunc1)();
 		};
+		if (memFunc2 != nullptr)
+		{
+			tChanger.Changer_Func_Second = [Obj, memFunc2]()
+			{
+				return (Obj->*memFunc2)();
+			};
+			if (memFunc3 != nullptr)
+			{
+				tChanger.Changer_Func_Third = [Obj, memFunc3]()
+				{
+					return (Obj->*memFunc3)();
+				};
+			}
+		}
+		if (memFunc4 != nullptr)
+		{
+			tChanger.Changer_Func_Progress = [Obj, memFunc4, fProgress](_float)
+			{
+				return (Obj->*memFunc4)(fProgress);
+			};
+		}
 
 		if (iter == m_mapChanger.end())
 			m_mapChanger.emplace(m_wstrCurrentStateName, list<CHANGER>{tChanger});

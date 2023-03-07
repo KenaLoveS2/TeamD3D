@@ -6,9 +6,9 @@
 
 BEGIN(Client)
 
-class CEffect_Point_Instancing final : public CEffect_Base
+class CEffect_Point_Instancing abstract : public CEffect_Base
 {
-private:
+protected:
 	CEffect_Point_Instancing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect_Point_Instancing(const CEffect_Point_Instancing& rhs);
 	virtual ~CEffect_Point_Instancing() = default;
@@ -47,7 +47,7 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype(_tchar* pProtoTag, const _tchar* pFilePath = nullptr);
+	virtual HRESULT Initialize_Prototype(_tchar* pProtoTag = nullptr, const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
@@ -57,15 +57,13 @@ private:
 	HRESULT         SetUp_Components();
 	HRESULT         SetUp_ShaderResources();
 
-private:
+protected:
 	const _tchar*                m_szVIBufferProtoTag = L"";
 	_float		                 m_fTimeDelta = 0.0f;
 	_float		                 m_fVIBufferTime = 0.0f;
 	vector<class CEffect_Trail*> m_vecTrailEffect;
 
 public:
-	static CEffect_Point_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* pProtoTag);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 };
 

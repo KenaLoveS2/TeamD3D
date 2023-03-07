@@ -60,7 +60,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fMass = 20.f;
 		PxCapsuleDesc.fDamping = 10.f;
 		PxCapsuleDesc.bCCD = true;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
@@ -125,7 +125,9 @@ void CSticks01::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
@@ -133,6 +135,7 @@ void CSticks01::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
 }
 
 void CSticks01::Late_Tick(_float fTimeDelta)
@@ -187,8 +190,13 @@ void CSticks01::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	if (ImGui::Button("TAKEDAMAGE"))
-		m_bHit = true;
+	m_pFSM->Imgui_RenderProperty();
+
+	if (ImGui::Button("WeaklyDamage"))
+		m_bWeaklyHit = true;
+
+	if (ImGui::Button("StronglyDamage"))
+		m_bStronglyHit = true;
 
 	if (ImGui::Button("BIND"))
 		m_bBind = true;
@@ -196,8 +204,10 @@ void CSticks01::Imgui_RenderProperty()
 
 void CSticks01::ImGui_AnimationProperty()
 {
-	if(ImGui::CollapsingHeader("Sticks01 Animation & State"))
+	if(ImGui::CollapsingHeader("Sticks01"))
 	{
+		ImGui::BeginTabBar("Sticks01 Animation & State");
+
 		if (ImGui::BeginTabItem("Animation"))
 		{
 			m_pModelCom->Imgui_RenderProperty();
@@ -209,6 +219,8 @@ void CSticks01::ImGui_AnimationProperty()
 			m_pFSM->Imgui_RenderProperty();
 			ImGui::EndTabItem();
 		}
+
+		ImGui::EndTabBar();
 	}
 }
 
@@ -298,7 +310,7 @@ HRESULT CSticks01::SetUp_State()
 
 		m_pModelCom->Set_AnimIndex(RESURRECT);
 	})
-		.AddTransition("RESURRECT to CHARGE", "CHARGE")
+		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(RESURRECT);
@@ -327,7 +339,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("COMBATIDLE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("COMBATIDLE to CHARGE", "CHEER")
 		.Predicator([this]()
@@ -353,7 +365,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("CHEER to BIND", "BIND")
 		.Predicator([this]()
@@ -363,9 +375,9 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("CHEER to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
-		.AddTransition("CHEER to CHARGE", "CHARGE")
+		.AddTransition("CHEER to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CHEER);
@@ -379,7 +391,7 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(STRAFELEFT);
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Left(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
@@ -391,9 +403,9 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("STRAFELEFT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
-		.AddTransition("STRAFELEFT to CHARGE", "CHARGE")
+		.AddTransition("STRAFELEFT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime,3.f);
@@ -407,7 +419,7 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(STRAFERIGHT);
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Right(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
 	})
@@ -420,13 +432,25 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("STRAFERIGHT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 
-		.AddTransition("STRAFERIGHT to CHARGE", "CHARGE")
+		.AddTransition("STRAFERIGHT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 3.f);
+	})
+
+		.AddState("INTOCHARGE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
+		m_pModelCom->Set_AnimIndex(INTOCHARGE);
+	})
+		.AddTransition("INTOCHARGE to CHARGE", "CHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE);
 	})
 
 		.AddState("CHARGE")
@@ -451,7 +475,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("CHARGE to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("CHARGE to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
@@ -492,7 +516,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -502,7 +526,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("CHARGEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("CHARGEATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -518,7 +542,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -528,7 +552,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("JUMPATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("JUMPATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -544,7 +568,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -554,7 +578,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("ATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("ATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -570,7 +594,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ATTACK2 to BIND", "BIND")
 		.Predicator([this]()
@@ -580,7 +604,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("ATTACK2 to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("ATTACK2 to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -596,7 +620,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("COMBOATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -606,7 +630,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("COMBOATTACK to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("COMBOATTACK to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -622,7 +646,7 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->LookAt(m_pKenaPos);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.AddTransition("ROCKTHROW to BIND", "BIND")
 		.Predicator([this]()
@@ -632,7 +656,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("ROCKTHROW to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
-		return m_bHit;
+		return m_bStronglyHit;
 	})
 		.AddTransition("ROCKTHROW to COMBATIDLE", "COMBATIDLE")
 		.Predicator([this]()
@@ -645,7 +669,7 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
 		m_pModelCom->Set_AnimIndex(BIND);
-		m_bHit = false;
+		m_bStronglyHit = false;
 		// 묶인 상태에서 맞았을때는 ADDITIVE 실행 
 	})
 		.Tick([this](_float fTimeDelta)
@@ -659,7 +683,7 @@ HRESULT CSticks01::SetUp_State()
 		Reset_Attack();
 	})
 
-		.AddTransition("BIND to CHARGE", "CHARGE")
+		.AddTransition("BIND to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BIND);
@@ -672,7 +696,7 @@ HRESULT CSticks01::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
 		m_pModelCom->Set_AnimIndex(PARRIED);
 	})
-		.AddTransition("PARRIED to CHARGE", "CHARGE")
+		.AddTransition("PARRIED to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(PARRIED);
@@ -685,7 +709,7 @@ HRESULT CSticks01::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(RECEIVEBOMB);
 		m_pModelCom->Set_AnimIndex(RECEIVEBOMB);
 	})
-		.AddTransition("RECEIVEBOMB to CHARGE", "CHARGE")
+		.AddTransition("RECEIVEBOMB to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(RECEIVEBOMB);
@@ -694,15 +718,31 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
 	{
-		// 앞 뒤 구별 ㄱ
-		// 맞는 애니메이션일때도 데미지가 들어오면 start에서 m_bHit = false;
-		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEL);
-		m_pModelCom->Set_AnimIndex(TAKEDAMAGEL);
+		if (m_PlayerLookAt_Dir == FRONT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEBIG);
+			m_pModelCom->Set_AnimIndex(TAKEDAMAGEBIG);
+		}
+		else if (m_PlayerLookAt_Dir == BACK)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEB);
+			m_pModelCom->Set_AnimIndex(TAKEDAMAGEB);
+		}
+		else if (m_PlayerLookAt_Dir == LEFT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGEL);
+			m_pModelCom->Set_AnimIndex(TAKEDAMAGEL);
+		}
+		else if (m_PlayerLookAt_Dir == RIGHT)
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGER);
+			m_pModelCom->Set_AnimIndex(TAKEDAMAGER);
+		}
 	})
 		.OnExit([this]()
 	{
 		// 맞는 애니메이션일때도 맞는가?
-		m_bHit = false;
+		m_bStronglyHit = false;
 		Reset_Attack();
 	})
 		.AddTransition("TAKEDAMAGE to BIND", "BIND")
@@ -710,10 +750,13 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bBind;
 	})
-		.AddTransition("TAKEDAMAGE to CHARGE", "CHARGE")
+		.AddTransition("TAKEDAMAGE to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(TAKEDAMAGEL);
+		return AnimFinishChecker(TAKEDAMAGEL) || 
+			AnimFinishChecker(TAKEDAMAGEB) || 
+			AnimFinishChecker(TAKEDAMAGER) || 
+			AnimFinishChecker(TAKEDAMAGEBIG);
 	})
 
 		.AddState("DEATH")
@@ -744,20 +787,7 @@ HRESULT CSticks01::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/stick_corrupted_glow_1k.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/axe_corrupted_glow_1k.png")), E_FAIL);
 
-	CCollider::COLLIDERDESC	ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-
-	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
-
-	CNavigation::NAVIDESC		NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
-
-	NaviDesc.iCurrentIndex = 0;
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
+	m_pModelCom->Set_RootBone("Sticks_01_RIG");
 
 	return S_OK;
 }
@@ -803,11 +833,43 @@ void CSticks01::Update_Collider(_float fTimeDelta)
 	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-	SocketMatrix =	 XMMatrixTranslation(m_vecPivot[0].x, m_vecPivot[0].y, m_vecPivot[0].z)
+	SocketMatrix =	 XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
 							* SocketMatrix;
 	_float4x4 mat;
 	XMStoreFloat4x4(&mat, SocketMatrix);
-	m_pTransformCom->Update_Collider(m_vecColliderName[0].c_str(), mat);
+	m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
+
+	// 맞았을때 약공격을 맞았으면 TWITCH~ Additive로
+
+}
+
+void CSticks01::AdditiveAnim(_float fTimeDelta)
+{
+	_float fRatio = Calc_PlayerLookAtDirection();
+
+	if(m_bWeaklyHit)
+	{
+		if (m_PlayerLookAt_Dir == BACK)
+		{
+			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_B);
+			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
+		}
+		else if(m_PlayerLookAt_Dir == FRONT)
+		{
+			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_F);
+			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
+		}
+		else if (m_PlayerLookAt_Dir == LEFT)
+		{
+			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_L);
+			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
+		}
+		else if (m_PlayerLookAt_Dir == RIGHT)
+		{
+			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_R);
+			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
+		}
+	}
 }
 
 void CSticks01::Set_AttackType()
@@ -856,6 +918,7 @@ void CSticks01::Reset_Attack()
 	m_bAttack2 = false;
 	m_bComboAttack = false;
 	m_bThrowRock = false;
+	m_iAttackType = ATTACKTYPE_END;
 }
 
 void CSticks01::Tick_Attack(_float fTimeDelta)
@@ -863,27 +926,27 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 	switch (m_iAttackType)
 	{
 	case AT_CHARGEATTACK:
-		m_pTransformCom->Chase(m_pKenaPos, fTimeDelta, 5.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
 		if (DistanceTrigger(5.f))
 			m_bRealAttack = true;
 		break;
 	case AT_JUMPATTACK:
-		m_pTransformCom->Chase(m_pKenaPos, fTimeDelta, 4.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 4.f);
 		if (DistanceTrigger(4.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK1:
-		m_pTransformCom->Chase(m_pKenaPos, fTimeDelta, 2.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
 		if (DistanceTrigger(2.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK2:
-		m_pTransformCom->Chase(m_pKenaPos, fTimeDelta, 2.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
 		if (DistanceTrigger(2.f))
 			m_bRealAttack = true;
 		break;
 	case AT_COMBOATTACK:
-		m_pTransformCom->Chase(m_pKenaPos, fTimeDelta, 2.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
 		if (DistanceTrigger(2.f))
 			m_bRealAttack = true;
 		break;

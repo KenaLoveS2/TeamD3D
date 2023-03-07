@@ -74,6 +74,12 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
+	if (m_TerrainDesc.iHeightBmpNum == 0)
+		return S_OK;
+
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
+	m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
+
 	return S_OK;
 }
 
@@ -112,6 +118,10 @@ HRESULT CTerrain::Render()
 void CTerrain::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
+
+	ImGui::Begin("Terrain Translation");
+	m_pTransformCom->Imgui_RenderProperty();
+	ImGui::End();
 }
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
@@ -281,4 +291,9 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+}
+
+void CTerrain::Connect_TriangleActor(_float4x4 Matrix)
+{
+	m_pVIBufferCom->Set_PxMatrix(Matrix);
 }

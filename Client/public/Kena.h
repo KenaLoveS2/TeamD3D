@@ -64,13 +64,12 @@ private:
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
-	map<const string, class CEffect_Base*>	m_mapEffects;
 
-	// CloneTag, Effect
 	map<const string, class CEffect_Base*>   m_mapEffect;
 
 private:
 	_bool					m_bAttack = false;
+	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
 
@@ -96,7 +95,7 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
-	void					Test(_bool bIsInit, _float fTimeDelta);
+	void							Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

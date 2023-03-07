@@ -7,6 +7,7 @@
 #include "Imgui_Effect.h"
 #include "Imgui_ShaderEditor.h"
 #include "Tool_Settings.h"
+#include "Tool_Animation.h"
 
 CLevel_EffectTest::CLevel_EffectTest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -27,6 +28,7 @@ HRESULT CLevel_EffectTest::Initialize()
 	pGameInstance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	pGameInstance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	pGameInstance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance);
 	// ~tool 
 

@@ -5,9 +5,7 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Trail final : public CVIBuffer_Instancing
 {
-public:
-
-public:
+private:
 	CVIBuffer_Trail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Trail(const CVIBuffer_Trail& rhs);
 	virtual ~CVIBuffer_Trail() = default;

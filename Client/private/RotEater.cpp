@@ -42,9 +42,49 @@ HRESULT CRotEater::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CRotEater::Late_Initialize(void * pArg)
+{
+	// 몸통
+	{
+		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
+		_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 30.f;
+		PxCapsuleDesc.fDamping = 10.f;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
+		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Set_PxPivotScale(vPivotScale);
+		m_pTransformCom->Set_PxPivot(vPivotPos);
+	}
+
+	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
+
+	return S_OK;
+}
+
 void CRotEater::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -176,21 +216,8 @@ HRESULT CRotEater::SetUp_Components()
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/RotEater/rot_eater_body_uv_EMISSIVE.png")), E_FAIL);
 
-	CCollider::COLLIDERDESC	ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-
-	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
-
-	CNavigation::NAVIDESC		NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
-
-	NaviDesc.iCurrentIndex = 0;
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
-
+	m_pModelCom->Set_RootBone("Rot_Eater_RIG");
+	
 	return S_OK;
 }
 
@@ -224,6 +251,15 @@ HRESULT CRotEater::SetUp_ShadowShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CRotEater::Update_Collider(_float fTimeDelta)
+{
+}
+
+void CRotEater::AdditiveAnim(_float fTimeDelta)
+{
+	//SK_RotEater.ao
 }
 
 CRotEater* CRotEater::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

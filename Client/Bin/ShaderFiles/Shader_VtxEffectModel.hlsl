@@ -26,9 +26,6 @@ float4  g_WorldCamPosition;
 bool g_bDissolve;
 float g_fDissolveTime;
 
-uniform float emission_amount = 5.0f;
-uniform float rim_steepness = 3.0f; //higher values mean a smaller rim.
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -45,7 +42,7 @@ struct VS_OUT
 	float4		vProjPos : TEXCOORD1;
 	float3      vWorldNormal : TEXCOORD2;
 	float3      vViewDir : TEXCOORD3;
-	float4      vWorldPosition : TEXCPPRED4;
+	float4      vWorldPosition : TEXCOORD4;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
@@ -81,7 +78,7 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD1;
 	float3      vWorldNormal : TEXCOORD2;
 	float3      vViewDir : TEXCOORD3;
-	float4      vWorldPosition : TEXCPPRED4;
+	float4      vWorldPosition : TEXCOORD4;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
@@ -176,23 +173,6 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 			if (Out.vDiffuse.a != 0.0f)
 				Out.vDiffuse = float4(BackPulseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
-
-
-		////Dissolve function
-		//half dissolve_value = Dissolve.r;
-		//float isGlowing = smoothstep(0.1f + fDissolveAmount, 0.1f, Dissolve - fDissolveAmount);
-		//float3 glow = isGlowing * BackPulseColor;
-
-		//if (dissolve_value >= fDissolveAmount)
-		//	discard;
-
-		//else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
-		//{
-		//	//if (Out.vDiffuse.a != 0.0f)
-		//	//	Out.vDiffuse = Out.vDiffuse + float4(glow, Out.vDiffuse.a);
-
-		//	Out.vDiffuse = Out.vDiffuse + float4(glow, Out.vDiffuse.a);
-		//}
 	}
 
 	return Out;

@@ -47,7 +47,6 @@ class ENGINE_DLL CAnimationState : public CBase
 {
 public:
 	using JOINTSET = pair<string, CBone::LOCKTO>;
-	enum ANIMBODY { ANIMBODY_UPPER, ANIMBODY_LOWER, ANIMBODY_ALL, ANIMBODY_END };
 
 private:
 	CAnimationState();
@@ -56,13 +55,18 @@ private:
 public:
 	CAnimState*		Get_CurrentAnim() { return m_pCurAnim; }
 	CAnimState*		Get_PreAnim() { return m_pPreAnim; }
+	const string&		Get_CurrentAnimName() const { return m_pCurAnim->m_strStateName; }
+	const string&		Get_PreAnimName() const { return m_pPreAnim->m_strStateName; }
+	const _uint		Get_CurrentAnimIndex() const;
+	const _uint		Get_PreAnimIndex() const;
 	const _bool&		Get_AnimationFinish();
+	const _float		Get_AnimationProgress() const;
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
 	HRESULT			Initialize_FromFile(const string& strFilePath);
 	void				Tick(_float fTimeDelta);
-	HRESULT			State_Animation(const string& strStateName, ANIMBODY eAnimBody = ANIMBODY_ALL);
+	HRESULT			State_Animation(const string& strStateName, _float fLerpDuration = -1.f);
 	void				Play_Animation(_float fTimeDelta);
 	void				ImGui_RenderProperty();
 

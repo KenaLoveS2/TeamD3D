@@ -122,18 +122,33 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (vSour.a > 1.f)
 	{
-		vMtrlDiffuse = vSourDiffuse;
+		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
+			vDestDiffuse1 * (1.f - vFilter2.r);
+
+		if (vMtrlDiffuse.a <= 0.9f)
+		{
+			vMtrlDiffuse = vDestDiffuse0;
+		}
+
+
 	}
 
-	//if (vDest.a > 1.f)
-	//{
-	//	vMtrlDiffuse = vSourDiffuse;
-	//}
+	if (vDest.a > 1.f)
+	{
+		vMtrlDiffuse.a = 0.0f;
+	}
 
-	//if (vTemp.a > 1.f)
-	//{
-	//	vMtrlDiffuse = vSourDiffuse;
-	//}
+	if (vTemp.a > 1.f)
+	{
+		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
+			vDestDiffuse2 * (1.f - vFilter1.r);
+
+		if (vMtrlDiffuse.a <= 0.9f)
+		{
+			vMtrlDiffuse = vDestDiffuse0;
+		}
+
+	}
 
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;

@@ -85,6 +85,14 @@ public:
 
 	const char* GetCurStateName() const { return m_pCurStateName; }
 
+	_bool IsCompareState(const char* pCompareState)
+	{
+		if (!strcmp(pCompareState, m_pCurStateName))
+			return true;
+		else
+			return false;
+	}
+	
 private:
 	void StateHistoryUpdate(const char* pNextStateName);
 

@@ -186,21 +186,6 @@ HRESULT CVillageGuard::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_AO.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_EMISSIVE2.png")), E_FAIL);
 
-	CCollider::COLLIDERDESC	ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-
-	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
-
-	CNavigation::NAVIDESC		NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
-
-	NaviDesc.iCurrentIndex = 0;
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
-
 	return S_OK;
 }
 
@@ -234,6 +219,10 @@ HRESULT CVillageGuard::SetUp_ShadowShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+void CVillageGuard::Update_Collider(_float fTimeDelta)
+{
 }
 
 CVillageGuard* CVillageGuard::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
