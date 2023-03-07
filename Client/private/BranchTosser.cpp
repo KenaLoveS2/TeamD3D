@@ -62,7 +62,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fDamping = 100.f;
+		PxCapsuleDesc.fLinearDamping = 100.f;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
@@ -111,7 +111,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fDamping = 1.f;
+		PxCapsuleDesc.fLinearDamping = 1.f;
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
