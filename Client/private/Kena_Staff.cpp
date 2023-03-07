@@ -27,7 +27,7 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	// FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 
@@ -54,8 +54,8 @@ void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Tick(fTimeDelta);
+	//if (m_pKenaStaffTrail != nullptr)
+	//	m_pKenaStaffTrail->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -68,13 +68,13 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	// staff_skin7_jnt
 
 	/* Weapon Update */
-	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
-	/* ~Weapon Update */
+	//CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	//_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	//m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
+	///* ~Weapon Update */
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Late_Tick(fTimeDelta);
+	//if (m_pKenaStaffTrail != nullptr)
+	//	m_pKenaStaffTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{
