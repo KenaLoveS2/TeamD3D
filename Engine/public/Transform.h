@@ -97,13 +97,12 @@ public:
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
 	void RotationFromNow(_fvector vAxis, _float fRadian);
 
-	/* 쳐다본다. */
 	/*void LookAt(const CTransform* pTarget);*/
 	void LookAt(_fvector vTargetPos);
 	void LookAt_NoUpDown(_fvector vTargetPos);
 
-	/* 추적한다 .*/
 	void Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit = 0.1f);
+	//void Jump(_float fTimeDelta);
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);

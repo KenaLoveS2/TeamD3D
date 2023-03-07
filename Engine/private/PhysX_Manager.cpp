@@ -958,6 +958,15 @@ void  CPhysX_Manager::Set_DynamicParameter(PxRigidActor * pActor, _float fMass, 
 	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
 }
 
+void CPhysX_Manager::Set_Velocity(PxRigidActor * pActor, _float3 vVelocity)
+{
+	if (pActor == nullptr)
+		return;
+
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+}
+
 void CPhysX_Manager::Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag)
 {
 	PxRigidActor *pActor = Find_Actor(pActorTag);

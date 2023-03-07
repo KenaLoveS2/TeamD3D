@@ -398,7 +398,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 					memcpy((_float*)&PointDesc->vExplosionDir + (k++), &vExplosionDir, sizeof(_float));
 
 				k = 0;
-				for (_float fDir : jObject["CloneObject Component PointDesc ExplosionDir"])
+				for (_float fDir : jObject["CloneObject Component PointDesc Dir"])
 					memcpy((_float*)&PointDesc->vDir + (k++), &fDir, sizeof(_float));
 
 				iEnum = 0;

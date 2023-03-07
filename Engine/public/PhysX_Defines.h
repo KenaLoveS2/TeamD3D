@@ -52,9 +52,12 @@ public:
 			{	
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-								
-				pSourUserData && pSourUserData->pOwner->Execute_Collision();
-				pDestUserData && pDestUserData->pOwner->Execute_Collision();
+				
+				CGameObject* pSourObj = pSourUserData ? pSourUserData->pOwner : nullptr;
+				CGameObject* pDestObj = pDestUserData ? pDestUserData->pOwner : nullptr;
+
+				pSourObj && pSourObj->Execute_Collision(pDestObj);
+				pDestObj && pDestObj->Execute_Collision(pSourObj);
 			}
 			// eDETECT_CCD_CONTACT: 연속 충돌 감지를 사용하여 두 액터 간의 접촉을 감지합니다.	
 			if (cp.events & PxPairFlag::eDETECT_CCD_CONTACT)

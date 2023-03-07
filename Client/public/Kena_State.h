@@ -783,6 +783,7 @@ private:
 	void						End_Sprint_Attack(_float fTimeDelta);
 
 private:	/* Changer */
+	_bool	OnGround();
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();

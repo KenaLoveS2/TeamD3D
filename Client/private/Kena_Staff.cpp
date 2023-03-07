@@ -54,8 +54,8 @@ void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Tick(fTimeDelta);
+	//if (m_pKenaStaffTrail != nullptr)
+	//	m_pKenaStaffTrail->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -67,14 +67,14 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	// staff_skin8_jnt
 	// staff_skin7_jnt
 
-// 	/* Weapon Update */
-// 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-// 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-// 	m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
-// 	/* ~Weapon Update */
-// 
-// 	if (m_pKenaStaffTrail != nullptr)
-// 		m_pKenaStaffTrail->Late_Tick(fTimeDelta);
+ 	/* Weapon Update */
+ 	//CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+ 	//_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+ 	//m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
+ 	/* ~Weapon Update */
+ 
+ 	//if (m_pKenaStaffTrail != nullptr)
+ 	//	m_pKenaStaffTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{

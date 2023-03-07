@@ -70,10 +70,12 @@ private:
 	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
+	_float					m_fVelocity = 0.f;
 
+	_bool					m_bOnGround = true;
 	_bool					m_bJump = false;
-	_bool					m_bDoubleJump = false;
-	_float					m_fGravity;
+	_bool					m_bPulseJump = false;
+	_float					m_fGravity = 9.81f;
 	_float					m_fInitJumpSpeed;
 	_float					m_fCurJumpSpeed;
 
@@ -103,6 +105,8 @@ public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
+
+	virtual _int Execute_Collision(CGameObject* pTarget) override;
 };
 
 END

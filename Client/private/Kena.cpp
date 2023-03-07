@@ -60,6 +60,10 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	m_fGravity = 9.81f;
+	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
+	m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+
 	return S_OK;
 }
 
@@ -96,11 +100,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
-	if(pGameInstnace->Key_Down(DIK_SPACE))
-		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
-	RELEASE_INSTANCE(CGameInstance)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
@@ -205,8 +204,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
-	//for (auto& pEffect : m_mapEffect)
-	//	pEffect.second->Late_Tick(fTimeDelta);
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
@@ -396,18 +395,18 @@ void CKena::ImGui_PhysXValueProperty()
 	m_pTransformCom->Set_PxPivot(vPxPivot);
 
 	// 이게 사실상 px 매니저 imgui_render에 있긴함
-	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
-	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
-	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
+	//PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+// 	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+// 	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+// 	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+// 	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+// 	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+// 	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+// 	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+// 	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+// 	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+// 	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+	//CPhysX_Manager::GetInstance()->Set_Velocity(pRigidActor, _float3(0.f, m_fCurJumpSpeed, 0.f));
 }
 
 void CKena::Update_Child()
@@ -1267,14 +1266,14 @@ HRESULT CKena::SetUp_State()
 	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "HEAVY_ATTACK_3_RELEASE";
 	pAnimState->m_bLoop = false;
-	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_fLerpDuration = 0.1f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_3_RELEASE);
 	m_pAnimation->Add_State(pAnimState);
 
 	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "HEAVY_ATTACK_3_RELEASE_PERFECT";
 	pAnimState->m_bLoop = false;
-	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_fLerpDuration = 0.1f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_3_RELEASE_PERFECT);
 	m_pAnimation->Add_State(pAnimState);
 
@@ -1442,4 +1441,22 @@ void CKena::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+}
+
+_int CKena::Execute_Collision(CGameObject * pTarget)
+{
+	/* Terrain */
+	if (pTarget == nullptr)
+	{
+		m_bOnGround = true;
+		m_bJump = false;
+		m_bPulseJump = false;
+		m_fCurJumpSpeed = 0.f;
+	}
+	/* Other Actors */
+	else
+	{
+	}
+
+	return 0;
 }
