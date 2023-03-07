@@ -184,7 +184,7 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 
 	if (In[0].InstanceID == 0) // 인스턴스아이디 50전까지 빌보드를 먹임(왜냐면 지금 출력사이즈를 작게했기 때문임) => Test
 	{
-		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth* 0.8f;
+		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth/** 0.8f*/;
 		vResultPos.z = -1.f;
 		Out[0].vPosition = mul(vResultPos, matVP);
 		Out[0].vTexUV = float2(0.f, 0.f);
@@ -202,7 +202,7 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth* 0.8f;
+		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth/** 0.8f*/;
 		vResultPos.z = -1.f;
 		Out[3].vPosition = mul(vResultPos, matVP);
 		Out[3].vTexUV = float2(0.f, 1.f);
@@ -223,7 +223,7 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		float3 vPreU = matrix_look(g_InfoMatrix[In[0].InstanceID - 1]);
 		float3 vU = matrix_look(In[0].Matrix);
 
-		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) + float4(vUp, 0.f) * fCurWidth * 0.9f ;
+		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) + float4(vUp, 0.f) * fCurWidth /** 0.9f*/ ;
 		Out[0].vPosition = mul(vResultPos, matVP);
 		Out[0].vTexUV = float2(vPreU.x, 0.f);
 		Out[0].fLife = In[0].fLife / g_fLife;
@@ -238,7 +238,7 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		Out[2].vTexUV = float2(0.1f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) - float4(vUp, 0.f) * fCurWidth * 0.9f;
+		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) - float4(vUp, 0.f) * fCurWidth /** 0.9f*/;
 		Out[3].vPosition = mul(vResultPos, matVP);
 		Out[3].vTexUV = float2(vPreU.x, 1.f);
 		Out[3].fLife = In[0].fLife / g_fLife;

@@ -25,6 +25,7 @@
 #include "WoodKnight.h"
 #include "BranchTosser.h"
 #include "BranchTosser_Weapon.h"
+#include "Sapling.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -1061,6 +1062,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_Sapling */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sapling",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sapling/Sapling.model"), PivotMatrix))))
+		return E_FAIL;
+
 	/* Prototype_Component_Model_BranchTosser */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix))))
@@ -1446,6 +1452,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"),
 		CBranchTosser_Weapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling"),
+		CSapling::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),

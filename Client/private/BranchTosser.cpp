@@ -107,10 +107,10 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		PxCapsuleDesc.vPos = _float3(0.f, 5.f, 0.f);
 		PxCapsuleDesc.fRadius = m_vecPivotScale[COLL_WEAPON].x;
 		PxCapsuleDesc.fHalfHeight = m_vecPivotScale[COLL_WEAPON].y;
-		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.vVelocity = _float3(0.f, -1.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 1.f;
+		PxCapsuleDesc.fMass = 10.f;
 		PxCapsuleDesc.fDamping = 1.f;
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
 
