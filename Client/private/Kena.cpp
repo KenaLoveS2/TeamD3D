@@ -394,6 +394,20 @@ void CKena::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
+
+	// 이게 사실상 px 매니저 imgui_render에 있긴함
+	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
 }
 
 void CKena::Update_Child()
