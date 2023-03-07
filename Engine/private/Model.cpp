@@ -215,6 +215,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		{
 			CAnimation *pAnimation = CAnimation::Create(hFile, this);
 			if (pAnimation == nullptr) return E_FAIL;
+			pAnimation->Set_AnimIndex(i);
 
 			m_Animations.push_back(pAnimation);
 		}
@@ -259,13 +260,11 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 		CloseHandle(hFile);
 	}
 
-#ifdef _DEBUG
-	/*For.Imgui*/
-
-	m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
-		Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
-
-#endif // _DEBUG
+	if (m_bIsInstancing == true)
+	{
+		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
+			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
+	}
 
 
 	return S_OK;
@@ -969,6 +968,25 @@ void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
 	m_Animations[iAnimIndex]->Reset_Animation();
 }
 
+void CModel::Set_AdditiveAnimIndexForMonster(_uint iAnimIndex)
+{
+	m_iAdditiveAnimIndexForMonster = iAnimIndex;
+}
+
+void CModel::Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone)
+{
+	if (TYPE_NONANIM == m_eType)
+		return;
+
+	m_Animations[m_iAdditiveAnimIndexForMonster]->Update_Bones_AdditiveForMonster(fTimeDelta, fRatio, strRootBone);
+
+	for (auto& pBone : m_Bones)
+	{
+		if (nullptr != pBone)
+			pBone->Compute_CombindTransformationMatrix();
+	}
+}
+
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)
@@ -1254,6 +1272,7 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 		CAnimation*	pAnimation = CAnimation::Create(nullptr, this);
 		NULL_CHECK_RETURN(pAnimation, E_FAIL);
 		FAILED_CHECK_RETURN(pAnimation->Load_Animation(hFile, dwByte), E_FAIL);
+		pAnimation->Set_AnimIndex(i);
 
 		m_Animations.push_back(pAnimation);
 	}
@@ -1306,23 +1325,30 @@ void CModel::Free()
 	}
 	m_Materials.clear();
 
-	for (auto& pMesh : m_Meshes)		/*Origin Mesh*/
-		Safe_Release(pMesh);
-	m_Meshes.clear();
-
-	for (auto& pInstMesh : m_InstancingMeshes)		/*Instancing Mesh*/
-		Safe_Release(pInstMesh);
-	m_InstancingMeshes.clear();
-
-	for (auto &pInstMatrix : m_pInstancingMatrix)
+	if (m_bIsInstancing == false)
 	{
-		Safe_Delete(pInstMatrix);
+		for (auto& pMesh : m_Meshes)		/*Origin Mesh*/
+			Safe_Release(pMesh);
+		m_Meshes.clear();
 	}
-	m_pInstancingMatrix.clear();
+	else
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)		/*Instancing Mesh*/
+			Safe_Release(pInstMesh);
+		m_InstancingMeshes.clear();
 
-#ifdef _DEBUG
-	Safe_Release(m_pInstanceTransform);
-#endif
+
+		for (auto &pInstMatrix : m_pInstancingMatrix)
+		{
+			Safe_Delete(pInstMatrix);
+		}
+		m_pInstancingMatrix.clear();
+
+		Safe_Release(m_pInstanceTransform);
+	}
+
+	
+
 }
 
 HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath)
@@ -1341,7 +1367,7 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	return S_OK;
 }
 
-#ifdef _DEBUG
+
 void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos,_fmatrix TerrainMatrix,_bool bPickingTerrain)
 {
 	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
@@ -1417,6 +1443,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
+
 	/*수정 부분*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
@@ -1431,7 +1458,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
-#endif
+
 
 
 void CModel::Create_PxTriangle()

@@ -114,10 +114,11 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	m_pPvd = PxCreatePvd(*m_pFoundation);
 	PxPvdTransport* pTransport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_pPvd->connect(*pTransport, PxPvdInstrumentationFlag::eALL);
-	
+		
 	m_PxTolerancesScale.length = 100;
 	m_PxTolerancesScale.speed = 981;
-	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, m_PxTolerancesScale, true, m_pPvd);
+	
+	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(), true, m_pPvd);
 	assert(m_pPhysics != nullptr && "CPhysX_Manager::InitWorld()");
 
 	m_pDispatcher = PxDefaultCpuDispatcherCreate(2);
@@ -131,6 +132,8 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	m_pScene = m_pPhysics->createScene(SceneDesc);	
 	assert(m_pScene != nullptr && "CPhysX_Manager::InitWorld()");
 	
+	m_pScene->setFlag(PxSceneFlag::eENABLE_CCD, true);
+
 #ifdef _DEBUG
 	PxPvdSceneClient* pPvdClient = m_pScene->getScenePvdClient();
 	assert(pPvdClient != nullptr && "CPhysX_Manager::InitWorld()");
@@ -141,10 +144,11 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, PxCookingParams(PxTolerancesScale()));
 	assert(m_pCooking != nullptr && "CPhysX_Manager::InitWorld()");
+	/*
 	PxCookingParams params(m_PxTolerancesScale);
 	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
 	m_pCooking->setParams(params);
-	
+	*/
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
 	// ±âº» ¶¥ »ý¼º	
@@ -194,10 +198,10 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 }
 
 void CPhysX_Manager::Render()
-{	
+{
 #ifdef _DEBUG
 	const PxRenderBuffer &RenderBuffer = m_pScene->getRenderBuffer();
-
+	
 	PxU32 NbTriangles = RenderBuffer.getNbTriangles();
 	PxU32 NbLines = RenderBuffer.getNbLines();
 	PxU32 NbTexts = RenderBuffer.getNbTexts();
@@ -214,16 +218,24 @@ void CPhysX_Manager::Render()
 
 	m_pBatch->Begin();
 
-	for (PxU32 i = 0; i < NbLines; i++)
+	static const PxU32 PxSkipCount = 1;
+	for (PxU32 i = 0; i < NbLines; i += PxSkipCount)
 	{
-		const PxDebugLine& pose = RenderBuffer.getLines()[i];
+		if (i >= NbLines) break;
 
+		const PxDebugLine& pose = RenderBuffer.getLines()[i];
+			
 		PxVec3 PxPos_0 = pose.pos0;
 		PxVec3 PxPos_1 = pose.pos1;
 
-		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1),_float4(0.f,1.f,0.f,1.f));
+		DX::DrawLine(m_pBatch,
+			CUtile::ConvertPosition_PxToD3D(PxPos_0),
+			CUtile::ConvertPosition_PxToD3D(PxPos_1),
+			_float4(0.f, 1.f, 0.f, 1.f));
 	}
+
 	m_pBatch->End();
+
 #endif // _DEBUG
 }
 
@@ -288,20 +300,27 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 {	
 	_float halfExtent = 0.1f;
 	PxU32 size = 1;
-	
+
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
 
 	PxDefaultMemoryInputData ReadBuffer(WriteBuffer.getData(), WriteBuffer.getSize());
 	PxTriangleMesh* pMesh = m_pPhysics->createTriangleMesh(ReadBuffer);
 
-	PxTransform Transform(PxIdentity);
-	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);	
-	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
 
-	pBody->attachShape(*shape);
+	PxTransform Transform(PxIdentity);
+	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
+
+	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
+	shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+	shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+
+	pBody->attachShape(*shape);	
+
 	m_pScene->addActor(*pBody);
 
+	shape->release();
 	return pBody;
 }
 
@@ -315,8 +334,8 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, false);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 		
 		pBox->attachShape(*pShape);
 		
@@ -335,7 +354,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		}
 
 		m_pScene->addActor(*pBox);
-
+		pShape->release();
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
@@ -351,6 +370,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pBox->attachShape(*pShape);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
+		pBox->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
 		PxRigidBodyExt::updateMassAndInertia(*pBox, Desc.fDensity);
 		
 		if (pUserData)
@@ -372,11 +392,9 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			CString_Manager::GetInstance()->Add_String(pTag);
 			m_DynamicColliders.emplace(pTag, pBox);
 		}
-
+		
 		m_pScene->addActor(*pBox);
-		PxTransform Temp = pBox->getGlobalPose();
-
-		int i = 0;
+		pShape->release();
 	}	
 }
 
@@ -406,6 +424,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		m_StaticActors.emplace(pTag, pSphere);
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
@@ -422,6 +441,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pSphere->attachShape(*pShape);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
+		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
 		PxRigidBodyExt::updateMassAndInertia(*pSphere, Desc.fDensity);
 
 		if (pUserData)
@@ -445,6 +465,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		}
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}	
 }
 
@@ -475,6 +496,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		m_StaticActors.emplace(pTag, pCapsule);
 	
 		m_pScene->addActor(*pCapsule);
+		pShape->release();
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
@@ -491,6 +513,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pCapsule->setLinearDamping(Desc.fDamping);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
+		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
 		
 		if (pUserData)
@@ -516,8 +539,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
-		PxVec3 temp = pCapsule->getGlobalPose().p;
-		int i = 0;
+		pShape->release();
 	}	
 }
 
@@ -622,7 +644,6 @@ PxRigidActor* CPhysX_Manager::Find_DynamicActor(const _tchar* pActorTag)
 	return Pair->second;
 }
 
-
 PxRigidActor * CPhysX_Manager::Find_DynamicCollider(const _tchar * pActorTag)
 {
 	auto Pair = find_if(m_DynamicColliders.begin(), m_DynamicColliders.end(), CTag_Finder(pActorTag));
@@ -722,6 +743,8 @@ void CPhysX_Manager::Set_ActorPosition(const _tchar* pActorTag, _float3 vPositio
 void CPhysX_Manager::Set_ActorRotation(const _tchar* pActorTag, _float fDegree, _float3 vAxis)
 {
 	PxRigidActor* pActor = Find_DynamicActor(pActorTag);
+	if (pActor == nullptr)
+		pActor = Find_DynamicCollider(pActorTag);
 	assert(pActor != nullptr && "CPhysX_Manager::Set_ActorRotation");
 
 	Set_ActorRotation(pActor, fDegree, vAxis);
@@ -865,7 +888,24 @@ void CPhysX_Manager::Imgui_Render()
 			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 
 			if (pUserData)
+			{
 				pUserData->pOwner->ImGui_PhysXValueProperty();
+				ImGui::NewLine();
+				ImGui::NewLine();
+				ImGui::NewLine();
+				ImGui::BulletText("Object to change PhysX Dynamic Parameter");
+				_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+				ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+				_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+				ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+				_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+				ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+				_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+				float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+				ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+				vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+				Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);
+			}
 		}
 
 		for (_uint i = 0; i < nDynamicObjectCount; ++i)
@@ -886,10 +926,71 @@ PxRigidActor* CPhysX_Manager::Find_StaticGameObject(_int iIndex)
 
 PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
 {
-	auto	iter = m_DynamicActors.begin();
+	auto iter = m_DynamicActors.begin();
 
 	for (_int i = 0; i < iIndex; ++i)
 		++iter;
 
 	return iter->second;
+}
+
+void CPhysX_Manager::Set_DynamicParameter(const _tchar* pActorTag, _float fMass, _float fLinearDamping, _float3 vVelocity)
+{
+	PxRigidActor* pActor  = Find_DynamicActor(pActorTag);
+
+	if (pActor == nullptr)
+		return;
+
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+}
+
+void  CPhysX_Manager::Set_DynamicParameter(PxRigidActor * pActor, _float fMass, _float fLinearDamping, _float3 vVelocity)
+{
+	if (pActor == nullptr)
+		return;
+
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+}
+
+void CPhysX_Manager::Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag)
+{
+	PxRigidActor *pActor = Find_Actor(pActorTag);
+	if (pActor == nullptr) return;
+
+	Set_ActorFlag_Simulation(pActor, bFlag);
+}
+
+void CPhysX_Manager::Set_ActorFlag_Simulation(PxRigidActor* pActor, _bool bFlag)
+{
+	pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, !bFlag);
+}
+
+PxRigidActor* CPhysX_Manager::Find_Actor(const _tchar * pActorTag)
+{
+	PxRigidActor *pActor = Find_StaticActor(pActorTag);
+	if (pActor == nullptr) 
+	{
+		pActor = Find_DynamicActor(pActorTag);
+		if (pActor == nullptr) 
+		{
+			pActor = Find_DynamicCollider(pActorTag);
+			if (pActor == nullptr)
+			{
+				return nullptr;
+			}
+		}
+	}
+
+	return pActor;
+}
+
+void CPhysX_Manager::Delete_Actor(PxActor& pActor)
+{
+	m_pScene->removeActor(pActor);
 }

@@ -4,10 +4,9 @@
 
 BEGIN(Client)
 
-
-class CEffect_Trail final : public CEffect_Base
+class CEffect_Trail abstract : public CEffect_Base
 {
-private:
+protected:
 	CEffect_Trail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect_Trail(const CEffect_Trail& rhs);
 	virtual ~CEffect_Trail() = default;
@@ -31,13 +30,11 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 
-private:
+protected:
 	_float					m_fTimeDelta = 0.0f;
 	_int					m_iIndex = 0;
 
 public:
-	static  CEffect_Trail*  Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
 };

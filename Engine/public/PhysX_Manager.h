@@ -18,6 +18,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping;
+		_bool bCCD;
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -31,6 +32,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping;
+		_bool bCCD;
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -45,6 +47,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fDamping;
+		_bool bCCD;
 	} PX_CAPSULE_DESC;
 		
 private:
@@ -118,6 +121,7 @@ public:
 	
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);
 	void Add_Force(PxRigidActor* pActor, _float3 vForce);
+
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
@@ -135,6 +139,26 @@ public:
 	void Set_ScalingSphere(PxRigidActor* pActor, _float fRadius);
 	void Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _float fHalfHeight);
 
+	void Set_DynamicParameter(PxRigidActor* pActor, _float fMass, _float fLinearDamping, _float3 vVelocity);
+	void Set_DynamicParameter(const _tchar* pActorTag, _float fMass,  _float fLinearDamping, _float3 vVelocity);
+
 	void Init_Rendering();		
+
+	/*
+	eVISUALIZATION: 이 플래그는 PhysX 비주얼 디버거에서 액터를 시각화해야 하는지 여부를 나타냅니다.
+	eDISABLE_GRAVITY: 이 플래그는 액터의 중력을 비활성화하는 데 사용됩니다.
+	eSEND_SLEEP_NOTIFIES: 이 플래그는 액터에 대한 수면 알림을 활성화/비활성화하는 데 사용됩니다. 액터가 잠들거나 깨어날 때 사용자에게 알림을 보낼 수 있습니다.
+	eDISABLE_SIMULATION: 이 플래그는 액터에 대한 시뮬레이션을 비활성화하는 데 사용됩니다.
+	eCONTACT_REPORTING: 이 플래그는 액터에 대한 연락처 보고를 활성화/비활성화하는 데 사용됩니다. 활성화되면 액터는 모든 접점을 사용자에게 보고합니다.
+	eCONTACT_PERFORMANCE_RBD: 이 플래그는 액터에 대한 접촉 성능 기능을 활성화/비활성화하는 데 사용됩니다. 활성화되면 액터는 성능을 향상시키는 단순화된 접촉 생성 알고리즘을 사용하지만 접촉의 정확도가 떨어질 수 있습니다.
+	eCONTACT_PERFORMANCE_ARTICULATION: 이 플래그는 다관절 몸체에 대한 접촉 성능 기능을 활성화/비활성화하는 데 사용됩니다. 활성화되면 다관절 몸체는 성능을 향상시키는 단순화된 접촉 생성 알고리즘을 사용하지만 접촉의 정확도가 떨어질 수 있습니다.
+	eCONTACT_FORCE_THRESHOLD: 이 플래그는 액터에 대한 접촉력 임계값을 설정하는 데 사용됩니다. 접촉력이 이 임계값을 초과하면 접촉 보고서가 생성됩니다.
+	eDISABLE_CONTACT_REPORT_BUFFER_RESIZE: 이 플래그는 연락처 보고서 버퍼가 액터에 대해 자동으로 크기가 조정되는 것을 방지하는 데 사용됩니다.
+	eLOCK_COM: 이 플래그는 액터의 질량 중심을 고정하는 데 사용됩니다.
+	*/
+	void Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag);
+	void Set_ActorFlag_Simulation(PxRigidActor* pActor, _bool bFlag);
+	PxRigidActor* Find_Actor(const _tchar* pActorTag);
+	void Delete_Actor(PxActor& pActor);
 };
 END

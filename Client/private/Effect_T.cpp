@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Camera.h"
 #include "Effect_Trail.h"
+#include "Effect_Trail_T.h"
 
 CEffect_T::CEffect_T(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -33,7 +34,7 @@ HRESULT CEffect_T::Initialize(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
-	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
@@ -419,7 +420,7 @@ HRESULT CEffect_T::Set_Trail(CEffect_Base* pEffect, const _tchar* pProtoTag)
 	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
 	pGameInstance->Add_String(szTrailCloneTag);
 
-	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();

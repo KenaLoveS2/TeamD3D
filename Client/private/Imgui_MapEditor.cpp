@@ -1201,11 +1201,16 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 
 void CImgui_MapEditor::imgui_ObjectList_Clear()
 {
+	static int iDeleteRoomIndex = 0;
+
+	ImGui::InputInt("Delete RoomIndex", &iDeleteRoomIndex);
+
+
 	if (ImGui::Button("Object_List_Clear"))
 	{
 		CGameInstance *pGameInstance = GET_INSTANCE(CGameInstance);
 		// 나중에 룸인덱스 조정 만들어야됌
-		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment",0);
+		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment", iDeleteRoomIndex);
 		
 		RELEASE_INSTANCE(CGameInstance);
 	}

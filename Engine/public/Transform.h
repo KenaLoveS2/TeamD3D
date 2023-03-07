@@ -56,6 +56,7 @@ public:
 	void		  Set_TransformDesc(TRANSFORMDESC eTransformDesc) { 
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
 	}
+	void			Set_Speed(_float fSpeedPerSec) { m_TransformDesc.fSpeedPerSec = fSpeedPerSec; }
 
 	void Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix);
 	void Set_WorldMatrix(_fmatrix WorldMatrix);
@@ -99,6 +100,7 @@ public:
 	/* 쳐다본다. */
 	/*void LookAt(const CTransform* pTarget);*/
 	void LookAt(_fvector vTargetPos);
+	void LookAt_NoUpDown(_fvector vTargetPos);
 
 	/* 추적한다 .*/
 	void Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit = 0.1f);

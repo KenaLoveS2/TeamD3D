@@ -19,6 +19,7 @@ public:
 
 	typedef struct tag_TerrainDesc
 	{
+		wstring		wstrViBuffer_Terrain;
 		wstring		wstrDiffuseTag;
 		wstring		wstrNormalTag;
 		wstring		wstrFilterTag;
@@ -29,6 +30,7 @@ public:
 		_int			iHeightBmpNum = 0;
 		tag_TerrainDesc()
 		{
+			wstrViBuffer_Terrain = L"";
 			wstrDiffuseTag = L"";	wstrFilterTag = L""; wstrNormalTag = L"";
 		}
 
@@ -41,7 +43,7 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
-	TERRAIN_DESC	*		Get_TerrainDesc() { return &m_TerrainDesc; }
+	TERRAIN_DESC*		Get_TerrainDesc() { return &m_TerrainDesc; }
 	
 
 public:
@@ -76,7 +78,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	TERRAIN_DESC					m_TerrainDesc;
+	TERRAIN_DESC						m_TerrainDesc;
 	_bool								m_bLoadData = false;
 
 private: /*For.Brush*/
@@ -86,6 +88,8 @@ public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	void Connect_TriangleActor(_float4x4 Matrix);
 };
 
 END
