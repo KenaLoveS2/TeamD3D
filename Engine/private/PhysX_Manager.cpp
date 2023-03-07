@@ -888,7 +888,24 @@ void CPhysX_Manager::Imgui_Render()
 			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 
 			if (pUserData)
+			{
 				pUserData->pOwner->ImGui_PhysXValueProperty();
+				ImGui::NewLine();
+				ImGui::NewLine();
+				ImGui::NewLine();
+				ImGui::BulletText("Object to change PhysX Dynamic Parameter");
+				_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+				ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+				_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+				ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+				_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+				ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+				_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+				float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+				ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+				vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+				Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);
+			}
 		}
 
 		for (_uint i = 0; i < nDynamicObjectCount; ++i)
@@ -917,15 +934,28 @@ PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
 	return iter->second;
 }
 
-void CPhysX_Manager::Set_DynamicParameter(const _tchar * pActorTag, _float fDensity, _float fAngularDamping, _float fMass, _float fDamping, _float3 vVelocity)
+void CPhysX_Manager::Set_DynamicParameter(const _tchar* pActorTag, _float fMass, _float fLinearDamping, _float3 vVelocity)
 {
 	PxRigidActor* pActor  = Find_DynamicActor(pActorTag);
-	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+
+	if (pActor == nullptr)
+		return;
+
 	((PxRigidDynamic*)pActor)->setMass(fMass);
-	((PxRigidDynamic*)pActor)->setLinearDamping(fDamping);
-	((PxRigidDynamic*)pActor)->setAngularDamping(fAngularDamping);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
 	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
-	//PxRigidBodyExt::updateMassAndInertia(*((PxRigidDynamic*)pActor), fDensity);
+}
+
+void  CPhysX_Manager::Set_DynamicParameter(PxRigidActor * pActor, _float fMass, _float fLinearDamping, _float3 vVelocity)
+{
+	if (pActor == nullptr)
+		return;
+
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
 }
 
 void CPhysX_Manager::Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag)

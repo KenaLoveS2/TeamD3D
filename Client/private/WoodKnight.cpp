@@ -26,7 +26,7 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -249,8 +249,11 @@ void CWoodKnight::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	if (ImGui::Button("TAKEDMAGE"))
+	if (ImGui::Button("WEALKYDMG"))
 		m_bWeaklyHit = true;
+
+	if (ImGui::Button("BLOCK"))
+		m_bBlock = true;
 }
 
 void CWoodKnight::ImGui_AnimationProperty()
@@ -421,13 +424,116 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_bStronglyHit;
 	})
+		.AddTransition("IDLE to BLOCK_INTO", "BLOCK_INTO")
+		.Predicator([this]()
+	{
+		return m_bBlock;
+	})
 		.AddTransition("IDLE to WALK", "WALK")
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
-	
-		
+
+		.AddState("BLOCK_INTO")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_INTO);
+		m_pModelCom->Set_AnimIndex(BLOCK_INTO);
+	})
+		.AddTransition("BLOCK_INTO to BLOCK_LOOP", "BLOCK_LOOP")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_INTO);
+	})
+
+		.AddState("BLOCK_LOOP")
+		.OnStart([this]()
+	{
+		m_fBlocktoAttackTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fBlocktoAttackTime += fTimeDelta;
+		m_pModelCom->Set_AnimIndex(BLOCK_LOOP);
+	})
+		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_EXIT")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fBlocktoAttackTime, 5.f);
+	})
+
+		.AddState("BLOCK_EXIT")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_EXIT);
+		m_pModelCom->Set_AnimIndex(BLOCK_EXIT);
+	})
+		.AddTransition("BLOCK_LOOP to BLOCK_EXIT", "BLOCK_AFTER")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_EXIT);
+	})
+
+		.AddState("BLOCK_AFTER")
+		.OnStart([this]()
+	{
+		m_bBlock = false;
+		Set_BlockAfterType();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		if (m_iBlockType == BA_FRONT)
+			m_bBlockAfterFront = true;
+		else if (m_iBlockType == BA_BACK)
+			m_bBlockAfterBack = true;
+		else if (m_iBlockType == BA_NONE)
+			m_bBlockNone = true;
+	})
+		.OnExit([this]()
+	{
+		Reset_BlockAfterType();
+	})
+		.AddTransition("BLOCK_AFTER to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_bBlockNone;
+	})
+		.AddTransition("BLOCK_AFTER to BLOCK_COUNTERATTACK", "BLOCK_COUNTERATTACK")
+		.Predicator([this]()
+	{
+		return m_bBlockAfterFront;
+	})
+		.AddTransition("BLOCK_AFTER to BLOCKATTACK_180", "BLOCKATTACK_180")
+		.Predicator([this]()
+	{
+		return m_bBlockAfterBack;
+	})
+
+		.AddState("BLOCK_COUNTERATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_COUNTERATTACK);
+		m_pModelCom->Set_AnimIndex(BLOCK_COUNTERATTACK);
+	})
+		.AddTransition("BLOCK_COUNTERATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_COUNTERATTACK);
+	})
+
+		.AddState("BLOCKATTACK_180")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCKATTACK_180);
+		m_pModelCom->Set_AnimIndex(BLOCKATTACK_180);
+	})
+		.AddTransition("BLOCKATTACK_180 to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCKATTACK_180);
+	})
+
 		.AddState("WALK")
 		.OnStart([this]()
 	{
@@ -748,21 +854,6 @@ HRESULT CWoodKnight::SetUp_Components()
 
 	m_pModelCom->Set_RootBone("WoodKnight");
 
-	CCollider::COLLIDERDESC	ColliderDesc;
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-
-	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Collider_SPHERE", L"Com_RangeCol", (CComponent**)&m_pRangeCol, &ColliderDesc, this), E_FAIL);
-
-	CNavigation::NAVIDESC		NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
-
-	NaviDesc.iCurrentIndex = 0;
-
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Navigation", L"Com_Navigation", (CComponent**)&m_pNavigationCom, &NaviDesc, this), E_FAIL);
-
 	return S_OK;
 }
 
@@ -858,7 +949,10 @@ void CWoodKnight::AdditiveAnim(_float fTimeDelta)
 	if(m_bWeaklyHit)
 	{
 		m_pModelCom->Set_AdditiveAnimIndexForMonster(TAKEDAMAGE);
-		m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, fRatio, "SK_WoodKnight.ao");
+		m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_WoodKnight.ao");
+
+		if (AnimFinishChecker(TAKEDAMAGE))
+			m_bWeaklyHit = false;
 	}
 }
 
@@ -975,6 +1069,26 @@ void CWoodKnight::Tick_Attack(_float fTimeDelta)
 	default:
 		break;
 	}
+}
+
+void CWoodKnight::Set_BlockAfterType()
+{
+	if(DistanceTrigger(3.f))
+	{
+		if (m_PlayerLookAt_Dir == BACK)
+			m_iBlockType = BA_BACK;
+		else
+			m_iBlockType = BA_FRONT;
+	}
+	else
+		m_iBlockType = BA_NONE;
+}
+
+void CWoodKnight::Reset_BlockAfterType()
+{
+	m_bBlockAfterFront = false;
+	m_bBlockAfterBack = false;
+	m_bBlockNone = false;
 }
 
 CWoodKnight* CWoodKnight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
