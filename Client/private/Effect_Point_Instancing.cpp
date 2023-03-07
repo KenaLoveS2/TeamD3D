@@ -2,6 +2,7 @@
 #include "..\public\Effect_Point_Instancing.h"
 #include "GameInstance.h"
 #include "Effect_Trail.h"
+#include "Effect_Trail_T.h"
 
 CEffect_Point_Instancing::CEffect_Point_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -53,7 +54,7 @@ HRESULT CEffect_Point_Instancing::Set_Trail(CEffect_Base * pEffect, const _tchar
 		_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
 		pGameInstance->Add_String(szTrailCloneTag);
 
-		if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+		if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 
 		_int iCurLevel = pGameInstance->Get_CurLevelIndex();
@@ -174,7 +175,9 @@ HRESULT CEffect_Point_Instancing::Initialize_Prototype(_tchar* pProtoTag, const 
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Set_VIBufferProtoTag(pProtoTag);
+	if (pProtoTag != nullptr)
+		Set_VIBufferProtoTag(pProtoTag);
+
 	return S_OK;
 }
 
@@ -186,19 +189,17 @@ HRESULT CEffect_Point_Instancing::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (pArg != nullptr)
-		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
+	//if (pArg != nullptr)
+	//	memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
-	if (FAILED(CGameObject::Initialize(&GameObjectDesc)))
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(5.f, 0.f, 0.f, 1.f));
-
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
+	this->Set_ShapePosition();
 	return S_OK;
 }
 
@@ -215,10 +216,10 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 	}
 
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+	//if (m_eEFfectDesc.IsBillboard == true)
+	//	BillBoardSetting(m_eEFfectDesc.vScale);
+	//else
+	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
@@ -238,14 +239,14 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 				else
 					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
 
-				m_eEFfectDesc.fWidthFrame = 0.f;
+				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 
 				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
+					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
 			}
 		}
 	}
-	int a = 0;
+	
 	if (m_eEFfectDesc.fAngle != 0.0f)
 	{
 		_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
@@ -256,13 +257,6 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
 		if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
 			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-	}
-
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
 	}
 
 	m_pVIInstancingBufferCom->Tick(fTimeDelta);
@@ -284,23 +278,13 @@ void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
 	if (m_vecTrailEffect.size() != 0)
 	{
 		for (auto& pTrailEffect : m_vecTrailEffect)
 			pTrailEffect->Late_Tick(fTimeDelta);
 	}
-
-	if (nullptr != m_pParent)
-		Set_Matrix();
 }
 
 HRESULT CEffect_Point_Instancing::Render()
@@ -461,30 +445,6 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-}
-
-CEffect_Point_Instancing * CEffect_Point_Instancing::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _tchar* pProtoTag)
-{
-	CEffect_Point_Instancing*		pInstance = new CEffect_Point_Instancing(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(pProtoTag)))
-	{
-		MSG_BOX("Failed to Created : CEffect_Point_Instancing");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-CGameObject * CEffect_Point_Instancing::Clone(void * pArg)
-{
-	CEffect_Point_Instancing*		pInstance = new CEffect_Point_Instancing(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CEffect_Point_Instancing");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
 }
 
 void CEffect_Point_Instancing::Free()

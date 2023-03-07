@@ -456,6 +456,12 @@ HRESULT CGameInstance::Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag
 	return m_pObject_Manager->Delete_Object(iLevelIndex, pLayerTag, pCloneObjectTag);
 }
 
+void CGameInstance::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * LayerTag, _int iRoomIndex)
+{
+	assert(m_pObject_Manager != nullptr && "CGameInstance::RoomIndex_Object_Clear");
+	return m_pObject_Manager->RoomIndex_Object_Clear(iCurLevel, LayerTag, iRoomIndex);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)

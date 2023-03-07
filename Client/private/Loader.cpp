@@ -48,6 +48,8 @@
 #include "Rot.h"
 #include "RuinKit.h"
 #include "Stone.h"
+#include "Grass.h"
+#include "Flower.h"
 
 #include "Door_Anim.h"
 
@@ -58,6 +60,8 @@
 #include "Effect_Point_Instancing.h"
 #include "E_KenaPulse.h"
 #include "E_KenaPulseCloud.h"
+#include "E_KenaPulseDot.h"
+#include "E_KenaTrail.h"
 
 /* Components*/
 #include "ControlMove.h"
@@ -98,14 +102,14 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_TESTPLAY:
 		pLoader->Loading_ForTestPlay();
 		break;
-#ifdef _DEBUG
+
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
 		break;
 	case LEVEL_EFFECT:
 		pLoader->Loading_ForTestEffect();
 		break;
-#endif
+
 	}
 	
 	LeaveCriticalSection(&pLoader->Get_CriticalSection());
@@ -139,7 +143,7 @@ HRESULT CLoader::Loading_ForLogo()
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
-	
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Prototype GameObject..."));
@@ -377,7 +381,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	/* For.Prototype_Component_Texture_Filter */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_HeightMaps"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 7))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 8))))
 		return E_FAIL;
 
 
@@ -391,32 +395,31 @@ HRESULT CLoader::Loading_ForMapTool()
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 		
 //#pragma region Cliff
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Cap", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Cap", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Glitter", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Glitter", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Sheer", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Sheer", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W2", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W3", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W3", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, true)))		// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, true)))		// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, true)))		// json NonUse
 //		return E_FAIL;
 //
 //#pragma endregion ~Cliff
-//
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Hanging_Objects/HangingChimes", true, true)))		// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))			
 //		return E_FAIL;
 //
 //#pragma region PulseStone
@@ -431,29 +434,28 @@ HRESULT CLoader::Loading_ForMapTool()
 //#pragma endregion PulseStone
 //
 //#pragma region Stone_JSON
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneBridge", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneBridge", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StonePath", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "StoneStep_Seperate", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "StoneStep_Seperate", true, true, true)))
 //		return E_FAIL;
-//
 //#pragma endregion
 //
 //#pragma  region Rock
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Big", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Big", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Medium", true, true, true)))
 //		return E_FAIL;
@@ -461,137 +463,190 @@ HRESULT CLoader::Loading_ForMapTool()
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, true, true)))
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Tiny", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Tiny", true, true, true)))
 //		return E_FAIL;
 //#pragma endregion Rock
 //
 //#pragma region RuinKit
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, true)))			// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar", true, true)))						// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Railing", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Railing", true, true)))					// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true)))					// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Brick", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Brick", true, true)))						// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true)))			// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, false)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true)))			// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true)))							// json NonUse
 //		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, false, true)))
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, true)))				// json NonUse
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, true, true)))			
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-//		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, false)))
-//		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true)))
 //		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
 //		return E_FAIL;
 //#pragma endregion RuinKit
 //
 //#pragma region RuinDebris
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinDebris", true, false)))
-//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinDebris", true, true)))										// json NonUse
+//		return E_FAIL;	
 //#pragma endregion RuinDebris
 //
 //
-//#pragma region Interactive
+//#pragma region Interactive	얘네는 무조건 인스턴싱 안함
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true)))
 //		return E_FAIL;
-//
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
+//		return E_FAIL;
 //#pragma endregion Interactive
 //
 //#pragma region Forest
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue", true, true)))											// json NonUse
+//		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/First_Room_Deco", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
-//	return E_FAIL;
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+//		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-//	return E_FAIL;
+//		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-//	return E_FAIL;
+//		return E_FAIL;
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, true, true)))
-//	return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
-//	return E_FAIL;
-//
+//		return E_FAIL;
 //#pragma region ~Forest
-
-#pragma  region Start_Forest_Room
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Rubble", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W2", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, false)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, false, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, false)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Medium", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue", false, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/First_Room_Deco", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1", true, true, true)))
-//return E_FAIL;
-//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, true, true)))
-//return E_FAIL;
 //
+//#pragma  region Tree
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Bare", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Billboard", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/Canopy", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/GodTree", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/Tree_Branch", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Canopy", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Dead", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Fallen", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
+//		return E_FAIL;
+//#pragma endregion ~Tree
+
 //
-#pragma endregion ~Start_Forest_Room
+//#pragma  region Start_Forest_Room
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PluseStone_Big", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PulseObjects/PulseStoneRock", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, true)))			// json NonUse
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Pillar", true, true)))						// json NonUse
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Brick", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Rubble", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_W2", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Large", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Short", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Wall_Med", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Medium", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/Start_Gate", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue", false, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/First_Room_Deco", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_1", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Fallen", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Dead", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Bare", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Billboard", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/Canopy", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/GodTree", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Branches/Tree_Branch", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Canopy", true, true, true)))
+//		return E_FAIL;
+//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
+//		return E_FAIL;
+//#pragma endregion ~Start_Forest_Room
 
 
-#pragma  region Tree
-/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
-if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true, true)))
-		return E_FAIL;
 
-#pragma endregion ~Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
-		return E_FAIL;
-
-	
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
@@ -770,17 +825,22 @@ if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/CeDarTree", true, true, 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Gate"),
 		CGate::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
 		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
+	/* For.Prototype_GameObject_RuinKit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
+		CFlower::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_RuinKit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
+		CGrass::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
@@ -809,7 +869,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Terrain*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
 		return E_FAIL;
@@ -831,7 +890,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* For.Prototype_Component_Texture_Filter */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Terrain_HeightMaps"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 7))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 8))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
@@ -841,7 +900,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_VIBuffer_Terrain */
+	/* For.Prototype_Component_VIBuffer_Terrain */ // TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_3.bmp")))))
 		return E_FAIL;
@@ -857,70 +916,104 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
-/*
-#pragma  region Start_Forest_Room
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, false)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, false, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, false)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", false, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, false, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
-	return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
-	return E_FAIL;
-#pragma endregion ~Start_Forest_Room
-*/
-#pragma  region Tree
-	/*터레인 피킹 해서 객체 생성 및 인스턴싱 객체 생성 만들기*/
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
-		return E_FAIL;
 
-#pragma endregion ~Tree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Map_Base")))
-		return E_FAIL;
+	#pragma  region Start_Forest_Room
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PluseStone_Big", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulseStoneRock", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_LedgeStone", true, true)))			// json NonUse
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Pillar", true, true)))						// json NonUse
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Brick", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Rock", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", false, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Giant", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Fallen", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Dead", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Bare", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Billboard", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Canopy", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/GodTree", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Tree_Branch", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Canopy", true, true, true)))
+			return E_FAIL;
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Map_Base")))
+			return E_FAIL;
+	#pragma endregion ~Start_Forest_Room
+
+
+
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 
@@ -1203,6 +1296,21 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/NormalTexture/N_Effect_%d.png"), 11))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_NormalEffect */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_TrailFlow */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_TrailFlow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 8))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_TrailType */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_TrailType"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
 	/* For.Prototype_Component_Shader_VtxEffectTex */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Shader_VtxEffectTex"),
@@ -1275,7 +1383,24 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma  endregion TESTPLAY EFFECT
 
 	/* For.Prototype_GameObject_KenaPulse */
-	// if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"), CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Pulse.json")))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
+		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaPulseCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
+		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaPulseDot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
+		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaStaffTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
+		CE_KenaTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	// ~Effect
 
 	/* For.Prototype_GameObject_Player */
@@ -1356,6 +1481,16 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* For.Prototype_Component_Texture_NormalEffect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_TrailFlow */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_TrailFlow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 8))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_TrailType */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_TrailType"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Shader..."));
@@ -1485,6 +1620,16 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* For.Prototype_GameObject_KenaPulseCloud */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
 		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaPulseDot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
+		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaStaffTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
+		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));

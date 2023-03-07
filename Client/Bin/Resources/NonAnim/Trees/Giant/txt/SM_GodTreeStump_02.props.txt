@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_GodTreeStump_02_Top.MI_GodTreeStump_02_Top'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_GodTreeStump_02_Sides.MI_GodTreeStump_02_Sides'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_GodTreeStump_02_Top.MI_GodTreeStump_02_Top'
+        MaterialSlotName = Top
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1529.42, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Giant/Materials/MI_GodTreeStump_02_Sides.MI_GodTreeStump_02_Sides'
+        MaterialSlotName = Sides
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 5288.02, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=188.871, Y=-6.86914, Z=361.138 }
+    BoxExtent = { X=1927.5, Y=1755.93, Z=933.757 }
+    SphereRadius = 2148.5
+}

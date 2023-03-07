@@ -10,12 +10,46 @@ CAnimationState::CAnimationState()
 {
 }
 
+const _uint CAnimationState::Get_CurrentAnimIndex() const
+{
+	if (m_pCurAnim != nullptr)
+	{
+		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+			return m_pCurAnim->m_pMainAnim->Get_AnimIndex();
+		else
+			return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+	}
+	else
+		return 10000;
+}
+
+const _uint CAnimationState::Get_PreAnimIndex() const
+{
+	if (m_pPreAnim != nullptr)
+	{
+		if (m_pPreAnim->m_vecAdditiveAnim.empty() == true)
+			return m_pPreAnim->m_pMainAnim->Get_AnimIndex();
+		else
+			return m_pPreAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+	}
+	else
+		return 10000;
+}
+
 const _bool & CAnimationState::Get_AnimationFinish()
 {
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->IsFinished();
 	else
 		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->IsFinished();
+}
+
+const _float CAnimationState::Get_AnimationProgress() const
+{
+	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		return m_pCurAnim->m_pMainAnim->Get_AnimationProgress();
+	else
+		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimationProgress();
 }
 
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
@@ -161,7 +195,7 @@ void CAnimationState::Tick(_float fTimeDelta)
 	/* TODO : Additive Ratio Controller */
 }
 
-HRESULT CAnimationState::State_Animation(const string & strStateName, ANIMBODY eAnimBody)
+HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLerpDuration)
 {
 	const auto	iter = find_if(m_mapAnimState.begin(), m_mapAnimState.end(), [&strStateName](const pair<const string, CAnimState*>& Pair) {
 		return Pair.first == strStateName;
@@ -173,7 +207,10 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, ANIMBODY e
 	CAnimState*		pAnim = iter->second;
 	NULL_CHECK_RETURN(pAnim->m_pMainAnim, E_FAIL);
 
-	m_fLerpDuration = pAnim->m_fLerpDuration;
+	if (fLerpDuration < 0.f)
+		m_fLerpDuration = pAnim->m_fLerpDuration;
+	else
+		m_fLerpDuration = fLerpDuration;
 
 	if (pAnim->m_listLockedJoint.empty() == false)
 	{

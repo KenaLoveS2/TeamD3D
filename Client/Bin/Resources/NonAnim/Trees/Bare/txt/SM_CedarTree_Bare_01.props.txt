@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/CedarTree/Materials/MI_CedarTree.MI_CedarTree'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/CedarTree/Materials/MI_CedarTree.MI_CedarTree'
+        MaterialSlotName = MI_CedarTree
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1106.91, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=18.0387, Y=48.7799, Z=1488.08 }
+    BoxExtent = { X=233.299, Y=230.013, Z=1533.66 }
+    SphereRadius = 1540.65
+}

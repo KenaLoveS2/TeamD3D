@@ -44,9 +44,11 @@ private:
 	DIMOUSESTATE				m_MouseState;
 	_bool							m_bKeyState[256];
 	_bool							m_bPressThisFrame[256];
+	_bool							m_bUpThisFrame[256];
 	_float							m_fChargeTime[256];
 	_bool							m_bMouseState[3];
 	_bool							m_bPressThisFrameMouse[3];
+	_bool							m_bUpThisFrameMouse[3];
 
 	_int							m_iClickedCnt = 0;
 

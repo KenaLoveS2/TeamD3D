@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Small_04_Base.MI_GodTree_Small_04_Base'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/MI_TreeLeaves4.MI_TreeLeaves4'
+        MaterialSlotName = Leaves
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 771.211, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Small_04_Base.MI_GodTree_Small_04_Base'
+        MaterialSlotName = Trunk
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1195.04, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=12.4914, Y=123.063, Z=947.581 }
+    BoxExtent = { X=602.23, Y=551.552, Z=965.178 }
+    SphereRadius = 992.823
+}

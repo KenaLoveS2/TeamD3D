@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeLog_Hollow.MI_TreeLog_Hollow'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeLog.MI_TreeLog'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeLog_Hollow.MI_TreeLog_Hollow'
+        MaterialSlotName = MI_TreeLog_Hollow2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2915.79, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Trees/Fallen/Material/MI_TreeLog.MI_TreeLog'
+        MaterialSlotName = MI_TreeLog2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1582.04, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-28.6007, Y=13.1383, Z=0.0641479 }
+    BoxExtent = { X=1143.21, Y=256.856, Z=253.219 }
+    SphereRadius = 1171.36
+}

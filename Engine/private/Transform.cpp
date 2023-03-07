@@ -210,6 +210,10 @@ void CTransform::Imgui_RenderProperty()
 
 void CTransform::Imgui_RenderProperty_ForJH()
 {
+	ImGui::Separator();
+	ImGui::InputFloat("Speed Per Sec", &m_TransformDesc.fSpeedPerSec, 0.1f, 0.5f);
+	ImGui::InputFloat("Rotation Per Sec", &m_TransformDesc.fRotationPerSec, 0.01f, 0.05f);
+
 	ImGuizmo::BeginFrame();
 
 	static ImGuizmo::OPERATION CurGuizmoType(ImGuizmo::TRANSLATE);

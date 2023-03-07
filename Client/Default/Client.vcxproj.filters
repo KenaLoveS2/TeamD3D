@@ -253,12 +253,6 @@
     <Filter Include="02.GameObjects\Terrain\Editor">
       <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\BranchTosser">
-      <UniqueIdentifier>{07fe02fb-96fa-4b97-af60-2e3631391ff8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Weapon">
-      <UniqueIdentifier>{3fec146d-8bf6-48d3-8b01-21340726eef9}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -435,9 +429,6 @@
     <ClInclude Include="..\Public\BowTarget.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Cliff_Rock.h">
-      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Crystal.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -556,7 +547,6 @@
     <ClInclude Include="..\public\RuinKit.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stone.h" />
     <ClInclude Include="..\public\Monster_Status.h">
       <Filter>02.GameObjects\Monster\Status</Filter>
     </ClInclude>
@@ -600,14 +590,17 @@
     <ClInclude Include="..\Public\Stone.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BranchTosser.h">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BranchTosser_Weapon.h">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClInclude Include="..\Public\Flower.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MonsterWeapon.h">
-      <Filter>02.GameObjects\Monster\Weapon</Filter>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grass.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -885,7 +878,6 @@
     <ClCompile Include="..\private\RuinKit.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stone.cpp" />
     <ClCompile Include="..\private\Monster_Status.cpp">
       <Filter>02.GameObjects\Monster\Status</Filter>
     </ClCompile>
@@ -929,14 +921,14 @@
     <ClCompile Include="..\Private\Stone.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BranchTosser.cpp">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BranchTosser_Weapon.cpp">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClCompile Include="..\Private\Flower.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MonsterWeapon.cpp">
-      <Filter>02.GameObjects\Monster\Weapon</Filter>
+    <ClCompile Include="..\Private\Grass.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

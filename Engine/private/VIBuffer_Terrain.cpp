@@ -183,32 +183,41 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	if (FAILED(__super::Create_IndexBuffer()))
 		return E_FAIL;
 
-//#pragma region 삼각형 액터 정보 구성
-//	if (m_pPxVertices == nullptr)
-//	{
-//		m_pPxVertices = new PxVec3[m_iNumVertices];
-//		ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
-//		for (_uint i = 0; i < m_iNumVertices; i++)
-//		{
-//			_float3 vPos = pVertices[i].vPosition;
-//			m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
-//		}
-//	}
-//
-//	if (m_pPxIndicies == nullptr)
-//	{
-//		m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
-//		ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
-//
-//		for (_uint i = 0; i < m_iNumPrimitive; i++)
-//		{
-//			m_pPxIndicies[i]._0 = pIndices[i]._0;
-//			m_pPxIndicies[i]._1 = pIndices[i]._2;
-//			m_pPxIndicies[i]._2 = pIndices[i]._1;
-//		}
-//	}
-//	Create_PxActor();
-//#pragma endregion
+#pragma region 삼각형 액터 정보 구성
+	
+	// m_iDivideCount = m_iNumVertices / m_iDivideThreshold;
+	if (m_iDivideCount == 0)
+	{
+		if (m_pPxVertices == nullptr)
+		{
+			m_pPxVertices = new PxVec3[m_iNumVertices];
+			ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+			for (_uint i = 0; i < m_iNumVertices; i++)
+			{
+				_float3 vPos = pVertices[i].vPosition;
+				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			}
+		}
+
+		if (m_pPxIndicies == nullptr)
+		{
+			m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
+			ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
+
+			for (_uint i = 0; i < m_iNumPrimitive; i++)
+			{
+				m_pPxIndicies[i]._0 = pIndices[i]._2;
+				m_pPxIndicies[i]._1 = pIndices[i]._1;
+				m_pPxIndicies[i]._2 = pIndices[i]._0;
+			}
+		}	
+	}
+	else
+	{
+		Create_Divide_PxData(pVertices, pIndices);
+	}
+	
+#pragma endregion
 
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
@@ -225,6 +234,8 @@ HRESULT CVIBuffer_Terrain::Initialize(void * pArg, CGameObject* pOwner)
 {
 	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
+
+	Create_PxActor();
 
 	return S_OK;
 }
@@ -767,7 +778,14 @@ CComponent * CVIBuffer_Terrain::Clone(void * pArg, CGameObject* pOwner)
 
 
 void CVIBuffer_Terrain::Free()
-{
+{	
+	for (_uint i = 0; i < m_iDivideCount + m_bRemainFlag; i++)
+		Safe_Delete_Array(m_pPxTerrainVtx[i]);		
+		
+	Safe_Delete_Array(m_pPxTerrainVtx);
+	Safe_Delete_Array(m_pPxTerrainIdx_Divide);
+	Safe_Delete_Array(m_pPxTerrainIdx_Remain);
+
 	__super::Free();
 	
 	if (false == m_isCloned)
@@ -777,4 +795,133 @@ void CVIBuffer_Terrain::Free()
 	}
 
 	Safe_Release(m_pQuadTree);
+}
+
+void CVIBuffer_Terrain::Create_Divide_PxData(VTXNORTEX* pVtx, FACEINDICES32* pIdx)
+{
+	_uint iDivideZ = m_iNumVerticesZ / m_iDivideCount;
+	_uint iRemainZ = m_iNumVerticesZ - (iDivideZ * m_iDivideCount);
+	m_bRemainFlag = (iRemainZ != 0);
+
+	m_pPxTerrainVtx = new PxVec3*[m_iDivideCount + m_bRemainFlag];
+	for (_uint i = 0; i < m_iDivideCount; i++)
+		m_pPxTerrainVtx[i] = new PxVec3[m_iNumVerticesX * iDivideZ];
+
+	if (m_bRemainFlag)
+		m_pPxTerrainVtx[m_iDivideCount] = new PxVec3[m_iNumVerticesX * iRemainZ];
+
+	_uint iVtxIndex = 0;
+	_float3 vPos;
+	for (_uint i = 0; i < m_iDivideCount; i++)
+	{
+		for (_uint j = 0; j < m_iNumVerticesX * iDivideZ; j++)
+		{
+			vPos = pVtx[iVtxIndex++].vPosition;
+			m_pPxTerrainVtx[i][j] = CUtile::ConvertPosition_D3DToPx(vPos);
+		}
+
+		iVtxIndex -= m_iNumVerticesX;
+	}
+
+	if (m_bRemainFlag)
+	{
+		for (_uint i = 0; i < m_iNumVerticesX * iRemainZ; i++)
+		{
+			vPos = pVtx[iVtxIndex++].vPosition;
+			m_pPxTerrainVtx[m_iDivideCount][i] = CUtile::ConvertPosition_D3DToPx(vPos);
+		}
+	}
+
+	_uint iDividePrimitive = (m_iNumVerticesX - 1) * (iDivideZ - 1) * 2;
+	_uint iRemainPrimitive = (m_iNumVerticesX - 1) * (iRemainZ - 1) * 2;
+		
+	m_pPxTerrainIdx_Divide = new PxIndicies[iDividePrimitive];
+	if (m_bRemainFlag) m_pPxTerrainIdx_Remain = new PxIndicies[iRemainPrimitive];
+		
+	_uint iNumFaces = 0;
+	for (_uint i = 0; i < iDivideZ - 1; i++)
+	{
+		for (_uint j = 0; j < m_iNumVerticesX - 1; j++)
+		{
+			_uint iIndex = i * iDivideZ + j;
+
+			_uint iIndices[4] = {
+				iIndex + m_iNumVerticesX,
+				iIndex + m_iNumVerticesX + 1,
+				iIndex + 1,
+				iIndex
+			};
+
+			m_pPxTerrainIdx_Divide[iNumFaces]._0 = iIndices[0];
+			m_pPxTerrainIdx_Divide[iNumFaces]._1 = iIndices[2];
+			m_pPxTerrainIdx_Divide[iNumFaces]._2 = iIndices[1];
+
+			++iNumFaces;
+
+			m_pPxTerrainIdx_Divide[iNumFaces]._0 = iIndices[0];
+			m_pPxTerrainIdx_Divide[iNumFaces]._1 = iIndices[3];
+			m_pPxTerrainIdx_Divide[iNumFaces]._2 = iIndices[2];
+
+			++iNumFaces;
+		}
+	}
+
+
+	if (m_bRemainFlag)
+	{
+		iNumFaces = 0;
+		for (_uint i = 0; i < iRemainZ - 1; i++)
+		{
+			for (_uint j = 0; j < m_iNumVerticesX - 1; j++)
+			{
+				_uint iIndex = i * iRemainZ + j;
+
+				_uint iIndices[4] = {
+					iIndex + m_iNumVerticesX,
+					iIndex + m_iNumVerticesX + 1,
+					iIndex + 1,
+					iIndex
+				};
+
+				m_pPxTerrainIdx_Remain[iNumFaces]._0 = iIndices[0];
+				m_pPxTerrainIdx_Remain[iNumFaces]._1 = iIndices[2];
+				m_pPxTerrainIdx_Remain[iNumFaces]._2 = iIndices[1];
+
+				++iNumFaces;
+
+				m_pPxTerrainIdx_Remain[iNumFaces]._0 = iIndices[0];
+				m_pPxTerrainIdx_Remain[iNumFaces]._1 = iIndices[3];
+				m_pPxTerrainIdx_Remain[iNumFaces]._2 = iIndices[2];
+
+				++iNumFaces;
+			}
+		}
+	}
+	
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+	for (_uint i = 0; i < m_iDivideCount; i++)
+	{
+		PxTriangleMeshDesc TriangleMeshDesc;
+		TriangleMeshDesc.points.count = m_iNumVerticesX * iDivideZ;
+		TriangleMeshDesc.points.stride = sizeof(PxVec3);
+		TriangleMeshDesc.points.data = m_pPxTerrainVtx[i];
+		TriangleMeshDesc.triangles.count = iDividePrimitive;
+		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+		TriangleMeshDesc.triangles.data = m_pPxTerrainIdx_Divide;
+
+		m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+	}
+
+	if (m_bRemainFlag)
+	{
+		PxTriangleMeshDesc TriangleMeshDesc;
+		TriangleMeshDesc.points.count = m_iNumVerticesX * iRemainZ;
+		TriangleMeshDesc.points.stride = sizeof(PxVec3);
+		TriangleMeshDesc.points.data = m_pPxTerrainVtx[m_iDivideCount];
+		TriangleMeshDesc.triangles.count = iRemainPrimitive;
+		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+		TriangleMeshDesc.triangles.data = m_pPxTerrainIdx_Remain;
+
+		m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+	}
 }

@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "Bone.h"
+#include "E_KenaTrail.h"
 
 CKena_Staff::CKena_Staff(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CKena_Parts(pDevice, pContext)
@@ -26,20 +27,54 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
 
 	return S_OK;
 }
 
+HRESULT CKena_Staff::Ready_Effects()
+{
+	CE_KenaTrail* pEffectTrail = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	/* KenaStaffTrail */
+	pEffectTrail = dynamic_cast<CE_KenaTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaStaffTrail", L"KenaStaffTrail"));
+	NULL_CHECK_RETURN(pEffectTrail, E_FAIL);
+
+	m_pKenaStaffTrail = pEffectTrail;
+	m_pKenaStaffTrail->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_pKenaStaffTrail != nullptr)
+		m_pKenaStaffTrail->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	/* »óºÎ »À ¼ø¼­ */
+	// bow_string_jnt_top
+	// staff_skin8_jnt
+	// staff_skin7_jnt
+
+	/* Weapon Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
+	/* ~Weapon Update */
+
+	if (m_pKenaStaffTrail != nullptr)
+		m_pKenaStaffTrail->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -59,16 +94,20 @@ HRESULT CKena_Staff::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i > 1)
-			continue;
-		
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		/********************* For. Kena PostProcess By WJ*****************/
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-		/******************************************************************/
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
+		if(i <= 1)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			/********************* For. Kena PostProcess By WJ*****************/
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			/******************************************************************/
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
+		}
+
+		//if (i == 3) // M_bowTrails == 3
+		//{
+		//}
 	}
 
 	return S_OK;
@@ -210,4 +249,6 @@ CGameObject * CKena_Staff::Clone(void * pArg)
 void CKena_Staff::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pKenaStaffTrail);
 }

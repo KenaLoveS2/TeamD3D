@@ -62,13 +62,12 @@ private:
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
-	map<const string, class CEffect_Base*>	m_mapEffects;
 
-	// CloneTag, Effect
 	map<const string, class CEffect_Base*>   m_mapEffect;
 
 private:
 	_bool					m_bAttack = false;
+	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
 

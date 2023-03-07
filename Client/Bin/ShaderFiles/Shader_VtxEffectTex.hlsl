@@ -124,6 +124,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	//else
 	//	Out.vColor = (Out.vColor * g_vColor) + (Out.vColor * (1.f - g_vColor));
 	Out.vColor = Out.vColor * g_vColor;
+	Out.vColor.a = Out.vColor.r;
 	Out.vColor = saturate(Out.vColor.r* g_vColor) * 4.5f;
 	Out.vColor.rgb = Out.vColor.rgb * 4.f;
 

@@ -19,6 +19,7 @@ public:
 
 	typedef struct tag_TerrainDesc
 	{
+		wstring		wstrViBuffer_Terrain;
 		wstring		wstrDiffuseTag;
 		wstring		wstrNormalTag;
 		wstring		wstrFilterTag;
@@ -26,8 +27,10 @@ public:
 		_int			iFillterOne_TextureNum = 0;
 		_int			iFillterTwo_TextureNum = 0;
 		_int			iFillterThree_TextureNum = 0;
+		_int			iHeightBmpNum = 0;
 		tag_TerrainDesc()
 		{
+			wstrViBuffer_Terrain = L"";
 			wstrDiffuseTag = L"";	wstrFilterTag = L""; wstrNormalTag = L"";
 		}
 
@@ -40,7 +43,7 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
-	TERRAIN_DESC	*		Get_TerrainDesc() { return &m_TerrainDesc; }
+	TERRAIN_DESC*		Get_TerrainDesc() { return &m_TerrainDesc; }
 	
 
 public:
@@ -75,7 +78,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	TERRAIN_DESC					m_TerrainDesc;
+	TERRAIN_DESC						m_TerrainDesc;
 	_bool								m_bLoadData = false;
 
 private: /*For.Brush*/

@@ -23,6 +23,9 @@ public:
 	void Late_Tick(_float fTimeDelta);
 	void	SwitchOnOff_Shadow(_bool bSwitch);
 
+
+	void		Delete_AllObjLayer(_int iRoomIndex);
+
 private:
 	map <const _tchar*, class CGameObject*>			m_GameObjects;	
 	typedef map<const _tchar*, class CGameObject*>	GAMEOBJECTS;

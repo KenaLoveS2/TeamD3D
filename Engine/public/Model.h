@@ -71,6 +71,7 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+	
 private:
 	TYPE					m_eType = TYPE_END;
 	wstring				m_wstrModelFilePath = L"";
@@ -111,9 +112,9 @@ private:
 	
 	/*For.Lod*/
 	_bool														m_bIsLodModel = false;
-#ifdef _DEBUG
+
 	class	CTransform*										m_pInstanceTransform = nullptr;
-#endif
+
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);
 	HRESULT			Load_BoneAnimation(HANDLE& hFile, DWORD& dwByte);
@@ -130,11 +131,11 @@ public:
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 
-#ifdef _DEBUG
+
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-#endif
+
 	
 public:
 	void Create_PxTriangle();

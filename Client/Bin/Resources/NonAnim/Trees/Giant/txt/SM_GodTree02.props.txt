@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Main_02_Base.MI_GodTree_Main_02_Base'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Main_01_Base.MI_GodTree_Main_01_Base'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Main_02_Base.MI_GodTree_Main_02_Base'
+        MaterialSlotName = lambert2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 6391.49, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/MI_GodTree_Main_01_Base.MI_GodTree_Main_01_Base'
+        MaterialSlotName = lambert3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 6881.18, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=131.846, Y=149.7, Z=4036.53 }
+    BoxExtent = { X=1827.52, Y=1966.15, Z=4138.74 }
+    SphereRadius = 4638.46
+}

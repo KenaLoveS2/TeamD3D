@@ -49,6 +49,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 
 		Imgui_SelectObject_InstancingControl();
 		Imgui_Control_ViewerCamTransform();
+		imgui_ObjectList_Clear();
 	}
 
 	ImGui::End();
@@ -785,7 +786,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain=	pTerrainEditor->Get_SelectedTerrin();
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -1153,7 +1154,7 @@ void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
-#ifdef _DEBUG
+
 	if (pSelectEnviObj == nullptr)
 		return;
 	
@@ -1167,7 +1168,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
 	_float4 vPickingPos;
 	_matrix TerrainMatrix;
-	if (m_bIstancingObjPicking == true)
+	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
 	{
 		m_bUseTerrainPicking = false;
 
@@ -1182,11 +1183,6 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
-			
-
-
-			//XMStoreFloat4(&vPickingPos, XMVector4Transform(XMLoadFloat4(&vPickingPos), pSelectObjTransform->Get_WorldMatrix()));
-
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
 		}
 	}
@@ -1195,11 +1191,25 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
 	}
 
-
-	
-
 	ImGui::End();
-#endif
+
+}
+
+void CImgui_MapEditor::imgui_ObjectList_Clear()
+{
+	static int iDeleteRoomIndex = 0;
+
+	ImGui::InputInt("Delete RoomIndex", &iDeleteRoomIndex);
+
+
+	if (ImGui::Button("Object_List_Clear"))
+	{
+		CGameInstance *pGameInstance = GET_INSTANCE(CGameInstance);
+		// 나중에 룸인덱스 조정 만들어야됌
+		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment", iDeleteRoomIndex);
+		
+		RELEASE_INSTANCE(CGameInstance);
+	}
 }
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)

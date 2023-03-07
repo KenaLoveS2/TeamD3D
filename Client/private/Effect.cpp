@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Camera.h"
 #include "Effect_Trail.h"
+#include "Effect_Trail_T.h"
 
 CEffect::CEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Base(pDevice, pContext)
@@ -42,12 +43,16 @@ HRESULT CEffect::Initialize(void * pArg)
 
 //	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_fInitSpriteCnt = { m_eEFfectDesc.fWidthFrame , m_eEFfectDesc.fHeightFrame };
 	return S_OK;
 }
 
 void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
@@ -84,14 +89,6 @@ void CEffect::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 		}
 	}
-	if(CGameInstance::GetInstance()->Key_Down(DIK_UP))
-	{
-		m_eEFfectDesc.fWidthFrame = 3.f;
-		m_eEFfectDesc.fHeightFrame = 3.f;
-		m_eEFfectDesc.iWidthCnt = 6;
-		m_eEFfectDesc.iHeightCnt = 6;
-	}
-	
 
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
@@ -100,7 +97,7 @@ void CEffect::Tick(_float fTimeDelta)
 		if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
 			return;
 
-		if(! CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
+		if (!CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
 		{
 			auto& iter = m_vecFreePos.begin();
 			if (iCurIdx >= m_vecFreePos.size())
@@ -118,6 +115,37 @@ void CEffect::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		if (m_eEFfectDesc.bActive == true)
+			Set_InitRotation();
+
+		m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+			m_fTimeDelta = 0.0;
+
+			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			{
+				if (m_eEFfectDesc.fTimeDelta < 1.f)
+					m_eEFfectDesc.fHeightFrame++;
+				else
+					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+
+				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+			}
+
+		}
+	}
+
 	if (nullptr != m_pEffectTrail)
 		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 }
@@ -126,6 +154,9 @@ void CEffect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 //	__super::Compute_CamDistance();
+
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -216,6 +247,25 @@ HRESULT CEffect::Edit_Child(const _tchar * ProtoTag)
 	}
 
 	return S_OK;
+}
+
+void CEffect::Set_InitRotation()
+{
+	_matrix		RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(m_eEFfectDesc.fTimeDelta * 0.2f));
+
+	_float3		vScale = _float3(XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_InitWorldMatrix).r[0])),
+		XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_InitWorldMatrix).r[1])),
+		XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_InitWorldMatrix).r[2])));
+
+	_float4 vRight, vUp, vLook;
+
+	XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4x4(&m_InitWorldMatrix).r[0]) * vScale.x);
+	XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4x4(&m_InitWorldMatrix).r[1]) * vScale.y);
+	XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4x4(&m_InitWorldMatrix).r[2]) * vScale.z);
+
+	memcpy(&m_InitWorldMatrix.m[0][0], &XMVector4Transform(vRight, RotationMatrix), sizeof vRight);
+	memcpy(&m_InitWorldMatrix.m[1][0], &XMVector4Transform(vUp, RotationMatrix), sizeof vUp);
+	memcpy(&m_InitWorldMatrix.m[2][0], &XMVector4Transform(vLook, RotationMatrix), sizeof vLook);
 }
 
 HRESULT CEffect::SetUp_Components()
@@ -380,7 +430,7 @@ HRESULT CEffect::Set_Trail(CEffect_Base* pEffect, const _tchar* pProtoTag)
 	_tchar*     szTrailCloneTag = CUtile::Create_String(strTrailCloneTag.c_str());
 	pGameInstance->Add_String(szTrailCloneTag);
 
-	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail::Create(m_pDevice, m_pContext))))
+	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
