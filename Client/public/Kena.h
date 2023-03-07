@@ -79,14 +79,14 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
 
-	_float3					m_vVelocity;
+	_float3				m_vVelocity;
 	_float					m_fDensity =  0.f;
 
 private:

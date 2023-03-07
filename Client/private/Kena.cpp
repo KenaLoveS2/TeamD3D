@@ -51,7 +51,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	Push_EventFunctions();
 
@@ -76,12 +76,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vPos = vPos;
 	PxCapsuleDesc.fRadius = vPivotScale.x;
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-	PxCapsuleDesc.vVelocity = m_vVelocity;
-	PxCapsuleDesc.fDensity = 1.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 1.f;
-	PxCapsuleDesc.fDamping = 1.f;
-	
+	PxCapsuleDesc.vVelocity = m_vVelocity;		// 가속도
+	PxCapsuleDesc.fDensity = 1.f;					// 밀도
+	PxCapsuleDesc.fAngularDamping = 0.5f;		// 회전 마찰력
+	PxCapsuleDesc.fMass = 1.f;						// 무게
+	PxCapsuleDesc.fDamping = 1.f;					// 마찰력
+
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -1307,6 +1307,83 @@ HRESULT CKena::SetUp_State()
 	pAnimState->m_bLoop = false;
 	pAnimState->m_fLerpDuration = 0.2f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_COMBO_INTO_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "JUMP_SQUAT";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::JUMP_SQUAT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::JUMP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "RUNNING_JUMP_SQUAT";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::RUNNING_JUMP_SQUAT_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "RUNNING_JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::RUNNING_JUMP_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_JUMP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_HEAVY";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND_HEAVY);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_WALKING";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND_WALKING);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "BOW_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LEDGE_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LEDGE_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "SLIDE_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::SLIDE_LAND);
 	m_pAnimation->Add_State(pAnimState);
 
 	return S_OK;

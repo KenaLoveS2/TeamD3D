@@ -42,10 +42,13 @@ HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CM
 	FAILED_CHECK_RETURN(SetUp_State_Bow(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Combat(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Fall(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack1(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack2(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack3(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack_Combo(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Jump(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Land(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Sprint(), E_FAIL);
 
@@ -875,8 +878,8 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.26f)
-		.Init_Changer(L"ATTACK_4_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_4_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"ATTACK_4_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"ATTACK_4_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
 
 		.Finish_Setting();
 
@@ -946,6 +949,13 @@ HRESULT CKena_State::SetUp_State_Dodge()
 		.Init_End(this, &CKena_State::End_Roll_Into_Fall)
 
 		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Fall()
+{
+
 
 	return S_OK;
 }
@@ -1136,9 +1146,16 @@ HRESULT CKena_State::SetUp_State_Heavy_Attack_Combo()
 		.Init_Start(this, &CKena_State::Start_Heavy_Attack_Combo)
 		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_Combo)
 		.Init_End(this, &CKena_State::End_Heavy_Attack_Combo)
-		.Init_Changer(L"HEAVY_ATTACK_COMBO_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"HEAVY_ATTACK_COMBO_RETURN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
-
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.6f)
+		
 		.Add_State(L"HEAVY_ATTACK_COMBO_RETURN")
 		.Init_Start(this, &CKena_State::Start_Heavy_Attack_Combo_Return)
 		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_Combo_Return)
@@ -1146,6 +1163,10 @@ HRESULT CKena_State::SetUp_State_Heavy_Attack_Combo()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
@@ -1156,8 +1177,82 @@ HRESULT CKena_State::SetUp_State_Heavy_Attack_Combo()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
 		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Jump()
+{
+	m_pStateMachine->Add_State(L"JUMP_SQUAT")
+		.Init_Start(this, &CKena_State::Start_Jump_Squat)
+		.Init_Tick(this, &CKena_State::Tick_Jump_Squat)
+		.Init_End(this, &CKena_State::End_Jump_Squat)
+		.Init_Changer(L"JUMP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"JUMP")
+		.Init_Start(this, &CKena_State::Start_Jump)
+		.Init_Tick(this, &CKena_State::Tick_Jump)
+		.Init_End(this, &CKena_State::End_Jump)
+
+		.Add_State(L"RUNNING_JUMP_SQUAT")
+		.Init_Start(this, &CKena_State::Start_Running_Jump_Squat)
+		.Init_Tick(this, &CKena_State::Tick_Running_Jump_Squat)
+		.Init_End(this, &CKena_State::End_Running_Jump_Squat)
+
+		.Add_State(L"RUNNING_JUMP")
+		.Init_Start(this, &CKena_State::Start_Running_Jump)
+		.Init_Tick(this, &CKena_State::Tick_Running_Jump)
+		.Init_End(this, &CKena_State::End_Running_Jump)
+
+		.Add_State(L"PULSE_JUMP")
+		.Init_Start(this, &CKena_State::Start_Pulse_Jump)
+		.Init_Tick(this, &CKena_State::Tick_Pulse_Jump)
+		.Init_End(this, &CKena_State::End_Pulse_Jump)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Land()
+{
+	m_pStateMachine->Add_State(L"LAND")
+		.Init_Start(this, &CKena_State::Start_Land)
+		.Init_Tick(this, &CKena_State::Tick_Land)
+		.Init_End(this, &CKena_State::End_Land)
+
+		.Add_State(L"LAND_HEAVY")
+		.Init_Start(this, &CKena_State::Start_Land_Heavy)
+		.Init_Tick(this, &CKena_State::Tick_Land_Heavy)
+		.Init_End(this, &CKena_State::End_Land_Heavy)
+
+		.Add_State(L"LAND_WALKING")
+		.Init_Start(this, &CKena_State::Start_Land_Walking)
+		.Init_Tick(this, &CKena_State::Tick_Land_Walking)
+		.Init_End(this, &CKena_State::End_Land_Walking)
+
+		.Add_State(L"BOW_LAND")
+		.Init_Start(this, &CKena_State::Start_Bow_Land)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Land)
+		.Init_End(this, &CKena_State::End_Bow_Land)
+
+		.Add_State(L"LEDGE_LAND")
+		.Init_Start(this, &CKena_State::Start_Ledge_Land)
+		.Init_Tick(this, &CKena_State::Tick_Ledge_Land)
+		.Init_End(this, &CKena_State::End_Ledge_Land)
+
+		.Add_State(L"SLIDE_LAND")
+		.Init_Start(this, &CKena_State::Start_Slide_Land)
+		.Init_Tick(this, &CKena_State::Tick_Slide_Land)
+		.Init_End(this, &CKena_State::End_Slide_Land)
 
 		.Finish_Setting();
 
@@ -1536,6 +1631,61 @@ void CKena_State::Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO_INTO_RUN");
 }
 
+void CKena_State::Start_Jump_Squat(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("JUMP_SQUAT");
+}
+
+void CKena_State::Start_Jump(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("JUMP");
+}
+
+void CKena_State::Start_Running_Jump_Squat(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("RUNNING_JUMP_SQUAT");
+}
+
+void CKena_State::Start_Running_Jump(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("RUNNING_JUMP");
+}
+
+void CKena_State::Start_Pulse_Jump(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("PULSE_JUMP");
+}
+
+void CKena_State::Start_Land(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LAND");
+}
+
+void CKena_State::Start_Land_Heavy(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LAND_HEAVY");
+}
+
+void CKena_State::Start_Land_Walking(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LAND_WALKING");
+}
+
+void CKena_State::Start_Bow_Land(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_LAND");
+}
+
+void CKena_State::Start_Ledge_Land(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LEDGE_LAND");
+}
+
+void CKena_State::Start_Slide_Land(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("SLIDE_LAND");
+}
+
 void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("INTO_PULSE");
@@ -1644,7 +1794,8 @@ void CKena_State::Start_Into_Sprint(_float fTimeDelta)
 
 void CKena_State::Start_Sprint(_float fTimeDelta)
 {
-	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)INTO_SPRINT || m_pAnimationState->Get_CurrentAnimIndex() == (_uint)PULSE_SQUAT_SPRINT)
+	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)INTO_SPRINT ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)PULSE_SQUAT_SPRINT)
 		m_pAnimationState->State_Animation("SPRINT", 0.f);
 	else
 		m_pAnimationState->State_Animation("SPRINT");
@@ -1965,6 +2116,50 @@ void CKena_State::Tick_Heavy_Attack_Combo_Return(_float fTimeDelta)
 void CKena_State::Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
 {
 	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Jump_Squat(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Running_Jump_Squat(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Running_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Pulse_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Land_Heavy(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Land_Walking(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Bow_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Ledge_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Slide_Land(_float fTimeDelta)
+{
 }
 
 void CKena_State::Tick_Into_Pulse(_float fTimeDelta)
@@ -2297,6 +2492,50 @@ void CKena_State::End_Heavy_Attack_Combo_Return(_float fTimeDelta)
 }
 
 void CKena_State::End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Jump_Squat(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Running_Jump_Squat(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Running_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Pulse_Jump(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Land_Heavy(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Land_Walking(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Bow_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Ledge_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Slide_Land(_float fTimeDelta)
 {
 }
 

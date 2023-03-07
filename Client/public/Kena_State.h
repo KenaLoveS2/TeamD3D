@@ -161,7 +161,10 @@ public:
 
 		INTO_SPRINT,
 
-		JOG, JUMP, JUMP_SQUAT,
+		JOG,
+		
+		/* JUMP */
+		JUMP, JUMP_SQUAT,
 		
 		PHOTO_KICK, PHOTO_KICK_LOOP,
 		PHOTO_KNEEL, PHOTO_KNEEL_LOOP,
@@ -422,10 +425,13 @@ private:
 	HRESULT					SetUp_State_Bow();
 	HRESULT					SetUp_State_Combat();
 	HRESULT					SetUp_State_Dodge();
+	HRESULT					SetUp_State_Fall();
 	HRESULT					SetUp_State_Heavy_Attack1();
 	HRESULT					SetUp_State_Heavy_Attack2();
 	HRESULT					SetUp_State_Heavy_Attack3();
 	HRESULT					SetUp_State_Heavy_Attack_Combo();
+	HRESULT					SetUp_State_Jump();
+	HRESULT					SetUp_State_Land();
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Sprint();
 
@@ -510,6 +516,19 @@ private:
 	void						Start_Heavy_Attack_Combo(_float fTimeDelta);
 	void						Start_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						Start_Jump_Squat(_float fTimeDelta);
+	void						Start_Jump(_float fTimeDelta);
+	void						Start_Running_Jump_Squat(_float fTimeDelta);
+	void						Start_Running_Jump(_float fTimeDelta);
+	void						Start_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						Start_Land(_float fTimeDelta);
+	void						Start_Land_Heavy(_float fTimeDelta);
+	void						Start_Land_Walking(_float fTimeDelta);
+	void						Start_Bow_Land(_float fTimeDelta);
+	void						Start_Ledge_Land(_float fTimeDelta);
+	void						Start_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -617,6 +636,19 @@ private:
 	void						Tick_Heavy_Attack_Combo(_float fTimeDelta);
 	void						Tick_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						Tick_Jump_Squat(_float fTimeDelta);
+	void						Tick_Jump(_float fTimeDelta);
+	void						Tick_Running_Jump_Squat(_float fTimeDelta);
+	void						Tick_Running_Jump(_float fTimeDelta);
+	void						Tick_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						Tick_Land(_float fTimeDelta);
+	void						Tick_Land_Heavy(_float fTimeDelta);
+	void						Tick_Land_Walking(_float fTimeDelta);
+	void						Tick_Bow_Land(_float fTimeDelta);
+	void						Tick_Ledge_Land(_float fTimeDelta);
+	void						Tick_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -717,6 +749,19 @@ private:
 	void						End_Heavy_Attack_Combo(_float fTimeDelta);
 	void						End_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						End_Jump_Squat(_float fTimeDelta);
+	void						End_Jump(_float fTimeDelta);
+	void						End_Running_Jump_Squat(_float fTimeDelta);
+	void						End_Running_Jump(_float fTimeDelta);
+	void						End_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						End_Land(_float fTimeDelta);
+	void						End_Land_Heavy(_float fTimeDelta);
+	void						End_Land_Walking(_float fTimeDelta);
+	void						End_Bow_Land(_float fTimeDelta);
+	void						End_Ledge_Land(_float fTimeDelta);
+	void						End_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
