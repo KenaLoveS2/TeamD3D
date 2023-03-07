@@ -54,15 +54,15 @@ void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Tick(fTimeDelta);
+	//if (m_pKenaStaffTrail != nullptr)
+	//	m_pKenaStaffTrail->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* »óºÎ »À ¼ø¼­ */
+	/* ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	// bow_string_jnt_top
 	// staff_skin8_jnt
 	// staff_skin7_jnt

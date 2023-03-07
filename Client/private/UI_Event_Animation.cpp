@@ -137,7 +137,7 @@ void CUI_Event_Animation::Imgui_RenderProperty()
 		m_vecFramesX.clear();
 		m_vecFramesY.clear();
 
-		for (_int i = 0; i < totalTextures; ++i)
+		for (_uint i = 0; i < totalTextures; ++i)
 		{
 			m_vecFramesX.push_back(1);
 			m_vecFramesY.push_back(1);
