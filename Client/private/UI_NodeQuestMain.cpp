@@ -4,6 +4,7 @@
 #include "Json/json.hpp"
 #include <fstream>
 #include <codecvt>
+#include <locale>
 
 CUI_NodeQuestMain::CUI_NodeQuestMain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice,pContext)
@@ -140,6 +141,34 @@ HRESULT CUI_NodeQuestMain::Save_Data()
 	//	{"what", "fckyou"}
 	//};
 
+	/* convert wstring to string */
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring wstr = L"한글테스트";
+	//wstring_convert<convert_type> utf8_conv;
+	//json["test"] = utf8_conv.to_bytes(wstr);
+	//json.dump();
+	/* ~ convert wstring to string */
+
+
+	using convert_type = codecvt_utf8<wchar_t>;
+
+	wstring main = L"타로를 구하세요";
+	wstring_convert<convert_type> utf8_conv;
+	json["mainQuest"]; // = utf8_conv.to_bytes(main);
+	//json.dump();
+
+	Json jSub;
+	wstring sub1 = L"신사를 정화하세요.";
+	wstring sub2 = L"오염된 숲을 정화하세요.";
+	json["sub1"] = utf8_conv.to_bytes(sub1);
+	json.dump();
+	json["sub2"] = utf8_conv.to_bytes(sub2);
+	json.dump();
+	json["mainQuest"].push_back(jSub);
+
+
+
+
 	_smatrix matWorld = m_matLocal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
@@ -198,6 +227,15 @@ HRESULT CUI_NodeQuestMain::Load_Data(wstring fileName)
 	file >> jLoad;
 	file.close();
 
+
+
+	/* convert string to wstring */
+	//string test;
+	//jLoad["test"].get_to<string>(test);
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
+	//wstring wstr = utf8_conv.from_bytes(test);
+	/* ~ convert string to wstring */
 
 	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
 	m_iOriginalRenderPass = m_iRenderPass;

@@ -205,7 +205,7 @@ HRESULT CMainApp::Ready_Gara()
 	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
-
+	TextureDesc.MipLevels = 6;
 	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;

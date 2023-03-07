@@ -198,6 +198,15 @@ HRESULT CVIBuffer_Trail::Bind_ShaderResouce(CShader * pShaderCom, const char * p
 	return pShaderCom->Set_MatrixArray(pConstanctName, (_float4x4*)m_vecInstanceInfo.data(), (_uint)m_vecInstanceInfo.size());
 }
 
+HRESULT CVIBuffer_Trail::Bind_RawValue(CShader * pShaderCom, const char * pConstanctName)
+{
+	if (pShaderCom == nullptr)
+		return E_FAIL;
+
+	_float fSize = (_float)m_vecInstanceInfo.size();
+	return pShaderCom->Set_RawValue(pConstanctName, &fSize, sizeof(_float));
+}
+
 CVIBuffer_Trail * CVIBuffer_Trail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iNumInstance)
 {
 	CVIBuffer_Trail*		pInstance = new CVIBuffer_Trail(pDevice, pContext);

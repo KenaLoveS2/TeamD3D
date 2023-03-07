@@ -20,6 +20,8 @@ private:
 private:
 	SpriteFont*					m_pFont = nullptr;
 	SpriteBatch*				m_pBatch = nullptr;
+	ID3D11BlendState*			m_pBlendState = nullptr;
+
 
 public:
 	static CCustomFont* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath);

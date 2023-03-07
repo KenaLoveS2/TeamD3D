@@ -4,6 +4,7 @@
 #include "Json/json.hpp"
 #include <fstream>
 #include "GameInstance.h"
+#include "String_Manager.h"
 
 CUtile::CUtile() { }
 CUtile::~CUtile() { }
@@ -124,6 +125,20 @@ char* CUtile::Create_String(const char * pText)
 	ZeroMemory(pString, sizeof(_tchar) * iSize);
 
 	strcpy_s(pString, iSize, pText);
+
+	return pString;
+}
+
+_tchar* CUtile::Create_StringAuto(const _tchar *pText)
+{
+	_int iSize = (_int)wcslen(pText) + 1;
+
+	_tchar* pString = new _tchar[iSize];
+	ZeroMemory(pString, sizeof(_tchar) * iSize);
+
+	lstrcpy(pString, pText);
+
+	CString_Manager::GetInstance()->Add_String(pString);
 
 	return pString;
 }
@@ -844,4 +859,17 @@ void  CUtile::MODELMATERIAL_Create(ID3D11Device * pDevice, ID3D11DeviceContext *
 	}
 
 
+}
+void CUtile::Execute_BillBoard(CTransform* pTransform, _float3 vScale)
+{
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	
+	_matrix worldmatrix = _smatrix::CreateBillboard(
+		pTransform->Get_State(CTransform::STATE_TRANSLATION), 
+		pPipeLine->Get_CamPosition_Float3(), 
+		pPipeLine->Get_CamUp_Float3(), 
+		&pPipeLine->Get_CamLook_Float3());
+
+	pTransform->Set_WorldMatrix(worldmatrix);
+	pTransform->Set_Scaled(vScale);
 }

@@ -22,6 +22,7 @@ float4  g_vColor;
 /* Trail  */
 bool	g_IsTrail;
 matrix  g_InfoMatrix[300];
+float   g_InfoSize;
 float	g_fWidth = 1.f;
 float	g_fLife;
 bool    g_bDistanceAlpha;
@@ -29,9 +30,10 @@ float   g_fAlpha;
 
 texture2D g_TrailflowTexture;
 texture2D g_TrailTypeTexture;
-float	g_BeforeUV, g_AfterUV;
+float	  g_BeforeUV, g_AfterUV;
 
 float2 g_UV;
+float  g_Time;
 /* ~Trail */
 
 struct VS_IN
@@ -84,6 +86,7 @@ VS_TRAILOUT VS_TRAILMAIN(VS_TRAILIN In)
 	VS_TRAILOUT  Out = (VS_TRAILOUT)0;
 
 	float4x4    Matrix = In.Matrix;
+	Out.fLife = In.Matrix[3][3];
 
 	Matrix[0][3] = 0.f;
 	Matrix[1][3] = 0.f;
@@ -92,7 +95,6 @@ VS_TRAILOUT VS_TRAILMAIN(VS_TRAILIN In)
 
 	Out.vPosition = float4(In.vPosition, 1.f);
 	Out.vPSize = In.vPSize;
-	Out.fLife = In.Matrix[3][3];
 	Out.Matrix = Matrix;
 	Out.InstanceID = In.InstanceID;
 
@@ -184,28 +186,20 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 
 	if (In[0].InstanceID == 0) // 인스턴스아이디 50전까지 빌보드를 먹임(왜냐면 지금 출력사이즈를 작게했기 때문임) => Test
 	{
-		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth/** 0.8f*/;
-		vResultPos.z = -1.f;
+		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth;
 		Out[0].vPosition = mul(vResultPos, matVP);
-		Out[0].vTexUV = float2(0.f, 0.f);
 		Out[0].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth;
-		vResultPos.z = -1.f;
 		Out[1].vPosition = mul(vResultPos, matVP);
-		Out[1].vTexUV = float2(1.f, 0.f);
 		Out[1].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth;
-		vResultPos.z = -1.f;
 		Out[2].vPosition = mul(vResultPos, matVP);
-		Out[2].vTexUV = float2(1.f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth/** 0.8f*/;
-		vResultPos.z = -1.f;
+		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth;
 		Out[3].vPosition = mul(vResultPos, matVP);
-		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife / g_fLife;
 
 		Vertices.Append(Out[0]);
@@ -223,25 +217,26 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		float3 vPreU = matrix_look(g_InfoMatrix[In[0].InstanceID - 1]);
 		float3 vU = matrix_look(In[0].Matrix);
 
-		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) + float4(vUp, 0.f) * fCurWidth /** 0.9f*/ ;
+		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) + float4(vUp, 0.f) * fCurWidth ;
 		Out[0].vPosition = mul(vResultPos, matVP);
-		Out[0].vTexUV = float2(vPreU.x, 0.f);
 		Out[0].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth;
 		Out[1].vPosition = mul(vResultPos, matVP);
-		Out[1].vTexUV = float2(0.1f, 0.f);
 		Out[1].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition - float4(vUp, 0.f) * fCurWidth;
 		Out[2].vPosition = mul(vResultPos, matVP);
-		Out[2].vTexUV = float2(0.1f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) - float4(vUp, 0.f) * fCurWidth /** 0.9f*/;
+		vResultPos = float4(matrix_postion(g_InfoMatrix[In[0].InstanceID - 1]), 1.f) - float4(vUp, 0.f) * fCurWidth;
 		Out[3].vPosition = mul(vResultPos, matVP);
-		Out[3].vTexUV = float2(vPreU.x, 1.f);
 		Out[3].fLife = In[0].fLife / g_fLife;
+
+		Out[0].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f )/ g_InfoSize), 0.f);
+		Out[1].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 0.f);
+		Out[2].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 1.f);
+		Out[3].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 1.f);
 
 		Vertices.Append(Out[0]);
 		Vertices.Append(Out[1]);
@@ -395,19 +390,15 @@ PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector   type = g_TrailTypeTexture.Sample(LinearSampler, In.vTexUV);
+	vector	 flow = g_TrailflowTexture.Sample(LinearSampler, In.vTexUV);
 
-	float2 UV_st = float2(g_UV.x, g_UV.y);
-	float2 UV = In.vTexUV * UV_st + UV_st;
-		/*float2(In.vTexUV.x / 0.89 , In.vTexUV.y / 0.87 + g_UV.x*/
-
-	vector	 flow = g_TrailflowTexture.Sample(LinearSampler, UV);
 	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
 
-	//float4 vColor = vector(160.0f, 231.f, 255.f, 255.f) / 255.f;
-	float4 vColor = vector(0.0f, 195.f, 255.f, 255.f) / 255.f;
-	Out.vColor = flow + g_vColor;
+	float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+	//float4 vColor = vector(0.0f, 195.f, 255.f, 255.f) / 255.f;
+	Out.vColor = flow + vColor;
 	Out.vColor.a = Out.vColor.r * In.fLife;
-	Out.vColor.rgb = Out.vColor.rgb * 1.5f;
+	Out.vColor.rgb = Out.vColor.rgb * 1.4f;
 	
 	if (g_bDistanceAlpha == true)
 		Out.vColor.a = Out.vColor.a * fAlpha;
