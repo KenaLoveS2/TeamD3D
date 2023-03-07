@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Terrain.h"
 #include "GameInstance.h"
+#include "GroundMark.h"
 
 CTerrain::CTerrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -59,18 +60,19 @@ HRESULT CTerrain::Initialize(void * pArg)
 }
 
 HRESULT CTerrain::Late_Initialize(void * pArg)
-{
+{	
+	/*
 	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
 	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
 	wstrFilePath += TEXT(".bmp");
 	Change_HeightMap(wstrFilePath.c_str());
+	*/
 
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
-	if (m_TerrainDesc.iHeightBmpNum == 0)
-		return S_OK;
-
-	
+	CGameInstance* pGameInst = CGameInstance::GetInstance();
+	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
+	if (m_pGroundMark == nullptr) return E_FAIL;
 
 	return S_OK;
 }
@@ -78,6 +80,8 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 void CTerrain::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_pGroundMark->Set_Position(m_vBrushPos + _float4(0.f, 1.f, 0.f, 0.f));
+	m_pGroundMark->Tick(fTimeDelta);
 }
 
 void CTerrain::Late_Tick(_float fTimeDelta)
@@ -86,13 +90,8 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	//m_pVIBufferCom->Culling(m_pTransformCom->Get_WorldMatrix());
 
-	if (nullptr != m_pRendererCom)
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this); 
-#ifdef _DEBUG
-
-#endif
-	}
+	m_pRendererCom && 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+	m_pGroundMark->Late_Tick(fTimeDelta);
 }
 
 HRESULT CTerrain::Render()
@@ -193,8 +192,8 @@ HRESULT CTerrain::SetUp_Components()
 			return E_FAIL;
 	}
 
-	/* For.Com_Brush*/
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Normal"), TEXT("Com_Brush"),
+	/* For.Com_Brush*/								
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Brush"),
 		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
@@ -230,7 +229,7 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture_2", m_TerrainDesc.iFillterThree_TextureNum)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 0)))
+	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", 1)))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
@@ -239,7 +238,7 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_vBrushRange, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -273,6 +272,8 @@ void CTerrain::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pGroundMark);
+
 	for (auto& pTextureCom : m_pTextureCom)	
 		Safe_Release(pTextureCom);	
 
@@ -280,5 +281,4 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
 }

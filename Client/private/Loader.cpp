@@ -50,6 +50,8 @@
 #include "Flower.h"
 
 #include "Door_Anim.h"
+#include "GroundMark.h"
+#include "Rope_RotRock.h"
 
 /* UI */
 #include "BackGround.h"
@@ -165,9 +167,14 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Brush*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Brush"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
+	/* For.Prototype_Component_Texture_Normal*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Normal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_GroundMark*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter */
@@ -361,9 +368,14 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Brush*/
+	/* For.Prototype_Component_Texture_Normal*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Normal"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_GroundMark*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter */
@@ -830,8 +842,11 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-
+	
+	/* For.Prototype_GameObject_GroundMark */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
+		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -859,9 +874,14 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Brush*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Normal"),
+	/* For.Prototype_Component_Texture_Normal*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Normal"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_GroundMark*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Filter */
@@ -1013,14 +1033,18 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+	/* Prototype_Component_Model_Rope_Rock */
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rope_RotRock", true, false, true)))
 		return E_FAIL;
-
+		
 	/* Prototype_Component_Model_HeroRot */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -1226,6 +1250,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_GroundMark */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
+		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	// Effect
 #pragma  region	 TESTPLAY EFFECT
 #pragma region EFFECT
@@ -1356,6 +1385,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"),
+		CRope_RotRock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;

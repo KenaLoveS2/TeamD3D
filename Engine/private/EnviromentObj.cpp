@@ -130,12 +130,12 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		m_EnviromentDesc.iCurLevel = Desc->iCurLevel;			//일단 툴에서만
 		//m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
-		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	}
 	else
 	{
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
-		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	}
 
 	if (FAILED(__super::Initialize(&m_EnviromentDesc.ObjectDesc))) return E_FAIL;

@@ -62,7 +62,9 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 10.f;
 		PxCapsuleDesc.fDamping = 10.f;
-	
+		PxCapsuleDesc.bCCD = true;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -74,7 +76,6 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 	// 무기
 	{
-		/*
 		wstring WeaponPivot;
 		m_vecColliderName.push_back(WeaponPivot);
 		_float3 vWeaponPivot = _float3(-0.55f,0.f, -1.15f);
@@ -106,11 +107,12 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);
-		*/
 	}
 
 	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
@@ -122,8 +124,8 @@ void CSticks01::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// Update_Collider(fTimeDelta);
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
