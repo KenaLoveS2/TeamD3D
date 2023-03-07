@@ -50,9 +50,12 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
-	BoxDesc.fDamping = 10.f;
+	BoxDesc.fLinearDamping = 10.f;
 	BoxDesc.fAngularDamping = 5.f;
 	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
@@ -79,6 +82,8 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 	{
 		m_pTransformCom->Set_Position(_float4(2.f, 0.f, 2.f, 1.f));
 	}
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
@@ -189,7 +194,7 @@ HRESULT CRope_RotRock::SetUp_State()
 		.AddTransition("MOVE to IDLE ", "IDLE")
 		.Predicator([this]()
 	{
-		_bool bClosed = m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 1.f);
+		_bool bClosed = m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 0.1f);
 		return bClosed;
 	})
 		.OnExit([this]()

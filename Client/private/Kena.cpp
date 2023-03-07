@@ -65,6 +65,8 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	m_iObjectProperty = OP_PLAYER;
+
 	return S_OK;
 }
 
@@ -85,9 +87,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fDamping = 1.f;
+	PxCapsuleDesc.fLinearDamping = 1.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+	PxCapsuleDesc.fDynamicFriction = 0.5f;
+	PxCapsuleDesc.fStaticFriction = 0.5f;
+	PxCapsuleDesc.fRestitution = 0.1f;
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
@@ -1399,7 +1404,7 @@ void CKena::Test_Raycast()
 			{
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
 				{
-					m_pRopeRotRock->Set_MoveFlag(true);
+					m_pRopeRotRock->Set_MoveFlag(true);					
 					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
 				}					
 			}			
