@@ -199,6 +199,7 @@
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
     <ClInclude Include="..\public\E_KenaPulse.h" />
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
+    <ClInclude Include="..\public\E_KenaPulseDot.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
     <ClCompile Include="..\private\E_KenaPulse.cpp" />
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />

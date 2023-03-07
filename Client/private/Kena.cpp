@@ -56,7 +56,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	Push_EventFunctions();
 
@@ -244,8 +244,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
-	//for (auto& pEffect : m_mapEffect)
-	//	pEffect.second->Late_Tick(fTimeDelta);
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
