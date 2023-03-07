@@ -146,7 +146,7 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
 	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
 	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
-	LightDesc.vPosition = _float4(100.f, 100.f, 100.f,1.f);
+	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
 	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))

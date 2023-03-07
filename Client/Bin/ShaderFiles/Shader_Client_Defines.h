@@ -17,6 +17,13 @@ AddressU = wrap;
 AddressV = wrap;
 };
 
+sampler BorderSampler = sampler_state
+{
+	filter = min_mag_mip_linear;
+AddressU = BORDER;
+AddressV = BORDER;
+};
+
 sampler EyeSampler = sampler_state
 {
 	filter = min_mag_mip_Point;
