@@ -24,7 +24,7 @@ public:
 public:
 	void	BackToOriginal();
 	void	Picked(_float fRatio);
-
+	void	State_Change(_uint eState);
 
 
 public:
@@ -40,6 +40,8 @@ private:
 private:
 	_uint					m_iLevel;
 	STATE					m_eState;
+	_float					m_fDiffuseAlpha;
+	_float					m_fMaskAlpha;
 
 public:
 	static	CUI_NodePlayerSkill*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

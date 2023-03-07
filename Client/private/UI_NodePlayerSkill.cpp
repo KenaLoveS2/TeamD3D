@@ -8,6 +8,8 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(ID3D11Device * pDevice, ID3D11DeviceCon
 	:CUI_Node(pDevice, pContext)
 	, m_iLevel{ 0 }
 	, m_eState{ STATE_BLOCKED }
+	, m_fDiffuseAlpha(0.f)
+	, m_fMaskAlpha(0.f)
 {
 }
 
@@ -15,6 +17,8 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(const CUI_NodePlayerSkill & rhs)
 	: CUI_Node(rhs)
 	, m_iLevel{ 0 }
 	, m_eState{ STATE_BLOCKED }
+	, m_fDiffuseAlpha(0.f)
+	, m_fMaskAlpha(0.f)
 {
 }
 
@@ -88,6 +92,32 @@ void CUI_NodePlayerSkill::Picked(_float fRatio)
 {
 	m_matLocal._11 *= fRatio;
 	m_matLocal._22 *= fRatio;
+}
+
+void CUI_NodePlayerSkill::State_Change(_uint eState)
+{
+	switch (eState)
+	{
+	case STATE_BLOCKED:
+		if (m_iLevel == 0)
+		{
+			m_fDiffuseAlpha = 0.f;
+			m_fMaskAlpha = 1.f;
+		}
+		else
+		{
+			m_fDiffuseAlpha = 1.f;
+			m_fMaskAlpha = 1.f;
+		}
+		break;
+	case STATE_LOCKED:
+
+		break;
+	case STATE_UNLOCKED:
+		m_fDiffuseAlpha = 1.f;
+		m_fMaskAlpha = 0.f;
+		break;
+	}
 }
 
 HRESULT CUI_NodePlayerSkill::Save_Data()
@@ -228,11 +258,15 @@ HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
 	{
 		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iLevel)))
 			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDiffuseAlpha", &m_fDiffuseAlpha, sizeof(_float))))
+			return E_FAIL;
 	}
 
-	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+ 	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
 	{
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fMaskAlpha", &m_fMaskAlpha, sizeof(_float))))
 			return E_FAIL;
 	}
 	RELEASE_INSTANCE(CGameInstance);

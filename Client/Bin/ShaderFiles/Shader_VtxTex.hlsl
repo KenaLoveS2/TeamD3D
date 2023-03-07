@@ -23,6 +23,9 @@ int		g_iCheck = 0;
 float	g_Time;
 unsigned int g_State = 0;
 
+float g_fDiffuseAlpha = 1.f;
+float g_fMaskAlpha = 0.f;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -422,7 +425,20 @@ PS_OUT PS_MAIN_TRIAL(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
 
+	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	vDiffuse.a *= g_fDiffuseAlpha;
+	vMask.a *= g_fMaskAlpha;
+
+	Out.vColor = vDiffuse + vMask;
+
+	return Out;
+}
 technique11 DefaultTechnique
 {
 	pass Rect // 0
@@ -620,7 +636,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_AlphaTestGuage();
 	}
 
-	pass Trial
+	pass Trial // 15
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -631,5 +647,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_TRIAL();
+	}
+
+	pass MaskAlpha
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASKALPHA();
 	}
 }

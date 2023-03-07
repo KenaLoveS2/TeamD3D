@@ -184,6 +184,7 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 			pGameInstance->Add_String(wstrCloneTag);
 			if (FAILED(static_cast<CUI_NodePlayerSkill*>(pUI)->Setting(m_pPlayerSkills[i]->Get_TextureProtoTag(), j)))
 				MSG_BOX("Failed To Setting : CanvasUpgrade");
+			static_cast<CUI_NodePlayerSkill*>(pUI)->State_Change(0);
 		}
 	}
 
