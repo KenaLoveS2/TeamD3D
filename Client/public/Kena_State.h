@@ -126,6 +126,8 @@ public:
 		HEAVY_ATTACK_1_CHARGE, HEAVY_ATTACK_1_INTO_RUN, HEAVY_ATTACK_1_RELEASE, HEAVY_ATTACK_1_RELEASE_PERFECT, HEAVY_ATTACK_1_RETURN,
 		HEAVY_ATTACK_2_CHARGE, HEAVY_ATTACK_2_INTO_RUN, HEAVY_ATTACK_2_RELEASE, HEAVY_ATTACK_2_RELEASE_PERFECT, HEAVY_ATTACK_2_RETURN,
 		HEAVY_ATTACK_3_CHARGE, HEAVY_ATTACK_3_RELEASE, HEAVY_ATTACK_3_RELEASE_PERFECT, HEAVY_ATTACK_3_RETURN,
+
+		/* SPRINT HEAVY ATTACK */
 		HEAVY_ATTACK_COMBO, HEAVY_ATTACK_COMBO_INTO_RUN, HEAVY_ATTACK_COMBO_RETURN,
 
 		HEAVY_FINISHER, HEAVY_FINISHER_LOOP,
@@ -138,7 +140,8 @@ public:
 
 		/* IDLE */
 		IDLE, IDLE_ADDITIVE_LOOP_ADD, 
-		IDLE_INTO_LOCK_ON, IDLE_INTO_RUN_180_LEFT, IDLE_INTO_RUN_180_RIGHT, 
+		IDLE_INTO_LOCK_ON,
+		IDLE_INTO_RUN_180_LEFT, IDLE_INTO_RUN_180_RIGHT, 
 		IDLE_POSE,
 		
 		/* INSPECT */
@@ -192,7 +195,7 @@ public:
 		/* LISTEN */
 		LISTENING_LOOP, LISTEN_LEFT_END_2,
 
-		/* LOCK ON */
+		/* LOCK ON (COMBAT) */
 		LOCK_ON_IDLE, LOCK_ON_TO_IDLE,
 
 		LOOK_AROUND_1_ADD, LOOK_AROUND_2_ADD, LOOK_AROUND_3_ADD,
@@ -405,7 +408,8 @@ private:
 	CTransform::DIRECTION	m_eDir = CTransform::DIR_END;
 	CTransform::DIRECTION	m_ePreDir = CTransform::DIR_END;
 
-	_matrix					m_matPivotBackUp;
+	_bool						m_bCombat = false;
+	_float						m_fCombatIdleTime = 0.f;
 
 private:
 	HRESULT					SetUp_State_Idle();
@@ -416,7 +420,12 @@ private:
 	HRESULT					SetUp_State_Attack3();
 	HRESULT					SetUp_State_Attack4();
 	HRESULT					SetUp_State_Bow();
+	HRESULT					SetUp_State_Combat();
 	HRESULT					SetUp_State_Dodge();
+	HRESULT					SetUp_State_Heavy_Attack1();
+	HRESULT					SetUp_State_Heavy_Attack2();
+	HRESULT					SetUp_State_Heavy_Attack3();
+	HRESULT					SetUp_State_Heavy_Attack_Combo();
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Sprint();
 
@@ -425,6 +434,7 @@ private:
 	void						Start_Idle(_float fTimeDelta);
 	/* RUN */
 	void						Start_Run(_float fTimeDelta);
+	void						Start_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						Start_Aim_Into(_float fTimeDelta);
 	void						Start_Aim_Loop(_float fTimeDelta);
@@ -464,6 +474,12 @@ private:
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						Start_Idle_Into_Lock_On(_float fTimeDelta);
+	void						Start_Lock_On_Idle(_float fTimeDelta);
+	void						Start_Lock_On_To_Idle(_float fTimeDelta);
+	void						Start_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						Start_Combat_Run(_float fTimeDelta);
 	/* DODGE */
 	void						Start_Backflip(_float fTimeDelta);
 	void						Start_Roll(_float fTimeDelta);
@@ -473,6 +489,27 @@ private:
 	void						Start_Roll_Into_Run(_float fTimeDelta);
 	void						Start_Roll_Into_Walk(_float fTimeDelta);
 	void						Start_Roll_Into_Fall(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						Start_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						Start_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						Start_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						Start_Heavy_Attack_Combo(_float fTimeDelta);
+	void						Start_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -505,6 +542,7 @@ private:
 	void						Tick_Idle(_float fTimeDelta);
 	/* RUN */
 	void						Tick_Run(_float fTimeDelta);
+	void						Tick_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						Tick_Aim_Into(_float fTimeDelta);
 	void						Tick_Aim_Loop(_float fTimeDelta);
@@ -543,6 +581,12 @@ private:
 	void						Tick_Bow_Release(_float fTimeDelta);
 	void						Tick_Bow_Recharge(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						Tick_Idle_Into_Lock_On(_float fTimeDelta);
+	void						Tick_Lock_On_Idle(_float fTimeDelta);
+	void						Tick_Lock_On_To_Idle(_float fTimeDelta);
+	void						Tick_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						Tick_Combat_Run(_float fTimeDelta);
 	/* DODGE */
 	void						Tick_Backflip(_float fTimeDelta);
 	void						Tick_Roll(_float fTimeDelta);
@@ -552,6 +596,27 @@ private:
 	void						Tick_Roll_Into_Run(_float fTimeDelta);
 	void						Tick_Roll_Into_Walk(_float fTimeDelta);
 	void						Tick_Roll_Into_Fall(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						Tick_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						Tick_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						Tick_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						Tick_Heavy_Attack_Combo(_float fTimeDelta);
+	void						Tick_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -577,6 +642,7 @@ private:
 	void						End_Idle(_float fTimeDelta);
 	/* RUN */
 	void						End_Run(_float fTimeDelta);
+	void						End_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						End_Aim_Into(_float fTimeDelta);
 	void						End_Aim_Loop(_float fTimeDelta);
@@ -615,6 +681,12 @@ private:
 	void						End_Bow_Release(_float fTimeDelta);
 	void						End_Bow_Recharge(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						End_Idle_Into_Lock_On(_float fTimeDelta);
+	void						End_Lock_On_Idle(_float fTimeDelta);
+	void						End_Lock_On_To_Idle(_float fTimeDelta);
+	void						End_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						End_Combat_Run(_float fTimeDelta);
 	/* DODGE */
 	void						End_Backflip(_float fTimeDelta);
 	void						End_Roll(_float fTimeDelta);
@@ -624,6 +696,27 @@ private:
 	void						End_Roll_Into_Run(_float fTimeDelta);
 	void						End_Roll_Into_Walk(_float fTimeDelta);
 	void						End_Roll_Into_Fall(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						End_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						End_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						End_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						End_Heavy_Attack_Combo(_float fTimeDelta);
+	void						End_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
@@ -648,6 +741,10 @@ private:	/* Changer */
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();
+	_bool	CombatTimeToIdle();
+	_bool	HeavyAttack1_Perfect();
+	_bool	HeavyAttack2_Perfect();
+	_bool	HeavyAttack3_Perfect();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();
@@ -664,6 +761,9 @@ private:	/* Changer */
 	_bool	KeyInput_LShift();
 	_bool	KeyInput_LCtrl();
 	_bool	MouseInput_Left();
+	_bool	MouseInput_Right();
+
+	_bool	NoMouseInput_Right();
 
 	_bool	KeyDown_E();
 	_bool	KeyDown_Q();
@@ -677,6 +777,7 @@ private:	/* Changer */
 	_bool	KeyUp_E();
 	_bool	KeyUp_LShift();
 	_bool	MouseUp_Left();
+	_bool	MouseUp_Right();
 
 private:
 	void	Move(_float TimeDelta, CTransform::DIRECTION eDir, MOVEOPTION eMoveOption = MOVEOPTION_COMMON);

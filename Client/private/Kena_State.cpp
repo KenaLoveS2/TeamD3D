@@ -40,7 +40,12 @@ HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CM
 	FAILED_CHECK_RETURN(SetUp_State_Attack3(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Attack4(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Bow(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Combat(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack1(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack2(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack3(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack_Combo(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Sprint(), E_FAIL);
 
@@ -93,6 +98,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
@@ -111,8 +117,23 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_End(this, &CKena_State::End_Run)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1_FROM_RUN", this, &CKena_State::MouseDown_Left)
-		.Init_Changer(L"IDLE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"RUN_STOP")
+		.Init_Start(this, &CKena_State::Start_Run_Stop)
+		.Init_Tick(this, &CKena_State::Tick_Run_Stop)
+		.Init_End(this, &CKena_State::End_Run_Stop)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1_FROM_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -146,7 +167,12 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_End(this, &CKena_State::End_Aim_Return)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
 		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"AIM_RUN")
@@ -249,9 +275,11 @@ HRESULT CKena_State::SetUp_State_Attack1()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.29f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.29f)
 		.Init_Changer(L"ATTACK_2", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.29f)
-		.Init_Changer(L"ATTACK_1_INTO_RUN", this,  &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_1_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"HEAVY_ATTACK_2_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.29f)
+		.Init_Changer(L"ATTACK_1_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"ATTACK_1_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.6f)
 
 		.Add_State(L"ATTACK_1_FROM_RUN")
 		.Init_Start(this, &CKena_State::Start_Attack_1_From_Run)
@@ -260,9 +288,11 @@ HRESULT CKena_State::SetUp_State_Attack1()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.27f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.27f)
 		.Init_Changer(L"ATTACK_2", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.27f)
-		.Init_Changer(L"ATTACK_1_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_1_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"HEAVY_ATTACK_2_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.27f)
+		.Init_Changer(L"ATTACK_1_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"ATTACK_1_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.6f)
 
 		.Add_State(L"ATTACK_1_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Attack_1_Into_Run)
@@ -271,8 +301,11 @@ HRESULT CKena_State::SetUp_State_Attack1()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"ATTACK_1_INTO_WALK")
 		.Init_Start(this, &CKena_State::Start_Attack_1_Into_Walk)
@@ -286,8 +319,11 @@ HRESULT CKena_State::SetUp_State_Attack1()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -303,9 +339,11 @@ HRESULT CKena_State::SetUp_State_Attack2()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.25f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.25f)
 		.Init_Changer(L"ATTACK_3", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.25f)
-		.Init_Changer(L"ATTACK_2_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_2_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"HEAVY_ATTACK_3_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.25f)
+		.Init_Changer(L"ATTACK_2_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"ATTACK_2_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.45f)
 
 		.Add_State(L"ATTACK_2_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Attack_2_Into_Run)
@@ -314,8 +352,11 @@ HRESULT CKena_State::SetUp_State_Attack2()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"ATTACK_2_INTO_WALK")
 		.Init_Start(this, &CKena_State::Start_Attack_2_Into_Walk)
@@ -329,8 +370,11 @@ HRESULT CKena_State::SetUp_State_Attack2()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -346,9 +390,11 @@ HRESULT CKena_State::SetUp_State_Attack3()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.14f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.14f)
 		.Init_Changer(L"ATTACK_4", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.14f)
-		.Init_Changer(L"ATTACK_3_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_3_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"HEAVY_ATTACK_2_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.14f)
+		.Init_Changer(L"ATTACK_3_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.3f)
+		.Init_Changer(L"ATTACK_3_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
 
 		.Add_State(L"ATTACK_3_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Attack_3_Into_Run)
@@ -357,8 +403,11 @@ HRESULT CKena_State::SetUp_State_Attack3()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"ATTACK_3_RETURN")
 		.Init_Start(this, &CKena_State::Start_Attack_3_Return)
@@ -367,8 +416,11 @@ HRESULT CKena_State::SetUp_State_Attack3()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -384,9 +436,11 @@ HRESULT CKena_State::SetUp_State_Attack4()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.38f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.38f)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.38f)
-		.Init_Changer(L"ATTACK_4_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"ATTACK_4_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.38f)
+		.Init_Changer(L"ATTACK_4_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+		.Init_Changer(L"ATTACK_4_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.6f)
 
 		.Add_State(L"ATTACK_4_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Attack_4_Into_Run)
@@ -395,8 +449,11 @@ HRESULT CKena_State::SetUp_State_Attack4()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"ATTACK_4_RETURN")
 		.Init_Start(this, &CKena_State::Start_Attack_4_Return)
@@ -405,8 +462,11 @@ HRESULT CKena_State::SetUp_State_Attack4()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -474,6 +534,67 @@ HRESULT CKena_State::SetUp_State_Bow()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Combat()
+{
+	m_pStateMachine->Add_State(L"IDLE_INTO_LOCK_ON")
+		.Init_Start(this, &CKena_State::Start_Idle_Into_Lock_On)
+		.Init_Tick(this, &CKena_State::Tick_Idle_Into_Lock_On)
+		.Init_End(this, &CKena_State::End_Idle_Into_Lock_On)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"LOCK_ON_IDLE")
+		.Init_Start(this, &CKena_State::Start_Lock_On_Idle)
+		.Init_Tick(this, &CKena_State::Tick_Lock_On_Idle)
+		.Init_End(this, &CKena_State::End_Lock_On_Idle)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_TO_IDLE", this, &CKena_State::CombatTimeToIdle)
+
+		.Add_State(L"LOCK_ON_TO_IDLE")
+		.Init_Start(this, &CKena_State::Start_Lock_On_To_Idle)
+		.Init_Tick(this, &CKena_State::Tick_Lock_On_To_Idle)
+		.Init_End(this, &CKena_State::End_Lock_On_To_Idle)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"COMBAT_IDLE_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Combat_Idle_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Combat_Idle_Into_Run)
+		.Init_End(this, &CKena_State::End_Combat_Idle_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"COMBAT_RUN")
+		.Init_Start(this, &CKena_State::Start_Combat_Run)
+		.Init_Tick(this, &CKena_State::Tick_Combat_Run)
+		.Init_End(this, &CKena_State::End_Combat_Run)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_Pulse()
 {
 	m_pStateMachine->Add_State(L"INTO_PULSE")
@@ -483,6 +604,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -490,7 +613,11 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Start(this, &CKena_State::Start_Into_Pulse_From_Run)
 		.Init_Tick(this, &CKena_State::Tick_Into_Pulse_From_Run)
 		.Init_End(this, &CKena_State::End_Into_Pulse_From_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -501,7 +628,11 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"PULSE_INTO_IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"PULSE_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"PULSE_INTO_IDLE", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
 
 		.Add_State(L"PULSE_LOOP")
 		.Init_Start(this, &CKena_State::Start_Pulse_Loop)
@@ -510,6 +641,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::KeyInput_Direction)
 
@@ -524,13 +657,26 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Into_Idle)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
-		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"PULSE_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Pulse_Into_Run)
 		.Init_Tick(this, &CKena_State::Tick_Pulse_Into_Run)
 		.Init_End(this, &CKena_State::End_Pulse_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"PULSE_PARRY")
 		.Init_Start(this, &CKena_State::Start_Pulse_Parry)
@@ -558,6 +704,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -568,6 +717,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -578,6 +730,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -588,6 +743,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -598,6 +756,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -608,6 +769,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -618,6 +782,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -628,6 +795,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Walk)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -638,6 +808,9 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Squat_Sprint)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO", this, &CKena_State::MouseDown_Right)
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT", this, &CKena_State::Animation_Finish)
@@ -656,6 +829,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO", this, &CKena_State::MouseDown_Right)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT", this, &CKena_State::Animation_Finish)
 
@@ -665,6 +839,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_End(this, &CKena_State::End_Sprint)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO", this, &CKena_State::MouseDown_Right)
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 
@@ -714,7 +889,12 @@ HRESULT CKena_State::SetUp_State_Dodge()
 		.Init_Start(this, &CKena_State::Start_Backflip)
 		.Init_Tick(this, &CKena_State::Tick_Backflip)
 		.Init_End(this, &CKena_State::End_Backflip)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.42f)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.42f)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.42f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.42f)
+		.Init_Changer(L"ROLL_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.42f)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"ROLL")
 		.Init_Start(this, &CKena_State::Start_Roll)
@@ -737,17 +917,23 @@ HRESULT CKena_State::SetUp_State_Dodge()
 		.Init_Start(this, &CKena_State::Start_Roll_Into_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Roll_Into_Idle)
 		.Init_End(this, &CKena_State::End_Roll_Into_Idle)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"ROLL_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"ROLL_INTO_RUN")
 		.Init_Start(this, &CKena_State::Start_Roll_Into_Run)
 		.Init_Tick(this, &CKena_State::Tick_Roll_Into_Run)
 		.Init_End(this, &CKena_State::End_Roll_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"ROLL_INTO_WALK")
 		.Init_Start(this, &CKena_State::Start_Roll_Into_Walk)
@@ -764,9 +950,224 @@ HRESULT CKena_State::SetUp_State_Dodge()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Heavy_Attack1()
+{
+	m_pStateMachine->Add_State(L"HEAVY_ATTACK_1_CHARGE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_1_Charge)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_1_Charge)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_1_Charge)
+		.Init_Changer(L"HEAVY_ATTACK_1_RELEASE_PERFECT", this, &CKena_State::MouseUp_Right, &CKena_State::HeavyAttack1_Perfect)
+		.Init_Changer(L"HEAVY_ATTACK_1_RELEASE", this, &CKena_State::NoMouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.25f)
+		.Init_Changer(L"HEAVY_ATTACK_1_RELEASE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_1_RELEASE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_1_Release)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_1_Release)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_1_Release)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"ATTACK_2", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_2_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_1_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.35f)
+		.Init_Changer(L"HEAVY_ATTACK_1_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+
+		.Add_State(L"HEAVY_ATTACK_1_RELEASE_PERFECT")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_1_Release_Perfect)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_1_Release_Perfect)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_1_Release_Perfect)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"ATTACK_2", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_2_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_1_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.35f)
+		.Init_Changer(L"HEAVY_ATTACK_1_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+
+		.Add_State(L"HEAVY_ATTACK_1_RETURN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_1_Return)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_1_Return)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_1_Return)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_1_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_1_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_1_Into_Run)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_1_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1_FROM_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Heavy_Attack2()
+{
+	m_pStateMachine->Add_State(L"HEAVY_ATTACK_2_CHARGE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_2_Charge)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_2_Charge)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_2_Charge)
+		.Init_Changer(L"HEAVY_ATTACK_2_RELEASE_PERFECT", this, &CKena_State::MouseUp_Right, &CKena_State::HeavyAttack2_Perfect)
+		.Init_Changer(L"HEAVY_ATTACK_2_RELEASE", this, &CKena_State::NoMouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.235f)
+		.Init_Changer(L"HEAVY_ATTACK_2_RELEASE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_2_RELEASE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_2_Release)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_2_Release)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_2_Release)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"ATTACK_3", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_3_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_2_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"HEAVY_ATTACK_2_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
+
+		.Add_State(L"HEAVY_ATTACK_2_RELEASE_PERFECT")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_2_Release_Perfect)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_2_Release_Perfect)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_2_Release_Perfect)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"ATTACK_3", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_3_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.21f)
+		.Init_Changer(L"HEAVY_ATTACK_2_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"HEAVY_ATTACK_2_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
+
+		.Add_State(L"HEAVY_ATTACK_2_RETURN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_2_Return)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_2_Return)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_2_Return)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_2_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_2_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_2_Into_Run)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_2_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1_FROM_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Heavy_Attack3()
+{
+	m_pStateMachine->Add_State(L"HEAVY_ATTACK_3_CHARGE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_3_Charge)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_3_Charge)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_3_Charge)
+		.Init_Changer(L"HEAVY_ATTACK_3_RELEASE_PERFECT", this, &CKena_State::MouseUp_Right, &CKena_State::HeavyAttack3_Perfect)
+		.Init_Changer(L"HEAVY_ATTACK_3_RELEASE", this, &CKena_State::NoMouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.36f)
+		.Init_Changer(L"HEAVY_ATTACK_3_RELEASE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_3_RELEASE")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_3_Release)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_3_Release)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_3_Release)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"HEAVY_ATTACK_2_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"HEAVY_ATTACK_3_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
+
+		.Add_State(L"HEAVY_ATTACK_3_RELEASE_PERFECT")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_3_Release_Perfect)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_3_Release_Perfect)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_3_Release_Perfect)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.24f)
+		.Init_Changer(L"HEAVY_ATTACK_2_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"HEAVY_ATTACK_3_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
+
+		.Add_State(L"HEAVY_ATTACK_3_RETURN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_3_Return)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_3_Return)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_3_Return)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Heavy_Attack_Combo()
+{
+	m_pStateMachine->Add_State(L"HEAVY_ATTACK_COMBO")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_Combo)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_Combo)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_Combo)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_RETURN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
+
+		.Add_State(L"HEAVY_ATTACK_COMBO_RETURN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_Combo_Return)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_Combo_Return)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_Combo_Return)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"COMBAT_IDLE_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"HEAVY_ATTACK_COMBO_INTO_RUN")
+		.Init_Start(this, &CKena_State::Start_Heavy_Attack_Combo_Into_Run)
+		.Init_Tick(this, &CKena_State::Tick_Heavy_Attack_Combo_Into_Run)
+		.Init_End(this, &CKena_State::End_Heavy_Attack_Combo_Into_Run)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 void CKena_State::Start_Idle(_float fTimeDelta)
 {
-	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ROLL_INTO_IDLE)
+	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)RUN_STOP ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ROLL_INTO_IDLE)
 		m_pAnimationState->State_Animation("IDLE", 0.f);
 	else
 		m_pAnimationState->State_Animation("IDLE");
@@ -774,10 +1175,23 @@ void CKena_State::Start_Idle(_float fTimeDelta)
 
 void CKena_State::Start_Run(_float fTimeDelta)
 {
-	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ROLL_INTO_RUN)
+	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ATTACK_1_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ATTACK_2_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ATTACK_3_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ATTACK_4_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)HEAVY_ATTACK_1_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)HEAVY_ATTACK_2_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)HEAVY_ATTACK_COMBO_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)PULSE_INTO_RUN ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ROLL_INTO_RUN)
 		m_pAnimationState->State_Animation("RUN", 0.f);
 	else
 		m_pAnimationState->State_Animation("RUN");
+}
+
+void CKena_State::Start_Run_Stop(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("RUN_STOP");
 }
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
@@ -854,13 +1268,15 @@ void CKena_State::Start_Aim_Run_Right(_float fTimeDelta)
 void CKena_State::Start_Attack_1(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ATTACK_1");
-	Move(0.f, m_eDir);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ATTACK_1_FROM_RUN");
-	Move(0.f, m_eDir);
+
+	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Start_Attack_1_Into_Run(_float fTimeDelta)
@@ -961,6 +1377,38 @@ void CKena_State::Start_Bow_Return(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN");
 }
 
+void CKena_State::Start_Idle_Into_Lock_On(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("IDLE_INTO_LOCK_ON");
+}
+
+void CKena_State::Start_Lock_On_Idle(_float fTimeDelta)
+{
+	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)IDLE_INTO_LOCK_ON ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)BACKFLIP ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)ROLL_INTO_IDLE)
+		m_pAnimationState->State_Animation("LOCK_ON_IDLE", 0.f);
+	else
+		m_pAnimationState->State_Animation("LOCK_ON_IDLE");
+
+	m_fCombatIdleTime = 0.f;
+}
+
+void CKena_State::Start_Lock_On_To_Idle(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LOCK_ON_TO_IDLE");
+}
+
+void CKena_State::Start_Combat_Idle_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("COMBAT_IDLE_INTO_RUN");
+}
+
+void CKena_State::Start_Combat_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("COMBAT_RUN_ADDITIVE_POSE");
+}
+
 void CKena_State::Start_Backflip(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BACKFLIP");
@@ -1001,6 +1449,91 @@ void CKena_State::Start_Roll_Into_Walk(_float fTimeDelta)
 void CKena_State::Start_Roll_Into_Fall(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ROLL_INTO_FALL");
+}
+
+void CKena_State::Start_Heavy_Attack_1_Charge(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_CHARGE");
+}
+
+void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE");
+}
+
+void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE_PERPECT");
+}
+
+void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RETURN");
+}
+
+void CKena_State::Start_Heavy_Attack_1_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_INTO_RUN");
+}
+
+void CKena_State::Start_Heavy_Attack_2_Charge(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_CHARGE");
+}
+
+void CKena_State::Start_Heavy_Attack_2_Release(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE");
+}
+
+void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE_PERFECT");
+}
+
+void CKena_State::Start_Heavy_Attack_2_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RETURN");
+}
+
+void CKena_State::Start_Heavy_Attack_2_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_INTO_RUN");
+}
+
+void CKena_State::Start_Heavy_Attack_3_Charge(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_CHARGE");
+}
+
+void CKena_State::Start_Heavy_Attack_3_Release(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE");
+}
+
+void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE_PERFECT");
+}
+
+void CKena_State::Start_Heavy_Attack_3_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RETURN");
+}
+
+void CKena_State::Start_Heavy_Attack_Combo(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO");
+}
+
+void CKena_State::Start_Heavy_Attack_Combo_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO_RETURN");
+}
+
+void CKena_State::Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO_INTO_RUN");
 }
 
 void CKena_State::Start_Into_Pulse(_float fTimeDelta)
@@ -1163,6 +1696,10 @@ void CKena_State::Tick_Run(_float fTimeDelta)
 	Move(fTimeDelta, m_eDir);
 }
 
+void CKena_State::Tick_Run_Stop(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Aim_Into(_float fTimeDelta)
 {
 
@@ -1304,6 +1841,28 @@ void CKena_State::Tick_Bow_Return(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Idle_Into_Lock_On(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Lock_On_Idle(_float fTimeDelta)
+{
+	m_fCombatIdleTime += fTimeDelta;
+}
+
+void CKena_State::Tick_Lock_On_To_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Combat_Idle_Into_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Combat_Run(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Backflip(_float fTimeDelta)
 {
 }
@@ -1337,6 +1896,77 @@ void CKena_State::Tick_Roll_Into_Fall(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Heavy_Attack_1_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_1_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_1_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_1_Into_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Heavy_Attack_2_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_2_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_2_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_2_Into_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Heavy_Attack_3_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_3_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_3_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_Combo(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_Combo_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
 void CKena_State::Tick_Into_Pulse(_float fTimeDelta)
 {
 }
@@ -1347,6 +1977,7 @@ void CKena_State::Tick_Into_Pulse_From_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Pulse(_float fTimeDelta)
 {
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Tick_Pulse_Loop(_float fTimeDelta)
@@ -1413,6 +2044,10 @@ void CKena_State::End_Idle(_float fTimeDelta)
 }
 
 void CKena_State::End_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Run_Stop(_float fTimeDelta)
 {
 }
 
@@ -1545,6 +2180,26 @@ void CKena_State::End_Bow_Return(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Idle_Into_Lock_On(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Lock_On_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Lock_On_To_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Combat_Idle_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Combat_Run(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Backflip(_float fTimeDelta)
 {
 }
@@ -1574,6 +2229,74 @@ void CKena_State::End_Roll_Into_Walk(_float fTimeDelta)
 }
 
 void CKena_State::End_Roll_Into_Fall(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_1_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_1_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_1_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_1_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_2_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_2_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_2_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_2_Into_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_3_Charge(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_3_Release(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_3_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_Combo(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_Combo_Return(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
 {
 }
 
@@ -1664,6 +2387,26 @@ _bool CKena_State::Animation_Progress(_float fProgress)
 _bool CKena_State::Direction_Change()
 {
 	return m_eDir != m_ePreDir && m_eDir != CTransform::DIR_END;
+}
+
+_bool CKena_State::CombatTimeToIdle()
+{
+	return !m_bCombat && m_fCombatIdleTime > 2.5f;
+}
+
+_bool CKena_State::HeavyAttack1_Perfect()
+{
+	return m_pAnimationState->Get_AnimationProgress() > 0.7f && m_pAnimationState->Get_AnimationProgress() < 0.75f;
+}
+
+_bool CKena_State::HeavyAttack2_Perfect()
+{
+	return m_pAnimationState->Get_AnimationProgress() > 0.45f && m_pAnimationState->Get_AnimationProgress() < 0.5f;
+}
+
+_bool CKena_State::HeavyAttack3_Perfect()
+{
+	return m_pAnimationState->Get_AnimationProgress() > 0.7f && m_pAnimationState->Get_AnimationProgress() < 0.75f;
 }
 
 _bool CKena_State::KeyInput_None()
@@ -1796,6 +2539,22 @@ _bool CKena_State::MouseInput_Left()
 	return false;
 }
 
+_bool CKena_State::MouseInput_Right()
+{
+	if (m_pGameInstance->Mouse_Pressing(DIM_RB))
+		return true;
+
+	return false;
+}
+
+_bool CKena_State::NoMouseInput_Right()
+{
+	if (m_pGameInstance->Mouse_Pressing(DIM_RB) == false)
+		return true;
+
+	return false;
+}
+
 _bool CKena_State::KeyDown_E()
 {
 	if (m_pGameInstance->Key_Down(DIK_E))
@@ -1879,6 +2638,14 @@ _bool CKena_State::KeyUp_LShift()
 _bool CKena_State::MouseUp_Left()
 {
 	if (m_pGameInstance->Mouse_Up(DIM_LB))
+		return true;
+
+	return false;
+}
+
+_bool CKena_State::MouseUp_Right()
+{
+	if (m_pGameInstance->Mouse_Up(DIM_RB))
 		return true;
 
 	return false;
