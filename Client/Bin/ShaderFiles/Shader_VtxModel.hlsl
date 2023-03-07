@@ -4,6 +4,7 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
 float				g_fFar = 300.f;
+float4			g_vCamPosition;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
@@ -187,6 +188,19 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN_SHADOW In)
 	return Out;
 }
 
+VS_OUT_SHADOW VS_MAIN_SHADOW_WEAPON(VS_IN_SHADOW In)
+{
+	VS_OUT_SHADOW		Out = (VS_OUT_SHADOW)0;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	vPosition = mul(vPosition, g_SocketMatrix);
+
+	Out.vPosition = mul(vPosition, matVP);
+	Out.vProjPos = Out.vPosition;
+	return Out;
+}
+
 struct PS_IN_SHADOW
 {
 	float4			vPosition : SV_POSITION;
@@ -275,5 +289,15 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_MODEL_VIEWER();
 	}
 
-
+	pass Weapon_Shadow //5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN_SHADOW_WEAPON();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+	}
 }

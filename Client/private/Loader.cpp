@@ -23,6 +23,8 @@
 #include "Sticks01.h"
 #include "VillageGuard.h"
 #include "WoodKnight.h"
+#include "BranchTosser.h"
+#include "BranchTosser_Weapon.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -69,7 +71,6 @@
 /*Test Objects*/
 #include "LodObject.h"
 #include "ModelViewerObject.h"
-#include "Moth.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -847,8 +848,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
-
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;
@@ -1049,7 +1048,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_Sticks01 */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sticks01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_VillageGuard */
@@ -1059,7 +1058,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_WoodKnight */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_BranchTosser */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Rot */
@@ -1070,6 +1074,9 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* Prototype_Component_Model_HeroRot */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser/", false, false, false)))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
@@ -1362,7 +1369,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 
-	///* For.Prototype_GameObject_Sky */
+	/* For.Prototype_GameObject_Sky */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mesh"),
 	//	CEffect_Mesh::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
@@ -1431,6 +1438,14 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WoodKnight"),
 		CWoodKnight::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"),
+		CBranchTosser::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"),
+		CBranchTosser_Weapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),

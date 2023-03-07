@@ -8,7 +8,6 @@ class CRenderer;
 class CShader;
 class CModel;
 class CCollider;
-class CRenderer;
 class CNavigation;
 class CFSMComponent;
 END
@@ -19,7 +18,8 @@ class CMonster  : public CGameObject
 {
 protected:
 	enum MonsterShaderPass
-	{ DEFAULT,
+	{
+		DEFAULT,
 		AO_R_M,
 		AO_R_M_E,
 		AO_R_M_G,
@@ -27,7 +27,17 @@ protected:
 		AO_R_M_EEM,
 		SEPARATE_AO_R_M_E,
 		MASK,
-		PASS_END};
+		PASS_END
+	};
+
+	enum PLAYERLOOKAT_DIR
+	{
+		LEFT,
+		FRONT,
+		RIGHT,
+		BACK,
+		PLAYERLOOKAT_DIREND
+	};
 
 protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -51,30 +61,38 @@ public:
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
-	virtual void					Update_Collider(_float fTimeDelta);
+	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
 	_bool							AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
 	_bool							DistanceTrigger(_float distance);
+	_bool							IntervalDistanceTrigger(_float min, _float max);
 	_bool							TimeTrigger(_float Time1, _float Time2);
 	_float							DistanceBetweenPlayer();
+	_float							Calc_PlayerLookAtDirection();
+
+	virtual void					AdditiveAnim(_float fTimeDelta);
 
 protected:
+	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
+
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*						m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
 	CCollider*						m_pRangeCol = nullptr;
-	CNavigation*				m_pNavigationCom = nullptr;
+	CNavigation*					m_pNavigationCom = nullptr;
 	CFSMComponent*		m_pFSM = nullptr;
 	class CGameObject*		m_pKena = nullptr;
-	_float4							m_pKenaPos;
+	_float4							m_vKenaPos;
 
 protected:
-	_bool							m_bSpawn = false;
-	_float							m_fIdletoAttackTime = 0.f;
+	_bool	m_bWeaklyHit = false;
+	_bool	m_bStronglyHit = false;
+	_bool	m_bBind = false;
 
 protected:
+	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
 	virtual	HRESULT			SetUp_Components() PURE;
 	virtual	HRESULT			SetUp_ShaderResources() PURE;

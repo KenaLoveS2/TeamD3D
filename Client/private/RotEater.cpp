@@ -226,6 +226,10 @@ HRESULT CRotEater::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+void CRotEater::Update_Collider(_float fTimeDelta)
+{
+}
+
 CRotEater* CRotEater::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRotEater*	pInstance = new CRotEater(pDevice, pContext);

@@ -968,6 +968,25 @@ void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
 	m_Animations[iAnimIndex]->Reset_Animation();
 }
 
+void CModel::Set_AdditiveAnimIndexForMonster(_uint iAnimIndex)
+{
+	m_iAdditiveAnimIndexForMonster = iAnimIndex;
+}
+
+void CModel::Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone)
+{
+	if (TYPE_NONANIM == m_eType)
+		return;
+
+	m_Animations[m_iAdditiveAnimIndexForMonster]->Update_Bones_AdditiveForMonster(fTimeDelta, fRatio, strRootBone);
+
+	for (auto& pBone : m_Bones)
+	{
+		if (nullptr != pBone)
+			pBone->Compute_CombindTransformationMatrix();
+	}
+}
+
 HRESULT CModel::Add_Event(_uint iAnimIndex, _float fPlayTime, const string & strFuncName)
 {
 	if (iAnimIndex >= m_iNumAnimations)

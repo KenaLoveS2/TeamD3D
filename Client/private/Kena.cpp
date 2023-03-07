@@ -76,12 +76,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vPos = vPos;
 	PxCapsuleDesc.fRadius = vPivotScale.x;
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.vVelocity = m_vVelocity;
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 	PxCapsuleDesc.fMass = 1.f;
 	PxCapsuleDesc.fDamping = 1.f;
-
+	
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -96,15 +96,15 @@ HRESULT CKena::Late_Initialize(void * pArg)
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-		
+
+	if(GetKeyState(VK_SPACE) & 0x8000)
+	{
+		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
+	}
+
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
-
-	if (GetKeyState(VK_SPACE) & 0x8000)
-	{
-		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0.f, 1.f, 0.f));
-	}
 
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
@@ -205,8 +205,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Late_Tick(fTimeDelta);
+	//for (auto& pEffect : m_mapEffect)
+	//	pEffect.second->Late_Tick(fTimeDelta);
 }
 
 HRESULT CKena::Render()
@@ -277,6 +277,23 @@ HRESULT CKena::RenderShadow()
 void CKena::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
+
+	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+	_float fMass = ((PxRigidDynamic*)pActor)->getMass();
+	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+	_float fLinearDamping = ((PxRigidDynamic*)pActor)->getLinearDamping();
+	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+	_float fAngularDamping = ((PxRigidDynamic*)pActor)->getAngularDamping();
+	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+	//ImGui::DragFloat("LinearDamping", &m_fDensity, 0.01f, -100.f, 500.f);
+	float vVelocity[3] = { m_vVelocity.x, m_vVelocity.y, m_vVelocity.z };
+	ImGui::DragFloat3("PxVelocity", vVelocity, 0.01f, 0.1f, 100.0f);
+	m_vVelocity.x = vVelocity[0]; m_vVelocity.y = vVelocity[1]; m_vVelocity.z = vVelocity[2];
+	CPhysX_Manager::GetInstance()->Set_DynamicParameter(m_szCloneObjectTag, m_fDensity, fAngularDamping, fMass, fLinearDamping, m_vVelocity);
+
+	ImGui::Begin("Trans");
+	m_pTransformCom->Imgui_RenderProperty();
+	ImGui::End();
 }
 
 void CKena::ImGui_AnimationProperty()
