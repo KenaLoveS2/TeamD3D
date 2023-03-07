@@ -7,8 +7,6 @@ BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
-class CCollider;
-class CNavigation;
 class CFSMComponent;
 END
 
@@ -80,8 +78,6 @@ protected:
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*						m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
-	CCollider*						m_pRangeCol = nullptr;
-	CNavigation*					m_pNavigationCom = nullptr;
 	CFSMComponent*		m_pFSM = nullptr;
 	class CGameObject*		m_pKena = nullptr;
 	_float4							m_vKenaPos;

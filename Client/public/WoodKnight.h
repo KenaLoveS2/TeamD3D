@@ -67,6 +67,14 @@ private:
 		ATTACKTYPE_END
 	};
 
+	enum BLOCKAFTERTYPE
+	{
+		BA_FRONT,
+		BA_BACK,
+		BA_NONE,
+		BLOCKAFTERTYPE_END
+	};
+
 	enum COLLIDERTYPE
 	{
 		COLL_WEAPON = 0,
@@ -109,6 +117,9 @@ private:
 	void Reset_Attack();
 	void Tick_Attack(_float fTimeDelta);
 
+	void Set_BlockAfterType();
+	void Reset_BlockAfterType();
+
 private:
 	_bool	m_bSpawn = false;
 	_float	m_fIdletoAttackTime = 0.f;
@@ -125,6 +136,15 @@ private:
 	_bool	m_isCloseRange = false;
 	_bool	m_isMiddleRange = false;
 	_bool	m_isFarRange = false;
+
+	_bool	m_bBlock = false;
+
+	_float	m_fBlocktoAttackTime = 0.f;
+	_int		m_iBlockType = BLOCKAFTERTYPE_END;
+
+	_bool	m_bBlockAfterFront = false;
+	_bool	m_bBlockAfterBack = false;
+	_bool	m_bBlockNone = false;
 
 private:
 	vector<wstring> m_vecColliderName;

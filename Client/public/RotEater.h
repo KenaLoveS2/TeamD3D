@@ -57,6 +57,7 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -75,6 +76,7 @@ private:
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
+	void	AdditiveAnim(_float fTimeDelta) override;
 
 public:
 	static CRotEater*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

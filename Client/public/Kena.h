@@ -86,9 +86,6 @@ private:
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
 
-	_float3					m_vVelocity;
-	_float					m_fDensity =  0.f;
-
 private:
 	HRESULT					Ready_Parts();
 	HRESULT					Ready_Effects();
