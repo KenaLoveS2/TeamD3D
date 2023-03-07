@@ -31,6 +31,10 @@ public:
 
 private:
 	class CE_KenaTrail* m_pKenaStaffTrail = nullptr;
+	_float m_fTimeDelta = 0.0f;
+	_float4 m_vColor;
+
+	_float2 m_fUV;
 
 public:
 	static CKena_Staff*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

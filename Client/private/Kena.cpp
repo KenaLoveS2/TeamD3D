@@ -7,6 +7,11 @@
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 
+#include "GroundMark.h"
+#include "Terrain.h"
+#include "Rope_RotRock.h"
+
+
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -34,7 +39,7 @@ HRESULT CKena::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GaemObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
@@ -63,6 +68,8 @@ HRESULT CKena::Initialize(void * pArg)
 	m_fGravity = 9.81f;
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
 	m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	
+	m_iObjectProperty = OP_PLAYER;
 
 	return S_OK;
 }
@@ -83,9 +90,14 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f,0.f,0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 1.f;
-	PxCapsuleDesc.fDamping = 1.f;
-	
+	PxCapsuleDesc.fMass = 59.f;
+	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.bCCD = true;
+	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+	PxCapsuleDesc.fDynamicFriction = 0.5f;
+	PxCapsuleDesc.fStaticFriction = 0.5f;
+	PxCapsuleDesc.fRestitution = 0.1f;
+
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -94,12 +106,22 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
 	m_pTransformCom->Set_PxPivot(vPivotPos);
 
+	CGameInstance* pGameInst = CGameInstance::GetInstance();
+	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
+
 	return S_OK;
 }
 
 void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Test_Raycast();
+
+	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
+	if(pGameInstnace->Key_Down(DIK_SPACE))
+		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
+	RELEASE_INSTANCE(CGameInstance)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
@@ -130,16 +152,27 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
 	
 	/************** Delegator Test *************/
-	CUI_ClientManager::UI_PRESENT eHP		= CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_PRESENT ePip			= CUI_ClientManager::HUD_PIP;
-	CUI_ClientManager::UI_PRESENT eType3		= CUI_ClientManager::HUD_SHIELD;
-	CUI_ClientManager::UI_PRESENT eType4		= CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_PRESENT eBomb			= CUI_ClientManager::AMMO_BOMB;
-	CUI_ClientManager::UI_PRESENT eArrowGuage	= CUI_ClientManager::AMMO_ARROW;
-	CUI_ClientManager::UI_PRESENT eAim			= CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
+	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	{
+
+	}
+
 	static _float fNum = 3.f;
 	_float fZero = 0.f;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
@@ -150,6 +183,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
 		m_PlayerDelegator.broadcast(ePip, funcLevelup, fLevel);
 		m_PlayerDelegator.broadcast(eHP, funcLevelup, fLevel);
+
+		m_PlayerDelegator.broadcast(eQuest, funcSwitch, fZero);
+
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -168,12 +204,17 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
 
 		/* Arrow Guage test */
-		static _float fArrow = 1.f; 
+		static _float fArrow = 1.f;
 		m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
 
 		/* Aim Test */
 		static _float fAim = 1.f;
 		m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
+
+		/* Quest Open Test */
+		static _float fQuestIndex = 0.f;
+		m_PlayerDelegator.broadcast(eQuestLine, funcSwitch, fQuestIndex);
+		fQuestIndex += 1.f;
 
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
@@ -182,6 +223,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
 		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
+
+		/* Quest Check Test */
+		static _float fQuestClear = 0.f;
+		m_PlayerDelegator.broadcast(eQuestLine, funcCheck, fQuestClear);
+		fQuestClear += 1.f;
+
+
 	}
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 	{
@@ -192,6 +240,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	}
 
 	/************** ~Delegator Test *************/
+
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -1459,4 +1508,35 @@ _int CKena::Execute_Collision(CGameObject * pTarget)
 	}
 
 	return 0;
+}
+void CKena::Test_Raycast()
+{
+	if (GetKeyState(VK_LSHIFT) & 0x0800)
+	{
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		CGameInstance* pGameInst = CGameInstance::GetInstance();
+
+		_vector vCamPos = pGameInst->Get_CamPosition();
+		_vector vCamLook = pGameInst->Get_CamLook_Float4();
+		_float3 vOut;
+
+		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
+		{
+			m_pTerrain->Set_BrushPosition(vOut);
+			// m_pGroundMark->Set_Position(vOut);
+
+			if (GetKeyState('R') & 0x0800)
+			{
+				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
+				{
+					m_pRopeRotRock->Set_MoveFlag(true);					
+					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
+				}					
+			}			
+		}
+		else
+		{
+
+		}
+	}
 }

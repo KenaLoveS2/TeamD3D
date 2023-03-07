@@ -70,6 +70,8 @@ protected:
 	_float3			m_vPhysXScale;
 	_float3			m_vPhysXPos;
 
+	_uint m_iObjectProperty = 0;
+
 protected:
 	map<const _tchar*, class CComponent*>			m_Components;
 

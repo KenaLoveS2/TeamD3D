@@ -4,6 +4,8 @@
 #include "Json/json.hpp"
 #include <fstream>
 #include "Utile.h"
+#include <codecvt>
+#include <locale>
 
 CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI(pDevice, pContext)
@@ -151,8 +153,14 @@ HRESULT CUI_Canvas::Save_Data()
 		iIndex = -1;
 	json["MaskTextureIndex"] = iIndex;
 
-
-
+	/* test */
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
+	//vector<wstring>* pProtos = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
+	//wstring diffuseTag = (*pProtos)[m_TextureListIndices[TEXTURE_DIFFUSE]];
+	//json["TextureProtoTag"] = utf8_conv.to_bytes(diffuseTag);
+	//json.dump();
+	
 	wstring filePath = L"../Bin/Data/UI/";
 	filePath += this->Get_ObjectCloneName();
 	filePath += L"_Property.json";
