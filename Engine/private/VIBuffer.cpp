@@ -22,9 +22,9 @@ CVIBuffer::CVIBuffer(const CVIBuffer & rhs)
 	, m_eTopology(rhs.m_eTopology)
 	, m_iNumIndices(rhs.m_iNumIndices)
 
-	// kbj physx
-	, m_pPxVertices(rhs.m_pPxVertices)
-	, m_pPxIndicies(rhs.m_pPxIndicies)
+
+	,m_pPxVertices(rhs.m_pPxVertices)
+	,m_pPxIndicies(rhs.m_pPxIndicies)
 {
 	Safe_AddRef(m_pVB);
 	Safe_AddRef(m_pIB);
@@ -103,7 +103,7 @@ void CVIBuffer::Free()
 	Safe_Release(m_pIB);
 
 	// kbj physx
-	if (m_isCloned == true)
+	if (m_isCloned == false)
 	{
 		Safe_Delete_Array(m_pPxVertices);
 		Safe_Delete_Array(m_pPxIndicies);

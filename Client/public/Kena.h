@@ -59,6 +59,8 @@ private:
 	class CKena_State*		m_pKenaState = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
+	class CTerrain* m_pTerrain = nullptr;
+	class CRope_RotRock* m_pRopeRotRock = nullptr;
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
@@ -93,16 +95,21 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
-	void					Test(_bool bIsInit, _float fTimeDelta);
+	void							Test(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 	_float m_fTest = 0.f;
 
+
+
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
+
+	void Test_Raycast();
+	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 };
 
 END

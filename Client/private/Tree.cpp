@@ -47,6 +47,8 @@ void CTree::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	
 }
 
 HRESULT CTree::Render()

@@ -62,7 +62,7 @@ void CMonster::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_pKena)
-		m_pKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -117,8 +117,11 @@ void CMonster::Push_EventFunctions()
 {
 }
 
-void CMonster::Update_Collider(_float fTimeDelta)
+void CMonster::Calc_RootBoneDisplacement(_fvector vDisplacement)
 {
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = vPos + vDisplacement;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
 _bool CMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
@@ -150,6 +153,19 @@ _bool CMonster::DistanceTrigger(_float distance)
 		return false;
 }
 
+_bool CMonster::IntervalDistanceTrigger(_float min, _float max)
+{
+	_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	_float fDistance = _float3::Distance(vPos, vPlayerPos);
+
+	if (min <= fDistance && fDistance <= max)
+		return true;
+	else
+		return false;
+}
+
 _bool CMonster::TimeTrigger(_float Time1, _float Time2)
 {
 	if (Time1 >= Time2)
@@ -166,6 +182,44 @@ _float CMonster::DistanceBetweenPlayer()
 	return  _float3::Distance(vPos, vPlayerPos);
 }
 
+_float CMonster::Calc_PlayerLookAtDirection()
+{
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vRight = m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
+	_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+
+	_float4 vEyeDirection = vPos - m_vKenaPos;
+	vEyeDirection.Normalize();
+	vEyeDirection.w = 0.f;
+
+	_float fFBLookRatio = vEyeDirection.Dot(vLook);
+	_float fLRLookRatio = vEyeDirection.Dot(vRight);
+
+	if (fFBLookRatio <= 0.f)
+	{
+		if (fLRLookRatio >= -0.5f && fLRLookRatio <= 0.5f)
+			m_PlayerLookAt_Dir = FRONT;
+		else	if (fLRLookRatio >= -1.f && fLRLookRatio <= -0.5f)
+			m_PlayerLookAt_Dir = RIGHT;
+		else if(fLRLookRatio >= 0.5f && fLRLookRatio <= 1.f)
+			m_PlayerLookAt_Dir = LEFT;
+	}
+	else 
+	{
+		if (fLRLookRatio >= -0.5f && fLRLookRatio <= 0.5f)
+			m_PlayerLookAt_Dir = BACK;
+		else	if (fLRLookRatio >= -1.f && fLRLookRatio <= -0.5f)
+			m_PlayerLookAt_Dir = RIGHT;
+		else if (fLRLookRatio >= 0.5f && fLRLookRatio <= 1.f)
+			m_PlayerLookAt_Dir = LEFT;
+	}
+
+	return fLRLookRatio;
+}
+
+void CMonster::AdditiveAnim(_float fTimeDelta)
+{
+}
 
 void CMonster::Free()
 {
@@ -173,7 +227,5 @@ void CMonster::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pRangeCol);
-	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pFSM);
 }

@@ -15,9 +15,11 @@ public:
 		_float fDegree;
 		_bool isGravity;
 
+		PX_FILTER_TYPE eFilterType;
+
 		// Dynamic Parameter
 		_float3 vVelocity;
-		_float fDensity, fAngularDamping;
+		_float fDensity, fAngularDamping, fMass, fDamping;
 		_bool bCCD;
 	} PX_BOX_DESC;
 
@@ -29,9 +31,11 @@ public:
 		_float fRadius;
 		_bool isGravity;
 
+		PX_FILTER_TYPE eFilterType;
+
 		// Dynamic Parameter
 		_float3 vVelocity;
-		_float fDensity, fAngularDamping;
+		_float fDensity, fAngularDamping, fMass, fDamping;
 		_bool bCCD;
 	} PX_SPHERE_DESC;
 
@@ -43,6 +47,8 @@ public:
 		_float fRadius, fHalfHeight;
 		_float fDegree;
 		_bool isGravity;
+
+		PX_FILTER_TYPE eFilterType;
 
 		// Dynamic Parameter
 		_float3 vVelocity;
@@ -138,6 +144,9 @@ public:
 	void Set_ScalingBox(PxRigidActor* pActor, _float3 vScale);
 	void Set_ScalingSphere(PxRigidActor* pActor, _float fRadius);
 	void Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _float fHalfHeight);
+
+	void Set_DynamicParameter(PxRigidActor* pActor, _float fMass, _float fLinearDamping, _float3 vVelocity);
+	void Set_DynamicParameter(const _tchar* pActorTag, _float fMass,  _float fLinearDamping, _float3 vVelocity);
 
 	void Init_Rendering();		
 

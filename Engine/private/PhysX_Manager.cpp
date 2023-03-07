@@ -6,16 +6,61 @@
 #include "DebugDraw.h"
 #include "GameInstance.h"
 
+/*
+Mass: The mass of the object, specified in kilograms.
+질량: 킬로그램으로 지정된 물체의 질량.
+
+Center of mass: The center of mass of the object, specified as a vector in local space.
+질량 중심: 로컬 공간에서 벡터로 지정된 개체의 질량 중심입니다.
+
+Inertia tensor: The 3x3 inertia tensor of the object, specified in local space.
+관성 텐서: 로컬 공간에서 지정된 개체의 3x3 관성 텐서입니다.
+
+Linear velocity: The linear velocity of the object, specified as a vector in world space.
+선형 속도: 월드 공간에서 벡터로 지정된 개체의 선형 속도입니다.
+
+Angular velocity: The angular velocity of the object, specified as a vector in local space.
+각속도: 로컬 공간에서 벡터로 지정된 객체의 각속도.
+
+Linear damping: The damping applied to the linear motion of the object. This value should be between 0 (no damping) and 1 (complete damping).
+선형 감쇠: 객체의 직선 운동에 적용되는 감쇠입니다. 이 값은 0(제동 없음)과 1(완전한 제동) 사이여야 합니다.
+
+Angular damping: The damping applied to the angular motion of the object. This value should be between 0 (no damping) and 1 (complete damping).
+각도 감쇠: 개체의 각 운동에 적용되는 감쇠입니다. 이 값은 0(제동 없음)과 1(완전한 제동) 사이여야 합니다.
+
+Max angular velocity: The maximum angular velocity that the object can reach, specified in radians per second.
+최대 각속도: 객체가 도달할 수 있는 최대 각속도로, 초당 라디안으로 지정됩니다.
+
+Sleep threshold: The amount of motion required to wake the object up from sleep. This value should be between 0 (never sleep) and a large number (sleep immediately).
+수면 임계값: 개체를 절전 상태에서 깨우는 데 필요한 동작의 양입니다. 이 값은 0(잠자지 않음)과 큰 숫자(즉시 잠자기) 사이여야 합니다.
+
+CCD threshold: The distance threshold at which continuous collision detection (CCD) is triggered for the object. This value should be greater than 0.
+CCD 임계값: 개체에 대해 CCD(연속 충돌 감지)가 트리거되는 거리 임계값입니다. 이 값은 0보다 커야 합니다.
+
+Collision filtering: The collision filter data used to determine which objects can collide with the rigid body.
+충돌 필터링: 강체와 충돌할 수 있는 객체를 결정하는 데 사용되는 충돌 필터 데이터입니다.
+
+Kinematic target: If the rigid body is set to kinematic, this specifies the target transform that the body will interpolate towards.
+운동학적 대상: 강체가 운동학적으로 설정된 경우 신체가 보간할 대상 변환을 지정합니다.
+*/
+
+
 PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
                                  PxFilterObjectAttributes attributes1, PxFilterData filterData1,
                                  PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	/*PX_UNUSED(attributes0);
-	PX_UNUSED(attributes1);
-	PX_UNUSED(filterData0);
-	PX_UNUSED(filterData1);
-	PX_UNUSED(constantBlockSize);
-	PX_UNUSED(constantBlock);*/
+	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)	||
+		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)	||
+		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON) ||
+		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY) )
+	{
+		return PxFilterFlag::eSUPPRESS;
+	}	
+
+	//if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	//{
+	//	pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+	//}
 
 	pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eDETECT_CCD_CONTACT
@@ -44,48 +89,6 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	return PxFilterFlag::eDEFAULT;
 }
 
-
-PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-	PX_UNUSED(attributes0);
-	PX_UNUSED(attributes1);
-	PX_UNUSED(filterData0);
-	PX_UNUSED(filterData1);
-	PX_UNUSED(constantBlockSize);
-	PX_UNUSED(constantBlock);
-
-	// all initial and persisting reports for everything, with per-point data
-	pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
-		| PxPairFlag::eNOTIFY_TOUCH_FOUND
-		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-		| PxPairFlag::eNOTIFY_CONTACT_POINTS
-		| PxPairFlag::eMODIFY_CONTACTS;
-
-	return PxFilterFlag::eDEFAULT;
-}
-
-PxFilterFlags TestSimulationFilterShader( PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-	/*
-	if (ECOLLISION_TYPE::COLL_IGNORE == CPhysX_Manager::CheckCollisionTable(static_cast<ECOLLISION_TYPE>(filterData0.word0), static_cast<ECOLLISION_TYPE>(filterData1.word0)))
-	{
-		return PxFilterFlag::eSUPPRESS;
-	}
-
-	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
-	{
-		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-		return PxFilterFlags();
-	}
-	*/
-	// PxPairFlag::eNOTIFY_TOUCH_FOUND 추가하면 OnContact 실행됨
-	pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
-	return PxFilterFlags();
-}
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
@@ -144,11 +147,11 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, PxCookingParams(PxTolerancesScale()));
 	assert(m_pCooking != nullptr && "CPhysX_Manager::InitWorld()");
-	/*
+	
 	PxCookingParams params(m_PxTolerancesScale);
 	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
 	m_pCooking->setParams(params);
-	*/
+	
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
 	// 기본 땅 생성	
@@ -218,8 +221,8 @@ void CPhysX_Manager::Render()
 
 	m_pBatch->Begin();
 
-	PxU32 Temp = 50;
-	for (PxU32 i = 0; i < NbLines; i += Temp)
+	static const PxU32 PxSkipCount= 1;
+	for (PxU32 i = 0; i < NbLines; i += PxSkipCount)
 	{
 		if (i >= NbLines) break;
 
@@ -301,20 +304,17 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	PxDefaultMemoryInputData ReadBuffer(WriteBuffer.getData(), WriteBuffer.getSize());
 	PxTriangleMesh* pMesh = m_pPhysics->createTriangleMesh(ReadBuffer);
-
-
+	
 	PxTransform Transform(PxIdentity);
 	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
 
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
-
-	pBody->attachShape(*shape);
-	m_pScene->addActor(*pBody);
-
-	shape->release();
-
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
 
+	pBody->attachShape(*shape);	
+	m_pScene->addActor(*pBody);
+
+	shape->release();	
 	return pBody;
 }
 
@@ -331,6 +331,10 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 		
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;		
+		pShape->setSimulationFilterData(FilterData);
+
 		pBox->attachShape(*pShape);
 		
 		if (pUserData)
@@ -346,9 +350,9 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			CString_Manager::GetInstance()->Add_String(pTag);
 			m_StaticActors.emplace(pTag, pBox);
 		}
-
+	
 		m_pScene->addActor(*pBox);
-
+		pShape->release();
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
@@ -360,8 +364,14 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-
+		
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;
+		pShape->setSimulationFilterData(FilterData);
+		
 		pBox->attachShape(*pShape);
+		pBox->setMass(Desc.fMass);
+		pBox->setLinearDamping(Desc.fDamping);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		pBox->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
@@ -388,10 +398,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		}
 		
 		m_pScene->addActor(*pBox);
-		PxTransform Temp = pBox->getGlobalPose();
-		
-
-		int i = 0;
+		pShape->release();
 	}	
 }
 
@@ -404,10 +411,14 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		
 		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
-		pSphere->attachShape(*pShape);
-		
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+	
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;
+		pShape->setSimulationFilterData(FilterData);
+		
+		pSphere->attachShape(*pShape);
 		
 		if (pUserData)
 		{
@@ -421,6 +432,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		m_StaticActors.emplace(pTag, pSphere);
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
@@ -434,7 +446,13 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;
+		pShape->setSimulationFilterData(FilterData);
+
 		pSphere->attachShape(*pShape);
+		pSphere->setMass(Desc.fMass);
+		pSphere->setLinearDamping(Desc.fDamping);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
@@ -461,6 +479,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		}
 
 		m_pScene->addActor(*pSphere);
+		pShape->release();
 	}	
 }
 
@@ -477,6 +496,10 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
 		
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;
+		pShape->setSimulationFilterData(FilterData);
+
 		pCapsule->attachShape(*pShape);
 
 		if (pUserData)
@@ -491,6 +514,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		m_StaticActors.emplace(pTag, pCapsule);
 	
 		m_pScene->addActor(*pCapsule);
+		pShape->release();
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
@@ -501,6 +525,10 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial, true);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
+
+		PxFilterData FilterData;
+		FilterData.word0 = Desc.eFilterType;
+		pShape->setSimulationFilterData(FilterData);
 
 		pCapsule->attachShape(*pShape);
 		pCapsule->setMass(Desc.fMass);
@@ -533,8 +561,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
-		PxVec3 temp = pCapsule->getGlobalPose().p;
-		int i = 0;
+		pShape->release();
 	}	
 }
 
@@ -946,3 +973,5 @@ void CPhysX_Manager::Delete_Actor(PxActor& pActor)
 {
 	m_pScene->removeActor(pActor);
 }
+
+

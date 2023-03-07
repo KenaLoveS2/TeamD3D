@@ -96,25 +96,23 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector		vDest = (vSourDiffuse* vFilter1.r * vFilter2.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r);
 	vector		vTemp = (vSourDiffuse* vFilter.r * vFilter2.r) + vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse2 * (1.f - vFilter2.r);
 
-	//vector vBrush = (vector)0.f;
-	///* 브러쉬의 영역 내부인지 확인 */
-	//if (g_fBrushRange >= abs(In.vWorldPos.x - g_vBrushPos.x)
-	//	&& g_fBrushRange >= abs(In.vWorldPos.z - g_vBrushPos.z))
-	//{
-	//	/* 브러쉬 영역 내부에서의 정점의 상대위치 / 길이 => 정규화 LT(0,0)~RB(1,1) UV좌표 */
-	//	float2	vUV;
+	vector vBrush = (vector)0.f;
+	/* 브러쉬의 영역 내부인지 확인 */
+	if (g_fBrushRange >= abs(In.vWorldPos.x - g_vBrushPos.x)
+		&& g_fBrushRange >= abs(In.vWorldPos.z - g_vBrushPos.z))
+	{
+		/* 브러쉬 영역 내부에서의 정점의 상대위치 / 길이 => 정규화 LT(0,0)~RB(1,1) UV좌표 */
+		float2	vUV;
 
-	//	float	fFullRange = g_fBrushRange * 2.f;
-	//	vUV.x = (In.vWorldPos.x - (g_vBrushPos.x - g_fBrushRange)) / fFullRange;
-	//	vUV.y = ((g_vBrushPos.z + g_fBrushRange) - In.vWorldPos.z) / fFullRange;
+		float	fFullRange = g_fBrushRange * 2.f;
+		vUV.x = (In.vWorldPos.x - (g_vBrushPos.x - g_fBrushRange)) / fFullRange;
+		vUV.y = ((g_vBrushPos.z + g_fBrushRange) - In.vWorldPos.z) / fFullRange;
 
-	//	vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
-	//}
-
-
-
+		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
+	}
+	
 	vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)
-		+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r);
+		+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) + vDestDiffuse2 * (1.f - vFilter2.r) + vBrush;
 
 	//vMtrlDiffuse = (vSourDiffuse * vFilter.r * vFilter1.r* vFilter2.r)		//원본
 	//	+ vDestDiffuse0 * (1.f - vFilter.r) + vDestDiffuse1 * (1.f - vFilter1.r) ;
@@ -124,18 +122,33 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (vSour.a > 1.f)
 	{
-		vMtrlDiffuse = vSourDiffuse;
+		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
+			vDestDiffuse1 * (1.f - vFilter2.r);
+
+		if (vMtrlDiffuse.a <= 0.9f)
+		{
+			vMtrlDiffuse = vDestDiffuse0;
+		}
+
+
 	}
 
-	//if (vDest.a > 1.f)
-	//{
-	//	vMtrlDiffuse = vSourDiffuse;
-	//}
+	if (vDest.a > 1.f)
+	{
+		vMtrlDiffuse.a = 0.0f;
+	}
 
-	//if (vTemp.a > 1.f)
-	//{
-	//	vMtrlDiffuse = vSourDiffuse;
-	//}
+	if (vTemp.a > 1.f)
+	{
+		vMtrlDiffuse = vDestDiffuse0 * (1.f - vFilter.r) +
+			vDestDiffuse2 * (1.f - vFilter1.r);
+
+		if (vMtrlDiffuse.a <= 0.9f)
+		{
+			vMtrlDiffuse = vDestDiffuse0;
+		}
+
+	}
 
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;

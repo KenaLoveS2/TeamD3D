@@ -76,11 +76,14 @@ public:
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
-protected:
+private:
 	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+
+private:
+	void	Update_Collider(_float fTimeDelta) override;
 
 public:
 	static CVillageGuard*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
