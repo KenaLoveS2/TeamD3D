@@ -14,7 +14,6 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
-#define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
