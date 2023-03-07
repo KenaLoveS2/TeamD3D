@@ -178,6 +178,8 @@
     <ClInclude Include="..\Public\Base_Ground.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
+    <ClInclude Include="..\public\BranchTosser.h" />
+    <ClInclude Include="..\public\BranchTosser_Weapon.h" />
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
@@ -230,6 +232,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Monster_Status.h" />
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\Path_Mesh.h" />
@@ -245,6 +248,7 @@
     <ClInclude Include="..\public\Rope_RotRock.h" />
     <ClInclude Include="..\public\Rot_State.h" />
     <ClInclude Include="..\public\RuinKit.h" />
+    <ClInclude Include="..\public\Sapling.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
     <ClInclude Include="..\Public\Stair.h" />
@@ -295,6 +299,8 @@
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
+    <ClCompile Include="..\private\BranchTosser.cpp" />
+    <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
@@ -346,6 +352,7 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Monster_Status.cpp" />
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\Path_Mesh.cpp" />
@@ -361,6 +368,7 @@
     <ClCompile Include="..\private\Rope_RotRock.cpp" />
     <ClCompile Include="..\private\Rot_State.cpp" />
     <ClCompile Include="..\private\RuinKit.cpp" />
+    <ClCompile Include="..\private\Sapling.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
