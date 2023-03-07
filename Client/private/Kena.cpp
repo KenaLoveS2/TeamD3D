@@ -56,7 +56,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	Push_EventFunctions();
 

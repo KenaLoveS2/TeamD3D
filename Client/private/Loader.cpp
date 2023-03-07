@@ -1010,7 +1010,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_RockGolem */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RockGolem",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_RotEater */
@@ -1020,7 +1020,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_Sticks01 */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sticks01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_VillageGuard */
@@ -1030,7 +1030,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_WoodKnight */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Rope_Rock */
