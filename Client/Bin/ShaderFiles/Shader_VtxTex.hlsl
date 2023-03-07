@@ -25,6 +25,7 @@ unsigned int g_State = 0;
 
 float g_fDiffuseAlpha = 1.f;
 float g_fMaskAlpha = 0.f;
+bool g_IsGray = false;
 
 struct VS_IN
 {
@@ -430,12 +431,30 @@ PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 
-	vDiffuse.a *= g_fDiffuseAlpha;
-	vMask.a *= g_fMaskAlpha;
+	
+	if (0 == g_iCheck) // Level0 Blocked
+	{
+		float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+		vDiffuse.a *= g_fDiffuseAlpha;
+		vMask.a *= g_fMaskAlpha;
+		Out.vColor = vDiffuse + vMask;
+	}
+	else if (1 == g_iCheck) // Level1~ Blocked or Locked
+	{
+		// grayScaling
+		float gray = dot(vDiffuse.rgb, float3(0.3333, 0.3333, 0.3333));
+		float4 grayColor = float4(gray, gray, gray, vDiffuse.a);
 
-	Out.vColor = vDiffuse + vMask;
+		// 채도 보존
+		float4 result = lerp(grayColor, vDiffuse, 0.1);
+		Out.vColor.rgb = result;
+		Out.vColor.a = vDiffuse.a;
+	}
+	else
+	{
+		Out.vColor = vDiffuse;
+	}
 
 	return Out;
 }

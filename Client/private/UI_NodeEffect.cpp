@@ -10,6 +10,7 @@ CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 	, m_pTarget(nullptr)
 	, m_eType(TYPE_END)
 	, m_fTime(0.f)
+	, m_fAlpha(1.f)
 {
 }
 
@@ -18,6 +19,7 @@ CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 	, m_pTarget(nullptr)
 	, m_eType(TYPE_END)
 	, m_fTime(0.f)
+	, m_fAlpha(1.f)
 {
 }
 
@@ -58,6 +60,7 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 
 void CUI_NodeEffect::Change_Scale(_float fData)
 {
+	m_bActive = true;
 	if (m_eType == TYPE_NONEANIM)
 	{
 		m_matLocal._11 = m_matLocalOriginal._11 * fData;
@@ -187,12 +190,14 @@ void CUI_NodeEffect::Imgui_RenderProperty()
 {
 	ImGui::Separator();
 	ImGui::Text("Effect Specific Property");
-	ImGui::Text("0TYPE_NONANIM, 1TYPE_ANIM, 2TYPE_SEPERATOR, 3TYPE_RING");
+	ImGui::Text("0TYPE_NONANIM, 1TYPE_ANIM, 2TYPE_SEPERATOR, 3TYPE_RING, 4TYPE_ALPHA");
 
 	static int eType;
 	eType = m_eType;
 	if (ImGui::InputInt("EffectType", &eType))
 		m_eType = (TYPE)eType;
+
+	ImGui::InputFloat("Effect Alpha", &m_fAlpha);
 
 	__super::Imgui_RenderProperty();
 }
@@ -201,6 +206,8 @@ HRESULT CUI_NodeEffect::Save_Data()
 {
 	Json	json;
 
+	json["Alpha"] = m_fAlpha;
+	
 	_smatrix matWorld = m_matLocalOriginal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
@@ -233,7 +240,20 @@ HRESULT CUI_NodeEffect::Save_Data()
 
 
 	wstring filePath = L"../Bin/Data/UI/";
-	filePath += this->Get_ObjectCloneName();
+	wstring name = Get_ObjectCloneName();
+	_uint i = 0;
+	for (auto c : name)
+	{
+		if (c == L'_')
+			i++;
+
+		if (i > 1)
+			break;
+		else
+			filePath += c;
+	}
+
+	//filePath += this->Get_ObjectCloneName();
 	filePath += L"_Property.json";
 
 	string fileName;
@@ -251,7 +271,20 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 	Json	jLoad;
 
 	wstring name = L"../Bin/Data/UI/";
-	name += fileName;
+	//name += fileName;
+
+	_uint cnt = 0;
+	for (auto c : fileName)
+	{
+		if (c == L'_')
+			cnt++;
+
+		if (cnt > 1)
+			break;
+		else
+			name += c;
+	}
+
 	name += L"_Property.json";
 	string filePath;
 	filePath.assign(name.begin(), name.end());
@@ -271,6 +304,11 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 
 	jLoad["DiffuseTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_DIFFUSE]);
 	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
+
+	if (jLoad.contains("Alpha"))
+	{
+		jLoad["Alpha"].get_to<_float>(m_fAlpha);
+	}
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
@@ -351,6 +389,9 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 
 	if(m_eType == TYPE_SEPERATOR)
 		if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTime, sizeof(_float))))
+			return E_FAIL;
+	else if(m_eType == TYPE_ALPHA)
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 			return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

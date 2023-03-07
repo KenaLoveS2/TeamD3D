@@ -11,6 +11,7 @@
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_pSelected(nullptr)
+	, m_iPickedIndex(-1)
 {
 	for (auto skill : m_pPlayerSkills)
 		skill = nullptr;
@@ -19,6 +20,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	: CUI_Canvas(rhs)
 	, m_pSelected(nullptr)
+	, m_iPickedIndex(-1)
 {
 	for (auto skill : m_pPlayerSkills)
 		skill = nullptr;
@@ -47,7 +49,7 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 		MSG_BOX("Failed To SetUp Components : CanvasUpgrade");
 		return E_FAIL;
 	}
-	
+
 	if (FAILED(Ready_PlayerSkill()))
 	{
 		MSG_BOX("Failed To Ready PlayerSkill : CanvasUpgrade");
@@ -60,7 +62,7 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
@@ -79,39 +81,27 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	/* Picking */
-	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
-
-	for (_uint i = 0; i < 20; ++i)
+	/* Return To Play */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
-		// left, top, right, bottom 
-		RECT rc = { LONG(vPosConvert.x - 30.f), LONG(vPosConvert.y - 30.f), 
-			LONG(vPosConvert.x + 30.f), LONG(vPosConvert.y + 30.f) };
-		if (PtInRect(&rc, pt))
+		CGameInstance::GetInstance()->Get_Back();
+		m_bActive = false;
+		return;
+	}
+
+	/* Picking the Skill Icons */
+	Picking();
+
+	/* Try To UnLock */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_SPACE))
+	{
+		if (m_pSelected != nullptr)
 		{
-			if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+			wstring returnMsg = m_pPlayerSkills[m_iPickedIndex/5]
+				->UnLock(static_cast<CUI_NodePlayerSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+			if (IDOK == MessageBox(NULL, returnMsg.c_str(), L"System Message", MB_OKCANCEL))
 			{
-				if (m_pSelected != m_vecNode[i])
-					m_vecEffects[EFFECT_BLUE]->BackToOriginalScale();
-
-				m_vecEffects[EFFECT_BLUE]->Start_Effect(m_vecNode[i], 0.f, 0.f);
-			}
-
-			if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
-			{
-				if (nullptr != m_pSelected)
-				{
-					m_pSelected->BackToOriginal();
-				}
-
-				m_pSelected = static_cast<CUI_NodePlayerSkill*>(m_vecNode[i]);				
-				if(i % 5 != 0)	 /* Level0 doesn't need this effect */
-					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
-				m_pSelected->Picked(1.2f);
-				m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
-
+				static_cast<CUI_NodePlayerSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
 			}
 		}
 	}
@@ -216,6 +206,29 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	pGameInstance->Add_String(tagCircle);
 	m_vecEffects.push_back(pCircle);
 
+	/* Lock */
+	for (_uint i = 0; i < 20; ++i)
+	{
+		string strLock = "Node_EffectLock_" + to_string(i);
+		CUI::UIDESC tDescLock;
+		_tchar* tagLock = CUtile::StringToWideChar(strLock);
+		tDescLock.fileName = tagLock;
+		CUI_NodeEffect* pLock
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagLock, &tDescLock));
+		if (FAILED(Add_Node(pLock)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strLock);
+		pGameInstance->Add_String(tagLock);
+		m_vecEffects.push_back(pLock);
+
+		if (i % 5 != 0)
+		{
+			pLock->Start_Effect(m_vecNode[i], 0.f, 0.f);
+			static_cast<CUI_NodePlayerSkill*>(m_vecNode[i])->Set_LockEffect(pLock);
+		}
+
+	}
+	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -290,8 +303,64 @@ HRESULT CUI_CanvasUpgrade::Ready_PlayerSkill()
 	return S_OK;
 }
 
+void CUI_CanvasUpgrade::Picking()
+{
+	/* Picking */
+	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
+
+	_bool isPicked = false; /* Blue Effect */
+	for (_uint i = 0; i < 20; ++i)
+	{
+		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
+		// left, top, right, bottom 
+		RECT rc = { LONG(vPosConvert.x - 30.f), LONG(vPosConvert.y - 30.f),
+			LONG(vPosConvert.x + 30.f), LONG(vPosConvert.y + 30.f) };
+
+		if (PtInRect(&rc, pt))
+		{
+			if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+			{
+				isPicked = true;
+				if (m_pSelected != m_vecNode[i])
+					m_vecEffects[EFFECT_BLUE]->BackToOriginalScale();
+				else
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
+
+				m_vecEffects[EFFECT_BLUE]->Start_Effect(m_vecNode[i], 0.f, 0.f);
+			}
+
+			if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
+			{
+				if (nullptr != m_pSelected)
+				{
+					m_pSelected->BackToOriginal();
+				}
+
+				m_pSelected = static_cast<CUI_NodePlayerSkill*>(m_vecNode[i]);
+				m_iPickedIndex = i;
+				m_pSelected->Picked(1.2f);
+
+				if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+				{
+					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
+				}
+				else
+					m_vecEffects[EFFECT_RING]->Set_Active(false);
+			}
+		}
+	}
+
+	if (!isPicked)
+		m_vecEffects[EFFECT_BLUE]->Set_Active(false);
+
+}
+
 void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
+	m_bActive = true;
+	CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 }
 
 void CUI_CanvasUpgrade::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
@@ -332,6 +401,8 @@ void CUI_CanvasUpgrade::Free()
 			Safe_Release(m_pPlayerSkills[i]);
 	}
 	
+	m_vecEffects.clear();
+
 
 	__super::Free();
 }

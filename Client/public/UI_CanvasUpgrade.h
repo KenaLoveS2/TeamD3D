@@ -34,9 +34,14 @@ private:
 	virtual HRESULT			Ready_Nodes()					override;
 	virtual HRESULT			SetUp_Components()				override;
 	virtual HRESULT			SetUp_ShaderResources()			override;
+
+	/* Ready_Information(Real Data) */
 private:
 	HRESULT					Ready_PlayerSkill();
 	CPlayerSkillInfo*		m_pPlayerSkills[TYPE_END];
+
+private:
+	void		Picking();
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
@@ -47,6 +52,7 @@ private:
 private:
 	CUI_NodePlayerSkill*		m_pSelected; /* LastSelectedOne*/
 	vector<CUI_NodeEffect*>		m_vecEffects;
+	_int						m_iPickedIndex;
 
 public:
 	static	CUI_CanvasUpgrade*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

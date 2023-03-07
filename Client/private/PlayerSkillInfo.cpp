@@ -6,10 +6,70 @@
 #include <codecvt>
 #include <locale>
 #include "Utile.h"
+#include "Kena.h"
 
 CPlayerSkillInfo::CPlayerSkillInfo()
 	:m_pTextureProtoTag(nullptr)
 {
+}
+
+wstring CPlayerSkillInfo::UnLock(_uint iLevel)
+{
+	CHECK eResult = Check(iLevel);
+	wstring msg;
+	switch (eResult)
+	{
+	case CHECK_PREVSKILL:
+		msg = L"선행스킬을 해금하세요";
+		break;
+	case CHECK_ROTLEVEL:
+		msg = L"부식령 레벨 부족";
+		break;
+	case  CHECK_KARMA:
+		msg = L"카르마 부족";
+		break;
+	case CHECK_UNLOCKED_AVAILABLE:
+		msg = L"해금 하시겠습니까?";
+		break;
+	case CHECK_UNLOCKED_ALREADY:
+		msg = L"해금됨.";
+		break;
+	default:
+		msg = L"메롱";
+		break;
+	}
+	return msg;
+
+
+		
+}
+
+CPlayerSkillInfo::CHECK CPlayerSkillInfo::Check(_uint iLevel)
+{
+	/* Connect With Player. But Not Now.... */
+	_uint iRotLevel, iKarma, iPrevSkill;
+
+	// stick Level2 : prev:1, rotlevel2, karma 150
+
+	/* Current Data */
+	iRotLevel = 1;
+	iKarma = 200;
+
+	//if (m_tDesc[iLevel].eState == STATE_UNLOCKED)
+	//	return CHECK_UNLOCKED_ALREADY;
+	//
+	//if (iRotLevel < m_tDesc[iLevel].conditions[CONDITION_ROTLEVEL])
+	//	return CHECK_ROTLEVEL;
+	//
+	//_int iPrevLevel = m_tDesc[iLevel].conditions[CONDITION_PREVSKILL];
+	//if (m_tDesc[iPrevLevel].eState != STATE_UNLOCKED)
+	//	return CHECK_PREVSKILL;
+	//
+	//if (iKarma < m_tDesc[iLevel].conditions[CONDITION_KARMA])
+	//	return CHECK_KARMA;
+
+	m_tDesc[iLevel].eState = STATE_UNLOCKED;
+	return CHECK_UNLOCKED_AVAILABLE;
 }
 
 HRESULT CPlayerSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)

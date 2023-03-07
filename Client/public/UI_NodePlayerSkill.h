@@ -3,6 +3,7 @@
 #include "UI_Node.h"
 
 BEGIN(Client)
+class CUI_NodeEffect;
 class CUI_NodePlayerSkill final : public CUI_Node
 {
 public:
@@ -12,6 +13,9 @@ private:
 	CUI_NodePlayerSkill(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodePlayerSkill(const CUI_NodePlayerSkill& rhs);
 	virtual ~CUI_NodePlayerSkill() = default;
+
+public:
+	_uint	Get_Level() { return m_iLevel; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -25,6 +29,7 @@ public:
 	void	BackToOriginal();
 	void	Picked(_float fRatio);
 	void	State_Change(_uint eState);
+	void	Set_LockEffect(CUI_NodeEffect* pEffect);
 
 
 public:
@@ -38,10 +43,12 @@ private:
 	virtual void			Imgui_RenderProperty() override;
 
 private:
+	CUI_NodeEffect*			m_pLock;
 	_uint					m_iLevel;
 	STATE					m_eState;
 	_float					m_fDiffuseAlpha;
 	_float					m_fMaskAlpha;
+	_int					m_iCheck;
 
 public:
 	static	CUI_NodePlayerSkill*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

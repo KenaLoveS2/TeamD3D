@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\public\UI_NodePlayerSkill.h"
+#include "UI_NodeEffect.h"
 #include "GameInstance.h"
 #include "Json/json.hpp"
 #include <fstream>
@@ -10,6 +11,8 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(ID3D11Device * pDevice, ID3D11DeviceCon
 	, m_eState{ STATE_BLOCKED }
 	, m_fDiffuseAlpha(0.f)
 	, m_fMaskAlpha(0.f)
+	, m_iCheck(0)
+	, m_pLock(nullptr)
 {
 }
 
@@ -19,6 +22,8 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(const CUI_NodePlayerSkill & rhs)
 	, m_eState{ STATE_BLOCKED }
 	, m_fDiffuseAlpha(0.f)
 	, m_fMaskAlpha(0.f)
+	, m_iCheck(0)
+	, m_pLock(nullptr)
 {
 }
 
@@ -85,6 +90,7 @@ HRESULT CUI_NodePlayerSkill::Render()
 
 void CUI_NodePlayerSkill::BackToOriginal()
 {
+	m_bActive = true;
 	m_matLocal = m_matLocalOriginal;
 }
 
@@ -96,28 +102,34 @@ void CUI_NodePlayerSkill::Picked(_float fRatio)
 
 void CUI_NodePlayerSkill::State_Change(_uint eState)
 {
+	m_iCheck = 2;
 	switch (eState)
 	{
 	case STATE_BLOCKED:
 		if (m_iLevel == 0)
 		{
+			m_iCheck = 0;
 			m_fDiffuseAlpha = 0.f;
-			m_fMaskAlpha = 0.7f;
+			m_fMaskAlpha = 0.4f;
 		}
 		else
 		{
-			m_fDiffuseAlpha = 1.f;
-			m_fMaskAlpha = 1.f;
+			m_iCheck = 1;
+			m_fDiffuseAlpha = 0.5f;
 		}
 		break;
 	case STATE_LOCKED:
-
 		break;
 	case STATE_UNLOCKED:
-		m_fDiffuseAlpha = 1.f;
-		m_fMaskAlpha = 0.f;
+		m_pLock->Set_Active(false);
 		break;
 	}
+}
+
+void CUI_NodePlayerSkill::Set_LockEffect(CUI_NodeEffect * pEffect)
+{
+	m_pLock = pEffect;
+	m_pLock->Start_Effect(this, 0.f, 0.f);
 }
 
 HRESULT CUI_NodePlayerSkill::Save_Data()
@@ -269,6 +281,9 @@ HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
 		if (FAILED(m_pShaderCom->Set_RawValue("g_fMaskAlpha", &m_fMaskAlpha, sizeof(_float))))
 			return E_FAIL;
 	}
+	if (FAILED(m_pShaderCom->Set_RawValue("g_iCheck", &m_iCheck, sizeof(_int))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

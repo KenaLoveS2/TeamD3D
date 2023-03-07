@@ -462,6 +462,20 @@ void CGameInstance::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * LayerT
 	return m_pObject_Manager->RoomIndex_Object_Clear(iCurLevel, LayerTag, iRoomIndex);
 }
 
+void CGameInstance::Set_SingleLayer(_uint iCurLevel, const _tchar * pLayerTag)
+{
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Set_SingleLayer()");
+
+	m_pObject_Manager->Set_SingleLayer(iCurLevel, pLayerTag);
+}
+
+void CGameInstance::Get_Back()
+{
+	assert(nullptr != m_pObject_Manager && "CGameInstance::Get_Back()");
+
+	m_pObject_Manager->Get_Back();
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
