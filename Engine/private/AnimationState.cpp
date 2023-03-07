@@ -243,6 +243,8 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 		{
 			if (pAnim->m_pBlendAnim != nullptr)
 				pAnim->m_pBlendAnim->Set_PlayTime(m_pPreAnim->m_pMainAnim->Get_PlayTime());
+			else
+				pAnim->m_pMainAnim->Reset_Animation();
 		}
 	}
 	else
