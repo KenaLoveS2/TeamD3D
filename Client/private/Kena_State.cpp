@@ -102,7 +102,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E)
-		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
+ 		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
 
 		.Finish_Setting();
 

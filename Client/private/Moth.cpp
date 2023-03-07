@@ -231,6 +231,10 @@ HRESULT CMoth::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+void CMoth::Update_Collider(_float fTimeDelta)
+{
+}
+
 CMoth* CMoth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CMoth*	pInstance = new CMoth(pDevice, pContext);

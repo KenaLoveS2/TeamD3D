@@ -56,9 +56,21 @@ private:
 		ANIMATION_END
 	};
 
+	enum ATTACKTYPE
+	{
+		AT_RANGEDATTACK,
+		AT_CHARGEATTACK,
+		AT_COMBOATTACK_LUNGE,
+		AT_COMBOATTACK_OVERHEAD,
+		AT_DOUBLEATTACK,
+		AT_UPPERCUTATTACK,
+		ATTACKTYPE_END
+	};
+
 	enum COLLIDERTYPE
 	{
 		COLL_WEAPON = 0,
+		COLL_PUNCH,
 		COLL_END
 	};
 
@@ -82,7 +94,7 @@ public:
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
-protected:
+private:
 	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
@@ -90,11 +102,35 @@ protected:
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
+	void	AdditiveAnim(_float fTimeDelta) override;
+
+private:
+	void Set_AttackType();
+	void Reset_Attack();
+	void Tick_Attack(_float fTimeDelta);
+
+private:
+	_bool	m_bSpawn = false;
+	_float	m_fIdletoAttackTime = 0.f;
+
+	_int		m_iAttackType = ATTACKTYPE_END;
+	_bool	m_bRealAttack = false;
+	_bool	m_bRangedAttack = false;
+	_bool	m_bChargeAttack = false;
+	_bool   m_bComboAttack_Lunge = false;
+	_bool	m_bComboAttack_Overhead = false;
+	_bool	m_bDoubleAttack = false;
+	_bool	m_bUppercutAttack = false;
+
+	_bool	m_isCloseRange = false;
+	_bool	m_isMiddleRange = false;
+	_bool	m_isFarRange = false;
 
 private:
 	vector<wstring> m_vecColliderName;
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
+	vector<_float3> m_vecPivotRot;
 
 public:
 	static CWoodKnight*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -22,9 +22,9 @@ CVIBuffer::CVIBuffer(const CVIBuffer & rhs)
 	, m_eTopology(rhs.m_eTopology)
 	, m_iNumIndices(rhs.m_iNumIndices)
 
-	// kbj physx
-	, m_pPxVertices(rhs.m_pPxVertices)
-	, m_pPxIndicies(rhs.m_pPxIndicies)
+
+	,m_pPxVertices(rhs.m_pPxVertices)
+	,m_pPxIndicies(rhs.m_pPxIndicies)
 {
 	Safe_AddRef(m_pVB);
 	Safe_AddRef(m_pIB);

@@ -86,7 +86,6 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 #pragma region INSTANCE_BUFFER
 
 	m_iInstanceStride = sizeof(VTXMATRIX);
-
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);	
 
 	m_BufferDesc.ByteWidth = m_iInstanceStride * iNumInstance;
@@ -120,6 +119,8 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 
 HRESULT CVIBuffer_Trail::Initialize(void * pArg, CGameObject * pOwner)
 {
+	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
+
 	return S_OK;
 }
 
@@ -135,7 +136,7 @@ HRESULT CVIBuffer_Trail::Tick(_float fTimeDelta)
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 	memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 

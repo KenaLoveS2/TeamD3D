@@ -193,7 +193,7 @@ void CAnimation::Update_Bones(_float fTimeDelta, const string & strRootBone)
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
+		if (true == m_isFinished && true == m_isLooping)
 			m_Channels[i]->Reset_KeyFrameIndex();
 	
 		if (m_Channels[i]->Get_BoneLocked() == true)
@@ -229,7 +229,7 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
+		if (true == m_isFinished && true == m_isLooping)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
 		if (m_Channels[i]->Get_BoneLocked() == true)
@@ -282,6 +282,34 @@ void CAnimation::Update_Bones_Additive(_float fTimeDelta, _float fRatio, const s
 
 	if (m_isFinished && m_isLooping)
 		m_PlayTime = 0.0;
+}
+
+void CAnimation::Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRatio, const string & strRootBone)
+{
+	if (true == m_isFinished &&
+		false == m_isLooping)
+	{
+		return;
+	}
+
+	m_PlayTime += m_TickPerSecond * fTimeDelta;
+
+	if (m_PlayTime >= m_Duration)
+	{
+		m_PlayTime = 0.0;
+		m_isFinished = true;
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+			continue;
+
+		m_Channels[i]->Additive_TransformMatrixForMonster(m_PlayTime, fRatio);
+	}
 }
 
 void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim)
@@ -573,5 +601,3 @@ HRESULT CAnimation::Synchronization_ChannelsBonePtr(CModel * pModel, const strin
 
 	return S_OK;
 }
-
-

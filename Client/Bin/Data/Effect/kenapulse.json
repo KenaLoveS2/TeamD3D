@@ -27,6 +27,7 @@
                                 0.0,
                                 0.0
                             ],
+                            "DurationTime": 0.5,
                             "Effect Type": 2,
                             "FreeMove": false,
                             "Have Trail": false,

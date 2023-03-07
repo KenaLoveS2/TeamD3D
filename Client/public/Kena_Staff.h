@@ -27,6 +27,12 @@ private:
 	virtual HRESULT		SetUp_ShadowShaderResources() override;
 
 public:
+	HRESULT		Ready_Effects();
+
+private:
+	class CE_KenaTrail* m_pKenaStaffTrail = nullptr;
+
+public:
 	static CKena_Staff*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void				Free() override;

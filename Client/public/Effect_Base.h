@@ -14,7 +14,7 @@ END
 
 BEGIN(Client)
 #define  MAX_TEXTURECNT 5
-//#define TESTPLAY
+#define TESTPLAY
 
 class CEffect_Base abstract : public CGameObject
 {
@@ -99,7 +99,10 @@ protected:
 	virtual ~CEffect_Base() = default;
 
 public:
-	HRESULT Load_E_Desc(const _tchar* pFilePath);
+	HRESULT   Load_E_Desc(const _tchar* pFilePath);
+	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+	HRESULT   Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
+	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag);
 
 public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {
@@ -123,10 +126,7 @@ public:
 	void						 Set_Parent(class CGameObject* pParrent) { m_pParent = pParrent; }
 
 	void						 Set_Matrix();
-	void						 Set_InitMatrix(_fmatrix WorldMatrix) {
-		XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix);
-	}
-	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+	void						 Set_InitMatrix(_fmatrix WorldMatrix) { XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix); }
 
 	void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
 	_bool   Get_Active() { return m_eEFfectDesc.bActive; }
@@ -146,8 +146,6 @@ public:
 	virtual vector<_float4>* Get_FreePos() { return nullptr; }
 	void Set_InitPos(vector<_float4> vecFreePos) { memcpy(&m_vecFreePos, &vecFreePos, sizeof(vecFreePos.size())); }
 
-	HRESULT	Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
-
 public:
 	void				 BillBoardSetting(_float3 vScale);
 
@@ -161,7 +159,6 @@ public:
 public:
 	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
 
-	HRESULT Set_InitChild(_int iCreateCnt, char* ProtoTag);
 	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
 
 	virtual HRESULT		 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
@@ -216,6 +213,7 @@ protected:
 	_bool  m_bLerp = false;
 	/* FreeMoving */
 
+	_float2 m_fInitSpriteCnt = { 0.f,0.f };
 public:
 	virtual void          Free() override;
 };

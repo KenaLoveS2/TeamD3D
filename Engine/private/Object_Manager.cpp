@@ -546,17 +546,8 @@ void CObject_Manager::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * Laye
 	if (pLayer == nullptr)
 		return;
 
-	for (auto& pMyPair : pLayer->GetGameObjects())
-	{
-		if(dynamic_cast<CEnviromentObj*>(pMyPair.second)== nullptr )
-			continue;
+	pLayer->Delete_AllObjLayer(iRoomIndex);
 
-		if (static_cast<CEnviromentObj*>(pMyPair.second)->Get_RoomIndex() == iRoomIndex)
-		{
-			pLayer->Delete_GameObject(pMyPair.second->Get_ObjectCloneName());
-		}
-
-	}
 
 	
 

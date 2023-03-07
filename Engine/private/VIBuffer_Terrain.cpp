@@ -214,7 +214,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	}
 	else
 	{
-		Create_Divide_PxData(pVertices, pIndices);
+		// Create_Divide_PxData(pVertices, pIndices);
 	}
 	
 #pragma endregion
