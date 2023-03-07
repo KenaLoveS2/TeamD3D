@@ -253,6 +253,15 @@
     <Filter Include="02.GameObjects\Terrain\Editor">
       <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Ground Mark">
+      <UniqueIdentifier>{09bcddae-cf1d-4be0-a1b1-8ea5259ae811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Interaction">
+      <UniqueIdentifier>{2e9685dc-b789-4674-a044-da945aaf8429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Interaction\Rope_RotRock">
+      <UniqueIdentifier>{8e19c382-7d37-455c-9610-31183ac7fb3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -602,6 +611,15 @@
     <ClInclude Include="..\Public\Grass.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GroundMark.h">
+      <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rope_RotRock.h">
+      <Filter>02.GameObjects\Envrioment\Interaction\Rope_RotRock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Enviroment_Interaction.h">
+      <Filter>02.GameObjects\Envrioment\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -929,6 +947,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Grass.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GroundMark.cpp">
+      <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rope_RotRock.cpp">
+      <Filter>02.GameObjects\Envrioment\Interaction\Rope_RotRock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Enviroment_Interaction.cpp">
+      <Filter>02.GameObjects\Envrioment\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

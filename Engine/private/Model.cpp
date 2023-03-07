@@ -41,7 +41,7 @@ CModel::CModel(const CModel & rhs)
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_AddRef(Material.pTexture[i]);
 	}
-
+	
 	for (auto& pBone : rhs.m_Bones)
 	{
 		m_Bones.push_back((CBone*)pBone->Clone());
@@ -61,9 +61,6 @@ CModel::CModel(const CModel & rhs)
 	{
 		m_InstancingMeshes.push_back((CInstancing_Mesh*)pInstanceMesh->Clone());
 	}
-
-
-
 }
 
 CBone * CModel::Get_BonePtr(const char * pBoneName)
@@ -148,7 +145,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		}
 		else
 		{
-			  CUtile::MODELMATERIAL_Create(m_pDevice, m_pContext, JsonMatrialPath, m_Materials);
+			CUtile::MODELMATERIAL_Create(m_pDevice, m_pContext, JsonMatrialPath, m_Materials);
 		
 			for (_uint i = 0; i < m_iNumMaterials; i++)
 			{

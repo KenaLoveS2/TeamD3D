@@ -144,6 +144,11 @@ public:
 	_float Calc_Distance_XZ(_float4 &vTargetPos);
 	_float Calc_Distance_XY(_float4 &vTargetPos);
 	_float Calc_Distance_YZ(_float4 &vTargetPos);
+
+	_float Calc_Distance_XYZ(_float3 &vTargetPos);
+	_float Calc_Distance_XZ(_float3 &vTargetPos);
+	_float Calc_Distance_XY(_float3 &vTargetPos);
+	_float Calc_Distance_YZ(_float3 &vTargetPos);
 	
 	_float Calc_Distance_XYZ(CTransform* pTransform);
 	_float Calc_Distance_XZ(CTransform* pTransform);	
@@ -164,6 +169,13 @@ public:
 	_float3 Get_vPxPivotScale() { return m_vPxPivotScale; }
 
 	void Tick(_float fTimeDelta);
+
+	_bool IsClosed_XYZ(_float4& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XZ(_float4& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XYZ(_float3& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XZ(_float3& vTargetPos, _float fDIstance = 0.1f);
+
+	void Set_Position(_fvector vPos);
 };
 
 END
