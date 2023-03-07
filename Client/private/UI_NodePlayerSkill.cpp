@@ -102,7 +102,7 @@ void CUI_NodePlayerSkill::State_Change(_uint eState)
 		if (m_iLevel == 0)
 		{
 			m_fDiffuseAlpha = 0.f;
-			m_fMaskAlpha = 1.f;
+			m_fMaskAlpha = 0.7f;
 		}
 		else
 		{
