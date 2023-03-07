@@ -61,9 +61,12 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
 		PxCapsuleDesc.bCCD = true;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 	
@@ -108,6 +111,9 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
 		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
 
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false));
 
