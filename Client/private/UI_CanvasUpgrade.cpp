@@ -91,8 +91,26 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 			LONG(vPosConvert.x + 30.f), LONG(vPosConvert.y + 30.f) };
 		if (PtInRect(&rc, pt))
 		{
+			if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+			{
+				if (m_pSelected != m_vecNode[i])
+					m_vecEffects[EFFECT_BLUE]->BackToOriginalScale();
+
+				m_vecEffects[EFFECT_BLUE]->Start_Effect(m_vecNode[i], 0.f, 0.f);
+			}
+
 			if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
 			{
+				if (nullptr != m_pSelected)
+				{
+					m_pSelected->BackToOriginal();
+				}
+
+				m_pSelected = static_cast<CUI_NodePlayerSkill*>(m_vecNode[i]);				
+				if(i % 5 != 0)	 /* Level0 doesn't need this effect */
+					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
+				m_pSelected->Picked(1.2f);
+				m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
 
 			}
 		}
@@ -184,6 +202,18 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	pGameInstance->Add_String(tagRing);
 	m_vecEffects.push_back(pEffectUI);
 
+	/* SelectedCircle */
+	string strCircle = "Node_SelectCircle";
+	CUI::UIDESC tDescCircle;
+	_tchar* tagCircle = CUtile::StringToWideChar(strCircle);
+	tDescCircle.fileName = tagCircle;
+	CUI_NodeEffect* pCircle
+		= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagCircle, &tDescCircle));
+	if (FAILED(Add_Node(pCircle)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(strCircle);
+	pGameInstance->Add_String(tagCircle);
+	m_vecEffects.push_back(pCircle);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

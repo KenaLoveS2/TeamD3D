@@ -44,8 +44,31 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 	if(!m_vecEvents.empty())
 		m_vecEvents[0]->Call_Event((_uint)0);
 
-	if (TYPE_SEPERATOR == m_eType)
+	switch (m_eType)
+	{
+	case TYPE_SEPERATOR:
 		m_fTime = 0.f;
+		break;
+	case TYPE_RING:
+		m_fTime = 0.f;
+		break;
+	}
+		
+}
+
+void CUI_NodeEffect::Change_Scale(_float fData)
+{
+	if (m_eType == TYPE_NONEANIM)
+	{
+		m_matLocal._11 = m_matLocalOriginal._11 * fData;
+		m_matLocal._22 = m_matLocalOriginal._22 * fData;
+
+	}
+}
+
+void CUI_NodeEffect::BackToOriginalScale()
+{
+	m_matLocal = m_matLocalOriginal;
 }
 
 HRESULT CUI_NodeEffect::Initialize_Prototype()
@@ -101,7 +124,8 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 			m_bActive = false;
 		break;
 	case TYPE_RING:
-
+		m_fTime += fTimeDelta;
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-m_fTime));
 		break;
 	default:
 		break;
@@ -119,6 +143,13 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	/* Test */
+	if (m_eType == TYPE_RING)
+	{
+		m_fTime += 10.f* fTimeDelta;
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-m_fTime));
+	}
 
 	/* think it's old one but keep it */
 	/*if (m_pParent != nullptr)
@@ -170,7 +201,7 @@ HRESULT CUI_NodeEffect::Save_Data()
 {
 	Json	json;
 
-	_smatrix matWorld = m_matLocal;
+	_smatrix matWorld = m_matLocalOriginal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
 	{
@@ -266,6 +297,7 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
 
 	this->Set_LocalMatrix(matLocal);
+	m_matLocalOriginal = matLocal;
 
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 

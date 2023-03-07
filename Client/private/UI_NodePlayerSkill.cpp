@@ -79,6 +79,64 @@ HRESULT CUI_NodePlayerSkill::Render()
 	return S_OK;
 }
 
+void CUI_NodePlayerSkill::BackToOriginal()
+{
+	m_matLocal = m_matLocalOriginal;
+}
+
+void CUI_NodePlayerSkill::Picked(_float fRatio)
+{
+	m_matLocal._11 *= fRatio;
+	m_matLocal._22 *= fRatio;
+}
+
+HRESULT CUI_NodePlayerSkill::Save_Data()
+{
+	Json	json;
+
+	_smatrix matWorld = m_matLocalOriginal;
+	_float fValue = 0.f;
+	for (int i = 0; i < 16; ++i)
+	{
+		fValue = 0.f;
+		memcpy(&fValue, (float*)&matWorld + i, sizeof(float));
+		json["localMatrix"].push_back(fValue);
+	}
+
+	json["renderPass"] = m_iOriginalRenderPass;
+
+	_int iIndex;
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_DIFFUSE];
+	else
+		iIndex = -1;
+	json["DiffuseTextureIndex"] = iIndex;
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+		iIndex = m_TextureListIndices[TEXTURE_MASK];
+	else
+		iIndex = -1;
+	json["MaskTextureIndex"] = iIndex;
+
+	for (auto e : m_vecEvents)
+		e->Save_Data(&json);
+
+	//vector<wstring>* list = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_ELSE);
+	wstring filePath = L"../Bin/Data/UI/";
+	filePath += this->Get_ObjectCloneName();
+	//filePath += this->Get_Name();
+	filePath += L"_Property.json";
+
+	string fileName;
+	fileName = fileName.assign(filePath.begin(), filePath.end());
+
+	ofstream	file(fileName);
+	file << json;
+	file.close();
+
+	return S_OK;
+}
+
 HRESULT CUI_NodePlayerSkill::Load_Data(wstring fileName)
 {
 	Json	jLoad;
@@ -118,6 +176,7 @@ HRESULT CUI_NodePlayerSkill::Load_Data(wstring fileName)
 		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
 
 	this->Set_LocalMatrix(matLocal);
+	m_matLocalOriginal = matLocal;
 
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 

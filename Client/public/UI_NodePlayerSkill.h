@@ -20,7 +20,15 @@ public:
 	virtual void			Tick(_float fTimeDelta)			override;
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
+
 public:
+	void	BackToOriginal();
+	void	Picked(_float fRatio);
+
+
+
+public:
+	virtual	HRESULT			Save_Data();
 	virtual HRESULT			Load_Data(wstring fileName);
 public:
 	HRESULT	Setting(_tchar* textureProtoTag, _uint iLevel);

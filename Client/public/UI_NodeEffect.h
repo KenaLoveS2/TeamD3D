@@ -14,6 +14,8 @@ private:
 
 public:
 	void	Start_Effect(CUI* pTarget, _float fX, _float fY);
+	void	Change_Scale(_float fData);
+	void	BackToOriginalScale();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

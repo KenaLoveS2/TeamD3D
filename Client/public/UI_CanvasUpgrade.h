@@ -16,7 +16,7 @@ public:
 	};
 
 	enum SKILLTYPE { TYPE_STICK, TYPE_SHIELD, TYPE_BOW, TYPE_BOMB, TYPE_END };
-
+	enum EFFECT { EFFECT_RING, EFFECT_BLUE, EFFECT_END };
 private:
 	CUI_CanvasUpgrade(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasUpgrade(const CUI_CanvasUpgrade& rhs);
@@ -45,7 +45,7 @@ private:
 	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
 
 private:
-	CUI_NodePlayerSkill*		m_pSelected;
+	CUI_NodePlayerSkill*		m_pSelected; /* LastSelectedOne*/
 	vector<CUI_NodeEffect*>		m_vecEffects;
 
 public:
