@@ -76,12 +76,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vPos = vPos;
 	PxCapsuleDesc.fRadius = vPivotScale.x;
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-	PxCapsuleDesc.vVelocity = m_vVelocity;		// 가속도
-	PxCapsuleDesc.fDensity = 1.f;					// 밀도
-	PxCapsuleDesc.fAngularDamping = 0.5f;		// 회전 마찰력
-	PxCapsuleDesc.fMass = 1.f;						// 무게
-	PxCapsuleDesc.fDamping = 1.f;					// 마찰력
-
+	PxCapsuleDesc.vVelocity = _float3(0.f,0.f,0.f);
+	PxCapsuleDesc.fDensity = 1.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+	PxCapsuleDesc.fMass = 1.f;
+	PxCapsuleDesc.fDamping = 1.f;
+	
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
@@ -97,10 +97,10 @@ void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(GetKeyState(VK_SPACE) & 0x8000)
-	{
+	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
+	if(pGameInstnace->Key_Down(DIK_SPACE))
 		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
-	}
+	RELEASE_INSTANCE(CGameInstance)
 
 	m_pKenaState->Tick(fTimeDelta);
 	m_pStateMachine->Tick(fTimeDelta);
@@ -277,23 +277,6 @@ HRESULT CKena::RenderShadow()
 void CKena::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
-
-	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	//ImGui::DragFloat("LinearDamping", &m_fDensity, 0.01f, -100.f, 500.f);
-	float vVelocity[3] = { m_vVelocity.x, m_vVelocity.y, m_vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", vVelocity, 0.01f, 0.1f, 100.0f);
-	m_vVelocity.x = vVelocity[0]; m_vVelocity.y = vVelocity[1]; m_vVelocity.z = vVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(m_szCloneObjectTag, m_fDensity, fAngularDamping, fMass, fLinearDamping, m_vVelocity);
-
-	ImGui::Begin("Trans");
-	m_pTransformCom->Imgui_RenderProperty();
-	ImGui::End();
 }
 
 void CKena::ImGui_AnimationProperty()
@@ -411,6 +394,20 @@ void CKena::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
+
+	// 이게 사실상 px 매니저 imgui_render에 있긴함
+	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
 }
 
 void CKena::Update_Child()
