@@ -100,6 +100,9 @@ void CUI_NodeEffect::Tick(_float fTimeDelta)
 		if (static_cast<CUI_Event_Animation*>(m_vecEvents[0])->Is_Finished())
 			m_bActive = false;
 		break;
+	case TYPE_RING:
+
+		break;
 	default:
 		break;
 	}
@@ -153,7 +156,7 @@ void CUI_NodeEffect::Imgui_RenderProperty()
 {
 	ImGui::Separator();
 	ImGui::Text("Effect Specific Property");
-	ImGui::Text("0TYPE_NONANIM, 1TYPE_ANIM, 2TYPE_SEPERATOR");
+	ImGui::Text("0TYPE_NONANIM, 1TYPE_ANIM, 2TYPE_SEPERATOR, 3TYPE_RING");
 
 	static int eType;
 	eType = m_eType;

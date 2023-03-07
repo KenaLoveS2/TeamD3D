@@ -3,12 +3,14 @@
 #include "GameInstance.h"
 #include "PlayerSkillInfo.h"
 #include "UI_NodePlayerSkill.h"
+#include "UI_NodeEffect.h"
 
 /* Bind Object */
 #include "Kena.h"
 
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
+	, m_pSelected(nullptr)
 {
 	for (auto skill : m_pPlayerSkills)
 		skill = nullptr;
@@ -16,6 +18,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext
 
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	: CUI_Canvas(rhs)
+	, m_pSelected(nullptr)
 {
 	for (auto skill : m_pPlayerSkills)
 		skill = nullptr;
@@ -44,7 +47,7 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 		MSG_BOX("Failed To SetUp Components : CanvasUpgrade");
 		return E_FAIL;
 	}
-
+	
 	if (FAILED(Ready_PlayerSkill()))
 	{
 		MSG_BOX("Failed To Ready PlayerSkill : CanvasUpgrade");
@@ -75,6 +78,28 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 
 	if (!m_bActive)
 		return;
+
+	/* Picking */
+	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
+
+	for (_uint i = 0; i < 20; ++i)
+	{
+		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
+		// left, top, right, bottom 
+		RECT rc = { LONG(vPosConvert.x - 30.f), LONG(vPosConvert.y - 30.f), 
+			LONG(vPosConvert.x + 30.f), LONG(vPosConvert.y + 30.f) };
+		if (PtInRect(&rc, pt))
+		{
+			if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
+			{
+
+			}
+		}
+	}
+
+
+
 
 	__super::Tick(fTimeDelta);
 
@@ -120,6 +145,8 @@ HRESULT CUI_CanvasUpgrade::Bind()
 HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	/* PlayerSkill */
 	for (_uint i = 0; i < TYPE_END; ++i)
 	{
 		string strHeader = "Node_PlayerSkill" + m_pPlayerSkills[i]->Get_TypeName();
@@ -137,10 +164,26 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 				return E_FAIL;
 			m_vecNodeCloneTag.push_back(strCloneTag);
 			pGameInstance->Add_String(wstrCloneTag);
-			if (FAILED(static_cast<CUI_NodePlayerSkill*>(pUI)->Setting(m_pPlayerSkills[i]->Get_TextureProtoTag(), j, )))
+			if (FAILED(static_cast<CUI_NodePlayerSkill*>(pUI)->Setting(m_pPlayerSkills[i]->Get_TextureProtoTag(), j)))
 				MSG_BOX("Failed To Setting : CanvasUpgrade");
 		}
 	}
+
+	/* RotSkill */
+
+	/* SelectedRing */
+	string strRing = "Node_SelectRing";
+	CUI::UIDESC tDescRing;
+	_tchar* tagRing = CUtile::StringToWideChar(strRing);
+	tDescRing.fileName = tagRing;
+	CUI_NodeEffect* pEffectUI
+		= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
+	if (FAILED(Add_Node(pEffectUI)))
+		return E_FAIL;
+	m_vecNodeCloneTag.push_back(strRing);
+	pGameInstance->Add_String(tagRing);
+	m_vecEffects.push_back(pEffectUI);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

@@ -5,6 +5,8 @@
 
 BEGIN(Client)
 class CPlayerSkillInfo;
+class CUI_NodePlayerSkill;
+class CUI_NodeEffect;
 class CUI_CanvasUpgrade final : public CUI_Canvas
 {
 public:
@@ -43,6 +45,8 @@ private:
 	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
 
 private:
+	CUI_NodePlayerSkill*		m_pSelected;
+	vector<CUI_NodeEffect*>		m_vecEffects;
 
 public:
 	static	CUI_CanvasUpgrade*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
