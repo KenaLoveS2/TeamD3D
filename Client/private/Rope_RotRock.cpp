@@ -105,7 +105,7 @@ HRESULT CRope_RotRock::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 		
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 

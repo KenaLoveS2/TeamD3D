@@ -17,9 +17,13 @@ public:
 	LEVEL Get_NextLevelID() const {
 		return m_eNextLevelID;
 	}
+
 	const _tchar* Get_LoadingText() const {
 		return m_szLoadingText;
 	}
+
+	const _float Get_Cur()  const { return m_fCur; }
+	const _float Get_Max() const { return m_fMax; }
 
 	CRITICAL_SECTION Get_CriticalSection() const {
 		return m_Critical_Section;
@@ -38,18 +42,20 @@ public:
 	HRESULT Loading_ForMapTool();
 	HRESULT Loading_ForTestPlay();
 	HRESULT Loading_ForTestEffect();
-private:
-	ID3D11Device*			m_pDevice = nullptr;
-	ID3D11DeviceContext*	m_pContext = nullptr;
-
-	CRITICAL_SECTION		m_Critical_Section;
 
 private:
-	LEVEL			m_eNextLevelID = LEVEL_END;
+	ID3D11Device*					m_pDevice = nullptr;
+	ID3D11DeviceContext*		m_pContext = nullptr;
+	CRITICAL_SECTION			m_Critical_Section;
+
+private:
+	LEVEL				m_eNextLevelID = LEVEL_END;
 	HANDLE			m_hThread;
-	_bool			m_isFinished = false;
-	_tchar			m_szLoadingText[MAX_PATH] = TEXT("");
+	_bool				m_isFinished = false;
+	_tchar				m_szLoadingText[MAX_PATH] = TEXT("");
 
+	_float				m_fCur = 1.f;
+	_float				m_fMax = 0.f;
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

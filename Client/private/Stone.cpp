@@ -113,7 +113,7 @@ HRESULT CStone::SetUp_Components()
 	/* For.Com_Shader */
 	if (m_pModelCom->Get_IStancingModel())
 	{
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 
@@ -121,7 +121,7 @@ HRESULT CStone::SetUp_Components()
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelTess"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 
