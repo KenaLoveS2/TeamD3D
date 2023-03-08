@@ -13,13 +13,13 @@ private:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
-	virtual void		Tick(_float fTimeDelta) override;
-	virtual void		Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
-	virtual void		Imgui_RenderProperty() override;
-	virtual void		ImGui_AnimationProperty() override;
-	virtual void		ImGui_ShaderValueProperty() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
 
 private:
 	virtual HRESULT		SetUp_Components() override;

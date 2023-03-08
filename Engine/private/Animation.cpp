@@ -134,7 +134,7 @@ HRESULT CAnimation::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
+void CAnimation::ImGui_RenderEvents(_int & iSelectEvent, const string & strImGuiKey)
 {
 	_uint		iEventCnt = (_uint)m_mapEvent.size();
 	char**		ppEvents = new char*[iEventCnt];
@@ -148,7 +148,11 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent)
 		strcpy_s(ppEvents[i++], (_uint)strShowTag.length() + 1, strShowTag.c_str());
 	}
 
-	ImGui::ListBox("Events List", &iSelectEvent, ppEvents, iEventCnt);
+	char	szAddKey[MAX_PATH] = "Events List";
+	if (strImGuiKey != "")
+		strcat_s(szAddKey, strImGuiKey.c_str());
+
+	ImGui::ListBox(szAddKey, &iSelectEvent, ppEvents, iEventCnt);
 
 	if (iSelectEvent != -1)
 	{
@@ -308,7 +312,7 @@ void CAnimation::Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRati
 		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 			continue;
 
-		m_Channels[i]->Additive_TransformMatrixForMonster(m_PlayTime, fRatio);
+		m_Channels[i]->Additive_TransformMatrixForMonster((_float)m_PlayTime, fRatio);
 	}
 }
 

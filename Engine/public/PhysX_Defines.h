@@ -63,9 +63,12 @@ public:
 
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-								
-				pSourUserData && pSourUserData->pOwner->Execute_Collision();
-				pDestUserData && pDestUserData->pOwner->Execute_Collision();
+				
+				CGameObject* pSourObj = pSourUserData ? pSourUserData->pOwner : nullptr;
+				CGameObject* pDestObj = pDestUserData ? pDestUserData->pOwner : nullptr;
+
+				pSourObj && pSourObj->Execute_Collision(pDestObj);
+				pDestObj && pDestObj->Execute_Collision(pSourObj);
 			}
 			
 			/*

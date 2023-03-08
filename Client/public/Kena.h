@@ -26,6 +26,7 @@ private:
 
 public:
 	_double					Get_AnimationPlayTime();
+	const _bool&				Is_Attack() const { return m_bAttack; }
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
@@ -33,17 +34,17 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void					Imgui_RenderProperty() override;
-	virtual void					ImGui_AnimationProperty() override;
-	virtual void					ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
-	virtual void					Update_Child() override;
+	virtual void				Imgui_RenderProperty() override;
+	virtual void				ImGui_AnimationProperty() override;
+	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void				ImGui_PhysXValueProperty() override;
+	virtual void				Update_Child() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void			Push_EventFunctions() override;
+	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 private:
@@ -68,18 +69,20 @@ private:
 	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
+	_float					m_fVelocity = 0.f;
 
+	_bool					m_bOnGround = true;
 	_bool					m_bJump = false;
-	_bool					m_bDoubleJump = false;
-	_float					m_fGravity;
+	_bool					m_bPulseJump = false;
+	_float					m_fGravity = 9.81f;
 	_float					m_fInitJumpSpeed;
 	_float					m_fCurJumpSpeed;
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
@@ -91,7 +94,11 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
-	void							Test(_bool bIsInit, _float fTimeDelta);
+
+private:	/* Animation Event Func */
+	void						Test(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
@@ -102,6 +109,7 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
+	virtual _int Execute_Collision(CGameObject* pTarget) override;
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 };

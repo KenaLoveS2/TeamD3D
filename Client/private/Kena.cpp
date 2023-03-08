@@ -65,6 +65,10 @@ HRESULT CKena::Initialize(void * pArg)
 	m_vMulAmbientColor = _float4(2.45f, 2.f, 2.f, 1.f);
 	m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 
+	m_fGravity = 9.81f;
+	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
+	m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	
 	m_iObjectProperty = OP_PLAYER;
 
 	return S_OK;
@@ -114,25 +118,23 @@ void CKena::Tick(_float fTimeDelta)
 
 	Test_Raycast();
 
-	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
-	if(pGameInstnace->Key_Down(DIK_SPACE))
-		CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
-	RELEASE_INSTANCE(CGameInstance)
-
-	m_pKenaState->Tick(fTimeDelta);
-	m_pStateMachine->Tick(fTimeDelta);
+	if (m_pAnimation->Get_Preview() == false)
+	{
+		m_pKenaState->Tick(fTimeDelta);
+		m_pStateMachine->Tick(fTimeDelta);
+	}
 	m_pTransformCom->Tick(fTimeDelta);
+
+	if (m_pModelCom->Get_Preview() == false)
+		m_pAnimation->Play_Animation(fTimeDelta);
+	else
+		m_pModelCom->Play_Animation(fTimeDelta);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
-
-	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
-	else
-		m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -440,18 +442,18 @@ void CKena::ImGui_PhysXValueProperty()
 	m_pTransformCom->Set_PxPivot(vPxPivot);
 
 	// 이게 사실상 px 매니저 imgui_render에 있긴함
-	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
-	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
-	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
+	//PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+// 	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+// 	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+// 	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+// 	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+// 	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+// 	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+// 	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+// 	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+// 	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+// 	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+	//CPhysX_Manager::GetInstance()->Set_Velocity(pRigidActor, _float3(0.f, m_fCurJumpSpeed, 0.f));
 }
 
 void CKena::Update_Child()
@@ -468,6 +470,8 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 void CKena::Push_EventFunctions()
 {
 	Test(true, 0.f);
+	TurnOnAttack(true, 0.f);
+	TurnOffAttack(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -873,14 +877,26 @@ HRESULT CKena::SetUp_State()
 
 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 
-	// 	pAdditiveAnim = new CAdditiveAnimation;
-	// 	pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_AUTO;
-	// 	pAdditiveAnim->m_fAdditiveRatio = 0.f;
-	// 	pAdditiveAnim->m_fMaxAdditiveRatio = 0.1f;
-	// 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_CHARGE_LOOP_ADD);
-	// 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_NEUTRAL_ADD);
-	// 
-	// 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "BOW_CHARGE_LOOP_RUN_FORWARD_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+
+	pAdditiveAnim = new CAdditiveAnimation;
+	pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_MAX;
+	pAdditiveAnim->m_fAdditiveRatio = 1.f;
+	pAdditiveAnim->m_fMaxAdditiveRatio = 1.f;
+	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIM_REFPOSE);
+	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_CHARGE_LOOP_ADD);
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_low_jnt", CBone::LOCKTO_ALONE});
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "staff_root_jnt", CBone::LOCKTO_PARENT});
+
+	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 
 	m_pAnimation->Add_State(pAnimState);
 
@@ -1296,14 +1312,14 @@ HRESULT CKena::SetUp_State()
 	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "HEAVY_ATTACK_3_RELEASE";
 	pAnimState->m_bLoop = false;
-	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_fLerpDuration = 0.1f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_3_RELEASE);
 	m_pAnimation->Add_State(pAnimState);
 
 	pAnimState = new CAnimState;
 	pAnimState->m_strStateName = "HEAVY_ATTACK_3_RELEASE_PERFECT";
 	pAnimState->m_bLoop = false;
-	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_fLerpDuration = 0.1f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_3_RELEASE_PERFECT);
 	m_pAnimation->Add_State(pAnimState);
 
@@ -1335,6 +1351,139 @@ HRESULT CKena::SetUp_State()
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::HEAVY_ATTACK_COMBO_INTO_RUN);
 	m_pAnimation->Add_State(pAnimState);
 
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "JUMP_SQUAT";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::JUMP_SQUAT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::JUMP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "RUNNING_JUMP_SQUAT";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::RUNNING_JUMP_SQUAT_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "RUNNING_JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::RUNNING_JUMP_LEFT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "PULSE_JUMP";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::PULSE_JUMP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_HEAVY";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND_HEAVY);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_WALKING";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LAND_WALKING);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LAND_RUNNING";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::DELETE_KENA_LAND_RUNNING);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "BOW_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "LEDGE_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::LEDGE_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "SLIDE_LAND";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::SLIDE_LAND);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_1";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_LIGHT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_2";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_LIGHT_ALT);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_INTO";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_INTO);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_LOOP";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_LOOP);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "AIR_ATTACK_SLAM_FINISH";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIR_ATTACK_SLAM_FINISH);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "FALL";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "FALL_INTO_RUN";
+	pAnimState->m_bLoop = false;
+	pAnimState->m_fLerpDuration = 0.2f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL_INTO_RUN);
+	m_pAnimation->Add_State(pAnimState);
+
 	return S_OK;
 }
 
@@ -1346,6 +1495,30 @@ void CKena::Test(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Test);
 		return;
 	}
+}
+
+void CKena::TurnOnAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnAttack);
+		return;
+	}
+
+	m_bAttack = true;
+}
+
+void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffAttack);
+		return;
+	}
+
+	m_bAttack = false;
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -1394,8 +1567,28 @@ void CKena::Free()
 	Safe_Release(m_pRendererCom);
 }
 
+_int CKena::Execute_Collision(CGameObject * pTarget)
+{
+	/* Terrain */
+	if (pTarget == nullptr)
+	{
+		m_bOnGround = true;
+		m_bJump = false;
+		m_bPulseJump = false;
+		m_fCurJumpSpeed = 0.f;
+	}
+	/* Other Actors */
+	else
+	{
+	}
+
+	return 0;
+}
 void CKena::Test_Raycast()
 {
+	if (m_pTerrain == nullptr)
+		return;
+
 	if (GetKeyState(VK_LSHIFT) & 0x0800)
 	{
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
