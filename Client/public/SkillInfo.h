@@ -3,7 +3,7 @@
 #include "Base.h"
 
 BEGIN(Client)
-class CPlayerSkillInfo final : public CBase
+class CSkillInfo final : public CBase
 {
 
 public:
@@ -13,7 +13,7 @@ public:
 	enum CHECK { CHECK_PREVSKILL, CHECK_ROTLEVEL, CHECK_KARMA, 
 		CHECK_UNLOCKED_AVAILABLE, CHECK_UNLOCKED_ALREADY, CHECK_END };
 
-	typedef struct tagPlayerSkillDesc
+	typedef struct tagSkillDesc
 	{
 		wstring		wstrName;
 		wstring		wstrDesc;
@@ -22,8 +22,8 @@ public:
 	}SKILLDESC;
 
 private:
-	CPlayerSkillInfo();
-	virtual ~CPlayerSkillInfo() = default;
+	CSkillInfo();
+	virtual ~CSkillInfo() = default;
 public:
 	string		Get_TypeName() { return m_strType; }
 	_tchar*		Get_TextureProtoTag() { return m_pTextureProtoTag; }
@@ -38,7 +38,7 @@ private:
 	string		m_strType;
 
 public:
-	static CPlayerSkillInfo* Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath);
+	static CSkillInfo* Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath);
 	virtual void	Free() override;
 };
 END

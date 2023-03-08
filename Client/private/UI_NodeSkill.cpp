@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "..\public\UI_NodePlayerSkill.h"
+#include "..\public\UI_NodeSkill.h"
 #include "UI_NodeEffect.h"
 #include "GameInstance.h"
 #include "Json/json.hpp"
 #include <fstream>
 
-CUI_NodePlayerSkill::CUI_NodePlayerSkill(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeSkill::CUI_NodeSkill(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_iLevel{ 0 }
 	, m_eState{ STATE_BLOCKED }
@@ -16,7 +16,7 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(ID3D11Device * pDevice, ID3D11DeviceCon
 {
 }
 
-CUI_NodePlayerSkill::CUI_NodePlayerSkill(const CUI_NodePlayerSkill & rhs)
+CUI_NodeSkill::CUI_NodeSkill(const CUI_NodeSkill & rhs)
 	: CUI_Node(rhs)
 	, m_iLevel{ 0 }
 	, m_eState{ STATE_BLOCKED }
@@ -27,7 +27,7 @@ CUI_NodePlayerSkill::CUI_NodePlayerSkill(const CUI_NodePlayerSkill & rhs)
 {
 }
 
-HRESULT CUI_NodePlayerSkill::Initialize_Prototype()
+HRESULT CUI_NodeSkill::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -35,7 +35,7 @@ HRESULT CUI_NodePlayerSkill::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::Initialize(void * pArg)
+HRESULT CUI_NodeSkill::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -45,7 +45,7 @@ HRESULT CUI_NodePlayerSkill::Initialize(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 	{
-		MSG_BOX("Failed To SetUp Components : nodeplayerskill");
+		MSG_BOX("Failed To SetUp Components : nodeskill");
 		return E_FAIL;
 	}
 
@@ -53,23 +53,23 @@ HRESULT CUI_NodePlayerSkill::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::Late_Initialize(void * pArg)
+HRESULT CUI_NodeSkill::Late_Initialize(void * pArg)
 {
 	return S_OK;
 }
 
-void CUI_NodePlayerSkill::Tick(_float fTimeDelta)
+void CUI_NodeSkill::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
 }
 
-void CUI_NodePlayerSkill::Late_Tick(_float fTimeDelta)
+void CUI_NodeSkill::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CUI_NodePlayerSkill::Render()
+HRESULT CUI_NodeSkill::Render()
 {
 	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
 		return E_FAIL;
@@ -79,7 +79,7 @@ HRESULT CUI_NodePlayerSkill::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHPBar");
+		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkill");
 		return E_FAIL;
 	}
 
@@ -88,19 +88,19 @@ HRESULT CUI_NodePlayerSkill::Render()
 	return S_OK;
 }
 
-void CUI_NodePlayerSkill::BackToOriginal()
+void CUI_NodeSkill::BackToOriginal()
 {
 	m_bActive = true;
 	m_matLocal = m_matLocalOriginal;
 }
 
-void CUI_NodePlayerSkill::Picked(_float fRatio)
+void CUI_NodeSkill::Picked(_float fRatio)
 {
 	m_matLocal._11 *= fRatio;
 	m_matLocal._22 *= fRatio;
 }
 
-void CUI_NodePlayerSkill::State_Change(_uint eState)
+void CUI_NodeSkill::State_Change(_uint eState)
 {
 	m_iCheck = 2;
 	switch (eState)
@@ -121,22 +121,23 @@ void CUI_NodePlayerSkill::State_Change(_uint eState)
 	case STATE_LOCKED:
 		break;
 	case STATE_UNLOCKED:
-		m_pLock->Set_Active(false);
+		if(m_pLock != nullptr)
+			m_pLock->Set_Active(false);
 		break;
 	}
 }
 
-void CUI_NodePlayerSkill::Set_LockEffect(CUI_NodeEffect * pEffect)
+void CUI_NodeSkill::Set_LockEffect(CUI_NodeEffect * pEffect)
 {
 	m_pLock = pEffect;
 	m_pLock->Start_Effect(this, 0.f, 0.f);
 }
 
-HRESULT CUI_NodePlayerSkill::Save_Data()
+HRESULT CUI_NodeSkill::Save_Data()
 {
 	Json	json;
 
-	_smatrix matWorld = m_matLocalOriginal;
+	_smatrix matWorld = m_matLocal; // m_matLocalOriginal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
 	{
@@ -179,7 +180,7 @@ HRESULT CUI_NodePlayerSkill::Save_Data()
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::Load_Data(wstring fileName)
+HRESULT CUI_NodeSkill::Load_Data(wstring fileName)
 {
 	Json	jLoad;
 
@@ -225,7 +226,7 @@ HRESULT CUI_NodePlayerSkill::Load_Data(wstring fileName)
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
+HRESULT CUI_NodeSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
 {
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), textureProtoTag, m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
 		return E_FAIL;
@@ -235,7 +236,7 @@ HRESULT CUI_NodePlayerSkill::Setting(_tchar * textureProtoTag, _uint iLevel)
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::SetUp_Components()
+HRESULT CUI_NodeSkill::SetUp_Components()
 {
 	/* Renderer */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
@@ -253,7 +254,7 @@ HRESULT CUI_NodePlayerSkill::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
+HRESULT CUI_NodeSkill::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -289,7 +290,7 @@ HRESULT CUI_NodePlayerSkill::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_NodePlayerSkill::Imgui_RenderProperty()
+void CUI_NodeSkill::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
 
@@ -299,29 +300,29 @@ void CUI_NodePlayerSkill::Imgui_RenderProperty()
 
 }
 
-CUI_NodePlayerSkill * CUI_NodePlayerSkill::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeSkill * CUI_NodeSkill::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CUI_NodePlayerSkill*	pInstance = new CUI_NodePlayerSkill(pDevice, pContext);
+	CUI_NodeSkill*	pInstance = new CUI_NodeSkill(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed To Create : CUI_NodePlayerSkill");
+		MSG_BOX("Failed To Create : CUI_NodeSkill");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CUI_NodePlayerSkill::Clone(void * pArg)
+CGameObject * CUI_NodeSkill::Clone(void * pArg)
 {
-	CUI_NodePlayerSkill*	pInstance = new CUI_NodePlayerSkill(*this);
+	CUI_NodeSkill*	pInstance = new CUI_NodeSkill(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed To Clone : CUI_NodePlayerSkill");
+		MSG_BOX("Failed To Clone : CUI_NodeSkill");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CUI_NodePlayerSkill::Free()
+void CUI_NodeSkill::Free()
 {
 	__super::Free();
 }

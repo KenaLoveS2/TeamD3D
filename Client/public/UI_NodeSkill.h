@@ -4,15 +4,15 @@
 
 BEGIN(Client)
 class CUI_NodeEffect;
-class CUI_NodePlayerSkill final : public CUI_Node
+class CUI_NodeSkill final : public CUI_Node
 {
 public:
 	enum STATE { STATE_BLOCKED, STATE_LOCKED, STATE_UNLOCKED, STATE_END };
 
 private:
-	CUI_NodePlayerSkill(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
-	CUI_NodePlayerSkill(const CUI_NodePlayerSkill& rhs);
-	virtual ~CUI_NodePlayerSkill() = default;
+	CUI_NodeSkill(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
+	CUI_NodeSkill(const CUI_NodeSkill& rhs);
+	virtual ~CUI_NodeSkill() = default;
 
 public:
 	_uint	Get_Level() { return m_iLevel; }
@@ -51,8 +51,8 @@ private:
 	_int					m_iCheck;
 
 public:
-	static	CUI_NodePlayerSkill*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
-	virtual CGameObject*			Clone(void* pArg = nullptr);
-	virtual void					Free() override;
+	static	CUI_NodeSkill*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
+	virtual CGameObject*		Clone(void* pArg = nullptr);
+	virtual void				Free() override;
 };
 END

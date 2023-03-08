@@ -61,7 +61,7 @@ void CUI_NodeEffect::Start_Effect(CUI * pTarget, _float fX, _float fY)
 void CUI_NodeEffect::Change_Scale(_float fData)
 {
 	m_bActive = true;
-	if (m_eType == TYPE_NONEANIM)
+	if (m_eType == TYPE_NONEANIM || m_eType == TYPE_RING)
 	{
 		m_matLocal._11 = m_matLocalOriginal._11 * fData;
 		m_matLocal._22 = m_matLocalOriginal._22 * fData;
@@ -386,13 +386,19 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	if(m_eType == TYPE_SEPERATOR)
+	
+	switch (m_eType)
+	{
+	case TYPE_SEPERATOR:
 		if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTime, sizeof(_float))))
 			return E_FAIL;
-	else if(m_eType == TYPE_ALPHA)
+		break;
+	case TYPE_ALPHA:
 		if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 			return E_FAIL;
+		break;
+	}
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

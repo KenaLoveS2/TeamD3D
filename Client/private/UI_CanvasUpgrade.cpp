@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasUpgrade.h"
 #include "GameInstance.h"
-#include "PlayerSkillInfo.h"
-#include "UI_NodePlayerSkill.h"
+#include "SkillInfo.h"
+#include "UI_NodeSkill.h"
 #include "UI_NodeEffect.h"
 
 /* Bind Object */
@@ -13,7 +13,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
 {
-	for (auto skill : m_pPlayerSkills)
+	for (auto skill : m_pSkills)
 		skill = nullptr;
 }
 
@@ -22,7 +22,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
 {
-	for (auto skill : m_pPlayerSkills)
+	for (auto skill : m_pSkills)
 		skill = nullptr;
 }
 
@@ -50,7 +50,7 @@ HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_PlayerSkill()))
+	if (FAILED(Ready_SkillInfo()))
 	{
 		MSG_BOX("Failed To Ready PlayerSkill : CanvasUpgrade");
 		return E_FAIL;
@@ -97,11 +97,11 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 	{
 		if (m_pSelected != nullptr)
 		{
-			wstring returnMsg = m_pPlayerSkills[m_iPickedIndex/5]
-				->UnLock(static_cast<CUI_NodePlayerSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+			wstring returnMsg = m_pSkills[m_iPickedIndex/5]
+				->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
 			if (IDOK == MessageBox(NULL, returnMsg.c_str(), L"System Message", MB_OKCANCEL))
 			{
-				static_cast<CUI_NodePlayerSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
+				static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
 			}
 		}
 	}
@@ -155,11 +155,11 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* PlayerSkill */
-	for (_uint i = 0; i < TYPE_END; ++i)
+	for (_uint i = 0; i < TYPE_END-1; ++i)
 	{
-		string strHeader = "Node_PlayerSkill" + m_pPlayerSkills[i]->Get_TypeName();
+		string strHeader = "Node_PlayerSkill" + m_pSkills[i]->Get_TypeName();
 
-		for (_uint j = 0; j < CPlayerSkillInfo::LEVEL_END; ++j)
+		for (_uint j = 0; j < CSkillInfo::LEVEL_END; ++j)
 		{
 			CUI* pUI = nullptr;
 			CUI::UIDESC tDesc;
@@ -167,18 +167,36 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 			string strCloneTag = strHeader + to_string(j);
 			_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
 			tDesc.fileName = wstrCloneTag;
-			pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_PlayerSkill", wstrCloneTag, &tDesc));
+			pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Skill", wstrCloneTag, &tDesc));
 			if (FAILED(Add_Node(pUI)))
 				return E_FAIL;
 			m_vecNodeCloneTag.push_back(strCloneTag);
 			pGameInstance->Add_String(wstrCloneTag);
-			if (FAILED(static_cast<CUI_NodePlayerSkill*>(pUI)->Setting(m_pPlayerSkills[i]->Get_TextureProtoTag(), j)))
+			if (FAILED(static_cast<CUI_NodeSkill*>(pUI)->Setting(m_pSkills[i]->Get_TextureProtoTag(), j)))
 				MSG_BOX("Failed To Setting : CanvasUpgrade");
-			static_cast<CUI_NodePlayerSkill*>(pUI)->State_Change(0);
+			static_cast<CUI_NodeSkill*>(pUI)->State_Change(0);
 		}
 	}
 
 	/* RotSkill */
+	for (_uint i = 1; i < CSkillInfo::LEVEL_END; ++i)
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_" + m_pSkills[TYPE_ROT]->Get_TypeName() + to_string(i);
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Skill", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+		if (FAILED(static_cast<CUI_NodeSkill*>(pUI)->Setting(m_pSkills[TYPE_ROT]->Get_TextureProtoTag(), i)))
+			MSG_BOX("Failed To Setting : CanvasUpgrade");
+		static_cast<CUI_NodeSkill*>(pUI)->State_Change(0);
+	}
+
 
 	/* SelectedRing */
 	string strRing = "Node_SelectRing";
@@ -223,8 +241,8 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 
 		if (i % 5 != 0)
 		{
-			pLock->Start_Effect(m_vecNode[i], 0.f, 0.f);
-			static_cast<CUI_NodePlayerSkill*>(m_vecNode[i])->Set_LockEffect(pLock);
+			//pLock->Start_Effect(m_vecNode[i], 0.f, 0.f);
+			static_cast<CUI_NodeSkill*>(m_vecNode[i])->Set_LockEffect(pLock);
 		}
 
 	}
@@ -284,21 +302,24 @@ HRESULT CUI_CanvasUpgrade::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CUI_CanvasUpgrade::Ready_PlayerSkill()
+HRESULT CUI_CanvasUpgrade::Ready_SkillInfo()
 {
 	/* Load Data of Player Skill */
 
-	m_pPlayerSkills[TYPE_STICK] =
-		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Stick.json"));
+	m_pSkills[TYPE_STICK] =
+		CSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Stick.json"));
 
-	m_pPlayerSkills[TYPE_SHIELD] =
-		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Shield.json"));
+	m_pSkills[TYPE_SHIELD] =
+		CSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Shield.json"));
 
-	m_pPlayerSkills[TYPE_BOW] =
-		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bow.json"));
+	m_pSkills[TYPE_BOW] =
+		CSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bow.json"));
 
-	m_pPlayerSkills[TYPE_BOMB] =
-		CPlayerSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bomb.json"));
+	m_pSkills[TYPE_BOMB] =
+		CSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/PlayerSkill_Bomb.json"));
+
+	m_pSkills[TYPE_ROT] =
+		CSkillInfo::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Skill/RotSkill.json"));
 
 	return S_OK;
 }
@@ -309,7 +330,7 @@ void CUI_CanvasUpgrade::Picking()
 	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
 
 	_bool isPicked = false; /* Blue Effect */
-	for (_uint i = 0; i < 20; ++i)
+	for (_uint i = 0; i <= UI_ROTSKILL_END; ++i)
 	{
 		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
@@ -319,7 +340,16 @@ void CUI_CanvasUpgrade::Picking()
 
 		if (PtInRect(&rc, pt))
 		{
-			if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+			if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
+			{
+				isPicked = true;
+				if (m_pSelected != m_vecNode[i])
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.3f);
+				else
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.6f);
+				m_vecEffects[EFFECT_BLUE]->Start_Effect(m_vecNode[i], 0.f, 0.f);
+			}
+			else if (i % 5 != 0)	 /* Level0 doesn't need this effect */
 			{
 				isPicked = true;
 				if (m_pSelected != m_vecNode[i])
@@ -330,24 +360,34 @@ void CUI_CanvasUpgrade::Picking()
 				m_vecEffects[EFFECT_BLUE]->Start_Effect(m_vecNode[i], 0.f, 0.f);
 			}
 
+
 			if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
 			{
-				if (nullptr != m_pSelected)
-				{
+				if (nullptr != m_pSelected) /* Previous One */
 					m_pSelected->BackToOriginal();
-				}
 
-				m_pSelected = static_cast<CUI_NodePlayerSkill*>(m_vecNode[i]);
+				m_pSelected = static_cast<CUI_NodeSkill*>(m_vecNode[i]);
 				m_iPickedIndex = i;
 				m_pSelected->Picked(1.2f);
 
-				if (i % 5 != 0)	 /* Level0 doesn't need this effect */
+				if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
 				{
+					m_vecEffects[EFFECT_RING]->Change_Scale(1.5f);
 					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
-					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.6f);
+				}
+				else if (i % 5 == 0) /* Player's Level0 SKill */
+				{
+					m_vecEffects[EFFECT_RING]->Change_Scale(1.4f);
+					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
 				}
 				else
-					m_vecEffects[EFFECT_RING]->Set_Active(false);
+				{
+					m_vecEffects[EFFECT_RING]->BackToOriginalScale();
+					m_vecEffects[EFFECT_RING]->Start_Effect(m_pSelected, 0.f, 0.f);
+					m_vecEffects[EFFECT_BLUE]->Change_Scale(1.2f);
+
+				}
 			}
 		}
 	}
@@ -398,7 +438,7 @@ void CUI_CanvasUpgrade::Free()
 	if (m_isCloned)
 	{
 		for (_uint i = 0; i < TYPE_END; ++i)
-			Safe_Release(m_pPlayerSkills[i]);
+			Safe_Release(m_pSkills[i]);
 	}
 	
 	m_vecEffects.clear();

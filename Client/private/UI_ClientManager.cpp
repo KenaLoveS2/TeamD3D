@@ -33,7 +33,7 @@
 
 /* CanvasUpgrade */
 #include "UI_CanvasUpgrade.h"
-#include "UI_NodePlayerSkill.h"
+#include "UI_NodeSkill.h"
 
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
@@ -469,9 +469,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Upgrade");
 	
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_PlayerSkill"), CUI_NodePlayerSkill::Create(pDevice, pContext))))
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
 		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_PlayerSkill");
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
 
 
 	/********************************************/

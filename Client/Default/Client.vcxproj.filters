@@ -640,12 +640,6 @@
     <ClInclude Include="..\public\UI_CanvasUpgrade.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodePlayerSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PlayerSkillInfo.h">
-      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\GroundMark.h">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
     </ClInclude>
@@ -681,6 +675,15 @@
     </ClInclude>
     <ClInclude Include="..\public\MonsterWeapon.h">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_NodeRotSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SkillInfo.h">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1012,12 +1015,6 @@
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodePlayerSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PlayerSkillInfo.cpp">
-      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\GroundMark.cpp">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
     </ClCompile>
@@ -1053,6 +1050,15 @@
     </ClCompile>
     <ClCompile Include="..\private\MonsterWeapon.cpp">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeRotSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SkillInfo.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

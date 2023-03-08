@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\PlayerSkillInfo.h"
+#include "..\public\SkillInfo.h"
 #include "GameInstance.h"	
 #include "Json/json.hpp"
 #include <fstream>
@@ -8,12 +8,12 @@
 #include "Utile.h"
 #include "Kena.h"
 
-CPlayerSkillInfo::CPlayerSkillInfo()
+CSkillInfo::CSkillInfo()
 	:m_pTextureProtoTag(nullptr)
 {
 }
 
-wstring CPlayerSkillInfo::UnLock(_uint iLevel)
+wstring CSkillInfo::UnLock(_uint iLevel)
 {
 	CHECK eResult = Check(iLevel);
 	wstring msg;
@@ -44,10 +44,10 @@ wstring CPlayerSkillInfo::UnLock(_uint iLevel)
 		
 }
 
-CPlayerSkillInfo::CHECK CPlayerSkillInfo::Check(_uint iLevel)
+CSkillInfo::CHECK CSkillInfo::Check(_uint iLevel)
 {
 	/* Connect With Player. But Not Now.... */
-	_uint iRotLevel, iKarma, iPrevSkill;
+	_int iRotLevel, iKarma;
 
 	// stick Level2 : prev:1, rotlevel2, karma 150
 
@@ -55,24 +55,24 @@ CPlayerSkillInfo::CHECK CPlayerSkillInfo::Check(_uint iLevel)
 	iRotLevel = 1;
 	iKarma = 200;
 
-	//if (m_tDesc[iLevel].eState == STATE_UNLOCKED)
-	//	return CHECK_UNLOCKED_ALREADY;
-	//
-	//if (iRotLevel < m_tDesc[iLevel].conditions[CONDITION_ROTLEVEL])
-	//	return CHECK_ROTLEVEL;
-	//
-	//_int iPrevLevel = m_tDesc[iLevel].conditions[CONDITION_PREVSKILL];
-	//if (m_tDesc[iPrevLevel].eState != STATE_UNLOCKED)
-	//	return CHECK_PREVSKILL;
-	//
-	//if (iKarma < m_tDesc[iLevel].conditions[CONDITION_KARMA])
-	//	return CHECK_KARMA;
+	if (m_tDesc[iLevel].eState == STATE_UNLOCKED)
+		return CHECK_UNLOCKED_ALREADY;
+	
+	if (iRotLevel < m_tDesc[iLevel].conditions[CONDITION_ROTLEVEL])
+		return CHECK_ROTLEVEL;
+	
+	_int iPrevLevel = m_tDesc[iLevel].conditions[CONDITION_PREVSKILL];
+	if (iPrevLevel!=-1 && m_tDesc[iPrevLevel].eState != STATE_UNLOCKED)
+		return CHECK_PREVSKILL;
+	
+	if (iKarma < m_tDesc[iLevel].conditions[CONDITION_KARMA])
+		return CHECK_KARMA;
 
 	m_tDesc[iLevel].eState = STATE_UNLOCKED;
 	return CHECK_UNLOCKED_AVAILABLE;
 }
 
-HRESULT CPlayerSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)
+HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)
 {
 	Json	jLoad;
 
@@ -142,17 +142,17 @@ HRESULT CPlayerSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	
 	return S_OK;
 }
 
-CPlayerSkillInfo * CPlayerSkillInfo::Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)
+CSkillInfo * CSkillInfo::Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)
 {
-	CPlayerSkillInfo* pInstance = new CPlayerSkillInfo();
+	CSkillInfo* pInstance = new CSkillInfo();
 	if (FAILED(pInstance->Load_File(pDevice, pContext, filePath)))
 	{
-		MSG_BOX("Failed To Load : PlayerSkillInfo");
+		MSG_BOX("Failed To Load : SkillInfo");
 	}
 	return pInstance;
 }
 
-void CPlayerSkillInfo::Free()
+void CSkillInfo::Free()
 {
 	Safe_Delete_Array(m_pTextureProtoTag);
 }
