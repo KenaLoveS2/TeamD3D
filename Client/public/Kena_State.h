@@ -425,6 +425,8 @@ private:
 	HRESULT					SetUp_State_Attack4();
 	HRESULT					SetUp_State_Bow();
 	HRESULT					SetUp_State_Combat();
+	HRESULT					SetUp_State_Damaged_Common();
+	HRESULT					SetUp_State_Damaged_Heavy();
 	HRESULT					SetUp_State_Dodge();
 	HRESULT					SetUp_State_Fall();
 	HRESULT					SetUp_State_Heavy_Attack1();
@@ -484,6 +486,7 @@ private:
 	void						Start_Bow_Charge(_float fTimeDelta);
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta);
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
@@ -493,6 +496,14 @@ private:
 	void						Start_Lock_On_To_Idle(_float fTimeDelta);
 	void						Start_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						Start_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						Start_Take_Damage_Front(_float fTimeDelta);
+	void						Start_Take_Damage_Back(_float fTImeDelta);
+	void						Start_Take_Damage_Left(_float fTimeDelta);
+	void						Start_Take_Damage_Right(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						Start_Backflip(_float fTimeDelta);
 	void						Start_Roll(_float fTimeDelta);
@@ -623,6 +634,14 @@ private:
 	void						Tick_Lock_On_To_Idle(_float fTimeDelta);
 	void						Tick_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						Tick_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						Tick_Take_Damage_Front(_float fTimeDelta);
+	void						Tick_Take_Damage_Back(_float fTImeDelta);
+	void						Tick_Take_Damage_Left(_float fTimeDelta);
+	void						Tick_Take_Damage_Right(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						Tick_Backflip(_float fTimeDelta);
 	void						Tick_Roll(_float fTimeDelta);
@@ -746,6 +765,14 @@ private:
 	void						End_Lock_On_To_Idle(_float fTimeDelta);
 	void						End_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						End_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						End_Take_Damage_Front(_float fTimeDelta);
+	void						End_Take_Damage_Back(_float fTImeDelta);
+	void						End_Take_Damage_Left(_float fTimeDelta);
+	void						End_Take_Damage_Right(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						End_Backflip(_float fTimeDelta);
 	void						End_Roll(_float fTimeDelta);
@@ -815,6 +842,8 @@ private:
 
 private:	/* Changer */
 	_bool	OnGround();
+	_bool	CommonHit();
+	_bool	HeavyHit();
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();

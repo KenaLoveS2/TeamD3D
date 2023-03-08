@@ -354,8 +354,11 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
 
- 			if (m_Channels[i]->Get_BoneLocked() == true)
- 				continue;
+			if (m_Channels[i]->Get_BoneLocked() == true)
+			{
+				//m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
+				continue;
+			}
 
  			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
  				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
@@ -429,7 +432,10 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 				m_Channels[i]->Reset_KeyFrameIndex();
 
 			if (m_Channels[i]->Get_BoneLocked() == true)
+			{
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
 				continue;
+			}
 
 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
@@ -445,7 +451,10 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			}
 
 			if (m_Channels[i]->Get_BoneLocked() == true)
+			{
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
 				continue;
+			}
 
 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
@@ -491,7 +500,10 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 			continue;
 
 		if (m_Channels[i]->Get_BoneLocked() == true)
+		{
+			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 			continue;
+		}
 
 		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
