@@ -141,6 +141,9 @@ public:
 	void Create_PxTriangle();
 	void Set_PxPosition(_float3 vPosition);
 	void Set_PxMatrix(_float4x4& Matrix);
+
+	void Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
+	void Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
 };
 
 END

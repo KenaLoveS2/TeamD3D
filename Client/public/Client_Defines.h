@@ -21,9 +21,12 @@ namespace Client
 
 	enum OBJECT_PROPERTY { 
 		OP_NULL,
-		OP_PLAYER, OP_STICKS,
-
-
+		OP_PLAYER, OP_ROT, 
+		
+		OP_MONSTER,
+		OP_MON_STICKS,
+		OP_ENVIROMENT,
+		
 		OBJECT_PROPERTY_END 
 	};
 }

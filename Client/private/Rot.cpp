@@ -3,6 +3,9 @@
 #include "GameInstance.h"
 #include "Rot_State.h"
 
+_uint CRot::m_iEveryRotCount = 0;
+vector<CRot*> CRot::m_EveryRotList;
+
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
 {
@@ -46,6 +49,9 @@ HRESULT CRot::Initialize(void* pArg)
 	Push_EventFunctions();
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	m_iThisRotIndex = m_iEveryRotCount++;
+	m_EveryRotList.push_back(this);
 
 	return S_OK;
 }

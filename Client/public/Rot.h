@@ -18,6 +18,12 @@ class CRot final : public CGameObject
 {
 	friend class CRot_State;
 
+private:
+	static _uint m_iEveryRotCount;
+	static vector<CRot*> m_EveryRotList;
+	_uint m_iThisRotIndex = 0;
+	
+
 public:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
