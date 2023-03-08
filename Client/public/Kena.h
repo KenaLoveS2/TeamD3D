@@ -8,9 +8,7 @@
 BEGIN(Engine)
 class CRenderer;
 class CShader;
-class CCollider;
 class CRenderer;
-class CNavigation;
 class CStateMachine;
 class CAnimationState;
 END
@@ -52,8 +50,6 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
-	CCollider*					m_pRangeCol = nullptr;
-	CNavigation*				m_pNavigationCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
@@ -100,8 +96,6 @@ private:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 	_float m_fTest = 0.f;
-
-
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

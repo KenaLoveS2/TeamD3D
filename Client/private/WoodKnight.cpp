@@ -65,6 +65,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
@@ -117,6 +118,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
 
@@ -168,6 +170,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
 
@@ -848,7 +851,7 @@ HRESULT CWoodKnight::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_WoodKnight", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 

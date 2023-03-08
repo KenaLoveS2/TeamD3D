@@ -376,7 +376,7 @@ HRESULT CEffect_Mesh::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(g_LEVEL,
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
