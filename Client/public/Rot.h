@@ -6,9 +6,7 @@ BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
-class CCollider;
 class CRenderer;
-class CNavigation;
 class CStateMachine;
 END
 
@@ -43,8 +41,6 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CCollider*					m_pRangeCol = nullptr;
-	CNavigation*			m_pNavigationCom = nullptr;
 	CStateMachine*		m_pStateMachine = nullptr;
 	class CRot_State*		m_pRotState = nullptr;
 

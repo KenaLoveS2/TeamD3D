@@ -121,13 +121,13 @@ HRESULT CBase_Ground::SetUp_Components()
 	/* For.Com_Shader */
 	if (m_pModelCom->Get_IStancingModel())
 	{
-		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModelInstance"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
+		if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 			(CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}
