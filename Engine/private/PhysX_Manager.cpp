@@ -7,6 +7,19 @@
 #include "GameInstance.h"
 
 /*
+eVISUALIZATION: 이 플래그는 PhysX 비주얼 디버거에서 액터를 시각화해야 하는지 여부를 나타냅니다.
+eDISABLE_GRAVITY: 이 플래그는 액터의 중력을 비활성화하는 데 사용됩니다.
+eSEND_SLEEP_NOTIFIES: 이 플래그는 액터에 대한 수면 알림을 활성화/비활성화하는 데 사용됩니다. 액터가 잠들거나 깨어날 때 사용자에게 알림을 보낼 수 있습니다.
+eDISABLE_SIMULATION: 이 플래그는 액터에 대한 시뮬레이션을 비활성화하는 데 사용됩니다.
+eCONTACT_REPORTING: 이 플래그는 액터에 대한 연락처 보고를 활성화/비활성화하는 데 사용됩니다. 활성화되면 액터는 모든 접점을 사용자에게 보고합니다.
+eCONTACT_PERFORMANCE_RBD: 이 플래그는 액터에 대한 접촉 성능 기능을 활성화/비활성화하는 데 사용됩니다. 활성화되면 액터는 성능을 향상시키는 단순화된 접촉 생성 알고리즘을 사용하지만 접촉의 정확도가 떨어질 수 있습니다.
+eCONTACT_PERFORMANCE_ARTICULATION: 이 플래그는 다관절 몸체에 대한 접촉 성능 기능을 활성화/비활성화하는 데 사용됩니다. 활성화되면 다관절 몸체는 성능을 향상시키는 단순화된 접촉 생성 알고리즘을 사용하지만 접촉의 정확도가 떨어질 수 있습니다.
+eCONTACT_FORCE_THRESHOLD: 이 플래그는 액터에 대한 접촉력 임계값을 설정하는 데 사용됩니다. 접촉력이 이 임계값을 초과하면 접촉 보고서가 생성됩니다.
+eDISABLE_CONTACT_REPORT_BUFFER_RESIZE: 이 플래그는 연락처 보고서 버퍼가 액터에 대해 자동으로 크기가 조정되는 것을 방지하는 데 사용됩니다.
+eLOCK_COM: 이 플래그는 액터의 질량 중심을 고정하는 데 사용됩니다.
+*/
+
+/*
 Mass: The mass of the object, specified in kilograms.
 질량: 킬로그램으로 지정된 물체의 질량.
 
@@ -152,7 +165,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
 	m_pCooking->setParams(params);
 	
-	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
 	// 기본 땅 생성	
 	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);	
@@ -294,11 +307,8 @@ void CPhysX_Manager::Clear()
 	}
 }
 
-PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
 {	
-	_float halfExtent = 0.1f;
-	PxU32 size = 1;
-
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
 
@@ -308,12 +318,15 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	PxTransform Transform(PxIdentity);
 	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
 
-	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *m_pMaterial, true);
+	PxMaterial *pMaterial = m_pPhysics->createMaterial(fStaticFriction, fDynamicFriction, fRestitution);
+
+	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
 
 	pBody->attachShape(*shape);	
-	m_pScene->addActor(*pBody);
 
+	m_pScene->addActor(*pBody);
+	pMaterial->release();
 	shape->release();	
 	return pBody;
 }
@@ -323,20 +336,21 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	if (Desc.eType == BOX_STATIC)
 	{	
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
-		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);
+		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);		
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, false);
 		
-		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, false);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-		
+
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;		
+		FilterData.word0 = Desc.eFilterType;
 		pShape->setSimulationFilterData(FilterData);
 
 		pBox->attachShape(*pShape);
-		
+
 		if (pUserData)
 		{
 			pUserData->eType = Desc.eType;
@@ -350,16 +364,18 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			CString_Manager::GetInstance()->Add_String(pTag);
 			m_StaticActors.emplace(pTag, pBox);
 		}
-	
+
+		
 		m_pScene->addActor(*pBox);
 		pShape->release();
+		pMaterial->release();
 	}
 	else if (Desc.eType == BOX_DYNAMIC)
 	{	
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pBox = m_pPhysics->createRigidDynamic(Transform);
-
-		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *m_pMaterial, true);		
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, true);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
@@ -371,10 +387,11 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		
 		pBox->attachShape(*pShape);
 		pBox->setMass(Desc.fMass);
-		pBox->setLinearDamping(Desc.fDamping);
+		pBox->setLinearDamping(Desc.fLinearDamping);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		pBox->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
+		
 		PxRigidBodyExt::updateMassAndInertia(*pBox, Desc.fDensity);
 		
 		if (pUserData)
@@ -399,6 +416,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		
 		m_pScene->addActor(*pBox);
 		pShape->release();
+		pMaterial->release();
 	}	
 }
 
@@ -407,10 +425,9 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 	if (Desc.eType == SPHERE_STATIC)
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
-		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);
-		
-		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
-		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
+		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);		
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 	
@@ -433,14 +450,14 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 
 		m_pScene->addActor(*pSphere);
 		pShape->release();
+		pMaterial->release();
 	}
 	else if (Desc.eType == SPHERE_DYNAMIC)
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidDynamic* pSphere = m_pPhysics->createRigidDynamic(Transform);
-
-		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pSphere, PxSphereGeometry(Desc.fRadius), *m_pMaterial);		
-		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *m_pMaterial, true);
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
@@ -452,7 +469,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 
 		pSphere->attachShape(*pShape);
 		pSphere->setMass(Desc.fMass);
-		pSphere->setLinearDamping(Desc.fDamping);
+		pSphere->setLinearDamping(Desc.fLinearDamping);
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
@@ -480,6 +497,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 
 		m_pScene->addActor(*pSphere);
 		pShape->release();
+		pMaterial->release();
 	}	
 }
 
@@ -489,9 +507,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
 		PxRigidStatic *pCapsule = m_pPhysics->createRigidStatic(Transform);
-				
-		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
-		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial, true);
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *pMaterial, true);
 		
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
@@ -515,14 +532,14 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 	
 		m_pScene->addActor(*pCapsule);
 		pShape->release();
+		pMaterial->release();
 	}
 	else if (Desc.eType == CAPSULE_DYNAMIC)
 	{
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
-		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);
-		
-		// PxShape* pShape = PxRigidActorExt::createExclusiveShape(*pCapsule, PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial);
-		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *m_pMaterial, true);
+		PxRigidDynamic *pCapsule = m_pPhysics->createRigidDynamic(Transform);		
+		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
+		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *pMaterial, true);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
 
@@ -532,7 +549,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 
 		pCapsule->attachShape(*pShape);
 		pCapsule->setMass(Desc.fMass);
-		pCapsule->setLinearDamping(Desc.fDamping);
+		pCapsule->setLinearDamping(Desc.fLinearDamping);
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
@@ -558,10 +575,11 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 			m_DynamicColliders.emplace(pTag, pCapsule);
 		}
 
-		//pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		// pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
 		pShape->release();
+		pMaterial->release();
 	}	
 }
 
@@ -973,5 +991,3 @@ void CPhysX_Manager::Delete_Actor(PxActor& pActor)
 {
 	m_pScene->removeActor(pActor);
 }
-
-

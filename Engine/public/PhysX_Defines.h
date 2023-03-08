@@ -3,7 +3,6 @@
 #include "GameObject.h"
 
 BEGIN(Engine)
-
 #pragma region Struct, Enum, Global Function 
 enum ACTOR_TYPE {
 	BOX_STATIC, SPHERE_STATIC, CAPSULE_STATIC, TRIANGLE_MESH_STATIC,
@@ -69,10 +68,6 @@ public:
 				pDestUserData && pDestUserData->pOwner->Execute_Collision();
 			}
 			
-			
-			
-
-
 			/*
 			// eDETECT_CCD_CONTACT: 연속 충돌 감지를 사용하여 두 액터 간의 접촉을 감지합니다.	
 			if (cp.events & PxPairFlag::eDETECT_CCD_CONTACT) { int temp = 0; }
@@ -116,15 +111,9 @@ public:
 		}
 	}
 
-	virtual void onWake(PxActor** actors, PxU32 count) override {
-		int wake = 0;
-	};
-	virtual void onSleep(PxActor** actors, PxU32 count) override {
-		int sleep = 0;
-	};
-	virtual void onAdvance(const PxRigidBody*const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count) override {
-		int adavance = 0;
-	};
+	virtual void onWake(PxActor** actors, PxU32 count) override { int wake = 0;	};
+	virtual void onSleep(PxActor** actors, PxU32 count) override { int sleep = 0; };
+	virtual void onAdvance(const PxRigidBody*const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count) override { int adavance = 0; };
 };
 #pragma endregion
 END

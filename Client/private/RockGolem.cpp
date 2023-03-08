@@ -60,7 +60,11 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
 
@@ -144,6 +148,13 @@ HRESULT CRockGolem::RenderShadow()
 void CRockGolem::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
+
+	// 일때만 가능
+	if(ImGui::Button("TAKEDAMAGE"))
+	{
+		if(m_pFSM->IsCompareState("EXPLODEATTACK"))
+			m_bHit = true;
+	}
 }
 
 void CRockGolem::ImGui_AnimationProperty()
@@ -168,8 +179,6 @@ void CRockGolem::ImGui_AnimationProperty()
 void CRockGolem::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
-
-	// shader Value 조절
 }
 
 void CRockGolem::ImGui_PhysXValueProperty()
@@ -198,6 +207,13 @@ void CRockGolem::Push_EventFunctions()
 	CMonster::Push_EventFunctions();
 }
 
+void CRockGolem::Calc_RootBoneDisplacement(_fvector vDisplacement)
+{
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = (vPos + vDisplacement) * 0.5f;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
 HRESULT CRockGolem::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
@@ -210,9 +226,21 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
 		{
-			return m_bSpawn;
+			return m_bSpawn && DistanceTrigger(20.f);
 		})
-	
+
+			.AddState("INTOSLEEP")
+			.OnStart([this]()
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(INTOSLEEP);
+			m_pModelCom->Set_AnimIndex(INTOSLEEP);
+		})
+			.AddTransition("INTOSLEEP to SLEEPIDLE" , "SLEEPIDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(INTOSLEEP);
+		})
+
 			.AddState("IDLE")
 			.OnStart([this]()
 		{
@@ -300,6 +328,23 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(EXPLODE);
 		})
+			.AddTransition("EXPLODEATTACK to TAKEDAMAGE" , "TAKEDAMAGE")
+			.Predicator([this]()
+		{
+			return m_bHit;
+		})
+
+			.AddState("TAKEDAMAGE")
+			.OnStart([this]()
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
+			m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
+		})
+			.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(TAKEDAMAGE);
+		})
 
 			.AddState("WISPIN")
 			.OnStart([this]()
@@ -319,13 +364,12 @@ HRESULT CRockGolem::SetUp_State()
 			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
 			m_pModelCom->Set_AnimIndex(WISPOUT);
 		})
-			.AddTransition("WISPOUT to SLEEPIDLE ", "SLEEPIDLE")
+			.AddTransition("WISPOUT to INTOSLEEP ", "INTOSLEEP")
 			.Predicator([this]()
 		{
 			return AnimFinishChecker(WISPOUT);
 		})
-
-		.Build();
+			.Build();
 
 	return S_OK;
 }
@@ -334,7 +378,7 @@ HRESULT CRockGolem::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_RockGolem", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 

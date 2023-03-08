@@ -166,7 +166,7 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -287,7 +287,6 @@ void CTerrain::Free()
 	for (auto& pTextureCom : m_pTextureCom)	
 		Safe_Release(pTextureCom);	
 
-	//Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

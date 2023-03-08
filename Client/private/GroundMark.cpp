@@ -48,7 +48,7 @@ HRESULT CGroundMark::Render()
 	if (FAILED(__super::Render())) return E_FAIL;
 	if (FAILED(SetUp_ShaderResources())) return E_FAIL;
 
-	m_pShaderCom->Begin(12);
+	m_pShaderCom->Begin(15);
 
 	m_pVIBufferCom->Render();
 
