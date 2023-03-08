@@ -42,6 +42,8 @@ HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CM
 	FAILED_CHECK_RETURN(SetUp_State_Attack4(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Bow(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Combat(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Damaged_Common(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Damaged_Heavy(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Fall(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack1(), E_FAIL);
@@ -69,6 +71,9 @@ void CKena_State::Tick(_double dTimeDelta)
 void CKena_State::Late_Tick(_double dTimeDelta)
 {
 	m_ePreDir = m_eDir;
+
+// 	m_pKena->m_bCommonHit = false;
+// 	m_pKena->m_bHeavyHit = false;
 }
 
 void CKena_State::ImGui_RenderProperty()
@@ -99,6 +104,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"TAKE_DAMAGE_FRONT", this, &CKena_State::CommonHit)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
@@ -120,6 +126,7 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_Start(this, &CKena_State::Start_Run)
 		.Init_Tick(this, &CKena_State::Tick_Run)
 		.Init_End(this, &CKena_State::End_Run)
+		.Init_Changer(L"TAKE_DAMAGE_FRONT", this, &CKena_State::CommonHit)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
@@ -687,6 +694,62 @@ HRESULT CKena_State::SetUp_State_Combat()
 		.Init_Start(this, &CKena_State::Start_Combat_Run)
 		.Init_Tick(this, &CKena_State::Tick_Combat_Run)
 		.Init_End(this, &CKena_State::End_Combat_Run)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Damaged_Common()
+{
+	m_pStateMachine->Add_State(L"TAKE_DAMAGE_FRONT")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Front)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Front)
+		.Init_End(this, &CKena_State::End_Take_Damage_Front)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"TAKE_DAMAGE_BACK")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Back)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Back)
+		.Init_End(this, &CKena_State::End_Take_Damage_Back)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"TAKE_DAMAGE_LEFT")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Left)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Left)
+		.Init_End(this, &CKena_State::End_Take_Damage_Left)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"TAKE_DAMAGE_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Right)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Right)
+		.Init_End(this, &CKena_State::End_Take_Damage_Right)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Damaged_Heavy()
+{
+	m_pStateMachine->Add_State(L"TAKE_DAMAGE_HEAVY_FRONT")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Heavy_Front)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Heavy_Front)
+		.Init_End(this, &CKena_State::End_Take_Damage_Heavy_Front)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"TAKE_DAMAGE_HEAVY_BACK")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Heavy_Back)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Heavy_Back)
+		.Init_End(this, &CKena_State::End_Take_Damage_Heavy_Back)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"TAKE_DAMAGE_HEAVY_AIR")
+		.Init_Start(this, &CKena_State::Start_Take_Damage_Heavy_Air)
+		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Heavy_Air)
+		.Init_End(this, &CKena_State::End_Take_Damage_Heavy_Air)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -1732,6 +1795,41 @@ void CKena_State::Start_Combat_Run(_float fTimeDelta)
 	m_pAnimationState->State_Animation("COMBAT_RUN_ADDITIVE_POSE");
 }
 
+void CKena_State::Start_Take_Damage_Front(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_FRONT");
+}
+
+void CKena_State::Start_Take_Damage_Back(_float fTImeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_BACK");
+}
+
+void CKena_State::Start_Take_Damage_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_LEFT");
+}
+
+void CKena_State::Start_Take_Damage_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_RIGHT");
+}
+
+void CKena_State::Start_Take_Damage_Heavy_Front(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_FRONT");
+}
+
+void CKena_State::Start_Take_Damage_Heavy_Back(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_BACK");
+}
+
+void CKena_State::Start_Take_Damage_Heavy_Air(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_AIR");
+}
+
 void CKena_State::Start_Backflip(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BACKFLIP");
@@ -2305,6 +2403,34 @@ void CKena_State::Tick_Combat_Run(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Take_Damage_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Back(_float fTImeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Left(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Right(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Heavy_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Heavy_Back(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Take_Damage_Heavy_Air(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Backflip(_float fTimeDelta)
 {
 }
@@ -2747,6 +2873,34 @@ void CKena_State::End_Combat_Run(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Take_Damage_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Back(_float fTImeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Left(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Right(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Heavy_Front(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Heavy_Back(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Take_Damage_Heavy_Air(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Backflip(_float fTimeDelta)
 {
 }
@@ -2980,6 +3134,16 @@ void CKena_State::End_Sprint_Attack(_float fTimeDelta)
 _bool CKena_State::OnGround()
 {
 	return m_pKena->m_bOnGround && !m_pKena->m_bJump;
+}
+
+_bool CKena_State::CommonHit()
+{
+	return m_pKena->m_bCommonHit && !m_pKena->m_bHeavyHit;
+}
+
+_bool CKena_State::HeavyHit()
+{
+	return !m_pKena->m_bCommonHit && m_pKena->m_bHeavyHit;
 }
 
 _bool CKena_State::Animation_Finish()

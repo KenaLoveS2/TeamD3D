@@ -125,6 +125,9 @@ void CKena::Tick(_float fTimeDelta)
 	}
 	m_pTransformCom->Tick(fTimeDelta);
 
+	m_bCommonHit = false;
+	m_bHeavyHit = false;
+
 	if (m_pModelCom->Get_Preview() == false)
 		m_pAnimation->Play_Animation(fTimeDelta);
 	else
@@ -616,7 +619,8 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 HRESULT CKena::SetUp_State()
 {
 	m_pModelCom->Set_RootBone("kena_RIG");
-	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
+	return S_OK;
 
 	CAnimState*			pAnimState = nullptr;
 	CAdditiveAnimation*	pAdditiveAnim = nullptr;
@@ -1580,6 +1584,8 @@ _int CKena::Execute_Collision(CGameObject * pTarget)
 	/* Other Actors */
 	else
 	{
+		m_bCommonHit = true;
+		//m_bHeavyHit = true;
 	}
 
 	return 0;
