@@ -130,23 +130,20 @@ HRESULT CUI_CanvasUpgrade::Render()
 
 HRESULT CUI_CanvasUpgrade::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasUpgrade::BindFunction);
+	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
+	//	L"Layer_Player", L"Kena"));
+	//if (pKena == nullptr)
+	//{
+	//	RELEASE_INSTANCE(CGameInstance);
+	//	return E_FAIL;
+	//}
+	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasUpgrade::BindFunction);
 
-	//m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
+	//RELEASE_INSTANCE(CGameInstance);
 
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	m_bBindFinished = true;
+	//m_bBindFinished = true;
 	return S_OK;
 }
 
@@ -399,8 +396,11 @@ void CUI_CanvasUpgrade::Picking()
 
 void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
-	m_bActive = true;
-	CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+	if (eType == CUI_ClientManager::INV_UPGRADE)
+	{
+		m_bActive = true;
+	}
+	
 }
 
 void CUI_CanvasUpgrade::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)

@@ -160,7 +160,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	//CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
@@ -170,8 +171,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
 		_float fTag = 0.f;
-		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
 
 	static _float fNum = 3.f;

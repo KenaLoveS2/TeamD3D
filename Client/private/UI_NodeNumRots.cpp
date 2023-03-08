@@ -73,13 +73,13 @@ HRESULT CUI_NodeNumRots::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 25.f, g_iWinSizeY*0.5f - vPos.y - 10.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 20.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	_tchar* str = CUtile::StringToWideChar(to_string(230));
+	_tchar* str = CUtile::StringToWideChar(to_string(m_iNumRots));
 	pGameInstance->Render_Font(TEXT("Font_Basic0"), str,
 		vNewPos /* position */,
-		0.f, _float2(1.f, 1.f)/* size */,
+		0.f, _float2(0.9f, 0.9f)/* size */,
 		XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	RELEASE_INSTANCE(CGameInstance);
 

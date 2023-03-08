@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_CanvasInvHeader.h"
 #include "GameInstance.h"
+#include "Kena.h"
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -43,7 +44,7 @@ HRESULT CUI_CanvasInvHeader::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	//m_bActive = true;
+	m_bActive = true;
 
 	return S_OK;
 }
@@ -61,6 +62,16 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 
 	if (!m_bActive)
 		return;
+
+	/* Return To Play */
+	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	{
+		CGameInstance::GetInstance()->Get_Back();
+		m_bActive = false;
+		return;
+	}
+
+
 
 	__super::Tick(fTimeDelta);
 }
@@ -84,17 +95,14 @@ HRESULT CUI_CanvasInvHeader::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-	//	L"Layer_Player", L"Kena"));
-	//if (pKena == nullptr)
-	//{
-	//	RELEASE_INSTANCE(CGameInstance);
-	//	return E_FAIL;
-	//}
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasUpgrade::BindFunction);
-
-	////m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
-
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
+		L"Layer_Player", L"Kena"));
+	if (pKena == nullptr)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return E_FAIL;
+	}
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -138,6 +146,10 @@ HRESULT CUI_CanvasInvHeader::Ready_Nodes()
 		return E_FAIL;
 	m_vecNodeCloneTag.push_back(CrysTag);
 	pGameInstance->Add_String(CyrsCloneTag);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
 
 }
 
@@ -194,6 +206,16 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 
 void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
+	/* Default */
+	if (eType == CUI_ClientManager::INV_)
+	{
+		m_bActive = true;
+		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+
+	}
+
+
+
 }
 
 CUI_CanvasInvHeader * CUI_CanvasInvHeader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

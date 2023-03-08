@@ -9,6 +9,9 @@ private:
 	CUI_NodeNumRots(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeNumRots(const CUI_NodeNumRots& rhs);
 	virtual ~CUI_NodeNumRots() = default;
+
+public:
+	_int	Get_NumRots() { return m_iNumRots; }
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -19,6 +22,9 @@ public:
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
+
+private:
+	_int	m_iNumRots;
 
 public:
 	static	CUI_NodeNumRots*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -497,18 +497,6 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 	/********************************************/
-	/*				For. Upgrades				*/
-	/********************************************/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Upgrade"), CUI_CanvasUpgrade::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Upgrade");
-	
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
-
-
-	/********************************************/
 	/*				For. InvHeader				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_InvHeader"), CUI_CanvasInvHeader::Create(pDevice, pContext))))
@@ -526,6 +514,18 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Crystal"), CUI_NodeCrystal::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Crystal");
+
+
+	/********************************************/
+	/*				For. Upgrades				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Upgrade"), CUI_CanvasUpgrade::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Upgrade");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
 
 
 	/********************************************/
