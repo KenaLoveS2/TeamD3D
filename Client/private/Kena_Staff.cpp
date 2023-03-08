@@ -70,6 +70,8 @@ void CKena_Staff::Tick(_float fTimeDelta)
 		}
 	}
 
+	m_pKenaStaffTrail->Set_Active(m_pPlayer->Is_Attack());
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
 }

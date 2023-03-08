@@ -42,6 +42,9 @@ HRESULT CEffect_Trail::Initialize(void * pArg)
 
 void CEffect_Trail::Tick(_float fTimeDelta)
 {
+	//if (m_eEFfectDesc.bActive == false)
+	//	return;
+
 	__super::Tick(fTimeDelta);
 	Set_TrailDesc();
 
