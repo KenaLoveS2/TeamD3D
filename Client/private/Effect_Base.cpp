@@ -709,7 +709,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 		{
 			for (_uint i = m_iTotalMTextureComCnt; i < iMTextureComCnt; ++i)
 			{
-				m_iTotalDTextureComCnt++;
+				m_iTotalMTextureComCnt++;
 
 				_tchar szMTexture[64] = L"";
 				wsprintf(szMTexture, L"Com_MTexture_%d", i);

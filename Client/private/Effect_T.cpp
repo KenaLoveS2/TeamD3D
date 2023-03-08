@@ -285,8 +285,6 @@ HRESULT CEffect_T::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
-	m_iTotalDTextureComCnt = 1;
-	m_iTotalMTextureComCnt = 1;
 
 	/* For.DiffuseTexture */
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)

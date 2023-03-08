@@ -107,7 +107,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Test_Raycast();
+	// Test_Raycast();
 
 	CGameInstance* pGameInstnace = GET_INSTANCE(CGameInstance)
 	if(pGameInstnace->Key_Down(DIK_SPACE))
