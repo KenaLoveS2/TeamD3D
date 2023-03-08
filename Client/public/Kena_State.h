@@ -484,6 +484,7 @@ private:
 	void						Start_Bow_Charge(_float fTimeDelta);
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta);
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);

@@ -578,7 +578,21 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"IDLE", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOW_CHARGE_LOOP_RUN_RIGHT", this, &CKena_State::KeyInput_D)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_CHARGE_LOOP_RUN_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Charge_Loop_Run_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Charge_Loop)
+		.Init_End(this, &CKena_State::End_Bow_Charge_Loop)
+		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 
 		.Add_State(L"BOW_RELEASE")
 		.Init_Start(this, &CKena_State::Start_Bow_Release)
@@ -1651,7 +1665,12 @@ void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
 
 void CKena_State::Start_Bow_Charge_Loop(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("BOW_CHARGE_LOOP_RUN_FORWARD_RIGHT");
+	m_pAnimationState->State_Animation("BOW_CHARGE_LOOP");
+}
+
+void CKena_State::Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_CHARGE_LOOP_RUN_FORWARD");
 }
 
 void CKena_State::Start_Bow_Release(_float fTimeDelta)
