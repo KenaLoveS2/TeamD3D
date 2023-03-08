@@ -25,7 +25,10 @@
 #include "WoodKnight.h"
 #include "BranchTosser.h"
 #include "BranchTosser_Weapon.h"
+#include "ShieldStick.h"
+#include "ShieldStick_Weapon.h"
 #include "Sapling.h"
+#include "Mage.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -839,8 +842,9 @@ HRESULT CLoader::Loading_ForMapTool()
 
 HRESULT CLoader::Loading_ForTestPlay()
 {
-	// 언제든지 수정 추가되면 수정 맨 마지막 cur 디버그 찍고 확인하면 댐
-	m_fMax = 86.f;
+	// 언제든지 수정, 추가되면 수정 맨 마지막 m_fCur 디버그 찍고 m_fMax 확인해서 값 바꿔주세여
+	// Loading에 추가하면 밑에 m_fCur++해주세여
+	m_fMax = 90.f;
 	m_fCur =	m_fCur / m_fMax * 100.f;
 
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -1035,12 +1039,50 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
+	/* NPC */
+	///* Prototype_Component_Model_Beni */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
 
-	/* Prototype_Component_Model_Moth */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Moth",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix))))
+	///* Prototype_Component_Model_Saiya */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
+
+	// 작업 시작 안한것들은 주석처리.
+
+	/* Prototype_Component_Model_Mage */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_ShieldStick */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_ShieldStick_Weapon */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/Shield.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	///* Prototype_Component_Model_CorruptVillager */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_CorruptVillager",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/CorruptVillager/CorruptVillager.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
+
+	///* Prototype_Component_Model_Moth */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Moth",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
 
 	/* Prototype_Component_Model_RockGolem */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RockGolem",
@@ -1050,7 +1092,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_RotEater */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotEater",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -1060,11 +1102,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* Prototype_Component_Model_VillageGuard */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
+	///* Prototype_Component_Model_VillageGuard */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
 
 	/* Prototype_Component_Model_WoodKnight */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
@@ -1436,6 +1478,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"),
+		CMage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"),
 		CBranchTosser::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -1443,6 +1490,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"),
 		CBranchTosser_Weapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"),
+		CShieldStick::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStickWeapon"),
+		CShieldStick_Weapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

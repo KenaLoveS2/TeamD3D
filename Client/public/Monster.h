@@ -25,6 +25,7 @@ protected:
 		AO_R_M_EEM,
 		SEPARATE_AO_R_M_E,
 		MASK,
+		ALPHA_AO_R_M,
 		PASS_END
 	};
 

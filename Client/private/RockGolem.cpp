@@ -75,6 +75,8 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
+	m_pTransformCom->Set_Position(_float4(26.f, 0.3f, 15.f, 1.f));
+
 	return S_OK;
 }
 
@@ -86,9 +88,6 @@ void CRockGolem::Tick(_float fTimeDelta)
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
-
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -147,9 +146,10 @@ HRESULT CRockGolem::RenderShadow()
 
 void CRockGolem::Imgui_RenderProperty()
 {
-	CMonster::Imgui_RenderProperty();
+	if (ImGui::Button("SPAWN"))
+		m_bSpawn = true;
 
-	// 일때만 가능
+	ImGui::Text("Possible EXPLODEATTACK");
 	if(ImGui::Button("TAKEDAMAGE"))
 	{
 		if(m_pFSM->IsCompareState("EXPLODEATTACK"))

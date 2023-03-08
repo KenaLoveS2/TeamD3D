@@ -289,6 +289,12 @@
     <Filter Include="02.GameObjects\Monster\MonsterWeapon">
       <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Mage">
+      <UniqueIdentifier>{14e9057c-bdc6-46ee-92ba-5f2c816260c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\ShieldStick">
+      <UniqueIdentifier>{27d5d57e-6a08-4728-a03b-2fac21da550f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -682,6 +688,11 @@
     <ClInclude Include="..\public\MonsterWeapon.h">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Mage.h">
+      <Filter>02.GameObjects\Monster\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShieldStick.h" />
+    <ClInclude Include="..\public\ShieldStick_Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1054,6 +1065,11 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Mage.cpp">
+      <Filter>02.GameObjects\Monster\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShieldStick.cpp" />
+    <ClCompile Include="..\private\ShieldStick_Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

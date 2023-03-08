@@ -77,7 +77,7 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
+	m_pTransformCom->Set_Position(_float4(22.f, 0.5f, 5.f, 1.f));
 
 	return S_OK;
 }
@@ -90,9 +90,6 @@ void CSapling::Tick(_float fTimeDelta)
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
-
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -158,8 +155,8 @@ void CSapling::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	if (ImGui::Button("BIND"))
-		m_bBind = true;
+	if (ImGui::Button("SPAWN"))
+		m_bSpawn = true;
 }
 
 void CSapling::ImGui_AnimationProperty()
@@ -232,7 +229,7 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("WISPOUT to IDLE" , "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(WISPOUT);
+		return AnimFinishChecker(WISPOUT) && m_bSpawn;
 	})
 
 		.AddState("IDLE")
