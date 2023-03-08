@@ -61,6 +61,7 @@ public:
 	const _uint		Get_PreAnimIndex() const;
 	const _bool&		Get_AnimationFinish();
 	const _float		Get_AnimationProgress() const;
+	const _bool&		Get_Preview() const { return m_bPreview; }
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
@@ -93,6 +94,8 @@ private:
 	_float				m_fLerpDuration = 0.f;
 
 	_smatrix			m_matBonesTransformation[800];
+
+	_bool				m_bPreview = false;
 
 public:
 	static CAnimationState*	Create(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath = "");

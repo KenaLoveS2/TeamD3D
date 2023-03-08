@@ -320,8 +320,8 @@ HRESULT CKena_State::SetUp_State_Air_Attack()
 		.Init_Start(this, &CKena_State::Start_Air_Attack_Slam_Finish)
 		.Init_Tick(this, &CKena_State::Tick_Air_Attack_Slam_Finish)
 		.Init_End(this, &CKena_State::End_Air_Attack_Slam_Finish)
-		.Init_Changer(L"HEAVY_ATTACK_COMBO_RETURN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
-		.Init_Changer(L"HEAVY_ATTACK_COMBO_INTO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_INTO_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.4f)
+		.Init_Changer(L"HEAVY_ATTACK_COMBO_RETURN", this, &CKena_State::KeyInput_None, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.5f)
 
 		.Finish_Setting();
 
@@ -1651,7 +1651,7 @@ void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
 
 void CKena_State::Start_Bow_Charge_Loop(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("BOW_CHARGE_LOOP");
+	m_pAnimationState->State_Animation("BOW_CHARGE_LOOP_RUN_FORWARD_RIGHT");
 }
 
 void CKena_State::Start_Bow_Release(_float fTimeDelta)
@@ -1777,7 +1777,7 @@ void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
 
 void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE_PERPECT");
+	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE_PERFECT");
 }
 
 void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
@@ -2144,10 +2144,18 @@ void CKena_State::Tick_Aim_Run_Right(_float fTimeDelta)
 
 void CKena_State::Tick_Air_Attack_1(_float fTimeDelta)
 {
+	CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+	Move(fTimeDelta, m_eDir);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 }
 
 void CKena_State::Tick_Air_Attack_2(_float fTimeDelta)
 {
+	CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+	Move(fTimeDelta, m_eDir);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 }
 
 void CKena_State::Tick_Air_Attack_Slam_Into(_float fTimeDelta)

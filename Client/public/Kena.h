@@ -26,6 +26,7 @@ private:
 
 public:
 	_double					Get_AnimationPlayTime();
+	const _bool&				Is_Attack() const { return m_bAttack; }
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
@@ -33,17 +34,17 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void					Imgui_RenderProperty() override;
-	virtual void					ImGui_AnimationProperty() override;
-	virtual void					ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
-	virtual void					Update_Child() override;
+	virtual void				Imgui_RenderProperty() override;
+	virtual void				ImGui_AnimationProperty() override;
+	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void				ImGui_PhysXValueProperty() override;
+	virtual void				Update_Child() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void			Push_EventFunctions() override;
+	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 private:
@@ -93,7 +94,11 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
-	void							Test(_bool bIsInit, _float fTimeDelta);
+
+private:	/* Animation Event Func */
+	void						Test(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

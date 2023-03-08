@@ -56,7 +56,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
-	//FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	Push_EventFunctions();
 
@@ -118,20 +118,23 @@ void CKena::Tick(_float fTimeDelta)
 
 	Test_Raycast();
 
-	m_pKenaState->Tick(fTimeDelta);
-	m_pStateMachine->Tick(fTimeDelta);
+	if (m_pAnimation->Get_Preview() == false)
+	{
+		m_pKenaState->Tick(fTimeDelta);
+		m_pStateMachine->Tick(fTimeDelta);
+	}
 	m_pTransformCom->Tick(fTimeDelta);
+
+	if (m_pModelCom->Get_Preview() == false)
+		m_pAnimation->Play_Animation(fTimeDelta);
+	else
+		m_pModelCom->Play_Animation(fTimeDelta);
 
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
-
-	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
-	else
-		m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -467,6 +470,8 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 void CKena::Push_EventFunctions()
 {
 	Test(true, 0.f);
+	TurnOnAttack(true, 0.f);
+	TurnOffAttack(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -872,14 +877,26 @@ HRESULT CKena::SetUp_State()
 
 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 
-	// 	pAdditiveAnim = new CAdditiveAnimation;
-	// 	pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_AUTO;
-	// 	pAdditiveAnim->m_fAdditiveRatio = 0.f;
-	// 	pAdditiveAnim->m_fMaxAdditiveRatio = 0.1f;
-	// 	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_CHARGE_LOOP_ADD);
-	// 	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_NEUTRAL_ADD);
-	// 
-	// 	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
+	m_pAnimation->Add_State(pAnimState);
+
+	pAnimState = new CAnimState;
+	pAnimState->m_strStateName = "BOW_CHARGE_LOOP_RUN_FORWARD_RIGHT";
+	pAnimState->m_bLoop = true;
+	pAnimState->m_fLerpDuration = 0.f;
+	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_FORWARD);
+	pAnimState->m_pBlendAnim = m_pModelCom->Find_Animation((_uint)CKena_State::AIM_RUN_RIGHT);
+
+	pAdditiveAnim = new CAdditiveAnimation;
+	pAdditiveAnim->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_MAX;
+	pAdditiveAnim->m_fAdditiveRatio = 1.f;
+	pAdditiveAnim->m_fMaxAdditiveRatio = 1.f;
+	pAdditiveAnim->m_pRefAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_AIM_REFPOSE);
+	pAdditiveAnim->m_pAdditiveAnim = m_pModelCom->Find_Animation((_uint)CKena_State::BOW_CHARGE_LOOP_ADD);
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_hip_jnt", CBone::LOCKTO_CHILD });
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "kena_spine_low_jnt", CBone::LOCKTO_ALONE});
+	pAdditiveAnim->m_listLockedJoint.push_back(CAnimationState::JOINTSET{ "staff_root_jnt", CBone::LOCKTO_PARENT});
+
+	pAnimState->m_vecAdditiveAnim.push_back(pAdditiveAnim);
 
 	m_pAnimation->Add_State(pAnimState);
 
@@ -1480,6 +1497,30 @@ void CKena::Test(_bool bIsInit, _float fTimeDelta)
 	}
 }
 
+void CKena::TurnOnAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnAttack);
+		return;
+	}
+
+	m_bAttack = true;
+}
+
+void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffAttack);
+		return;
+	}
+
+	m_bAttack = false;
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -1545,6 +1586,9 @@ _int CKena::Execute_Collision(CGameObject * pTarget)
 }
 void CKena::Test_Raycast()
 {
+	if (m_pTerrain == nullptr)
+		return;
+
 	if (GetKeyState(VK_LSHIFT) & 0x0800)
 	{
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
