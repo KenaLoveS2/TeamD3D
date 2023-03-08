@@ -23,6 +23,12 @@ Texture2D<float4>		g_HairDepthTexture;
 Texture2D<float4>		g_HairAlphaTexture;
 Texture2D<float4>		g_HairRootTexture;
 
+/* Kena Bow_String Texture */
+Texture2D		g_NoiseTexture;
+Texture2D		g_SwipeTexture;
+Texture2D		g_GradientTexture;
+/* Kena Bow_String Texture */
+
 float								g_fHairLength = 1.f;
 float								g_fHairThickness = 1.f;
 
@@ -34,6 +40,8 @@ float4							g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
 float4							g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
 float								g_fSSSAmount = 1.f;
+
+float g_Time;
 
 float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV, float amount, Texture2D<float4> Texturediffuse, Texture2D<float4> sssMask)
 {
@@ -347,6 +355,112 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	return Out;
 }//7
 
+PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.7f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(2.f, 1.f), float2(0.f, -time));
+
+	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vMask = g_MaskTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
+
+	float4 vColor = vector(29.0f, 142.f, 176.f, 255.f) / 255.f;
+	Out.vDiffuse = (vDiffuse * vMask) * 2.f + vColor;
+	Out.vDiffuse.a = Out.vDiffuse.r;
+	Out.vDiffuse = saturate(Out.vDiffuse.r * vColor) * 4.5f;
+	if (Out.vDiffuse.a < 0.01)
+		discard;
+
+	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//8
+
+PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Texture */
+	vector vMask  = g_MaskTexture.Sample(LinearSampler, float2(In.vTexUV.x + 1.78, In.vTexUV.y));
+	if (vMask.g < 7 / 255.f)
+		discard;
+	vMask.r = 0.0f;
+	vMask.b = 0.0f;
+
+	/* Color */		// R=0, G=6.49374, B=10, A=1
+	float4 MaskColor = vector(40.f, 85.f, 92.f, 155.f) / 255.f;
+
+	/* Mask */
+	float  mask_alpha = vMask.g;
+	float  mask_distance = min(1.f, mask_alpha);
+
+	float4 mask_texture = float4(lerp(vMask, mask_alpha, mask_distance));
+
+	mask_texture = saturate(mask_texture * 2.f * MaskColor);
+	mask_texture.a = mask_texture.r;
+	if (mask_texture.a < 0.01)
+		discard;
+	mask_texture.rgb = mask_texture.rgb * 1.5f;
+	mask_texture = mask_texture + MaskColor;
+	/* Mask */
+
+	Out.vDiffuse = mask_texture;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//9
+
+float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
+{
+	return pow((1.0 - dot(normalize(normal), normalize(view))), amount) * color * intensity;
+}
+
+PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* UV Moving */
+	float  time = frac(g_Time * 0.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(0.0f, -time));
+
+	/* Texture */
+	vector vGradient = g_GradientTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y + 1.9f));
+	vGradient.a = vGradient.r;
+	if (vGradient.a < 0.3f)
+		discard;
+	vGradient = vector(0.25f, 0.25f, 0.25f, 0.25f);
+
+	/* Color */
+	float4 TextureColor = vector(37.0f,210.f, 255.f, 50.f) / 255.f;
+	float4 vColor = vector(0.0f, 194.f, 221.f, 0.0f) / 255.f;
+	float4 FinalDiffuseColor = vector(38.0f, 108.f, 145.f, 228.f) / 255.f;
+
+	float4   fresnel = float4(fresnel_glow(4.5, 2.5, vColor.rgb, In.vNormal.rgb, In.vViewDir), vColor.a);
+
+	vector vNoise = g_NoiseTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - time / OffsetUV.y));
+	vector vSwipe = g_SwipeTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - time / OffsetUV.y));
+	float  fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
+
+	Out.vDiffuse = saturate((vNoise + vSwipe) * FinalDiffuseColor * 2.f) * fresnel + FinalDiffuseColor;
+	Out.vDiffuse.a = Out.vDiffuse.a*fAlpha * 0.5f;
+
+	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
+	if (Out.vDiffuse.a < 0.33)
+		discard;
+
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//10
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -452,5 +566,43 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_EYELASH();
 	}
-}
+	// 8
+	pass Kena_Staff_BowTrail
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWTRAIL();
+	}
+	// 9
+	pass Kena_Staff_BowString 
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWSTRING();
+	}
+	// 10
+	pass Kena_Staff_BowString_Part2
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWSTRING_PART2();
+	}
+}

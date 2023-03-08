@@ -129,7 +129,6 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-
 	float time = frac(g_Time * 0.5f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(5.5f, 5.f), float2(0.f, -time));
 

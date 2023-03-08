@@ -104,9 +104,15 @@ HRESULT CLevel_Loading::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-
-
-	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText());
+	if(wcscmp(m_pLoader->Get_LoadingText(), L""))
+		SetWindowText(g_hWnd, m_pLoader->Get_LoadingText());
+	else
+	{
+		_float fPercentage = m_pLoader->Get_Cur() / m_pLoader->Get_Max() * 100.f;
+		wstring strPercentage = L"Loading..." + to_wstring(fPercentage) + L"%";
+		SetWindowText(g_hWnd, strPercentage.c_str());
+	}
+		
 
 	return S_OK;
 }

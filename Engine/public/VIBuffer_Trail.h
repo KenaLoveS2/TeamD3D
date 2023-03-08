@@ -22,6 +22,7 @@ public:
 public:
 	void			Add_Instance(_float4x4 InfoMatrix);
 	HRESULT			Bind_ShaderResouce(class CShader* pShaderCom, const char* pConstanctName);
+	HRESULT			Bind_RawValue(CShader * pShaderCom, const char * pConstanctName);
 
 private:
 	_uint			m_iInitNumInstance = 0;

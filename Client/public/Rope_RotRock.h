@@ -14,7 +14,7 @@ class CRope_RotRock : public CEnviroment_Interaction
 {
 private:
 	_float3 m_vInitPosition;
-	_float3 m_vMoveTargetPosition;
+	_float4 m_vMoveTargetPosition;
 	
 	_bool m_bMoveFlag = false;
 
@@ -45,7 +45,10 @@ public:
 	virtual	HRESULT SetUp_State() override;
 
 
-	void Set_MoveTargetPosition(_fvector vPos) { m_vMoveTargetPosition = vPos; }
+	void Set_MoveTargetPosition(_fvector vPos) { 
+		m_vMoveTargetPosition = vPos; 
+		m_vMoveTargetPosition.w = 1.f;
+	}	
 	void Set_MoveFlag(_bool bFlag) { m_bMoveFlag = bFlag; }
 	_bool  Get_MoveFlag() { return m_bMoveFlag; }
 
