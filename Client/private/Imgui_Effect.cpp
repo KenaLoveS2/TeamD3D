@@ -897,6 +897,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 			jDesc["MoveDir Type"] = eSaveEffectDesc.eMoveDir;
 			jDesc["Rotation Type"] = eSaveEffectDesc.eRotation;
 
+			jDesc["PassCnt"] = eSaveEffectDesc.iPassCnt;
+
 			_float fFrame = 0.0f, fMaskFrame;
 			for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
 			{
@@ -1064,6 +1066,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 					jChildDesc["Blend Type"] = eChildEffectDesc.eBlendType;
 					jChildDesc["MoveDir Type"] = eChildEffectDesc.eMoveDir;
 					jChildDesc["Rotation Type"] = eChildEffectDesc.eRotation;
+
+					jChildDesc["PassCnt"] = eChildEffectDesc.iPassCnt;
 
 					_float fFrame = 0.0f, fMaskFrame;
 					for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
@@ -3066,6 +3070,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+				ImGui::InputInt("PassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 
 				ImGui::BulletText("Option : ");
@@ -3352,6 +3358,8 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+				ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 
 				ImGui::BulletText("Option : ");
@@ -3887,6 +3895,8 @@ void CImgui_Effect::Show_ChildWindow(CEffect_Base * pEffect)
 				eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 			if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 				eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+			ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 			ImGui::Separator();
 
 			ImGui::BulletText("Option : ");

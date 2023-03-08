@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "Bone.h"
+#include "Effect_Base.h"
 #include "E_KenaTrail.h"
 
 CKena_Staff::CKena_Staff(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -29,22 +30,27 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
-	m_vMulAmbientColor = _float4(2.f,2.f, 2.f,1.f);
+	m_vMulAmbientColor = _float4(2.f, 2.f, 2.f, 1.f);
 
 	return S_OK;
 }
 
 HRESULT CKena_Staff::Ready_Effects()
 {
-	CE_KenaTrail* pEffectTrail = nullptr;
+	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* KenaStaffTrail */
-	pEffectTrail = dynamic_cast<CE_KenaTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaStaffTrail", L"KenaStaffTrail"));
-	NULL_CHECK_RETURN(pEffectTrail, E_FAIL);
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaStaffTrail", L"KenaStaffTrail"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("KenaTrail", pEffectBase);
 
-	m_pKenaStaffTrail = pEffectTrail;
-	m_pKenaStaffTrail->Set_Parent(this);
+	/* KenaChargeEffect */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaCharge", L"KenaChargeEffect"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("KenaCharge", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -55,15 +61,23 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Tick(fTimeDelta);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+	{
+		for (auto& Effect : m_mapEffect)
+		{
+			if (Effect.first == "KenaCharge")
+				Effect.second->Set_Active(true);
+		}
+	}
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* ��� �� ���� */
 	// bow_string_jnt_top
 	// staff_skin8_jnt
 	// staff_skin7_jnt
@@ -71,11 +85,24 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	/* Weapon Update */
 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	m_pKenaStaffTrail->Set_WorldMatrix(SocketMatrix * m_pTransformCom->Get_WorldMatrix());
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	for (auto& Effect : m_mapEffect)
+	{
+		if (Effect.first == "KenaCharge")
+		{
+			_matrix matChargeEffect = Effect.second->Get_TransformCom()->Get_WorldMatrix();
+			matChargeEffect.r[3] = matWorldSocket.r[3];
+
+			Effect.second->Get_TransformCom()->Set_WorldMatrix(matChargeEffect);
+		}
+		else
+			Effect.second->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	}
 	/* ~Weapon Update */
 
-	if (m_pKenaStaffTrail != nullptr)
-		m_pKenaStaffTrail->Late_Tick(fTimeDelta);
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -296,5 +323,7 @@ void CKena_Staff::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pKenaStaffTrail);
+	for (auto& Pair : m_mapEffect)
+		Safe_Release(Pair.second);
+	m_mapEffect.clear();
 }

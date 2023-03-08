@@ -61,10 +61,16 @@
 
 /* Effects */
 #include "Effect_Point_Instancing.h"
+//Pulse
 #include "E_KenaPulse.h"
 #include "E_KenaPulseCloud.h"
 #include "E_KenaPulseDot.h"
+//Trail
 #include "E_KenaTrail.h"
+//Charge
+#include "E_KenaCharge.h"
+#include "E_KenaChargeImpact.h"
+/* ~Effects */
 
 /* Components*/
 #include "ControlMove.h"
@@ -371,15 +377,15 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_KenaPulseCloud */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
-		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_KenaPulseDot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
-		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
-		return E_FAIL;
+ 	/* For.Prototype_GameObject_KenaPulseCloud */
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
+ 		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+ 		return E_FAIL;
+ 
+ 	/* For.Prototype_GameObject_KenaPulseDot */
+ 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
+ 		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+ 		return E_FAIL;
 
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
@@ -1256,14 +1262,9 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_KenaPulseCloud */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
-		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_KenaPulseDot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
-		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+	/* For.Prototype_GameObject_KenaCharge */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
+		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_KenaStaffTrail */
@@ -1428,6 +1429,16 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* For.Prototype_GameObject_KenaPulseDot */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
 		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaCharge */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
+		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaChargeImpact */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
+		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_KenaStaffTrail */

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_KenaPulse.h"
 #include "GameInstance.h"
+#include "Effect_Trail.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -119,12 +120,15 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			m_bDesolve = false;
 			m_fDissolveTime = 0.0f;
 		}
-	}
+	}	
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+		Set_Matrix();
 }
 
 HRESULT CE_KenaPulse::Render()

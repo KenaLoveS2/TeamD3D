@@ -41,7 +41,6 @@ HRESULT CEffect::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-//	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_fInitSpriteCnt = { m_eEFfectDesc.fWidthFrame , m_eEFfectDesc.fHeightFrame };
 	return S_OK;
@@ -50,12 +49,20 @@ HRESULT CEffect::Initialize(void * pArg)
 void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+		m_fShaderBindTime += fTimeDelta;
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
+
+	/* BillBoard */
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+	/* BillBoard */
 
 	if (m_eEFfectDesc.IsMovingPosition == true)
 	{
@@ -160,11 +167,6 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 }
 
 HRESULT CEffect::Render()
@@ -175,11 +177,7 @@ HRESULT CEffect::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
-
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIBufferCom->Render();
 	return S_OK;
 }
@@ -329,6 +327,9 @@ HRESULT CEffect::SetUp_ShaderResources()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_WorldCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
@@ -363,6 +364,8 @@ HRESULT CEffect::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float))))
 		return E_FAIL;
 
 	// MaxCnt == 10

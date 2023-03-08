@@ -12,6 +12,7 @@
 #include "Effect_T.h"
 #include "Effect_Mesh_T.h"
 #include "Effect_Trail_T.h"
+#include "Kena_Staff.h"
 // ~Json
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -26,6 +27,12 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalDTextureComCnt(rhs.m_iTotalDTextureComCnt)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
+	, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
+	, m_vecProPos(rhs.m_vecProPos)
+	, m_vecFreePos(rhs.m_vecFreePos)
+	, m_pParent(rhs.m_pParent)
+	, m_pEffectTrail(rhs.m_pEffectTrail)
+	, m_vecChild(rhs.m_vecChild)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(rhs.m_eEFfectDesc));
@@ -89,6 +96,10 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 
 				jDesc["Rotation Type"].get_to<_int>(iEnum);
 				eLoadEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+				iEnum = 0;
+				jDesc["PassCnt"].get_to<_int>(iEnum);
+				eLoadEffectDesc.iPassCnt = iEnum;
 
 				_int i = 0;
 				for (_float fFrame : jDesc["DiffuseTexture Index"])
@@ -259,6 +270,10 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 						jChildDesc["Rotation Type"].get_to<_int>(iEnum);
 						eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
 
+						iEnum = 0;
+						jChildDesc["PassCnt"].get_to<_int>(iEnum);
+						eChildEffectDesc.iPassCnt = iEnum;
+
 						_int i = 0;
 						for (_float fFrame : jChildDesc["DiffuseTexture Index"])
 							memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
@@ -317,8 +332,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 #pragma  endregion	EFFECTDESC
 					}
 
-					char* szProtoTag = CUtile::Create_String(strPrototypeTag.c_str());
-					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, szProtoTag);
+					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str());
 				}
 			}
 
@@ -520,7 +534,7 @@ void CEffect_Base::BillBoardSetting(_float3 vScale)
 
 	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
 
-	m_pTransformCom->Set_WorldMatrix(m_InitWorldMatrix * worldmatrix);
+	m_pTransformCom->Set_WorldMatrix(/*m_InitWorldMatrix **/ worldmatrix);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype(const _tchar* pFilePath)
@@ -560,8 +574,6 @@ void CEffect_Base::Late_Tick(_float fTimeDelta)
 	for (auto& pChild : m_vecChild)
 		pChild->Late_Tick(fTimeDelta);
 
-	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false) 
-		Set_Matrix();
 }
 
 HRESULT CEffect_Base::Render()
@@ -572,7 +584,7 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag)
+HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag)
 {
 	CEffect_Base*    pEffectBase = nullptr;
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);

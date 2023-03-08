@@ -52,7 +52,6 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	if (m_eEFfectDesc.bActive == false)
 		return;
 

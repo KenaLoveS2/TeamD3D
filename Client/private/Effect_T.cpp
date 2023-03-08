@@ -43,12 +43,15 @@ HRESULT CEffect_T::Initialize(void * pArg)
 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_eEFfectDesc.bActive = false;
+
 	return S_OK;
 }
 
 void CEffect_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fShaderBindTime += fTimeDelta;
 
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
@@ -117,13 +120,6 @@ void CEffect_T::Tick(_float fTimeDelta)
 		}
 	}
 
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
-	}
-
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
 		static _int iCurIdx = 0;
@@ -158,18 +154,17 @@ void CEffect_T::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 	__super::Compute_CamDistance();
 
+	ImGui::Begin("ReCompile");
+	if (ImGui::Button("test"))
+	{
+		m_pShaderCom->ReCompile();
+	}
+	ImGui::End();
+	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+		Set_Matrix();
+
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
-
-	if (nullptr != m_pParent)
-		Set_Matrix();
 }
 
 HRESULT CEffect_T::Render()
@@ -180,15 +175,7 @@ HRESULT CEffect_T::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
-	//else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
-	//	m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
-	//else
-	//	m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
-
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIBufferCom->Render();
 	return S_OK;
 }
@@ -358,6 +345,8 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float))))
 		return E_FAIL;
 
 	// MaxCnt == 10

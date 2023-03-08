@@ -90,11 +90,6 @@ struct PS_OUT
 	float4		vDepth   : SV_TARGET2;
 };
 
-float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
-{
-	return pow((1.0 - dot(normalize(normal), normalize(view))), amount) * color * intensity;
-}
-
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -112,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float4 fresnel = float4(fresnel_glow(3, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
 	float4 BackPulseColor = g_vColor;
-	float4 fresnel_Pulse = float4(fresnel_glow(4.5, 2.5, fresnelColor, In.vNormal.rgb, -In.vViewDir), fresnelColor.a) + fresnel;
+	float4 fresnel_Pulse = float4(fresnel_glow(4.5f, 2.5f, fresnelColor.rgb, In.vNormal.rgb, -In.vViewDir.rgb), fresnelColor.a) + fresnel;
 
 	float4 mask = g_DTexture_1.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
 	float4 glow = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
@@ -158,7 +153,7 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		float4 Dissolve1 = g_DissolveTexture[1].Sample(LinearSampler, In.vTexUV);
 		float4 Dissolve2 = g_DissolveTexture[2].Sample(LinearSampler, In.vTexUV);
 		float4 Dissolve3 = g_DissolveTexture[3].Sample(LinearSampler, In.vTexUV);
-		float Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
+		float4 Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
 		Dissolve = saturate(Dissolve);
 
 		//Dissolve function

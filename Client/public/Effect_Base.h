@@ -39,6 +39,8 @@ public:
 		MOVEDIR           eMoveDir = MOVE_FRONT;
 		ROTXYZ            eRotation = ROT_Y;
 
+		_int			  iPassCnt = 0;
+
 		// Diffuse Frame ( Cur Texture Idx )
 		_float		fFrame[MAX_TEXTURECNT] = { 0.0f };
 		// Mask Frame ( Cur Texture Idx )
@@ -101,7 +103,7 @@ public:
 	HRESULT   Load_E_Desc(const _tchar* pFilePath);
 	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
 	HRESULT   Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
-	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag);
+	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag);
 
 public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {

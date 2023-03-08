@@ -92,13 +92,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 	/* 빌보드가 필요한거 같긴함 */
 
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
-	}
-
 	// FreeMoveing Tick
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
@@ -132,13 +125,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
