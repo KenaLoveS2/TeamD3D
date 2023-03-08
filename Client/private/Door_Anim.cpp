@@ -112,8 +112,9 @@ HRESULT CDoor_Anim::SetUp_Components()
 	if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+
 	/* For.Com_Shader */
-	FAILED_CHECK_RETURN(__super::Add_Component(m_EnviromentDesc.iCurLevel,
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	return S_OK;

@@ -280,6 +280,15 @@
     <Filter Include="02.GameObjects\Envrioment\Interaction\Rope_RotRock">
       <UniqueIdentifier>{8e19c382-7d37-455c-9610-31183ac7fb3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\BranchTosser">
+      <UniqueIdentifier>{6cf9411d-1b20-4039-90b6-aa49ddae82bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Sapling">
+      <UniqueIdentifier>{e51a7d50-06bb-4a4b-8041-288a4ea6ecfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\MonsterWeapon">
+      <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -661,6 +670,18 @@
     <ClInclude Include="..\public\E_KenaPulseCloud.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BranchTosser.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BranchTosser_Weapon.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sapling.h">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterWeapon.h">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1020,6 +1041,18 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser_Weapon.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sapling.cpp">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterWeapon.cpp">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

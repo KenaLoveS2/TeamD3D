@@ -60,6 +60,7 @@ public:
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
+	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 private:
 	virtual  HRESULT			SetUp_State() override;
@@ -85,6 +86,8 @@ private:
 	_bool	m_bChargeAttack = false;
 	_bool	m_bSlamAttack = false;
 	_bool    m_bExplodeAttack = false;
+
+	_bool	m_bHit = false;
 
 public:
 	static CRockGolem*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

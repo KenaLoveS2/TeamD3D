@@ -85,7 +85,6 @@ void Client::CMonsterWeapon::Free()
 		Safe_Release(m_WeaponDesc.pTargetTransform);
 	}
 
-	Safe_Release(m_pRangeCol);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

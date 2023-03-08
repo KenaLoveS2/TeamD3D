@@ -31,8 +31,6 @@ private:
 	HRESULT Start_Level(LEVEL eLevelID);
 	HRESULT Ready_Prototype_Component();
 	HRESULT Ready_Prototype_GameObject();
-	HRESULT Ready_Gara();
-
 
 	HRESULT CMainApp::Ready_BufferLock_UnLock();
 
