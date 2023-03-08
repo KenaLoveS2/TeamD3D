@@ -35,6 +35,12 @@
 #include "UI_CanvasUpgrade.h"
 #include "UI_NodeSkill.h"
 
+/* CanvasInventoryHeader */
+#include "UI_CanvasInvHeader.h"
+#include "UI_NodeKarma.h"
+#include "UI_NodeCrystal.h"
+#include "UI_NodeNumRots.h"
+
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
 
@@ -87,7 +93,8 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/fonts/131.SpriteFont"))))
 		return E_FAIL;
-
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic0"), TEXT("../Bin/Resources/fonts/Font00.SpriteFont"))))
+		return E_FAIL;
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
@@ -268,10 +275,14 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/********************************************/
 	/*				For. Upgrade				*/
 	/********************************************/
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Inventory"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/Inventory%d.png"),2))))
+	//if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Inventory"),
+	//	CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/Inventory%d.png"),2))))
+	//	return E_FAIL;
+	//Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Inventory");
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_UpgradeWindow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/UpgradeWindow.png")))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Inventory");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_UpgradeWindow");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PlayerSkillLevel0Locked"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Level0Blocked.png")))))
@@ -293,6 +304,29 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SelectedCircle");
 
+
+	/********************************************/
+	/*				For. InvHeader				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InvHeader"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/InventoryHeader.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InvHeader");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CrystalIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Gem_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CrystalIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KarmaIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Karma_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KarmaIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_NumRotsIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Rot_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_NumRotsIcon");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -472,6 +506,26 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
+
+
+	/********************************************/
+	/*				For. InvHeader				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_InvHeader"), CUI_CanvasInvHeader::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_InvHeader");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Karma"), CUI_NodeKarma::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Karma");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_NumRots"), CUI_NodeNumRots::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_NumRots");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Crystal"), CUI_NodeCrystal::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Crystal");
 
 
 	/********************************************/

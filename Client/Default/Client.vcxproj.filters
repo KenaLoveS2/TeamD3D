@@ -289,6 +289,9 @@
     <Filter Include="02.GameObjects\Monster\MonsterWeapon">
       <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency">
+      <UniqueIdentifier>{a6cd374a-a4de-43a3-ba84-f05c3632b1eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -685,6 +688,18 @@
     <ClInclude Include="..\public\SkillInfo.h">
       <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasInvHeader.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeCrystal.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeKarma.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeNumRots.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1059,6 +1074,18 @@
     </ClCompile>
     <ClCompile Include="..\private\SkillInfo.cpp">
       <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasInvHeader.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeCrystal.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeKarma.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeNumRots.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

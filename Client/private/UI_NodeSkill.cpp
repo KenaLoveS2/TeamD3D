@@ -137,7 +137,7 @@ HRESULT CUI_NodeSkill::Save_Data()
 {
 	Json	json;
 
-	_smatrix matWorld = m_matLocal; // m_matLocalOriginal;
+	_smatrix matWorld = m_matLocalOriginal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
 	{

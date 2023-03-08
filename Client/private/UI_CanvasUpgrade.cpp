@@ -37,11 +37,11 @@ HRESULT CUI_CanvasUpgrade::Initialize_Prototype()
 HRESULT CUI_CanvasUpgrade::Initialize(void * pArg)
 {
 	/* Get a Texture Size, and Make an Initial Matrix */
-	XMStoreFloat4x4(&m_matInit, XMMatrixScaling((_float)g_iWinSizeX, (_float)g_iWinSizeY, 1.f));
+	XMStoreFloat4x4(&m_matInit, XMMatrixScaling((_float)g_iWinSizeX, 830.f, 1.f));
 
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3((_float)g_iWinSizeX, (_float)g_iWinSizeY, 1.f));
+		m_pTransformCom->Set_Scaled(_float3((_float)g_iWinSizeX, 830.f, 1.f));
 	}
 
 	if (FAILED(SetUp_Components()))
