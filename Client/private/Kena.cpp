@@ -1575,7 +1575,7 @@ void CKena::Free()
 	Safe_Release(m_pRendererCom);
 }
 
-_int CKena::Execute_Collision(CGameObject * pTarget)
+_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos)
 {
 	/* Terrain */
 	if (pTarget == nullptr)
