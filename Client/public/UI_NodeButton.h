@@ -22,6 +22,10 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	_bool	MouseOverEvent();
+	void	BackToNormal();
+
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
@@ -30,6 +34,7 @@ private:
 	_tchar*					m_szName;
 	TYPE					m_eType;
 	_float					m_fAlpha;
+	_float4					m_vColor;
 
 public:
 	static	CUI_NodeButton*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -11,7 +11,6 @@ CUI_Canvas::CUI_Canvas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI(pDevice, pContext)
 	, m_bBindFinished(false)
 	, m_iSelectedNode(-1)
-	, m_eOrderGroup(ORDER_NORMAL)
 {
 }
 
@@ -19,7 +18,6 @@ CUI_Canvas::CUI_Canvas(const CUI_Canvas & rhs)
 	:CUI(rhs)
 	, m_bBindFinished(false)
 	, m_iSelectedNode(-1)
-	, m_eOrderGroup(ORDER_NORMAL)
 {
 }
 

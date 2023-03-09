@@ -34,6 +34,10 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	virtual void			Common_Function(_bool bResult)	override;
+
+
 private:
 	virtual HRESULT			Bind()							override;
 	virtual HRESULT			Ready_Nodes()					override;

@@ -7,6 +7,7 @@ CUI_CanvasConfirm::CUI_CanvasConfirm(ID3D11Device * pDevice, ID3D11DeviceContext
 	:CUI_Canvas(pDevice,pContext)
 	, m_bConfirm(false)
 	, m_Message(nullptr)
+	, m_pCaller(nullptr)
 {
 }
 
@@ -14,14 +15,18 @@ CUI_CanvasConfirm::CUI_CanvasConfirm(const CUI_CanvasConfirm & rhs)
 	:CUI_Canvas(rhs)
 	, m_bConfirm(false)
 	, m_Message(nullptr)
+	, m_pCaller(nullptr)
 {
 }
 
-void CUI_CanvasConfirm::Set_Message(wstring msg)
+void CUI_CanvasConfirm::Set_Message(wstring msg, CUI_Canvas* pCaller)
 {
+	m_bActive = true;
 	Safe_Delete_Array(m_Message);
-
 	m_Message = CUtile::Create_String(msg.c_str());
+	m_vecNode[UI_YES]->Set_Active(true);
+	m_vecNode[UI_NO]->Set_Active(true);
+	m_pCaller = pCaller;
 }
 
 HRESULT CUI_CanvasConfirm::Initialize_Prototype()
@@ -54,7 +59,6 @@ HRESULT CUI_CanvasConfirm::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_eOrderGroup = ORDER_LAST;
 	//m_bActive = true;
 
 	return S_OK;
@@ -74,6 +78,9 @@ void CUI_CanvasConfirm::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+
+	Picking();
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -82,7 +89,20 @@ void CUI_CanvasConfirm::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
+	CUI::Late_Tick(fTimeDelta);
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UILAST, this);
+
+		/* Nodes added to RenderList After the canvas. */
+		/* So It can be guaranteed that Canvas Draw first */
+		for (auto node : m_vecNode)
+			node->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CUI_CanvasConfirm::Render()
@@ -220,6 +240,42 @@ HRESULT CUI_CanvasConfirm::SetUp_ShaderResources()
 
 void CUI_CanvasConfirm::Picking()
 {
+	/* Picking */
+	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
+
+	_bool bClicked = false;
+	_int iChoice = -1;
+	for (_uint i = 0; i < UI_END; ++i)
+	{
+		_float4 vPos = m_vecNode[i]->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float2 vPosConvert = { vPos.x + 0.5f*g_iWinSizeX, -vPos.y + 0.5f*g_iWinSizeY };
+		// left, top, right, bottom 
+		RECT rc = { LONG(vPosConvert.x - 30.f), LONG(vPosConvert.y - 20.f),
+			LONG(vPosConvert.x + 30.f), LONG(vPosConvert.y + 20.f) };
+
+		if (PtInRect(&rc, pt))
+		{
+			if (bClicked = static_cast<CUI_NodeButton*>(m_vecNode[i])->MouseOverEvent())
+				iChoice = i;
+		}
+		else
+			static_cast<CUI_NodeButton*>(m_vecNode[i])->BackToNormal();
+	}
+
+	if (bClicked)
+	{
+		if (UI_YES == iChoice)
+		{
+			if (m_pCaller != nullptr)
+				m_pCaller->Common_Function(true);
+			m_bActive = false;
+		}
+		else
+		{
+			m_bActive = false;
+		}
+	}
+
 }
 
 void CUI_CanvasConfirm::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)

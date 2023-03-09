@@ -15,7 +15,7 @@ private:
 	virtual ~CUI_CanvasConfirm() = default;
 
 public:
-	void	Set_Message(wstring msg);
+	void	Set_Message(wstring msg, CUI_Canvas* pCaller);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -37,6 +37,7 @@ private: /* Bind Functions */
 private:
 	_bool		m_bConfirm;
 	_tchar*		m_Message;
+	CUI_Canvas* m_pCaller;
 
 public:
 	static	CUI_CanvasConfirm*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

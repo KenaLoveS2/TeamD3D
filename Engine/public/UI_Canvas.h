@@ -4,8 +4,7 @@
 BEGIN(Engine)
 class ENGINE_DLL CUI_Canvas abstract : public CUI
 {
-public:
-	enum	ORDER_GROUP { ORDER_NORMAL, ORDER_LAST, ORDER_END };
+
 
 public:
 	CUI_Canvas(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
@@ -17,8 +16,7 @@ public:
 			return nullptr;
 		return m_vecNode[m_iSelectedNode];
 	}
-public:
-	ORDER_GROUP			m_eOrderGroup;
+
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -27,9 +25,14 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+
+public:
+	virtual void			Common_Function(_bool bResult) { }
+
 protected: /* For Clones. */
 	virtual HRESULT			Bind() { return S_OK; }
 	virtual HRESULT			Ready_Nodes() { return S_OK; }
+
 
 public:
 	virtual void			Imgui_RenderProperty();

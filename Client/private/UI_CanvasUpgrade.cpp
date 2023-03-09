@@ -104,16 +104,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 				m_pSkills[m_iPickedIndex / 5]
 				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level()))
 			{
-				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true);
-
-
-				//if (IDOK == MessageBox(NULL, L"잠금해제하시겠습니까?", L"System Message", MB_OKCANCEL))
-				//{
-				// m_pSkills[m_iPickedIndex / 5]
-				// 	->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
-				// 
-				// static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
-				//}
+				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	
 			}
 		}
 	}
@@ -138,6 +129,17 @@ HRESULT CUI_CanvasUpgrade::Render()
 	__super::Render();
 
 	return S_OK;
+}
+
+void CUI_CanvasUpgrade::Common_Function(_bool bResult)
+{
+	if (bResult)
+	{
+	 m_pSkills[m_iPickedIndex / 5]
+	 	->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+	 
+	 static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
+	}
 }
 
 HRESULT CUI_CanvasUpgrade::Bind()

@@ -10,7 +10,6 @@
 #include "PostFX.h"
 #include "GameInstance.h"
 #include "Level_Manager.h"
-#include "UI_Canvas.h"
 
 CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -284,6 +283,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_PostProcess()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
+		return E_FAIL;
+	if (FAILED(Render_UILast()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -594,29 +595,27 @@ HRESULT CRenderer::Render_UI()
 	//{
 	// list.sort();
 	//}
-	CGameObject* pLast = nullptr;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
 	{
-		if (CUI_Canvas::ORDER_LAST == static_cast<CUI_Canvas*>(pGameObject)->m_eOrderGroup)
-		{
-			pLast = pGameObject;
-		}
-		else
-		{
-			pGameObject && pGameObject->Render();
-			Safe_Release(pGameObject);
-		}
+		pGameObject && pGameObject->Render();
+		Safe_Release(pGameObject);
 	}
-
-	if (pLast != nullptr)
-	{
-		pLast->Render();
-		Safe_Release(pLast);
-	}
-
 
 	m_RenderObjects[RENDER_UI].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_UILast()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_UILAST])
+	{
+		pGameObject && pGameObject->Render();
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UILAST].clear();
 
 	return S_OK;
 }

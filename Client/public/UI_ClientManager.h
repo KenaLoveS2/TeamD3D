@@ -60,7 +60,7 @@ public:
 	CUI_Canvas*				Get_Canvas(UI_CANVAS eID);
 	void					Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect);
 	CUI_NodeEffect*			Get_Effect(UI_EFFECT eID);
-	void					Call_ConfirmWindow(wstring msg, _bool bActive);
+	void					Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller = nullptr);
 
 private:
 	vector<CUI_Canvas*>		m_vecCanvas;

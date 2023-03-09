@@ -737,19 +737,20 @@ CUI_NodeEffect * CUI_ClientManager::Get_Effect(UI_EFFECT eID)
 	return m_vecEffects[eID];
 }
 
-void CUI_ClientManager::Call_ConfirmWindow(wstring msg, _bool bActive)
+void CUI_ClientManager::Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller)
 {
 	if (nullptr == m_pConfirmWindow)
 		return;
 
-	if (false == bActive)
+	if (nullptr == pCaller)
 	{
 		m_pConfirmWindow->Set_Active(false);
 		return;
 	}
 
-	m_pConfirmWindow->Set_Active(true);
-	m_pConfirmWindow->Set_Message(msg);
+
+	//m_pConfirmWindow->Set_Active(true);
+	m_pConfirmWindow->Set_Message(msg, pCaller);
 
 }
 
