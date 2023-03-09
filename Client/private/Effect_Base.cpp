@@ -28,14 +28,13 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
 	, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
-	, m_vecProPos(rhs.m_vecProPos)
-	, m_vecFreePos(rhs.m_vecFreePos)
-	, m_pParent(rhs.m_pParent)
-	, m_pEffectTrail(rhs.m_pEffectTrail)
-	, m_vecChild(rhs.m_vecChild)
+// 	, m_vecProPos(rhs.m_vecProPos)
+// 	, m_vecFreePos(rhs.m_vecFreePos)
+	//, m_pEffectTrail(rhs.m_pEffectTrail)
+	//, m_vecChild(rhs.m_vecChild)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
- 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(rhs.m_eEFfectDesc));
+ 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
@@ -778,6 +777,9 @@ void CEffect_Base::Free()
 	// Mesh Release
 	if (nullptr != m_pModelCom)
 		Safe_Release(m_pModelCom);
+
+	if (nullptr != m_pEffectTrail)
+		Safe_Release(m_pEffectTrail);
 
 	for (auto& pChild : m_vecChild)
 		Safe_Release(pChild);

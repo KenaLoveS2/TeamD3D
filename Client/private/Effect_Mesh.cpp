@@ -117,9 +117,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 			}
 		}
 	}
-
-	if (nullptr != m_pEffectTrail)
-		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CEffect_Mesh::Late_Tick(_float fTimeDelta)
@@ -360,14 +357,6 @@ HRESULT CEffect_Mesh::SetUp_Components()
 		TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
-
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	Set_ModelCom(m_eEFfectDesc.eMeshType);
 
 	/***********
 	*  TEXTURE *

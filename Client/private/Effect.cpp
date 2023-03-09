@@ -57,13 +57,6 @@ void CEffect::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
 
-	/* BillBoard */
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-	/* BillBoard */
-
 	if (m_eEFfectDesc.IsMovingPosition == true)
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
@@ -164,6 +157,11 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
+
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);

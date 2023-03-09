@@ -34,7 +34,10 @@ HRESULT CLevel_EffectTest::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Player"))))
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Late_Initialize(LEVEL_EFFECT)))
@@ -89,20 +92,6 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 	return S_OK;
 }
 
-HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	
-	CGameObject* pGameObject = nullptr;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaPulse"), TEXT("KenaPulse"))))
-	//	return E_FAIL;
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-	return S_OK;
-}
 
 HRESULT CLevel_EffectTest::Ready_Layer_Camera(const _tchar * pLayerTag)
 {
@@ -160,6 +149,37 @@ HRESULT CLevel_EffectTest::Ready_Layer_Camera(const _tchar * pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_EffectTest::Ready_Layer_Player(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EnemyWisp"), L"EnemyWisp", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
 
 CLevel_EffectTest * CLevel_EffectTest::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

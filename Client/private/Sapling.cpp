@@ -94,8 +94,12 @@ void CSapling::Tick(_float fTimeDelta)
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;
 
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	if (m_bDesolve)
+		m_fDissolveTime += fTimeDelta;
+	else
+		m_fDissolveTime = 0.0f;
 
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -122,13 +126,31 @@ HRESULT CSapling::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if ((i == 0 || i == 3) && !m_bBombUp) // 다른 패스로 그려야됨 얘네 둘 혜원이누나가 원하는대로 pass 만들어서 진행해주시고 몬스터 enum pass 에 추가해주세요
+		if (i == 3 && !m_bBombUp) 
 			continue;
 
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
+		if (i == 0)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT, "g_LineTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_SmoothTexture");
+
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DissolveTexture");
+
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+		}
+
+		if (i == 1 || i == 2 || i == 4)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DissolveTexture");
+
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
+		}
 	}
 
 	// 0 : 뒤에 달려있는 폭탄입니다. 제대로된 애니메이션 일 때 만 렌더를 켜야합니다.
@@ -335,9 +357,24 @@ HRESULT CSapling::SetUp_Components()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i == 0 || i ==3)
+		if (i == 3)
 			continue;
-		FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Sapling/stick_02_AO_R_M.png")), E_FAIL);
+
+		if (i == 0) // Boom
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/Noise_cloudsmed.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Deadzone_REAM.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Black_Linear.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_GR_Noise_Smooth_A.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
+		}
+
+		if (i == 1 || i == 2 || i == 4) // Body
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Sapling/stick_02_AO_R_M.png")), E_FAIL);
+
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
+		}
 	}
 
 	m_pModelCom->Set_RootBone("Sticks_02_RIG");
@@ -353,6 +390,14 @@ HRESULT CSapling::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	/* Dissolve */
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
+		return E_FAIL;
+	/* Dissolve */
+
 
 	return S_OK;
 }
@@ -371,7 +416,6 @@ HRESULT CSapling::SetUp_ShadowShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

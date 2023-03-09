@@ -75,8 +75,18 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
+	/* Component */
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"), L"Com_DissolveTexture", (CComponent**)&m_pDissolveTexture, this)))
 		return E_FAIL;
+
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	Set_ModelCom(m_eEFfectDesc.eMeshType);
+	/* ~Component */
 
 	m_eEFfectDesc.bActive = false;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));

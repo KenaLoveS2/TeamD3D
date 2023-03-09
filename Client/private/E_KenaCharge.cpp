@@ -38,8 +38,8 @@ HRESULT CE_KenaCharge::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = false;
 	
 	Set_Child();
-	m_pTransformCom->Set_Scaled(_float3(0.6f, 0.6f, 0.6f));
-	m_InitScale = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_InitScale = _float3(0.5f, 0.5f, 0.5f);
+	m_pTransformCom->Set_Scaled(m_InitScale);
 	m_InitColor = m_eEFfectDesc.vColor;
 	return S_OK;
 }
@@ -51,22 +51,13 @@ void CE_KenaCharge::Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == true)
 	{
-		/* Render false */
-		m_fDurationActiveTime += fTimeDelta;
-		if (m_fDurationActiveTime > 0.3f)
-		{
-			m_eEFfectDesc.bActive = false;
-			m_pTransformCom->Set_Scaled(m_InitScale);
-			m_eEFfectDesc.vColor = m_InitColor;
-			m_fScale = 0.0f;
-			m_fDurationActiveTime = 0.0f;
-		}
-		else
-		{
-			m_fScale += 0.08f;
-			m_eEFfectDesc.vColor = m_eEFfectDesc.vColor * 1.1f;
-			m_pTransformCom->Set_Scaled(m_CurScale * m_fScale);
-		}
+		m_fScale += 0.3f;
+		m_pTransformCom->Set_Scaled(m_CurScale * m_fScale);
+	}
+	else
+	{
+		m_pTransformCom->Set_Scaled(_float3(0.3f, 0.3f, 0.3f));
+		m_fScale = 0.0f;
 	}
 
 	for (auto& pChild : m_vecChild)
@@ -99,7 +90,6 @@ void CE_KenaCharge::Set_Child()
 
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaChargeImpact", L"KenaChargeEffect_Impact"));
 	NULL_CHECK_RETURN(pEffectBase, );
-	pEffectBase->Set_Parent(this);
 	m_vecChild.push_back(pEffectBase);
 
 	for (auto& pChild : m_vecChild)

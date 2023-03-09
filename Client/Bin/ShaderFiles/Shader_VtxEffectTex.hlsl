@@ -220,12 +220,11 @@ PS_OUT PS_MAIN_E_CHARGING(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float time = frac(g_Time * 0.3f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(0.0f, -time));
-
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	albedo.rgb = float3(1.f, 1.f, 1.f) * 2.3f;
-	albedo = albedo * g_vColor;
+	albedo.a = albedo.r;
+	albedo.a = albedo.g * 0.55;
+
+	albedo.rgb = g_vColor * 1.3f;
 
 	Out.vColor = albedo;
 	return Out;
@@ -242,6 +241,25 @@ PS_OUT PS_MAIN_E_CHARGING_LIGHT(PS_IN In)
 	//albedo.a = g_vColor.a;
 
 	Out.vColor = albedo;
+	return Out;
+}
+
+PS_OUT PS_MAIN_E_ENEMYZONE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(0.5f, 0.5f));
+
+	vector vMask = g_DTexture_0.Sample(LinearSampler, OffsetUV); // mask
+	vector vBlur = g_DTexture_1.Sample(LinearSampler, In.vTexUV);    
+	vector vLine = g_DTexture_2.Sample(LinearSampler, In.vTexUV);    
+
+	float4 finalcolor = saturate(vMask + vBlur + vLine);
+	finalcolor.a = finalcolor.r;
+	if (finalcolor.a < 0.1)
+		discard;
+
+	Out.vColor = finalcolor;
 	return Out;
 }
 
@@ -297,6 +315,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_CHARGING_LIGHT();
+	}
+
+	pass Effect_EnemyZone // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_ENEMYZONE();
 	}
 
 }

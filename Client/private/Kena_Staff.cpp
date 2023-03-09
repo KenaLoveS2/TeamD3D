@@ -61,16 +61,14 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_T))
+	for (auto& Effect : m_mapEffect)
 	{
-		for (auto& Effect : m_mapEffect)
-		{
-			if (Effect.first == "KenaCharge")
-				Effect.second->Set_Active(true);
-		}
-	}
+		if (Effect.first == "KenaTrail")
+			Effect.second->Set_Active(m_pPlayer->Is_Attack());
 
-	m_pKenaStaffTrail->Set_Active(m_pPlayer->Is_Attack());
+		else if (Effect.first == "KenaCharge")
+			Effect.second->Set_Active(m_pPlayer->Is_ChargeLight());
+	}
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);

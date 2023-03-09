@@ -235,9 +235,6 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena Effect">
       <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
-      <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Base\Texture Type\Tool">
       <UniqueIdentifier>{09cd37fc-43e2-44dd-80ec-927535bb78dd}</UniqueIdentifier>
     </Filter>
@@ -297,6 +294,15 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena Effect\Charge">
       <UniqueIdentifier>{5e459464-94b6-4e1c-9776-9feede0e628d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Effect">
+      <UniqueIdentifier>{bc8217a2-05f5-4571-8995-ea38512dc9bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type\AnimModel">
+      <UniqueIdentifier>{a1e36d75-3abb-4d53-b9ae-48176ee1f73a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
+      <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -552,9 +558,6 @@
     <ClInclude Include="..\public\UI_NodeAimLine.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Effect_Mesh.h">
-      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Rot.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -688,14 +691,23 @@
     <ClInclude Include="..\public\E_KenaPulseDot.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_KenaCharge.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Charge</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_KenaChargeImpact.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyWisp.h">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh.h">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispTrail.h">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -930,9 +942,6 @@
     <ClCompile Include="..\private\UI_NodeAimLine.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Effect_Mesh.cpp">
-      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -1066,14 +1075,23 @@
     <ClCompile Include="..\private\E_KenaPulseDot.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Pulse</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_KenaCharge.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Charge</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyWisp.cpp">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh.cpp">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1137,6 +1155,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
