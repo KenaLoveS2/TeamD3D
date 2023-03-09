@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "GameObject.h"
+#include "Utile.h"
 
 BEGIN(Engine)
 #pragma region Struct, Enum, Global Function 
@@ -22,7 +23,7 @@ typedef struct tagPhysXUserData
 	ACTOR_TYPE	 eType;
 	
 	CGameObject* pOwner;
-	bool					isGravity;
+	bool isGravity;
 } PX_USER_DATA;
 
 static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity = true)
@@ -53,19 +54,40 @@ public:
 			if (Pair.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{	
 				PxU32 nbContacts = Pair.extractContacts(contacts, bufferSize);
+				_float3 vCollisionPos;
 				for (PxU32 j = 0; j < nbContacts; j++)
-				{
+				{	
 					PxVec3 point = contacts[j].position;
+					vCollisionPos = CUtile::ConvertPosition_PxToD3D(point);
+					/*
 					PxVec3 impulse = contacts[j].impulse;
 					PxU32 internalFaceIndex0 = contacts[j].internalFaceIndex0;
 					PxU32 internalFaceIndex1 = contacts[j].internalFaceIndex1;
+					*/
 				}
 
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-								
-				pSourUserData && pSourUserData->pOwner->Execute_Collision();
-				pDestUserData && pDestUserData->pOwner->Execute_Collision();
+
+				if (pSourUserData && pDestUserData)
+				{
+					CGameObject* pSourObject = pSourUserData->pOwner;
+					CGameObject* pDestObject = pDestUserData->pOwner;
+
+					pSourObject && (pSourUserData->isGravity && pDestUserData->isGravity == false) 
+						&& pSourObject->Execute_Collision(pDestObject, vCollisionPos);
+
+					pDestObject && (pDestUserData->isGravity && pSourUserData->isGravity == false) 
+						&& pDestObject->Execute_Collision(pSourObject, vCollisionPos);
+				}
+				else if (pSourUserData || pDestUserData)
+				{
+					CGameObject* pSourObject = pSourUserData ? pSourUserData->pOwner : nullptr;
+					CGameObject* pDestObject = pDestUserData ? pSourUserData->pOwner : nullptr;
+
+					pSourObject && pSourObject->Execute_Collision(pDestObject, vCollisionPos);
+					pDestObject && pDestObject->Execute_Collision(pSourObject, vCollisionPos);
+				}
 			}
 			
 			/*

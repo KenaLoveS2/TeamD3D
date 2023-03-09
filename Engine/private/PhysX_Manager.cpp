@@ -168,7 +168,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
 	// ±âº» ¶¥ »ý¼º	
-	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);	
+	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
 	Init_Rendering();
@@ -953,6 +953,39 @@ PxRigidActor* CPhysX_Manager::Find_DynamicGameObject(_int iIndex)
 		++iter;
 
 	return iter->second;
+}
+
+void CPhysX_Manager::Set_DynamicParameter(const _tchar* pActorTag, _float fMass, _float fLinearDamping, _float3 vVelocity)
+{
+	PxRigidActor* pActor  = Find_DynamicActor(pActorTag);
+
+	if (pActor == nullptr)
+		return;
+
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+}
+
+void  CPhysX_Manager::Set_DynamicParameter(PxRigidActor * pActor, _float fMass, _float fLinearDamping, _float3 vVelocity)
+{
+	if (pActor == nullptr)
+		return;
+
+	((PxRigidDynamic*)pActor)->setMass(fMass);
+	((PxRigidDynamic*)pActor)->setLinearDamping(fLinearDamping);
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
+}
+
+void CPhysX_Manager::Set_Velocity(PxRigidActor * pActor, _float3 vVelocity)
+{
+	if (pActor == nullptr)
+		return;
+
+	PxVec3 v = CUtile::ConvertPosition_D3DToPx(vVelocity);
+	((PxRigidDynamic*)pActor)->setLinearVelocity(v);
 }
 
 void CPhysX_Manager::Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag)

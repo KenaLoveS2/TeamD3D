@@ -873,3 +873,13 @@ void CUtile::Execute_BillBoard(CTransform* pTransform, _float3 vScale)
 	pTransform->Set_WorldMatrix(worldmatrix);
 	pTransform->Set_Scaled(vScale);
 }
+
+_tchar* CUtile::Create_DummyString()
+{
+	static _uint iIndex = 0;
+	static _tchar szBuf[MAX_PATH] = { 0, };
+
+	swprintf_s(szBuf, TEXT("%d"), iIndex++);
+
+	return Create_StringAuto(szBuf);
+}

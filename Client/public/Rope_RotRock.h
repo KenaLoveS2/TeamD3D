@@ -16,9 +16,34 @@ private:
 	_float3 m_vInitPosition;
 	_float4 m_vMoveTargetPosition;
 	
+
+	_bool m_bChoiceFlag = false;
 	_bool m_bMoveFlag = false;
 
-	class CKena *m_pPlayerKena = nullptr;
+	class CKena *m_pKena = nullptr;
+	
+	class CLiftRot* m_pCuteLiftRot = nullptr;
+	class CLiftRot_Master * m_pLiftRotMaster = nullptr;	
+	
+	_float3 m_vRotCreatePosOffset[LIFT_ROT_COUNT] = {
+		_float3(2.f, 0.f, 0.f),
+		_float3(2.f, 0.f, -2.f),
+		_float3(2.f, 0.f, 2.f ),
+		_float3(-2.f, 0.f, 0.f), 
+		_float3(-2.f, 0.f, -2.f ),
+		_float3(-2.f, 0.f, 2.f ),
+	};
+	
+	_float3 m_vRotLiftPosOffset[LIFT_ROT_COUNT] = {
+		_float3(1.2f, 0.f, 0.f), 
+		_float3(1.2f, 0.f, -1.2f),
+		_float3(1.2f, 0.f, 1.2f),
+		_float3(-1.2f, 0.f, 0.f),
+		_float3(-1.2f, 0.f, -1.2f),
+		_float3(-1.2f, 0.f, 1.2f),
+	};
+
+	_float3 m_vPxPivotDist;
 
 public:
 	CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
@@ -49,6 +74,8 @@ public:
 		m_vMoveTargetPosition = vPos; 
 		m_vMoveTargetPosition.w = 1.f;
 	}	
+
+	void Set_ChoiceFlag(_bool bFlag) { m_bChoiceFlag = bFlag; }
 	void Set_MoveFlag(_bool bFlag) { m_bMoveFlag = bFlag; }
 	_bool  Get_MoveFlag() { return m_bMoveFlag; }
 

@@ -172,9 +172,6 @@
     <Filter Include="02.GameObjects\Monster\RockGolem">
       <UniqueIdentifier>{e9cdc3ca-fe1f-4457-bfe8-4e231662a7f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\RotEater">
-      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Sticks01">
       <UniqueIdentifier>{9b3c719a-1aa8-4fce-9b69-e04e73c1811c}</UniqueIdentifier>
     </Filter>
@@ -268,14 +265,11 @@
     <Filter Include="02.GameObjects\Envrioment\Interaction\Rope_RotRock">
       <UniqueIdentifier>{8e19c382-7d37-455c-9610-31183ac7fb3b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\BranchTosser">
-      <UniqueIdentifier>{6cf9411d-1b20-4039-90b6-aa49ddae82bc}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Monster\RockGolem\RotEater">
+      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Sapling">
-      <UniqueIdentifier>{e51a7d50-06bb-4a4b-8041-288a4ea6ecfa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\MonsterWeapon">
-      <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Rot\LiftRot">
+      <UniqueIdentifier>{64d9edad-2238-40c6-8fd8-aada30546c76}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. Spirits">
       <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
@@ -532,7 +526,7 @@
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotEater.h">
-      <Filter>02.GameObjects\Monster\RotEater</Filter>
+      <Filter>02.GameObjects\Monster\RockGolem\RotEater</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sticks01.h">
       <Filter>02.GameObjects\Monster\Sticks01</Filter>
@@ -676,17 +670,15 @@
     <ClInclude Include="..\public\E_KenaPulseCloud.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BranchTosser.h">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClInclude Include="..\public\BranchTosser.h" />
+    <ClInclude Include="..\public\BranchTosser_Weapon.h" />
+    <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\Sapling.h" />
+    <ClInclude Include="..\public\LiftRot.h">
+      <Filter>02.GameObjects\Rot\LiftRot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BranchTosser_Weapon.h">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Sapling.h">
-      <Filter>02.GameObjects\Monster\Sapling</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterWeapon.h">
-      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    <ClInclude Include="..\public\LiftRot_Master.h">
+      <Filter>02.GameObjects\Rot\LiftRot</Filter>
     </ClInclude>
     <ClInclude Include="UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
@@ -934,7 +926,7 @@
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotEater.cpp">
-      <Filter>02.GameObjects\Monster\RotEater</Filter>
+      <Filter>02.GameObjects\Monster\RockGolem\RotEater</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sticks01.cpp">
       <Filter>02.GameObjects\Monster\Sticks01</Filter>
@@ -1078,17 +1070,15 @@
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BranchTosser.cpp">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    <ClCompile Include="..\private\BranchTosser.cpp" />
+    <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
+    <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\Sapling.cpp" />
+    <ClCompile Include="..\private\LiftRot.cpp">
+      <Filter>02.GameObjects\Rot\LiftRot</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BranchTosser_Weapon.cpp">
-      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Sapling.cpp">
-      <Filter>02.GameObjects\Monster\Sapling</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterWeapon.cpp">
-      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    <ClCompile Include="..\private\LiftRot_Master.cpp">
+      <Filter>02.GameObjects\Rot\LiftRot</Filter>
     </ClCompile>
     <ClCompile Include="UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>

@@ -225,6 +225,8 @@
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\Public\Level_MapTool.h" />
     <ClInclude Include="..\Public\Level_TestPlay.h" />
+    <ClInclude Include="..\public\LiftRot.h" />
+    <ClInclude Include="..\public\LiftRot_Master.h" />
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\LoadingIcon.h" />
@@ -355,6 +357,8 @@
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Level_MapTool.cpp" />
     <ClCompile Include="..\Private\Level_TestPlay.cpp" />
+    <ClCompile Include="..\private\LiftRot.cpp" />
+    <ClCompile Include="..\private\LiftRot_Master.cpp" />
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp" />

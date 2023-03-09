@@ -190,6 +190,7 @@ public: /* For.PipeLine */
 		class CCamera* Get_WorkCameraPtr();
 		_float*		Get_CameraFar();
 		map<const _tchar*, class CCamera*>*	Get_CameraContainer();
+		_bool IsWorkCamera(const _tchar * pCameraTag);
 
 	public:		/* For Function Manager */
 		template<typename T>
