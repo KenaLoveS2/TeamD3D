@@ -6,19 +6,18 @@ BEGIN(Engine)
 class CUI;
 END
 
+/* Gradually moving with Alpha */
 BEGIN(Client)
 class CUI_Event_Transform final : public CUI_Event
 {
-public:
-	enum TAG { TAG_SCALE_BY_PERCENT, TAG_SCALE_BY_TIME, TAG_TRANS_BY_PERCENT, TAG_TRANS_BY_TIME, TAG_END };
-
+	enum TAG { TAG_APPEAR, TAG_DISAPPEAR, TAG_END };
 private:
 	CUI_Event_Transform(CUI* pUI);
 	virtual ~CUI_Event_Transform() = default;
 
 public:
 	virtual void		Call_Event(_uint iTag, _float fData)	override;
-	_bool				Is_Finished() { m_bFinished; }
+	_bool				Is_Finished() { return m_bFinished; }
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;
@@ -30,27 +29,15 @@ public:
 	virtual HRESULT		Load_Data(wstring fileName)				override;
 
 private:
+	_bool		Appear(_float fTimeDelta);
+	_bool		DisAppear(_float fTimeDelta);
+
+private:
 	TAG			m_eTag;
 	_bool		m_bStart;
 	_bool		m_bFinished;
-
-	/* For. Scale */
-	_float3		m_vSourScale;
-	_float3		m_vDestScale;
-	_float3		m_vScaleNow;
-	_float		m_fScaleSpeed;
-
-	/* For. Translation */
-	_float4		m_vSourTranslation;
-	_float4		m_vDestTranslation;
-	_float4		m_vTranslationNow;
-	_float		m_fTransSpeed;
-
-	/* For. Rotation */
-	_float3		m_vRotAxis;
-	_float		m_fRotAngle;
-	_float		m_fRotAngleNow;
-	_float		m_fRotSpeed;
+	_float		m_fSpeed;
+	_float		m_fAlpha;
 
 public:
 	static CUI_Event_Transform*		Create(CUI* pUI);

@@ -97,12 +97,12 @@ public:
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
 	void RotationFromNow(_fvector vAxis, _float fRadian);
 
-	/* 쳐다본다. */
 	/*void LookAt(const CTransform* pTarget);*/
 	void LookAt(_fvector vTargetPos);
+	void LookAt_NoUpDown(_fvector vTargetPos);
 
-	/* 추적한다 .*/
 	void Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit = 0.1f);
+	//void Jump(_float fTimeDelta);
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
@@ -143,6 +143,11 @@ public:
 	_float Calc_Distance_XZ(_float4 &vTargetPos);
 	_float Calc_Distance_XY(_float4 &vTargetPos);
 	_float Calc_Distance_YZ(_float4 &vTargetPos);
+
+	_float Calc_Distance_XYZ(_float3 &vTargetPos);
+	_float Calc_Distance_XZ(_float3 &vTargetPos);
+	_float Calc_Distance_XY(_float3 &vTargetPos);
+	_float Calc_Distance_YZ(_float3 &vTargetPos);
 	
 	_float Calc_Distance_XYZ(CTransform* pTransform);
 	_float Calc_Distance_XZ(CTransform* pTransform);	
@@ -163,6 +168,13 @@ public:
 	_float3 Get_vPxPivotScale() { return m_vPxPivotScale; }
 
 	void Tick(_float fTimeDelta);
+
+	_bool IsClosed_XYZ(_float4& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XZ(_float4& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XYZ(_float3& vTargetPos, _float fDIstance = 0.1f);
+	_bool IsClosed_XZ(_float3& vTargetPos, _float fDIstance = 0.1f);
+
+	void Set_Position(_fvector vPos);
 };
 
 END

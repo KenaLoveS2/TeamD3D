@@ -6,47 +6,19 @@
 
 CUI_Event_Transform::CUI_Event_Transform(CUI * pUI)
 {
-	m_szEventName			= "Transform";
-	m_pParent				= pUI;
+	m_szEventName	= "Transform";
+	m_pParent		= pUI;
 
-	m_bStart				= false;
-	m_bFinished				= false;
-	m_eTag					= TAG_END;
-
-	m_vSourScale			= { 1.f ,1.f, 1.f };
-	m_vSourTranslation		= { 0.f, 0.f, 0.f };
-
-	m_vDestScale			= { 1.f ,1.f, 1.f };
-	m_vDestTranslation		= { 0.f, 0.f, 0.f };
-
-	m_vRotAxis				= { 0.f, 1.f ,0.f };
-	m_fRotAngle				= 0.f;
-
-	m_fScaleSpeed			= 0.f;
-	m_fTransSpeed			= 0.f;
-	m_fRotSpeed				= 0.f;
-
-	m_vScaleNow				= m_vSourScale;
-	m_vTranslationNow		= m_vSourTranslation;
-	m_fRotAngleNow			= 0.f;
+	m_bStart		= false;
+	m_bFinished		= false;
+	m_fSpeed		= 0.f;
+	m_fAlpha		= 1.f;
+	m_eTag			= TAG_END;
 }
 
 void CUI_Event_Transform::Call_Event(_uint iTag, _float fData)
 {
-/*	switch (iTag)
-	{
-	case TAG_SCALE_BY_PERCENT: *//* 일단 HP 바 전용으로 만든다 */
-		_float4x4 matLocal = m_pParent->Get_LocalMatrixFloat4x4();
-
-		m_vSourScale = {matLocal._11, matLocal._22, matLocal._33};//m_pParent->Get_OriginalSettingScale();
-		m_vDestScale = fData * m_vSourScale;
-
-		m_vDestTranslation = { matLocal._41, matLocal._42, matLocal._43, 1.f };
-		_float3 vDestTrans = m_vSourScale *(1 - fData);
-		m_vDestTranslation += { vDestTrans.x, vDestTrans.y, vDestTrans.z, 0.f };
-	//	break;
-	//}
-
+	m_eTag = (TAG)iTag;
 	m_bStart = true;
 	m_bFinished = false;
 	m_fTimeAcc = 0.f;
@@ -67,30 +39,14 @@ HRESULT CUI_Event_Transform::Late_Tick(_float fTimeDelta)
 		m_bStart = false;
 		return S_OK;
 	}
-	
 
-	m_fScaleSpeed = 0.3f;
-	m_fTransSpeed = 0.3f;
+
 	m_fTimeAcc += fTimeDelta;
-	if (m_vDestScale.x > m_vScaleNow.x)
+	if (m_fTimeAcc <= m_fTime)
 	{
-		m_vScaleNow.x += 0.1f * m_fScaleSpeed * m_fTimeAcc;
-		m_vTranslationNow.x += 0.1f * m_fTransSpeed * m_fTimeAcc;
-		_float4x4 matLocal = m_pParent->Get_LocalMatrixFloat4x4();
-		matLocal._11 = m_vScaleNow.x;
-		matLocal._41 = m_vTranslationNow.x;
-		m_pParent->Set_LocalMatrix(matLocal);
+
 	}
-	else
-	{
-		m_bFinished = true;
-		_float4x4 matLocal = m_pParent->Get_LocalMatrixFloat4x4();
-		matLocal._11 = m_vDestScale.x;
-		matLocal._41 = m_vTranslationNow.x;
-	}
-
-
-
+	
 
 	return S_OK;
 }
@@ -112,22 +68,6 @@ void CUI_Event_Transform::Imgui_RenderProperty()
 	fDuration = m_fTime;
 	if (ImGui::SliderFloat("Transform Duration", &fDuration, 0.f, 30.f))
 		m_fTime = fDuration;
-
-	/* Type */
-	//TAG_SCALE_BY_PERCENT, TAG_SCALE_BY_TIME, TAG_TRANS_BY_PERCENT, TAG_TRANS_BY_TIME
-
-	/* 귀찮으니까 TAG_SCALE_BY_PERCENT 기준으로 만듦 나중에 이거 또 써야 하는 일이 있으면 범용성있게 만들자고 */
-
-	//m_vDestScale;
-	//m_vDestTranslation;
-	//
-	//m_vRotAxis;
-	//m_fRotAngle;
-	//
-	//m_fScaleSpeed;
-	//m_fTransSpeed;
-	//m_fRotSpeed;
-
 
 }
 
@@ -176,6 +116,16 @@ HRESULT CUI_Event_Transform::Load_Data(wstring fileName)
 	return S_OK;
 }
 
+_bool CUI_Event_Transform::Appear(_float fTimeDelta)
+{
+	return _bool();
+}
+
+_bool CUI_Event_Transform::DisAppear(_float fTimeDelta)
+{
+	return _bool();
+}
+
 CUI_Event_Transform * CUI_Event_Transform::Create(CUI * pUI)
 {
 	CUI_Event_Transform* pInstance = new CUI_Event_Transform(pUI);
@@ -192,4 +142,5 @@ CUI_Event_Transform * CUI_Event_Transform::Create(wstring fileName, CUI * pUI)
 
 void CUI_Event_Transform::Free()
 {
+	__super::Free();
 }

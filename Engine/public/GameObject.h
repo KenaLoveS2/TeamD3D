@@ -70,6 +70,8 @@ protected:
 	_float3			m_vPhysXScale;
 	_float3			m_vPhysXPos;
 
+	_uint m_iObjectProperty = 0;
+
 protected:
 	map<const _tchar*, class CComponent*>			m_Components;
 
@@ -100,6 +102,8 @@ public: /* imgui */
 	void Set_WorldMatrix(_float4x4& vPosition);
 
 public:
-	virtual _int Execute_Collision() { return 0; }
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos) { return 0; }
+	_uint Get_ObjectProperty() { return m_iObjectProperty; }
+
 };
 END

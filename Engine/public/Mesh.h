@@ -59,6 +59,12 @@ public:
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
 
 	HRESULT Create_PxTriangleData(); // kbj physx	
+	_uint Get_NumVertices() {
+		return m_iNumVertices;
+	}
+	_uint Get_NumPrimitive() {
+		return m_iNumPrimitive;
+	}
 };
 
 END

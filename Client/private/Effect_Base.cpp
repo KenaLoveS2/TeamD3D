@@ -46,12 +46,6 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 	jLayer["1.Save2Load Level"].get_to<int>(iSave2LoadLevel);
 	jLayer["2.Layer Tag"].get_to<string>(strLayerTag);
 
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
-
 	// Clone GameObject
 	_int iEnum = 0, iEffectType = 0;
 	CEffect_Base::EFFECTDESC eLoadEffectDesc;
@@ -347,7 +341,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 				jObject["Instance DataCnt"].get_to<_int>(iCnt);
 
 				CVIBuffer_Point_Instancing* pVIBuffer = nullptr;
-				if (FAILED(pGameInstance->Add_Prototype(iCurLevel, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
+				if (FAILED(pGameInstance->Add_Prototype(g_LEVEL, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
 					return E_FAIL;
 
 #pragma region Instance Data
@@ -398,7 +392,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 					memcpy((_float*)&PointDesc->vExplosionDir + (k++), &vExplosionDir, sizeof(_float));
 
 				k = 0;
-				for (_float fDir : jObject["CloneObject Component PointDesc ExplosionDir"])
+				for (_float fDir : jObject["CloneObject Component PointDesc Dir"])
 					memcpy((_float*)&PointDesc->vDir + (k++), &fDir, sizeof(_float));
 
 				iEnum = 0;

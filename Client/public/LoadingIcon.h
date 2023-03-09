@@ -35,12 +35,10 @@ private:
 	_float					m_fTime;
 	_float					m_fTimeAcc;
 
-
 private:
 	_float4x4				m_ViewMatrix;
 	_float4x4				m_ProjMatrix;
 	_float					m_fX, m_fY, m_fSizeX, m_fSizeY;
-
 
 private:
 	HRESULT			SetUp_Components();

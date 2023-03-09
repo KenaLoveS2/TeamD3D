@@ -153,14 +153,7 @@ void CUI_CanvasAim::Tick(_float fTimeDelta)
 			_float3 vNewScale = (1 - m_fTimeAcc) * m_vOriginalSettingScale;
 			m_pTransformCom->Set_Scaled(vNewScale);
 		}
-		else
-		{
-			m_bStart = false;
-			m_fTimeAcc = 0.f;
-			m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
-			static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(false);
-			static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(false);
-		}
+
 	}
 
 	/* ~Code */
@@ -335,11 +328,23 @@ HRESULT CUI_CanvasAim::SetUp_ShaderResources()
 
 void CUI_CanvasAim::Default(CUI_ClientManager::UI_PRESENT eType, _float fData)
 {
-	m_bStart = true;
-	m_fTimeAcc = 0.f;
-	m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
-	static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(true);
-	static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(true);
+	if (fData == 1.0f)
+	{
+		m_bStart = true;
+		m_fTimeAcc = 0.0f;
+		m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(true);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(true);
+
+	}
+	else if (fData == 0.0f)
+	{
+		m_bStart = false;
+		m_fTimeAcc = 0.0f;
+		m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(false);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(false);
+	}
 }
 
 void CUI_CanvasAim::LevelUp(CUI_ClientManager::UI_PRESENT eType, _float fData)

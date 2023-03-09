@@ -97,8 +97,8 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		static_cast<CTransform*>(pLoadTerrain->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		pLoadTerrain->Late_Initialize();	/*머지후 삭제 요망*/
-
+		// pLoadTerrain->Late_Initialize();	/*머지후 삭제 요망*/
+		
 		szCloneTag = "";
 		pLoadTerrain = nullptr;
 

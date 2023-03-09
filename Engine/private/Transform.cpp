@@ -418,14 +418,29 @@ void CTransform::LookAt(_fvector vTargetPos)
 	Set_State(CTransform::STATE_LOOK, vLook);
 }
 
+void CTransform::LookAt_NoUpDown(_fvector vTargetPos)
+{
+	_float3   vScale = Get_Scaled();
+
+	_vector   vPosWithoutY = XMVectorSetY(vTargetPos, m_WorldMatrix._42);
+
+	_vector   vLook = XMVector3Normalize(vPosWithoutY - Get_State(STATE_TRANSLATION)) * vScale.z;
+	_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+	_vector   vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+
+	Set_State(STATE_RIGHT, vRight);
+	Set_State(STATE_UP, vUp);
+	Set_State(STATE_LOOK, vLook);
+}
+
 void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 {
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector		vDir = vTargetPos - vPosition;
-
+	
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
-	LookAt(vTargetPos);
+	LookAt_NoUpDown(vTargetPos);
 
 	if(fDistance > fLimit)
 	{
@@ -557,6 +572,40 @@ _float CTransform::Calc_Distance_YZ(_float4 & vTargetPos)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
+_float CTransform::Calc_Distance_XYZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+
+	return XMVectorGetX(XMVector3Length(vPos - vTargetPos));
+}
+
+_float CTransform::Calc_Distance_XZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.y = vPos.y;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_XY(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.z = vPos.z;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
+_float CTransform::Calc_Distance_YZ(_float3 & vTargetPos)
+{
+	_float4 vPos = Get_State(STATE_TRANSLATION);
+	_float4 vTarget = vTargetPos;
+	vTarget.x = vPos.x;
+
+	return XMVectorGetX(XMVector3Length(vPos - vTarget));
+}
+
 _float CTransform::Calc_Distance_XYZ(CTransform * pTransform)
 {
 	_float4 vPos = Get_State(STATE_TRANSLATION);
@@ -646,7 +695,6 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
-		
 		}
 		else
 		{
@@ -682,6 +730,9 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	if (m_pPxActor == nullptr)
+		return;
+
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
 	_float4x4 RetMatrix, Pivot;
 
@@ -704,4 +755,43 @@ void CTransform::Tick(_float fTimeDelta)
 		XMStoreFloat4x4(&RetMatrix, m);
 		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
 	}	
+}
+
+_bool CTransform::IsClosed_XYZ(_float4 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XYZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XZ(_float4 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XYZ(_float3 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XYZ(vTargetPos) <= fDIstance;
+}
+
+_bool CTransform::IsClosed_XZ(_float3 & vTargetPos, _float fDIstance)
+{
+	return Calc_Distance_XZ(vTargetPos) <= fDIstance;
+}
+
+void CTransform::Set_Position(_fvector vPos)
+{
+	if (m_pPxActor && m_pPhysX_Manager)
+	{
+		if (m_bIsStaticPxActor)
+		{
+			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + vPivot);
+			Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}
+		else			
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + XMLoadFloat3(&m_vPxPivot));
+	}
+	else
+	{
+		Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
 }

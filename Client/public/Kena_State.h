@@ -33,7 +33,7 @@ public:
 
 		/* AIR ATTACK */
 		AIR_ATTACK_1_RETURN, AIR_ATTACK_LIGHT, AIR_ATTACK_LIGHT_ALT,
-		AIR_ATTACK_SLAM_FINKSH, AIR_ATTACK_SLAM_INTO, AIR_ATTACK_SLAM_LOOP, 
+		AIR_ATTACK_SLAM_FINISH, AIR_ATTACK_SLAM_INTO, AIR_ATTACK_SLAM_LOOP, 
 
 		ANTIGRAVITY_INTO, ANTIGRAVITY_LOOP,
 
@@ -126,6 +126,8 @@ public:
 		HEAVY_ATTACK_1_CHARGE, HEAVY_ATTACK_1_INTO_RUN, HEAVY_ATTACK_1_RELEASE, HEAVY_ATTACK_1_RELEASE_PERFECT, HEAVY_ATTACK_1_RETURN,
 		HEAVY_ATTACK_2_CHARGE, HEAVY_ATTACK_2_INTO_RUN, HEAVY_ATTACK_2_RELEASE, HEAVY_ATTACK_2_RELEASE_PERFECT, HEAVY_ATTACK_2_RETURN,
 		HEAVY_ATTACK_3_CHARGE, HEAVY_ATTACK_3_RELEASE, HEAVY_ATTACK_3_RELEASE_PERFECT, HEAVY_ATTACK_3_RETURN,
+
+		/* SPRINT HEAVY ATTACK */
 		HEAVY_ATTACK_COMBO, HEAVY_ATTACK_COMBO_INTO_RUN, HEAVY_ATTACK_COMBO_RETURN,
 
 		HEAVY_FINISHER, HEAVY_FINISHER_LOOP,
@@ -138,7 +140,8 @@ public:
 
 		/* IDLE */
 		IDLE, IDLE_ADDITIVE_LOOP_ADD, 
-		IDLE_INTO_LOCK_ON, IDLE_INTO_RUN_180_LEFT, IDLE_INTO_RUN_180_RIGHT, 
+		IDLE_INTO_LOCK_ON,
+		IDLE_INTO_RUN_180_LEFT, IDLE_INTO_RUN_180_RIGHT, 
 		IDLE_POSE,
 		
 		/* INSPECT */
@@ -158,7 +161,10 @@ public:
 
 		INTO_SPRINT,
 
-		JOG, JUMP, JUMP_SQUAT,
+		JOG,
+		
+		/* JUMP */
+		JUMP, JUMP_SQUAT,
 		
 		PHOTO_KICK, PHOTO_KICK_LOOP,
 		PHOTO_KNEEL, PHOTO_KNEEL_LOOP,
@@ -192,7 +198,7 @@ public:
 		/* LISTEN */
 		LISTENING_LOOP, LISTEN_LEFT_END_2,
 
-		/* LOCK ON */
+		/* LOCK ON (COMBAT) */
 		LOCK_ON_IDLE, LOCK_ON_TO_IDLE,
 
 		LOOK_AROUND_1_ADD, LOOK_AROUND_2_ADD, LOOK_AROUND_3_ADD,
@@ -405,18 +411,30 @@ private:
 	CTransform::DIRECTION	m_eDir = CTransform::DIR_END;
 	CTransform::DIRECTION	m_ePreDir = CTransform::DIR_END;
 
-	_matrix					m_matPivotBackUp;
+	_bool						m_bCombat = false;
+	_float						m_fCombatIdleTime = 0.f;
 
 private:
 	HRESULT					SetUp_State_Idle();
 	HRESULT					SetUp_State_Run();
 	HRESULT					SetUp_State_Aim();
+	HRESULT					SetUp_State_Air_Attack();
 	HRESULT					SetUp_State_Attack1();
 	HRESULT					SetUp_State_Attack2();
 	HRESULT					SetUp_State_Attack3();
 	HRESULT					SetUp_State_Attack4();
 	HRESULT					SetUp_State_Bow();
+	HRESULT					SetUp_State_Combat();
+	HRESULT					SetUp_State_Damaged_Common();
+	HRESULT					SetUp_State_Damaged_Heavy();
 	HRESULT					SetUp_State_Dodge();
+	HRESULT					SetUp_State_Fall();
+	HRESULT					SetUp_State_Heavy_Attack1();
+	HRESULT					SetUp_State_Heavy_Attack2();
+	HRESULT					SetUp_State_Heavy_Attack3();
+	HRESULT					SetUp_State_Heavy_Attack_Combo();
+	HRESULT					SetUp_State_Jump();
+	HRESULT					SetUp_State_Land();
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Sprint();
 
@@ -425,6 +443,7 @@ private:
 	void						Start_Idle(_float fTimeDelta);
 	/* RUN */
 	void						Start_Run(_float fTimeDelta);
+	void						Start_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						Start_Aim_Into(_float fTimeDelta);
 	void						Start_Aim_Loop(_float fTimeDelta);
@@ -438,6 +457,12 @@ private:
 	void						Start_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Start_Aim_Run_Left(_float fTimeDelta);
 	void						Start_Aim_Run_Right(_float fTimeDelta);
+	/* AIR ATTACK */
+	void						Start_Air_Attack_1(_float fTimeDelta);
+	void						Start_Air_Attack_2(_float fTimeDelta);
+	void						Start_Air_Attack_Slam_Into(_float fTimeDelta);
+	void						Start_Air_Attack_Slam_Loop(_float fTimeDelta);
+	void						Start_Air_Attack_Slam_Finish(_float fTimeDelta);
 	/* ATTACK 1 */
 	void						Start_Attack_1(_float fTimeDelta);
 	void						Start_Attack_1_From_Run(_float fTimeDelta);
@@ -461,9 +486,24 @@ private:
 	void						Start_Bow_Charge(_float fTimeDelta);
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta);
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						Start_Idle_Into_Lock_On(_float fTimeDelta);
+	void						Start_Lock_On_Idle(_float fTimeDelta);
+	void						Start_Lock_On_To_Idle(_float fTimeDelta);
+	void						Start_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						Start_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						Start_Take_Damage_Front(_float fTimeDelta);
+	void						Start_Take_Damage_Back(_float fTImeDelta);
+	void						Start_Take_Damage_Left(_float fTimeDelta);
+	void						Start_Take_Damage_Right(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						Start_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						Start_Backflip(_float fTimeDelta);
 	void						Start_Roll(_float fTimeDelta);
@@ -473,6 +513,44 @@ private:
 	void						Start_Roll_Into_Run(_float fTimeDelta);
 	void						Start_Roll_Into_Walk(_float fTimeDelta);
 	void						Start_Roll_Into_Fall(_float fTimeDelta);
+	/* FALL */
+	void						Start_Fall(_float fTimeDelta);
+	void						Start_Fall_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						Start_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						Start_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						Start_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						Start_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						Start_Heavy_Attack_Combo(_float fTimeDelta);
+	void						Start_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						Start_Jump_Squat(_float fTimeDelta);
+	void						Start_Jump(_float fTimeDelta);
+	void						Start_Running_Jump_Squat(_float fTimeDelta);
+	void						Start_Running_Jump(_float fTimeDelta);
+	void						Start_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						Start_Land(_float fTimeDelta);
+	void						Start_Land_Heavy(_float fTimeDelta);
+	void						Start_Land_Walking(_float fTimeDelta);
+	void						Start_Land_Running(_float fTimeDelta);
+	void						Start_Bow_Land(_float fTimeDelta);
+	void						Start_Ledge_Land(_float fTimeDelta);
+	void						Start_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -505,6 +583,7 @@ private:
 	void						Tick_Idle(_float fTimeDelta);
 	/* RUN */
 	void						Tick_Run(_float fTimeDelta);
+	void						Tick_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						Tick_Aim_Into(_float fTimeDelta);
 	void						Tick_Aim_Loop(_float fTimeDelta);
@@ -517,6 +596,12 @@ private:
 	void						Tick_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Tick_Aim_Run_Left(_float fTimeDelta);
 	void						Tick_Aim_Run_Right(_float fTimeDelta);
+	/* AIR ATTACK */
+	void						Tick_Air_Attack_1(_float fTimeDelta);
+	void						Tick_Air_Attack_2(_float fTimeDelta);
+	void						Tick_Air_Attack_Slam_Into(_float fTimeDelta);
+	void						Tick_Air_Attack_Slam_Loop(_float fTimeDelta);
+	void						Tick_Air_Attack_Slam_Finish(_float fTimeDelta);
 	/* ATTACK 1 */
 	void						Tick_Attack_1(_float fTimeDelta);
 	void						Tick_Attack_1_From_Run(_float fTimeDelta);
@@ -543,6 +628,20 @@ private:
 	void						Tick_Bow_Release(_float fTimeDelta);
 	void						Tick_Bow_Recharge(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						Tick_Idle_Into_Lock_On(_float fTimeDelta);
+	void						Tick_Lock_On_Idle(_float fTimeDelta);
+	void						Tick_Lock_On_To_Idle(_float fTimeDelta);
+	void						Tick_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						Tick_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						Tick_Take_Damage_Front(_float fTimeDelta);
+	void						Tick_Take_Damage_Back(_float fTImeDelta);
+	void						Tick_Take_Damage_Left(_float fTimeDelta);
+	void						Tick_Take_Damage_Right(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						Tick_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						Tick_Backflip(_float fTimeDelta);
 	void						Tick_Roll(_float fTimeDelta);
@@ -552,6 +651,44 @@ private:
 	void						Tick_Roll_Into_Run(_float fTimeDelta);
 	void						Tick_Roll_Into_Walk(_float fTimeDelta);
 	void						Tick_Roll_Into_Fall(_float fTimeDelta);
+	/* FALL */
+	void						Tick_Fall(_float fTimeDelta);
+	void						Tick_Fall_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						Tick_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						Tick_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						Tick_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						Tick_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						Tick_Heavy_Attack_Combo(_float fTimeDelta);
+	void						Tick_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						Tick_Jump_Squat(_float fTimeDelta);
+	void						Tick_Jump(_float fTimeDelta);
+	void						Tick_Running_Jump_Squat(_float fTimeDelta);
+	void						Tick_Running_Jump(_float fTimeDelta);
+	void						Tick_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						Tick_Land(_float fTimeDelta);
+	void						Tick_Land_Heavy(_float fTimeDelta);
+	void						Tick_Land_Walking(_float fTimeDelta);
+	void						Tick_Land_Running(_float fTimeDelta);
+	void						Tick_Bow_Land(_float fTimeDelta);
+	void						Tick_Ledge_Land(_float fTimeDelta);
+	void						Tick_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -577,6 +714,7 @@ private:
 	void						End_Idle(_float fTimeDelta);
 	/* RUN */
 	void						End_Run(_float fTimeDelta);
+	void						End_Run_Stop(_float fTimeDelta);
 	/* AIM */
 	void						End_Aim_Into(_float fTimeDelta);
 	void						End_Aim_Loop(_float fTimeDelta);
@@ -589,6 +727,12 @@ private:
 	void						End_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						End_Aim_Run_Left(_float fTimeDelta);
 	void						End_Aim_Run_Right(_float fTimeDelta);
+	/* AIR ATTACK */
+	void						End_Air_Attack_1(_float fTimeDelta);
+	void						End_Air_Attack_2(_float fTimeDelta);
+	void						End_Air_Attack_Slam_Into(_float fTimeDelta);
+	void						End_Air_Attack_Slam_Loop(_float fTimeDelta);
+	void						End_Air_Attack_Slam_Finish(_float fTimeDelta);
 	/* ATTACK 1 */
 	void						End_Attack_1(_float fTimeDelta);
 	void						End_Attack_1_From_Run(_float fTimeDelta);
@@ -615,6 +759,20 @@ private:
 	void						End_Bow_Release(_float fTimeDelta);
 	void						End_Bow_Recharge(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);
+	/* COMBAT */
+	void						End_Idle_Into_Lock_On(_float fTimeDelta);
+	void						End_Lock_On_Idle(_float fTimeDelta);
+	void						End_Lock_On_To_Idle(_float fTimeDelta);
+	void						End_Combat_Idle_Into_Run(_float fTimeDelta);
+	void						End_Combat_Run(_float fTimeDelta);
+	/* DAMAGED */
+	void						End_Take_Damage_Front(_float fTimeDelta);
+	void						End_Take_Damage_Back(_float fTImeDelta);
+	void						End_Take_Damage_Left(_float fTimeDelta);
+	void						End_Take_Damage_Right(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Front(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Back(_float fTimeDelta);
+	void						End_Take_Damage_Heavy_Air(_float fTimeDelta);
 	/* DODGE */
 	void						End_Backflip(_float fTimeDelta);
 	void						End_Roll(_float fTimeDelta);
@@ -624,6 +782,44 @@ private:
 	void						End_Roll_Into_Run(_float fTimeDelta);
 	void						End_Roll_Into_Walk(_float fTimeDelta);
 	void						End_Roll_Into_Fall(_float fTimeDelta);
+	/* FALL */
+	void						End_Fall(_float fTimeDelta);
+	void						End_Fall_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 1 */
+	void						End_Heavy_Attack_1_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_1_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 2 */
+	void						End_Heavy_Attack_2_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_2_Into_Run(_float fTimeDelta);
+	/* HEAVY ATTACK 3 */
+	void						End_Heavy_Attack_3_Charge(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Release(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta);
+	void						End_Heavy_Attack_3_Return(_float fTimeDelta);
+	/* HEAVY ATTACK COMBO */
+	void						End_Heavy_Attack_Combo(_float fTimeDelta);
+	void						End_Heavy_Attack_Combo_Return(_float fTimeDelta);
+	void						End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* JUMP */
+	void						End_Jump_Squat(_float fTimeDelta);
+	void						End_Jump(_float fTimeDelta);
+	void						End_Running_Jump_Squat(_float fTimeDelta);
+	void						End_Running_Jump(_float fTimeDelta);
+	void						End_Pulse_Jump(_float fTimeDelta);
+	/* LAND */
+	void						End_Land(_float fTimeDelta);
+	void						End_Land_Heavy(_float fTimeDelta);
+	void						End_Land_Walking(_float fTimeDelta);
+	void						End_Land_Running(_float fTimeDelta);
+	void						End_Bow_Land(_float fTimeDelta);
+	void						End_Ledge_Land(_float fTimeDelta);
+	void						End_Slide_Land(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
@@ -645,9 +841,16 @@ private:
 	void						End_Sprint_Attack(_float fTimeDelta);
 
 private:	/* Changer */
+	_bool	OnGround();
+	_bool	CommonHit();
+	_bool	HeavyHit();
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();
+	_bool	CombatTimeToIdle();
+	_bool	HeavyAttack1_Perfect();
+	_bool	HeavyAttack2_Perfect();
+	_bool	HeavyAttack3_Perfect();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();
@@ -664,6 +867,9 @@ private:	/* Changer */
 	_bool	KeyInput_LShift();
 	_bool	KeyInput_LCtrl();
 	_bool	MouseInput_Left();
+	_bool	MouseInput_Right();
+
+	_bool	NoMouseInput_Right();
 
 	_bool	KeyDown_E();
 	_bool	KeyDown_Q();
@@ -677,6 +883,7 @@ private:	/* Changer */
 	_bool	KeyUp_E();
 	_bool	KeyUp_LShift();
 	_bool	MouseUp_Left();
+	_bool	MouseUp_Right();
 
 private:
 	void	Move(_float TimeDelta, CTransform::DIRECTION eDir, MOVEOPTION eMoveOption = MOVEOPTION_COMMON);

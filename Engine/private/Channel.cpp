@@ -114,7 +114,7 @@ HRESULT CChannel::SetUp_BonePtr(CModel* pModel)
 {
 	m_pBone = pModel->Get_BonePtr(m_szName);
 	if (m_pBone == nullptr) return E_FAIL;
-
+	m_pModel = pModel;
 	Safe_AddRef(m_pBone);
 	return S_OK;
 }
@@ -297,6 +297,41 @@ void CChannel::Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, 
 
 		m_pBone->Set_TransformMatrix(TransformMatrix);
 	}
+}
+
+void CChannel::Additive_TransformMatrixForMonster(_float PlayTime, _float fAdditiveRatio, _bool isRootBone)
+{
+	_vector vBaseScale, vBaseRot, vBasePos;
+	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, m_pBone->Get_TransformMatrix());
+
+	_vector			vRotation;
+
+	if (PlayTime >= m_KeyFrames.back().Time)
+	{
+		vRotation = XMLoadFloat4(&m_KeyFrames.back().vRotation);
+	}
+	else
+	{
+		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
+		{
+			++m_iCurrentKeyFrameIndex;
+		}
+
+		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
+			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
+
+		_vector			vSourRotation, vDestRotation;
+		vSourRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex].vRotation);
+		vDestRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vRotation);
+		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, (float)Ratio);
+	}
+
+	vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRatio);
+	vRotation = XMQuaternionMultiply(vBaseRot, vRotation);
+
+	_matrix TransformMatrix = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
+
+	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
 
 void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)

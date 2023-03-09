@@ -42,6 +42,9 @@ HRESULT CEffect_Trail::Initialize(void * pArg)
 
 void CEffect_Trail::Tick(_float fTimeDelta)
 {
+	//if (m_eEFfectDesc.bActive == false)
+	//	return;
+
 	__super::Tick(fTimeDelta);
 	Set_TrailDesc();
 
@@ -134,20 +137,13 @@ HRESULT CEffect_Trail::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
-
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
+/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVITrailBufferCom)))
 		return E_FAIL;
 
@@ -163,7 +159,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -176,7 +172,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -213,6 +209,8 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InfoMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize")))
 		return E_FAIL;
 
 	/* Texture Total Cnt */

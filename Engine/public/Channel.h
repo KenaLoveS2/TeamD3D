@@ -31,6 +31,8 @@ public:
 	void Blend_TransformMatrix(_float PlayTime, _float fBlendRadio, _bool isRootBone = false);
 	void Additive_TransformMatrix(_float PlayTime, _float fAdditiveRatio, _bool isRootBone = false);
 
+	void Additive_TransformMatrixForMonster(_float PlayTime, _float fAdditiveRatio, _bool isRootBone = false);
+
 	/* For CAnimationState */
 	void Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix& matBonesTransfomation, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);
 	void Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRadio, _smatrix& matBonesTransfomation, _bool isRootBone = false, CChannel* pBlendChannel = nullptr);

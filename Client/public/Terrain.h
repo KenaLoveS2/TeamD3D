@@ -7,7 +7,6 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CNavigation;
 class CVIBuffer_Terrain;
 END
 
@@ -41,7 +40,7 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
-	TERRAIN_DESC*		Get_TerrainDesc() { return &m_TerrainDesc; }
+	TERRAIN_DESC* Get_TerrainDesc() { return &m_TerrainDesc; }
 	
 
 public:
@@ -59,7 +58,11 @@ private:
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*						m_pTextureCom[TYPE_END] = { nullptr };
 	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
-	//CNavigation*				m_pNavigationCom = nullptr;
+
+	_float4 m_vBrushPos;
+	_float m_vBrushRange = 0.8f;
+	class CGroundMark* m_pGroundMark = nullptr;
+
 
 public: /*For.IMgui*/
 	void					Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag);
@@ -76,16 +79,22 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	TERRAIN_DESC						m_TerrainDesc;
+	TERRAIN_DESC					m_TerrainDesc;
 	_bool								m_bLoadData = false;
 
-private: /*For.Brush*/
-	_float								m_fBrushRange = 5.f;
-	_float4								m_vBrushPos;
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	void Set_BrushPosition(_float4 vPos) {
+		m_vBrushPos = vPos; 
+	}
+	void Set_BrushPosition(_float3 vPos) { 
+		m_vBrushPos = _float4(vPos.x, vPos.y, vPos.z, 1.f); 
+	}
+	void Set_BrushRange(_float fRange) { m_vBrushRange = fRange;	}
+	void Connect_TriangleActor(_float4x4 Matrix);
 };
 
 END

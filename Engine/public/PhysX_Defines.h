@@ -1,9 +1,9 @@
 #pragma once
 #include "Base.h"
 #include "GameObject.h"
+#include "Utile.h"
 
 BEGIN(Engine)
-
 #pragma region Struct, Enum, Global Function 
 enum ACTOR_TYPE {
 	BOX_STATIC, SPHERE_STATIC, CAPSULE_STATIC, TRIANGLE_MESH_STATIC,
@@ -11,12 +11,19 @@ enum ACTOR_TYPE {
 	TYPE_END
 };
 
-typedef struct ENGINE_DLL tagPhysXUserData
+enum PX_FILTER_TYPE { 
+	FILTER_DEFULAT,
+	PLAYER_BODY, PLAYER_WEAPON, 
+	MONSTER_BODY, MONSTER_WEAPON,
+	FILTER_END,
+};
+
+typedef struct tagPhysXUserData
 {
 	ACTOR_TYPE	 eType;
 	
 	CGameObject* pOwner;
-	bool					isGravity;
+	bool isGravity;
 } PX_USER_DATA;
 
 static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity = true)
@@ -27,14 +34,6 @@ static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravit
 	return pData;
 }
 
-//dx11 constant buffer
-typedef struct tagConstantBufferData
-{
-	XMMATRIX WVP_Matrix;
-	XMMATRIX WorldMatrix;
-	XMMATRIX WorldMatrix_Inverse_Transpose;
-	XMFLOAT3 Cam_Position;
-} CB_DATA;
 #pragma endregion
 
 #pragma region Collision Callback Event Class
@@ -43,39 +42,61 @@ class CustomSimulationEventCallback : public PxSimulationEventCallback
 public:
 	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override
 	{
+		const PxU32 bufferSize = 64;
+		PxContactPairPoint contacts[bufferSize];
+
+
 		for (PxU32 i = 0; i < nbPairs; i++)
 		{
-			const PxContactPair& cp = pairs[i];
+			const PxContactPair& Pair = pairs[i];
 
 			// eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
-			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			if (Pair.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{	
+				PxU32 nbContacts = Pair.extractContacts(contacts, bufferSize);
+				_float3 vCollisionPos;
+				for (PxU32 j = 0; j < nbContacts; j++)
+				{	
+					PxVec3 point = contacts[j].position;
+					vCollisionPos = CUtile::ConvertPosition_PxToD3D(point);
+					/*
+					PxVec3 impulse = contacts[j].impulse;
+					PxU32 internalFaceIndex0 = contacts[j].internalFaceIndex0;
+					PxU32 internalFaceIndex1 = contacts[j].internalFaceIndex1;
+					*/
+				}
+
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-								
-				pSourUserData && pSourUserData->pOwner->Execute_Collision();
-				pDestUserData && pDestUserData->pOwner->Execute_Collision();
+
+				if (pSourUserData && pDestUserData)
+				{
+					CGameObject* pSourObject = pSourUserData->pOwner;
+					CGameObject* pDestObject = pDestUserData->pOwner;
+
+					pSourObject && (pSourUserData->isGravity && pDestUserData->isGravity == false) 
+						&& pSourObject->Execute_Collision(pDestObject, vCollisionPos);
+
+					pDestObject && (pDestUserData->isGravity && pSourUserData->isGravity == false) 
+						&& pDestObject->Execute_Collision(pSourObject, vCollisionPos);
+				}
+				else if (pSourUserData || pDestUserData)
+				{
+					CGameObject* pSourObject = pSourUserData ? pSourUserData->pOwner : nullptr;
+					CGameObject* pDestObject = pDestUserData ? pSourUserData->pOwner : nullptr;
+
+					pSourObject && pSourObject->Execute_Collision(pDestObject, vCollisionPos);
+					pDestObject && pDestObject->Execute_Collision(pSourObject, vCollisionPos);
+				}
 			}
+			
+			/*
 			// eDETECT_CCD_CONTACT: 연속 충돌 감지를 사용하여 두 액터 간의 접촉을 감지합니다.	
-			if (cp.events & PxPairFlag::eDETECT_CCD_CONTACT)
-			{
-				int temp = 0;
-			}
-
-			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_CCD)
-			{
-				int temp = 0;
-			}
-
-			if (cp.events & PxPairFlag::eNOTIFY_CONTACT_POINTS)
-			{
-				int temp = 0;
-			}
-
-			if (cp.events & PxPairFlag::eCONTACT_EVENT_POSE)
-			{
-				int temp = 0;
-			}
+			if (cp.events & PxPairFlag::eDETECT_CCD_CONTACT) { int temp = 0; }
+			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_CCD) { int temp = 0; }
+			if (cp.events & PxPairFlag::eNOTIFY_CONTACT_POINTS) { int temp = 0; }
+			if (cp.events & PxPairFlag::eCONTACT_EVENT_POSE) { int temp = 0; }
+			*/
 		}
 	}
 
@@ -112,15 +133,9 @@ public:
 		}
 	}
 
-	virtual void onWake(PxActor** actors, PxU32 count) override {
-		int wake = 0;
-	};
-	virtual void onSleep(PxActor** actors, PxU32 count) override {
-		int sleep = 0;
-	};
-	virtual void onAdvance(const PxRigidBody*const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count) override {
-		int adavance = 0;
-	};
+	virtual void onWake(PxActor** actors, PxU32 count) override { int wake = 0;	};
+	virtual void onSleep(PxActor** actors, PxU32 count) override { int sleep = 0; };
+	virtual void onAdvance(const PxRigidBody*const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count) override { int adavance = 0; };
 };
 #pragma endregion
 END
