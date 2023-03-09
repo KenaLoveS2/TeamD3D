@@ -112,7 +112,7 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
-	virtual _int Execute_Collision(CGameObject* pTarget) override;
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos) override;
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
