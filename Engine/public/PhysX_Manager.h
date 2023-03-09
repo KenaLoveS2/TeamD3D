@@ -151,6 +151,7 @@ public:
 
 	void Set_DynamicParameter(PxRigidActor* pActor, _float fMass, _float fLinearDamping, _float3 vVelocity);
 	void Set_DynamicParameter(const _tchar* pActorTag, _float fMass,  _float fLinearDamping, _float3 vVelocity);
+	void Set_Velocity(PxRigidActor* pActor, _float3 vVelocity);
 
 	void Init_Rendering();		
 
