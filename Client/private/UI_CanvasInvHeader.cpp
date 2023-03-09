@@ -44,7 +44,7 @@ HRESULT CUI_CanvasInvHeader::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
