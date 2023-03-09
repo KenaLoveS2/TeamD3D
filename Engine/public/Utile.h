@@ -50,6 +50,7 @@ public:
 
 	static void Execute_BillBoard(class CTransform* pTransform, _float3 vScale);
 
+	static _tchar* Create_DummyString();
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

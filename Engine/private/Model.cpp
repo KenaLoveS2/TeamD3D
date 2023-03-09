@@ -1456,8 +1456,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
 
-
-
 void CModel::Create_PxTriangle()
 {
 	for (auto &iter : m_Meshes)
@@ -1480,4 +1478,65 @@ void CModel::Set_PxMatrix(_float4x4& Matrix)
 	{
 		iter->Set_PxMatrix(Matrix);
 	}
+}
+
+void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)
+{
+	_float Xmin = INT_MAX, Xmax = INT_MIN, Ymin = INT_MAX, Ymax = INT_MIN, Zmin = INT_MAX, Zmax = INT_MIN;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		_uint iNumVertices = m_Meshes[i]->Get_NumVertices();
+		VTXMODEL* pVtxModel = m_Meshes[i]->Get_NonAnimVertices();
+
+		for (_uint j = 0; j < iNumVertices; ++j) {
+			Xmin = min(Xmin, pVtxModel[j].vPosition.x);
+			Xmax = max(Xmax, pVtxModel[j].vPosition.x);
+
+			Ymin = min(Ymin, pVtxModel[j].vPosition.y);
+			Ymax = max(Ymax, pVtxModel[j].vPosition.y);
+
+			Zmin = min(Zmin, pVtxModel[j].vPosition.z);
+			Zmax = max(Zmax, pVtxModel[j].vPosition.z);
+		}
+	}
+
+	*pMinX = Xmin;
+	*pMaxX = Xmax;
+	*pMinY = Ymin;
+	*pMaxY = Ymax;
+	*pMinZ = Zmin;
+	*pMaxZ = Zmax;
+}
+
+void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _float3 vPivotDist)
+{
+	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
+
+	Calc_MinMax(&fMinX, &fMaxX, &fMinY, &fMaxY, &fMinZ, &fMaxZ);
+
+	_float fLenX = fMaxX - fMinX;
+	_float fLenY = fMaxY - fMinY;
+	_float fLenZ = fMaxZ - fMinZ;
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;	
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.pActortag = pActorName;
+	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
+	BoxDesc.vSize = _float3(fLenX, fLenY, fLenZ);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = true;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fDynamicFriction = 0.5f;  
+	BoxDesc.fRestitution = 0.1f;
+	BoxDesc.eFilterType = FILTER_DEFULAT;
+
+	//// Dynamic Parameter
+	//_float3 vVelocity;
+	//_float fDensity, fAngularDamping, fMass, fLinearDamping;
+	//_bool bCCD;
+
+	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false));
+	pConnectTransform->Connect_PxActor_Static(pActorName, vPivotDist);
 }

@@ -154,12 +154,9 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 	if (nullptr == pGameObject)
 		return nullptr;
 
-	if (pCloneObjectTag != nullptr)
-		pGameObject->Set_CloneTag(pCloneObjectTag);
-
-	/*Set_ProtoTag*/
-	if (pPrototypeTag != nullptr)
-		pGameObject->Set_ProtoTag(pPrototypeTag);
+	pGameObject->Set_CloneTag(pCloneObjectTag);
+	pGameObject->Set_ProtoTag(pPrototypeTag);
+	pGameObject->Late_Initialize();
 
 	return pGameObject;	
 }

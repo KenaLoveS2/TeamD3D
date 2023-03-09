@@ -857,6 +857,12 @@ map<const _tchar*, class CCamera*>* CGameInstance::Get_CameraContainer()
 	return m_pCamera_Manager->Get_CameraContainer();
 }
 
+_bool CGameInstance::IsWorkCamera(const _tchar * pCameraTag)
+{
+	NULL_CHECK_RETURN(m_pCamera_Manager, nullptr);
+	return m_pCamera_Manager->IsWorkCamera(pCameraTag);
+}
+
 HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _float fTimeDelta)
 {
 	NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
