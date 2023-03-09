@@ -88,10 +88,11 @@ void CShieldStick::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	m_pWeapon->Tick(fTimeDelta);
+	//if (m_pFSM)
+	//	m_pFSM->Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if(m_isWeapon)
+		m_pWeapon->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -102,7 +103,8 @@ void CShieldStick::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
 
-	m_pWeapon->Late_Tick(fTimeDelta);
+	if(m_isWeapon)
+		m_pWeapon->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -153,7 +155,6 @@ HRESULT CShieldStick::RenderShadow()
 void CShieldStick::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
-	m_pWeapon->Imgui_RenderProperty();
 }
 
 void CShieldStick::ImGui_AnimationProperty()
@@ -178,8 +179,6 @@ void CShieldStick::ImGui_AnimationProperty()
 void CShieldStick::ImGui_ShaderValueProperty()
 {
 	CMonster::ImGui_ShaderValueProperty();
-
-	// shader Value Á¶Àý
 }
 
 void CShieldStick::ImGui_PhysXValueProperty()
@@ -229,9 +228,6 @@ HRESULT CShieldStick::SetUp_Components()
 
 	m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, L"../Bin/Resources/Anim/Enemy/ShieldSticks/stick_03_AO_R_M.png");
 	m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, L"../Bin/Resources/Anim/Enemy/ShieldSticks/mask_03_AO_R_M.png");
-
-	// 0 : body
-	// 1 : mask
 
 	m_pModelCom->Set_RootBone("Sticks_03_RIG");
 

@@ -106,7 +106,7 @@ float3 diffuseBurley(float3 diffuseLightColor, float3 Albedo, float3 N, float3 V
 	return diffuse * diffuseLightColor;
 }
 
-float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
+float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
 {
 	float3 N = normalize(Normal);
 	float3 V = normalize(View) * -1.f;
@@ -127,7 +127,7 @@ float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Met
 	float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0);
 
 	float3 specular = numerator / max(denominator, 0.001);
-	float3 ambient = ambientLightColor * Albedo * ao;
+	float3 ambient = ambientLightColor * Albedo;
 	float3 diffuse = diffuseBurley(diffuseLightColor, Albedo, N, V, L, H, Roughness, specularLightColor);
 
 	return float4(ambient + diffuse + specular, 1.f);
@@ -263,9 +263,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (float4)1.f;*/
 
 	/* fourth algorithm */
-	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic, fRoughness, fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
+	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic, fRoughness, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
 	Out.vShade.a = vDiffuse.a;
 	Out.vSpecular = (float4)1.f;
+
 	return Out;
 }
 

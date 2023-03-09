@@ -673,7 +673,6 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		// 맞는 애니메이션일때도 맞는가?
 		m_bBind = false;
 		Reset_Attack();
 	})

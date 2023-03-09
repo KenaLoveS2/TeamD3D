@@ -51,7 +51,6 @@ private:
 	void	AdditiveAnim(_float fTimeDelta) override;
 
 private:
-	_bool m_bSpawn = false;
 	_bool m_bBombUp = false;
 
 	_float m_fIdletoAttack = 0.f;

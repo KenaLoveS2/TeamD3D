@@ -70,14 +70,15 @@ private:
 	void	AdditiveAnim(_float fTimeDelta) override;
 
 private:
+	_float m_fIdleToAttack = 0.f; 
+
 	vector<wstring> m_vecColliderName;
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 
+	_bool m_isWeapon = true;
 	class CGameObject* m_pWeapon = nullptr;
-
-	_float m_fIdleToAttack = 0.f;
 
 public:
 	static CShieldStick*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

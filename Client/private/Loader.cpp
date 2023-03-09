@@ -1060,11 +1060,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* Prototype_Component_Model_ShieldStick */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
+	///* Prototype_Component_Model_ShieldStick */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
 
 	/* Prototype_Component_Model_ShieldStick_Weapon */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",

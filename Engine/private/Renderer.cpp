@@ -108,6 +108,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
 		return E_FAIL;
+
 	// Model_Preview 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_ModelViewer"), TEXT("Target_ModelViewer"))))
 		return E_FAIL;
@@ -171,7 +172,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	/* For.ModelViewer */
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
 		return E_FAIL;
-
 
 #endif
 	
@@ -249,6 +249,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
+
+	// 빛연산 전에 진행해야함
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 

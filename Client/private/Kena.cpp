@@ -367,6 +367,7 @@ void CKena::ImGui_ShaderValueProperty()
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
+		 system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();

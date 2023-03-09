@@ -691,8 +691,12 @@
     <ClInclude Include="..\public\Mage.h">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ShieldStick.h" />
-    <ClInclude Include="..\public\ShieldStick_Weapon.h" />
+    <ClInclude Include="..\public\ShieldStick.h">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShieldStick_Weapon.h">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1068,8 +1072,12 @@
     <ClCompile Include="..\private\Mage.cpp">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ShieldStick.cpp" />
-    <ClCompile Include="..\private\ShieldStick_Weapon.cpp" />
+    <ClCompile Include="..\private\ShieldStick.cpp">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShieldStick_Weapon.cpp">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

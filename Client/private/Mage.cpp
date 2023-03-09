@@ -345,6 +345,7 @@ HRESULT CMage::SetUp_State()
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
 		Tick_Attack(fTimeDelta);
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.OnExit([this]()
 	{
@@ -364,6 +365,11 @@ HRESULT CMage::SetUp_State()
 		.Predicator([this]()
 	{
 		return	m_iIdletoDash >= 3;
+	})
+		.AddTransition("IDLE to DASH" , "DASH")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(1.5f);
 	})
 		.AddTransition("IDLE to SUMMON", "SUMMON")
 		.Predicator([this]()
@@ -386,6 +392,7 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(SUMMON);
 		m_pModelCom->Set_AnimIndex(SUMMON); // 3마리 생성
+		Summon();
 	})
 		.AddTransition("SUMMON to BIND", "BIND")
 		.Predicator([this]()
@@ -435,6 +442,10 @@ HRESULT CMage::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(CLOSEATTACK);
 		m_pModelCom->Set_AnimIndex(CLOSEATTACK);
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	})
 		.AddTransition("CLOSEATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -445,7 +456,7 @@ HRESULT CMage::SetUp_State()
 	{
 		return m_bStronglyHit;
 	})
-		.AddTransition("CLOSEATTACK to DASH", "DASH")
+		.AddTransition("CLOSEATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CLOSEATTACK);
@@ -715,7 +726,12 @@ void CMage::AdditiveAnim(_float fTimeDelta)
 void CMage::Set_AttackType()
 {
 	//	TODO : stick summon
-	if (DistanceTrigger(3.f))
+	if(m_SticksList.empty() || !m_bFirstAttack)
+	{
+		m_iAttackType = AT_SUMMON;
+		m_bFirstAttack = true;
+	}
+	else	if (DistanceTrigger(3.f))
 		m_iAttackType = AT_CLOSEATTACK;
 	else
 		m_iAttackType = AT_RANGEDATTACK;
@@ -729,6 +745,7 @@ void CMage::Set_AttackType()
 		m_bRangedAttack = true;
 		break;
 	case AT_SUMMON:
+		m_bSummonAttack = true;
 		break;
 	default:
 		break;
@@ -756,10 +773,57 @@ void CMage::Tick_Attack(_float fTimeDelta)
 		m_bRealAttack = true;
 		break;
 	case AT_SUMMON:
+		m_bRealAttack = true;
 		break;
 	default:
 		break;
 	}
+}
+
+void CMage::Summon()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	// 내 앞에
+	{
+		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
+			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_0"), nullptr,
+			&pGameObject);
+		pGameObject->Late_Initialize();
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.z += 3.f;
+		pGameObject->Get_TransformCom()->Set_Position(vPos);
+		static_cast<CMonster*>(pGameObject)->Spawn();
+		m_SticksList.push_back(pGameObject);
+	}
+	// 내 옆으로
+	{
+		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
+			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_1"), nullptr,
+			&pGameObject);
+		pGameObject->Late_Initialize();
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.x += 3.f;
+		pGameObject->Get_TransformCom()->Set_Position(vPos);
+		static_cast<CMonster*>(pGameObject)->Spawn();
+		m_SticksList.push_back(pGameObject);
+	}
+	// 내 옆으로
+	{
+		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
+			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_2"), nullptr,
+			&pGameObject);
+		pGameObject->Late_Initialize();
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.x -= 3.f;
+		pGameObject->Get_TransformCom()->Set_Position(vPos);
+		static_cast<CMonster*>(pGameObject)->Spawn();
+		m_SticksList.push_back(pGameObject);
+	}
+
+	RELEASE_INSTANCE(CGameInstance)
 }
 
 CMage* CMage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

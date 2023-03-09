@@ -97,8 +97,9 @@ private:
 	void Reset_Attack();
 	void Tick_Attack(_float fTimeDelta);
 
+	void Summon();
+
 private:
-	_bool	m_bSpawn = false;
 	_float	m_fIdletoAttackTime = 0.f;
 
 	_int m_iAttackType = ATTACKTYPE_END;
@@ -108,6 +109,8 @@ private:
 	_bool m_bRangedAttack = false;
 	_bool m_bSummonAttack = false;
 
+	_bool m_bFirstAttack = false;
+
 	_int	m_iIdletoDash = 0;
 
 private:
@@ -116,6 +119,7 @@ private:
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 
+	list<CGameObject*> m_SticksList;
 public:
 	static CMage*							Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
