@@ -3,7 +3,7 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/kena_props_BASECOLOR.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/kena_props_BASECOLOR.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -19,21 +19,21 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/kena_props_AO_R_M.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/kena_props_AO_R_M.dds"
   
     }
   ],
   "2_Second": [
     {
      "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
-      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_E.png",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_E.dds",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_N.png",
       "7_MASK_path": "NONE",
-      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/DeadMoss.png",
+      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/DeadMoss.dds",
       "9_SPRINT_EMISSIVE_path": "NONE",
       "10_HAIR_DEPTH_Path": "../Bin/Resources/NonAnim/Textures/T_Dirt_Tile_N.png",
       "11_ALPHA_path": "NONE",
@@ -42,6 +42,6 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_Comp_M_R_AO.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfDeath_Rock_Comp_M_R_AO.dds"
     }
   ]}

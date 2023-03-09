@@ -22,12 +22,15 @@ CTexture::CTexture(const CTexture & rhs)
 	
 }
 
-HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
+HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures, _bool bddsLoad)
 {
 	m_pTextures = new ID3D11ShaderResourceView*[iNumTextures];
 
 	m_wstrFilePath = pTextureFilePath;
 	m_iNumTextures = iNumTextures;
+
+
+
 
 	for (_uint i = 0; i < m_iNumTextures; ++i)
 	{
@@ -41,6 +44,24 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		_wsplitpath_s(szTexturePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
 
 		HRESULT		hr = 0;
+
+		/*	if (bddsLoad == true)
+			{
+				_tchar	szDirectory[MAX_PATH] = TEXT("");
+				_tchar	szFileName[MAX_PATH] = TEXT("");
+				_tchar	szdds[MAX_PATH] = TEXT(".dds");
+
+				_wsplitpath_s(pTextureFilePath, nullptr, 0, szDirectory, MAX_PATH, szFileName, MAX_PATH, nullptr,0);
+
+				lstrcat(szDirectory, szFileName);
+				lstrcat(szDirectory, szdds);
+
+				hr = DirectX::CreateDDSTextureFromFile(m_pDevice, szDirectory, nullptr, &m_pTextures[i]);
+
+				if (hr == E_FAIL)
+					return E_FAIL;
+				return hr;
+			}*/
 
 		if (!lstrcmp(szExt, TEXT(".tga")))
 			return E_FAIL;
@@ -135,11 +156,11 @@ void CTexture::Imgui_ImageViewer()
 
 
 
-CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures)
+CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures, _bool bddsLoad)
 {
 	CTexture*		pInstance = new CTexture(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
+	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures, bddsLoad)))
 	{
  		MSG_BOX("Failed to Created : CTexture");
 		Safe_Release(pInstance);

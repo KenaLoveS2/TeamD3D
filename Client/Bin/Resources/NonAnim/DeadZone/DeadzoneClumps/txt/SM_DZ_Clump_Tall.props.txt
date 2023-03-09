@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Materials/MI_DZ_Clump.MI_DZ_Clump'
+    Materials[1] = Material3'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Materials/M_DestructibleDeadzone.M_DestructibleDeadzone'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Materials/MI_DZ_Clump.MI_DZ_Clump'
+        MaterialSlotName = MI_DZ_Clump
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 338.792, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = Material3'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Materials/M_DestructibleDeadzone.M_DestructibleDeadzone'
+        MaterialSlotName = M_Corruption
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 272.969, 0, 0, 0 }
+        }
+    }
+}
+Sockets[7] = {  }
+ExtendedBounds =
+{
+    Origin = { X=0.894142, Y=-2.96787, Z=59.5284 }
+    BoxExtent = { X=65.7762, Y=41.8502, Z=71.9113 }
+    SphereRadius = 96.0322
+}

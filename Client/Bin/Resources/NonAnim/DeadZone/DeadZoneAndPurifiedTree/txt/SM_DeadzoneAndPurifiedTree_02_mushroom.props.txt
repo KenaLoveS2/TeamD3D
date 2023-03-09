@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Mushrooms/Material/MI_MushroomClump.MI_MushroomClump'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Mushrooms/Material/MI_MushroomClump.MI_MushroomClump'
+        MaterialSlotName = Mushroom
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 598.653, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=13.9494, Y=114.847, Z=216.624 }
+    BoxExtent = { X=190.67, Y=148.071, Z=243.948 }
+    SphereRadius = 315.507
+}

@@ -26,31 +26,26 @@ public:
 public:
 	static				void									Load_MapObjects(_uint iLevel, string JsonFileName);
 	static				void									Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	//static				void									Insert_TextureFilePath(class CGameInstance *pGameInstace, CEnviromentObj::tagEnviromnetObjectDesc& EnviromentDesc, array<string, (_int)WJTextureType_UNKNOWN> vecStr);
 	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
 
 private:
-	void															Imgui_SelectOption();						// 컴포넌트 기능 선택
-	void															Imgui_Save_Load_Json();
-	void															Imgui_CreateEnviromentObj();
-	void															Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
-	void															Imgui_SelectObject_InstancingControl();
-	void															Imgui_Control_ViewerCamTransform();
-	void															Imgui_TexturePathNaming();
-	void															Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj);
-	void															Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
-	void															imgui_ObjectList_Clear();
+	void														Imgui_SelectOption();						// 컴포넌트 기능 선택
+	void														Imgui_Save_Load_Json();
+	void														Imgui_CreateEnviromentObj();
+	void														Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
+	void														Imgui_SelectObject_InstancingControl();
+	void														Imgui_Control_ViewerCamTransform();
+	void														Imgui_TexturePathNaming();
+	void														Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
+	void														imgui_ObjectList_Clear();
 
 private:		/*Logic*/
-	void															Imgui_Save_Func();
-	HRESULT													Imgui_Load_Func();
-	void															Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace, class CGameObject* pGameObject);
-	void															Imgui_Create_Option_Reset();
-	void															JsonTest();
-	void															Imgui_Maptool_Terrain_Selecte();
-				
+	void														Imgui_Save_Func();
+	HRESULT														Imgui_Load_Func();
+	void														Imgui_AddComponentOption_CreateCamFront(class CGameInstance *pGameInstace, class CGameObject* pGameObject);
+	void														Imgui_Create_Option_Reset();
 
-
+	void														Imgui_Maptool_Terrain_Selecte();
 
 
 private: /*For_Tool*/
@@ -58,17 +53,17 @@ private: /*For_Tool*/
 	wstring														m_wstrProtoName = TEXT("");
 	wstring														m_wstrModelName = TEXT("");
 	wstring														m_wstrTexturelName = TEXT("");
-	char															m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
+	char														m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
 	_bool														m_bWireFrame = false;
 	string														m_strFileName = "";
 	_bool														m_bSaveWrite = false;
-	class CModelViewerObject*						m_pViewerObject = nullptr;
+	class CModelViewerObject*									m_pViewerObject = nullptr;
 	_bool														m_bOnceSearch = false;
 	_bool														m_bModelChange = false;
-	_int															m_iTexturePathNum = false;
+	_int														m_iTexturePathNum = false;
 
-	_int															m_iSelectMeshIndex = -1;
+	_int														m_iSelectMeshIndex = -1;
 
 
 private: /*Use.Terrain*/
@@ -78,20 +73,13 @@ private: /*Use.Terrain*/
 
 
 private:	/*Use_Data*/
-	_int															m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
-	_int															m_iCreateObjRoom_Option = 0;
-	array<_bool, CEnviromentObj::COMPONENTS_END>	m_bComOptions;
+	_int														m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
+	_int														m_iCreateObjRoom_Option = 0;
+	array<_bool, CEnviromentObj::COMPONENTS_END>				m_bComOptions;
 
 public:
-	static	CImgui_MapEditor*						Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);
+	static	CImgui_MapEditor*									Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);
 	virtual void												Free() override;
 
 };
 END
-
-//
-//string	strDiffuse, SPECULAR_path, AMBIENT_path, EMISSIVE_path,
-//EMISSIVEMASK_path, NORMALS_path, MASK_path, SSS_MASK_path,
-//SPRINT_EMISSIVE_path, LIGHTMAP_path, ALPHA_path, HAIR_ROOT_path,
-//COMP_MSK_CURV_path, COMP_H_R_AO_path, COMP_E_R_AO_path, ROUGHNESS_path,
-//AMBIENT_OCCLUSION_path;
