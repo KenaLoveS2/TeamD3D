@@ -55,6 +55,8 @@
 #include "Door_Anim.h"
 #include "GroundMark.h"
 #include "Rope_RotRock.h"
+#include "LiftRot.h"
+#include "LiftRot_Master.h"
 
 /* UI */
 #include "BackGround.h"
@@ -1327,6 +1329,14 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"),
 		CRope_RotRock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot"),
+		CLiftRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
+		CLiftRot_Master::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));

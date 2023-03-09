@@ -168,7 +168,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
 	// ±âº» ¶¥ »ý¼º	
-	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);	
+	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
 	Init_Rendering();

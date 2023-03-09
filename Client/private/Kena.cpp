@@ -10,7 +10,7 @@
 #include "GroundMark.h"
 #include "Terrain.h"
 #include "Rope_RotRock.h"
-
+#include "Rot.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -110,6 +110,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 void CKena::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
+#endif
+	
 	__super::Tick(fTimeDelta);
 
 	Test_Raycast();
@@ -1396,6 +1400,14 @@ void CKena::Free()
 
 void CKena::Test_Raycast()
 {
+	if (GetKeyState('T') & 0x8000)
+	{
+		if (m_pRopeRotRock)
+		{
+			m_pRopeRotRock->Set_ChoiceFlag(true);
+		}
+	}
+
 	if (GetKeyState(VK_LSHIFT) & 0x0800)
 	{
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
@@ -1410,13 +1422,13 @@ void CKena::Test_Raycast()
 			m_pTerrain->Set_BrushPosition(vOut);
 			// m_pGroundMark->Set_Position(vOut);
 
-			if (GetKeyState('R') & 0x0800)
-			{
+			if (GetKeyState('R') & 0x8000)
+			{	
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
 				{
-					m_pRopeRotRock->Set_MoveFlag(true);					
+					m_pRopeRotRock->Set_MoveFlag(true);
 					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
-				}					
+				}			
 			}			
 		}
 		else

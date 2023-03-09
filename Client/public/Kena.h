@@ -57,6 +57,7 @@ private:
 	class CCamera_Player*	m_pCamera = nullptr;
 	class CTerrain* m_pTerrain = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
+	class CRot* m_pFirstRot = nullptr;
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
@@ -104,6 +105,9 @@ public:
 
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
+	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
+	
+
 };
 
 END

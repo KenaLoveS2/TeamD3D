@@ -175,7 +175,6 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_PUNCH].c_str(), pivotMatrix);
-		m_pRendererCom->Set_PhysXRender(true);
 	}
 	
 	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f),_float4());
@@ -189,8 +188,7 @@ void CWoodKnight::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;

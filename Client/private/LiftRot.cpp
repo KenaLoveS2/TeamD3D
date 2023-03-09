@@ -1,38 +1,40 @@
 #include "stdafx.h"
-#include "..\public\Rot.h"
+#include "..\public\LiftRot.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "Kena.h"
 #include "Rope_RotRock.h"
 
-_uint CRot::m_iEveryRotCount = 0;
-_uint CRot::m_iKenaFindRotCount = 0;
-vector<CRot*> CRot::m_vecEveryRot;
-
-CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
+CLiftRot::CLiftRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
 {
 }
 
-CRot::CRot(const CRot& rhs)
+CLiftRot::CLiftRot(const CLiftRot& rhs)
 	:CGameObject(rhs)
 {
 }
 
-const _double& CRot::Get_AnimationPlayTime()
+const _double& CLiftRot::Get_AnimationPlayTime()
 {
 	return m_pModelCom->Get_PlayTime();
 }
 
-HRESULT CRot::Initialize_Prototype()
+HRESULT CLiftRot::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CRot::Initialize(void* pArg)
+HRESULT CLiftRot::Initialize(void* pArg)
 {
+	if (pArg) memcpy(&m_Desc, pArg, sizeof(DESC));
+	else {
+		m_Desc.eType = LIFT;
+		m_Desc.vInitPos = _float4(-50.f, 0.f, -50.f, 1.f);
+	}
+
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 
@@ -41,33 +43,25 @@ HRESULT CRot::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_LiftFSM(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CuteFSM(), E_FAIL);
+	Set_Type(m_Desc.eType);
 
-	m_pTransformCom->Set_Translation(_float4(5.f, 0.f, 5.f, 1.f), _float4());
-
-	m_pModelCom->Set_AnimIndex(IDLE);
+	m_pModelCom->Set_AnimIndex(CRot::IDLE);
 	m_pModelCom->Set_AllAnimCommonType();
 
 	Push_EventFunctions();
-
-	m_iEveryRotCount++;
-	m_iObjectProperty = OP_ROT;
-
+	
 	return S_OK;
 }
 
-HRESULT CRot::Late_Initialize(void * pArg)
+HRESULT CLiftRot::Late_Initialize(void * pArg)
 {	
-	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-	assert(m_pKena != nullptr && "CRot::Late_Initialize");
-
-	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
-	assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
-
 	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 	PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+	PxCapsuleDesc.isGravity = true;
 	PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fRadius = 0.1f;
 	PxCapsuleDesc.fHalfHeight = 0.04f;
@@ -81,31 +75,22 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fRestitution = 0.1f;
 	PxCapsuleDesc.eFilterType = FILTER_DEFULAT;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
-	m_pTransformCom->Set_Position(_float3(1.f, 3.f, 5.f));
-
 	
-
-	if (m_iThisRotIndex == FIRST_ROT)
-		m_vecEveryRot.reserve(m_iEveryRotCount);
+	m_pTransformCom->Set_Position(m_Desc.vInitPos);
 
 	return S_OK;
 }
 
-void CRot::Tick(_float fTimeDelta)
+void CLiftRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (GetKeyState('F') & 0x8000)
-	{
-		m_bWakeUp = true;
-	}
-
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if (m_pWorkFSM)
+		m_pWorkFSM->Tick(fTimeDelta);
 		
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -113,11 +98,11 @@ void CRot::Tick(_float fTimeDelta)
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
-void CRot::Late_Tick(_float fTimeDelta)
+void CLiftRot::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -126,7 +111,7 @@ void CRot::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CRot::Render()
+HRESULT CLiftRot::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
@@ -159,7 +144,7 @@ HRESULT CRot::Render()
 	return S_OK;
 }
 
-HRESULT CRot::RenderShadow()
+HRESULT CLiftRot::RenderShadow()
 {
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
@@ -175,12 +160,12 @@ HRESULT CRot::RenderShadow()
 	return S_OK;
 }
 
-void CRot::Imgui_RenderProperty()
+void CLiftRot::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
 }
 
-void CRot::ImGui_AnimationProperty()
+void CLiftRot::ImGui_AnimationProperty()
 {
 	ImGui::BeginTabBar("Rot Animation & State");
 
@@ -199,7 +184,7 @@ void CRot::ImGui_AnimationProperty()
 	ImGui::EndTabBar();
 }
 
-void CRot::ImGui_ShaderValueProperty()
+void CLiftRot::ImGui_ShaderValueProperty()
 {
 	if (ImGui::Button("Recompile"))
 	{
@@ -208,7 +193,7 @@ void CRot::ImGui_ShaderValueProperty()
 	}
 }
 
-void CRot::ImGui_PhysXValueProperty()
+void CLiftRot::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
 
@@ -242,17 +227,17 @@ void CRot::ImGui_PhysXValueProperty()
 	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
 }
 
-HRESULT CRot::Call_EventFunction(const string& strFuncName)
+HRESULT CLiftRot::Call_EventFunction(const string& strFuncName)
 {
 	return CGameObject::Call_EventFunction(strFuncName);
 }
 
-void CRot::Push_EventFunctions()
+void CLiftRot::Push_EventFunctions()
 {
 	Test(true, 0.f);
 }
 
-HRESULT CRot::SetUp_Components()
+HRESULT CLiftRot::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 
@@ -274,7 +259,7 @@ HRESULT CRot::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CRot::SetUp_ShaderResources()
+HRESULT CLiftRot::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
@@ -286,7 +271,7 @@ HRESULT CRot::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CRot::SetUp_ShadowShaderResources()
+HRESULT CLiftRot::SetUp_ShadowShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -306,91 +291,80 @@ HRESULT CRot::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-void CRot::Test(_bool bIsInit, _float fTimeDelta)
+void CLiftRot::Test(_bool bIsInit, _float fTimeDelta)
 {
 }
 
-CRot* CRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLiftRot* CLiftRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRot*	pInstance = new CRot(pDevice, pContext);
+	CLiftRot*	pInstance = new CLiftRot(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Create : CRot");
+		MSG_BOX("Failed to Create : CLiftRot");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CRot::Clone(void* pArg)
+CGameObject* CLiftRot::Clone(void* pArg)
 {
-	CRot*	pInstance = new CRot(*this);
+	CLiftRot*	pInstance = new CLiftRot(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Clone : CRot");
+		MSG_BOX("Failed to Clone : CLiftRot");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CRot::Free()
+void CLiftRot::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pFSM);
+	Safe_Release(m_pCuteFSM);
+	Safe_Release(m_pLiftFSM);
+	Safe_Release(m_pLiftFSM);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 }
 
-HRESULT CRot::SetUp_State()
+HRESULT CLiftRot::SetUp_LiftFSM()
 {
-	m_pFSM = CFSMComponentBuilder()
+	m_pLiftFSM = CFSMComponentBuilder()
 		.InitState("SLEEP")
 		.AddState("SLEEP")
 		.Tick([this](_float fTimeDelta)
 	{
 	
 	})
-		.AddTransition("SLEEP to WAKE_UP", "WAKE_UP")
+		.AddTransition("SLEEP to CREATE", "CREATE")
 		.Predicator([this]()
 	{
 		return m_bWakeUp;
 	})
 		.OnExit([this]()
 	{
-		m_iThisRotIndex = m_iKenaFindRotCount++;
-		m_vecEveryRot.push_back(this);
-		if (m_iThisRotIndex == 0)
-		{
-			m_pKena->Set_FirstRotPtr(this);
-		}
+		m_bCreateStart = true;;
 	})
-
-
-		.AddState("WAKE_UP")
+		.AddState("CREATE")
 		.OnStart([this]()
 	{
-		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
-		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
-
-		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
-		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
-		
-		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex); 
+		m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-
+		// if(m_pModelCom->Get_AnimationFinish()) m_pModelCom->Set_AnimIndex(CRot::IDLE);
 	})
-		.AddTransition("WAKE_UP to IDLE ", "IDLE")
+		.AddTransition("CREATE to LIFT_POS_MOVE", "LIFT_POS_MOVE")
 		.Predicator([this]()
-	{
-		_bool bCuteAnimFinish = (m_iCuteAnimIndex == m_pModelCom->Get_AnimIndex()) && m_pModelCom->Get_AnimationFinish();
-		return bCuteAnimFinish;
+	{		
+		// if(m_bUnderGround) m_pModelCom->Set_AnimIndex(CRot::IDLE);		
+		return m_pModelCom->Get_AnimationFinish();
 	})
 		.OnExit([this]()
 	{
@@ -398,26 +372,23 @@ HRESULT CRot::SetUp_State()
 	})
 
 
-		.AddState("IDLE")
+		.AddState("LIFT_POS_MOVE")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(IDLE);
+		m_pModelCom->Set_AnimIndex(CRot::WALK);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		
+		m_pTransformCom->Chase(m_vLiftPos, fTimeDelta);
 	})
-		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
+		.AddTransition("LIFT_POS_MOVE to LIFT_READY ", "LIFT")
 		.Predicator([this]()
-	{
-		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	{		
+		m_bLiftReady = m_pTransformCom->IsClosed_XZ(m_vLiftPos, 0.2f);
+		if(m_bLiftReady)
+			m_pModelCom->Set_AnimIndex(CRot::CARRYLOOP);
 
-		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
-	})
-		.AddTransition("IDLE to FOLLOW_KENA ", "DUMMY")
-		.Predicator([this]()
-	{
-		return false;
+		return m_bLiftStart;
 	})		
 		.OnExit([this]()
 	{
@@ -425,38 +396,211 @@ HRESULT CRot::SetUp_State()
 	})
 
 
-		.AddState("FOLLOW_KENA")
+		.AddState("LIFT")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(WALK);		
+		m_pModelCom->Set_AnimIndex(CRot::LIFT);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->Chase(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta, 1.f);
+		
 	})
-		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
+		.AddTransition("LIFT to LIFT_MOVE", "LIFT_MOVE")
 		.Predicator([this]()
 	{	
-		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-		return m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
+		m_bLiftEnd = m_iAnimationIndex == CRot::LIFT && m_pModelCom->Get_AnimationFinish();
+		return m_bLiftMoveStart;
 	})		
 		.OnExit([this]()
 	{
 
 	})
 
-		.Build();
+		.AddState("LIFT_MOVE")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(CRot::CARRYFORWARD);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
 
+	})
+		.AddTransition("LIFT_MOVE to LIFT_DOWN", "LIFT_DOWN")
+		.Predicator([this]()
+	{		
+		return m_bLiftMoveEnd;
+	})
+		.OnExit([this]()
+	{
+
+	})
+
+		.AddState("LIFT_DOWN")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(CRot::LIFT2);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.AddTransition("LIFT_DOWN to GO_SLEEP", "GO_SLEEP")
+		.Predicator([this]()
+	{
+		return m_bLiftDownEnd;
+	})
+		.OnExit([this]()
+	{
+
+	})
+
+
+		.AddState("GO_SLEEP")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(CRot::LIFT2);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.OnExit([this]()
+	{
+		m_bWakeUp = false;
+		m_bCreateStart = false;		
+		m_bUnderGround = false;
+		m_bLiftReady = false;
+		m_bLiftStart = false;
+		m_bLiftEnd = false;
+		m_bLiftMoveStart = false;
+		m_bLiftMoveEnd = false;
+		m_bLiftDownEnd = false;
+
+		m_pTransformCom->Set_Position(m_Desc.vInitPos);
+	})
+		.Build();
 
 	return S_OK;
 }
 
-_int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos)
+HRESULT CLiftRot::SetUp_CuteFSM()
 {
-	if (pTarget && pTarget->Get_ObjectProperty() == OP_PLAYER)
+	m_pCuteFSM = CFSMComponentBuilder()
+		.InitState("SLEEP")
+		.AddState("SLEEP")
+		.Tick([this](_float fTimeDelta)
 	{
-		m_bWakeUp = true;
+
+	})
+		.AddTransition("SLEEP to CUTE", "CUTE")
+		.Predicator([this]()
+	{
+		return m_bCuteStart;
+	})
+		.OnExit([this]()
+	{
+		
+	})
+		.AddState("CUTE")
+		.OnStart([this]()
+	{
+		// 나타나는 이펙트
+		m_pModelCom->Set_AnimIndex(CRot::TELEPORT7);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(CRot::TELEPORT2);
+	})
+		.AddTransition("CUTE to GO_SLEEP", "GO_SLEEP")
+		.Predicator([this]()
+	{	
+		return m_bCuteEnd;
+	})
+		.OnExit([this]()
+	{
+	
+	})
+		.AddState("GO_SLEEP")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(CRot::IDLE); // 사라지는 애님
+		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		
+	})
+		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.OnExit([this]()
+	{
+		// 사라지는 이펙트
+		m_bCuteStart = false;
+		m_bCuteEnd = false;
+		m_pTransformCom->Set_Position(m_Desc.vInitPos);
+	})
+		.Build();
+
+	return S_OK;
+}
+
+_int CLiftRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos)
+{
+	if (m_bCreateStart && pTarget == nullptr)
+	{
+		m_bUnderGround = true;
 	}
 
 	return 0;
+}
+
+void CLiftRot::Execute_WakeUp(_float4& vCreatePos, _float4& vLiftPos)
+{
+	m_pTransformCom->Set_Position(vCreatePos);
+	m_vLiftPos = vLiftPos;	
+	m_bWakeUp = true;
+}
+
+void CLiftRot::Execute_LiftStart()
+{
+	m_bLiftStart = true;
+}
+
+void CLiftRot::Execute_LiftMoveStart()
+{
+	m_bLiftMoveStart = true;
+}
+
+void CLiftRot::Execute_LiftMoveEnd()
+{
+	m_bLiftMoveEnd = true;
+}
+
+void CLiftRot::Execute_LiftDownEnd()
+{
+	m_bLiftDownEnd = true;
+}
+
+void CLiftRot::Execute_StartCute(_float4& vCreatePos)
+{
+	m_pTransformCom->Set_Position(vCreatePos);
+	m_bCuteStart = true;
+}
+
+void CLiftRot::Execute_EndCute()
+{
+	m_bCuteEnd = true;	
+}
+
+void CLiftRot::Set_NewPosition(_float4 vNewPos)
+{
+	m_pTransformCom->Set_Position(vNewPos);
 }

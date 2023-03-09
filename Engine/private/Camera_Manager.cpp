@@ -86,3 +86,8 @@ HRESULT CCamera_Manager::Clear()
 	return S_OK;
 }
 
+_bool CCamera_Manager::IsWorkCamera(const _tchar * pCameraTag)
+{	
+	return m_pWorkCamera == Find_Camera(pCameraTag);
+}
+
