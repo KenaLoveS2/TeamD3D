@@ -214,7 +214,7 @@ HRESULT CUI_CanvasQuest::Ready_Nodes()
 	//for (_uint i = 0; i < QUEST_END; ++i)
 	_uint i = 0;
 	{
-		string strMEffect = "Node_EffectClear" + to_string(i);
+		string strMEffect = "Node_EffectClear_" + to_string(i);
 		CUI::UIDESC tDescEffectM;
 		_tchar* tagMTag = CUtile::StringToWideChar(strMEffect);
 		tDescEffectM.fileName = tagMTag;

@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotCarry/Materials/MI_OwlStatue.MI_OwlStatue'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotCarry/Materials/MI_OwlStatue.MI_OwlStatue'
+        MaterialSlotName = MI_Bow_DrawBridge_closed_Rock
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1638.22, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.28511, Y=0.863686, Z=-6.10486 }
+    BoxExtent = { X=95.6048, Y=96.0637, Z=51.5988 }
+    SphereRadius = 110.856
+}

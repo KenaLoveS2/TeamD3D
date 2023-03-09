@@ -1,0 +1,19 @@
+{
+  "0_LayerTag": "Layer_BackGround",
+  "Terrain_Data": [
+    {
+
+      "10_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 
+                              -48.5, 12.686, 995.967, 1.0 ],
+      "1_CloneTag": "Terrain4",
+      "2_DiffuseTag": "Prototype_Component_Texture_Terrain",
+      "3_FillterTag": "Prototype_Component_Terrain_Two_Filter",
+      "4_NormalTag": "",
+      "5_Diffuse_TextureNum": 3,
+      "6_FillterOne_TextureNum": 0,
+      "7_FillterTwo_TextureNum": 2,
+      "8_FillterThree_TextureNum": 4,
+      "9_Height_TextureNum": 14
+    }
+  ]
+}

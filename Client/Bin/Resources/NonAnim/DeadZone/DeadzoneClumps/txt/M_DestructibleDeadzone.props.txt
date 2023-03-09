@@ -1,0 +1,194 @@
+TwoSided = false
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[6] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_D.T_DZ_Clump_01_D'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_E.T_DZ_Clump_01_E'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_M_R_AO.T_DZ_Clump_01_M_R_AO'
+    ReferencedTextures[3] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_N.T_DZ_Clump_01_N'
+    ReferencedTextures[4] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+    ReferencedTextures[5] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[18] =
+                {
+                    ParameterInfos[0] = { Name=Roughness }
+                    ParameterInfos[1] = { Name=RefractionTilling }
+                    ParameterInfos[2] = { Name=CPD_DissolveAmount }
+                    ParameterInfos[3] = { Name=CPD_DamageAmount }
+                    ParameterInfos[4] = { Name=DissolveEmissiveAmount }
+                    ParameterInfos[5] = { Name=InnerGlowContrast }
+                    ParameterInfos[6] = { Name=RefractionSpeedU }
+                    ParameterInfos[7] = { Name=Blend_Bias }
+                    ParameterInfos[8] = { Name=DamageAmount }
+                    ParameterInfos[9] = { Name=DissolveAmount }
+                    ParameterInfos[10] = { Name=OpacityNoiseTilling }
+                    ParameterInfos[11] = { Name=OpacitySpeedU }
+                    ParameterInfos[12] = { Name=Blend_Sharpness }
+                    ParameterInfos[13] = { Name=FlattenNormal }
+                    ParameterInfos[14] = { Name=DissolveTile }
+                    ParameterInfos[15] = { Name=RefractionSpeedV }
+                    ParameterInfos[16] = { Name=OpacitySpeedV }
+                    ParameterInfos[17] = { Name=Fringe }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=GlowColor }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[5] =
+                {
+                    ParameterInfos[0] = { Name=OpacityNoise }
+                    ParameterInfos[1] = { Name=Diffuse }
+                    ParameterInfos[2] = { Name=Normal }
+                    ParameterInfos[3] = { Name=DissolveAplha }
+                    ParameterInfos[4] = { Name=RefractionTexture }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[18] =
+        {
+            ScalarValues[0] = 1
+            ScalarValues[1] = 3
+            ScalarValues[2] = 0
+            ScalarValues[3] = 0
+            ScalarValues[4] = 50
+            ScalarValues[5] = 0.5
+            ScalarValues[6] = 0.015
+            ScalarValues[7] = 0.5
+            ScalarValues[8] = 0
+            ScalarValues[9] = 0
+            ScalarValues[10] = 4
+            ScalarValues[11] = 0.01
+            ScalarValues[12] = 1.5
+            ScalarValues[13] = 0.7
+            ScalarValues[14] = 1
+            ScalarValues[15] = 0.02
+            ScalarValues[16] = 0.02
+            ScalarValues[17] = 2
+        }
+        VectorValues[1] =
+        {
+            VectorValues[0] = { R=1, G=0, B=0.202189, A=1 }
+        }
+        TextureValues[5] =
+        {
+            TextureValues[0] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[1] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_D.T_DZ_Clump_01_D'
+            TextureValues[2] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_N.T_DZ_Clump_01_N'
+            TextureValues[3] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+            TextureValues[4] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        }
+    }
+    ReferencedTextures[6] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_M_R_AO.T_DZ_Clump_01_M_R_AO'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_E.T_DZ_Clump_01_E'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        ReferencedTextures[3] = Texture2D'/Game/ThirdParty/InteractiveForceFields/Textures/T_NoiseClassic01.T_NoiseClassic01'
+        ReferencedTextures[4] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_D.T_DZ_Clump_01_D'
+        ReferencedTextures[5] = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_N.T_DZ_Clump_01_N'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[5] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = OpacityNoise
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_D.T_DZ_Clump_01_D'
+        Name = Diffuse
+        Group = None
+    }
+    CollectedTextureParameters[2] =
+    {
+        Texture = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneClumps/Textures/T_DZ_Clump_01_N.T_DZ_Clump_01_N'
+        Name = Normal
+        Group = None
+    }
+    CollectedTextureParameters[3] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = DissolveAplha
+        Group = None
+    }
+    CollectedTextureParameters[4] =
+    {
+        Texture = Texture2D'/Game/Mochi/Effects/Prototype/Explosions/Textures/Noise_cloudsmed.Noise_cloudsmed'
+        Name = RefractionTexture
+        Group = None
+    }
+}
+CollectedScalarParameters[18] =
+{
+    CollectedScalarParameters[0] = { Value=1, Name=Roughness, Group=None }
+    CollectedScalarParameters[1] = { Value=3, Name=RefractionTilling, Group=None }
+    CollectedScalarParameters[2] = { Value=0, Name=CPD_DissolveAmount, Group=None }
+    CollectedScalarParameters[3] = { Value=0, Name=CPD_DamageAmount, Group=None }
+    CollectedScalarParameters[4] =
+    {
+        Value = 50
+        Name = DissolveEmissiveAmount
+        Group = None
+    }
+    CollectedScalarParameters[5] = { Value=0.5, Name=InnerGlowContrast, Group=None }
+    CollectedScalarParameters[6] = { Value=0.015, Name=RefractionSpeedU, Group=None }
+    CollectedScalarParameters[7] = { Value=0.5, Name=Blend_Bias, Group=None }
+    CollectedScalarParameters[8] = { Value=0, Name=DamageAmount, Group=None }
+    CollectedScalarParameters[9] = { Value=0, Name=DissolveAmount, Group=None }
+    CollectedScalarParameters[10] = { Value=4, Name=OpacityNoiseTilling, Group=None }
+    CollectedScalarParameters[11] = { Value=0.01, Name=OpacitySpeedU, Group=None }
+    CollectedScalarParameters[12] = { Value=1.5, Name=Blend_Sharpness, Group=None }
+    CollectedScalarParameters[13] = { Value=0.7, Name=FlattenNormal, Group=None }
+    CollectedScalarParameters[14] = { Value=1, Name=DissolveTile, Group=None }
+    CollectedScalarParameters[15] = { Value=0.02, Name=RefractionSpeedV, Group=None }
+    CollectedScalarParameters[16] = { Value=0.02, Name=OpacitySpeedV, Group=None }
+    CollectedScalarParameters[17] = { Value=2, Name=Fringe, Group=None }
+}
+CollectedVectorParameters[1] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=1, G=0, B=0.202189, A=1 }
+        Name = GlowColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[1] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_NoiseClassic01
+    }
+}

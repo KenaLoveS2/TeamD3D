@@ -10,6 +10,9 @@ extern bool g_bFrameLimit;
 #define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
 
+#define LIFT_ROT_COUNT		6
+#define FIRST_ROT			0
+
 namespace Client
 {
 	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_END };
@@ -21,9 +24,12 @@ namespace Client
 
 	enum OBJECT_PROPERTY { 
 		OP_NULL,
-		OP_PLAYER, OP_STICKS,
-
-
+		OP_PLAYER, OP_ROT, 
+		
+		OP_MONSTER,
+		OP_MON_STICKS,
+		OP_ENVIROMENT,
+		
 		OBJECT_PROPERTY_END 
 	};
 }

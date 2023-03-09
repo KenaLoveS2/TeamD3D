@@ -71,6 +71,8 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+private:
+	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
 	TYPE					m_eType = TYPE_END;
@@ -86,7 +88,7 @@ private:
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
-	vector<class CBone*>		m_Bones;
+	vector<class CBone*>			m_Bones;
 	string							m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;
@@ -141,6 +143,9 @@ public:
 	void Create_PxTriangle();
 	void Set_PxPosition(_float3 vPosition);
 	void Set_PxMatrix(_float4x4& Matrix);
+
+	void Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
+	void Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
 };
 
 END

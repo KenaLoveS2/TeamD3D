@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_Reactive_GroundCover_ThistlePlant.MI_Reactive_GroundCover_ThistlePlant'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_Reactive_GroundCover_ThistlePlant_CheapLOD.MI_Reactive_GroundCover_ThistlePlant_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_Reactive_GroundCover_ThistlePlant.MI_Reactive_GroundCover_ThistlePlant'
+        MaterialSlotName = ThistlePlant1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 80.0471, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_Reactive_GroundCover_ThistlePlant_CheapLOD.MI_Reactive_GroundCover_ThistlePlant_CheapLOD'
+        MaterialSlotName = MI_Reactive_GroundCover_ThistlePlant_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 86.1902, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-12.296, Y=-2.3843, Z=51.1817 }
+    BoxExtent = { X=70.7455, Y=58.6177, Z=53.4768 }
+    SphereRadius = 100.825
+}

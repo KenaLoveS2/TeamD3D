@@ -6,7 +6,7 @@ BEGIN(Client)
 class CUI_NodeEffect final : public CUI_Node
 {
 public:
-	enum	TYPE { TYPE_NONEANIM, TYPE_ANIM, TYPE_SEPERATOR, TYPE_RING, TYPE_END };
+	enum	TYPE { TYPE_NONEANIM, TYPE_ANIM, TYPE_SEPERATOR, TYPE_RING, TYPE_ALPHA, TYPE_END };
 private:
 	CUI_NodeEffect(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeEffect(const CUI_NodeEffect& rhs);
@@ -40,6 +40,8 @@ private:
 
 	/* For. Simple Action  */
 	_float					m_fTime;
+	_float					m_fAlpha;
+
 
 
 public:

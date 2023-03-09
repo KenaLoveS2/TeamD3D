@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/Billboards/MI_GroundClovers_Billboard.MI_GroundClovers_Billboard'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+        MaterialSlotName = MI_Reactive_GroundCover2
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 252.603, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/Billboards/MI_GroundClovers_Billboard.MI_GroundClovers_Billboard'
+        MaterialSlotName = MI_Clovers_Billboard
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 510.428, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=1.40728, Y=-11.476, Z=7.19089 }
+    BoxExtent = { X=52.2559, Y=51.3111, Z=20.9751 }
+    SphereRadius = 58.2401
+}

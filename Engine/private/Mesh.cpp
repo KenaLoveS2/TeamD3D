@@ -19,6 +19,9 @@ CMesh::CMesh(const CMesh & rhs)
 	, m_pIndices(rhs.m_pIndices)
 	, m_bLodMesh(rhs.m_bLodMesh)
 {
+
+	m_Bones.reserve(rhs.m_Bones.size());
+
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
 		m_pBoneNames = new string[rhs.m_iNumBones];
@@ -150,6 +153,8 @@ HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod)
 	ReadFile(hFile, &m_iMaterialIndex, sizeof(_uint), &dwByte, nullptr);
 
 	ReadFile(hFile, &m_iNumBones, sizeof(_uint), &dwByte, nullptr);
+	m_Bones.reserve(m_iNumBones);
+
 	for (_uint i = 0; i < m_iNumBones; i++)
 	{
 		_uint iLen = 0;

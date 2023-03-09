@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover_CheapLOD.MI_Reactive_GroundCover_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+        MaterialSlotName = MI_Reactive_GroundCover1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 109.37, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover_CheapLOD.MI_Reactive_GroundCover_CheapLOD'
+        MaterialSlotName = MI_Reactive_GroundCover_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 125.69, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.927027, Y=10.0673, Z=30.3768 }
+    BoxExtent = { X=28.5383, Y=33.3066, Z=31.6383 }
+    SphereRadius = 41.3883
+}

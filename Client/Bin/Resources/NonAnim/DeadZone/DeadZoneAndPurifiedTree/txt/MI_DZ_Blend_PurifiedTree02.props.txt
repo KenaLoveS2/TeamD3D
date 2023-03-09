@@ -1,0 +1,208 @@
+Parent = Material3'/Game/Mochi/MaterialLibrary/_MASTER/Deadzone/M_DeadzoneBlend_Foliage_Master.M_DeadzoneBlend_Foliage_Master'
+ScalarParameterValues[14] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Color_Intensity }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_Roughness }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_V_Tile }
+        ParameterValue = 1.5
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Metalness }
+        ParameterValue = 0.2
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Specular }
+        ParameterValue = 0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Deadzone_Roughness }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=DZ_Color_Intensity }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=DZ_Desaturate }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=DZ_Emissive_Intensity }
+        ParameterValue = 0.5
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=DZ_Specular }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=DZ_Tiling }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[11] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[12] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither_NearFade }
+        ParameterValue = 256
+        ParameterName = None
+    }
+    ScalarParameterValues[13] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[7] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Comp_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_restored_Comp_M_R_AO.T_DeadzoneAndPurifiedTree_02_restored_Comp_M_R_AO'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_Diffuse_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_restored_D.T_DeadzoneAndPurifiedTree_02_restored_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_restored_N.T_DeadzoneAndPurifiedTree_02_restored_N'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=DZ_Comp_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_Comp_M_R_AO.T_DeadzoneAndPurifiedTree_02_Comp_M_R_AO'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=DZ_Diffuse_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_D.T_DeadzoneAndPurifiedTree_02_D'
+        ParameterName = None
+    }
+    TextureParameterValues[5] =
+    {
+        ParameterInfo = { Name=DZ_Emissive_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_E.T_DeadzoneAndPurifiedTree_02_E'
+        ParameterName = None
+    }
+    TextureParameterValues[6] =
+    {
+        ParameterInfo = { Name=DZ_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_02/T_DeadzoneAndPurifiedTree_02_N.T_DeadzoneAndPurifiedTree_02_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Diffuse_Overlay }
+        ParameterValue = { R=1, G=1, B=1, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=DZ_Color_Overlay }
+        ParameterValue = { R=1, G=1, B=1, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = true
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = true
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[2] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Enable_DZ_EmissiveColor }
+            bOverride = true
+        }
+        StaticSwitchParameters[1] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_PixelDithering }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_DeadzoneAndPurifiedTree_02_Comp_M_R_AO
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_DeadzoneAndPurifiedTree_02_D
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_DeadzoneAndPurifiedTree_02_N
+    }
+}

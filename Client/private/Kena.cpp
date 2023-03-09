@@ -10,7 +10,7 @@
 #include "GroundMark.h"
 #include "Terrain.h"
 #include "Rope_RotRock.h"
-
+#include "Rot.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -114,6 +114,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 void CKena::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
+#endif
+	
 	__super::Tick(fTimeDelta);
 
 	Test_Raycast();
@@ -162,7 +166,12 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
+	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
+	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
 
+	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
@@ -171,7 +180,14 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
+		_float fTag = 0.f;
+		_float fCurrency[3] = { 200.f, 13.f, 230.f };
+		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
+		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
+		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
 
+		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
 
 	static _float fNum = 3.f;
@@ -1572,7 +1588,7 @@ void CKena::Free()
 	Safe_Release(m_pRendererCom);
 }
 
-_int CKena::Execute_Collision(CGameObject * pTarget)
+_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos)
 {
 	/* Terrain */
 	if (pTarget == nullptr)
@@ -1596,6 +1612,14 @@ void CKena::Test_Raycast()
 	if (m_pTerrain == nullptr)
 		return;
 
+	if (GetKeyState('T') & 0x8000)
+	{
+		if (m_pRopeRotRock)
+		{
+			m_pRopeRotRock->Set_ChoiceFlag(true);
+		}
+	}
+
 	if (GetKeyState(VK_LSHIFT) & 0x0800)
 	{
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
@@ -1610,13 +1634,13 @@ void CKena::Test_Raycast()
 			m_pTerrain->Set_BrushPosition(vOut);
 			// m_pGroundMark->Set_Position(vOut);
 
-			if (GetKeyState('R') & 0x0800)
-			{
+			if (GetKeyState('R') & 0x8000)
+			{	
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
 				{
-					m_pRopeRotRock->Set_MoveFlag(true);					
+					m_pRopeRotRock->Set_MoveFlag(true);
 					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
-				}					
+				}			
 			}			
 		}
 		else

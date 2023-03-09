@@ -26,7 +26,7 @@ public:
 public:
 	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
 	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
-
+	void			InstBufferSize_Update(_int iSize);
 public:
 	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
