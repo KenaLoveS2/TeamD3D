@@ -68,7 +68,7 @@ public:
 
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-				
+
 				if (pSourUserData && pDestUserData)
 				{
 					CGameObject* pSourObject = pSourUserData->pOwner;

@@ -437,7 +437,7 @@ void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 {
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector		vDir = vTargetPos - vPosition;
-
+	
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
 	LookAt_NoUpDown(vTargetPos);
@@ -695,7 +695,6 @@ void CTransform::Set_Translation(_fvector vPosition, _fvector vDist)
 			_vector vPivot = XMLoadFloat3(&m_vPxPivot);
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPosition + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPosition);
-		
 		}
 		else
 		{

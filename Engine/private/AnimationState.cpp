@@ -5,6 +5,7 @@
 #include "Utile.h"
 #include "GameObject.h"
 #include "Model.h"
+#include "Function_Manager.h"
 
 CAnimationState::CAnimationState()
 {
@@ -274,6 +275,12 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 	if (m_pCurAnim == nullptr)
 		return;
 
+	if (m_bPreview == true)
+	{
+		m_fCurLerpTime = m_fLerpDuration;
+		fTimeDelta = 0.f;
+	}
+
 	CAnimation*	pPreAnim = nullptr;
 	CAnimation*	pPreBlendAnim = nullptr;
 	CAnimation*	pMainAnim = m_pCurAnim->m_pMainAnim;
@@ -387,6 +394,9 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				}
 			}
 
+			if (pAdditiveAnim->m_pRefAnim != pMainAnim)
+				pAdditiveAnim->m_pRefAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
+
 			CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
 
 			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
@@ -429,6 +439,14 @@ void CAnimationState::ImGui_RenderProperty()
 	static char	szFilePath[MAX_PATH] = "";
 	static _int	iSelectState = -1;
 	char**			ppStateName = nullptr;
+	static _bool	bAddEventMain = false;
+	static _int	iSelectEventMain = -1;
+	static _int	iSelectFunctionMain = -1;
+	char**			ppFunctionTagsMain = nullptr;
+	static _bool	bAddEventAdd = false;
+	static _int	iSelectEventAdd = -1;
+	static _int	iSelectFunctionAdd = -1;
+	char**			ppFunctionTagsAdd = nullptr;
 
 	if (m_pCurAnim != nullptr)
 	{
@@ -473,6 +491,17 @@ void CAnimationState::ImGui_RenderProperty()
 			CAnimState*		pSelectState = m_mapAnimState[string(ppStateName[iSelectState])];
 			if (pSelectState != nullptr)
 			{
+				if (ImGui::Button("Play"))
+				{
+					m_bPreview = true;
+					State_Animation(pSelectState->m_strStateName, 0.f);
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel"))
+				{
+					m_bPreview = false;
+					iSelectState = -1;
+				}
 				ImGui::Text("State Name : %s", pSelectState->m_strStateName.c_str());
 				ImGui::Text("Loop : %d", pSelectState->m_bLoop);
 				ImGui::InputFloat("Lerp Duration", &pSelectState->m_fLerpDuration, 0.005f, 0.01f);
@@ -509,6 +538,102 @@ void CAnimationState::ImGui_RenderProperty()
 						j++;
 					}
 				}
+
+				if (ImGui::CollapsingHeader("Management Events"))
+				{
+					ImGui::Text("Main Animation : %s", pSelectState->m_pMainAnim->Get_Name());
+					_float		fProgress = _float(pSelectState->m_pMainAnim->Get_PlayTime() / pSelectState->m_pMainAnim->Get_AnimationDuration());
+					ImGui::Text("Play Progress");
+					if (ImGui::SliderFloat("Set Progress", &fProgress, 0.f, 1.f))
+					{
+						bAddEventMain = true;
+						m_bPreview = true;
+						pSelectState->m_pMainAnim->Reset_Animation();
+						pSelectState->m_pMainAnim->Get_PlayTime() = (_double)fProgress * pSelectState->m_pMainAnim->Get_AnimationDuration();
+
+						if (pSelectState->m_pBlendAnim != nullptr)
+						{
+							pSelectState->m_pBlendAnim->Reset_Animation();
+							pSelectState->m_pBlendAnim->Get_PlayTime() = (_double)fProgress * pSelectState->m_pBlendAnim->Get_AnimationDuration();
+						}
+					}
+					if (bAddEventMain == true)
+					{
+						_uint	iFuncCnt = 0;
+						CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTagsMain);
+
+						ImGui::Combo("Select Function", &iSelectFunctionMain, ppFunctionTagsMain, iFuncCnt);
+						if (ImGui::Button("Add Event") && iSelectFunctionMain > -1)
+						{
+							_tchar		wszFunctionTag[128] = L"";
+							CUtile::CharToWideChar(ppFunctionTagsMain[iSelectFunctionMain], wszFunctionTag);
+							pSelectState->m_pMainAnim->Add_Event(_float(pSelectState->m_pMainAnim->Get_PlayTime()), string(ppFunctionTagsMain[iSelectFunctionMain]));
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Escape"))
+						{
+							bAddEventMain = false;
+							iSelectFunctionMain = -1;
+						}
+
+						for (_uint i = 0; i < iFuncCnt; ++i)
+							Safe_Delete_Array(ppFunctionTagsMain[i]);
+						Safe_Delete_Array(ppFunctionTagsMain);
+					}
+					ImGui::Separator();
+					ImGui::BulletText("Main Animation Events");
+					pSelectState->m_pMainAnim->ImGui_RenderEvents(iSelectEventMain);
+
+					if (pSelectState->m_vecAdditiveAnim.empty() == false)
+					{
+						_uint j = 0;
+						for (auto pAdditiveAnim : pSelectState->m_vecAdditiveAnim)
+						{
+							ImGui::Separator();
+							ImGui::Text("Reference Animation[%d] : %s", j, pAdditiveAnim->m_pRefAnim->Get_Name());
+							ImGui::Text("Additive Animation[%d] : %s", j, pAdditiveAnim->m_pAdditiveAnim->Get_Name());
+
+							_float		fProgress = _float(pAdditiveAnim->m_pAdditiveAnim->Get_PlayTime() / pAdditiveAnim->m_pAdditiveAnim->Get_AnimationDuration());
+							ImGui::Text("Play Progress Additive");
+							if (ImGui::SliderFloat("Set Progress Additive", &fProgress, 0.f, 1.f))
+							{
+								bAddEventAdd = true;
+								m_bPreview = true;
+								pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
+								pAdditiveAnim->m_pAdditiveAnim->Get_PlayTime() = (_double)fProgress * pAdditiveAnim->m_pAdditiveAnim->Get_AnimationDuration();
+							}
+							if (bAddEventAdd == true)
+							{
+								_uint	iFuncCnt = 0;
+								CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTagsAdd);
+
+								ImGui::Combo("Select Function Additive", &iSelectFunctionAdd, ppFunctionTagsAdd, iFuncCnt);
+								if (ImGui::Button("Add Event Additive") && iSelectFunctionAdd > -1)
+								{
+									_tchar		wszFunctionTag[128] = L"";
+									CUtile::CharToWideChar(ppFunctionTagsAdd[iSelectFunctionMain], wszFunctionTag);
+									pAdditiveAnim->m_pAdditiveAnim->Add_Event(_float(pAdditiveAnim->m_pAdditiveAnim->Get_PlayTime()), string(ppFunctionTagsAdd[iSelectFunctionAdd]));
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Escape Additive"))
+								{
+									bAddEventAdd = false;
+									iSelectFunctionAdd = -1;
+								}
+
+								for (_uint i = 0; i < iFuncCnt; ++i)
+									Safe_Delete_Array(ppFunctionTagsAdd[i]);
+								Safe_Delete_Array(ppFunctionTagsAdd);
+							}
+							ImGui::Separator();
+							ImGui::BulletText("Additive Animation Events");
+							pAdditiveAnim->m_pAdditiveAnim->ImGui_RenderEvents(iSelectEventAdd, " Additive");
+
+							j++;
+						}
+					}
+				}
+
 				if (ImGui::Button("Delete"))
 				{
 					for (_uint i = 0; i < (_uint)m_mapAnimState.size(); ++i)

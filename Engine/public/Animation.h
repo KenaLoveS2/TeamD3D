@@ -41,7 +41,7 @@ public:
 public:
 	HRESULT						Initialize_Prototype(HANDLE hFile, class CModel* pModel);
 	HRESULT						Initialize(void* pArg);
-	void							ImGui_RenderEvents(_int& iSelectEvent);
+	void							ImGui_RenderEvents(_int& iSelectEvent, const string& strImGuiKey = "");
 
 	void								Update_Bones(_float fTimeDelta, const string& strRootBone = "");
 	void								Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const string& strRootBone = "");

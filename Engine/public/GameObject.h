@@ -104,5 +104,6 @@ public: /* imgui */
 public:
 	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos) { return 0; }
 	_uint Get_ObjectProperty() { return m_iObjectProperty; }
+
 };
 END
