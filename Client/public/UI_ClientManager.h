@@ -13,6 +13,7 @@ END
 and all works are done before Imgui_UIEditor Starts. */
 BEGIN(Client)
 class CUI_NodeEffect;
+class CUI_CanvasConfirm;
 class CUI_ClientManager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_ClientManager);
@@ -23,11 +24,17 @@ public:
 		AMMO_BOMB, AMMO_ARROW,
 		AIM_, AIM_ARROW, AIM_BOMB,
 		QUEST_, QUEST_LINE,
-		INV_, INV_UPGRADE, INV_SPIRIT,
+		INV_, INV_KARMA, INV_NUMROTS, INV_CRYSTAL,
+
+
+		/*Must Be Last ... ! */
+		UI_CONFIRM,
 		UI_PRESENT_END
 	};
 	enum UI_FUNCTION { FUNC_DEFAULT, FUNC_LEVELUP, FUNC_SWITCH, FUNC_CHECK, FUNC_END };
-	enum UI_CANVAS { CANVAS_HUD, CANVAS_AMMO, CANVAS_AIM, CANVAS_QUEST, CANVAS_END };
+	enum UI_CANVAS { CANVAS_HUD, CANVAS_AMMO, CANVAS_AIM, CANVAS_QUEST, CANVAS_INV, CANVAS_UPGRADE, 
+		
+					/* Last Canvas */ CANVAS_CONFIRM, CANVAS_END };
 	enum UI_EVENT { EVENT_BARGUAGE, EVENT_CHANGEIMG, EVENT_ANIMATION, EVENT_END };
 	enum UI_EFFECT { EFFECT_PIPFULL, EFFECT_ARROWFULL, EFFECT_BOMBFULL, EFFECT_QUESTCLEAR, EFFECT_END };
 
@@ -53,10 +60,12 @@ public:
 	CUI_Canvas*				Get_Canvas(UI_CANVAS eID);
 	void					Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect);
 	CUI_NodeEffect*			Get_Effect(UI_EFFECT eID);
+	void					Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller = nullptr);
 
 private:
 	vector<CUI_Canvas*>		m_vecCanvas;
 	vector<CUI_NodeEffect*>	m_vecEffects;
+	CUI_CanvasConfirm*		m_pConfirmWindow;
 
 public:
 	virtual void Free() override;

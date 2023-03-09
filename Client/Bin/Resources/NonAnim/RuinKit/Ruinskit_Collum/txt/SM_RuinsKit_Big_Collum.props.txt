@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Big_Collumn.MI_Ruins_Big_Collumn'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Big_Collumn.MI_Ruins_Big_Collumn'
+        MaterialSlotName = Big Collumn
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 814.465, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-3.05176e-05, Y=-1.52588e-05, Z=339.555 }
+    BoxExtent = { X=56.1307, Y=118.395, Z=345.793 }
+    SphereRadius = 363.916
+}

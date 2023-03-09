@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Flower08.MI_Flower08'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Flower08_CheapLOD.MI_Flower08_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Flower08.MI_Flower08'
+        MaterialSlotName = MI_Reactive_GroundCover_Flower3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 141.685, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Flower08_CheapLOD.MI_Flower08_CheapLOD'
+        MaterialSlotName = MI_Flower08_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 169.082, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.20963, Y=-0.127506, Z=50.6897 }
+    BoxExtent = { X=31.8575, Y=41.2032, Z=51.7278 }
+    SphereRadius = 56.8512
+}

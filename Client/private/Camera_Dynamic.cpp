@@ -80,6 +80,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	if (pGameInstance->Key_Pressing(DIK_C))
 		m_pTransformCom->Go_AxisNegY(fTimeDelta);
 
+	
 
 	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
 	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);

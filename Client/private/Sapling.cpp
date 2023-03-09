@@ -68,7 +68,7 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -88,8 +88,7 @@ void CSapling::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if (DistanceTrigger(10.f))
 		m_bSpawn = true;

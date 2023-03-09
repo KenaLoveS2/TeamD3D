@@ -697,11 +697,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 
 	for (auto jLoadChild : jLoadEnviromentObjList["1_Data"])
 	{
-	/*	string	strDiffuse="", SPECULAR_path = "", AMBIENT_path = "", EMISSIVE_path = "",
-			EMISSIVEMASK_path = "", NORMALS_path = "", MASK_path = "", SSS_MASK_path = "",
-			SPRINT_EMISSIVE_path = "", HAIR_DEPTH_Path = "", ALPHA_path = "", HAIR_ROOT_path = "",
-			COMP_MSK_CURV_path = "", COMP_H_R_AO_path = "", COMP_E_R_AO_path = "", ROUGHNESS_path = "",
-			AMBIENT_OCCLUSION_path = "";*/
 
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
@@ -742,10 +737,8 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 
 		EnviromentDesc.szProtoObjTag = m_wstrProtoName;
 		EnviromentDesc.szModelTag = m_wstrModelName;
-		//EnviromentDesc.szTextureTag = m_wstrTexturelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
-	//	Insert_TextureFilePath(pGameInstance, EnviromentDesc, strFilePaths_arr);
 		
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
@@ -775,7 +768,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 void CImgui_MapEditor::Imgui_Create_Option_Reset()/* 초기화*/
 {
 	m_bComOptions.fill(false);
-	m_iCreateObjRoom_Option = 0;
 }
 
 void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
@@ -786,88 +778,10 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
-}
-
-void CImgui_MapEditor::JsonTest()
-{
-
-	// 현재 선택한 파일 경로 불러오는 함수
-	string      strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
-	if (m_bSaveWrite == true)
-	{
-		char   szDash[128] = "\\";
-		strcat_s(szDash, m_strFileName.c_str());
-		strSaveDirectory += string(szDash);
-		strSaveDirectory += ".json";
-	}
-	else
-	{
-		string	   strSaveFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
-		char   szDash[128] = "\\";
-		strcat_s(szDash, strSaveFileName.c_str());
-		strSaveDirectory += string(szDash);
-	}
-
-	ofstream      file(strSaveDirectory.c_str());
-	
-	CGameInstance* pGameInstace = GET_INSTANCE(CGameInstance);
-
-	string test = "";
-	_int		iMeshNum = 2;
-	Json	jEnviromentObjList;
-	jEnviromentObjList["0_MeshNum"]  = iMeshNum;
-	Json jChild;
-	jChild["0_None_path"] = test;
-	jChild["1_DIFFUSE_path"] = test;
-	jChild["2_SPECULAR_path"] = test;
-	jChild["3_AMBIENT_path"] = test;
-	jChild["4_EMISSIVE_path"] = test;
-	jChild["5_EMISSIVEMASK_path"] = test;
-	jChild["6_NORMALS_path"] = test;
-	jChild["7_MASK_path"] = test;
-	jChild["8_SSS_MASK_path"] = test;
-	jChild["9_SPRINT_EMISSIVE_path"] = test;
-	jChild["10_HAIR_DEPTH_Path"] = test;
-	jChild["11_ALPHA_path"] = test;
-	jChild["12_HAIR_ROOT_path"] = test;
-	jChild["13_COMP_MSK_CURV_path"] = test;
-	jChild["14_COMP_H_R_AO_path"] = test;
-	jChild["15_COMP_E_R_AO_path"] = test;
-	jChild["16_ROUGHNESS_path"] = test;
-	jChild["17_AMBIENT_OCCLUSION_path"] = test;
-	jEnviromentObjList["1_First"].push_back(jChild);
-
-	Json jChild2;
-	jChild2["0_None_path"] = test;
-	jChild2["1_DIFFUSE_path"] = test;
-	jChild2["2_SPECULAR_path"] = test;
-	jChild2["3_AMBIENT_path"] = test;
-	jChild2["4_EMISSIVE_path"] = test;
-	jChild2["5_EMISSIVEMASK_path"] = test;
-	jChild2["6_NORMALS_path"] = test;
-	jChild2["7_MASK_path"] = test;
-	jChild2["8_SSS_MASK_path"] = test;
-	jChild2["9_SPRINT_EMISSIVE_path"] = test;
-	jChild2["10_HAIR_DEPTH_Path"] = test;
-	jChild2["11_ALPHA_path"] = test;
-	jChild2["12_HAIR_ROOT_path"] = test;
-	jChild2["13_COMP_MSK_CURV_path"] = test;
-	jChild2["14_COMP_H_R_AO_path"] = test;
-	jChild2["15_COMP_E_R_AO_path"] = test;
-	jChild2["16_ROUGHNESS_path"] = test;
-	jChild2["17_AMBIENT_OCCLUSION_path"] = test;
-	
-	jEnviromentObjList["2_Second"].push_back(jChild2);
-
-	file << jEnviromentObjList;
-	file.close();
-	MSG_BOX("Save_jEnviromentObjList");
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
@@ -934,15 +848,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 
 	for (auto jLoadChild : jLoadEnviromentObjList["1_Data"])
 	{
-	/*	string	strDiffuse = "", SPECULAR_path = "", AMBIENT_path = "", EMISSIVE_path = "",
-			EMISSIVEMASK_path = "", NORMALS_path = "", MASK_path = "", SSS_MASK_path = "",
-			SPRINT_EMISSIVE_path = "", HAIR_DEPTH_Path = "", ALPHA_path = "", HAIR_ROOT_path = "",
-			COMP_MSK_CURV_path = "", COMP_H_R_AO_path = "", COMP_E_R_AO_path = "", ROUGHNESS_path = "",
-			AMBIENT_OCCLUSION_path = "";*/
-
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
-		//jLoadChild["2_TextureTag"].get_to<string>(szTextureTag);
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
@@ -956,24 +863,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		{
 			memcpy(((float*)&fWroldMatrix) + (k++), &fElement, sizeof(float));
 		}
-
-		//jLoadChild["8_DIFFUSE_path"].get_to<string>(strDiffuse);															strFilePaths_arr[WJTextureType_DIFFUSE] = strDiffuse;
-		//jLoadChild["9_SPECULAR_path"].get_to<string>(SPECULAR_path);											strFilePaths_arr[WJTextureType_SPECULAR] = SPECULAR_path;
-		//jLoadChild["10_AMBIENT_path"].get_to<string>(AMBIENT_path);												strFilePaths_arr[WJTextureType_AMBIENT] = AMBIENT_path;
-		//jLoadChild["11_EMISSIVE_path"].get_to<string>(EMISSIVE_path);												strFilePaths_arr[WJTextureType_EMISSIVE] = EMISSIVE_path;
-		//jLoadChild["12_EMISSIVEMASK_path"].get_to<string>(EMISSIVEMASK_path);							strFilePaths_arr[WJTextureType_EMISSIVEMASK] = EMISSIVEMASK_path;
-		//jLoadChild["13_NORMALS_path"].get_to<string>(NORMALS_path);											strFilePaths_arr[WJTextureType_NORMALS] = NORMALS_path;
-		//jLoadChild["14_MASK_path"].get_to<string>(MASK_path);														strFilePaths_arr[WJTextureType_MASK] = MASK_path;
-		//jLoadChild["15_SSS_MASK_path"].get_to<string>(SSS_MASK_path);											strFilePaths_arr[WJTextureType_SSS_MASK] = SSS_MASK_path;
-		//jLoadChild["16_SPRINT_EMISSIVE_path"].get_to<string>(SPRINT_EMISSIVE_path);					strFilePaths_arr[WJTextureType_SPRINT_EMISSIVE] = SPRINT_EMISSIVE_path;
-		//jLoadChild["17_LIGHTMAP_path"].get_to<string>(HAIR_DEPTH_Path);											strFilePaths_arr[WJTextureType_HAIR_DEPTH] = HAIR_DEPTH_Path;
-		//jLoadChild["18_REFLECTION_path"].get_to<string>(ALPHA_path);									strFilePaths_arr[WJTextureType_ALPHA] = ALPHA_path;
-		//jLoadChild["19_BASE_COLOR_path"].get_to<string>(HAIR_ROOT_path);								strFilePaths_arr[WJTextureType_HAIR_ROOT] = HAIR_ROOT_path;
-		//jLoadChild["20_NORMAL_CAMERA_path"].get_to<string>(COMP_MSK_CURV_path);				strFilePaths_arr[WJTextureType_COMP_MSK_CURV] = COMP_MSK_CURV_path;
-		//jLoadChild["21_EMISSION_COLOR_path"].get_to<string>(COMP_H_R_AO_path);					strFilePaths_arr[WJTextureType_COMP_H_R_AO] = COMP_H_R_AO_path;
-		//jLoadChild["22_METALNESS_path"].get_to<string>(COMP_E_R_AO_path);									strFilePaths_arr[WJTextureType_ROUGHNESS] = COMP_E_R_AO_path;
-		//jLoadChild["23_DIFFUSE_ROUGHNESS_path"].get_to<string>(ROUGHNESS_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = ROUGHNESS_path;
-		//jLoadChild["24_AMBIENT_OCCLUSION_path"].get_to<string>(AMBIENT_OCCLUSION_path);	strFilePaths_arr[WJTextureType_AMBIENT_OCCLUSION] = AMBIENT_OCCLUSION_path;
 
 		vector<_float4x4>	vecInstnaceMatrixVec;
 		_int MatrixNumber = 0;
@@ -997,11 +886,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 
 		EnviromentDesc.szProtoObjTag = wstrProtoName;
 		EnviromentDesc.szModelTag = wstrModelName;
-	//	EnviromentDesc.szTextureTag = wstrTexturelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
-		//Insert_TextureFilePath(pGameInstance, EnviromentDesc, strFilePaths_arr);
 
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
@@ -1040,116 +927,7 @@ CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11Device
 void CImgui_MapEditor::Free()
 {
 	__super::Free();
-
 	m_wstrProtoName.clear();
-
-}
-
-void CImgui_MapEditor::Imgui_TexturePathViewer(CGameObject*	pSelectEnviObj)
-{
-	//aiTextureType_FilePath* structAiTextureFilePath = static_cast<CEnviromentObj*>(pSelectEnviObj)->Get_TexturePaths();
-
-	//wstring  wstrDiffusePath = structAiTextureFilePath->DIFFUSE_path;
-	//ImGui::Text(strTexturePathNum[1].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrDiffusePath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrSPECULARPath = structAiTextureFilePath->SPECULAR_path;
-	//ImGui::Text(strTexturePathNum[2].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrSPECULARPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrAMBIENTPath = structAiTextureFilePath->AMBIENT_path;
-	//ImGui::Text(strTexturePathNum[3].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrAMBIENTPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrEMISSIVEPath = structAiTextureFilePath->EMISSIVE_path;
-	//ImGui::Text(strTexturePathNum[4].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrEMISSIVEPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrEMISSIVE_MASKPath = structAiTextureFilePath->EMISSIVEMASK_path;
-	//ImGui::Text(strTexturePathNum[5].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrEMISSIVE_MASKPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrNORMALSPath = structAiTextureFilePath->NORMALS_path;
-	//ImGui::Text(strTexturePathNum[6].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrNORMALSPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrMASK_Path = structAiTextureFilePath->MASK_path;
-	//ImGui::Text(strTexturePathNum[7].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrMASK_Path).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrSSS_MASKPath = structAiTextureFilePath->SSS_MASK_path;
-	//ImGui::Text(strTexturePathNum[8].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrSSS_MASKPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrSPRINT_EMISSIVEPath = structAiTextureFilePath->SPRINT_EMISSIVE_path;
-	//ImGui::Text(strTexturePathNum[9].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrSPRINT_EMISSIVEPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstrLIGHTMAPPath = structAiTextureFilePath->HAIR_DEPTH_Path;
-	//ImGui::Text(strTexturePathNum[10].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstrLIGHTMAPPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_REFLECTION_Path = structAiTextureFilePath->ALPHA_path;
-	//ImGui::Text(strTexturePathNum[11].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_REFLECTION_Path).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_BASE_COLORPath = structAiTextureFilePath->HAIR_ROOT_path;
-	//ImGui::Text(strTexturePathNum[12].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_BASE_COLORPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_NORMAL_CAMERAPath = structAiTextureFilePath->COMP_MSK_CURV_path;
-	//ImGui::Text(strTexturePathNum[13].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_NORMAL_CAMERAPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_EMISSION_COLORName = structAiTextureFilePath->COMP_H_R_AO_path;
-	//ImGui::Text(strTexturePathNum[14].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_EMISSION_COLORName).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_METALNESSName = structAiTextureFilePath->COMP_E_R_AO_path;
-	//ImGui::Text(strTexturePathNum[15].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_METALNESSName).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_DIFFUSE_ROUGHNESSName = structAiTextureFilePath->ROUGHNESS_path;
-	//ImGui::Text(strTexturePathNum[16].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_DIFFUSE_ROUGHNESSName).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
-
-	//wstring  wstr_AMBIENT_OCCLUSIONPath = structAiTextureFilePath->AMBIENT_OCCLUSION_path;
-	//ImGui::Text(strTexturePathNum[17].c_str()); ImGui::SameLine();
-	//IMGUI_TEXT_COLOR_CHANGE
-	//ImGui::Text(CUtile::WstringToString(wstr_AMBIENT_OCCLUSIONPath).c_str());
-	//IMGUI_TEXT_COLOR_CHANGE_END
 }
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)

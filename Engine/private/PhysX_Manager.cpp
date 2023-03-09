@@ -62,10 +62,16 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
                                  PxFilterObjectAttributes attributes1, PxFilterData filterData1,
                                  PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)	||
-		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)	||
-		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON) ||
-		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY) )
+	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)		||
+		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
+		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON)		||
+		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY)		||
+		
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_WEAPON)	||
+		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_WEAPON)		||
+		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_BODY)			||
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_BODY)
+		)
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}	
@@ -168,7 +174,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
 
 	// ±âº» ¶¥ »ý¼º	
-	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);	
+	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
 	Init_Rendering();
@@ -307,7 +313,7 @@ void CPhysX_Manager::Clear()
 	}
 }
 
-PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
 {	
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
@@ -324,6 +330,13 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
 
 	pBody->attachShape(*shape);	
+
+	if (pUserData)
+	{
+		pUserData->eType = TRIANGLE_MESH_STATIC;
+		pBody->userData = pUserData;
+		m_UserDataes.push_back(pUserData);
+	}
 
 	m_pScene->addActor(*pBody);
 	pMaterial->release();
@@ -358,13 +371,9 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			m_UserDataes.push_back(pUserData);
 		}
 
-		if (pUserData->isGravity)
-		{
-			_tchar *pTag = CUtile::Create_String(Desc.pActortag);
-			CString_Manager::GetInstance()->Add_String(pTag);
-			m_StaticActors.emplace(pTag, pBox);
-		}
-
+		_tchar *pTag = CUtile::Create_String(Desc.pActortag);
+		CString_Manager::GetInstance()->Add_String(pTag);
+		m_StaticActors.emplace(pTag, pBox);
 		
 		m_pScene->addActor(*pBox);
 		pShape->release();

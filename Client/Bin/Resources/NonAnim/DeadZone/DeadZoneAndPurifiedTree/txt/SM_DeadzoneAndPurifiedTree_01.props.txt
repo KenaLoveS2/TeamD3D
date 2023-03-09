@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_01/MI_DZ_Blend_PurifiedTree01.MI_DZ_Blend_PurifiedTree01'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_ReactiveDZ_Leaves.MI_ReactiveDZ_Leaves'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneAndPurifiedTree_01/MI_DZ_Blend_PurifiedTree01.MI_DZ_Blend_PurifiedTree01'
+        MaterialSlotName = MI_DZ_Blend_PurifiedTree02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2219.76, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_ReactiveDZ_Leaves.MI_ReactiveDZ_Leaves'
+        MaterialSlotName = MI_ReactiveDZ_Leaves1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 508.945, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=202.724, Y=-272.311, Z=880.185 }
+    BoxExtent = { X=1006.83, Y=690.507, Z=1020.26 }
+    SphereRadius = 1239.23
+}

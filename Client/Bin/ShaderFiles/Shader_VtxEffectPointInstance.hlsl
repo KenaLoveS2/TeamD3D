@@ -133,11 +133,7 @@ struct GS_TRAILOUT
 [maxvertexcount(6)]
 void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 {
-	GS_OUT		Out[4] = {
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f } };
+	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
 	float3		vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f;
@@ -177,11 +173,13 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 [maxvertexcount(6)]
 void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
-	GS_TRAILOUT		Out[4] = {
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },{ 0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },{ 0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },{ 0.0f },
-		{ 0.0f,0.0f,0.0f,0.0f },{ 0.0f,0.0f },{ 0.0f } };
+	GS_TRAILOUT		Out[4] = 
+	{
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } }
+	};
 
 	matrix  matVP = mul(g_ViewMatrix, g_ProjMatrix);
 

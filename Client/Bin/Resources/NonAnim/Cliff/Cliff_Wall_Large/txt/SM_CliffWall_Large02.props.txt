@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/MI_CliffWall_Large02.MI_CliffWall_Large02'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Cliffs/_Materials/MI_CliffWall_Large02.MI_CliffWall_Large02'
+        MaterialSlotName = MI_CliffWall_Large02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4105.68, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-2.4187, Y=1.46985, Z=978.028 }
+    BoxExtent = { X=1038.42, Y=852.053, Z=1081.63 }
+    SphereRadius = 1494.21
+}

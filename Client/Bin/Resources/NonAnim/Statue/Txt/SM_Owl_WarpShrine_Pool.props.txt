@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/WarpShrine/Materials/MI_RusuFountain.MI_RusuFountain'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/WarpShrine/Materials/MI_RusuFountain.MI_RusuFountain'
+        MaterialSlotName = RusuFountain
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1711.13, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.196793, Y=-2.88292, Z=19.6434 }
+    BoxExtent = { X=178.159, Y=177.295, Z=32.6835 }
+    SphereRadius = 186.452
+}

@@ -18,9 +18,9 @@ public:
 
 	typedef struct tag_TerrainDesc
 	{
-		wstring		wstrDiffuseTag;
-		wstring		wstrNormalTag;
-		wstring		wstrFilterTag;
+		wstring			wstrDiffuseTag;
+		wstring			wstrNormalTag;
+		wstring			wstrFilterTag;
 		_int			iBaseDiffuse = 0;
 		_int			iFillterOne_TextureNum = 0;
 		_int			iFillterTwo_TextureNum = 0;
@@ -95,6 +95,7 @@ public:
 	}
 	void Set_BrushRange(_float fRange) { m_vBrushRange = fRange;	}
 	void Connect_TriangleActor(_float4x4 Matrix);
+	
 };
 
 END

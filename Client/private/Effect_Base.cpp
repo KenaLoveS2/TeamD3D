@@ -27,11 +27,11 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalDTextureComCnt(rhs.m_iTotalDTextureComCnt)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
-	, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
- 	, m_vecProPos(rhs.m_vecProPos)
- 	, m_vecFreePos(rhs.m_vecFreePos)
-	, m_pEffectTrail(rhs.m_pEffectTrail)
-	, m_vecChild(rhs.m_vecChild)
+	//, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
+ //	, m_vecProPos(rhs.m_vecProPos)
+ //	, m_vecFreePos(rhs.m_vecFreePos)
+	//, m_pEffectTrail(rhs.m_pEffectTrail)
+	//, m_vecChild(rhs.m_vecChild)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));

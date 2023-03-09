@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\Rope_RotRock.h"
-#include "Rot_State.h"
 #include "Kena.h"
+#include "LiftRot_Master.h"
 
 CRope_RotRock::CRope_RotRock(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CEnviroment_Interaction(pDevice, p_context)
@@ -34,6 +34,29 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 {
+	/*
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+	
+	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom);
+
+	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	if (m_pKena == nullptr) return E_FAIL;
+
+	m_pLiftRotMaster = (CLiftRot_Master*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Rot"), TEXT("LiftRot_Master"));
+	if (m_pLiftRotMaster == nullptr) return E_FAIL;
+
+	CLiftRot::DESC CutRotDesc;
+	CutRotDesc.eType = CLiftRot::CUTE;
+	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
+
+	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
+	if (m_pCuteLiftRot == nullptr) return E_FAIL;
+
+	return S_OK;
+	*/
+	
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
@@ -42,7 +65,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_DYNAMIC;
 	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
-	BoxDesc.vSize = _float3(1.f, 1.25f, 1.f);
+	BoxDesc.vSize = _float3(0.9f, 1.25f, 0.9f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);		
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = true;
@@ -57,16 +80,26 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(_float3(0.f, 1.2f, 0.f));
 	m_pTransformCom->Set_Position(_float4(5.f, 0.f, 5.f, 1.f));
 	
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
-	m_pPlayerKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	if (m_pPlayerKena == nullptr) return E_FAIL;
+	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	if (m_pKena == nullptr) return E_FAIL;
 
+	m_pLiftRotMaster = (CLiftRot_Master*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Rot"), TEXT("LiftRot_Master"));
+	if (m_pLiftRotMaster == nullptr) return E_FAIL;
+
+	CLiftRot::DESC CutRotDesc;
+	CutRotDesc.eType = CLiftRot::CUTE;
+	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
+	
+	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
+	if (m_pCuteLiftRot == nullptr) return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -77,18 +110,15 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 	if(m_pFSM) 
 		m_pFSM->Tick(fTimeDelta);
 
-	m_bMoveFlag;
-	if (GetKeyState(VK_RETURN) & 0x8000)
-	{
-		m_pTransformCom->Set_Position(_float4(2.f, 0.f, 2.f, 1.f));
-	}
-
+	m_pCuteLiftRot->Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	m_pCuteLiftRot->Late_Tick(fTimeDelta);
 }
 
 void CRope_RotRock::Imgui_RenderProperty()
@@ -153,53 +183,140 @@ CGameObject* CRope_RotRock::Clone(void* pArg)
 void CRope_RotRock::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pCuteLiftRot);
 }
 
 HRESULT CRope_RotRock::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
-		.AddState("IDLE") // IDLE STATE 추가		
-		.OnStart([this]()
-	{
-		m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);		
-	})
+		.AddState("IDLE")		
 		.Tick([this](_float fTimeDelta)
 	{
-		// m_pTransformCom->Set_Position(m_vInitPosition);
-
-		_float3 vPlayerPos = m_pPlayerKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
-			m_pPlayerKena->Set_RopeRotRockPtr(this);
+			m_pKena->Set_RopeRotRockPtr(this);
 	})
-		.AddTransition("IDLE to MOVE", "MOVE")
+		.AddTransition("IDLE to CHOICE", "CHOICE")
 		.Predicator([this]()
 	{
-		return m_bMoveFlag;
+		return m_bChoiceFlag;
 	})		
 		.OnExit([this]()
 	{
-		m_bMoveFlag = true;
 	})
-		.AddState("MOVE") // MOVE STATE 추가
+		
+		.AddState("CHOICE")
 		.OnStart([this]()
 	{
-		m_vMoveTargetPosition;
+		_float4 vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPosition.y += 2.5f;		
+		vPosition.w = 1.f;
+		m_pCuteLiftRot->Execute_StartCute(vPosition);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
+			m_pKena->Set_RopeRotRockPtr(this);
+	})
+		.AddTransition("CHOICE to UP_WAIT", "UP_WAIT")
+		.Predicator([this]()
+	{
+		return m_bMoveFlag;
+	})
+		.OnExit([this]()
+	{
+		m_bMoveFlag = true;
+		m_pCuteLiftRot->Execute_StartCute(m_vMoveTargetPosition);
+		m_pLiftRotMaster->Execute_WakeUp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_vRotCreatePosOffset, m_vRotLiftPosOffset);
+	})
+		
+		.AddState("UP_WAIT")
+		.OnStart([this]()
+	{	
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+	
+	})
+		.AddTransition("UP_WAIT to UP", "UP")
+		.Predicator([this]()
+	{
+		return m_pLiftRotMaster->Is_LiftReady();
+	})
+		.OnExit([this]()
+	{
+	})
+		
+		.AddState("UP")
+		.OnStart([this]()
+	{
+		m_pLiftRotMaster->Execute_LiftStart();
+		m_vPxPivotDist = m_pTransformCom->Get_vPxPivot();
+	})
+		.Tick([this](_float fTimeDelta)
+	{	
+		// 업
+	})
+		.AddTransition("UP to MOVE", "MOVE")
+		.Predicator([this]()
+	{
+		return m_pLiftRotMaster->Is_LiftEnd();
+	})
+		.OnExit([this]()
+	{
+	})
+
+
+		.AddState("MOVE")
+		.OnStart([this]()
+	{
+		m_pLiftRotMaster->Execute_LiftMoveStart();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->Chase(m_vMoveTargetPosition, fTimeDelta);
+		m_pLiftRotMaster->Execute_Move(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_vRotLiftPosOffset);
+
+		if (m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 5.f))
+			m_pCuteLiftRot->Execute_EndCute();
 	})		
-		.AddTransition("MOVE to IDLE ", "IDLE")
+		.AddTransition("MOVE to DOWN ", "DOWN")
 		.Predicator([this]()
-	{
+	{	
 		_bool bClosed = m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 0.1f);
 		return bClosed;
 	})
 		.OnExit([this]()
 	{
-		m_bMoveFlag = false;		
+		m_pLiftRotMaster->Execute_LiftMoveEnd();
+		m_pCuteLiftRot->Execute_EndCute();
+	})
+
+		.AddState("DOWN")
+		.OnStart([this]()
+	{
+
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		// 다운
+	})
+		.AddTransition("DOWN to IDLE ", "IDLE")
+		.Predicator([this]()
+	{		
+		return true;
+	})
+		.OnExit([this]()
+	{
+		m_bChoiceFlag = false;
+		m_bMoveFlag = false;
+
+		m_pLiftRotMaster->Execute_LiftDownEnd();
 	})
 		.Build();
 

@@ -1,0 +1,140 @@
+Parent = Material3'/Game/Mochi/MaterialLibrary/M_Standard_Tiles.M_Standard_Tiles'
+ScalarParameterValues[10] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_UV_Tiling }
+        ParameterValue = 4
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Color_Intensity }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Metalness }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Normal_Intensity }
+        ParameterValue = 1.5
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=RoughnessMax }
+        ParameterValue = 0.8
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=RoughnessMin }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=Spec }
+        ParameterValue = 0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither }
+        ParameterValue = 5
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=PixelDepth_Dither_NearFade }
+        ParameterValue = 256
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[3] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Comp_M_R_Ao }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/ForestGround/T_LightDirtPatch_Comp_H_R_AO.T_LightDirtPatch_Comp_H_R_AO'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/ForestGround/T_LightDirtPatch_D.T_LightDirtPatch_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/ForestGround/T_LightDirtPatch_N.T_LightDirtPatch_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[1] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color }
+        ParameterValue = { R=0.439236, G=0.439236, B=0.439236, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 4
+        UVChannelIndex = 0
+        TextureName = T_LightDirtPatch_Comp_H_R_AO
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 4
+        UVChannelIndex = 0
+        TextureName = T_LightDirtPatch_D
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 4
+        UVChannelIndex = 0
+        TextureName = T_LightDirtPatch_N
+    }
+}

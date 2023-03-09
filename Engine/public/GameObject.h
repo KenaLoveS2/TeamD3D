@@ -102,6 +102,8 @@ public: /* imgui */
 	void Set_WorldMatrix(_float4x4& vPosition);
 
 public:
-	virtual _int Execute_Collision(CGameObject* pTarget) { return 0; }
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) { return 0; }
+	_uint Get_ObjectProperty() { return m_iObjectProperty; }
+	virtual void* Get_VoidMemberPtr() { return nullptr; }
 };
 END

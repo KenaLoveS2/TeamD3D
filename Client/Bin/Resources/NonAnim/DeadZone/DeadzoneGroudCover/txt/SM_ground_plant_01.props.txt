@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Reactive_GroundCover.MI_Reactive_GroundCover'
+        MaterialSlotName = lambert1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 234.279, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.762917, Y=-0.592731, Z=116.101 }
+    BoxExtent = { X=38.8885, Y=55.9859, Z=116.594 }
+    SphereRadius = 116.947
+}

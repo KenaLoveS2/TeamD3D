@@ -61,12 +61,12 @@ HRESULT CTerrain::Initialize(void * pArg)
 
 HRESULT CTerrain::Late_Initialize(void * pArg)
 {	
-	/*
+
 	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
 	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
 	wstrFilePath += TEXT(".bmp");
 	Change_HeightMap(wstrFilePath.c_str());
-	*/
+
 
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
@@ -74,12 +74,12 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
-	if (m_TerrainDesc.iHeightBmpNum == 0)
-		return S_OK;
+	// if (m_TerrainDesc.iHeightBmpNum == 0) return S_OK;
 
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
+	m_pVIBufferCom->Create_PxTriangleMeshActor(Create_PxUserData(this, true, COL_GROUND));
 	m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
-
+	
 	return S_OK;
 }
 
@@ -137,7 +137,7 @@ void CTerrain::Erase_FilterCom()
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
 }
 
-void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
+void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)		// 여기서 버퍼를 바꾸기때문에
 {
 	if (nullptr == pHeightMapFilePath)
 		return;
@@ -186,7 +186,7 @@ HRESULT CTerrain::SetUp_Components()
 			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 			return E_FAIL;
 
-		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Terrain");
+		m_TerrainDesc.wstrDiffuseTag = TEXT("Prototype_Component_Texture_Terrain");
 		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Filter");
 		m_TerrainDesc.wstrNormalTag = TEXT("");
 	}

@@ -1,6 +1,9 @@
 #pragma once
 #include "Base.h"
 #include "GameObject.h"
+#include "Utile.h"
+
+#define COLLISON_DUMMY		-1
 
 BEGIN(Engine)
 #pragma region Struct, Enum, Global Function 
@@ -22,14 +25,19 @@ typedef struct tagPhysXUserData
 	ACTOR_TYPE	 eType;
 	
 	CGameObject* pOwner;
-	bool					isGravity;
+
+	_bool isGravity;
+	_uint iColliderIndex;
 } PX_USER_DATA;
 
-static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity = true)
+static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravity, _uint iColliderIndex)
 {
 	PX_USER_DATA* pData = new PX_USER_DATA;
+
 	pData->pOwner = pOwner;
 	pData->isGravity = isGravity;
+	pData->iColliderIndex = iColliderIndex;
+	
 	return pData;
 }
 
@@ -51,26 +59,29 @@ public:
 
 			// eNOTIFY_TOUCH_FOUND: 두 배우의 접촉이 처음 감지되면 애플리케이션에 알립니다.
 			if (Pair.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{	
+			{
 				PxU32 nbContacts = Pair.extractContacts(contacts, bufferSize);
+				_float3 vCollisionPos;
 				for (PxU32 j = 0; j < nbContacts; j++)
 				{
 					PxVec3 point = contacts[j].position;
+					vCollisionPos = CUtile::ConvertPosition_PxToD3D(point);
+					/*
 					PxVec3 impulse = contacts[j].impulse;
 					PxU32 internalFaceIndex0 = contacts[j].internalFaceIndex0;
 					PxU32 internalFaceIndex1 = contacts[j].internalFaceIndex1;
+					*/
 				}
 
 				PX_USER_DATA* pSourUserData = (PX_USER_DATA*)pairHeader.actors[0]->userData;
 				PX_USER_DATA* pDestUserData = (PX_USER_DATA*)pairHeader.actors[1]->userData;
-				
-				CGameObject* pSourObj = pSourUserData ? pSourUserData->pOwner : nullptr;
-				CGameObject* pDestObj = pDestUserData ? pDestUserData->pOwner : nullptr;
 
-				pSourObj && pSourObj->Execute_Collision(pDestObj);
-				pDestObj && pDestObj->Execute_Collision(pSourObj);
+				CGameObject* pSourObject = pSourUserData ? pSourUserData->pOwner : nullptr;
+				CGameObject* pDestObject = pDestUserData ? pDestUserData->pOwner : nullptr;
+
+				pSourObject && pSourObject->Execute_Collision(pDestObject, vCollisionPos, pDestUserData ? pDestUserData->iColliderIndex : COLLISON_DUMMY);
+				pDestObject && pDestObject->Execute_Collision(pSourObject, vCollisionPos, pSourUserData ? pSourUserData->iColliderIndex : COLLISON_DUMMY);
 			}
-			
 			/*
 			// eDETECT_CCD_CONTACT: 연속 충돌 감지를 사용하여 두 액터 간의 접촉을 감지합니다.	
 			if (cp.events & PxPairFlag::eDETECT_CCD_CONTACT) { int temp = 0; }

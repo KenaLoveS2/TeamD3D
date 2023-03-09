@@ -1,0 +1,62 @@
+Materials[4] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_JizoStatues1.MI_JizoStatues1'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoStatue.MI_JizoStatue'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoCrystal.MI_JizoCrystal'
+    Materials[3] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoStatue_Base.MI_JizoStatue_Base'
+}
+SourceModels[0] = {}
+StaticMaterials[4] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_JizoStatues1.MI_JizoStatues1'
+        MaterialSlotName = MI_JizoStatues1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 489.703, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoStatue.MI_JizoStatue'
+        MaterialSlotName = MI_JizoStatue
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 172.001, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoCrystal.MI_JizoCrystal'
+        MaterialSlotName = MI_JizoCrystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 406.305, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[3] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/JizoStatue/Materials/MI_JizoStatue_Base.MI_JizoStatue_Base'
+        MaterialSlotName = MI_JizoStone
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 324.975, 0, 0, 0 }
+        }
+    }
+}
+Sockets[1] = {  }
+ExtendedBounds =
+{
+    Origin = { X=-18.0971, Y=-26.9302, Z=84.1898 }
+    BoxExtent = { X=110.276, Y=88.0678, Z=92.4422 }
+    SphereRadius = 152.458
+}
