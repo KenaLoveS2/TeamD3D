@@ -284,6 +284,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
+	if (FAILED(Render_UILast()))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	// Model Viewer
@@ -597,11 +599,23 @@ HRESULT CRenderer::Render_UI()
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
 	{
 		pGameObject && pGameObject->Render();
-
 		Safe_Release(pGameObject);
 	}
 
 	m_RenderObjects[RENDER_UI].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_UILast()
+{
+	for (auto& pGameObject : m_RenderObjects[RENDER_UILAST])
+	{
+		pGameObject && pGameObject->Render();
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UILAST].clear();
 
 	return S_OK;
 }

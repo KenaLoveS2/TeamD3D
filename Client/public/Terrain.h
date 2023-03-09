@@ -18,9 +18,9 @@ public:
 
 	typedef struct tag_TerrainDesc
 	{
-		wstring		wstrDiffuseTag;
-		wstring		wstrNormalTag;
-		wstring		wstrFilterTag;
+		wstring			wstrDiffuseTag;
+		wstring			wstrNormalTag;
+		wstring			wstrFilterTag;
 		_int			iBaseDiffuse = 0;
 		_int			iFillterOne_TextureNum = 0;
 		_int			iFillterTwo_TextureNum = 0;

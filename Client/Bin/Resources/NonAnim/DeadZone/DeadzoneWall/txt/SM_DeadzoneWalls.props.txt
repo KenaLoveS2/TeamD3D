@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_02.MI_DeadzoneWalls_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_01.MI_DeadzoneWalls_01'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_01_Opaque.MI_DeadzoneWalls_01_Opaque'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_02.MI_DeadzoneWalls_02'
+        MaterialSlotName = MI_DeadzoneWalls_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 662.847, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_01.MI_DeadzoneWalls_01'
+        MaterialSlotName = MI_DeadzoneWalls_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 662.123, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_01_Opaque.MI_DeadzoneWalls_01_Opaque'
+        MaterialSlotName = lambert1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 0, 0, 0, 0 }
+        }
+    }
+}
+Sockets[1] = {  }
+ExtendedBounds =
+{
+    Origin = { X=14.6948, Y=9.52991, Z=135.959 }
+    BoxExtent = { X=219.97, Y=173.267, Z=168.692 }
+    SphereRadius = 274.197
+}

@@ -1,0 +1,26 @@
+{
+  "0_MeshNum": 1,
+  "1_First": [
+    {
+     "0_None_path": "NONE",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_RockTileableTexture_A.dds",
+      "2_SPECULAR_path": "NONE",
+      "3_AMBIENT_path": "NONE",
+      "4_EMISSIVE_path": "NONE",
+      "5_EMISSIVEMASK_path": "NONE",
+      "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_RuinsKit_ToriGate_N.png",
+       "7_MASK_path":  "NONE",
+      "8_SSS_MASK_path":  "../Bin/Resources/NonAnim/Textures/DeadMoss.dds",
+      "9_SPRINT_EMISSIVE_path":  "../Bin/Resources/NonAnim/Textures/T_Sand_01_N.png",
+      "10_HAIR_DEPTH_Path":  "../Bin/Resources/NonAnim/Textures/T_Detail_03_N.png",
+      "11_ALPHA_path": "NONE",
+      "12_HAIR_ROOT_path": "NONE",
+      "13_COMP_MSK_CURV_path": "NONE",
+      "14_COMP_H_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_RockTileableTexture_Comp_H_R_AO.dds",
+      "15_COMP_E_R_AO_path": "NONE",
+      "16_ROUGHNESS_path": "NONE",
+      "17_AMBIENT_OCCLUSION_path": "NONE"
+    }
+  ]
+
+ }

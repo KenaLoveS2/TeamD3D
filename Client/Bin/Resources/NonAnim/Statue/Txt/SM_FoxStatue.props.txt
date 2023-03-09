@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_FoxStatue.MI_FoxStatue'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_FoxStatue_Leaves.MI_FoxStatue_Leaves'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_FoxStatue.MI_FoxStatue'
+        MaterialSlotName = M_FoxStatue
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 165.398, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_FoxStatue_Leaves.MI_FoxStatue_Leaves'
+        MaterialSlotName = Leaves
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 100.668, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=5.38511, Y=1.66905, Z=66.0774 }
+    BoxExtent = { X=40.2673, Y=22.7732, Z=66.3452 }
+    SphereRadius = 74.9631
+}

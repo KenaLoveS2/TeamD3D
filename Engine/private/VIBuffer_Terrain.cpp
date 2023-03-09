@@ -771,8 +771,8 @@ CComponent * CVIBuffer_Terrain::Clone(void * pArg, CGameObject* pOwner)
 void CVIBuffer_Terrain::Free()
 {	
 	for (_uint i = 0; i < m_iDivideCount + m_bRemainFlag; i++)
-		Safe_Delete_Array(m_pPxTerrainVtx[i]);		
-		
+		Safe_Delete_Array(m_pPxTerrainVtx[i]);
+
 	Safe_Delete_Array(m_pPxTerrainVtx);
 	Safe_Delete_Array(m_pPxTerrainIdx_Divide);
 	Safe_Delete_Array(m_pPxTerrainIdx_Remain);

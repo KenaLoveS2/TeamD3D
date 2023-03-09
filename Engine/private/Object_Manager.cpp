@@ -258,26 +258,72 @@ HRESULT CObject_Manager::Late_Initialize(_uint iLevelIndex)
 
 void CObject_Manager::Tick(_float fTimeDelta)
 {
-	for (_uint i = 0; i < m_iNumLevels; ++i)
+	if (nullptr != m_pSingleLayer)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pLayers[CGameInstance::Get_StaticLevelIndex()])
 		{
-			if(nullptr != Pair.second)
-				Pair.second->Tick(fTimeDelta);			
+			if (nullptr != Pair.second)
+				Pair.second->Tick(fTimeDelta);
 		}
-	}	
+
+		m_pSingleLayer->Tick(fTimeDelta);
+	}
+	else
+	{
+		for (_uint i = 0; i < m_iNumLevels; ++i)
+		{
+			for (auto& Pair : m_pLayers[i])
+			{
+				if (nullptr != Pair.second)
+					Pair.second->Tick(fTimeDelta);
+			}
+		}
+	}
+
+
+
 }
 
 void CObject_Manager::Late_Tick(_float fTimeDelta)
 {
-	for (_uint i = 0; i < m_iNumLevels; ++i)
+	if (nullptr != m_pSingleLayer)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pLayers[CGameInstance::Get_StaticLevelIndex()])
 		{
 			if (nullptr != Pair.second)
 				Pair.second->Late_Tick(fTimeDelta);
 		}
+
+		m_pSingleLayer->Late_Tick(fTimeDelta);
 	}
+	else 
+	{
+		for (_uint i = 0; i < m_iNumLevels; ++i)
+		{
+			for (auto& Pair : m_pLayers[i])
+			{
+				if (nullptr != Pair.second)
+					Pair.second->Late_Tick(fTimeDelta);
+			}
+		}
+	}
+	
+	/* Finishe LateTick And Get_Back To Normal Layers */
+	if (m_bCheckLateTick == true)
+	{
+		m_pSingleLayer = nullptr;
+		m_bCheckLateTick = false;
+	}
+
+
+	//for (_uint i = 0; i < m_iNumLevels; ++i)
+	//{
+	//	for (auto& Pair : m_pLayers[i])
+	//	{
+	//		if (nullptr != Pair.second)
+	//			Pair.second->Late_Tick(fTimeDelta);
+	//	}
+	//}
 }
 
 void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
@@ -290,6 +336,23 @@ void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
 				Pair.second->SwitchOnOff_Shadow(bSwitch);
 		}
 	}
+}
+
+void CObject_Manager::Set_SingleLayer(_uint iCurLevel, const _tchar * pLayerTag)
+{
+	if (iCurLevel < 0 || iCurLevel >= m_iNumLevels || pLayerTag == nullptr)
+		return;
+
+	CLayer* pLayer = Find_Layer(iCurLevel, pLayerTag);
+	if (nullptr != pLayer)
+		m_pSingleLayer = pLayer;
+
+}
+
+void CObject_Manager::Get_Back()
+{
+	//m_pSingleLayer = nullptr;
+	m_bCheckLateTick = true;
 }
 
 CGameObject * CObject_Manager::Find_Prototype(const _tchar * pPrototypeTag)
@@ -544,11 +607,6 @@ void CObject_Manager::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * Laye
 		return;
 
 	pLayer->Delete_AllObjLayer(iRoomIndex);
-
-
-	
-
-
 }
 
 void CObject_Manager::Imgui_Add_For_EnviroMent_Component()

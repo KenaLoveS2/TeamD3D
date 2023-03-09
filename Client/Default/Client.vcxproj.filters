@@ -172,6 +172,9 @@
     <Filter Include="02.GameObjects\Monster\RockGolem">
       <UniqueIdentifier>{e9cdc3ca-fe1f-4457-bfe8-4e231662a7f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\RotEater">
+      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Monster\Sticks01">
       <UniqueIdentifier>{9b3c719a-1aa8-4fce-9b69-e04e73c1811c}</UniqueIdentifier>
     </Filter>
@@ -247,18 +250,6 @@
     <Filter Include="02.GameObjects\UI\04. Events\Transform">
       <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade">
-      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05. Spirits">
-      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills">
-      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader">
-      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\05. Real Object">
       <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
     </Filter>
@@ -277,11 +268,50 @@
     <Filter Include="02.GameObjects\Envrioment\Interaction\Rope_RotRock">
       <UniqueIdentifier>{8e19c382-7d37-455c-9610-31183ac7fb3b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\RockGolem\RotEater">
-      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Monster\BranchTosser">
+      <UniqueIdentifier>{6cf9411d-1b20-4039-90b6-aa49ddae82bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Rot\LiftRot">
-      <UniqueIdentifier>{64d9edad-2238-40c6-8fd8-aada30546c76}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Monster\Sapling">
+      <UniqueIdentifier>{e51a7d50-06bb-4a4b-8041-288a4ea6ecfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\MonsterWeapon">
+      <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Mage">
+      <UniqueIdentifier>{14e9057c-bdc6-46ee-92ba-5f2c816260c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\ShieldStick">
+      <UniqueIdentifier>{27d5d57e-6a08-4728-a03b-2fac21da550f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. Spirits">
+      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade">
+      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills">
+      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader">
+      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency">
+      <UniqueIdentifier>{a6cd374a-a4de-43a3-ba84-f05c3632b1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab">
+      <UniqueIdentifier>{6414a1b2-8ab6-46fc-8f64-b148da3aa9db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm">
+      <UniqueIdentifier>{4c58d31c-1d1f-4e79-906f-458d328535c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect">
+      <UniqueIdentifier>{6a9bc3f6-fc55-44a7-80e9-197fd833f701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button">
+      <UniqueIdentifier>{5b9db725-cb7e-483a-84a5-7db69fd72ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc">
+      <UniqueIdentifier>{f73c2825-7fbe-4977-ae4e-8adcca69c5d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -444,9 +474,6 @@
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeEffect.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Imgui_MapEditor.h">
       <Filter>02.GameObjects\Envrioment\Editor</Filter>
     </ClInclude>
@@ -514,7 +541,7 @@
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotEater.h">
-      <Filter>02.GameObjects\Monster\RockGolem\RotEater</Filter>
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sticks01.h">
       <Filter>02.GameObjects\Monster\Sticks01</Filter>
@@ -632,13 +659,7 @@
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasUpgrade.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodePlayerSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PlayerSkillInfo.h">
-      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GroundMark.h">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
@@ -664,15 +685,67 @@
     <ClInclude Include="..\public\E_KenaPulseCloud.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BranchTosser.h" />
-    <ClInclude Include="..\public\BranchTosser_Weapon.h" />
-    <ClInclude Include="..\public\MonsterWeapon.h" />
-    <ClInclude Include="..\public\Sapling.h" />
-    <ClInclude Include="..\public\LiftRot.h">
-      <Filter>02.GameObjects\Rot\LiftRot</Filter>
+    <ClInclude Include="..\public\BranchTosser.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LiftRot_Master.h">
-      <Filter>02.GameObjects\Rot\LiftRot</Filter>
+    <ClInclude Include="..\public\BranchTosser_Weapon.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sapling.h">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterWeapon.h">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LiftRot.h" />
+    <ClInclude Include="..\public\LiftRot_Master.h" />
+    <ClInclude Include="..\Public\DeadZoneObj.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_NodeRotSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SkillInfo.h">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasInvHeader.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeCrystal.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeKarma.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeNumRots.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillDesc.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillName.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillCond.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasConfirm.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeEffect.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeButton.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotLevel.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -814,9 +887,6 @@
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeEffect.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
       <Filter>02.GameObjects\Envrioment\Editor</Filter>
     </ClCompile>
@@ -884,7 +954,7 @@
       <Filter>02.GameObjects\Monster\RockGolem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotEater.cpp">
-      <Filter>02.GameObjects\Monster\RockGolem\RotEater</Filter>
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sticks01.cpp">
       <Filter>02.GameObjects\Monster\Sticks01</Filter>
@@ -1002,13 +1072,7 @@
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodePlayerSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PlayerSkillInfo.cpp">
-      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GroundMark.cpp">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
@@ -1034,15 +1098,67 @@
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BranchTosser.cpp" />
-    <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
-    <ClCompile Include="..\private\MonsterWeapon.cpp" />
-    <ClCompile Include="..\private\Sapling.cpp" />
-    <ClCompile Include="..\private\LiftRot.cpp">
-      <Filter>02.GameObjects\Rot\LiftRot</Filter>
+    <ClCompile Include="..\private\BranchTosser.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LiftRot_Master.cpp">
-      <Filter>02.GameObjects\Rot\LiftRot</Filter>
+    <ClCompile Include="..\private\BranchTosser_Weapon.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sapling.cpp">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterWeapon.cpp">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LiftRot.cpp" />
+    <ClCompile Include="..\private\LiftRot_Master.cpp" />
+    <ClCompile Include="..\Private\DeadZoneObj.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeRotSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SkillInfo.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasInvHeader.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeCrystal.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeKarma.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeNumRots.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillName.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillCond.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasConfirm.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeEffect.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeButton.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotLevel.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

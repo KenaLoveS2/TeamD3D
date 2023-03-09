@@ -128,7 +128,7 @@ HRESULT CUI_NodeQuest::Render()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Render_Font(TEXT("Font_Comic"), m_szQuest,
 		vNewPos /* position */,
-		0.f, _float2(0.4f, 0.4f)/* size */, 
+		0.f, _float2(1.f, 1.f)/* size */, 
 		XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);
 	RELEASE_INSTANCE(CGameInstance); 
 

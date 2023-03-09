@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Wall_B_Half.MI_Ruins_Wall_B_Half'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Wall_B_Half.MI_Ruins_Wall_B_Half'
+        MaterialSlotName = Wall B Half
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 939.157, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.00012207, Y=-3.05176e-05, Z=238.771 }
+    BoxExtent = { X=250.359, Y=51.7425, Z=248.724 }
+    SphereRadius = 329.223
+}

@@ -41,7 +41,9 @@ CModel::CModel(const CModel & rhs)
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
 			Safe_AddRef(Material.pTexture[i]);
 	}
-	
+
+
+	m_Bones.reserve(rhs.m_Bones.size());
 	for (auto& pBone : rhs.m_Bones)
 	{
 		m_Bones.push_back((CBone*)pBone->Clone());
@@ -52,11 +54,13 @@ CModel::CModel(const CModel & rhs)
 		m_Animations.push_back((CAnimation*)pAnimation->Clone());
 	}
 
+	m_Meshes.reserve(rhs.m_Meshes.size());
 	for (auto& pMesh : rhs.m_Meshes)			/*For.Origin*/
 	{
 		m_Meshes.push_back((CMesh*)pMesh->Clone());
 	}
 
+	m_Meshes.reserve(rhs.m_InstancingMeshes.size());
 	for (auto& pInstanceMesh : rhs.m_InstancingMeshes)			/*For.Instacing*/
 	{
 		m_InstancingMeshes.push_back((CInstancing_Mesh*)pInstanceMesh->Clone());
@@ -132,7 +136,8 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 						ReadFile(hFile, szPath, (iLen + 1) * sizeof(_tchar), &dwByte, nullptr);
 						_uint iNumTextures = 0;
 						ReadFile(hFile, &iNumTextures, sizeof(_uint), &dwByte, nullptr);
-						ModelMatrial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, szPath, iNumTextures);
+						
+						ModelMatrial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, szPath, iNumTextures);	
 					}
 					else
 						ModelMatrial.pTexture[j] = nullptr;
@@ -145,11 +150,10 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		}
 		else
 		{
-			CUtile::MODELMATERIAL_Create(m_pDevice, m_pContext, JsonMatrialPath, m_Materials);
-		
+			MODELMATERIAL_Create_Model(JsonMatrialPath);
+
 			for (_uint i = 0; i < m_iNumMaterials; i++)
 			{
-				// 여기서 json 로드하기
 			
 				for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 				{
@@ -176,6 +180,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		}
 
 		ReadFile(hFile, &m_iNumBones, sizeof(_uint), &dwByte, nullptr);
+		m_Bones.reserve(m_iNumBones);
 		for (_uint i = 0; i < m_iNumBones; i++)
 		{
 			CBone* pBone = CBone::Create(hFile);
@@ -189,6 +194,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			return E_FAIL;
 
 		ReadFile(hFile, &m_iNumMeshes, sizeof(_uint), &dwByte, nullptr);
+		m_Meshes.reserve(m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; i++)
 		{
 			// for. Instaincing
@@ -1131,7 +1137,6 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 }
 
 
-
 HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 {
 	DWORD	dwByte = 0;
@@ -1437,8 +1442,21 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 			}
 		}
 	}
+	
+	static _int iSize = 1;
+	ImGui::InputInt("Upsize ", &iSize);
+	if (ImGui::Button("All_Instancing_Size_Up"))
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstBufferSize_Update(iSize);	
+	}
+	
+	
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
+
+
+
 
 
 	/*수정 부분*/
@@ -1478,6 +1496,631 @@ void CModel::Set_PxMatrix(_float4x4& Matrix)
 	{
 		iter->Set_PxMatrix(Matrix);
 	}
+}
+
+
+void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
+{
+	ifstream      file(jSonPath);
+	Json			  jLoadMatrial;
+	file >> jLoadMatrial;
+	file.close();
+
+	int				iMeshNum = 0;
+	jLoadMatrial["0_MeshNum"].get_to<int>(iMeshNum);
+
+	string FilePath = "";
+	wstring wstrTextureFilePath = L"";
+	//_tchar* pTextureFilePath = L"";
+	for (int i = 0; i < iMeshNum; ++i)
+	{
+		MODELMATERIAL ModelMatrial;
+		if (i == 0)
+		{
+			for (auto jLoadChild : jLoadMatrial["1_First"])
+			{
+				jLoadChild["0_None_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath !=  L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["1_DIFFUSE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["2_SPECULAR_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = nullptr;
+
+				FilePath = "";
+				jLoadChild["3_AMBIENT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["4_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["5_EMISSIVEMASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["6_NORMALS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = nullptr;
+
+
+				FilePath = "";
+				jLoadChild["7_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["8_SSS_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["9_SPRINT_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["10_HAIR_DEPTH_Path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = nullptr;
+
+				FilePath = "";
+				jLoadChild["11_ALPHA_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = nullptr;
+
+				FilePath = "";
+				jLoadChild["12_HAIR_ROOT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["13_COMP_MSK_CURV_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = nullptr;
+
+				FilePath = "";
+				jLoadChild["14_COMP_H_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = nullptr;
+
+				FilePath = "";		
+				jLoadChild["15_COMP_E_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["16_ROUGHNESS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = nullptr;
+
+				FilePath = "";
+				jLoadChild["17_AMBIENT_OCCLUSION_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = nullptr;
+
+			}
+		}
+		else if (i == 1)
+		{
+			for (auto jLoadChild : jLoadMatrial["2_Second"])
+			{
+				FilePath = "";
+				jLoadChild["0_None_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["1_DIFFUSE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["2_SPECULAR_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = nullptr;
+
+				FilePath = "";
+				jLoadChild["3_AMBIENT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["4_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["5_EMISSIVEMASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["6_NORMALS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = nullptr;
+
+
+				FilePath = "";
+				jLoadChild["7_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["8_SSS_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["9_SPRINT_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["10_HAIR_DEPTH_Path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = nullptr;
+
+				FilePath = "";
+				jLoadChild["11_ALPHA_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = nullptr;
+
+				FilePath = "";
+				jLoadChild["12_HAIR_ROOT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["13_COMP_MSK_CURV_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = nullptr;
+
+				FilePath = "";
+				jLoadChild["14_COMP_H_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["15_COMP_E_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["16_ROUGHNESS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = nullptr;
+
+				FilePath = "";
+				jLoadChild["17_AMBIENT_OCCLUSION_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = nullptr;
+
+			}
+		}
+		else if (i == 2)
+		{
+			for (auto jLoadChild : jLoadMatrial["3_Third"])
+			{
+				FilePath = "";
+				jLoadChild["0_None_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["1_DIFFUSE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["2_SPECULAR_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = nullptr;
+
+				FilePath = "";
+				jLoadChild["3_AMBIENT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["4_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["5_EMISSIVEMASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["6_NORMALS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = nullptr;
+
+
+				FilePath = "";
+				jLoadChild["7_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["8_SSS_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["9_SPRINT_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["10_HAIR_DEPTH_Path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = nullptr;
+
+				FilePath = "";
+				jLoadChild["11_ALPHA_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = nullptr;
+
+				FilePath = "";
+				jLoadChild["12_HAIR_ROOT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["13_COMP_MSK_CURV_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = nullptr;
+
+				FilePath = "";
+				jLoadChild["14_COMP_H_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["15_COMP_E_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["16_ROUGHNESS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = nullptr;
+
+				FilePath = "";
+				jLoadChild["17_AMBIENT_OCCLUSION_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = nullptr;
+
+			}
+		}
+		else if (i == 3)
+		{
+			for (auto jLoadChild : jLoadMatrial["4_Four"])
+			{
+				FilePath = "";
+				jLoadChild["0_None_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NONE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["1_DIFFUSE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_DIFFUSE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["2_SPECULAR_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPECULAR] = nullptr;
+
+				FilePath = "";
+				jLoadChild["3_AMBIENT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["4_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["5_EMISSIVEMASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_EMISSIVEMASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["6_NORMALS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_NORMALS] = nullptr;
+
+
+				FilePath = "";
+				jLoadChild["7_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["8_SSS_MASK_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SSS_MASK] = nullptr;
+
+				FilePath = "";
+				jLoadChild["9_SPRINT_EMISSIVE_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_SPRINT_EMISSIVE] = nullptr;
+
+				FilePath = "";
+				jLoadChild["10_HAIR_DEPTH_Path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_DEPTH] = nullptr;
+
+				FilePath = "";
+				jLoadChild["11_ALPHA_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ALPHA] = nullptr;
+
+				FilePath = "";
+				jLoadChild["12_HAIR_ROOT_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_HAIR_ROOT] = nullptr;
+
+				FilePath = "";
+				jLoadChild["13_COMP_MSK_CURV_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_MSK_CURV] = nullptr;
+
+				FilePath = "";
+				jLoadChild["14_COMP_H_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_H_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["15_COMP_E_R_AO_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_COMP_E_R_AO] = nullptr;
+
+				FilePath = "";
+				jLoadChild["16_ROUGHNESS_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_ROUGHNESS] = nullptr;
+
+				FilePath = "";
+				jLoadChild["17_AMBIENT_OCCLUSION_path"].get_to<string>(FilePath);
+				wstrTextureFilePath = CUtile::stringToWString(FilePath);
+				if (wstrTextureFilePath != L"NONE")
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = CTexture::Create(m_pDevice, m_pContext, wstrTextureFilePath.c_str(), 1);
+				else
+					ModelMatrial.pTexture[aiTextureType::WJTextureType_AMBIENT_OCCLUSION] = nullptr;
+
+			}
+		}
+		m_Materials.push_back(ModelMatrial);
+	}
+
 }
 
 void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)

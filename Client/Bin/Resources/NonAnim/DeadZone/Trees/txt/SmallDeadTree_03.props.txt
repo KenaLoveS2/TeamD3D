@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Deadzone/MI_DeadzoneDecay_SmallDeadTree.MI_DeadzoneDecay_SmallDeadTree'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Deadzone/MI_DeadzoneDecay_SmallDeadTree.MI_DeadzoneDecay_SmallDeadTree'
+        MaterialSlotName = MI_DeadzoneDecay_SmallDeadTree3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1249.98, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=0, Z=408.804 }
+    BoxExtent = { X=192.131, Y=110.1, Z=499.908 }
+    SphereRadius = 515.172
+}
