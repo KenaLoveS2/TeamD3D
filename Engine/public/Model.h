@@ -47,11 +47,11 @@ public:
 	const	_bool 			Get_IsLodModel()const { return m_bIsLodModel; }
 	
 public:
-	HRESULT				Save_Model(const wstring& wstrSaveFileDirectory);
-	HRESULT				Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
-	HRESULT				Synchronization_MeshBone(CModel* pModelCom);
+	HRESULT					Save_Model(const wstring& wstrSaveFileDirectory);
+	HRESULT					Animation_Synchronization(CModel* pModelCom, const string& strRootNodeName);
+	HRESULT					Synchronization_MeshBone(CModel* pModelCom);
 	void					Reset_Animation();
-	HRESULT				Add_Event(_uint iAnimIndex, _float fPlayTime, const string& strFuncName);
+	HRESULT					Add_Event(_uint iAnimIndex, _float fPlayTime, const string& strFuncName);
 	void					Call_Event(const string& strFuncName);
 	void					Compute_CombindTransformationMatrix();
 	void					Update_BonesMatrix(CModel* pModel);
@@ -69,6 +69,8 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+private:
+	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
 	TYPE					m_eType = TYPE_END;
@@ -84,7 +86,7 @@ private:
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
-	vector<class CBone*>		m_Bones;
+	vector<class CBone*>			m_Bones;
 	string							m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;

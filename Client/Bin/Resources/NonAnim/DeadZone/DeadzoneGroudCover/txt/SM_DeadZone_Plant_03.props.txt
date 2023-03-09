@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass.MI_DeadZone_Deadgrass'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass.MI_DeadZone_Deadgrass'
+        MaterialSlotName = MI_Plants_Leaves
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 77.8028, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.231033, Y=0.609177, Z=10.9796 }
+    BoxExtent = { X=20.39, Y=37.4362, Z=17.4342 }
+    SphereRadius = 41.2938
+}

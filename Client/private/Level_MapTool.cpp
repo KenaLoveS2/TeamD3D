@@ -106,9 +106,9 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain2"))))
 	//	return E_FAIL;
 
-	CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
-
-
+	//CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("Room_Four.json");
+	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

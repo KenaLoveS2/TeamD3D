@@ -185,6 +185,7 @@
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\Public\ControlMove.h" />
+    <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
@@ -295,6 +296,7 @@
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
+    <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />

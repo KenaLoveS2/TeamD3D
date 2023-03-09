@@ -3,7 +3,7 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_D_A.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_D_A.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -19,14 +19,14 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_M_R_AO.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_M_R_AO.dds"
   
     }
   ],
   "2_Second": [
     {
     "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_D_A.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_D_A.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -42,6 +42,6 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_M_R_AO.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_LeafPile_M_R_AO.dds"
     }
   ]}

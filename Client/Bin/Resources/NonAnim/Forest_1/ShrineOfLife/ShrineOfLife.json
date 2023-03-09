@@ -3,14 +3,14 @@
   "1_First": [
     {
     "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
-      "5_EMISSIVEMASK_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_E.png",
+      "5_EMISSIVEMASK_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_E.dds",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_N.png",
       "7_MASK_path": "NONE",
-      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/DeadMoss.png",
+      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/DeadMoss.dds",
       "9_SPRINT_EMISSIVE_path": "NONE",
       "10_HAIR_DEPTH_Path": "../Bin/Resources/NonAnim/Textures/T_Dirt_Tile_N.png",
       "11_ALPHA_path": "NONE",
@@ -19,13 +19,13 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_Comp_M_R_AO.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_Comp_M_R_AO.dds"
     }
   ],
   "2_Second": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -41,20 +41,20 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_Comp_M_R_AO.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_ShrineOfLife_Comp_M_R_AO.dds"
     }
   ],
   "3_Third": [
     {
 
        "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Trees_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Trees_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_Trees_N.png",
-      "7_MASK_path": "../Bin/Resources/NonAnim/Textures/T_Trees_Woodland_Msk.png",
+      "7_MASK_path": "../Bin/Resources/NonAnim/Textures/T_Trees_Woodland_Msk.dds",
       "8_SSS_MASK_path": "NONE",
       "9_SPRINT_EMISSIVE_path": "NONE",
       "10_HAIR_DEPTH_Path": "NONE",
@@ -64,7 +64,7 @@
       "14_COMP_H_R_AO_path": "NONE",
       "15_COMP_E_R_AO_path": "NONE",
       "16_ROUGHNESS_path": "NONE",
-      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_Trees_Comp_M_R_Ao.png"
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_Trees_Comp_M_R_Ao.dds"
 
    
     }

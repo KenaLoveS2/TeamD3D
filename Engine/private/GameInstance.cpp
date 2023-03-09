@@ -145,6 +145,8 @@ void CGameInstance::Tick_Engine(_bool bWinActive, _float fTimeDelta)
 	m_pFrustum->Transform_ToWorldSpace();
 	m_pEnviroment_Manager->Tick(fTimeDelta);
 
+
+
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
 	m_pLevel_Manager->Late_Tick(fTimeDelta);

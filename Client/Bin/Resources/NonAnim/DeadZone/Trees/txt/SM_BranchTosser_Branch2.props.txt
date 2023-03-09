@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/Trees/_Materials/MI_BranchTosser_Branch.MI_BranchTosser_Branch'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/Trees/_Materials/MI_BranchTosser_Branch.MI_BranchTosser_Branch'
+        MaterialSlotName = MI_BranchTosser_Branch
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 411.063, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-158.197, Y=-19.1566, Z=-17.8848 }
+    BoxExtent = { X=176.846, Y=106.684, Z=70.676 }
+    SphereRadius = 206.684
+}

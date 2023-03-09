@@ -602,6 +602,11 @@
     <ClInclude Include="..\Public\Grass.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Effect_Point_Instancing_T.h" />
+    <ClInclude Include="..\public\Effect_Trail_T.h" />
+    <ClInclude Include="..\public\E_KenaPulseDot.h" />
+    <ClInclude Include="..\public\E_KenaTrail.h" />
+    <ClInclude Include="..\Public\DeadZoneObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -930,6 +935,11 @@
     <ClCompile Include="..\Private\Grass.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp" />
+    <ClCompile Include="..\private\Effect_Trail_T.cpp" />
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
+    <ClCompile Include="..\private\E_KenaTrail.cpp" />
+    <ClCompile Include="..\Private\DeadZoneObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

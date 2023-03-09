@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_JizoStatues.MI_JizoStatues'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Statues/_Materials/MI_JizoStatues.MI_JizoStatues'
+        MaterialSlotName = MI_JizoStatues
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 598.243, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.33386, Y=0.0602455, Z=-0.18322 }
+    BoxExtent = { X=33.3302, Y=34.0443, Z=23.0608 }
+    SphereRadius = 38.701
+}

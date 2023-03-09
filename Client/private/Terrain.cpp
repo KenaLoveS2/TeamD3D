@@ -128,7 +128,7 @@ void CTerrain::Erase_FilterCom()
 	Safe_Release(m_pTextureCom[TYPE_FILTER]);
 }
 
-void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)
+void CTerrain::Change_HeightMap(const _tchar * pHeightMapFilePath)		// 여기서 버퍼를 바꾸기때문에
 {
 	if (nullptr == pHeightMapFilePath)
 		return;
@@ -276,7 +276,6 @@ void CTerrain::Free()
 	for (auto& pTextureCom : m_pTextureCom)	
 		Safe_Release(pTextureCom);	
 
-	//Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

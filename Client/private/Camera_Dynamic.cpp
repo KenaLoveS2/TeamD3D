@@ -50,17 +50,30 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 #ifdef  FOR_MAPTOOL
+
+	static _float HighSpeed = 1.f;
+	if (pGameInstance->Key_Pressing(DIK_LSHIFT))
+	{
+		HighSpeed += 0.1f * fTimeDelta *5.f;
+	}
+
+	if (pGameInstance->Key_Pressing(DIK_LCONTROL))
+	{
+		HighSpeed -= 0.1f * fTimeDelta *5.f;
+	}
+
+
 	if (pGameInstance->Key_Pressing(DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta* HighSpeed);
 
 	if (pGameInstance->Key_Pressing(DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta);
+		m_pTransformCom->Go_Backward(fTimeDelta * HighSpeed);
 
 	if (pGameInstance->Key_Pressing(DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta);
+		m_pTransformCom->Go_Left(fTimeDelta*HighSpeed);
 
 	if (pGameInstance->Key_Pressing(DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta);
+		m_pTransformCom->Go_Right(fTimeDelta*HighSpeed);
 #else
 	if (pGameInstance->Key_Pressing(DIK_UP))
 		m_pTransformCom->Go_Straight(fTimeDelta);
@@ -80,6 +93,7 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	if (pGameInstance->Key_Pressing(DIK_C))
 		m_pTransformCom->Go_AxisNegY(fTimeDelta);
 
+	
 
 	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
 	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);

@@ -547,11 +547,6 @@ void CObject_Manager::RoomIndex_Object_Clear(_int iCurLevel, const _tchar * Laye
 		return;
 
 	pLayer->Delete_AllObjLayer(iRoomIndex);
-
-
-	
-
-
 }
 
 void CObject_Manager::Imgui_Add_For_EnviroMent_Component()

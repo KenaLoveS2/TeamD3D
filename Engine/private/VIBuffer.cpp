@@ -103,7 +103,7 @@ void CVIBuffer::Free()
 	Safe_Release(m_pIB);
 
 	// kbj physx
-	if (m_isCloned == true)
+	if (m_isCloned == false)
 	{
 		Safe_Delete_Array(m_pPxVertices);
 		Safe_Delete_Array(m_pPxIndicies);

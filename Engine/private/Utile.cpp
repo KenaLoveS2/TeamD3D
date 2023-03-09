@@ -76,10 +76,19 @@ _tchar * CUtile::StringToWideChar(string str)
 
 
 
+
+
+
 string CUtile::WstringToString(wstring wstr)
 {
 	string str;
 	return str.assign(wstr.begin(), wstr.end());
+}
+
+wstring CUtile::stringToWString(string str)
+{
+	wstring wstr;
+	return wstr.assign(str.begin(), str.end());
 }
 
 char * CUtile::Split_String(char * pSour, char szSymbol)
