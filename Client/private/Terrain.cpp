@@ -61,12 +61,12 @@ HRESULT CTerrain::Initialize(void * pArg)
 
 HRESULT CTerrain::Late_Initialize(void * pArg)
 {	
-	/*
+
 	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
 	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
 	wstrFilePath += TEXT(".bmp");
 	Change_HeightMap(wstrFilePath.c_str());
-	*/
+
 
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
@@ -186,7 +186,7 @@ HRESULT CTerrain::SetUp_Components()
 			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 			return E_FAIL;
 
-		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Terrain");
+		m_TerrainDesc.wstrDiffuseTag = TEXT("Prototype_Component_Texture_Terrain");
 		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Filter");
 		m_TerrainDesc.wstrNormalTag = TEXT("");
 	}

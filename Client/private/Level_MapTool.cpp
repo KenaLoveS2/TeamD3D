@@ -51,6 +51,9 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
+	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
