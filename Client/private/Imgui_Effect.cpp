@@ -87,20 +87,20 @@ void CImgui_Effect::Imgui_RenderWindow()
 	// 1. Texture Type Select
 	const char* szEffectType[] = { " ~SELECT_EFFECT TYPE~ ", " EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
 	ImGui::BulletText("EffectType : "); 
-	if (ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 0))
+	if (ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 1))
 	{
 		iPreSelectEffectType = iSelectEffectType = EFFECT_PLANE;
 		bIsCreate = true;
 		m_bIsRectLayer = true;
 
 	}ImGui::SameLine();
-	if (ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType,1))
+	if (ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType,2))
 	{
-		iPreSelectEffectType = iSelectEffectType = EFFECT_PARTICLE;
+		iPreSelectEffectType = iSelectEffectType = 2;
 		bIsCreate = true;
 		m_bIsParticleLayer = true;
 	}ImGui::SameLine();
-	if (ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 2))
+	if (ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 3))
 	{
 		iPreSelectEffectType = iSelectEffectType = EFFECT_MESH;
 		bIsCreate = true;
@@ -1052,8 +1052,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 					CUtile::WideCharToChar((*iter)->Get_ProtoObjectName(), szPrototypeTag);
 					CUtile::WideCharToChar((*iter)->Get_ObjectCloneName(), szClonetypeTag);
-					jObject["Child ProtoTag"] = szPrototypeTag;
-					jObject["Child CloneTag"] = szClonetypeTag;
+					jChildDesc["Child ProtoTag"] = szPrototypeTag;
+					jChildDesc["Child CloneTag"] = szClonetypeTag;
 
 #pragma  region	EFFECTDESC
 					CEffect_Base::EFFECTDESC eChildEffectDesc = (*iter)->Get_EffectDesc();
@@ -1148,6 +1148,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 					jChildDesc["FreeMove"] = eChildEffectDesc.bFreeMove;
 
 					jObject["ChildDesc"].push_back(jChildDesc);
+					jChildDesc.clear();
 #pragma  endregion	EFFECTDESC
 				}
 			}
@@ -2029,7 +2030,7 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	ImGui::Begin("Moving Particle Option Window");
-	CEffect_Point_Instancing* pParticle = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
+	CEffect_Point_Instancing_T* pParticle = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect);
 	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = pParticle->Get_PointInstanceDesc();
 	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = pParticle->Get_InstanceData();
 
@@ -3273,7 +3274,7 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	CEffect_Point_Instancing* pEffect = nullptr;
+	CEffect_Point_Instancing_T* pEffect = nullptr;
 	// 2. Texture Create
 	if (iSelectObject != -1)
 	{
@@ -3285,12 +3286,12 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 		size_t iLayerObjSize = pGameObject.size();
 
 		auto iter = pGameObject.begin();
-		for (size_t i = 0; i < iSelectObject; ++i)
+		for (size_t i = 0; i < iSelectObject ; ++i)
 			iter++;
 
 		if (iCurSelect != iSelectObject)
 		{
-			pEffect = dynamic_cast<CEffect_Point_Instancing*>(iter->second);
+			pEffect = dynamic_cast<CEffect_Point_Instancing_T*>(iter->second);
 			if (pEffect == nullptr)
 				return;
 

@@ -103,6 +103,7 @@ void CEffect_T::Tick(_float fTimeDelta)
 				m_eEFfectDesc.fWidthFrame++;
 			else
 				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
 			m_fTimeDelta = 0.0;
 
 			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
@@ -110,13 +111,14 @@ void CEffect_T::Tick(_float fTimeDelta)
 				if (m_eEFfectDesc.fTimeDelta < 1.f)
 					m_eEFfectDesc.fHeightFrame++;
 				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
+					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
 
-				m_eEFfectDesc.fWidthFrame = 0.f;
+				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 
 				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
+					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
 			}
+
 		}
 	}
 
@@ -153,12 +155,12 @@ void CEffect_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	__super::Compute_CamDistance();
+	static _float fRotation = 0.0;
 
 	ImGui::Begin("ReCompile");
 	if (ImGui::Button("test"))
-	{
 		m_pShaderCom->ReCompile();
-	}
+
 	ImGui::End();
 	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
 		Set_Matrix();

@@ -28,10 +28,10 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
 	, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
-// 	, m_vecProPos(rhs.m_vecProPos)
-// 	, m_vecFreePos(rhs.m_vecFreePos)
-	//, m_pEffectTrail(rhs.m_pEffectTrail)
-	//, m_vecChild(rhs.m_vecChild)
+ 	, m_vecProPos(rhs.m_vecProPos)
+ 	, m_vecFreePos(rhs.m_vecFreePos)
+	, m_pEffectTrail(rhs.m_pEffectTrail)
+	, m_vecChild(rhs.m_vecChild)
 {
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
@@ -235,15 +235,16 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 					string strPrototypeTag = "";
 					string strCloneTag = "";
 
-					jObject["Child ProtoTag"].get_to<string>(strPrototypeTag);
-					jObject["Child CloneTag"].get_to<string>(strCloneTag);
-
 					CEffect_Base::EFFECTDESC eChildEffectDesc;
 					ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
 
 					for (auto jChildDesc : jObject["ChildDesc"])
 					{
 #pragma  region	EFFECTDESC
+						jChildDesc["Child ProtoTag"].get_to<string>(strPrototypeTag);
+						jChildDesc["Child CloneTag"].get_to<string>(strCloneTag);
+
+
 						jChildDesc["Effect Type"].get_to<_int>(iEffectType);
 						eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
 
@@ -329,9 +330,9 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 						jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
 						jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
 #pragma  endregion	EFFECTDESC
+						dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str());
+						jChildDesc.clear();
 					}
-
-					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str());
 				}
 			}
 
@@ -572,7 +573,6 @@ void CEffect_Base::Late_Tick(_float fTimeDelta)
 
 	for (auto& pChild : m_vecChild)
 		pChild->Late_Tick(fTimeDelta);
-
 }
 
 HRESULT CEffect_Base::Render()
@@ -594,7 +594,7 @@ HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, con
 	EFFECTDESC eChildeffectDesc;
 	memcpy(&eChildeffectDesc, &eEffectDesc, sizeof(eEffectDesc));
 
-	for (_int i = 0; i < iCreateCnt; ++i)
+	//for (_int i = 0; i < iCreateCnt; ++i)
 	{
 		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
 		pGameInstance->Add_String(szChildProtoTag);

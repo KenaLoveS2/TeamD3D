@@ -99,7 +99,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 				pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
 				pMainApp->Render();
-				// pMainApp->Resize_BackBuffer();
+				pMainApp->Resize_BackBuffer();
 
 				TimerAcc = 0.0;
 			}

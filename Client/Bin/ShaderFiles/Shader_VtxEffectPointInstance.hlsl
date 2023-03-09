@@ -437,6 +437,18 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 	return Out;
 }
 
+PS_OUT PS_FLOWERPARTICLE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	 flower = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	// flower.a = flower.r;
+	flower.rgb = g_vColor.rgb;
+
+	Out.vColor = flower;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -503,7 +515,7 @@ technique11 DefaultTechnique
 	}
 
 	// PS_ENEMYWISP, 5
-	pass Trail_EnemyWisp // 4
+	pass Trail_EnemyWisp // 5
 	{
 		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
@@ -516,4 +528,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_ENEMYWISP();
 	}
 
+	pass FlowerParticle // 6
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FLOWERPARTICLE();
+	}
 }

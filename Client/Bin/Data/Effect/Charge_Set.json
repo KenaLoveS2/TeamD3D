@@ -5,12 +5,12 @@
     "Pulse Test": [
         {
             "Object Data": [
-                {
-                    "Child CloneTag": "ChargePoint_0",
-                    "Child Count": 1,
-                    "Child ProtoTag": "Prototype_GameObject_ChargePoint",
+                {             
+                    "Child Count": 1,            
                     "ChildDesc": [
                         {
+                            "Child CloneTag": "ChargePoint_0",
+                            "Child ProtoTag": "Prototype_GameObject_ChargePoint",
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": true,

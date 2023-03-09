@@ -531,7 +531,6 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
 	pEffectBase->Set_Parent(this);
-
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);

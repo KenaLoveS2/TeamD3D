@@ -304,6 +304,9 @@
     <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
       <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena Effect\Damage">
+      <UniqueIdentifier>{99569c48-bbd7-49d4-9446-e01d95f2bd7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -709,6 +712,9 @@
     <ClInclude Include="..\public\E_KenaTrail.h">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_KenaDamage.h">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Damage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1092,6 +1098,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDamage.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena Effect\Damage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

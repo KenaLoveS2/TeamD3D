@@ -262,6 +262,45 @@ PS_OUT PS_MAIN_E_ENEMYZONE(PS_IN In)
 	Out.vColor = finalcolor;
 	return Out;
 }
+//PS_MAIN_E_HIT / PS_MAIN_E_DAMAGE
+PS_OUT PS_MAIN_E_HIT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	/* Sprite */
+
+	/* DiffuseTexture */
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	albedo.rgb = g_vColor.rgb;
+	Out.vColor = albedo;
+	return Out;
+}
+
+PS_OUT PS_MAIN_E_DAMAGE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	/* Sprite */
+
+	/* DiffuseTexture */
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	albedo.rgb = (albedo.rgb * g_vColor.rgb) * 2.f;
+	albedo.b = 10.f;
+	Out.vColor = albedo;
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -328,6 +367,32 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_ENEMYZONE();
+	}
+
+	pass Effect_Hit // 5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_HIT();
+	}
+
+	pass Effect_Damage // 6
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_DAMAGE();
 	}
 
 }
