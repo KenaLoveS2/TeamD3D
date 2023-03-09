@@ -63,6 +63,7 @@ private:
 	CUI_NodeSkill*				m_pSelected; /* LastSelectedOne*/
 	vector<CUI_NodeEffect*>		m_vecEffects;
 	_int						m_iPickedIndex;
+	_bool						m_bPick;
 
 public:
 	static	CUI_CanvasUpgrade*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

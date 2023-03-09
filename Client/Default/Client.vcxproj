@@ -292,6 +292,8 @@
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
     <ClInclude Include="..\public\UI_NodeKarma.h" />
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
+    <ClInclude Include="..\public\UI_NodeRotGuage.h" />
+    <ClInclude Include="..\public\UI_NodeRotLevel.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
@@ -424,6 +426,8 @@
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
     <ClCompile Include="..\private\UI_NodeKarma.cpp" />
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />

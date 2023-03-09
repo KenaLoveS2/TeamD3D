@@ -15,6 +15,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext
 	:CUI_Canvas(pDevice, pContext)
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
+	, m_bPick(true)
 {
 	for (auto skill : m_pSkills)
 		skill = nullptr;
@@ -24,6 +25,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	: CUI_Canvas(rhs)
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
+	, m_bPick(true)
 {
 	for (auto skill : m_pSkills)
 		skill = nullptr;
@@ -104,6 +106,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 				m_pSkills[m_iPickedIndex / 5]
 				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level()))
 			{
+				m_bPick = false;
 				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	
 			}
 		}
@@ -133,6 +136,8 @@ HRESULT CUI_CanvasUpgrade::Render()
 
 void CUI_CanvasUpgrade::Common_Function(_bool bResult)
 {
+	m_bPick = true;
+
 	if (bResult)
 	{
 	 m_pSkills[m_iPickedIndex / 5]
@@ -368,6 +373,10 @@ HRESULT CUI_CanvasUpgrade::Ready_SkillInfo()
 
 void CUI_CanvasUpgrade::Picking()
 {
+	/* Temp Methd*/
+	if (!m_bPick)
+		return;
+
 	/* Picking */
 	POINT pt = CUtile::GetClientCursorPos(g_hWnd);
 

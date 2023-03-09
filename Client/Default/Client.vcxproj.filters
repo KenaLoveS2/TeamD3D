@@ -298,6 +298,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button">
       <UniqueIdentifier>{5b9db725-cb7e-483a-84a5-7db69fd72ec3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc">
+      <UniqueIdentifier>{f73c2825-7fbe-4977-ae4e-8adcca69c5d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -719,6 +722,12 @@
     <ClInclude Include="..\public\UI_NodeButton.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotLevel.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1118,6 +1127,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeButton.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotLevel.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -264,15 +264,17 @@ void CUI_CanvasConfirm::Picking()
 
 	if (bClicked)
 	{
+		m_bActive = false;
+
 		if (UI_YES == iChoice)
 		{
 			if (m_pCaller != nullptr)
 				m_pCaller->Common_Function(true);
-			m_bActive = false;
 		}
 		else
 		{
-			m_bActive = false;
+			if (m_pCaller != nullptr)
+				m_pCaller->Common_Function(false);
 		}
 	}
 
