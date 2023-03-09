@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Delegator.h"
 #include "UI_ClientManager.h"
+#include "Monster_Status.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -76,11 +77,15 @@ protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
 
 	CRenderer*					m_pRendererCom = nullptr;
-	CShader*						m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
+	CMonster_Status*			m_pMonsterStatusCom = nullptr;
+
 	CFSMComponent*		m_pFSM = nullptr;
 	class CGameObject*		m_pKena = nullptr;
 	_float4							m_vKenaPos;
+
+	
 
 protected:
 	_bool	m_bWeaklyHit = false;
@@ -90,13 +95,14 @@ protected:
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
-	virtual	HRESULT			SetUp_Components() PURE;
+	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual  HRESULT			SetUp_ShadowShaderResources() PURE;
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr)  PURE;
 	virtual void					Free() override;
+	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 };
 
 END

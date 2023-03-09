@@ -41,7 +41,7 @@ HRESULT CStair::Late_Initialize(void * pArg)
 	if (FAILED(__super::Late_Initialize(pArg)))
 		return E_FAIL;
 
-	m_pModelCom->Create_PxTriangle();
+	m_pModelCom->Create_PxTriangle(Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pModelCom->Set_PxMatrix(m_pTransformCom->Get_WorldMatrixFloat4x4());
 
 	return S_OK;

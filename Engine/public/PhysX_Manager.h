@@ -115,7 +115,7 @@ public:
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
 	void Clear();
 
-	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
+	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
 	
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
