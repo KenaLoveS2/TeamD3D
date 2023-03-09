@@ -404,7 +404,6 @@ HRESULT CLoader::Loading_ForMapTool()
 
 
 
-	
 
 #pragma region AncientWells
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells", true, true, true)))
@@ -544,7 +543,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 #pragma endregion ~Statue
 
-#pragma region Stone_JSON
+#pragma region Stone
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, true, true)))
@@ -559,7 +558,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "StoneStep_Seperate", true, true, true)))
 		return E_FAIL;
-#pragma endregion
+#pragma endregion Stone
 
 #pragma  region Tree
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Giant", true, true, true)))
@@ -584,13 +583,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 #pragma endregion ~Tree
 
-
 #pragma region VantagePlatform
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VantagePlatform", true, true, true)))											// json NonUse
 		return E_FAIL;
 #pragma endregion ~VantagePlatform
-
-
 
 #pragma region RuinKit
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, true, true)))
@@ -605,8 +601,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
 		return E_FAIL;
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true)))			// 			issue
-//		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true,true)))
+		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, true, true)))
@@ -621,6 +617,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
 		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsWall", true, true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/Ruinskit_Collum", true, true, true)))
+		return E_FAIL;
 #pragma endregion RuinKit
 
 #pragma region Interactive	얘네는 무조건 인스턴싱 안함
@@ -630,13 +630,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 #pragma endregion Interactive
 
-
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsWall", true, true, true)))
-		return E_FAIL;
-
+#pragma region  DeadZone
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
 		return E_FAIL;
-
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/DeadzoneClumps", true, true, true)))
@@ -651,10 +647,9 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Trees", true, true, true)))
 		return E_FAIL;
-
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/BushDead_02", true, true)))
 		return E_FAIL;
-
+#pragma endregion DeadZone
 
 #pragma region RuinDebris
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinDebris", true, true)))									

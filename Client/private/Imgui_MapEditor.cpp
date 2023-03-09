@@ -778,7 +778,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain3"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
