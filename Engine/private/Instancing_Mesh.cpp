@@ -22,6 +22,8 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
 {
+
+	m_Bones.reserve(rhs.m_Bones.size());
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
 	{
 		m_pBoneNames = new string[rhs.m_iNumBones];
@@ -232,6 +234,37 @@ void CInstancing_Mesh::InstBuffer_Update(vector<_float4x4*> VecInstancingMatrix)
 
 }
 
+void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
+{
+	/*메쉬_인스턴싱_이펙트 일때 여기 사용*/
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+
+	
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float4 vRight = ((VTXMATRIX*)SubResource.pData)[i].vRight;
+		_float4 vUp = ((VTXMATRIX*)SubResource.pData)[i].vUp;
+		_float4 vLook = ((VTXMATRIX*)SubResource.pData)[i].vLook;
+
+		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)) * (_float)iSize);
+		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)) * (_float)iSize);
+		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) * iSize);
+
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vLook, &vLook, sizeof(_float4));
+	
+
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+}
+
 HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
 {
 	if (hFile == nullptr)
@@ -243,6 +276,7 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	ReadFile(hFile, &m_iMaterialIndex, sizeof(_uint), &dwByte, nullptr);
 
 	ReadFile(hFile, &m_iNumBones, sizeof(_uint), &dwByte, nullptr);
+	m_Bones.reserve(m_iNumBones);
 	for (_uint i = 0; i < m_iNumBones; i++)
 	{
 		_uint iLen = 0;

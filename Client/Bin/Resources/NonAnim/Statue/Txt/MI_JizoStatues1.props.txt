@@ -1,0 +1,204 @@
+Parent = Material3'/Game/Mochi/Art/Interactables/JizoStatue/Materials/M_JizoStatue_Master.M_JizoStatue_Master'
+ScalarParameterValues[16] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=TopLayer_UV_Tiling }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Deadzone_Tiling }
+        ParameterValue = 1.95778
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=DissolveAmount }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=DissolveTile }
+        ParameterValue = 0.428572
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Fringe }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=HighlightMidPoint }
+        ParameterValue = 0.8
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=MossMaskAmount }
+        ParameterValue = 0.5
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=MossMaskContrast }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=MossMaskTile }
+        ParameterValue = 0.2
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=Spec }
+        ParameterValue = 0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=OpacityNoiseTilling }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[11] =
+    {
+        ParameterInfo = { Name=Blend_Bias }
+        ParameterValue = 0.350476
+        ParameterName = None
+    }
+    ScalarParameterValues[12] =
+    {
+        ParameterInfo = { Name=Blend_Sharpness }
+        ParameterValue = 2.95736
+        ParameterName = None
+    }
+    ScalarParameterValues[13] =
+    {
+        ParameterInfo = { Name=RefractionTilling }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[14] =
+    {
+        ParameterInfo = { Name=TopLayer_Normal_Intensity }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[15] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[5] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Comp_M_R_Ao }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Statues/_Textures/T_JizoStatues_M_R_AO.T_JizoStatues_M_R_AO'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Statues/_Textures/T_JizoStatues_D.T_JizoStatues_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Statues/_Textures/T_JizoStatues_N.T_JizoStatues_N'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=T_TopLayer_Diffuse }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Organic/Trees/Textures/DeadMoss.DeadMoss'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=TopLayer_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Moss/T_Moss_01_N.T_Moss_01_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[0] = {}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = true
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[7] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 10
+        UVChannelIndex = 0
+        TextureName = DeadMoss
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1.95313
+        UVChannelIndex = 0
+        TextureName = Deadzone_DRA
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1.95313
+        UVChannelIndex = 0
+        TextureName = T_Deadzone_01_N
+    }
+    TextureStreamingData[3] =
+    {
+        SamplingScale = 1.95313
+        UVChannelIndex = 0
+        TextureName = T_Deadzone_Albedo
+    }
+    TextureStreamingData[4] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_JizoStatues_D
+    }
+    TextureStreamingData[5] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_JizoStatues_M_R_AO
+    }
+    TextureStreamingData[6] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_Moss_01_N
+    }
+}

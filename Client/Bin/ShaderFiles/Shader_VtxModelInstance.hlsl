@@ -295,6 +295,14 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
+
+	
+
+	if (0.9f <= vDiffuse.r && 0.9f <= vDiffuse.g && 0.9f <= vDiffuse.b )
+		discard;
+
+
+
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);

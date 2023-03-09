@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/Deadzones_GoopWeb/Materials/M_Deadzone_GoopWeb.M_Deadzone_GoopWeb'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/Deadzones_GoopWeb/Materials/M_Deadzone_GoopWeb.M_Deadzone_GoopWeb'
+        MaterialSlotName = M_Deadzone_GoopWeb
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2514.52, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=382.518, Y=-92.1178, Z=-76.2977 }
+    BoxExtent = { X=478.031, Y=433.952, Z=425.577 }
+    SphereRadius = 683.702
+}

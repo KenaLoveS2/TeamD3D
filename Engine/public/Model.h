@@ -71,6 +71,8 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+private:
+	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
 	TYPE					m_eType = TYPE_END;
@@ -86,7 +88,7 @@ private:
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
-	vector<class CBone*>		m_Bones;
+	vector<class CBone*>			m_Bones;
 	string							m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;

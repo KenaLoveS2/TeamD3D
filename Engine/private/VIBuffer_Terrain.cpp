@@ -228,7 +228,7 @@ HRESULT CVIBuffer_Terrain::Initialize(void * pArg, CGameObject* pOwner)
 	if (FAILED(__super::Initialize(pArg, pOwner)))
 		return E_FAIL;
 
-	Create_PxActor();
+	//Create_PxActor();		// 일단 오류때문에
 
 	return S_OK;
 }
@@ -773,8 +773,8 @@ CComponent * CVIBuffer_Terrain::Clone(void * pArg, CGameObject* pOwner)
 void CVIBuffer_Terrain::Free()
 {	
 	for (_uint i = 0; i < m_iDivideCount + m_bRemainFlag; i++)
-		Safe_Delete_Array(m_pPxTerrainVtx[i]);		
-		
+		Safe_Delete_Array(m_pPxTerrainVtx[i]);
+
 	Safe_Delete_Array(m_pPxTerrainVtx);
 	Safe_Delete_Array(m_pPxTerrainIdx_Divide);
 	Safe_Delete_Array(m_pPxTerrainIdx_Remain);

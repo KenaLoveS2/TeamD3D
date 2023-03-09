@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_02.MI_DeadzoneWalls_02'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneHearts/Wall/Materials/MI_DeadzoneWalls_02.MI_DeadzoneWalls_02'
+        MaterialSlotName = MI_DeadzoneWalls_04
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 756.317, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.0356293, Y=0.851097, Z=0.294449 }
+    BoxExtent = { X=83.4993, Y=59.8966, Z=62.7755 }
+    SphereRadius = 90.9676
+}

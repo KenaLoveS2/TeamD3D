@@ -49,15 +49,38 @@ void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
 
 void CLayer::Delete_AllObjLayer(_int iRoomIndex)
 {
-	for (auto& Pair : m_GameObjects)
+	/*for (auto& Pair : m_GameObjects)
 	{
 		if (dynamic_cast<CEnviromentObj*>(Pair.second) == nullptr)
 			return;
 
-		if(iRoomIndex ==  static_cast<CEnviromentObj*>(Pair.second)->Get_RoomIndex())
+
+		if (iRoomIndex == static_cast<CEnviromentObj*>(Pair.second)->Get_RoomIndex())
+		{
 			Safe_Release(Pair.second);
-	}
+			m_GameObjects.erase(Pair.first);
+		}
+	}*/
 	
+
+	for (auto Iter = m_GameObjects.begin(); Iter != m_GameObjects.end();)
+	{
+		if (dynamic_cast<CEnviromentObj*>(Iter->second) == nullptr)
+		{
+			++Iter;
+		}
+
+		if (iRoomIndex == static_cast<CEnviromentObj*>(Iter->second)->Get_RoomIndex())
+		{
+			Safe_Release(Iter->second);
+
+			Iter = m_GameObjects.erase(Iter);
+		}
+		else
+			++Iter;
+
+	}
+
 
 }
 

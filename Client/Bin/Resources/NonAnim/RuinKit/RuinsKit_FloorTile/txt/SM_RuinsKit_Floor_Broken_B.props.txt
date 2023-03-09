@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Floor.MI_Ruins_Floor'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/RuinsKit/Materials/MI_Ruins_Floor.MI_Ruins_Floor'
+        MaterialSlotName = RuinFloor
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1246.47, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0, Y=3.05176e-05, Z=0.872444 }
+    BoxExtent = { X=158.788, Y=162.917, Z=30.4761 }
+    SphereRadius = 217.707
+}

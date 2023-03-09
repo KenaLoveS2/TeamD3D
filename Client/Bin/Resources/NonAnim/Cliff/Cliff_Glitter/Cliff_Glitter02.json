@@ -3,13 +3,13 @@
   "1_First": [
     {
      "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Rock_Tile_01_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_RockTileableTexture_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
-      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_Black.png",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_Black.dds",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_Rock_Tile_02_N.png",
-      "7_MASK_path": "../Bin/Resources/NonAnim/Textures/T_CliffRock_02_Msk.png",
+      "7_MASK_path": "../Bin/Resources/NonAnim/Textures/T_CliffRock_02_Msk.dds",
       "8_SSS_MASK_path":  "NONE",
       "9_SPRINT_EMISSIVE_path":  "NONE",
       "10_HAIR_DEPTH_Path":  "NONE",

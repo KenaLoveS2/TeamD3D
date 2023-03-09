@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Terraces/Materials/MI_Shell_Field01.MI_Shell_Field01'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Level_Specific/World02/Backdrops/MI_GrassTile_W2_Backdrop.MI_GrassTile_W2_Backdrop'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Bridge/_Materials/MI_Dirt_Tile03.MI_Dirt_Tile03'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Terraces/Materials/MI_Shell_Field01.MI_Shell_Field01'
+        MaterialSlotName = Shell
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3388.45, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Level_Specific/World02/Backdrops/MI_GrassTile_W2_Backdrop.MI_GrassTile_W2_Backdrop'
+        MaterialSlotName = grass
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 3385.19, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Bridge/_Materials/MI_Dirt_Tile03.MI_Dirt_Tile03'
+        MaterialSlotName = dirt
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 301.863, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.891479, Y=-0.0148315, Z=13.9858 }
+    BoxExtent = { X=1079.43, Y=724.046, Z=166.171 }
+    SphereRadius = 1124.71
+}
