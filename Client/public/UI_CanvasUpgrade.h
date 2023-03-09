@@ -14,8 +14,9 @@ public:
 	enum UI_ORDER {
 		UI_PLAYERSKILL_START = 0, UI_PLAYERSKILL_END = 19,
 		UI_ROTSKILLS_START = 20, UI_ROTSKILL_END = 23, 
-		UI_EFFECT_RING, UI_EFFECT_BLUE,
-		UI_LOCK_START,
+		UI_EFFECT_RING = 24, UI_EFFECT_BLUE = 25,
+		UI_LOCK_START = 26, UI_LOCK_END = 45,
+		UI_SKILLNAME = 46, UI_SKILLCOND = 47,
 		UI_END
 	};
 
@@ -46,6 +47,7 @@ private:
 
 private:
 	void		Picking();
+	void		Spread();
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);

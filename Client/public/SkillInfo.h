@@ -25,10 +25,11 @@ private:
 	CSkillInfo();
 	virtual ~CSkillInfo() = default;
 public:
+	SKILLDESC	Get_SkillDesc(_uint iLevel) { return m_tDesc[iLevel]; }
 	string		Get_TypeName() { return m_strType; }
 	_tchar*		Get_TextureProtoTag() { return m_pTextureProtoTag; }
 public:
-	wstring		UnLock(_uint iLevel);
+	void 		UnLock(_uint iLevel) { m_tDesc[iLevel].eState = STATE_UNLOCKED; }
 	CHECK		Check(_uint iLevel);
 private:
 	HRESULT		Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath);

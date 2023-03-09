@@ -7,7 +7,7 @@
             "Desc": "화살설명0",
             "Condition": [
                 {
-                    "PrevSkill" : 0,
+                    "PrevSkill" : -1,
                     "RotLevel"  : 1,
                     "Karma"     : 50
                 }
@@ -21,7 +21,7 @@
             "Desc": "화살설명1",
             "Condition": [
                 {
-                    "PrevSkill" : 0,
+                    "PrevSkill" : -1,
                     "RotLevel"  : 1,
                     "Karma"     : 100
                 }
@@ -49,7 +49,7 @@
             "Desc": "화살설명3",
             "Condition": [
                 {
-                    "PrevSkill" : 0,
+                    "PrevSkill" : -1,
                     "RotLevel"  : 3,
                     "Karma"     : 200
                 }

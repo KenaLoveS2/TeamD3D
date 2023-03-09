@@ -34,6 +34,9 @@
 /* CanvasUpgrade */
 #include "UI_CanvasUpgrade.h"
 #include "UI_NodeSkill.h"
+#include "UI_NodeSkillName.h"
+#include "UI_NodeSkillDesc.h"
+#include "UI_NodeSkillCond.h"
 
 /* CanvasInventoryHeader */
 #include "UI_CanvasInvHeader.h"
@@ -304,6 +307,22 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SelectedCircle");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_TitleBrush"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/T_BrushStroke_AlphaOnly.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_TitleBrush");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CountDown"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Countdown.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CountDown");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleBar"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/T_ProgressBarBGRounded.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SimpleBar");
+
+
 
 	/********************************************/
 	/*				For. InvHeader				*/
@@ -327,6 +346,10 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Rot_Glow_128.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_NumRotsIcon");
+
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -353,8 +376,11 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTest");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaChange");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlphaTestGuage");
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "One_Effect(Terrain)"); /* temp */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlpha"); 
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaTexture");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTestColor");
+
 
 
 																					 /* Event List */
@@ -526,6 +552,19 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillName"), CUI_NodeSkillName::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillName");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillDesc"), CUI_NodeSkillDesc::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillDesc");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillCondition"), CUI_NodeSkillCond::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillCondition");
+
 
 
 	/********************************************/

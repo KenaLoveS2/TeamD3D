@@ -85,6 +85,9 @@ HRESULT CUI_NodeCrystal::Render()
 		vNewPos /* position */,
 		0.f, _float2(0.9f,0.9f)/* size */,
 		XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+
+	Safe_Delete_Array(str);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 

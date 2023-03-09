@@ -250,18 +250,6 @@
     <Filter Include="02.GameObjects\UI\04. Events\Transform">
       <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade">
-      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05. Spirits">
-      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills">
-      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader">
-      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\05. Real Object">
       <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
     </Filter>
@@ -289,8 +277,23 @@
     <Filter Include="02.GameObjects\Monster\MonsterWeapon">
       <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency">
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. Spirits">
+      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade">
+      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills">
+      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader">
+      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency">
       <UniqueIdentifier>{a6cd374a-a4de-43a3-ba84-f05c3632b1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab">
+      <UniqueIdentifier>{6414a1b2-8ab6-46fc-8f64-b148da3aa9db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -641,7 +644,7 @@
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasUpgrade.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GroundMark.h">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
@@ -680,25 +683,34 @@
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClInclude>
     <ClInclude Include="UI_NodeRotSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SkillInfo.h">
       <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasInvHeader.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeCrystal.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeKarma.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeNumRots.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillDesc.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillName.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillCond.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1028,7 +1040,7 @@
       <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GroundMark.cpp">
       <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
@@ -1067,25 +1079,34 @@
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClCompile>
     <ClCompile Include="UI_NodeRotSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\04. Upgrade\Skills</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SkillInfo.cpp">
       <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_CanvasInvHeader.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeCrystal.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeKarma.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeNumRots.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\06. InvHeader\currency</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillName.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillCond.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

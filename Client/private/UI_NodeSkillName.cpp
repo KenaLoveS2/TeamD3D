@@ -1,20 +1,39 @@
 #include "stdafx.h"
-#include "..\public\UI_NodeNumRots.h"
+#include "..\public\UI_NodeSkillName.h"
 #include "GameInstance.h"
 
-CUI_NodeNumRots::CUI_NodeNumRots(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CUI_Node(pDevice,pContext)
-	, m_iNumRots(0)
+CUI_NodeSkillName::CUI_NodeSkillName(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI_Node(pDevice, pContext)
+	, m_szName(nullptr)
+	, m_fFontPos(0.f)
+	, m_fTextureScale(0.f)
 {
 }
 
-CUI_NodeNumRots::CUI_NodeNumRots(const CUI_NodeNumRots & rhs)
+CUI_NodeSkillName::CUI_NodeSkillName(const CUI_NodeSkillName & rhs)
 	:CUI_Node(rhs)
-	, m_iNumRots(0)
+	, m_szName(nullptr)
+	, m_fFontPos(0.f)
+	, m_fTextureScale(0.f)
 {
 }
 
-HRESULT CUI_NodeNumRots::Initialize_Prototype()
+void CUI_NodeSkillName::Set_String(wstring str)
+{
+
+	Safe_Delete_Array(m_szName);
+	m_szName = CUtile::Create_String(str.c_str());
+
+	size_t length = str.length();
+
+	m_fFontPos = 20.f* (length - 4);
+	m_fTextureScale = 40.f * (length - 4);
+
+	m_matLocal._11 = m_matLocalOriginal._11 + m_fTextureScale;
+
+}
+
+HRESULT CUI_NodeSkillName::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -22,7 +41,7 @@ HRESULT CUI_NodeNumRots::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_NodeNumRots::Initialize(void * pArg)
+HRESULT CUI_NodeSkillName::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -40,15 +59,16 @@ HRESULT CUI_NodeNumRots::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CUI_NodeNumRots::Tick(_float fTimeDelta)
+void CUI_NodeSkillName::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
 
+
 	__super::Tick(fTimeDelta);
 }
 
-void CUI_NodeNumRots::Late_Tick(_float fTimeDelta)
+void CUI_NodeSkillName::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
@@ -56,7 +76,7 @@ void CUI_NodeNumRots::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CUI_NodeNumRots::Render()
+HRESULT CUI_NodeSkillName::Render()
 {
 	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
 		return E_FAIL;
@@ -66,7 +86,7 @@ HRESULT CUI_NodeNumRots::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHPBar");
+		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
 		return E_FAIL;
 	}
 
@@ -75,21 +95,25 @@ HRESULT CUI_NodeNumRots::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 20.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 45.f - m_fFontPos, g_iWinSizeY*0.5f - vPos.y -20.f };
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	_tchar* str = CUtile::StringToWideChar(to_string(m_iNumRots));
-	pGameInstance->Render_Font(TEXT("Font_Basic0"), str,
-		vNewPos /* position */,
-		0.f, _float2(0.9f, 0.9f)/* size */,
-		XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
-	Safe_Delete_Array(str);
+	
+	if (nullptr != m_szName)
+	{
+		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szName,
+			vNewPos /* position */,
+			0.f, _float2(0.9f, 0.9f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
+
+
 	return S_OK;
 }
 
-HRESULT CUI_NodeNumRots::SetUp_Components()
+HRESULT CUI_NodeSkillName::SetUp_Components()
 {
 	/* Renderer */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
@@ -107,7 +131,7 @@ HRESULT CUI_NodeNumRots::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CUI_NodeNumRots::SetUp_ShaderResources()
+HRESULT CUI_NodeSkillName::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -132,35 +156,37 @@ HRESULT CUI_NodeNumRots::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
 
-CUI_NodeNumRots * CUI_NodeNumRots::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_NodeSkillName * CUI_NodeSkillName::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CUI_NodeNumRots*	pInstance = new CUI_NodeNumRots(pDevice, pContext);
+	CUI_NodeSkillName*	pInstance = new CUI_NodeSkillName(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed To Create : CUI_NodeNumRots");
+		MSG_BOX("Failed To Create : CUI_NodeSkillName");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CUI_NodeNumRots::Clone(void * pArg)
+CGameObject * CUI_NodeSkillName::Clone(void * pArg)
 {
-	CUI_NodeNumRots*	pInstance = new CUI_NodeNumRots(*this);
+	CUI_NodeSkillName*	pInstance = new CUI_NodeSkillName(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed To Clone : CUI_NodeNumRots");
+		MSG_BOX("Failed To Clone : CUI_NodeSkillName");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CUI_NodeNumRots::Free()
+void CUI_NodeSkillName::Free()
 {
 	__super::Free();
+
+	Safe_Delete_Array(m_szName);
+
 }

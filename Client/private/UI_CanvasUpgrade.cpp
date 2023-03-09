@@ -4,6 +4,9 @@
 #include "SkillInfo.h"
 #include "UI_NodeSkill.h"
 #include "UI_NodeEffect.h"
+#include "UI_NodeSkillName.h"
+#include "UI_NodeSkillDesc.h"
+#include "UI_NodeSkillCond.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -97,11 +100,17 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 	{
 		if (m_pSelected != nullptr)
 		{
-			wstring returnMsg = m_pSkills[m_iPickedIndex/5]
-				->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
-			if (IDOK == MessageBox(NULL, returnMsg.c_str(), L"System Message", MB_OKCANCEL))
+			if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
+				m_pSkills[m_iPickedIndex / 5]
+				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level()))
 			{
-				static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
+				if (IDOK == MessageBox(NULL, L"잠금해제하시겠습니까?", L"System Message", MB_OKCANCEL))
+				{
+					m_pSkills[m_iPickedIndex / 5]
+						->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+
+					static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
+				}
 			}
 		}
 	}
@@ -243,6 +252,37 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 		}
 
 	}
+
+	/* SkillName */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_SkillName";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillName", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
+	/* SkillCond */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_SkillCondition";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillCondition", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
 	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -366,6 +406,8 @@ void CUI_CanvasUpgrade::Picking()
 				m_pSelected = static_cast<CUI_NodeSkill*>(m_vecNode[i]);
 				m_iPickedIndex = i;
 				m_pSelected->Picked(1.2f);
+				/* Spread Selected Skill's Information To Nodes */
+				Spread();
 
 				if (i >= UI_ROTSKILLS_START && i <= UI_ROTSKILL_END)
 				{
@@ -394,12 +436,19 @@ void CUI_CanvasUpgrade::Picking()
 
 }
 
+void CUI_CanvasUpgrade::Spread()
+{
+	CSkillInfo::SKILLDESC tDesc;
+	tDesc = m_pSkills[m_iPickedIndex / 5]->Get_SkillDesc(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+	static_cast<CUI_NodeSkillName*>(m_vecNode[UI_SKILLNAME])->Set_String(tDesc.wstrName);
+
+	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
+	static_cast<CUI_NodeSkillCond*>(m_vecNode[UI_SKILLCOND])->Set_Condition(tDesc, eCheck);
+
+}
+
 void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
-	if (eType == CUI_ClientManager::INV_UPGRADE)
-	{
-		m_bActive = true;
-	}
 	
 }
 

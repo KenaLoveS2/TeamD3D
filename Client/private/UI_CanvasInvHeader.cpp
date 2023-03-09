@@ -2,6 +2,9 @@
 #include "..\public\UI_CanvasInvHeader.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "UI_NodeCrystal.h"
+#include "UI_NodeKarma.h"
+#include "UI_NodeNumRots.h"
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -54,10 +57,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 	if (!m_bBindFinished)
 	{
 		if (FAILED(Bind()))
-		{
-			//	MSG_BOX("Bind Failed");
 			return;
-		}
 	}
 
 	if (!m_bActive)
@@ -68,6 +68,7 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 	{
 		CGameInstance::GetInstance()->Get_Back();
 		m_bActive = false;
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
 		return;
 	}
 
@@ -206,14 +207,23 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 
 void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
 {
-	/* Default */
-	if (eType == CUI_ClientManager::INV_)
+	switch (eType)
 	{
+	case CUI_ClientManager::INV_:
 		m_bActive = true;
 		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
+		break;
+	case CUI_ClientManager::INV_KARMA:
+		static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma((_int)fValue);
+		break;
+	case CUI_ClientManager::INV_NUMROTS:
+		static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots((_int)fValue);
+		break;
+	case CUI_ClientManager::INV_CRYSTAL:
+		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal((_int)fValue);
+		break;
 	}
-
 
 
 }

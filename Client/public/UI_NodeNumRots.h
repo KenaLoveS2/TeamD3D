@@ -12,6 +12,8 @@ private:
 
 public:
 	_int	Get_NumRots() { return m_iNumRots; }
+	void	Set_NumRots(_int iNum) { m_iNumRots = iNum; }
+
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;

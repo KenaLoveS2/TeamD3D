@@ -12,6 +12,7 @@ private:
 
 public:
 	_int	Get_Karma() { return m_iKarma; }
+	void	Set_Karma(_int iKarma) { m_iKarma = iKarma; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

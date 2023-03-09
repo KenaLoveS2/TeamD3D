@@ -138,6 +138,30 @@ PS_OUT PS_MAIN_AlphaBlend(PS_IN In)
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
 	return Out;
+} 
+PS_OUT PS_MAIN_ALPHATESTCOLOR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	Out.vColor.a *= g_fAlpha;
+
+	if (Out.vColor.a > 0.9)
+		Out.vColor.rgb = g_vColor.rgb;
+	else
+		discard;
+	//Out.vColor.rbg = saturate(Out.vColor.rgb);
+
+	return Out;
+}
+PS_OUT PS_MAIN_ONLYALPHA(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor.rgb = 0.f;
+	Out.vColor.a = g_Texture.Sample(LinearSampler, In.vTexUV).r;
+
+	return Out;
 }
 
 PS_OUT PS_MAIN_ALPHACHANGE(PS_IN In)
@@ -448,7 +472,7 @@ PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
 
 		// 채도 보존
 		float4 result = lerp(grayColor, vDiffuse, 0.1);
-		Out.vColor.rgb = result;
+		Out.vColor.rgb = result.rgb;
 		Out.vColor.a = vDiffuse.a;
 	}
 	else
@@ -679,5 +703,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_MASKALPHA();
+	}
+
+	pass OnlyAlphaTexture // 17
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ONLYALPHA();
+	}
+
+	pass AlphaTestColor // 18
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ALPHATESTCOLOR();
 	}
 }

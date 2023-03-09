@@ -290,6 +290,9 @@
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
+    <ClInclude Include="..\public\UI_NodeSkillCond.h" />
+    <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
+    <ClInclude Include="..\public\UI_NodeSkillName.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -415,6 +418,9 @@
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />

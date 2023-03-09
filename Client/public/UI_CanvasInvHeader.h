@@ -8,7 +8,7 @@ class CUI_CanvasInvHeader final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_END };
+	enum UI_ORDER { UI_KARMA, UI_NUMROTS, UI_CRYSTAL, UI_END };
 private:
 	CUI_CanvasInvHeader(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasInvHeader(const CUI_CanvasInvHeader& rhs);

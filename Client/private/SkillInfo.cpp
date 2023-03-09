@@ -13,36 +13,34 @@ CSkillInfo::CSkillInfo()
 {
 }
 
-wstring CSkillInfo::UnLock(_uint iLevel)
-{
-	CHECK eResult = Check(iLevel);
-	wstring msg;
-	switch (eResult)
-	{
-	case CHECK_PREVSKILL:
-		msg = L"선행스킬을 해금하세요";
-		break;
-	case CHECK_ROTLEVEL:
-		msg = L"부식령 레벨 부족";
-		break;
-	case  CHECK_KARMA:
-		msg = L"카르마 부족";
-		break;
-	case CHECK_UNLOCKED_AVAILABLE:
-		msg = L"해금 하시겠습니까?";
-		break;
-	case CHECK_UNLOCKED_ALREADY:
-		msg = L"해금됨.";
-		break;
-	default:
-		msg = L"메롱";
-		break;
-	}
-	return msg;
-
-
-		
-}
+//void CSkillInfo::UnLock(_uint iLevel)
+//{
+//	/* return it can be unlocked. For Confirm window */
+	//CHECK eResult = Check(iLevel);
+	//wstring msg;
+	//switch (eResult)
+	//{
+	//case CHECK_PREVSKILL:
+	//	msg = L"선행 능력 필요";
+	//	break;
+	//case CHECK_ROTLEVEL:
+	//	msg = L"부식령 레벨 " + to_wstring(m_tDesc[iLevel].conditions[CHECK_ROTLEVEL]) + L" 필요";
+	//	break;
+	//case  CHECK_KARMA:
+	//	msg = L"카르마 부족";
+	//	break;
+	//case CHECK_UNLOCKED_AVAILABLE:
+	//	msg = L"업그레이드 가능";
+	//	break;
+	//case CHECK_UNLOCKED_ALREADY:
+	//	msg = L"추가 카르마 필요";
+	//	break;
+	//default:
+	//	msg = L"돌아가";
+	//	break;
+	//}
+	//return msg;
+//}
 
 CSkillInfo::CHECK CSkillInfo::Check(_uint iLevel)
 {

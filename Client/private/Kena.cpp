@@ -118,7 +118,7 @@ void CKena::Tick(_float fTimeDelta)
 		if (pGameInstnace->Key_Down(DIK_SPACE))
 		{
 			CPhysX_Manager::GetInstance()->Add_Force(m_szCloneObjectTag, _float3(0, 1.f, 0));
-			MSG_BOX("Jump");
+			//MSG_BOX("Jump");
 		}
 	RELEASE_INSTANCE(CGameInstance)
 
@@ -160,7 +160,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-	//CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
+	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
+	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+
 	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
@@ -171,8 +175,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
 		_float fTag = 0.f;
-		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		//m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
+		_float fCurrency[3] = {200.f, 13.f, 230.f};
+		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
+		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
+		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
+
+	//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
 
 	static _float fNum = 3.f;

@@ -1,18 +1,19 @@
 #pragma once
 #include "Client_Defines.h"
 #include "UI_Node.h"
+#include "SkillInfo.h"
 
 BEGIN(Client)
-class CUI_NodeCrystal final : public CUI_Node
+class CUI_NodeSkillCond final : public CUI_Node
 {
 private:
-	CUI_NodeCrystal(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
-	CUI_NodeCrystal(const CUI_NodeCrystal& rhs);
-	virtual ~CUI_NodeCrystal() = default;
-	
+	CUI_NodeSkillCond(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
+	CUI_NodeSkillCond(const CUI_NodeSkillCond& rhs);
+	virtual ~CUI_NodeSkillCond() = default;
+
 public:
-	_int	Get_Crystal() { return m_iCrystal; }
-	void	Set_Crystal(_int iCrystal) { m_iCrystal = iCrystal; }
+	void	Set_Condition(CSkillInfo::SKILLDESC tDesc, CSkillInfo::CHECK eCheck);
+
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -25,10 +26,13 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
-	_int	m_iCrystal;
+	CSkillInfo::CHECK		m_eCondition;
+	_float4					m_vColor;
+	_tchar*					m_szCondition;
+	_float					m_fFontPos;
 
 public:
-	static	CUI_NodeCrystal*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
+	static	CUI_NodeSkillCond*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr);
 	virtual void				Free() override;
 };
