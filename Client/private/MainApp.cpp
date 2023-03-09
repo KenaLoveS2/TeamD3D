@@ -9,6 +9,7 @@
 #include "LoadingIcon.h"
 
 #include "UI_ClientManager.h"
+#include "Monster_Status.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -219,6 +220,9 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	Safe_AddRef(m_pRenderer);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", CStateMachine::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", CMonster_Status::Create(m_pDevice, m_pContext)), E_FAIL);
+	
 
 	return S_OK;
 }

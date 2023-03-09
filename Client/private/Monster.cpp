@@ -221,11 +221,34 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 {
 }
 
+HRESULT CMonster::SetUp_Components()
+{
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+
+	return S_OK;
+}
+
 void CMonster::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMonsterStatusCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
+}
+
+_int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget)
+	{
+		if (iColliderIndex == COL_PLAYER_WEAPON)
+		{
+			// Å¸°Ý
+		}
+	}
+
+	return 0;
 }

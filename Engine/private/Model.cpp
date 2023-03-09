@@ -96,7 +96,7 @@ void CModel::Set_PlayTime(_double dPlayTime)
 }
 
 HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix,
-	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath)
+	const _tchar * pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing, const char*  JsonMatrialPath, _bool bUseTriangleMeshActor)
 {
 	if (JsonMatrialPath == nullptr)
 		JsonMatrialPath = "NULL";
@@ -206,7 +206,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			}
 			else   // For.origin Mesh
 			{
-				CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
+				CMesh *pMesh = CMesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
 				if (pMesh == nullptr) return E_FAIL;
 
 				m_Meshes.push_back(pMesh);
@@ -1283,10 +1283,10 @@ HRESULT CModel::Load_BoneAnimation(HANDLE & hFile, DWORD & dwByte)
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath,
-	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial)
+	_bool bIsLod, _bool bIsInstancing, const char* JsonMatrial, _bool bUseTriangleMeshActor)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing, JsonMatrial)))
+	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PivotMatrix, pAdditionalFilePath, bIsLod, bIsInstancing, JsonMatrial, bUseTriangleMeshActor)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
@@ -1474,11 +1474,11 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
 
-void CModel::Create_PxTriangle()
+void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
 	for (auto &iter : m_Meshes)
 	{
-		iter->Create_PxTriangleData();
+		iter->Create_PxTriangleMeshActor(pUserData);
 	}
 }
 
@@ -2152,7 +2152,7 @@ void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pM
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _float3 vPivotDist)
+void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2166,7 +2166,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	BoxDesc.eType = BOX_STATIC;
 	BoxDesc.pActortag = pActorName;
 	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
-	BoxDesc.vSize = _float3(fLenX, fLenY, fLenZ);
+	BoxDesc.vSize = _float3(fLenX * 0.5f * 0.5f, fLenY * 0.5f, fLenZ * 0.5f * 0.5f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = true;
@@ -2180,6 +2180,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	//_float fDensity, fAngularDamping, fMass, fLinearDamping;
 	//_bool bCCD;
 
-	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false));
-	pConnectTransform->Connect_PxActor_Static(pActorName, vPivotDist);
+	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
+	pConnectTransform->Connect_PxActor_Static(pActorName, _float3(0.f, BoxDesc.vSize.y, 0.f));
+	pConnectTransform->Set_WorldMatrix(pConnectTransform->Get_WorldMatrix());
 }

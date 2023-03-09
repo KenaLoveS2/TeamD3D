@@ -98,7 +98,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fStaticFriction = 0.5f;
 	PxCapsuleDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -1587,23 +1587,30 @@ void CKena::Free()
 	Safe_Release(m_pRendererCom);
 }
 
-_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos)
+_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	/* Terrain */
-	if (pTarget == nullptr)
+	if (m_bJump)
 	{
-		m_bOnGround = true;
-		m_bJump = false;
-		m_bPulseJump = false;
-		m_fCurJumpSpeed = 0.f;
+		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
+		{
+			m_bOnGround = true;
+			m_bJump = false;
+			m_bPulseJump = false;
+			m_fCurJumpSpeed = 0.f;
+		}
 	}
-	/* Other Actors */
 	else
 	{
-		m_bCommonHit = true;
-		//m_bHeavyHit = true;
-	}
+		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
 
+		if (iColliderIndex == COL_MONSTER_WEAPON)
+		{
+			m_bCommonHit = true;
+			//m_bHeavyHit = true;
+		}
+	}
+	
 	return 0;
 }
 void CKena::Test_Raycast()
@@ -1631,8 +1638,7 @@ void CKena::Test_Raycast()
 		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
 		{
 			m_pTerrain->Set_BrushPosition(vOut);
-			// m_pGroundMark->Set_Position(vOut);
-
+			
 			if (GetKeyState('R') & 0x8000)
 			{	
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
@@ -1642,9 +1648,9 @@ void CKena::Test_Raycast()
 				}			
 			}			
 		}
-		else
-		{
-
-		}
+	}
+	else
+	{
+		m_pTerrain->Set_BrushPosition(_float3(-1000.f, 0.f , 0.f));
 	}
 }
