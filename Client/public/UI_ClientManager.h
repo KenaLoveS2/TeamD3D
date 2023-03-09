@@ -13,6 +13,7 @@ END
 and all works are done before Imgui_UIEditor Starts. */
 BEGIN(Client)
 class CUI_NodeEffect;
+class CUI_CanvasConfirm;
 class CUI_ClientManager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_ClientManager);
@@ -59,10 +60,12 @@ public:
 	CUI_Canvas*				Get_Canvas(UI_CANVAS eID);
 	void					Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect);
 	CUI_NodeEffect*			Get_Effect(UI_EFFECT eID);
+	void					Call_ConfirmWindow(wstring msg, _bool bActive);
 
 private:
 	vector<CUI_Canvas*>		m_vecCanvas;
 	vector<CUI_NodeEffect*>	m_vecEffects;
+	CUI_CanvasConfirm*		m_pConfirmWindow;
 
 public:
 	virtual void Free() override;

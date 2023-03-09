@@ -261,6 +261,7 @@
     <ClInclude Include="..\public\UI_CanvasAim.h" />
     <ClInclude Include="..\public\UI_CanvasAmmo.h" />
     <ClInclude Include="..\Public\Tree.h" />
+    <ClInclude Include="..\public\UI_CanvasConfirm.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
     <ClInclude Include="..\public\UI_CanvasInvHeader.h" />
     <ClInclude Include="..\public\UI_CanvasUpgrade.h" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
+    <ClInclude Include="..\public\UI_NodeButton.h" />
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
@@ -389,6 +391,7 @@
     <ClCompile Include="..\private\UI_CanvasAim.cpp" />
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp" />
     <ClCompile Include="..\Private\Tree.cpp" />
+    <ClCompile Include="..\private\UI_CanvasConfirm.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
     <ClCompile Include="..\private\UI_CanvasInvHeader.cpp" />
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp" />
@@ -405,6 +408,7 @@
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
+    <ClCompile Include="..\private\UI_NodeButton.cpp" />
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />

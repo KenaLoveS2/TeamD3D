@@ -66,8 +66,8 @@ CSkillInfo::CHECK CSkillInfo::Check(_uint iLevel)
 	if (iKarma < m_tDesc[iLevel].conditions[CONDITION_KARMA])
 		return CHECK_KARMA;
 
-	m_tDesc[iLevel].eState = STATE_UNLOCKED;
 	return CHECK_UNLOCKED_AVAILABLE;
+
 }
 
 HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath)

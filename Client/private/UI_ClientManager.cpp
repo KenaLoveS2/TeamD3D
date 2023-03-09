@@ -46,6 +46,9 @@
 
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
+/* Confirm Window */
+#include "UI_CanvasConfirm.h"
+#include "UI_NodeButton.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -56,6 +59,8 @@ CUI_ClientManager::CUI_ClientManager()
 
 	for (_uint i = 0; i < CANVAS_END; ++i)
 		m_vecCanvas.push_back(nullptr);
+
+	m_pConfirmWindow = nullptr;
 }
 
 HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -348,6 +353,37 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_NumRotsIcon");
 
 
+	/********************************************/
+	/*				For. Common_Confirm			*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ConfirmWindow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UIBGBox_Alpha.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ConfirmWindow");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLight"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLight");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightCenter"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Centered.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightCenter");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightGlow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Glow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlow");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightGlowCenter"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Centered_Glow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlowCenter");
+
+
+
+
 
 
 
@@ -575,7 +611,21 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
 
-	
+	/********************************************/
+	/*				For. Confirm				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Confirm"), CUI_CanvasConfirm::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Confirm");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Button"), CUI_NodeButton::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Button");
+
+
+
+
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -661,6 +711,9 @@ void CUI_ClientManager::Set_Canvas(UI_CANVAS eID, CUI_Canvas * pCanvas)
 	if (eID < 0 || eID >= m_vecCanvas.size() || pCanvas == nullptr)
 		return;
 	m_vecCanvas[eID] = pCanvas;
+
+	if (eID == CANVAS_CONFIRM)
+		m_pConfirmWindow = static_cast<CUI_CanvasConfirm*>(pCanvas);
 }
 
 CUI_Canvas * CUI_ClientManager::Get_Canvas(UI_CANVAS eID)
@@ -682,6 +735,22 @@ CUI_NodeEffect * CUI_ClientManager::Get_Effect(UI_EFFECT eID)
 	if (eID < 0 || eID >= m_vecEffects.size())
 		return nullptr;
 	return m_vecEffects[eID];
+}
+
+void CUI_ClientManager::Call_ConfirmWindow(wstring msg, _bool bActive)
+{
+	if (nullptr == m_pConfirmWindow)
+		return;
+
+	if (false == bActive)
+	{
+		m_pConfirmWindow->Set_Active(false);
+		return;
+	}
+
+	m_pConfirmWindow->Set_Active(true);
+	m_pConfirmWindow->Set_Message(msg);
+
 }
 
 void CUI_ClientManager::Free()

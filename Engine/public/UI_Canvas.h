@@ -5,6 +5,9 @@ BEGIN(Engine)
 class ENGINE_DLL CUI_Canvas abstract : public CUI
 {
 public:
+	enum	ORDER_GROUP { ORDER_NORMAL, ORDER_LAST, ORDER_END };
+
+public:
 	CUI_Canvas(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_Canvas(const CUI_Canvas& rhs);
 	virtual ~CUI_Canvas() = default;
@@ -14,6 +17,8 @@ public:
 			return nullptr;
 		return m_vecNode[m_iSelectedNode];
 	}
+public:
+	ORDER_GROUP			m_eOrderGroup;
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -42,6 +47,7 @@ public:
 //	virtual	void	Call_CanvasFunction(_int iParam1, _int iParam2) {};
 
 protected:
+
 	vector<string>		m_vecNodeCloneTag;
 	vector<CUI*>		m_vecNode;
 	_bool				m_bBindFinished;
