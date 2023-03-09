@@ -237,6 +237,8 @@ HRESULT CUI_Node::Load_Data(wstring fileName)
 
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
+	m_matLocalOriginal = m_matLocal;
+
 	return S_OK;
 }
 
