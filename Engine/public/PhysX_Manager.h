@@ -81,7 +81,10 @@ private:
 	map<const _tchar*, PxRigidActor*> m_DynamicActors;
 	map<const _tchar*, PxRigidActor*> m_DynamicColliders;
 
+	map<const _tchar*, PxRigidActor*> m_Triggers;
+
 	list<PX_USER_DATA*> m_UserDataes;
+	list<PX_TRIGGER_DATA*> m_TriggerDataes;
 
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pContext = nullptr;
@@ -117,6 +120,7 @@ public:
 
 	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
 	
+	void Create_Trigger(PX_TRIGGER_DATA* pTriggerData);
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
