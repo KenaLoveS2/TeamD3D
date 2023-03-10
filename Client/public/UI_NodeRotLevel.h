@@ -11,7 +11,7 @@ private:
 	virtual ~CUI_NodeRotLevel() = default;
 
 public:
-	void	Set_Info(_int iLevel, wstring str);
+	void	Set_Info(_int iLevel, _int iTotal, _int iNow);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -27,6 +27,8 @@ private:
 private:
 	_tchar*					m_szInfo;
 	_int					m_iLevel;
+	_int					m_iRotTotal;
+	_int					m_iRotNow;
 
 public:
 	static	CUI_NodeRotLevel*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
