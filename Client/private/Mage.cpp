@@ -68,7 +68,7 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this,true,COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -121,7 +121,7 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false,COL_MONSTER_WEAPON));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);

@@ -32,6 +32,10 @@ Texture2D<float4>		g_ShadowTexture;
 Texture2D<float4>		g_MtrlAmbientTexture;
 Texture2D<float4>		g_SSAOTexture;
 
+
+
+
+
 float3 CalculateDiffuse(float3 albedo, float3 normal, float3 lightColor, float3 lightDirection)
 {
 	float ndl = max(0, dot(lightDirection, normal));
@@ -191,7 +195,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
 	PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
 
-	vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
@@ -200,20 +204,28 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 	vector		vWorldPos;
+
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
 	vWorldPos *= fViewZ;
+
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
+
 	float			fAO = vAmbientDesc.r;
 	float			fRoughness = vAmbientDesc.g;
 	float			fMetalic = vAmbientDesc.b;
 
-	// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
+	float3 N = normalize(vNormal.xyz);
+	float3 V = normalize(vLook.xyz) * -1.f;
+	float3 L = normalize(g_vLightDir.xyz) * -1.f;
+	float3 H = normalize(V + L);
+
 	/* first algorithm */
 	/* float3		Lo = (float3)0.f;
 	float3		P = vWorldPos.xyz;
@@ -265,29 +277,40 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (float4)1.f;*/
 
 	/* fourth algorithm */
-	//Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic, fRoughness, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular)
-	//					* vSSAODesc.r * fAO;
-
+	//Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz, fMetalic, fRoughness,
+	//		g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular)
+	//		* vSSAODesc.r * fAO;
 	//Out.vShade.a = vDiffuse.a;
 	//Out.vSpecular = (float4)1.f;
 
-	if (fAO == 1.f && fRoughness == 1.f && fMetalic == 1.f)
-	{
-		Out.vShade = vDiffuse * g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient + vSSAODesc.r));
-		Out.vShade.a = vDiffuse.a;
+	/* five algorithm */
+	float4 DiffuseLight = g_vLightDiffuse;
+	float4 AmbientLight = g_vLightAmbient;
 
-		Out.vSpecular = (g_vLightSpecular)* pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
-		Out.vSpecular.a = 0.f;
-	}
-	else
-	{
-		Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz, fMetalic, fRoughness,
-			g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular)
-			* vSSAODesc.r * fAO;
+	DiffuseLight *= 5.f;
+	AmbientLight *= 5.f;
 
-		Out.vShade.a = vDiffuse.a;
-		Out.vSpecular = (float4)1.f;
-	}
+	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), DiffuseLight.rgb, fMetalic);
+
+	// Fresnel term
+	float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
+
+	// Roughness term
+	float alpha = fRoughness * fRoughness;
+
+	// Geometric attenuation
+	float G = smith_G1(V, N, alpha) * smith_G1(N, L, alpha);
+
+	// Specular (reflection) term
+	float3 D = disney_D(H, N, L, alpha, fMetalic);
+	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
+
+	// Diffuse (Lambertian) term
+	float3 diffuse = DiffuseLight / PI;
+
+	// Final color
+	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight))) * vSSAODesc.r;
+	Out.vSpecular = float4(specular * dot(N, L), 1.f);
 
 	return Out;
 }
@@ -350,7 +373,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) /*+ vSpecular * 0.001f*/;
+	Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/;
 	//Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
 	//Out.vColor = vShade;
 

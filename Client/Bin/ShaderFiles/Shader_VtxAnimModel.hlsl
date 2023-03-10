@@ -23,6 +23,8 @@ Texture2D<float4>		g_HairDepthTexture;
 Texture2D<float4>		g_HairAlphaTexture;
 Texture2D<float4>		g_HairRootTexture;
 
+Texture2D<float4>		g_DetailNormal;
+
 /* Kena Bow_String Texture */
 Texture2D		g_NoiseTexture;
 Texture2D		g_SwipeTexture;
@@ -223,7 +225,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	vector		vEmissive			 = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
 	vector		vNormalDesc	 = g_NormalTexture.Sample(LinearSampler, vTexUV);
 
-	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3		vNormal = (vNormalDesc.xyz) * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 

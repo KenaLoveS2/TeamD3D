@@ -115,7 +115,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		PxSphereDesc.fStaticFriction = 0.5f;
 		PxSphereDesc.fRestitution = 0.1f;
 
-		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false));
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false,COL_MONSTER_WEAPON));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);

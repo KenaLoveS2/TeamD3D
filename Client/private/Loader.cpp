@@ -1794,10 +1794,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* ~Monster */
 	m_fCur += 1.f;
 
-	lstrcpy(m_szLoadingText, TEXT("Loading End."));
-
-	m_fCur += 1.f;
-
 	m_isFinished = true;
 
 	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
