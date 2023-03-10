@@ -162,6 +162,8 @@ void CBone::Set_BoneLocked(LOCKTO eLockTo)
 	}
 	else if (eLockTo == CBone::LOCKTO_ALONE)
 		m_bLock = true;
+	else if (eLockTo == CBone::LOCKTO_ROTATE)
+		m_bRotateLock = true;
 	else if (eLockTo == CBone::UNLOCKTO_CHILD)
 	{
 		m_bLock = false;

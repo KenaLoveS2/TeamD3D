@@ -47,6 +47,18 @@ HRESULT CAnimation::Save_Animation(HANDLE & hFile, DWORD & dwByte)
 		}
 	}
 
+	_uint	iEventCnt = (_uint)m_mapEvent.size();
+	WriteFile(hFile, &iEventCnt, sizeof(_uint), &dwByte, nullptr);
+
+	_uint	iEventTagLen = 0;
+	for (auto& Pair : m_mapEvent)
+	{
+		WriteFile(hFile, &Pair.first, sizeof(_float), &dwByte, nullptr);
+		iEventTagLen = _uint(Pair.second.length()) + 1;
+		WriteFile(hFile, &iEventTagLen, sizeof(_uint), &dwByte, nullptr);
+		WriteFile(hFile, Pair.second.c_str(), sizeof(char) * iEventTagLen, &dwByte, nullptr);
+	}
+
 	return S_OK;
 }
 
@@ -78,6 +90,24 @@ HRESULT CAnimation::Load_Animation(HANDLE & hFile, DWORD & dwByte)
 		FAILED_CHECK_RETURN(pChannel->Load_Channel(hFile, dwByte), E_FAIL);
 
 		m_Channels.push_back(pChannel);
+	}
+
+	_uint	iEventCnt = 0;
+	ReadFile(hFile, &iEventCnt, sizeof(_uint), &dwByte, nullptr);
+
+	_uint	iEventTagLen = 0;
+	_float	fEventTime = 0.f;
+	char*	pEventTag = nullptr;
+	for (_uint i = 0; i < iEventCnt; ++i)
+	{
+		ReadFile(hFile, &fEventTime, sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &iEventTagLen, sizeof(_uint), &dwByte, nullptr);
+		pEventTag = new char[iEventTagLen];
+		ReadFile(hFile, pEventTag, sizeof(char) * iEventTagLen, &dwByte, nullptr);
+
+		m_mapEvent.emplace(fEventTime, string(pEventTag));
+
+		Safe_Delete_Array(pEventTag);
 	}
 
 	return S_OK;
@@ -347,7 +377,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
 		if (pBlendAnim == nullptr)
 		{
@@ -433,7 +463,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 
 			if (m_Channels[i]->Get_BoneLocked() == true)
 			{
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
+				//m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
 				continue;
 			}
 
@@ -452,7 +482,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 
 			if (m_Channels[i]->Get_BoneLocked() == true)
 			{
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
+				//m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
 				continue;
 			}
 
@@ -499,12 +529,12 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
 			continue;
 
-		if (m_Channels[i]->Get_BoneLocked() == true)
+		if (m_Channels[i]->Get_BoneLocked() == true /*|| !strcmp(m_Channels[i]->Get_Name(), "staff_root_jnt")*/)
 		{
-			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
+			//m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 			continue;
 		}
-
+		
 		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
 			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 		else
@@ -513,6 +543,34 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 
 	if (m_isFinished && m_isLooping)
 		m_PlayTime = 0.0;
+}
+
+void CAnimation::Blend_BoneMatrices(_float fBlendRatio, _smatrix * matPreAnimBones, _smatrix * matCurAnimBones, const string & strRootBone)
+{
+	NULL_CHECK_RETURN(matPreAnimBones, );
+	NULL_CHECK_RETURN(matCurAnimBones, );
+
+	_vector	vScale, vRotate, vPosition;
+	_vector	vPreScale, vPreRotate, vPrePosition;
+	_vector	vCurScale, vCurRotate, vCurPosition;
+
+	for (_uint i = 1; i < m_iNumChannels; ++i)
+	{
+		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
+			continue;
+
+		XMMatrixDecompose(&vPreScale, &vPreRotate, &vPrePosition, matPreAnimBones[i]);
+		XMMatrixDecompose(&vCurScale, &vCurRotate, &vCurPosition, matCurAnimBones[i]);
+
+		vScale = XMVectorLerp(vPreScale, vCurScale, fBlendRatio);
+		vRotate = XMQuaternionSlerp(vPreRotate, vCurRotate, fBlendRatio);
+		vPosition = XMVectorLerp(vPrePosition, vCurPosition, fBlendRatio);
+		vPosition = XMVectorSetW(vPosition, 1.f);
+
+		m_Channels[i]->Set_BoneTranfromMatrix(XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotate, vPosition));
+
+		matPreAnimBones[i] = matCurAnimBones[i];
+	}
 }
 
 void CAnimation::Reverse_Play(_float fTimeDelta)
