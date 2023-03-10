@@ -53,7 +53,6 @@ public:
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 
-
 	
 public:
 	virtual HRESULT Initialize_Prototype();

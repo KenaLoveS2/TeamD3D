@@ -408,7 +408,8 @@ HRESULT CInstancing_Mesh::Initialize(void * pArg, CGameObject * pOwner)
 
 HRESULT CInstancing_Mesh::Tick(_float fTimeDelta)
 {
-	/*메쉬_인스턴싱_이펙트 일때 여기 사용*/
+	///*메쉬_인스턴싱_이펙트 일때 여기 사용*/
+	//
 	//D3D11_MAPPED_SUBRESOURCE			SubResource;
 	//ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
@@ -477,6 +478,52 @@ void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix Pi
 			* pBone->Get_CombindMatrix()
 			* PivotMatrix);
 	}
+}
+
+void CInstancing_Mesh::Instaincing_MoveControl(_int iOption,_float fTimeDelta)
+{
+	if (iOption == (_int)INST_MOVE_UP)
+	{
+		D3D11_MAPPED_SUBRESOURCE			SubResource;
+		ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+		m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			if(m_vecOriginYPos[i] <=((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+				continue;
+
+			_float fMaxSpeed = fmax((i + 1)*1.5f, 3.f);
+
+
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed) * fTimeDelta;
+			
+		}
+
+		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	}
+
+
+}
+
+void CInstancing_Mesh::Instaincing_GimmkicInit(_int iOption)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	if (iOption == _int(INST_MOVE_UP))
+	{
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			m_vecOriginYPos.push_back(((VTXMATRIX*)SubResource.pData)[i].vPosition.y);
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= 10.f;
+		}
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
 }
 
 HRESULT CInstancing_Mesh::SetUp_BonePtr(CModel * pModel)

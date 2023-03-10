@@ -9,6 +9,9 @@ BEGIN(Engine)
 class CInstancing_Mesh  final : public CVIBuffer_Instancing
 {
 private:
+	enum INST_MOVE { INST_MOVE_UP, INST_MOVE_DOWN, INST_MOVE_LEFT, INST_MOVE_RIGHT, INST_MOVE_END};
+
+private:
 	CInstancing_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CInstancing_Mesh(const CInstancing_Mesh& rhs);
 	virtual ~CInstancing_Mesh() = default;
@@ -33,28 +36,38 @@ public:
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
+
+public:
+	void	Instaincing_MoveControl(_int iOption,_float fTimeDelta);
+
+	void	Instaincing_GimmkicInit(_int iOption);
+
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
 	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
 
 private:				/*For.OriginMeshData*/
-	CModel::TYPE				m_eType;
+	CModel::TYPE						m_eType;
 	_uint								m_iMaterialIndex = 0;  /* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
 	_uint								m_iNumBones = 0; /* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
-	vector<class CBone*>	m_Bones;
-	string*							m_pBoneNames = nullptr;
-	VTXMODEL*					m_pNonAnimVertices = nullptr;
-	FACEINDICES32*			m_pIndices = nullptr;
+	vector<class CBone*>				m_Bones;
+	string*								m_pBoneNames = nullptr;
+	VTXMODEL*							m_pNonAnimVertices = nullptr;
+	FACEINDICES32*						m_pIndices = nullptr;
 
 private:		/*for.Lod */
 	_bool							m_bLodMesh = false;
 
 private:		/*For.Instancing*/
-	//_double*					m_pSpeeds = nullptr;
-	vector<_float4>			m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
+	vector<_float4>						m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
 	_uint								m_iOriginNumPrimitive = 0;			// 기존 NumPrimitive Data
 	_uint								m_iIncreaseInstancingNumber = 0;
+	
+	vector<_float>						m_vecOriginYPos;
+	_float								m_fIncreaseYPos = 0.f;
+
+
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 private:

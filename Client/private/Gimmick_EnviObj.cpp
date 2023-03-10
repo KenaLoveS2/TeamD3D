@@ -4,6 +4,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
+/* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -35,9 +36,32 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
+{
+	//if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_GO_UP)
+	//m_pModelCom->Instaincing_GimmkicInit(CGimmick_EnviObj::Gimmick_TYPE_GO_UP);
+
+	//else if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE)
+	//	m_pModelCom->Instaincing_MoveControl(CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE);
+
+	//else if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE)
+	//	m_pModelCom->Instaincing_MoveControl(CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE);
+
+	return S_OK;
+}
+
 void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if (pGameInstance->Key_Down(DIK_UP))
+		m_bGimmick_Active = !m_bGimmick_Active;
+
+	Gimmik_Start(Gimmick_TYPE_GO_UP,fTimeDelta);
+
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -67,6 +91,30 @@ HRESULT CGimmick_EnviObj::Render()
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
+}
+
+void CGimmick_EnviObj::Gimmik_Start(_int iRoomNumber, _float fTimeDelta)
+{
+	if (m_bGimmick_Active == false)
+		return;
+
+	switch (iRoomNumber)
+	{
+	case 0:
+		Gimmick_Go_up(fTimeDelta);
+		break;
+
+	default:
+		break;
+	}
+
+	//Gimmick_Go_up(fTimeDelta);
+}
+
+void CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
+{
+	m_pModelCom->Instaincing_MoveControl(_int(Gimmick_TYPE_GO_UP),fTimeDelta);
+
 }
 
 HRESULT CGimmick_EnviObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

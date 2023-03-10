@@ -38,6 +38,8 @@ private:
 	void														Imgui_TexturePathNaming();
 	void														Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
 	void														imgui_ObjectList_Clear();
+	void														imgui_Gimmic_Class_Viewr();
+
 
 private:		/*Logic*/
 	void														Imgui_Save_Func();
@@ -46,6 +48,8 @@ private:		/*Logic*/
 	void														Imgui_Create_Option_Reset();
 
 	void														Imgui_Maptool_Terrain_Selecte();
+
+
 
 
 private: /*For_Tool*/

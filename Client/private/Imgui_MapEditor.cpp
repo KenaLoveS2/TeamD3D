@@ -13,6 +13,8 @@
 
 #include "Imgui_Manager.h"
 #include "Imgui_TerrainEditor.h"
+#include "Gimmick_EnviObj.h"
+
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -50,6 +52,8 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_SelectObject_InstancingControl();
 		Imgui_Control_ViewerCamTransform();
 		imgui_ObjectList_Clear();
+
+		imgui_Gimmic_Class_Viewr();
 	}
 
 	ImGui::End();
@@ -750,7 +754,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
-
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -900,8 +904,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
-
 		pLoadObject->Late_Initialize();
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -994,6 +998,10 @@ void CImgui_MapEditor::imgui_ObjectList_Clear()
 	}
 }
 
+void CImgui_MapEditor::imgui_Gimmic_Class_Viewr()
+{
+}
+
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)
 {
 	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
@@ -1002,7 +1010,13 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 	if (false == pModel->Get_IStancingModel())
 		return;
 
+
 	pModel->Set_InstancePos(vecMatrixVec);
+
+	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
+		pModel->Instaincing_GimmkicInit(CGimmick_EnviObj::Gimmick_TYPE_GO_UP);
+	
+
 
 }
 

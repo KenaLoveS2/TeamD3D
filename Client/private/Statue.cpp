@@ -65,22 +65,19 @@ HRESULT CStatue::Render()
 			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 		}
 	}
 	else
 	{
-
-	
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, ONLY_MRAO);
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
-	}
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, ONLY_MRAO);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+		}
 	}
 	return S_OK;
 }

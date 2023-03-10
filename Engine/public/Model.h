@@ -71,7 +71,9 @@ public:
 	void					Play_Animation(_float fTimeDelta);
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
-
+			
+	void				Instaincing_GimmkicInit(_int iOption);
+	void				Instaincing_MoveControl(_int iOption,_float fTimeDelta);
 private:
 	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	
@@ -85,7 +87,7 @@ private:
 	vector<class CMesh*>		m_Meshes;	
 
 	_uint							m_iNumMaterials = 0;
-	vector<MODELMATERIAL>	m_Materials;			
+	vector<MODELMATERIAL>			m_Materials;			
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
@@ -139,7 +141,7 @@ public:
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-
+	
 	
 public:
 	void Create_PxTriangle(PX_USER_DATA *pUserData);
