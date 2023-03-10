@@ -18,9 +18,7 @@ void CUI_NodeSkillDesc::Set_String(wstring str)
 {
 	Safe_Delete_Array(m_szDesc);
 
-	m_szDesc = CUtile::Create_String(L"설명이다~");
-
-	//m_szDesc = CUtile::Create_String(str.c_str());
+	m_szDesc = CUtile::Create_String(str.c_str());
 }
 
 HRESULT CUI_NodeSkillDesc::Initialize_Prototype()
