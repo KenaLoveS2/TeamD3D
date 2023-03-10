@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\PhysX_Manager.h"
+#include "PhysX_Manager.h"
 #include "Utile.h"
 #include "String_Manager.h"
 #include "PipeLine.h"
@@ -62,6 +62,12 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
                                  PxFilterObjectAttributes attributes1, PxFilterData filterData1,
                                  PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+
 	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)		||
 		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
 		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON)		||
@@ -75,11 +81,6 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}	
-
-	//if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
-	//{
-	//	pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-	//}
 
 	pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eDETECT_CCD_CONTACT
@@ -250,8 +251,9 @@ void CPhysX_Manager::Render()
 		PxVec3 PxPos_0 = pose.pos0;
 		PxVec3 PxPos_1 = pose.pos1;
 
-		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1),_float4(0.f,1.f,0.f,1.f));
+		DX::DrawLine(m_pBatch, CUtile::ConvertPosition_PxToD3D(PxPos_0), CUtile::ConvertPosition_PxToD3D(PxPos_1), _float4(0.f,1.f,0.f,1.f));
 	}
+
 	m_pBatch->End();
 #endif // _DEBUG
 }
@@ -308,6 +310,11 @@ void CPhysX_Manager::Clear()
 	Px_Safe_Release(m_pFoundation);
 
 	for (auto &iter : m_UserDataes)
+	{
+		Safe_Delete(iter);
+	}
+
+	for (auto &iter : m_TriggerDataes)
 	{
 		Safe_Delete(iter);
 	}
@@ -1032,4 +1039,25 @@ PxRigidActor* CPhysX_Manager::Find_Actor(const _tchar * pActorTag)
 void CPhysX_Manager::Delete_Actor(PxActor& pActor)
 {
 	m_pScene->removeActor(pActor);
+}
+
+void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
+{
+	if (pTriggerData == nullptr) return;
+
+	PxTransform Transform(CUtile::ConvertPosition_D3DToPx(pTriggerData->vPos));
+	PxRigidStatic* pTrigger = m_pPhysics->createRigidStatic(Transform);	
+
+	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
+	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+
+	pTrigger->attachShape(*pShape);
+	pTrigger->userData = pTriggerData;
+	
+	m_TriggerDataes.push_back(pTriggerData);
+	m_Triggers.emplace(CUtile::Create_StringAuto(pTriggerData->pActortag), pTrigger);
+
+	m_pScene->addActor(*pTrigger);
+	pShape->release();
 }

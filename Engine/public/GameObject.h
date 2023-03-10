@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Transform.h"
 
 BEGIN(Engine)
@@ -103,6 +102,9 @@ public: /* imgui */
 
 public:
 	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) { return 0; }
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) { return 0; }
+	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) { return 0; }
+
 	_uint Get_ObjectProperty() { return m_iObjectProperty; }
 	virtual void* Get_VoidMemberPtr() { return nullptr; }
 };
