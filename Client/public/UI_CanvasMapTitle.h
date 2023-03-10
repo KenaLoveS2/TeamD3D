@@ -1,5 +1,4 @@
 #pragma once
-#include ""
 class CUI_CanvasMapTitle
 {
 public:

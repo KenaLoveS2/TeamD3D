@@ -2,20 +2,28 @@
 #include "Monster.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+#include "UI_MonsterHP.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
+	, m_pUIHPBar(nullptr)
 {
 }
 
 CMonster::CMonster(const CMonster & rhs)
 	: CGameObject(rhs)
+	, m_pUIHPBar(nullptr)
 {
 }
 
 const _double & CMonster::Get_AnimationPlayTime()
 {
 	return m_pModelCom->Get_PlayTime();
+}
+
+_fvector CMonster::Get_Position()
+{
+	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 }
 
 HRESULT CMonster::Initialize_Prototype()
@@ -42,6 +50,8 @@ HRESULT CMonster::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
+
+
 	Push_EventFunctions();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -54,12 +64,21 @@ HRESULT CMonster::Initialize(void* pArg)
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
+
 	return S_OK;
 }
 
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_pUIHPBar != nullptr)
+	{
+		CUI_MonsterHP::WORLDUIDESC tDesc;
+		tDesc.pOwner = this;
+		tDesc.vPos = { 0.f , 20.f };
+		m_pUIHPBar->Setting(tDesc);
+	}
 
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
@@ -225,6 +244,26 @@ HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+
+	return S_OK;
+}
+
+HRESULT CMonster::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CUI_MonsterHP::WORLDUIDESC tDesc;
+	tDesc.pOwner = this;
+	tDesc.vPos = { 0.f , 20.f };
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, L"Layer_UI",
+		TEXT("Prototype_GameObject_MonsterHP"),
+		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
+	{
+		MSG_BOX("Failed To make UI");
+		return E_FAIL;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
 
 	return S_OK;
 }
