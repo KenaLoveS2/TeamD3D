@@ -7,6 +7,8 @@
 #include "UI_NodeSkillName.h"
 #include "UI_NodeSkillDesc.h"
 #include "UI_NodeSkillCond.h"
+#include "UI_NodeRotLevel.h"
+#include "UI_NodeRotGuage.h"
 
 /* Bind Object */
 #include "Kena.h"
@@ -293,6 +295,50 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 		pGameInstance->Add_String(wstrCloneTag);
 	}
 
+	/* SkillDesc */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_SkillDesc";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillDesc", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
+	/* RotLevel */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_RotLevel";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotLevel", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
+	/* RotGuage */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_RotGuage";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotGuage", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
 	
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -455,9 +501,15 @@ void CUI_CanvasUpgrade::Spread()
 	CSkillInfo::SKILLDESC tDesc;
 	tDesc = m_pSkills[m_iPickedIndex / 5]->Get_SkillDesc(m_pSelected->Get_Level());
 	static_cast<CUI_NodeSkillName*>(m_vecNode[UI_SKILLNAME])->Set_String(tDesc.wstrName);
+	static_cast<CUI_NodeSkillDesc*>(m_vecNode[UI_SKILLDESC])->Set_String(tDesc.wstrDesc);
 
 	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(m_pSelected->Get_Level());
 	static_cast<CUI_NodeSkillCond*>(m_vecNode[UI_SKILLCOND])->Set_Condition(tDesc, eCheck);
+
+	/* test */
+	static_cast<CUI_NodeRotLevel*>(m_vecNode[UI_ROTLEVEL])->Set_Info(4, 20, 13);
+
+	static_cast<CUI_NodeRotGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(0.5);
 
 }
 

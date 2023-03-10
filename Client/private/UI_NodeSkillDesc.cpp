@@ -18,7 +18,9 @@ void CUI_NodeSkillDesc::Set_String(wstring str)
 {
 	Safe_Delete_Array(m_szDesc);
 
-	m_szDesc = CUtile::Create_String(str.c_str());
+	m_szDesc = CUtile::Create_String(L"설명이다~");
+
+	//m_szDesc = CUtile::Create_String(str.c_str());
 }
 
 HRESULT CUI_NodeSkillDesc::Initialize_Prototype()
@@ -90,7 +92,7 @@ HRESULT CUI_NodeSkillDesc::Render()
 	{
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szDesc,
 			vNewPos /* position */,
-			0.f, _float2(1.f, 1.f)/* size */,
+			0.f, _float2(0.8f, 0.8f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
 

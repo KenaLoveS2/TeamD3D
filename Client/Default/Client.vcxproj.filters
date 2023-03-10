@@ -759,6 +759,9 @@
     <ClInclude Include="..\public\UI_NodeRotGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeConfWindow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClInclude>      
     <ClInclude Include="..\public\E_KenaCharge.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
     </ClInclude>
@@ -1191,6 +1194,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeConfWindow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_KenaCharge.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>

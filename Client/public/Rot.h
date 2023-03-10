@@ -18,7 +18,7 @@ class CRot final : public CGameObject
 private:
 	static _uint m_iEveryRotCount;
 	static _uint m_iKenaFindRotCount;
-	static vector<CRot*> m_vecEveryRot;
+	static vector<CRot*> m_vecKenaConnectRot;
 	_uint m_iThisRotIndex = 0;
 
 	CRenderer* m_pRendererCom = nullptr;
@@ -29,6 +29,8 @@ private:
 	class CKena *m_pKena = nullptr;
 	CTransform* m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
+
+	_float4 m_vWakeUpPosition;
 
 private:
 	_bool m_bWakeUp = false;	
@@ -70,8 +72,9 @@ public:
 
 	const _double& Get_AnimationPlayTime();
 	
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos);
-		
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+
 public:
 
 	enum STATE {
