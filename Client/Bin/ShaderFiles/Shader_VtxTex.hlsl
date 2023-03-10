@@ -159,7 +159,7 @@ PS_OUT PS_MAIN_ONLYALPHA(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor.rgb = 0.f;
-	Out.vColor.a = g_Texture.Sample(LinearSampler, In.vTexUV).r;
+	Out.vColor.a = g_Texture.Sample(LinearSampler, In.vTexUV).r * g_Texture.Sample(LinearSampler, In.vTexUV).r;
 
 	return Out;
 }
