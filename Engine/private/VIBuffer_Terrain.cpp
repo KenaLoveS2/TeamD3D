@@ -902,7 +902,7 @@ void CVIBuffer_Terrain::Create_Divide_PxData(VTXNORTEX* pVtx, FACEINDICES32* pId
 		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 		TriangleMeshDesc.triangles.data = m_pPxTerrainIdx_Divide;
 
-		m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+		// m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
 	}
 
 	if (m_bRemainFlag)
@@ -915,6 +915,6 @@ void CVIBuffer_Terrain::Create_Divide_PxData(VTXNORTEX* pVtx, FACEINDICES32* pId
 		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 		TriangleMeshDesc.triangles.data = m_pPxTerrainIdx_Remain;
 
-		m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+		// m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
 	}
 }

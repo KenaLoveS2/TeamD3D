@@ -344,42 +344,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "N/A",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "staff_root_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "staff_root_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
-                    },
-                    {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -391,34 +370,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "A_Kena_Aim_Run_Left",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -430,34 +396,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "A_Kena_Aim_Run_Right",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -469,34 +422,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "N/A",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -508,34 +448,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "A_Kena_Aim_Run_Left",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -547,34 +474,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "A_Kena_Aim_Run_Right",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -586,34 +500,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Left",
         "4. Blend Animation": "N/A",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }
@@ -625,34 +526,21 @@
         "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Run_Right",
         "4. Blend Animation": "N/A",
-        "5. Joint Index": [
-            {
-                "0. Bone Name": "kena_RIG",
-                "1. Lock To": "Lock Child"
-            },
-            {
-                "0. Bone Name": "kena_spine_low_jnt",
-                "1. Lock To": "Unlock Alone"
-            },
-            {
-                "0. Bone Name": "kena_hip_jnt",
-                "1. Lock To": "Unlock Child"
-            }
-        ],
+        "5. Joint Index": "N/A",
         "6. Additive Animation": [
             {
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
-                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
-                "3. Additive Animation": "A_Kena_Bow_ChargeLoop",
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
                 "4. Joint Index": [
                     {
-                        "0. Bone Name": "kena_spine_low_jnt",
-                        "1. Lock To": "Lock Alone"
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
                     },
                     {
-                        "0. Bone Name": "kena_hip_jnt",
-                        "1. Lock To": "Lock Child"
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
                     }
                 ]
             }

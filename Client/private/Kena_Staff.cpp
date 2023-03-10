@@ -114,6 +114,7 @@ HRESULT CKena_Staff::Render()
 
 		if (i == 3) // M_bowTrails == 3
 		{
+			continue;
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			/******************************************************************/

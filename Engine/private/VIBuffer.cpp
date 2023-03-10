@@ -125,7 +125,7 @@ HRESULT CVIBuffer::Create_PxActor()
 	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	TriangleMeshDesc.triangles.data = m_pPxIndicies;
 	
-	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, PX_FILTER_TYPE::FILTER_GROUND);
 
 	return S_OK;
 }

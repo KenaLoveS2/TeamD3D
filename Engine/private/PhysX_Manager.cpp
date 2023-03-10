@@ -62,13 +62,35 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
                                  PxFilterObjectAttributes attributes1, PxFilterData filterData1,
                                  PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
+	/*
+	if ((filterData0.word0 == PLAYER_BODY && filterData1.word0 == MONSTER_WEAPON) ||
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == PLAYER_WEAPON) ||
+		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == FILTER_GROUND) ||
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == FILTER_GROUND) ||
+		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == FILTER_WALL) ||
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == FILTER_WALL))
+	{
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT
+			| PxPairFlag::eDETECT_CCD_CONTACT
+			| PxPairFlag::eNOTIFY_TOUCH_CCD
+			| PxPairFlag::eNOTIFY_TOUCH_FOUND
+			| PxPairFlag::eNOTIFY_CONTACT_POINTS
+			| PxPairFlag::eCONTACT_EVENT_POSE;
+
+		return PxFilterFlag::eDEFAULT;		
+	}
+	else
+		return PxFilterFlag::eSUPPRESS;
+		*/
+	
 	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)	||
 		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)	||
 		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON) ||
 		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY) )
 	{
 		return PxFilterFlag::eSUPPRESS;
-	}	
+	}
+	
 
 	//if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
 	//{
@@ -307,7 +329,7 @@ void CPhysX_Manager::Clear()
 	}
 }
 
-PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_FILTER_TYPE eFilterType, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
 {	
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
@@ -322,6 +344,9 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+	PxFilterData FilterData;
+	FilterData.word0 = eFilterType;
+	shape->setSimulationFilterData(FilterData);
 
 	pBody->attachShape(*shape);	
 
