@@ -42,7 +42,7 @@ private:
 
 protected:
 	_float m_fTimeDelta = 0.0f;	
-
+	float  m_fShaderBindTime = 0.0f;
 public:
 	virtual void         Free() override;
 };

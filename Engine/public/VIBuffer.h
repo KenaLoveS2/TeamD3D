@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Component.h"
+#include "PhysX_Defines.h"
 
 BEGIN(Engine)
 
@@ -58,7 +58,7 @@ public: // kbj physx
 		PxU32 _0, _1, _2;
 	} PxIndicies;
 
-	HRESULT Create_PxActor();
+	HRESULT Create_PxTriangleMeshActor(PX_USER_DATA* pUserData);
 	void Set_PxPosition(_float3 vPos);
 	void Set_PxMatrix(_float4x4& Matrix);
 

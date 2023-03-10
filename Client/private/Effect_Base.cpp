@@ -12,6 +12,8 @@
 #include "Effect_T.h"
 #include "Effect_Mesh_T.h"
 #include "Effect_Trail_T.h"
+#include "Kena_Staff.h"
+#include "Layer.h"
 // ~Json
 
 CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -26,9 +28,16 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalDTextureComCnt(rhs.m_iTotalDTextureComCnt)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
+	//, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
+	//, m_vecProPos(rhs.m_vecProPos)
+	//, m_vecFreePos(rhs.m_vecFreePos)
+	//, m_pEffectTrail(rhs.m_pEffectTrail)
+	//, m_vecChild(rhs.m_vecChild)
 {
+	m_vecChild.assign(rhs.m_vecChild.begin(), rhs.m_vecChild.end());
+
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
- 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(rhs.m_eEFfectDesc));
+ 	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
 }
 
 HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
@@ -65,8 +74,8 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 			{
 
 #pragma  region	EFFECTDESC
-				jDesc["Effect Type"].get_to<_int>(iEffectType);
-				eLoadEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
+				jDesc["Effect Type"].get_to<_int>(iEnum);
+				eLoadEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEnum;
 
 				iEnum = 0;
 				jDesc["Mesh Type"].get_to<_int>(iEnum);
@@ -89,6 +98,10 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 
 				jDesc["Rotation Type"].get_to<_int>(iEnum);
 				eLoadEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+				iEnum = 0;
+				jDesc["PassCnt"].get_to<_int>(iEnum);
+				eLoadEffectDesc.iPassCnt = iEnum;
 
 				_int i = 0;
 				for (_float fFrame : jDesc["DiffuseTexture Index"])
@@ -155,7 +168,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 				m_iTotalDTextureComCnt = iDTextureCnt;
 				m_iTotalMTextureComCnt = iMTextureCnt;
 
-				_matrix WorldMatrix;
+				_matrix WorldMatrix = XMMatrixIdentity();
 				_int i = 0;
 				for (_float fElement : jObject["WorldMatrix"])	
 					memcpy(((_float*)&WorldMatrix) + (i++), &fElement, sizeof(_float));
@@ -220,111 +233,117 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 			// Child
 			if (iChildCnt != 0)
 			{
-				for (_int j = 0; j < iChildCnt; j++)
+				CEffect_Base::EFFECTDESC eChildEffectDesc;
+				ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
+
+				for (auto jChildDesc : jObject["ChildDesc"])
 				{
+#pragma  region	EFFECTDESC
 					string strPrototypeTag = "";
 					string strCloneTag = "";
 
-					jObject["Child ProtoTag"].get_to<string>(strPrototypeTag);
-					jObject["Child CloneTag"].get_to<string>(strCloneTag);
+					jChildDesc["Child ProtoTag"].get_to<string>(strPrototypeTag);
+					jChildDesc["Child CloneTag"].get_to<string>(strCloneTag);
 
-					CEffect_Base::EFFECTDESC eChildEffectDesc;
-					ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
+					jChildDesc["Effect Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEnum;
 
-					for (auto jChildDesc : jObject["ChildDesc"])
+					iEnum = 0;
+					jChildDesc["Mesh Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eMeshType = (CEffect_Base::EFFECTDESC::MESHTYPE)iEnum;
+
+					jChildDesc["Particle Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eParticleType = (CEffect_Base::EFFECTDESC::PARTICLETYPE)iEnum;
+
+					jChildDesc["TextureRender Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eTextureRenderType = (CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE)iEnum;
+
+					jChildDesc["Texture Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eTextureType = (CEffect_Base::EFFECTDESC::TEXTURETYPE)iEnum;
+
+					jChildDesc["Blend Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eBlendType = (CEffect_Base::EFFECTDESC::BLENDSTATE)iEnum;
+
+					jChildDesc["MoveDir Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eMoveDir = (CEffect_Base::EFFECTDESC::MOVEDIR)iEnum;
+
+					jChildDesc["Rotation Type"].get_to<_int>(iEnum);
+					eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+					iEnum = 0;
+					jChildDesc["PassCnt"].get_to<_int>(iEnum);
+					eChildEffectDesc.iPassCnt = iEnum;
+
+					_int i = 0;
+					for (_float fFrame : jChildDesc["DiffuseTexture Index"])
+						memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
+					i = 0;
+					for (_float fMaskFrame : jChildDesc["MaskTexture Index"])
+						memcpy(((_float*)&eChildEffectDesc.fMaskFrame) + (i++), &fMaskFrame, sizeof(_float));
+					i = 0;
+					for (_float vColor : jChildDesc["Color"])
+						memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
+					i = 0;
+					for (_float vScale : jChildDesc["vScale"])
+						memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
+
+					jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
+					jChildDesc["Width Frame"].get_to<_float>(eChildEffectDesc.fWidthFrame);
+					jChildDesc["Height Frame"].get_to<_float>(eChildEffectDesc.fHeightFrame);
+
+					jChildDesc["SeparateWidth"].get_to<_int>(eChildEffectDesc.iSeparateWidth);
+					jChildDesc["SeparateHeight"].get_to<_int>(eChildEffectDesc.iSeparateHeight);
+					jChildDesc["WidthCnt"].get_to<_int>(eChildEffectDesc.iWidthCnt);
+					jChildDesc["HeightCnt"].get_to<_int>(eChildEffectDesc.iHeightCnt);
+					jChildDesc["DurationTime"].get_to<_float>(eChildEffectDesc.fTimeDelta);
+
+					jChildDesc["CreateRange"].get_to<_float>(eChildEffectDesc.fCreateRange);
+					jChildDesc["Range"].get_to<_float>(eChildEffectDesc.fRange);
+					jChildDesc["Angle"].get_to<_float>(eChildEffectDesc.fAngle);
+					jChildDesc["MoveDurationTime"].get_to<_float>(eChildEffectDesc.fMoveDurationTime);
+					jChildDesc["Start"].get_to<_bool>(eChildEffectDesc.bStart);
+
+					i = 0;
+					for (_float vInitPos : jChildDesc["Init Pos"])
+						memcpy(((_float*)&eChildEffectDesc.vInitPos) + (i++), &vInitPos, sizeof(_float));
+					i = 0;
+					for (_float vPixedDir : jChildDesc["Pixed Dir"])
+						memcpy(((_float*)&eChildEffectDesc.vPixedDir) + (i++), &vPixedDir, sizeof(_float));
+
+					jChildDesc["Have Trail"].get_to<_bool>(eChildEffectDesc.IsTrail);
+					if (eChildEffectDesc.IsTrail == true)
 					{
-#pragma  region	EFFECTDESC
-						jChildDesc["Effect Type"].get_to<_int>(iEffectType);
-						eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
-
-						iEnum = 0;
-						jChildDesc["Mesh Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eMeshType = (CEffect_Base::EFFECTDESC::MESHTYPE)iEnum;
-
-						jChildDesc["Particle Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eParticleType = (CEffect_Base::EFFECTDESC::PARTICLETYPE)iEnum;
-
-						jChildDesc["TextureRender Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eTextureRenderType = (CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE)iEnum;
-
-						jChildDesc["Texture Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eTextureType = (CEffect_Base::EFFECTDESC::TEXTURETYPE)iEnum;
-
-						jChildDesc["Blend Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eBlendType = (CEffect_Base::EFFECTDESC::BLENDSTATE)iEnum;
-
-						jChildDesc["MoveDir Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eMoveDir = (CEffect_Base::EFFECTDESC::MOVEDIR)iEnum;
-
-						jChildDesc["Rotation Type"].get_to<_int>(iEnum);
-						eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
-
-						_int i = 0;
-						for (_float fFrame : jChildDesc["DiffuseTexture Index"])
-							memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
-						i = 0;
-						for (_float fMaskFrame : jChildDesc["MaskTexture Index"])
-							memcpy(((_float*)&eChildEffectDesc.fMaskFrame) + (i++), &fMaskFrame, sizeof(_float));
-						i = 0;
-						for (_float vColor : jChildDesc["Color"])
-							memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
-						i = 0;
-						for (_float vScale : jChildDesc["vScale"])
-							memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
-
-						jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
-						jChildDesc["Width Frame"].get_to<_float>(eChildEffectDesc.fWidthFrame);
-						jChildDesc["Height Frame"].get_to<_float>(eChildEffectDesc.fHeightFrame);
-
-						jChildDesc["SeparateWidth"].get_to<_int>(eChildEffectDesc.iSeparateWidth);
-						jChildDesc["SeparateHeight"].get_to<_int>(eChildEffectDesc.iSeparateHeight);
-						jChildDesc["WidthCnt"].get_to<_int>(eChildEffectDesc.iWidthCnt);
-						jChildDesc["HeightCnt"].get_to<_int>(eChildEffectDesc.iHeightCnt);
-						jChildDesc["DurationTime"].get_to<_float>(eChildEffectDesc.fTimeDelta);
-
-						jChildDesc["CreateRange"].get_to<_float>(eChildEffectDesc.fCreateRange);
-						jChildDesc["Range"].get_to<_float>(eChildEffectDesc.fRange);
-						jChildDesc["Angle"].get_to<_float>(eChildEffectDesc.fAngle);
-						jChildDesc["MoveDurationTime"].get_to<_float>(eChildEffectDesc.fMoveDurationTime);
-						jChildDesc["Start"].get_to<_bool>(eChildEffectDesc.bStart);
-
-						i = 0;
-						for (_float vInitPos : jChildDesc["Init Pos"])
-							memcpy(((_float*)&eChildEffectDesc.vInitPos) + (i++), &vInitPos, sizeof(_float));
-						i = 0;
-						for (_float vPixedDir : jChildDesc["Pixed Dir"])
-							memcpy(((_float*)&eChildEffectDesc.vPixedDir) + (i++), &vPixedDir, sizeof(_float));
-
-						jChildDesc["Have Trail"].get_to<_bool>(eChildEffectDesc.IsTrail);
-						if (eChildEffectDesc.IsTrail == true)
-						{
-							jChildDesc["Active"].get_to<_bool>(eChildEffectDesc.bActive);
-							jChildDesc["Alpha Trail"].get_to<_bool>(eChildEffectDesc.bAlpha);
-							jChildDesc["Life"].get_to<_float>(eChildEffectDesc.fLife);
-							jChildDesc["Width"].get_to<_float>(eChildEffectDesc.fWidth);
-							jChildDesc["SegmentSize"].get_to<_float>(eChildEffectDesc.fSegmentSize);
-						}
-
-						jChildDesc["Alpha"].get_to<_float>(eChildEffectDesc.fAlpha);
-						jChildDesc["Billboard"].get_to<_bool>(eChildEffectDesc.IsBillboard);
-						jChildDesc["Use Normal"].get_to<_bool>(eChildEffectDesc.IsNormal);
-						jChildDesc["Use Mask"].get_to<_bool>(eChildEffectDesc.IsMask);
-						jChildDesc["Trigger"].get_to<_bool>(eChildEffectDesc.IsTrigger);
-						jChildDesc["MovingPosition"].get_to<_bool>(eChildEffectDesc.IsMovingPosition);
-						jChildDesc["Use Child"].get_to<_bool>(eChildEffectDesc.bUseChild);
-						jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
-						jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
-#pragma  endregion	EFFECTDESC
+						jChildDesc["Active"].get_to<_bool>(eChildEffectDesc.bActive);
+						jChildDesc["Alpha Trail"].get_to<_bool>(eChildEffectDesc.bAlpha);
+						jChildDesc["Life"].get_to<_float>(eChildEffectDesc.fLife);
+						jChildDesc["Width"].get_to<_float>(eChildEffectDesc.fWidth);
+						jChildDesc["SegmentSize"].get_to<_float>(eChildEffectDesc.fSegmentSize);
 					}
 
-					char* szProtoTag = CUtile::Create_String(strPrototypeTag.c_str());
-					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, szProtoTag);
+					jChildDesc["Alpha"].get_to<_float>(eChildEffectDesc.fAlpha);
+					jChildDesc["Billboard"].get_to<_bool>(eChildEffectDesc.IsBillboard);
+					jChildDesc["Use Normal"].get_to<_bool>(eChildEffectDesc.IsNormal);
+					jChildDesc["Use Mask"].get_to<_bool>(eChildEffectDesc.IsMask);
+					jChildDesc["Trigger"].get_to<_bool>(eChildEffectDesc.IsTrigger);
+					jChildDesc["MovingPosition"].get_to<_bool>(eChildEffectDesc.IsMovingPosition);
+					jChildDesc["Use Child"].get_to<_bool>(eChildEffectDesc.bUseChild);
+					jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
+					jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
+
+					_matrix WorldMatrix = XMMatrixIdentity();
+					i = 0;
+					for (_float fElement : jChildDesc["WorldMatrix"])
+						memcpy(((_float*)&WorldMatrix) + (i++), &fElement, sizeof(_float));
+
+#pragma  endregion	EFFECTDESC
+					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str(), WorldMatrix);
+					jChildDesc.clear();
 				}
 			}
 
 			_int iCnt = 0;
 			// Component Desc ÀúÀå
-			if (iEffectType == 1) // VIBuffer_Point_Instancing Data Save
+			if (m_eEFfectDesc.eEffectType == CEffect_Base::EFFECTDESC::EFFECTTYPE::EFFECT_PARTICLE) // VIBuffer_Point_Instancing Data Save
 			{
 				string strVIBufferTag = "";
 				if (jObject.contains("CloneObject Component ProtoTag"))
@@ -519,8 +538,7 @@ void CEffect_Base::BillBoardSetting(_float3 vScale)
 	XMStoreFloat3(&cameraForward, pTargetTransform->Get_State(CTransform::STATE_LOOK));
 
 	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
-
-	m_pTransformCom->Set_WorldMatrix(m_InitWorldMatrix * worldmatrix);
+	m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix() * worldmatrix);
 }
 
 HRESULT CEffect_Base::Initialize_Prototype(const _tchar* pFilePath)
@@ -559,9 +577,6 @@ void CEffect_Base::Late_Tick(_float fTimeDelta)
 
 	for (auto& pChild : m_vecChild)
 		pChild->Late_Tick(fTimeDelta);
-
-	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false) 
-		Set_Matrix();
 }
 
 HRESULT CEffect_Base::Render()
@@ -572,7 +587,7 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
-HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag)
+HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag, _matrix worldmatrix)
 {
 	CEffect_Base*    pEffectBase = nullptr;
 	CGameInstance*   pGameInstance = GET_INSTANCE(CGameInstance);
@@ -583,55 +598,76 @@ HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, cha
 	EFFECTDESC eChildeffectDesc;
 	memcpy(&eChildeffectDesc, &eEffectDesc, sizeof(eEffectDesc));
 
-	for (_int i = 0; i < iCreateCnt; ++i)
+	_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
+	pGameInstance->Add_String(szChildProtoTag);
+
+	// CloneTag
+	wstring		strGameObjectTag = L"Prototype_GameObject_";
+	size_t		TagLength = strGameObjectTag.length();
+
+	wstring		strProtoTag = szChildProtoTag;
+	size_t      ProtoLength = strProtoTag.length();
+
+	wstring     strChildCloneTag = strProtoTag.substr(TagLength, ProtoLength - TagLength);
+	strChildCloneTag += '_';
+	strChildCloneTag += to_wstring(m_iHaveChildCnt);
+
+	_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
+	pGameInstance->Add_String(szChildClondTag);
+
+	CLayer* pLayer = pGameInstance->Find_Layer(g_LEVEL, L"Layer_Effect");
+	if(pLayer != nullptr)
 	{
-		_tchar* szChildProtoTag = CUtile::Create_String(szChildProto);
-		pGameInstance->Add_String(szChildProtoTag);
+		map<const _tchar*, class CGameObject*>& pGameObjects = pLayer->GetGameObjects();
+		_uint iLayerSize = (_uint)pGameObjects.size();
 
-		// CloneTag
-		wstring		strGameObjectTag = L"Prototype_GameObject_";
-		size_t		TagLength = strGameObjectTag.length();
-
-		wstring		strProtoTag = szChildProtoTag;
-		size_t      ProtoLength = strProtoTag.length();
-
-		wstring     strChildCloneTag = strProtoTag.substr(TagLength, ProtoLength - TagLength);
-		const _tchar* szClone = strChildCloneTag.c_str();
-		strChildCloneTag += '_';
-		strChildCloneTag += to_wstring(m_iHaveChildCnt);
-
-		_tchar* szChildClondTag = CUtile::Create_String(strChildCloneTag.c_str());
-		pGameInstance->Add_String(szChildClondTag);
-
-		switch (eChildeffectDesc.eEffectType)
+		auto iter = pGameObjects.begin();
+		for (size_t i = 0; i < iLayerSize; ++i, iter++)
 		{
-		case CEffect_Base::tagEffectDesc::EFFECT_PLANE:
-			if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_T::Create(m_pDevice, m_pContext))))
+			if (!lstrcmp(iter->second->Get_ProtoObjectName(), szChildProtoTag))
 			{
-				RELEASE_INSTANCE(CGameInstance);
-				return E_FAIL;
-			}
-			break;
+				pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag, &eChildeffectDesc));
+				pEffectBase->Set_InitMatrix(worldmatrix);
+				NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+				pEffectBase->Set_Parent(this);
 
-		case CEffect_Base::tagEffectDesc::EFFECT_PARTICLE:
-			break;
+				m_vecChild.push_back(pEffectBase);
+				m_iHaveChildCnt++;
 
-		case CEffect_Base::tagEffectDesc::EFFECT_MESH:
-			if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
-			{
 				RELEASE_INSTANCE(CGameInstance);
-				return E_FAIL;
+				return S_OK;
 			}
-			break;
 		}
-
-		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag, &eChildeffectDesc));
-		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-		pEffectBase->Set_Parent(this);
-
-		m_vecChild.push_back(pEffectBase);
-		m_iHaveChildCnt++;
 	}
+
+	switch (eChildeffectDesc.eEffectType)
+	{
+	case CEffect_Base::tagEffectDesc::EFFECT_PLANE:
+		if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_T::Create(m_pDevice, m_pContext))))
+		{
+			RELEASE_INSTANCE(CGameInstance);
+			return E_FAIL;
+		}
+		break;
+
+	case CEffect_Base::tagEffectDesc::EFFECT_PARTICLE:
+		break;
+
+	case CEffect_Base::tagEffectDesc::EFFECT_MESH:
+		if (FAILED(pGameInstance->Add_Prototype(szChildProtoTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
+		{
+			RELEASE_INSTANCE(CGameInstance);
+			return E_FAIL;
+		}
+		break;
+	}
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(szChildProtoTag, szChildClondTag, &eChildeffectDesc));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	pEffectBase->Set_InitMatrix(worldmatrix);
+
+	m_vecChild.push_back(pEffectBase);
+	m_iHaveChildCnt++;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -676,7 +712,7 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 				_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 				CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-				if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}
@@ -709,14 +745,14 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 		{
 			for (_uint i = m_iTotalMTextureComCnt; i < iMTextureComCnt; ++i)
 			{
-				m_iTotalDTextureComCnt++;
+				m_iTotalMTextureComCnt++;
 
 				_tchar szMTexture[64] = L"";
 				wsprintf(szMTexture, L"Com_MTexture_%d", i);
 
 				_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 				CGameInstance::GetInstance()->Add_String(szMTextureComTag);
-				if (FAILED(__super::Add_Component(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+				if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 					return E_FAIL;
 			}
 		}
@@ -766,6 +802,9 @@ void CEffect_Base::Free()
 	// Mesh Release
 	if (nullptr != m_pModelCom)
 		Safe_Release(m_pModelCom);
+
+	if (nullptr != m_pEffectTrail)
+		Safe_Release(m_pEffectTrail);
 
 	for (auto& pChild : m_vecChild)
 		Safe_Release(pChild);

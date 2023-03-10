@@ -97,7 +97,7 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		static_cast<CTransform*>(pLoadTerrain->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		// pLoadTerrain->Late_Initialize();	/*머지후 삭제 요망*/
+		 //pLoadTerrain->Late_Initialize();	
 		
 		szCloneTag = "";
 		pLoadTerrain = nullptr;
@@ -108,7 +108,7 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 
 HRESULT CImgui_TerrainEditor::Initialize(void * pArg)
 {
-	//Ready_FilterBuffer();
+	Ready_FilterBuffer();
 
 	m_pHeightTexture = static_cast<CTexture*>(m_pGameInstance->
 		Clone_Component(LEVEL_MAPTOOL, L"Prototype_Component_Terrain_HeightMaps"));
@@ -125,10 +125,12 @@ void CImgui_TerrainEditor::Imgui_FreeRender()
 	if (ImGui::CollapsingHeader("Terrain_Option"))
 	{
 		Terrain_Selecte();
-		Imgui_FilterControl();
-		Imgui_Save_Load();
-		Imgui_Change_HeightBmp();
 		Create_Terrain();
+		Imgui_FilterControl();
+		
+		Imgui_Change_HeightBmp();
+		Imgui_Save_Load();
+		
 	
 	
 	}
@@ -320,7 +322,7 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 
 	for (_uint i = 0; i < 3; ++i)
 	{
-		ReadFile(hFile, m_pPixel[i], sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height, &dwByte, nullptr);
+		ReadFile(hFile, m_pPixel[i], sizeof(_ulong) * 256 * 256, &dwByte, nullptr);
 	}
 	CloseHandle(hFile);
 
@@ -368,10 +370,13 @@ void CImgui_TerrainEditor::Imgui_FilterPixel_Load()
 		ZeroMemory(&SubResource, sizeof SubResource);
 
 		m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
-
+		
 		memcpy(SubResource.pData, m_pPixel[m_iFilterCaseNum], (sizeof(_ulong) *TextureDesc.Width * TextureDesc.Height));
 
 		m_pContext->Unmap(pTexture2D, 0);
+
+		
+
 
 		wstring wstr = TEXT("../Bin/Resources/Terrain_Texture/Filter/");
 
@@ -618,6 +623,23 @@ void CImgui_TerrainEditor::Imgui_Change_HeightBmp()
 void CImgui_TerrainEditor::Create_Terrain()
 {
 
+	static string			strCloneTag = "";
+	ImGui::InputText("Clone Tag", &strCloneTag);
+
+	if (ImGui::Button("Create_Terrain"))
+	{
+		CGameObject* pCreateObject = nullptr;
+	
+		_tchar *pCloneName = CUtile::StringToWideChar(strCloneTag);
+		CGameInstance::GetInstance()->Add_String(pCloneName);
+
+		if (FAILED(m_pGameInstance->Clone_GameObject(m_pGameInstance->Get_CurLevelIndex(),
+			TEXT("Layer_BackGround"),
+			TEXT("Prototype_GameObject_Terrain"),
+			pCloneName, nullptr, &pCreateObject)))
+			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
+
+	}
 }
 
 void CImgui_TerrainEditor::Clear_Filter_Pixel()

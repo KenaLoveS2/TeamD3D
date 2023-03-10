@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Animation.h"
+#include "PhysX_Defines.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
@@ -62,7 +63,7 @@ public:
 
 public:	
 	HRESULT 				Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
-		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial);
+		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor);
 	virtual HRESULT		Initialize(void* pArg, class CGameObject* pOwner);
 	virtual void			Imgui_RenderProperty() override;
 
@@ -71,6 +72,8 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 
+private:
+	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
 	TYPE					m_eType = TYPE_END;
@@ -86,7 +89,7 @@ private:
 
 	/* ÀüÃ¼ »ÀÀÇ °¹¼ö. */
 	_uint							m_iNumBones = 0;
-	vector<class CBone*>		m_Bones;
+	vector<class CBone*>			m_Bones;
 	string							m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;
@@ -121,7 +124,8 @@ private:
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, _bool bIsLod = false, _bool bIsInstancing = false, const char* JsonMatrial = nullptr);
+		const _tchar* pModelFilePath, _fmatrix PivotMatrix, const _tchar* pAdditionalFilePath = nullptr, 
+		_bool bIsLod = false, _bool bIsInstancing = false, const char* JsonMatrial = nullptr, _bool bUseTriangleMeshActor = false);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 
@@ -138,9 +142,12 @@ public:
 
 	
 public:
-	void Create_PxTriangle();
+	void Create_PxTriangle(PX_USER_DATA *pUserData);
 	void Set_PxPosition(_float3 vPosition);
 	void Set_PxMatrix(_float4x4& Matrix);
+
+	void Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
+	void Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex);
 };
 
 END

@@ -187,6 +187,7 @@
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\Public\ControlMove.h" />
+    <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
@@ -198,15 +199,22 @@
     <ClInclude Include="..\public\Effect_T.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\public\Effect_Trail_T.h" />
+    <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
+    <ClInclude Include="..\public\E_EnemyWispTrail.h" />
+    <ClInclude Include="..\public\E_KenaChargeImpact.h" />
+    <ClInclude Include="..\public\E_KenaDamage.h" />
+    <ClInclude Include="..\public\E_KenaHit.h" />
     <ClInclude Include="..\public\E_KenaPulse.h" />
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\E_KenaPulseDot.h" />
+    <ClInclude Include="..\public\E_KenaCharge.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
     <ClInclude Include="..\public\Gate.h" />
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
@@ -225,6 +233,8 @@
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\Public\Level_MapTool.h" />
     <ClInclude Include="..\Public\Level_TestPlay.h" />
+    <ClInclude Include="..\public\LiftRot.h" />
+    <ClInclude Include="..\public\LiftRot_Master.h" />
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\LoadingIcon.h" />
@@ -237,7 +247,8 @@
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\Path_Mesh.h" />
     <ClInclude Include="..\Public\Pillar.h" />
-    <ClInclude Include="..\public\PlayerSkillInfo.h" />
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
+    <ClInclude Include="..\public\SkillInfo.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Pulse_PlateForm.h" />
     <ClInclude Include="..\public\Quest.h" />
@@ -261,7 +272,9 @@
     <ClInclude Include="..\public\UI_CanvasAim.h" />
     <ClInclude Include="..\public\UI_CanvasAmmo.h" />
     <ClInclude Include="..\Public\Tree.h" />
+    <ClInclude Include="..\public\UI_CanvasConfirm.h" />
     <ClInclude Include="..\public\UI_CanvasHUD.h" />
+    <ClInclude Include="..\public\UI_CanvasInvHeader.h" />
     <ClInclude Include="..\public\UI_CanvasUpgrade.h" />
     <ClInclude Include="..\public\UI_CanvasQuest.h" />
     <ClInclude Include="..\public\UI_ClientManager.h" />
@@ -276,7 +289,10 @@
     <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
+    <ClInclude Include="..\public\UI_NodeButton.h" />
+    <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
+    <ClInclude Include="..\public\UI_NodeConfWindow.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -284,8 +300,15 @@
     <ClInclude Include="..\public\UI_NodeHUDRot.h" />
     <ClInclude Include="..\public\UI_NodeHUDShield.h" />
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
-    <ClInclude Include="..\public\UI_NodePlayerSkill.h" />
+    <ClInclude Include="..\public\UI_NodeKarma.h" />
+    <ClInclude Include="..\public\UI_NodeNumRots.h" />
+    <ClInclude Include="..\public\UI_NodeRotGuage.h" />
+    <ClInclude Include="..\public\UI_NodeRotLevel.h" />
+    <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
+    <ClInclude Include="..\public\UI_NodeSkillCond.h" />
+    <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
+    <ClInclude Include="..\public\UI_NodeSkillName.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
@@ -293,6 +316,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_NodeRotSkill.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
@@ -307,6 +331,7 @@
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
+    <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
@@ -318,15 +343,22 @@
     <ClCompile Include="..\private\Effect_T.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
+    <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
+    <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
+    <ClCompile Include="..\private\E_KenaDamage.cpp" />
+    <ClCompile Include="..\private\E_KenaHit.cpp" />
     <ClCompile Include="..\private\E_KenaPulse.cpp" />
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
+    <ClCompile Include="..\private\E_KenaCharge.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
@@ -345,6 +377,8 @@
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Level_MapTool.cpp" />
     <ClCompile Include="..\Private\Level_TestPlay.cpp" />
+    <ClCompile Include="..\private\LiftRot.cpp" />
+    <ClCompile Include="..\private\LiftRot_Master.cpp" />
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp" />
@@ -357,7 +391,8 @@
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\Path_Mesh.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />
-    <ClCompile Include="..\private\PlayerSkillInfo.cpp" />
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
+    <ClCompile Include="..\private\SkillInfo.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
@@ -381,7 +416,9 @@
     <ClCompile Include="..\private\UI_CanvasAim.cpp" />
     <ClCompile Include="..\private\UI_CanvasAmmo.cpp" />
     <ClCompile Include="..\Private\Tree.cpp" />
+    <ClCompile Include="..\private\UI_CanvasConfirm.cpp" />
     <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
+    <ClCompile Include="..\private\UI_CanvasInvHeader.cpp" />
     <ClCompile Include="..\private\UI_CanvasUpgrade.cpp" />
     <ClCompile Include="..\private\UI_CanvasQuest.cpp" />
     <ClCompile Include="..\private\UI_ClientManager.cpp" />
@@ -396,7 +433,10 @@
     <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
+    <ClCompile Include="..\private\UI_NodeButton.cpp" />
+    <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
+    <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
@@ -404,8 +444,15 @@
     <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
-    <ClCompile Include="..\private\UI_NodePlayerSkill.cpp" />
+    <ClCompile Include="..\private\UI_NodeKarma.cpp" />
+    <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
@@ -416,6 +463,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UI_NodeRotSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />
@@ -431,6 +479,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />

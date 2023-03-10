@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulsePlate/Materials/MI_PulsePlate.MI_PulsePlate'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulsePlate/Materials/MI_PulsePlate_Crystal.MI_PulsePlate_Crystal'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulsePlate/Materials/MI_PulsePlate.MI_PulsePlate'
+        MaterialSlotName = Plate
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 932.841, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/PulsePlate/Materials/MI_PulsePlate_Crystal.MI_PulsePlate_Crystal'
+        MaterialSlotName = Crystal
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 944.348, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=4.38297, Y=-23.1116, Z=9.63709 }
+    BoxExtent = { X=190.87, Y=200.504, Z=35.679 }
+    SphereRadius = 246.418
+}

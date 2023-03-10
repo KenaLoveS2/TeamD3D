@@ -10,6 +10,7 @@ Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_MRAOTexture;
 
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;

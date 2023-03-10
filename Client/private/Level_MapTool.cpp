@@ -51,6 +51,9 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
+	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -106,9 +109,12 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain2"))))
 	//	return E_FAIL;
 
-	CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
-
-
+	
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

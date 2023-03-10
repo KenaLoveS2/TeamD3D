@@ -21,7 +21,6 @@ public:
 		_float4x4			ProjMatrix;
 		_uint				iIndex;
 	} UIDESC;
-
 protected:
 	CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI(const CUI& rhs);

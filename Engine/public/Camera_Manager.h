@@ -34,5 +34,6 @@ public:
 	HRESULT Clear();
 
 	class CCamera* Get_WorkCameraPtr() { return m_pWorkCamera; }
+	_bool IsWorkCamera(const _tchar* pCameraTag);
 };
 END

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass.MI_DeadZone_Deadgrass'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass_CheapLOD.MI_DeadZone_Deadgrass_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass.MI_DeadZone_Deadgrass'
+        MaterialSlotName = MI_DeadZone_Deadgrass
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 120.116, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/DeadZones/DeadzoneGroundCover/MI_DeadZone_Deadgrass_CheapLOD.MI_DeadZone_Deadgrass_CheapLOD'
+        MaterialSlotName = MI_DeadZone_Deadgrass_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 119.673, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-4.65799, Y=4.19588, Z=23.0998 }
+    BoxExtent = { X=26.5495, Y=22.5382, Z=24.0535 }
+    SphereRadius = 34.1718
+}

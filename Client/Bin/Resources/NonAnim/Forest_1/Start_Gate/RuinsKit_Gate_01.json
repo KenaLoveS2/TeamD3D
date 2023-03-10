@@ -3,7 +3,7 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Door_B_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Door_B_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -17,7 +17,7 @@
       "12_HAIR_ROOT_path": "NONE",
       "13_COMP_MSK_CURV_path": "NONE",
       "14_COMP_H_R_AO_path": "NONE",
-      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_Door_B_E_R_Ao.png",
+      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_Door_B_E_R_Ao.dds",
       "16_ROUGHNESS_path": "NONE",
       "17_AMBIENT_OCCLUSION_path": "NONE"
   
@@ -26,7 +26,7 @@
   "2_Second": [
     {
     "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Door_A_Base_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Door_A_Base_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -40,7 +40,7 @@
       "12_HAIR_ROOT_path": "NONE",
       "13_COMP_MSK_CURV_path": "NONE",
       "14_COMP_H_R_AO_path": "NONE",
-      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_Door_A_Base_E_R_Ao.png",
+      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_Door_A_Base_E_R_Ao.dds",
       "16_ROUGHNESS_path": "NONE",
       "17_AMBIENT_OCCLUSION_path": "NONE"
     }

@@ -3,10 +3,10 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
-      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.png",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.dds",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_N.png",
       "7_MASK_path": "NONE",
@@ -17,7 +17,7 @@
       "12_HAIR_ROOT_path": "NONE",
       "13_COMP_MSK_CURV_path": "NONE",
       "14_COMP_H_R_AO_path": "NONE",
-      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.png",
+      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.dds",
       "16_ROUGHNESS_path": "NONE",
       "17_AMBIENT_OCCLUSION_path": "NONE"
     }
@@ -25,10 +25,10 @@
   "2_Second": [
     {
    "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
-      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.png",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.dds",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_N.png",
       "7_MASK_path": "NONE",
@@ -39,7 +39,7 @@
       "12_HAIR_ROOT_path": "NONE",
       "13_COMP_MSK_CURV_path": "NONE",
       "14_COMP_H_R_AO_path": "NONE",
-      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.png",
+      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.dds",
       "16_ROUGHNESS_path": "NONE",
       "17_AMBIENT_OCCLUSION_path": "NONE"
     }
@@ -47,10 +47,10 @@
   "3_Third": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.png",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
-      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.png",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E.dds",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_N.png",
       "7_MASK_path": "NONE",
@@ -61,7 +61,7 @@
       "12_HAIR_ROOT_path": "NONE",
       "13_COMP_MSK_CURV_path": "NONE",
       "14_COMP_H_R_AO_path": "NONE",
-      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.png",
+      "15_COMP_E_R_AO_path": "../Bin/Resources/NonAnim/Textures/T_StoneDoor_Arch_E_R_Ao.dds",
       "16_ROUGHNESS_path": "NONE",
       "17_AMBIENT_OCCLUSION_path": "NONE"
     }

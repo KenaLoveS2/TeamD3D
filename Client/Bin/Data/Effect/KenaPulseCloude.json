@@ -9,6 +9,7 @@
                     "Child Count": 0,
                     "Desc": [
                         {
+                            "PassCnt": 1,
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": true,

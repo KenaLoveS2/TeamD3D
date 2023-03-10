@@ -33,10 +33,25 @@
 
 /* CanvasUpgrade */
 #include "UI_CanvasUpgrade.h"
-#include "UI_NodePlayerSkill.h"
+#include "UI_NodeSkill.h"
+#include "UI_NodeSkillName.h"
+#include "UI_NodeSkillDesc.h"
+#include "UI_NodeSkillCond.h"
+#include "UI_NodeRotLevel.h"
+#include "UI_NodeRotGuage.h"
+
+/* CanvasInventoryHeader */
+#include "UI_CanvasInvHeader.h"
+#include "UI_NodeKarma.h"
+#include "UI_NodeCrystal.h"
+#include "UI_NodeNumRots.h"
 
 /* Effect (Common) */
 #include "UI_NodeEffect.h"
+/* Confirm Window */
+#include "UI_CanvasConfirm.h"
+#include "UI_NodeButton.h"
+#include "UI_NodeConfWindow.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -47,6 +62,8 @@ CUI_ClientManager::CUI_ClientManager()
 
 	for (_uint i = 0; i < CANVAS_END; ++i)
 		m_vecCanvas.push_back(nullptr);
+
+	m_pConfirmWindow = nullptr;
 }
 
 HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -87,7 +104,10 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/fonts/131.SpriteFont"))))
 		return E_FAIL;
-
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic0"), TEXT("../Bin/Resources/fonts/Font00.SpriteFont"))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic1"), TEXT("../Bin/Resources/fonts/Font04.SpriteFont"))))
+		return E_FAIL;
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
@@ -268,10 +288,14 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/********************************************/
 	/*				For. Upgrade				*/
 	/********************************************/
-	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Inventory"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/Inventory%d.png"),2))))
+	//if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Inventory"),
+	//	CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/Inventory%d.png"),2))))
+	//	return E_FAIL;
+	//Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Inventory");
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_UpgradeWindow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/UpgradeWindow.png")))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_Inventory");
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_UpgradeWindow");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_PlayerSkillLevel0Locked"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Level0Blocked.png")))))
@@ -292,6 +316,85 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Kena_Ability_BGCircle_01.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SelectedCircle");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_TitleBrush"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/T_BrushStroke_AlphaOnly.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_TitleBrush");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CountDown"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Countdown.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CountDown");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleBar"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/T_ProgressBarBGRounded.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SimpleBar");
+
+
+
+	/********************************************/
+	/*				For. InvHeader				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_InvHeader"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/InventoryHeader.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_InvHeader");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CrystalIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Gem_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CrystalIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KarmaIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Karma_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KarmaIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_NumRotsIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/currency/T_Rot_Glow_128.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_NumRotsIcon");
+
+
+	/********************************************/
+	/*				For. Common_Confirm			*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ConfirmWindow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UIBGBox_Alpha.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ConfirmWindow");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLight"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLight");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightCenter"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Centered.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightCenter");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightGlow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Glow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlow");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ButtonHighLightGlowCenter"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_ButtonHighlight_BrushStroke_Centered_Glow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlowCenter");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BGGlow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UI_BGGlow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BGGlow");
+
+
+
+
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -319,8 +422,12 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTest");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaChange");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlphaTestGuage");
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "Trial_AlphaBlend"); /* temp */
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "One_Effect(Terrain)"); /* temp */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlpha"); 
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaTexture");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTestColor");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SpriteColor");
+
 
 
 																					 /* Event List */
@@ -463,16 +570,55 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 	/********************************************/
+	/*				For. InvHeader				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_InvHeader"), CUI_CanvasInvHeader::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_InvHeader");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Karma"), CUI_NodeKarma::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Karma");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_NumRots"), CUI_NodeNumRots::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_NumRots");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Crystal"), CUI_NodeCrystal::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Crystal");
+
+
+	/********************************************/
 	/*				For. Upgrades				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Upgrade"), CUI_CanvasUpgrade::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Upgrade");
-	
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_PlayerSkill"), CUI_NodePlayerSkill::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_PlayerSkill");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Skill"), CUI_NodeSkill::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Skill");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillName"), CUI_NodeSkillName::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillName");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillDesc"), CUI_NodeSkillDesc::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillDesc");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillCondition"), CUI_NodeSkillCond::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillCondition");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLevel"), CUI_NodeRotLevel::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLevel");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotGuage"), CUI_NodeRotGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotGuage");
 
 	/********************************************/
 	/*				For. Effects				*/
@@ -482,7 +628,24 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
 
-	
+	/********************************************/
+	/*				For. Confirm				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Confirm"), CUI_CanvasConfirm::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Confirm");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Button"), CUI_NodeButton::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Button");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Window"), CUI_NodeConfWindow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
+
+
+
+
 
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -568,6 +731,9 @@ void CUI_ClientManager::Set_Canvas(UI_CANVAS eID, CUI_Canvas * pCanvas)
 	if (eID < 0 || eID >= m_vecCanvas.size() || pCanvas == nullptr)
 		return;
 	m_vecCanvas[eID] = pCanvas;
+
+	if (eID == CANVAS_CONFIRM)
+		m_pConfirmWindow = static_cast<CUI_CanvasConfirm*>(pCanvas);
 }
 
 CUI_Canvas * CUI_ClientManager::Get_Canvas(UI_CANVAS eID)
@@ -589,6 +755,23 @@ CUI_NodeEffect * CUI_ClientManager::Get_Effect(UI_EFFECT eID)
 	if (eID < 0 || eID >= m_vecEffects.size())
 		return nullptr;
 	return m_vecEffects[eID];
+}
+
+void CUI_ClientManager::Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller)
+{
+	if (nullptr == m_pConfirmWindow)
+		return;
+
+	if (nullptr == pCaller)
+	{
+		m_pConfirmWindow->Set_Active(false);
+		return;
+	}
+
+
+	//m_pConfirmWindow->Set_Active(true);
+	m_pConfirmWindow->Set_Message(msg, pCaller);
+
 }
 
 void CUI_ClientManager::Free()
