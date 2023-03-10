@@ -43,7 +43,8 @@ HRESULT CEffect_Mesh_T::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+//	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+// 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
@@ -160,7 +161,7 @@ HRESULT CEffect_Mesh_T::Render()
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.eBlendType);
+		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
 }
@@ -349,34 +350,27 @@ vector<_float4>* CEffect_Mesh_T::Get_FreePos()
 }
 HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 {
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
-
 	/* For.Com_Model */
 	switch (eMeshType)
 	{
 	case Client::CEffect_Base::tagEffectDesc::MESH_PLANE:
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CUBE:
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CONE:
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_SPHERE:
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}
@@ -386,13 +380,6 @@ HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 
 HRESULT CEffect_Mesh_T::SetUp_Components()
 {
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
-
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), 
 		TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
@@ -420,7 +407,7 @@ HRESULT CEffect_Mesh_T::SetUp_Components()
 	_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 	CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[0], this)))
 		return E_FAIL;
 
 	/* For.MaskTexture */
@@ -430,10 +417,10 @@ HRESULT CEffect_Mesh_T::SetUp_Components()
 	_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 	CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[0], this)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_NormalEffect"), L"Com_NTexture", (CComponent**)&m_pNTextureCom, this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_NormalEffect"), L"Com_NTexture", (CComponent**)&m_pNTextureCom, this)))
 		return E_FAIL;
 
 	return S_OK;

@@ -39,6 +39,7 @@ private:
 
 private:
 	_float m_fTimeDelta = 0.0f;	
+	_float 	m_fShaderBindTime = 0.0f;
 
 public:
 	static  CEffect_T*     Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

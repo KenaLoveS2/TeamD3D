@@ -120,7 +120,7 @@ void CKena::Tick(_float fTimeDelta)
 	
 	__super::Tick(fTimeDelta);
 
-	Test_Raycast();
+	// Test_Raycast();
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -491,6 +491,8 @@ void CKena::Push_EventFunctions()
 	Test(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
+	TurnOnCharge(true, 0.f);
+	TurnOffCharge(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -548,7 +550,6 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
 	pEffectBase->Set_Parent(this);
-
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1539,6 +1540,30 @@ void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_bAttack = false;
+}
+
+void CKena::TurnOnCharge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnCharge);
+		return;
+	}
+
+	m_bChargeLight = true;
+}
+
+void CKena::TurnOffCharge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffCharge);
+		return;
+	}
+
+	m_bChargeLight = false;
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
