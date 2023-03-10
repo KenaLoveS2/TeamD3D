@@ -41,34 +41,54 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 		pChild->Set_Parent(this);
 
 		if (!lstrcmp(pChild->Get_ObjectCloneName(), L"KenaDamageCircleR_2"))
-			pChild->Get_TransformCom()->Rotation(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), 90.f);
-	}
+		{
+			_matrix matrchildworld = XMMatrixIdentity();
+			_matrix	RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(180.0f));
 
-	m_pTransformCom->Set_Scaled(_float3(0.3f, 0.3f, 0.3f));
+			_float3	vScale = _float3(XMVectorGetX(matrchildworld.r[0]),
+				XMVectorGetX(XMVector3Length(matrchildworld.r[1])),
+				XMVectorGetX(XMVector3Length(matrchildworld.r[2])));
+
+			_vector	vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
+			_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+			_vector	vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
+
+			matrchildworld.r[0] = XMVector4Transform(vRight, RotationMatrix);
+			matrchildworld.r[1] = XMVector4Transform(vUp, RotationMatrix);
+			matrchildworld.r[2] = XMVector4Transform(vLook, RotationMatrix);
+
+			pChild->Set_InitMatrix(matrchildworld);
+		}
+	}
 	return S_OK;
 }
 
 void CE_KenaDamage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	ImGui::Begin("Damage");
-	ImGui::Checkbox("Avtice", &m_eEFfectDesc.bActive);
-	ImGui::End();
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
+
 	if (m_eEFfectDesc.bActive == true)
 	{
-// 		m_fScale += 0.3f;
-// 		m_pTransformCom->Set_Scaled(m_CurScale * m_fScale);
+		m_fScaleTime += fTimeDelta;
+		m_fAddValue += 0.3f;
+
+		if (m_fScaleTime > 0.6f)
+		{
+			m_eEFfectDesc.vScale *= m_fAddValue;
+			m_eEFfectDesc.bActive = false;
+		}
 	}
 	else
 	{
-// 		m_pTransformCom->Set_Scaled(_float3(0.3f, 0.3f, 0.3f));
-// 		m_fScale = 0.0f;
-	}
+		for (auto& pChild : m_vecChild)
+			pChild->ResetSprite();
 
-	for (auto& pChild : m_vecChild)
-	{
-		pChild->Set_Active(m_eEFfectDesc.bActive);
-
+		m_fAddValue = 0.0f;
+		m_fScaleTime = 0.0f;
+		m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
 	}
 }
 

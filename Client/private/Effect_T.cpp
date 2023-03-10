@@ -40,7 +40,7 @@ HRESULT CEffect_T::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+	XMStoreFloat4x4(&m_InitWorldMatrix, Get_WorldMatrix());
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_eEFfectDesc.bActive = false;
@@ -90,7 +90,7 @@ void CEffect_T::Tick(_float fTimeDelta)
 	}
 
 	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
+		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
 	else
 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
@@ -155,13 +155,7 @@ void CEffect_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	__super::Compute_CamDistance();
-	static _float fRotation = 0.0;
 
-	ImGui::Begin("ReCompile");
-	if (ImGui::Button("test"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
 	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
 		Set_Matrix();
 
@@ -404,11 +398,18 @@ HRESULT CEffect_T::Set_Trail(CEffect_Base* pEffect, const _tchar* pProtoTag)
 	pGameInstance->Add_String(szTrailCloneTag);
 
 	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
 	if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Trail", szTrailProtoTag, szTrailCloneTag)))
-		return E_FAIL;
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+
 	m_pEffectTrail = dynamic_cast<CEffect_Trail*>(pGameInstance->Get_GameObjectPtr(iCurLevel, L"Layer_Trail", szTrailCloneTag));
 	if (m_pEffectTrail == nullptr)
 	{

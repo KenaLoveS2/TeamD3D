@@ -94,6 +94,7 @@ unsigned int	g_LEVEL = 0;
 #include <fstream>
 #include "E_EnemyWispTrail.h"
 #include "E_KenaDamage.h"
+#include "E_KenaHit.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1579,18 +1580,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_GameObject_KenaCharge */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
-		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaChargeImpact */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
-		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
 	/* For.Prototype_GameObject_KenaPulseCloud */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
 		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
@@ -1603,9 +1592,27 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	/* For.Prototype_GameObject_KenaCharge */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
+		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaChargeImpact */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
+		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_KenaDamage */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDamage"),
 		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Damage_Set.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaHit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hit.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -1693,7 +1700,20 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
 		CLiftRot_Master::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* Monster */
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.mdat", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
+		CEnemyWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
+		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* ~Monster */
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_fCur += 1.f;
@@ -1812,6 +1832,11 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* For.Prototype_GameObject_KenaDamage */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDamage"),
 		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Damage_Set.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaHit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hit.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_KenaStaffTrail */

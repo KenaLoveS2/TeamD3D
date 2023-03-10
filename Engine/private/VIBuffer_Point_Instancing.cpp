@@ -34,8 +34,6 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	Set_PSize(m_InstanceData->fPSize);
-
 	switch (m_ePointDesc->eShapeType)
 	{
 	case CVIBuffer_Point_Instancing::tagPointDesc::VIBUFFER_BOX:

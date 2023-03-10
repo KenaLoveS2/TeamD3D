@@ -31,6 +31,8 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
+	// m_szVIBufferProtoTag = L"Prototype_Component_KenaPulseDot";
+
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 

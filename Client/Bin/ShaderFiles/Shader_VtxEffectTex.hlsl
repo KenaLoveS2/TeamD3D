@@ -277,7 +277,8 @@ PS_OUT PS_MAIN_E_HIT(PS_IN In)
 
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	albedo.rgb = g_vColor.rgb;
+	float3 vColor = float3(215.f, 174.f, 129.f) / 255.f;
+	albedo.rgb = vColor * 1.7f;
 	Out.vColor = albedo;
 	return Out;
 }
@@ -371,8 +372,8 @@ technique11 DefaultTechnique
 
 	pass Effect_Hit // 5
 	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

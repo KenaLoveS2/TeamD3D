@@ -1,15 +1,15 @@
 #pragma once
 #include "Client_Defines.h"
-#include "Effect.h"
+#include "Effect_Mesh.h"
 
 BEGIN(Client)
 
-class CE_KenaDamage final : public CEffect
+class CE_KenaHit final : public CEffect_Mesh
 {
 private:
-	CE_KenaDamage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CE_KenaDamage(const CE_KenaDamage& rhs);
-	virtual ~CE_KenaDamage() = default;
+	CE_KenaHit(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CE_KenaHit(const CE_KenaHit& rhs);
+	virtual ~CE_KenaHit() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -23,10 +23,9 @@ private:
 	_float			m_fAddValue = 0.0f;
 
 public:
-	static  CE_KenaDamage* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
+	static  CE_KenaHit* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*  Clone(void* pArg = nullptr) override;
 	virtual void          Free() override;
-
 };
 
 END

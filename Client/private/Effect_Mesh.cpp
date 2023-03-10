@@ -39,7 +39,10 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-// 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+	if(m_pModelCom == nullptr)
+		Set_ModelCom(m_eEFfectDesc.eMeshType);
+
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }

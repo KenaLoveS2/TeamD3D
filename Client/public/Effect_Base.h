@@ -103,7 +103,7 @@ public:
 	HRESULT   Load_E_Desc(const _tchar* pFilePath);
 	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
 	HRESULT   Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
-	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag);
+	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag, _matrix worldmatrix);
 
 public:
 	void	             Set_EffectDesc(EFFECTDESC eEffectDesc) {
@@ -132,9 +132,16 @@ public:
 	void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
 	_bool   Get_Active() { return m_eEFfectDesc.bActive; }
 
+	void	ResetSprite(){
+		m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+		m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+	}
+
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
+	void    Set_TotalDTextureCnt(_int iTextureCnt) { m_iTotalDTextureComCnt =iTextureCnt; }
+	void    Set_TotalMTextureCnt(_int iTextureCnt) { m_iTotalMTextureComCnt =iTextureCnt; }
 
 public:
 	_bool   Get_HaveTrail() { return m_eEFfectDesc.IsTrail; }

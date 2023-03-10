@@ -169,6 +169,22 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_EFFECT_HIT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 PulseColor = float4(122.f, 122.f, 122.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(4, 4.5, PulseColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.rgb = vDiffuse.rgb *4.f;
+
+	Out.vDiffuse = vDiffuse * fresnel + PulseColor;
+	Out.vDiffuse.a = (PulseColor.r * 5.f + 0.5f) * 0.05f;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
@@ -195,5 +211,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_PULSE_MAIN();
+	}
+
+	pass Effect_Hit // 2
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_EFFECT_HIT();
 	}
 }

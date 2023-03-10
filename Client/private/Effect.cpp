@@ -159,7 +159,7 @@ void CEffect::Late_Tick(_float fTimeDelta)
 		return;
 
 	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
+		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
 	else
 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
