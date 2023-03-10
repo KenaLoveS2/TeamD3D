@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CBone final : public CBase
 {
 public:
-	enum LOCKTO { LOCKTO_CHILD, LOCKTO_PARENT, LOCKTO_ALONE, UNLOCKTO_CHILD, UNLOCKTO_PARENT, UNLOCKTO_ALONE, LOCKTO_END };
+	enum LOCKTO { LOCKTO_CHILD, LOCKTO_PARENT, LOCKTO_ALONE, LOCKTO_ROTATE, UNLOCKTO_CHILD, UNLOCKTO_PARENT, UNLOCKTO_ALONE, LOCKTO_END };
 
 private:
 	CBone();
@@ -25,11 +25,17 @@ public:
 	_matrix					Get_OffsetMatrix() { return XMLoadFloat4x4(&m_OffsetMatrix); }
 	_matrix					Get_TransformMatrix() { return XMLoadFloat4x4(&m_TransformMatrix); }
 	const _bool&		Get_BoneLocked() const { return m_bLock; }
+	const _bool&		Get_BoneRotateLocked() const { return m_bRotateLock; }
 	void						Set_CombindMatrix(_fmatrix CombindMatrix) { XMStoreFloat4x4(&m_CombindTransformMatrix, CombindMatrix); }
 	void						Set_OffsetMatrix(_float4x4 OffsetMatrix) { m_OffsetMatrix = OffsetMatrix; }
 	void						Set_TransformMatrix(_fmatrix TransformMatrix) { XMStoreFloat4x4(&m_TransformMatrix, TransformMatrix); }
 	void						Set_BoneLocked(LOCKTO eLockTo);
-	void						Set_BoneLocked(_bool bLock) { m_bLock = bLock; }
+	void						Set_BoneLocked(_bool bLock) {
+		m_bLock = bLock;
+
+		if (bLock == false)
+			m_bRotateLock = false;
+	}
 
 	HRESULT SetParent(CBone* pParent);
 	const char* Get_ParentName() const { return m_szParentName; }
@@ -51,6 +57,7 @@ private:
 	vector<CBone*>	m_vecChild;
 
 	_bool				m_bLock = false;
+	_bool				m_bRotateLock = false;
 
 public:
 	static CBone* Create(HANDLE hFile);

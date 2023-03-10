@@ -72,6 +72,7 @@ private:
 	_bool					m_bHeavyHit = false;
 	_bool					m_bChargeLight = false;
 	_bool					m_bSprint = false;
+	_bool					m_bAim = false;
 
 	_float					m_fInertia = 5.f;
 	_float					m_fVelocity = 0.f;

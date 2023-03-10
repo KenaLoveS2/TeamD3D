@@ -67,7 +67,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 	m_fGravity = 9.81f;
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
-	m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	m_fInitJumpSpeed = 0.35f;
 	
 	m_iObjectProperty = OP_PLAYER;
 
@@ -555,6 +556,7 @@ HRESULT CKena::Ready_Effects()
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
