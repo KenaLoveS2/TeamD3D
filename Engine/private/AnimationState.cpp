@@ -18,7 +18,7 @@ const _uint CAnimationState::Get_CurrentAnimIndex() const
 		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 			return m_pCurAnim->m_pMainAnim->Get_AnimIndex();
 		else
-			return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+			return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimIndex();
 	}
 	else
 		return 10000;
@@ -31,7 +31,7 @@ const _uint CAnimationState::Get_PreAnimIndex() const
 		if (m_pPreAnim->m_vecAdditiveAnim.empty() == true)
 			return m_pPreAnim->m_pMainAnim->Get_AnimIndex();
 		else
-			return m_pPreAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+			return m_pPreAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimIndex();
 	}
 	else
 		return 10000;
@@ -42,7 +42,7 @@ const _bool & CAnimationState::Get_AnimationFinish()
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->IsFinished();
 	else
-		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->IsFinished();
+		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->IsFinished();
 }
 
 const _float CAnimationState::Get_AnimationProgress() const
@@ -50,7 +50,7 @@ const _float CAnimationState::Get_AnimationProgress() const
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->Get_AnimationProgress();
 	else
-		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimationProgress();
+		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationProgress();
 }
 
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
@@ -261,8 +261,15 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 	{
 		for (auto pAdditiveAnim : m_pCurAnim->m_vecAdditiveAnim)
 		{
-			pAdditiveAnim->m_pRefAnim->Reset_Animation();
-			pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
+			//pAdditiveAnim->m_pRefAnim->Reset_Animation();
+			
+			if (m_pPreAnim->m_vecAdditiveAnim.empty() == false)
+			{
+				if (pAdditiveAnim->m_pAdditiveAnim != m_pPreAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim)
+					pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
+			}
+			else
+				pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
 
 			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 				pAdditiveAnim->m_fAdditiveRatio = 0.f;
@@ -388,9 +395,20 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 		}
 		else
 		{
-			/* 현재 애님에 애디티브 적용 후의 뼈행렬과 러프해야함. */
 			_smatrix	matBonesTransformationForBlend[800];
 			pMainAnim->Update_Bones_ReturnMat(fTimeDelta, matBonesTransformationForBlend, m_strRootBone, pBlendAnim);
+
+			if (m_pPreAnim->m_vecAdditiveAnim.empty() == false)
+			{
+				for (auto pPreAdditiveAnim : m_pPreAnim->m_vecAdditiveAnim)
+				{
+					if (pPreAdditiveAnim->m_pAdditiveAnim == m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim)
+					{
+						pPreAdditiveAnim->m_pAdditiveAnim->Reverse_Play(fTimeDelta);
+						break;
+					}
+				}
+			}
 			
 			for (auto pAdditiveAnim : m_pCurAnim->m_vecAdditiveAnim)
 			{
