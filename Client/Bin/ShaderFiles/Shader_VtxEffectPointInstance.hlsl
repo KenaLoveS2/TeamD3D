@@ -30,6 +30,7 @@ float   g_fAlpha;
 
 texture2D g_TrailflowTexture;
 texture2D g_TrailTypeTexture;
+//texture2D g_TrailOutTexture;
 float	  g_BeforeUV, g_AfterUV;
 
 float2 g_UV;
@@ -416,6 +417,7 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector	 flow = g_TrailflowTexture.Sample(LinearSampler, In.vTexUV);
+	// vector   vOutflow = g_TrailOutTexture.Sample(LinearSampler, In.vTexUV);
 	flow.a = flow.r;
 
 	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 3.f);

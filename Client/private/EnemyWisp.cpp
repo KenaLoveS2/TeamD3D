@@ -42,54 +42,15 @@ HRESULT CEnemyWisp::Initialize(void * pArg)
 	m_pModelCom->Set_AnimIndex(0);
 
 	FAILED_CHECK_RETURN(Set_WispTrail(), E_FAIL);
-
+	/* matrix 이상하게 들어감 확인 해봐야함 */
+	_matrix matiden = XMMatrixIdentity();
+	m_pTransformCom->Set_WorldMatrix(matiden);
 	return S_OK;
 }
 
 void CEnemyWisp::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	static _bool bPlay = false;
-
-	ImGui::Begin("EnemyWisp Option");
-	ImGui::Checkbox("Play", &bPlay);
-
-	ImGui::DragFloat("UV_X", (_float*)&m_fUV.x, 0.01f, 0.f, 10.f);
-	ImGui::DragFloat("UV_Y", (_float*)&m_fUV.y, 0.01f, 0.f, 10.f);
-
-	if(bPlay)
-	{
-		m_pModelCom->Play_Animation(fTimeDelta);
-		m_pEffectTrail->Tick(fTimeDelta);
-		m_pEffectTrail->Set_Active(true);
-	}
-
-	if (!bPlay)
-		m_pEffectTrail->Set_Active(false);
-
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
-
-	ImGui::End();
 }
 
 void CEnemyWisp::Late_Tick(_float fTimeDelta)
