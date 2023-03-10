@@ -214,6 +214,7 @@
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
     <ClInclude Include="..\public\Gate.h" />
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
@@ -247,6 +248,7 @@
     <ClInclude Include="..\public\Moth.h" />
     <ClInclude Include="..\public\Path_Mesh.h" />
     <ClInclude Include="..\Public\Pillar.h" />
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
     <ClInclude Include="..\public\SkillInfo.h" />
     <ClInclude Include="..\Public\PulseStone.h" />
     <ClInclude Include="..\public\Pulse_PlateForm.h" />
@@ -359,6 +361,7 @@
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
@@ -392,6 +395,7 @@
     <ClCompile Include="..\private\Moth.cpp" />
     <ClCompile Include="..\private\Path_Mesh.cpp" />
     <ClCompile Include="..\Private\Pillar.cpp" />
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
     <ClCompile Include="..\private\SkillInfo.cpp" />
     <ClCompile Include="..\Private\PulseStone.cpp" />
     <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
