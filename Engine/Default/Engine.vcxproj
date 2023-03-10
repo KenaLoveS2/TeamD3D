@@ -425,6 +425,7 @@ call Copy.bat</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PhysX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessVFX.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\public\Json\ReadMe.txt" />
