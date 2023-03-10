@@ -883,6 +883,32 @@ void CUtile::Execute_BillBoard(CTransform* pTransform, _float3 vScale)
 	pTransform->Set_Scaled(vScale);
 }
 
+void CUtile::Execute_BillBoardOrtho(CTransform * pTransform, _float3 vScale, _float fCamDist)
+{
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+
+	_matrix worldmatrix = _smatrix::CreateBillboard(
+		pTransform->Get_State(CTransform::STATE_TRANSLATION),
+		pPipeLine->Get_CamPosition_Float3(),
+		pPipeLine->Get_CamUp_Float3(),
+		&pPipeLine->Get_CamLook_Float3());
+
+	pTransform->Set_WorldMatrix(worldmatrix);
+
+	_float fNear = *CGameInstance::GetInstance()->Get_CameraNear();
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_float4 vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
+
+	_float4 vDist = vCamPos - vPos;
+	_float fDist = vDist.Length();
+	
+	_float3 vOrthoScale = { 10.f, 10.f, 1.f };
+	//_float3 vOrthoScale = { fNear*vScale.x / fDist, fNear*vScale.y / fDist, 1.f };
+	pTransform->Set_Scaled(vOrthoScale);
+
+	//CGameInstance::GetInstance()->camera
+}
+
 _tchar* CUtile::Create_DummyString()
 {
 	static _uint iIndex = 0;

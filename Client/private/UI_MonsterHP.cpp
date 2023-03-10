@@ -29,7 +29,9 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(20.f, 00.f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(20.f, 10.f, 1.f));
+		m_matInit = m_pTransformCom->Get_WorldMatrixFloat4x4();
+		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -118,9 +120,6 @@ HRESULT CUI_MonsterHP::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
-	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	vPos = XMVectorSetZ(vPos,1.f);
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))

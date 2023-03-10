@@ -22,6 +22,7 @@ public:
 
 
 public:
+	_float* Get_CameraNear();
 	_float* Get_CameraFar();
 	map<const _tchar*, class CCamera*>*	Get_CameraContainer() { return &m_Cameras; }
 

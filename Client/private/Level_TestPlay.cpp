@@ -48,11 +48,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 		
-	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	/*if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
 	{
 		MSG_BOX("Layer_Enviroment");
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
@@ -181,6 +181,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");

@@ -41,6 +41,13 @@ CCamera* CCamera_Manager::Find_Camera(const _tchar * pCameraTag)
 	return Pair->second;
 }
 
+_float * CCamera_Manager::Get_CameraNear()
+{
+	if (m_pWorkCamera == nullptr)		return nullptr;
+
+	return m_pWorkCamera->Get_Near();
+}
+
 _float* CCamera_Manager::Get_CameraFar()
 {
 	if (m_pWorkCamera == nullptr)		return nullptr;
