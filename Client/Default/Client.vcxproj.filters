@@ -232,9 +232,6 @@
     <Filter Include="02.GameObjects\Effect\Object">
       <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Kena Effect">
-      <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
       <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
     </Filter>
@@ -312,6 +309,30 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc">
       <UniqueIdentifier>{f73c2825-7fbe-4977-ae4e-8adcca69c5d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena">
+      <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Charge">
+      <UniqueIdentifier>{cb2ab0f6-fd16-4a70-b321-1347281d0e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Damage">
+      <UniqueIdentifier>{fcefc623-bcb5-4f71-8875-64b12b1adb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Pulse">
+      <UniqueIdentifier>{f88dbeb1-9787-4a51-af4c-ace4d4aee6e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Trail">
+      <UniqueIdentifier>{ff96dfad-5fab-464e-aea5-e42d5c7b51e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Enemy">
+      <UniqueIdentifier>{2fab38ba-d3bd-4753-86e5-5756678dfe7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Effect">
+      <UniqueIdentifier>{446db465-dba5-46e8-86fe-56034d6c67fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
+      <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -608,7 +629,7 @@
       <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_KenaPulse.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+      <Filter>02.GameObjects\Effect\Object\Kena</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bridge.h">
       <Filter>02.GameObjects\Envrioment</Filter>
@@ -676,15 +697,6 @@
     <ClInclude Include="..\public\Effect_Point_Instancing_T.h">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_KenaTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulseDot.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_KenaPulseCloud.h">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\BranchTosser.h">
       <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
@@ -746,6 +758,36 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeRotGuage.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeConfWindow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClInclude>      
+    <ClInclude Include="..\public\E_KenaCharge.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaChargeImpact.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDamage.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseDot.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyWisp.h">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaHit.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1024,7 +1066,7 @@
       <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_KenaPulse.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
+      <Filter>02.GameObjects\Effect\Object\Kena</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bridge.cpp">
       <Filter>02.GameObjects\Envrioment</Filter>
@@ -1089,15 +1131,6 @@
     <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp">
       <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulseDot.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\BranchTosser.cpp">
       <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
@@ -1159,6 +1192,36 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeConfWindow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaCharge.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaChargeImpact.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDamage.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyWisp.cpp">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaHit.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1222,6 +1285,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

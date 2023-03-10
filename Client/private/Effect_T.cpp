@@ -40,15 +40,18 @@ HRESULT CEffect_T::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+	XMStoreFloat4x4(&m_InitWorldMatrix, Get_WorldMatrix());
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PLANE;
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_eEFfectDesc.bActive = false;
+
 	return S_OK;
 }
 
 void CEffect_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fShaderBindTime += fTimeDelta;
 
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
@@ -87,7 +90,7 @@ void CEffect_T::Tick(_float fTimeDelta)
 	}
 
 	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
+		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
 	else
 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
@@ -100,6 +103,7 @@ void CEffect_T::Tick(_float fTimeDelta)
 				m_eEFfectDesc.fWidthFrame++;
 			else
 				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
 			m_fTimeDelta = 0.0;
 
 			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
@@ -107,21 +111,15 @@ void CEffect_T::Tick(_float fTimeDelta)
 				if (m_eEFfectDesc.fTimeDelta < 1.f)
 					m_eEFfectDesc.fHeightFrame++;
 				else
-					m_eEFfectDesc.fHeightFrame += floor(m_eEFfectDesc.fTimeDelta);
+					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
 
-				m_eEFfectDesc.fWidthFrame = 0.f;
+				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 
 				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = 0.f;
+					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
 			}
-		}
-	}
 
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
+		}
 	}
 
 	if (m_eEFfectDesc.bFreeMove == true)
@@ -158,18 +156,11 @@ void CEffect_T::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 	__super::Compute_CamDistance();
 
+	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+		Set_Matrix();
+
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
-
-	if (nullptr != m_pParent)
-		Set_Matrix();
 }
 
 HRESULT CEffect_T::Render()
@@ -180,15 +171,7 @@ HRESULT CEffect_T::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
-	//else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
-	//	m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
-	//else
-	//	m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
-
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIBufferCom->Render();
 	return S_OK;
 }
@@ -260,12 +243,6 @@ HRESULT CEffect_T::Edit_Child(const _tchar * ProtoTag)
 
 HRESULT CEffect_T::SetUp_Components()
 {
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
 
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
@@ -285,8 +262,6 @@ HRESULT CEffect_T::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
-	m_iTotalDTextureComCnt = 1;
-	m_iTotalMTextureComCnt = 1;
 
 	/* For.DiffuseTexture */
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
@@ -297,7 +272,7 @@ HRESULT CEffect_T::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -310,7 +285,7 @@ HRESULT CEffect_T::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 	return S_OK;
@@ -360,6 +335,8 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float))))
 		return E_FAIL;
 
 	// MaxCnt == 10
@@ -421,11 +398,18 @@ HRESULT CEffect_T::Set_Trail(CEffect_Base* pEffect, const _tchar* pProtoTag)
 	pGameInstance->Add_String(szTrailCloneTag);
 
 	if (FAILED(pGameInstance->Add_Prototype(szTrailProtoTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
 
 	_int iCurLevel = pGameInstance->Get_CurLevelIndex();
 	if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Trail", szTrailProtoTag, szTrailCloneTag)))
-		return E_FAIL;
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return S_OK;
+	}
+
 	m_pEffectTrail = dynamic_cast<CEffect_Trail*>(pGameInstance->Get_GameObjectPtr(iCurLevel, L"Layer_Trail", szTrailCloneTag));
 	if (m_pEffectTrail == nullptr)
 	{

@@ -714,7 +714,17 @@ void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
 		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
-		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
+		if (m_bIsStaticPxActor)
+		{
+			m_pPhysX_Manager->Set_ActorMatrix(m_pPxActor, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * m_WorldMatrix);
+		}
+		else
+		{
+			_float4x4 RetMatrix;
+			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
+			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
+			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+		}
 	}
 }
 
@@ -724,20 +734,30 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 	if (m_pPxActor && m_pPhysX_Manager)
 	{
 		_vector vPivot = XMLoadFloat3(&m_vPxPivot);
-		m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, Get_State(CTransform::STATE_TRANSLATION) + vPivot);
+		if (m_bIsStaticPxActor)
+		{
+			m_pPhysX_Manager->Set_ActorMatrix(m_pPxActor, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * m_WorldMatrix);
+		}
+		else
+		{
+			_float4x4 RetMatrix;
+			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
+			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
+			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+		}	
 	}		
 }
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	if (m_pPxActor == nullptr)
+	if (m_pPxActor == nullptr || m_bIsStaticPxActor)
 		return;
 
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
 	_float4x4 RetMatrix, Pivot;
 
 	_matrix m;
-	XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) *  World);
+	XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
 	m = XMLoadFloat4x4(&RetMatrix);
 	m.r[0] = XMVector3Normalize(m.r[0]);
 	m.r[1] = XMVector3Normalize(m.r[1]);

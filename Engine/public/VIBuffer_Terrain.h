@@ -54,8 +54,7 @@ public:
 	}
 	FACEINDICES32* Get_InidicesPtr() { return m_pIndices; }
 	_uint Get_NumVerticesX() { return m_iNumVerticesX; }
-	_uint Get_NumVerticesZ() { return m_iNumVerticesZ; }
-	void Create_Divide_PxData(VTXNORTEX* pVtx, FACEINDICES32* pIdx);
+	_uint Get_NumVerticesZ() { return m_iNumVerticesZ; }	
 };
 
 END

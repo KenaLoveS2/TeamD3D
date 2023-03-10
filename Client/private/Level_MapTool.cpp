@@ -110,9 +110,11 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 	//CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "..\public\E_KenaPulseCloud.h"
+#include "Shader.h"
+#include "Effect_Trail.h"
+#include "GameInstance.h"
+#include "Camera.h"
 
 CE_KenaPulseCloud::CE_KenaPulseCloud(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect(pDevice, pContext)
@@ -46,6 +50,9 @@ void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pParent != nullptr)
+		Set_Matrix();
 }
 
 HRESULT CE_KenaPulseCloud::Render()
@@ -55,7 +62,7 @@ HRESULT CE_KenaPulseCloud::Render()
 
 	if (FAILED(__super::Render()))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

@@ -199,10 +199,16 @@
     <ClInclude Include="..\public\Effect_T.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\public\Effect_Trail_T.h" />
+    <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
+    <ClInclude Include="..\public\E_EnemyWispTrail.h" />
+    <ClInclude Include="..\public\E_KenaChargeImpact.h" />
+    <ClInclude Include="..\public\E_KenaDamage.h" />
+    <ClInclude Include="..\public\E_KenaHit.h" />
     <ClInclude Include="..\public\E_KenaPulse.h" />
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\E_KenaPulseDot.h" />
+    <ClInclude Include="..\public\E_KenaCharge.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -287,6 +293,7 @@
     <ClInclude Include="..\public\UI_NodeButton.h" />
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
+    <ClInclude Include="..\public\UI_NodeConfWindow.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -337,10 +344,16 @@
     <ClCompile Include="..\private\Effect_T.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
+    <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
+    <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
+    <ClCompile Include="..\private\E_KenaDamage.cpp" />
+    <ClCompile Include="..\private\E_KenaHit.cpp" />
     <ClCompile Include="..\private\E_KenaPulse.cpp" />
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
+    <ClCompile Include="..\private\E_KenaCharge.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
@@ -425,6 +438,7 @@
     <ClCompile Include="..\private\UI_NodeButton.cpp" />
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
+    <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
@@ -467,6 +481,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />

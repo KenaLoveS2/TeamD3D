@@ -67,7 +67,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -120,7 +120,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
 		m_pRendererCom->Set_PhysXRender(true);
@@ -172,7 +172,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_PUNCH].c_str(), pivotMatrix);
 	}
@@ -838,10 +838,9 @@ HRESULT CWoodKnight::SetUp_State()
 
 HRESULT CWoodKnight::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
+	__super::SetUp_Components();
+	
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_WoodKnight", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes() - 1;

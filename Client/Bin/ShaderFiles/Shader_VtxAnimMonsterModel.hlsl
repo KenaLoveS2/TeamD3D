@@ -22,6 +22,22 @@ Texture2D<float4>		g_AOTexture;
 Texture2D<float4>		g_RoughnessTexture;
 Texture2D<float4>		g_MaskTexture;
 
+/* EnemyWisp Texture */
+texture2D		g_NoiseTexture;
+texture2D		g_ReamTexture;
+texture2D		g_LineTexture;
+texture2D		g_SmoothTexture;
+texture2D		g_ShapeMaskTexture;
+float4			g_vColor;
+/* ~EnemyWisp Texture */
+
+/* Dissolve */
+texture2D		g_DissolveTexture;
+bool			g_bDissolve;
+float			g_fDissolveTime;
+/* ~Dissolve */
+
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -324,7 +340,55 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 	return Out;
 }//7
 
-// ALPHA, AO
+PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV);
+	//float4 vMask = g_ShapeMaskTexture.Sample(LinearSampler, In.vTexUV);
+	//vMask.a = vMask.r;
+	float4 vColor = g_ReamTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vSmooth = g_SmoothTexture.Sample(LinearSampler, In.vTexUV);
+	float4 vblendColor = lerp(vColor, vSmooth, vSmooth.r);
+	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(73.f, 24.f, 16.f, 255.f) /255.f;
+
+	float4 vLine = g_LineTexture.Sample(LinearSampler, In.vTexUV);
+
+	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
+	float  base = dot(In.vNormal, -In.vViewDir);
+	float  exponential = /*vMask * */pow(base, 2.f);
+	float4 fresnelcolor = float4(197.f, 57.f, 57.f, 13.f) / 255.f;
+	float4 fresnel = exponential + fresnelcolor * (1.0f - exponential);
+
+	// rim
+	float  rim = dot(In.vNormal, In.vViewDir);
+	float4 vOutline = pow(1.f - rim, 5.f);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		//Dissolve function
+		half dissolve_value = Dissolve.r;
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
+
+	Out.vDiffuse = finalcolor * vOutline * fresnel;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+} //8
+
+  // ALPHA, AO
 PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -351,10 +415,11 @@ PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
-}//8
+}//9
 
 technique11 DefaultTechnique
 {
+	// 0
 	pass Default
 	{
 		SetRasterizerState(RS_Default);
@@ -368,6 +433,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
+	// 1
 	pass AO_R_M
 	{
 		SetRasterizerState(RS_Default);
@@ -380,7 +446,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M();
 	}
-
+	// 2
 	pass AO_R_M_E
 	{
 		SetRasterizerState(RS_Default);
@@ -393,7 +459,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E();
 	}
-
+	// 3
 	pass AO_R_M_G
 	{
 		SetRasterizerState(RS_Default);
@@ -406,7 +472,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_G();
 	}
-
+	// 4
 	pass AO_R_M_O
 	{
 		SetRasterizerState(RS_Default);
@@ -420,6 +486,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_O();
 	}
 
+	// 5
 	pass AO_R_M_EEM
 	{
 		SetRasterizerState(RS_Default);
@@ -432,7 +499,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_EEM();
 	}
-
+	// 6
 	pass SEPARATE_AO_R_M_E
 	{
 		SetRasterizerState(RS_Default);
@@ -445,7 +512,7 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SEPARATE_AO_R_M_E();
 	}
-
+	// 7
 	pass MASK
 	{
 		SetRasterizerState(RS_Default);
@@ -459,12 +526,25 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_MASK();
 	}
 
+	// 8
+	pass Sapling_BombChargeUp
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_BOMBCHARGEUP();
+	}
+
+	//9
 	pass ALPHA_AO_R_M
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;

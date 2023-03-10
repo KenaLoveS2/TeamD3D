@@ -81,7 +81,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fRestitution = 0.1f;
 	PxCapsuleDesc.eFilterType = FILTER_DEFULAT;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_ROT));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));

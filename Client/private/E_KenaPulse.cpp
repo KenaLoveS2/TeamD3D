@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_KenaPulse.h"
 #include "GameInstance.h"
+#include "Effect_Trail.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -74,8 +75,18 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
+	/* Component */
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"), L"Com_DissolveTexture", (CComponent**)&m_pDissolveTexture, this)))
 		return E_FAIL;
+
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
+		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	Set_ModelCom(m_eEFfectDesc.eMeshType);
+	/* ~Component */
 
 	m_eEFfectDesc.bActive = false;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
@@ -119,12 +130,15 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			m_bDesolve = false;
 			m_fDissolveTime = 0.0f;
 		}
-	}
+	}	
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+		Set_Matrix();
 }
 
 HRESULT CE_KenaPulse::Render()
