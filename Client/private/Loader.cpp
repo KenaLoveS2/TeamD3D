@@ -1343,26 +1343,37 @@ HRESULT CLoader::Loading_ForTestPlay()
 	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneClumps", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneGroudCover", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneHeart", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneWall", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Gate", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Trees", true, true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/BushDead_02", true, true)))
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/Rot_Rock", true, true)))// json NonUse
 		assert(!"Issue");
+	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/RotCarry_Piece", true, true)))// json NonUse
 		assert(!"Issue");
+	m_fCur += 1.f;
 #pragma endregion ~ 0~4 MapObj
 	
 
