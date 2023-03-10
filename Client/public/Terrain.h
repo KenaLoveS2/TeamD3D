@@ -55,9 +55,9 @@ public:
 
 private:
 	CShader*						m_pShaderCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
+	CRenderer*						m_pRendererCom = nullptr;
 	CTexture*						m_pTextureCom[TYPE_END] = { nullptr };
-	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
+	CVIBuffer_Terrain*				m_pVIBufferCom = nullptr;
 
 	_float4 m_vBrushPos;
 	_float m_vBrushRange = 0.8f;

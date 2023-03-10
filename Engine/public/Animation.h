@@ -53,6 +53,7 @@ public:
 	void								Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
 	void								Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
 	void								Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "");
+	void								Blend_BoneMatrices(_float fBlendRatio, _smatrix* matPreAnimBones, _smatrix* matCurAnimBones, const string& strRootBone = "");
 	void								Reverse_Play(_float fTimeDelta);
 	void								Reset_Animation();
 

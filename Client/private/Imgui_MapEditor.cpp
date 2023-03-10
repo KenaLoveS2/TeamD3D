@@ -346,7 +346,7 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 	if (m_wstrProtoName == L"" || m_wstrModelName == L"")
 		return;
 
-	if (m_bUseTerrainPicking)
+	if (m_bUseTerrainPicking && m_pSelectedTerrain != nullptr)
 	{
 		m_bIstancingObjPicking = false;
 		_float4 fCreatePos;

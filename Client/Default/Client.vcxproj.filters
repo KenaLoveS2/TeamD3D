@@ -810,6 +810,8 @@
     <ClInclude Include="..\public\UI_MonsterHP.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1259,6 +1261,8 @@
     <ClCompile Include="..\private\UI_MonsterHP.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

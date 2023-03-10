@@ -362,8 +362,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	})
 		.AddTransition("CREATE to LIFT_POS_MOVE", "LIFT_POS_MOVE")
 		.Predicator([this]()
-	{		
-		// if(m_bUnderGround) m_pModelCom->Set_AnimIndex(CRot::IDLE);		
+	{			
 		return m_pModelCom->Get_AnimationFinish();
 	})
 		.OnExit([this]()
@@ -472,8 +471,7 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		.OnExit([this]()
 	{
 		m_bWakeUp = false;
-		m_bCreateStart = false;		
-		m_bUnderGround = false;
+		m_bCreateStart = false;				
 		m_bLiftReady = false;
 		m_bLiftStart = false;
 		m_bLiftEnd = false;
@@ -552,13 +550,13 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 	return S_OK;
 }
 
-_int CLiftRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos)
+_int CLiftRot::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (m_bCreateStart && pTarget == nullptr)
+	if (pTarget)
 	{
-		m_bUnderGround = true;
+		
 	}
-
+	
 	return 0;
 }
 
