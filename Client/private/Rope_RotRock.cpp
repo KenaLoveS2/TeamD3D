@@ -34,6 +34,29 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 {
+	/*
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+	
+	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom);
+
+	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	if (m_pKena == nullptr) return E_FAIL;
+
+	m_pLiftRotMaster = (CLiftRot_Master*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Rot"), TEXT("LiftRot_Master"));
+	if (m_pLiftRotMaster == nullptr) return E_FAIL;
+
+	CLiftRot::DESC CutRotDesc;
+	CutRotDesc.eType = CLiftRot::CUTE;
+	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
+
+	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
+	if (m_pCuteLiftRot == nullptr) return E_FAIL;
+
+	return S_OK;
+	*/
+	
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
@@ -57,7 +80,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true));
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	m_pTransformCom->Set_PxPivot(_float3(0.f, 1.2f, 0.f));
 	m_pTransformCom->Set_Position(_float4(5.f, 0.f, 5.f, 1.f));
@@ -77,7 +100,6 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
 	if (m_pCuteLiftRot == nullptr) return E_FAIL;
 	
-
 	return S_OK;
 }
 

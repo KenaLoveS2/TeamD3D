@@ -416,11 +416,6 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	return Out;
 }//9
 
-float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
-{
-	return pow((1.0 - dot(normalize(normal), normalize(view))), amount) * color * intensity;
-}
-
 PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -447,7 +442,8 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 	vector vSwipe = g_SwipeTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - time / OffsetUV.y));
 	float  fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
 
-	Out.vDiffuse = saturate((vNoise + vSwipe) * FinalDiffuseColor * 2.f) * fresnel + FinalDiffuseColor;
+	Out.vDiffuse = lerp(vNoise, vSwipe, 1.f - fAlpha);
+	Out.vDiffuse = saturate(Out.vDiffuse * FinalDiffuseColor * 2.f) * fresnel + FinalDiffuseColor;
 	Out.vDiffuse.a = Out.vDiffuse.a*fAlpha * 0.5f;
 
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
@@ -596,7 +592,7 @@ technique11 DefaultTechnique
 	pass Kena_Staff_BowString_Part2
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

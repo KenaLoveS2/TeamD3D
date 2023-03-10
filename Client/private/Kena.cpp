@@ -98,7 +98,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fStaticFriction = 0.5f;
 	PxCapsuleDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this));
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -120,7 +120,7 @@ void CKena::Tick(_float fTimeDelta)
 	
 	__super::Tick(fTimeDelta);
 
-	Test_Raycast();
+	// Test_Raycast();
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -491,6 +491,8 @@ void CKena::Push_EventFunctions()
 	Test(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
+	TurnOnCharge(true, 0.f);
+	TurnOffCharge(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -548,7 +550,6 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 
 	pEffectBase->Set_Parent(this);
-
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1541,6 +1542,30 @@ void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
 	m_bAttack = false;
 }
 
+void CKena::TurnOnCharge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnCharge);
+		return;
+	}
+
+	m_bChargeLight = true;
+}
+
+void CKena::TurnOffCharge(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffCharge);
+		return;
+	}
+
+	m_bChargeLight = false;
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -1587,23 +1612,30 @@ void CKena::Free()
 	Safe_Release(m_pRendererCom);
 }
 
-_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos)
+_int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	/* Terrain */
-	if (pTarget == nullptr)
+	if (m_bJump)
 	{
-		m_bOnGround = true;
-		m_bJump = false;
-		m_bPulseJump = false;
-		m_fCurJumpSpeed = 0.f;
+		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
+		{
+			m_bOnGround = true;
+			m_bJump = false;
+			m_bPulseJump = false;
+			m_fCurJumpSpeed = 0.f;
+		}
 	}
-	/* Other Actors */
 	else
 	{
-		m_bCommonHit = true;
-		//m_bHeavyHit = true;
-	}
+		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
 
+		if (iColliderIndex == COL_MONSTER_WEAPON)
+		{
+			m_bCommonHit = true;
+			//m_bHeavyHit = true;
+		}
+	}
+	
 	return 0;
 }
 void CKena::Test_Raycast()
@@ -1631,8 +1663,7 @@ void CKena::Test_Raycast()
 		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
 		{
 			m_pTerrain->Set_BrushPosition(vOut);
-			// m_pGroundMark->Set_Position(vOut);
-
+			
 			if (GetKeyState('R') & 0x8000)
 			{	
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
@@ -1642,9 +1673,9 @@ void CKena::Test_Raycast()
 				}			
 			}			
 		}
-		else
-		{
-
-		}
+	}
+	else
+	{
+		m_pTerrain->Set_BrushPosition(_float3(-1000.f, 0.f , 0.f));
 	}
 }

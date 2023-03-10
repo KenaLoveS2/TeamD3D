@@ -31,6 +31,8 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
+	// m_szVIBufferProtoTag = L"Prototype_Component_KenaPulseDot";
+
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
@@ -40,12 +42,21 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 
 void CE_KenaPulseDot::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
 }
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pParent != nullptr)
+		Set_Matrix();
 }
 
 HRESULT CE_KenaPulseDot::Render()
@@ -54,20 +65,6 @@ HRESULT CE_KenaPulseDot::Render()
 		return E_FAIL;
 
 	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.eTextureRenderType);
-
-	return S_OK;
-}
-
-HRESULT CE_KenaPulseDot::SetUp_ShaderResources()
-{
-	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
 	return S_OK;

@@ -42,11 +42,12 @@ HRESULT CEffect_Trail::Initialize(void * pArg)
 
 void CEffect_Trail::Tick(_float fTimeDelta)
 {
-	//if (m_eEFfectDesc.bActive == false)
-	//	return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Tick(fTimeDelta);
-	Set_TrailDesc();
+
+	// Set_TrailDesc();
 
 	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
@@ -54,7 +55,6 @@ void CEffect_Trail::Tick(_float fTimeDelta)
 void CEffect_Trail::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
@@ -123,9 +123,6 @@ HRESULT CEffect_Trail::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
-	m_pShaderCom->Begin(4);
-	m_pVITrailBufferCom->Render();
 
 	return S_OK;
 }

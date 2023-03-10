@@ -30,7 +30,8 @@ public:
 	HRESULT		Ready_Effects();
 
 private:
-	class CE_KenaTrail* m_pKenaStaffTrail = nullptr;
+	map<const string, class CEffect_Base*>   m_mapEffect;
+
 	_float m_fTimeDelta = 0.0f;
 	_float4 m_vColor;
 

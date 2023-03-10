@@ -142,7 +142,7 @@ HRESULT CMesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 	return S_OK;
 }
 
-HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod)
+HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor)
 {
 	if (hFile == nullptr)
 		return S_OK;
@@ -233,6 +233,45 @@ HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod)
 		if (FAILED(__super::Create_IndexBuffer()))
 			return E_FAIL;
 #pragma endregion
+	}
+
+	if (bUseTriangleMeshActor)
+	{
+		if (m_pPxVertices == nullptr)
+		{
+			m_pPxVertices = new PxVec3[m_iNumVertices];
+			ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+
+			if (m_eType == CModel::TYPE_ANIM)
+			{
+				for (_uint i = 0; i < m_iNumVertices; i++)
+				{
+					_float3 vPos = m_pAnimVertices[i].vPosition;
+					m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+				}
+			}
+			else if (m_eType == CModel::TYPE_NONANIM)
+			{
+				for (_uint i = 0; i < m_iNumVertices; i++)
+				{
+					_float3 vPos = m_pNonAnimVertices[i].vPosition;
+					m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+				}
+			}
+			else return E_FAIL;
+		}
+
+		if (m_pPxIndicies == nullptr)
+		{
+			m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
+			ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
+			for (_uint i = 0; i < m_iNumPrimitive; i++)
+			{
+				m_pPxIndicies[i]._0 = m_pIndices[i]._0;
+				m_pPxIndicies[i]._1 = m_pIndices[i]._2;
+				m_pPxIndicies[i]._2 = m_pIndices[i]._1;
+			}
+		}
 	}
 
 	return S_OK;
@@ -466,10 +505,10 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel* pModel)
 }
 
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel* pModel, _bool bIsLod)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);
@@ -507,45 +546,3 @@ void CMesh::Free()
 		Safe_Delete_Array(m_pIndices);
 	}
 }
-// kbj physx
-HRESULT CMesh::Create_PxTriangleData()
-{
-	if (m_pPxVertices == nullptr)
-	{
-		m_pPxVertices = new PxVec3[m_iNumVertices];
-		ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
-
-		if (m_eType == CModel::TYPE_ANIM)
-		{
-			for (_uint i = 0; i < m_iNumVertices; i++)
-			{
-				_float3 vPos = m_pAnimVertices[i].vPosition;
-				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
-			}
-		}
-		else if (m_eType == CModel::TYPE_NONANIM)
-		{
-			for (_uint i = 0; i < m_iNumVertices; i++)
-			{
-				_float3 vPos = m_pNonAnimVertices[i].vPosition;
-				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
-			}
-		}
-		else return E_FAIL;
-	}
-	
-	if (m_pPxIndicies == nullptr)
-	{
-		m_pPxIndicies = new PxIndicies[m_iNumPrimitive];
-		ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iNumPrimitive);
-		for (_uint i = 0; i < m_iNumPrimitive; i++)
-		{
-			m_pPxIndicies[i]._0 = m_pIndices[i]._0;
-			m_pPxIndicies[i]._1 = m_pIndices[i]._2;
-			m_pPxIndicies[i]._2 = m_pIndices[i]._1;
-		}
-	}
-
-	return Create_PxActor();
-}
-

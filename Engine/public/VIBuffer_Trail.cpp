@@ -234,4 +234,6 @@ CComponent * CVIBuffer_Trail::Clone(void * pArg, CGameObject * pOwner)
 void CVIBuffer_Trail::Free()
 {
 	__super::Free();
+
+	m_vecInstanceInfo.clear();
 }

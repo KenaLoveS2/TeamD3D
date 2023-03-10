@@ -1,5 +1,4 @@
 #pragma once
-
 #include "VIBuffer.h"
 #include "Model.h"
 
@@ -23,7 +22,7 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod);
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 
 public:
@@ -53,12 +52,11 @@ private:
 
 
 public:
-	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod=false);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _bool bUseTriangleMeshActor = false);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
 
-	HRESULT Create_PxTriangleData(); // kbj physx	
 	_uint Get_NumVertices() {
 		return m_iNumVertices;
 	}
