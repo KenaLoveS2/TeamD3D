@@ -34,8 +34,7 @@ private:
 
 private:
 	_bool m_bWakeUp = false;
-	_bool m_bCreateStart = false;	
-	_bool m_bUnderGround = false;
+	_bool m_bCreateStart = false;		
 	_bool m_bLiftReady = false;
 	_bool m_bLiftStart = false;
 	_bool m_bLiftEnd = false;
@@ -86,7 +85,7 @@ public:
 
 	const _double& Get_AnimationPlayTime();
 	
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos);
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	
 public:
 	void Execute_WakeUp(_float4& vCreatePos, _float4& vLiftPos);

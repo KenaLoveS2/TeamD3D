@@ -487,6 +487,13 @@ private:
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Loop_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Release(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
@@ -625,6 +632,7 @@ private:
 	void						Tick_Bow_Charge(_float fTimeDelta);
 	void						Tick_Bow_Charge_Full(_float fTimeDelta);
 	void						Tick_Bow_Charge_Loop(_float fTimeDelta);
+	void						Tick_Bow_Charge_Loop_Run(_float fTimeDelta);
 	void						Tick_Bow_Release(_float fTimeDelta);
 	void						Tick_Bow_Recharge(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
@@ -756,6 +764,7 @@ private:
 	void						End_Bow_Charge(_float fTimeDelta);
 	void						End_Bow_Charge_Full(_float fTimeDelta);
 	void						End_Bow_Charge_Loop(_float fTimeDelta);
+	void						End_Bow_Charge_Loop_Run(_float fTimeDelta);
 	void						End_Bow_Release(_float fTimeDelta);
 	void						End_Bow_Recharge(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);

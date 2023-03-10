@@ -7,7 +7,7 @@
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
-vector<CRot*> CRot::m_vecEveryRot;
+vector<CRot*> CRot::m_vecKenaConnectRot;
 
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -85,12 +85,14 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
-	m_pTransformCom->Set_Position(_float3(1.f, 3.f, 5.f));
+	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
-	
+	m_vWakeUpPosition = _float4(-3.f, 0.f, -3.f, 1.f);
+
+	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f));
 
 	if (m_iThisRotIndex == FIRST_ROT)
-		m_vecEveryRot.reserve(m_iEveryRotCount);
+		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
 
 	return S_OK;
 }
@@ -363,15 +365,36 @@ HRESULT CRot::SetUp_State()
 		.OnExit([this]()
 	{
 		m_iThisRotIndex = m_iKenaFindRotCount++;
-		m_vecEveryRot.push_back(this);
+		m_vecKenaConnectRot.push_back(this);
+		
 		if (m_iThisRotIndex == 0)
 		{
 			m_pKena->Set_FirstRotPtr(this);
 		}
+
+		m_pTransformCom->Set_Position(m_vWakeUpPosition);
 	})
 
 
 		.AddState("WAKE_UP")
+		.OnStart([this]()
+	{	
+		m_pModelCom->Set_AnimIndex(TELEPORT3);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.AddTransition("WAKE_UP to COLLECT ", "COLLECT")
+		.Predicator([this]()
+	{	
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.OnExit([this]()
+	{
+
+	})
+		.AddState("COLLECT")
 		.OnStart([this]()
 	{
 		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
@@ -379,14 +402,14 @@ HRESULT CRot::SetUp_State()
 
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
-		
-		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex); 
+
+		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
 
 	})
-		.AddTransition("WAKE_UP to IDLE ", "IDLE")
+		.AddTransition("COLLECT to IDLE ", "IDLE")
 		.Predicator([this]()
 	{
 		_bool bCuteAnimFinish = (m_iCuteAnimIndex == m_pModelCom->Get_AnimIndex()) && m_pModelCom->Get_AnimationFinish();
@@ -396,7 +419,6 @@ HRESULT CRot::SetUp_State()
 	{
 
 	})
-
 
 		.AddState("IDLE")
 		.OnStart([this]()
@@ -451,9 +473,14 @@ HRESULT CRot::SetUp_State()
 	return S_OK;
 }
 
-_int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos)
+_int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{	
+	return 0;
+}
+
+_int CRot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (pTarget && pTarget->Get_ObjectProperty() == OP_PLAYER)
+	if (pTarget && iTriggerIndex == ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == COL_PLAYER)
 	{
 		m_bWakeUp = true;
 	}

@@ -47,8 +47,8 @@ public:
 
 	static _float4 Calc_RayDirByMousePos(HWND hWnd, ID3D11DeviceContext *pContext, _float4 vRayPos);
 
-	inline static _float3 Float_3to4(_float4& vValue) { return _float3(vValue.x, vValue.y, vValue.z); }
-	inline static _float4 Float_4to3(_float3& vValue, _float fW) { return _float4(vValue.x, vValue.y, vValue.z, fW); }
+	inline static _float3 Float_4to3(_float4& vValue) { return _float3(vValue.x, vValue.y, vValue.z); }
+	inline static _float4 Float_3to4(_float3& vValue, _float fW) { return _float4(vValue.x, vValue.y, vValue.z, fW); }
 
 	static void Execute_BillBoard(class CTransform* pTransform, _float3 vScale);
 

@@ -44,6 +44,12 @@ namespace Client
 
 		COLLIDER_INDEX_END,
 	};
+
+	enum TRIGGER_INDEX {
+		TRIGGER_ROT,
+
+		TRIGGER_END
+	};
 }
 
 extern bool				g_bFullScreen;
