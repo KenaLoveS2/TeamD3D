@@ -106,6 +106,8 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic0"), TEXT("../Bin/Resources/fonts/Font00.SpriteFont"))))
 		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic1"), TEXT("../Bin/Resources/fonts/Font04.SpriteFont"))))
+		return E_FAIL;
 	/********************************************/
 	/*				For. Canvas_HUD				*/
 	/********************************************/
