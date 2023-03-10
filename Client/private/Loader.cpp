@@ -328,7 +328,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	/* For.Prototype_Component_Texture_TrailFlow */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_TrailFlow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 8))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 10))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_TrailType */
@@ -1049,7 +1049,7 @@ m_fCur += 1.f;
 HRESULT CLoader::Loading_ForTestPlay()
 {
 	// 언제든지 수정 추가되면 수정 맨 마지막 cur 디버그 찍고 확인하면 댐
-	m_fMax = 88.f;
+	m_fMax = 97.f;
 	m_fCur = m_fCur / m_fMax * 100.f;
 
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -1513,7 +1513,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* For.Prototype_Component_Texture_TrailFlow */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_TrailFlow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 8))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 10))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -1692,27 +1692,33 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"),
 		CRope_RotRock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot"),
 		CLiftRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
 		CLiftRot_Master::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* Monster */
 	/* For.Prototype_Component_Model_EnemyWisp */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.mdat", PivotMatrix))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
 		CEnemyWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
 		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	/* ~Monster */
+	m_fCur += 1.f;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -1751,7 +1757,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 
 	/* For.Prototype_Component_Texture_TrailFlow */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_TrailFlow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 8))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 10))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_TrailType */

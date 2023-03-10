@@ -46,6 +46,7 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Parent(this);
 
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 	return  S_OK;
 }
