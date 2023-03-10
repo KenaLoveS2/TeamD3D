@@ -214,7 +214,23 @@ PS_OUT PS_MAIN_SPRITE(PS_IN In)
 
 	return Out;
 }
+PS_OUT PS_MAIN_SPRITECOLOR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
 
+	In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+	In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+	In.vTexUV.x = In.vTexUV.x / g_XFrames;
+	In.vTexUV.y = In.vTexUV.y / g_YFrames;
+
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	Out.vColor.rgb = g_vColor.rgb;
+
+
+	return Out;
+}
 PS_OUT PS_MAIN_UVMOVE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -729,5 +745,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_ALPHATESTCOLOR();
+	}
+
+	pass SpriteColor // 19
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SPRITECOLOR();
 	}
 }
