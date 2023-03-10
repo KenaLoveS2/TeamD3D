@@ -321,14 +321,15 @@ void CPhysX_Manager::Clear()
 	}
 }
 
+
 PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
-{	
+{
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
 
 	PxDefaultMemoryInputData ReadBuffer(WriteBuffer.getData(), WriteBuffer.getSize());
 	PxTriangleMesh* pMesh = m_pPhysics->createTriangleMesh(ReadBuffer);
-	
+
 	PxTransform Transform(PxIdentity);
 	PxRigidStatic *pBody = m_pPhysics->createRigidStatic(Transform);
 
@@ -336,11 +337,8 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
-	PxFilterData FilterData;
-	FilterData.word0 = eFilterType;
-	shape->setSimulationFilterData(FilterData);
 
-	pBody->attachShape(*shape);	
+	pBody->attachShape(*shape);
 
 	if (pUserData)
 	{
@@ -351,7 +349,7 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	m_pScene->addActor(*pBody);
 	pMaterial->release();
-	shape->release();	
+	shape->release();
 	return pBody;
 }
 
