@@ -306,7 +306,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
 
 	// Diffuse (Lambertian) term
-	float3 diffuse = DiffuseLight / PI;
+	float3 diffuse = DiffuseLight.rgb / PI;
 
 	// Final color
 	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight))) * vSSAODesc.r;
