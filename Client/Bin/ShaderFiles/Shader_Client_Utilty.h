@@ -10,6 +10,12 @@ static const float PI = 3.14159265359;
 //    Disney
 // -------------------------------------------------------------------------
 
+float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
+{
+	return pow((1.0 - dot(normalize(normal), normalize(view))), amount) * color * intensity;
+}
+
+
 float3 disney_D(float3 H, float3 N, float3 L, float alpha, float metallic)
 {
 	float dotNH = dot(N, H);

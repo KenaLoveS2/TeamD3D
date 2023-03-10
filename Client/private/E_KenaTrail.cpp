@@ -35,7 +35,6 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Trail Texture */
-
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this)))
 		return E_FAIL;
 
@@ -64,48 +63,6 @@ void CE_KenaTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-
-	/*
-	ImGui::Begin("Trail Option");
-	ImGui::Checkbox("IsTrail", &m_eEFfectDesc.IsTrail);
-	ImGui::Checkbox("bActive", &m_eEFfectDesc.bActive);
-	ImGui::Checkbox("bAlpha", &m_eEFfectDesc.bAlpha);
-	ImGui::DragFloat("Life", (_float*)&m_eEFfectDesc.fLife);
-	ImGui::DragFloat("Width", (_float*)&m_eEFfectDesc.fWidth);
-	ImGui::DragFloat("Alpha", (_float*)&m_eEFfectDesc.fAlpha);
-	ImGui::DragFloat("SegmentSize", (_float*)&m_eEFfectDesc.fSegmentSize, 1.f,0.f,0.f, "%.6f");
-	ImGui::DragFloat4("Pos", (_float*)&m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	ImGui::DragFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
-
-	ImGui::DragFloat("UV_X", (_float*)&m_fUV.x, 0.01f, 0.f, 3.f);
-	ImGui::DragFloat("UV_Y", (_float*)&m_fUV.y, 0.01f, 0.f, 3.f);
-
-	ImGui::InputInt("FlowTexture", (_int*)&m_iTrailFlowTexture);
-	ImGui::InputInt("TypeTexture", (_int*)&m_iTrailTypeTexture);
-
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##4", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
-
-	ImGui::End();
-	*/
 }
 
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
@@ -120,6 +77,9 @@ HRESULT CE_KenaTrail::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
+
+	m_pShaderCom->Begin(4);
+	m_pVITrailBufferCom->Render();
 
 	return S_OK;
 }

@@ -67,7 +67,6 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	wstrFilePath += TEXT(".bmp");
 	Change_HeightMap(wstrFilePath.c_str());
 
-
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
@@ -117,11 +116,11 @@ HRESULT CTerrain::Render()
 
 void CTerrain::Imgui_RenderProperty()
 {
-	CGameObject::Imgui_RenderProperty();
+	/*CGameObject::Imgui_RenderProperty();
 
 	ImGui::Begin("Terrain Translation");
 	m_pTransformCom->Imgui_RenderProperty();
-	ImGui::End();
+	ImGui::End();*/
 }
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
@@ -281,6 +280,11 @@ CGameObject * CTerrain::Clone(void * pArg)
 void CTerrain::Free()
 {
 	__super::Free();
+
+	if (m_isCloned)
+	{
+		int i = 0;
+	}
 
 	Safe_Release(m_pGroundMark);
 

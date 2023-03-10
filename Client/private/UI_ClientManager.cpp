@@ -37,6 +37,8 @@
 #include "UI_NodeSkillName.h"
 #include "UI_NodeSkillDesc.h"
 #include "UI_NodeSkillCond.h"
+#include "UI_NodeRotLevel.h"
+#include "UI_NodeRotGuage.h"
 
 /* CanvasInventoryHeader */
 #include "UI_CanvasInvHeader.h"
@@ -49,6 +51,7 @@
 /* Confirm Window */
 #include "UI_CanvasConfirm.h"
 #include "UI_NodeButton.h"
+#include "UI_NodeConfWindow.h"
 
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
@@ -102,6 +105,8 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/fonts/131.SpriteFont"))))
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic0"), TEXT("../Bin/Resources/fonts/Font00.SpriteFont"))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Font(pDevice, pContext, TEXT("Font_Basic1"), TEXT("../Bin/Resources/fonts/Font04.SpriteFont"))))
 		return E_FAIL;
 	/********************************************/
 	/*				For. Canvas_HUD				*/
@@ -381,6 +386,11 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ButtonHighLightGlowCenter");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_BGGlow"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/07. Common/T_UI_BGGlow.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BGGlow");
+
 
 
 
@@ -416,6 +426,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MaskAlpha"); 
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaTexture");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTestColor");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SpriteColor");
 
 
 
@@ -601,7 +612,13 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillCondition");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLevel"), CUI_NodeRotLevel::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLevel");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotGuage"), CUI_NodeRotGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotGuage");
 
 	/********************************************/
 	/*				For. Effects				*/
@@ -622,6 +639,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Button");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Window"), CUI_NodeConfWindow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
 
 
 

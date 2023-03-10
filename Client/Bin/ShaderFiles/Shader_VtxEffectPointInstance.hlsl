@@ -30,6 +30,7 @@ float   g_fAlpha;
 
 texture2D g_TrailflowTexture;
 texture2D g_TrailTypeTexture;
+//texture2D g_TrailOutTexture;
 float	  g_BeforeUV, g_AfterUV;
 
 float2 g_UV;
@@ -140,7 +141,6 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
-
 	float3		vPosition;
 
 	vPosition = In[0].vPosition + vRight + vUp;
@@ -190,7 +190,7 @@ void GS_TRAILMAIN(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	vector		vPosition = vector(matrix_postion(In[0].Matrix), 1.f);
 	vector      vResultPos;
 
-	if (In[0].InstanceID == 0) // 인스턴스아이디 50전까지 빌보드를 먹임(왜냐면 지금 출력사이즈를 작게했기 때문임) => Test
+	if (In[0].InstanceID == 0) 
 	{
 		vResultPos = vPosition + float4(vUp, 0.f) * fCurWidth;
 		Out[0].vPosition = mul(vResultPos, matVP);
@@ -412,6 +412,43 @@ PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 	return Out;
 }
 
+PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	 flow = g_TrailflowTexture.Sample(LinearSampler, In.vTexUV);
+	// vector   vOutflow = g_TrailOutTexture.Sample(LinearSampler, In.vTexUV);
+	flow.a = flow.r;
+
+	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 3.f);
+
+	vector orange = vector(228.f, 65.f, 24.f, 255.f) / 255.f;
+
+	Out.vColor = flow + orange;
+	if (Out.vColor.a > 0.6)
+		Out.vColor = Out.vColor * vector(255.f, 144.f, 50.f, 110.f) / 255.f;
+
+	//Out.vColor.a = Out.vColor.a * In.fLife;
+	// Out.vColor.rgb = Out.vColor.rgb * 1.4f;
+
+	//if (g_bDistanceAlpha == true)
+	//	Out.vColor.a = Out.vColor.a * fAlpha;
+
+	return Out;
+}
+
+PS_OUT PS_FLOWERPARTICLE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	 flower = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	// flower.a = flower.r;
+	flower.rgb = g_vColor.rgb;
+
+	Out.vColor = flower;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -475,5 +512,32 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_TRAILMAIN();
+	}
+
+	// PS_ENEMYWISP, 5
+	pass Trail_EnemyWisp // 5
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_TRAILMAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_ENEMYWISP();
+	}
+
+	pass FlowerParticle // 6
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FLOWERPARTICLE();
 	}
 }

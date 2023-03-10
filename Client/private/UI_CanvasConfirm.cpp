@@ -155,7 +155,7 @@ HRESULT CUI_CanvasConfirm::Ready_Nodes()
 		CUI* pUI = nullptr;
 		CUI::UIDESC tDesc;
 
-		string strCloneTag = "Node_Yes";
+		string strCloneTag = "Node_ButtonYes";
 		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
 		tDesc.fileName = wstrCloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Button", wstrCloneTag, &tDesc));
@@ -170,7 +170,7 @@ HRESULT CUI_CanvasConfirm::Ready_Nodes()
 		CUI* pUI = nullptr;
 		CUI::UIDESC tDesc;
 
-		string strCloneTag = "Node_No";
+		string strCloneTag = "Node_ButtonNo";
 		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
 		tDesc.fileName = wstrCloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Button", wstrCloneTag, &tDesc));

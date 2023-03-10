@@ -4,23 +4,29 @@
 
 CUI_NodeRotLevel::CUI_NodeRotLevel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice,pContext)
-	, m_szInfo(nullptr)
+	, m_szInfo{ nullptr }
+	, m_iRotTotal(0)
+	, m_iRotNow(0)
 {
 }
 
 CUI_NodeRotLevel::CUI_NodeRotLevel(const CUI_NodeRotLevel & rhs)
 	:CUI_Node(rhs)
-	, m_szInfo(nullptr)
+	, m_szInfo{ nullptr }
+	, m_iRotTotal(0)
+	, m_iRotNow(0)
 {
 }
 
-void CUI_NodeRotLevel::Set_Info(_int iLevel, wstring str)
+void CUI_NodeRotLevel::Set_Info(_int iLevel, _int iTotal, _int iNow)
 {
-	Safe_Delete_Array(m_szInfo);
-
-	m_szInfo = CUtile::Create_String(str.c_str());
-
 	m_iLevel = iLevel;	
+	m_iRotTotal = iTotal;
+	m_iRotNow = iNow;
+
+	wstring wstr = to_wstring(m_iRotNow) + L" / " + to_wstring(m_iRotTotal);
+	Safe_Delete_Array(m_szInfo);
+	m_szInfo = CUtile::Create_String(wstr.c_str());
 }
 
 HRESULT CUI_NodeRotLevel::Initialize_Prototype()
@@ -85,7 +91,7 @@ HRESULT CUI_NodeRotLevel::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 45.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 80.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -93,7 +99,7 @@ HRESULT CUI_NodeRotLevel::Render()
 	{
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szInfo,
 			vNewPos /* position */,
-			0.f, _float2(0.9f, 0.9f)/* size */,
+			0.f, _float2(0.8f, 0.8f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
 
@@ -145,6 +151,23 @@ HRESULT CUI_NodeRotLevel::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
+	_int XFrames = 9;
+	_int YFrames = 1;
+	_int XFrameNow = 9 - m_iLevel;
+	_int YFrameNow = 0;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &XFrames, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &YFrames, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &XFrameNow, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &YFrameNow, sizeof(_int))))
+		return E_FAIL;
+
+	_float4 vColor  = { 0.0f, 0.98f, 0.98f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
