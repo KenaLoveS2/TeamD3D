@@ -86,21 +86,21 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 	// 1. Texture Type Select
 	const char* szEffectType[] = { " ~SELECT_EFFECT TYPE~ ", " EFFECT_PLANE ", " EFFECT_PARTICLE", " EFFECT_MESH" };
-	ImGui::BulletText("EffectType : "); 
-	if (ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 0))
+	ImGui::BulletText("EffectType : ");
+	if (ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 1))
 	{
 		iPreSelectEffectType = iSelectEffectType = EFFECT_PLANE;
 		bIsCreate = true;
 		m_bIsRectLayer = true;
 
 	}ImGui::SameLine();
-	if (ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType,1))
+	if (ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType, 2))
 	{
-		iPreSelectEffectType = iSelectEffectType = EFFECT_PARTICLE;
+		iPreSelectEffectType = iSelectEffectType = 2;
 		bIsCreate = true;
 		m_bIsParticleLayer = true;
 	}ImGui::SameLine();
-	if (ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 2))
+	if (ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 3))
 	{
 		iPreSelectEffectType = iSelectEffectType = EFFECT_MESH;
 		bIsCreate = true;
@@ -116,7 +116,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::BulletText("EffectLayer Tag : ");
 		pGameObject = LayerEffects_ListBox(pObjectTag, iLayerSize, pSelectObject, "##EffectLayer Tag", iSelectObj, TAGTYPE::TAG_CLONE);
 
-		if (nullptr != pGameObject && -1 != iSelectEffectType )
+		if (nullptr != pGameObject && -1 != iSelectEffectType)
 			CEffect_Base::tagEffectDesc::EFFECTTYPE eEffectType = dynamic_cast<CEffect_Base*>(pGameObject)->Get_EffectDesc().eEffectType;
 
 		for (size_t i = 0; i < iLayerSize; ++i)
@@ -158,22 +158,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 		m_bIsMeshLayer = false;
 		iSelectEffectType = -1;
 	}
-	if (ImGui::Button("Component_Save"))
-	{
-		bComponentSave = true;
-	};	ImGui::SameLine();
-	if (ImGui::Button("Component_Load"))
-	{
-		// bComponentLoad = true;
-	};	ImGui::SameLine();
 	if (ImGui::Button("Desc_Save"))
 	{
 		bDescSave = true;
-	};	ImGui::SameLine();
-	if (ImGui::Button("Desc_Load"))
-	{
-		// bComponentLoad = true;
-	};	 
+	};	
 
 	static	char szSaveFileName[MAX_PATH] = "";
 	char*        szLevelName[] = { "Loading", "Logo", "GamePlay", "MapTool", "TestPlay", "EffectTool" };
@@ -191,8 +179,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		{
 			if (bSave)
 				ImGuiFileDialog::Instance()->OpenDialog("Select EffectData", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
-			if (bComponentSave)
-				ImGuiFileDialog::Instance()->OpenDialog("Select EffectComponent", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 			if (bDescSave)
 				ImGuiFileDialog::Instance()->OpenDialog("Select EffectDesc", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 		}
@@ -201,7 +187,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		if (ImGui::Button("Cancle"))
 		{
 			bSave = false;
-			bComponentSave = false;
 			bDescSave = false;
 			iSaveLevel = 0;
 			strcpy_s(szSaveFileName, "");
@@ -214,8 +199,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		ImGui::BulletText("Load Data");
 		if (bLoad)
 			ImGuiFileDialog::Instance()->OpenDialog("Select EffectLoad", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
-		if (bComponentLoad)
-			ImGuiFileDialog::Instance()->OpenDialog("Select EffectComponentLoad", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 		if (bDescLoad)
 			ImGuiFileDialog::Instance()->OpenDialog("Select EffectDescLoad", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 	}
@@ -402,459 +385,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		break;
 	}
 
-	// Component => Prototype => Clone(Desc)
-	if (ImGuiFileDialog::Instance()->Display("Select EffectData"))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-#pragma region SaveData
-			string		strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
-			strSaveDirectory += "\\";
-			strSaveDirectory += szSaveFileName;
-			strSaveDirectory += ".json";
-
-			Json	jLayer;
-			Json	jComponent;
-			Json	jPrototypeObjects;
-
-			Json	jCloneComponentDesc;
-
-			_int    iCurLevel = pGameInstance->Get_CurLevelIndex();
-			map<const _tchar*, CComponent*>*	Components = pGameInstance->Get_ComponentProtoType();
-			map<const _tchar*, CGameObject*>	Prototypes = pGameInstance->Get_ProtoTypeObjects();
-			CLayer *							Layers = pGameInstance->Find_Layer(iCurLevel, L"Layer_Effect");
-
-			jLayer["0.Save Level"] = iCurLevel;
-			jLayer["1.Save2Load Level"] = iSaveLevel;
-			jLayer["2.Layer Tag"] = "Layer_Effect";
-
-			// TOOL
-			// 툴에서 생성한 컴포넌트 저장 => Instance컴포넌트 카운트까지 저장함
-			for (auto& iter = Components[iCurLevel].begin(); iter != Components[iCurLevel].end(); iter++)
-			{
-				char     szComponentTag[MAX_PATH] = "";
-				if (dynamic_cast<CVIBuffer_Point_Instancing*>(iter->second))
-				{
-					CUtile::WideCharToChar(iter->first, szComponentTag);
-					jComponent["0.Component Tag"] = szComponentTag;
-					jComponent["1.Component Cnt"] = dynamic_cast<CVIBuffer_Point_Instancing*>(iter->second)->Get_InstanceNum();
-					jLayer["3.Prototype Component"].push_back(jComponent);
-				}
-			}
-
-			// ProtoType GameObject 
-			for (auto& pObject = Prototypes.begin(); pObject != Prototypes.end(); pObject++)
-			{
-				if (!dynamic_cast<CEffect_Base*>(pObject->second))
-					continue;
-
-				char     szPrototypeTag[MAX_PATH] = "";
-				CUtile::WideCharToChar(pObject->first, szPrototypeTag);
-				jPrototypeObjects["0.Prototype Proto Tag"] = szPrototypeTag;
-
-				_int iEffectType = 0;
-				if (dynamic_cast<CEffect_T*>(pObject->second))
-					iEffectType = 0;
-				if (dynamic_cast<CEffect_Mesh_T*>(pObject->second))
-					iEffectType = 2;
-				if (dynamic_cast<CEffect_Trail*>(pObject->second))
-					iEffectType = 3;
-
-				if (dynamic_cast<CEffect_Point_Instancing*>(pObject->second))
-				{
-					iEffectType = 1;
-
-					char     szComponentTag[MAX_PATH] = "";
-					CUtile::WideCharToChar(dynamic_cast<CEffect_Point_Instancing*>(pObject->second)->Get_VIBufferProtoTag(), szComponentTag);
-					jPrototypeObjects["2.Prototype VIBufferComponent Tag"] = szComponentTag;
-				}
-				jPrototypeObjects["1.Prototype Type"] = iEffectType;
-				jLayer["4.Prototype GameObject"].push_back(jPrototypeObjects);
-			}
-
-			// Clone GameObject 
-			map <const _tchar*, CGameObject*>   GameObjects = Layers->GetGameObjects();
-			for (auto& pCloneObject = GameObjects.begin(); pCloneObject != GameObjects.end(); pCloneObject++)
-			{
-				if (!dynamic_cast<CEffect_Base*>(pCloneObject->second))
-					continue;
-				Json	jCloneObjects;
-				char     szPrototypeTag[MAX_PATH] = "";
-				char     szClonetypeTag[MAX_PATH] = "";
-				CUtile::WideCharToChar(pCloneObject->second->Get_ProtoObjectName(), szPrototypeTag);
-				CUtile::WideCharToChar(pCloneObject->second->Get_ObjectCloneName(), szClonetypeTag);
-
-				jCloneObjects["0.CloneObject Proto Tag"] = szPrototypeTag;
-				jCloneObjects["1.CloneObject Clone Tag"] = szClonetypeTag;
-
-#pragma  region	EFFECTDESC
-				CEffect_Base* pEffect = dynamic_cast<CEffect_Base*>(pCloneObject->second);
-				CEffect_Base::EFFECTDESC eSaveEffectDesc = pEffect->Get_EffectDesc();
-
-				jCloneObjects["2.Effect Type"] = eSaveEffectDesc.eEffectType;
-				jCloneObjects["Mesh Type"] = eSaveEffectDesc.eMeshType;
-				jCloneObjects["Particle Type"] = eSaveEffectDesc.eParticleType;
-				jCloneObjects["TextureRender Type"] = eSaveEffectDesc.eTextureRenderType;
-				jCloneObjects["Texture Type"] = eSaveEffectDesc.eTextureType;
-				jCloneObjects["Blend Type"] = eSaveEffectDesc.eBlendType;
-				jCloneObjects["MoveDir Type"] = eSaveEffectDesc.eMoveDir;
-				jCloneObjects["Rotation Type"] = eSaveEffectDesc.eRotation;
-
-				_float fFrame = 0.0f, fMaskFrame;
-				for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
-				{
-					fFrame = 0.0f;
-					memcpy(&fFrame, &eSaveEffectDesc.fFrame[i], sizeof(_float));
-					jCloneObjects["DiffuseTexture Index"].push_back(fFrame);
-				}
-				for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
-				{
-					fMaskFrame = 0.0f;
-					memcpy(&fMaskFrame, &eSaveEffectDesc.fMaskFrame[i], sizeof(_float));
-					jCloneObjects["MaskTexture Index"].push_back(fMaskFrame);
-				}
-
-				_float	vColor = 0.f, vScale = 0.f;
-				for (_int i = 0; i < 4; ++i)
-				{
-					vColor = 0.0f;
-					memcpy(&vColor, (_float*)&eSaveEffectDesc.vColor + i, sizeof(_float));
-					jCloneObjects["Color"].push_back(vColor);
-				}
-				for (_int i = 0; i < 4; ++i)
-				{
-					vScale = 0.0f;
-					memcpy(&vScale, (_float*)&eSaveEffectDesc.vScale + i, sizeof(_float));
-					jCloneObjects["Scale"].push_back(vColor);
-				}
-
-				jCloneObjects["NormalTexture Index"] = eSaveEffectDesc.fNormalFrame;
-				jCloneObjects["Width Frame"] = eSaveEffectDesc.fWidthFrame;
-				jCloneObjects["Height Frame"] = eSaveEffectDesc.fHeightFrame;
-
-				jCloneObjects["SeparateWidth"] = eSaveEffectDesc.iSeparateWidth;
-				jCloneObjects["SeparateHeight"] = eSaveEffectDesc.iSeparateHeight;
-				jCloneObjects["WidthCnt"] = eSaveEffectDesc.iWidthCnt;
-				jCloneObjects["HeightCnt"] = eSaveEffectDesc.iHeightCnt;
-
-				jCloneObjects["CreateRange"] = eSaveEffectDesc.fCreateRange;
-				jCloneObjects["Range"] = eSaveEffectDesc.fRange;
-				jCloneObjects["Angle"] = eSaveEffectDesc.fAngle;
-				jCloneObjects["MoveDurationTime"] = eSaveEffectDesc.fMoveDurationTime;
-				jCloneObjects["Start"] = eSaveEffectDesc.bStart;
-
-				_float	vInitPos = 0.f, vPixedDir = 0.f;
-				for (_int i = 0; i < 4; ++i)
-				{
-					vInitPos = 0.0f;
-					memcpy(&vInitPos, (_float*)&eSaveEffectDesc.vInitPos + i, sizeof(_float));
-					jCloneObjects["Init Pos"].push_back(vInitPos);
-				}
-				for (_int i = 0; i < 4; ++i)
-				{
-					vPixedDir = 0.0f;
-					memcpy(&vPixedDir, (_float*)&eSaveEffectDesc.vPixedDir + i, sizeof(_float));
-					jCloneObjects["Pixed Dir"].push_back(vPixedDir);
-				}
-
-				jCloneObjects["Have Trail"] = eSaveEffectDesc.IsTrail;
-				if (eSaveEffectDesc.IsTrail == true)
-				{
-					jCloneObjects["Active"] = eSaveEffectDesc.bActive;
-					jCloneObjects["Alpha Trail"] = eSaveEffectDesc.bAlpha;
-					jCloneObjects["Life"] = eSaveEffectDesc.fLife;
-					jCloneObjects["Width"] = eSaveEffectDesc.fWidth;
-					jCloneObjects["SegmentSize"] = eSaveEffectDesc.fSegmentSize;
-				}
-
-				jCloneObjects["Alpha"] = eSaveEffectDesc.fAlpha;
-				jCloneObjects["Billboard"] = eSaveEffectDesc.IsBillboard;
-				jCloneObjects["Use Normal"] = eSaveEffectDesc.IsNormal;
-				jCloneObjects["Use Mask"] = eSaveEffectDesc.IsMask;
-				jCloneObjects["Trigger"] = eSaveEffectDesc.IsTrigger;
-				jCloneObjects["MovingPosition"] = eSaveEffectDesc.IsMovingPosition;
-				jCloneObjects["Use Child"] = eSaveEffectDesc.bUseChild;
-				jCloneObjects["Spread"] = eSaveEffectDesc.bSpread;
-				jCloneObjects["FreeMove"] = eSaveEffectDesc.bFreeMove;
-#pragma  endregion	EFFECTDESC
-
-				// FreeMove
-				if (eSaveEffectDesc.bFreeMove == true)
-				{
-					vector<_float4>* FreePos = pEffect->Get_FreePos();
-					_float fFreePos = 0.0f;
-					for (_int i = 0; i < FreePos->size(); i++)
-					{
-						for (_int j = 0; j < 4; j++)
-						{
-							fFreePos = 0.0f;
-							memcpy(&fFreePos, (_float*)&FreePos[i] + j, sizeof(_float));
-							jCloneObjects["99.FreePos"].push_back(fFreePos);
-						}
-					}
-				}
-
-				// Trail
-				if (eSaveEffectDesc.IsTrail == true)
-				{
-					char     szPrototypeTag[MAX_PATH] = "";
-					char     szClonetypeTag[MAX_PATH] = "";
-
-					//jPrototypeObjects["Trail EffectType"] = dynamic_cast<CEffect_Base*>(pObject->second)->Get_EffectDesc().eEffectType;
-					if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
-					{
-						vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_TrailEffect();
-						_int iTrailSize = (_int)vecTrail.size();
-						for (auto& pvecTrail : vecTrail)
-						{
-							CUtile::WideCharToChar(pvecTrail->Get_ProtoObjectName(), szPrototypeTag);
-							CUtile::WideCharToChar(pvecTrail->Get_ObjectCloneName(), szClonetypeTag);
-							jCloneObjects["99.Trail Index"] = pvecTrail->Get_ParticleIdx();
-						}
-					}
-					else
-					{
-						CEffect_Trail* pEffectTrail = dynamic_cast<CEffect_Base*>(pCloneObject->second)->Get_Trail();
-						CUtile::WideCharToChar(pEffectTrail->Get_ProtoObjectName(), szPrototypeTag);
-						CUtile::WideCharToChar(pEffectTrail->Get_ObjectCloneName(), szClonetypeTag);
-					}
-					jCloneObjects["99.Trail ProtoTag"] = szPrototypeTag;
-					jCloneObjects["99.Trail CloneTag"] = szClonetypeTag;
-				}
-
-				_int iChildCnt = pEffect->Get_ChildCnt();
-				jCloneObjects["99.Child Count"] = iChildCnt;
-
-				// Child
-				if (iChildCnt != 0)
-				{
-					vector<CEffect_Base*>* pvecChild = dynamic_cast<CEffect_Base*>(pCloneObject->second)->Get_vecChild();
-					for (auto& iter = pvecChild->begin(); iter != pvecChild->end(); iter++)
-					{
-						char     szPrototypeTag[MAX_PATH] = "";
-						char     szClonetypeTag[MAX_PATH] = "";
-
-						CUtile::WideCharToChar((*iter)->Get_ProtoObjectName(), szPrototypeTag);
-						CUtile::WideCharToChar((*iter)->Get_ObjectCloneName(), szClonetypeTag);
-						jCloneObjects["99.Child ProtoTag"] = szPrototypeTag;
-						jCloneObjects["99.Child CloneTag"] = szClonetypeTag;
-					}
-				}
-
-				// Component Desc 저장
-				if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
-				{
-					char     szVIBufferTag[MAX_PATH] = "";
-					const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_VIBufferProtoTag();
-					CUtile::WideCharToChar(szVIBufferWidecharTag, szVIBufferTag);
-
-					CEffect_Point_Instancing* pPointInstance = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
-					CVIBuffer_Point_Instancing*	pVIBufferPointInstancing = (CVIBuffer_Point_Instancing*)pPointInstance->Find_Component(L"Com_VIBuffer");
-					jCloneComponentDesc["CloneObject Component CloneTag"] = szVIBufferTag;
-
-#pragma region Instance Data
-
-					CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = pVIBufferPointInstancing->Get_InstanceData();
-
-					_int iInstanceNum = pVIBufferPointInstancing->Get_InstanceNum();
-					_float fPos = 0.0f;
-					jCloneComponentDesc["0. Instance DataCnt"] = iInstanceNum;
-					for (_int k = 0; k < 4; k++)
-					{
-						fPos = 0.0f;
-						memcpy(&fPos, (_float*)&InstanceData->fPos + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component InstnaceData Position"].push_back(fPos);
-					}
-
-					jCloneComponentDesc["CloneObject Component InstnaceData Speed"] = InstanceData->pSpeeds;
-					jCloneComponentDesc["CloneObject Component InstnaceData SpeedMinMin"] = InstanceData->SpeedMinMax.x;
-					jCloneComponentDesc["CloneObject Component InstnaceData SpeedMinMax"] = InstanceData->SpeedMinMax.y;
-					jCloneComponentDesc["CloneObject Component InstnaceData PSizeX"] = InstanceData->fPSize.x;
-					jCloneComponentDesc["CloneObject Component InstnaceData PSizeY"] = InstanceData->fPSize.y;
-#pragma endregion Instance Data
-
-#pragma region Point Desc Data
-					CVIBuffer_Point_Instancing::POINTDESC* PointDesc = pVIBufferPointInstancing->Get_PointDesc();
-
-					_float fDir = 0.0f, fMin = 0.0f, fMax = 0.0f, fCirclePos = 0.0f, fConeRange = 0.0f, vOriginPos, vExplosionDir;
-					jCloneComponentDesc["0. Point Data"] = "PointDesc Data";
-					for (_int k = 0; k < 3; k++)
-					{
-						fMin = 0.0f;
-						memcpy(&fMin, (_float*)&PointDesc->fMin + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc Min"].push_back(fMin);
-					}
-					for (_int k = 0; k < 3; k++)
-					{
-						fMax = 0.0f;
-						memcpy(&fMax, (_float*)&PointDesc->fMax + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc Max"].push_back(fMax);
-					}
-					for (_int k = 0; k < 4; k++)
-					{
-						fCirclePos = 0.0f;
-						memcpy(&fCirclePos, (_float*)&PointDesc->vCirclePos + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc CirclePos"].push_back(fCirclePos);
-					}
-					for (_int k = 0; k < 2; k++)
-					{
-						fConeRange = 0.0f;
-						memcpy(&fCirclePos, (_float*)&PointDesc->fConeRange + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc ConeRange"].push_back(fConeRange);
-					}
-					for (_int k = 0; k < 4; k++)
-					{
-						vOriginPos = 0.0f;
-						memcpy(&vOriginPos, (_float*)&PointDesc->vOriginPos + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc OriginPos"].push_back(vOriginPos);
-					}
-					for (_int k = 0; k < 4; k++)
-					{
-						vExplosionDir = 0.0f;
-						memcpy(&vExplosionDir, (_float*)&PointDesc->vExplosionDir + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc ExplosionDir"].push_back(vExplosionDir);
-					}
-					for (_int k = 0; k < 4; k++)
-					{
-						fDir = 0.0f;
-						memcpy(&fDir, (_float*)&PointDesc->vDir + k, sizeof(_float));
-						jCloneComponentDesc["CloneObject Component PointDesc Dir"].push_back(fDir);
-					}
-
-					for (_int j = 0; j < iInstanceNum; j++)
-					{
-						jCloneComponentDesc["1. Instance Num"] = j;
-						jCloneComponentDesc["CloneObject Component PointDesc ShapeType"] = PointDesc->eShapeType;
-						jCloneComponentDesc["CloneObject Component PointDesc RotXYZ"] = PointDesc->eRotXYZ;
-						jCloneComponentDesc["CloneObject Component PointDesc Range"] = PointDesc->fRange;
-						jCloneComponentDesc["CloneObject Component PointDesc CreateInstance"] = PointDesc->iCreateInstance;
-						jCloneComponentDesc["CloneObject Component PointDesc InstanceIndex"] = PointDesc->iInstanceIndex;
-						jCloneComponentDesc["CloneObject Component PointDesc Spread"] = PointDesc->bSpread;
-						jCloneComponentDesc["CloneObject Component PointDesc IsAlive"] = PointDesc->bIsAlive;
-						jCloneComponentDesc["CloneObject Component PointDesc bMoveY"] = PointDesc->bMoveY;
-						jCloneComponentDesc["CloneObject Component PointDesc Rotation"] = PointDesc->bRotation;
-						jCloneComponentDesc["CloneObject Component PointDesc MoveY"] = PointDesc->fMoveY;
-						jCloneComponentDesc["CloneObject Component PointDesc CreateRange"] = PointDesc->fCreateRange;
-						jCloneComponentDesc["CloneObject Component PointDesc DurationTime"] = PointDesc->fDurationTime;
-						jCloneComponentDesc["CloneObject Component PointDesc MaxTime"] = PointDesc->fMaxTime;
-						jCloneComponentDesc["CloneObject Component PointDesc RangeOffset"] = PointDesc->fRangeOffset;
-						jCloneComponentDesc["CloneObject Component PointDesc RangeY"] = PointDesc->fRangeY;
-					}
-#pragma endregion Point Desc Data
-
-				}
-				jCloneObjects["CloneObject Component"] = jCloneComponentDesc;
-				jLayer["3.Clone GameObject"].push_back(jCloneObjects);
-				jCloneComponentDesc.clear();
-			}
-
-			ofstream	file(strSaveDirectory.c_str());
-			file << jLayer;
-			file.close();
-			//
-			bSave = false;
-			iSaveLevel = 0;
-			strcpy_s(szSaveFileName, "");
-#pragma endregion SaveData
-			ImGuiFileDialog::Instance()->Close();
-		}
-		if (!ImGuiFileDialog::Instance()->IsOk())
-		{
-			bSave = false;
-			iSaveLevel = 0;
-			strcpy_s(szSaveFileName, "");
-			ImGuiFileDialog::Instance()->Close();
-		}
-	}
-
-	if (ImGuiFileDialog::Instance()->Display("Select EffectComponent"))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-#pragma region SaveData
-			string		strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
-			strSaveDirectory += "\\";
-			strSaveDirectory += szSaveFileName;
-			strSaveDirectory += ".json";
-
-			Json	jLayer;
-			Json	jComponent;
-			Json	jPrototypeObjects;
-
-			Json	jCloneComponentDesc;
-
-			_int    iCurLevel = pGameInstance->Get_CurLevelIndex();
-			map<const _tchar*, CComponent*>*	Components = pGameInstance->Get_ComponentProtoType();
-			map<const _tchar*, CGameObject*>	Prototypes = pGameInstance->Get_ProtoTypeObjects();
-			CLayer *							Layers = pGameInstance->Find_Layer(iCurLevel, L"Layer_Effect");
-
-			jLayer["0.Save Level"] = iCurLevel;
-			jLayer["1.Save2Load Level"] = iSaveLevel;
-			jLayer["2.Layer Tag"] = "Layer_Effect";
-
-			// TOOL
-			// 툴에서 생성한 컴포넌트 저장 => Instance컴포넌트 카운트까지 저장함
-			for (auto& iter = Components[iCurLevel].begin(); iter != Components[iCurLevel].end(); iter++)
-			{
-				char     szComponentTag[MAX_PATH] = "";
-				if (dynamic_cast<CVIBuffer_Point_Instancing*>(iter->second))
-				{
-					CUtile::WideCharToChar(iter->first, szComponentTag);
-					jComponent["0.Component Tag"] = szComponentTag;
-					jComponent["1.Component Cnt"] = dynamic_cast<CVIBuffer_Point_Instancing*>(iter->second)->Get_InstanceNum();
-					jLayer["3.Prototype Component"].push_back(jComponent);
-				}
-			}
-
-			// ProtoType GameObject 
-			for (auto& pObject = Prototypes.begin(); pObject != Prototypes.end(); pObject++)
-			{
-				if (!dynamic_cast<CEffect_Base*>(pObject->second))
-					continue;
-
-				char     szPrototypeTag[MAX_PATH] = "";
-				CUtile::WideCharToChar(pObject->first, szPrototypeTag);
-				jPrototypeObjects["0.Prototype Proto Tag"] = szPrototypeTag;
-
-				_int iEffectType = 0;
-				if (dynamic_cast<CEffect_T*>(pObject->second))
-					iEffectType = 0;
-				if (dynamic_cast<CEffect_Mesh_T*>(pObject->second))
-					iEffectType = 2;
-				if (dynamic_cast<CEffect_Trail*>(pObject->second))
-					iEffectType = 3;
-
-				if (dynamic_cast<CEffect_Point_Instancing*>(pObject->second))
-				{
-					iEffectType = 1;
-
-					char     szComponentTag[MAX_PATH] = "";
-					CUtile::WideCharToChar(dynamic_cast<CEffect_Point_Instancing*>(pObject->second)->Get_VIBufferProtoTag(), szComponentTag);
-					jPrototypeObjects["2.Prototype VIBufferComponent Tag"] = szComponentTag;
-				}
-				jPrototypeObjects["1.Prototype Type"] = iEffectType;
-				jLayer["4.Prototype GameObject"].push_back(jPrototypeObjects);
-			}
-
-			ofstream	file(strSaveDirectory.c_str());
-			file << jLayer;
-			file.close();
-			//
-			bSave = false;
-			iSaveLevel = 0;
-			strcpy_s(szSaveFileName, "");
-#pragma endregion SaveComponentData
-			ImGuiFileDialog::Instance()->Close();
-		}
-		if (!ImGuiFileDialog::Instance()->IsOk())
-		{
-			bSave = false;
-			iSaveLevel = 0;
-			strcpy_s(szSaveFileName, "");
-			ImGuiFileDialog::Instance()->Close();
-		}
-	}
-
 	if (ImGuiFileDialog::Instance()->Display("Select EffectDesc"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())
@@ -896,6 +426,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 			jDesc["Blend Type"] = eSaveEffectDesc.eBlendType;
 			jDesc["MoveDir Type"] = eSaveEffectDesc.eMoveDir;
 			jDesc["Rotation Type"] = eSaveEffectDesc.eRotation;
+
+			jDesc["PassCnt"] = eSaveEffectDesc.iPassCnt;
 
 			_float fFrame = 0.0f, fMaskFrame;
 			for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
@@ -1050,8 +582,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 					CUtile::WideCharToChar((*iter)->Get_ProtoObjectName(), szPrototypeTag);
 					CUtile::WideCharToChar((*iter)->Get_ObjectCloneName(), szClonetypeTag);
-					jObject["Child ProtoTag"] = szPrototypeTag;
-					jObject["Child CloneTag"] = szClonetypeTag;
+					jChildDesc["Child ProtoTag"] = szPrototypeTag;
+					jChildDesc["Child CloneTag"] = szClonetypeTag;
 
 #pragma  region	EFFECTDESC
 					CEffect_Base::EFFECTDESC eChildEffectDesc = (*iter)->Get_EffectDesc();
@@ -1064,6 +596,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 					jChildDesc["Blend Type"] = eChildEffectDesc.eBlendType;
 					jChildDesc["MoveDir Type"] = eChildEffectDesc.eMoveDir;
 					jChildDesc["Rotation Type"] = eChildEffectDesc.eRotation;
+
+					jChildDesc["PassCnt"] = eChildEffectDesc.iPassCnt;
 
 					_float fFrame = 0.0f, fMaskFrame;
 					for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
@@ -1143,7 +677,18 @@ void CImgui_Effect::Imgui_RenderWindow()
 					jChildDesc["Spread"] = eChildEffectDesc.bSpread;
 					jChildDesc["FreeMove"] = eChildEffectDesc.bFreeMove;
 
+					_float4x4 WorldMatrix;
+					XMStoreFloat4x4(&WorldMatrix, (*iter)->Get_WorldMatrix());
+					for (_int i = 0; i < 16; i++)
+					{
+						_float fWorldMatrix = 0.0f;
+						memcpy(&fWorldMatrix, ((_float*)&WorldMatrix) + i, sizeof(_float));
+
+						jChildDesc["WorldMatrix"].push_back(fWorldMatrix);
+					}
+
 					jObject["ChildDesc"].push_back(jChildDesc);
+					jChildDesc.clear();
 #pragma  endregion	EFFECTDESC
 				}
 			}
@@ -1255,6 +800,447 @@ void CImgui_Effect::Imgui_RenderWindow()
 			file << jLayer;
 			file.close();
 			//
+			bSave = false;
+			iSaveLevel = 0;
+			strcpy_s(szSaveFileName, "");
+#pragma endregion SaveDesc
+			ImGuiFileDialog::Instance()->Close();
+		}
+		if (!ImGuiFileDialog::Instance()->IsOk())
+		{
+			bSave = false;
+			iSaveLevel = 0;
+			strcpy_s(szSaveFileName, "");
+			ImGuiFileDialog::Instance()->Close();
+		}
+	}
+
+	/* Save All */
+	if (ImGuiFileDialog::Instance()->Display("Select EffectData"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			string		strSaveFileDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+#pragma region SaveData
+
+			_int    iCurLevel = pGameInstance->Get_CurLevelIndex();
+			CLayer *							Layers = pGameInstance->Find_Layer(iCurLevel, L"Layer_Effect");
+
+			Json	jLayer;
+			jLayer["0.Save Level"] = iCurLevel;
+			jLayer["1.Save2Load Level"] = iSaveLevel;
+			jLayer["2.Layer Tag"] = "Layer_Effect";
+
+			// Clone GameObject 
+			Json	jDesc;
+			Json	jObject;
+
+			map <const _tchar*, CGameObject*>   GameObjects = Layers->GetGameObjects();
+			for (auto& pCloneObject = GameObjects.begin(); pCloneObject != GameObjects.end(); pCloneObject++)
+			{
+				if (!dynamic_cast<CEffect_Base*>(pCloneObject->second))
+					continue;
+
+				CEffect_Base* pEffect = dynamic_cast<CEffect_Base*>(pCloneObject->second);
+				CEffect_Base::EFFECTDESC eSaveEffectDesc = pEffect->Get_EffectDesc();
+
+				char     szPrototypeTag[MAX_PATH] = "";
+				char     szClonetypeTag[MAX_PATH] = "";
+
+				CUtile::WideCharToChar((pCloneObject->second)->Get_ProtoObjectName(), szPrototypeTag);
+				CUtile::WideCharToChar((pCloneObject->second)->Get_ObjectCloneName(), szClonetypeTag);
+				jDesc["Object ProtoTag"] = szPrototypeTag;
+				jDesc["Object CloneTag"] = szClonetypeTag;
+
+#pragma  region	EFFECTDESC
+
+				jDesc["Effect Type"] = eSaveEffectDesc.eEffectType;
+				jDesc["Mesh Type"] = eSaveEffectDesc.eMeshType;
+				jDesc["Particle Type"] = eSaveEffectDesc.eParticleType;
+				jDesc["TextureRender Type"] = eSaveEffectDesc.eTextureRenderType;
+				jDesc["Texture Type"] = eSaveEffectDesc.eTextureType;
+				jDesc["Blend Type"] = eSaveEffectDesc.eBlendType;
+				jDesc["MoveDir Type"] = eSaveEffectDesc.eMoveDir;
+				jDesc["Rotation Type"] = eSaveEffectDesc.eRotation;
+
+				jDesc["PassCnt"] = eSaveEffectDesc.iPassCnt;
+
+				_float fFrame = 0.0f, fMaskFrame;
+				for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
+				{
+					fFrame = 0.0f;
+					memcpy(&fFrame, &eSaveEffectDesc.fFrame[i], sizeof(_float));
+					jDesc["DiffuseTexture Index"].push_back(fFrame);
+				}
+				for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
+				{
+					fMaskFrame = 0.0f;
+					memcpy(&fMaskFrame, &eSaveEffectDesc.fMaskFrame[i], sizeof(_float));
+					jDesc["MaskTexture Index"].push_back(fMaskFrame);
+				}
+
+				_float	vColor = 0.f, vScale = 0.f;
+				for (_int i = 0; i < 4; ++i)
+				{
+					vColor = 0.0f;
+					memcpy(&vColor, (_float*)&eSaveEffectDesc.vColor + i, sizeof(_float));
+					jDesc["Color"].push_back(vColor);
+				}
+				for (_int i = 0; i < 4; ++i)
+				{
+					vScale = 0.0f;
+					memcpy(&vScale, (_float*)&eSaveEffectDesc.vScale + i, sizeof(_float));
+					jDesc["Scale"].push_back(vColor);
+				}
+
+				jDesc["NormalTexture Index"] = eSaveEffectDesc.fNormalFrame;
+				jDesc["Width Frame"] = eSaveEffectDesc.fWidthFrame;
+				jDesc["Height Frame"] = eSaveEffectDesc.fHeightFrame;
+
+				jDesc["SeparateWidth"] = eSaveEffectDesc.iSeparateWidth;
+				jDesc["SeparateHeight"] = eSaveEffectDesc.iSeparateHeight;
+				jDesc["WidthCnt"] = eSaveEffectDesc.iWidthCnt;
+				jDesc["HeightCnt"] = eSaveEffectDesc.iHeightCnt;
+				jDesc["DurationTime"] = eSaveEffectDesc.fTimeDelta;
+
+				jDesc["CreateRange"] = eSaveEffectDesc.fCreateRange;
+				jDesc["Range"] = eSaveEffectDesc.fRange;
+				jDesc["Angle"] = eSaveEffectDesc.fAngle;
+				jDesc["MoveDurationTime"] = eSaveEffectDesc.fMoveDurationTime;
+				jDesc["Start"] = eSaveEffectDesc.bStart;
+
+				_float	vInitPos = 0.f, vPixedDir = 0.f;
+				for (_int i = 0; i < 4; ++i)
+				{
+					vInitPos = 0.0f;
+					memcpy(&vInitPos, (_float*)&eSaveEffectDesc.vInitPos + i, sizeof(_float));
+					jDesc["Init Pos"].push_back(vInitPos);
+				}
+				for (_int i = 0; i < 4; ++i)
+				{
+					vPixedDir = 0.0f;
+					memcpy(&vPixedDir, (_float*)&eSaveEffectDesc.vPixedDir + i, sizeof(_float));
+					jDesc["Pixed Dir"].push_back(vPixedDir);
+				}
+
+				jDesc["Have Trail"] = eSaveEffectDesc.IsTrail;
+				if (eSaveEffectDesc.IsTrail == true)
+				{
+					jDesc["Active"] = eSaveEffectDesc.bActive;
+					jDesc["Alpha Trail"] = eSaveEffectDesc.bAlpha;
+					jDesc["Life"] = eSaveEffectDesc.fLife;
+					jDesc["Width"] = eSaveEffectDesc.fWidth;
+					jDesc["SegmentSize"] = eSaveEffectDesc.fSegmentSize;
+				}
+
+				jDesc["Alpha"] = eSaveEffectDesc.fAlpha;
+				jDesc["Billboard"] = eSaveEffectDesc.IsBillboard;
+				jDesc["Use Normal"] = eSaveEffectDesc.IsNormal;
+				jDesc["Use Mask"] = eSaveEffectDesc.IsMask;
+				jDesc["Trigger"] = eSaveEffectDesc.IsTrigger;
+				jDesc["MovingPosition"] = eSaveEffectDesc.IsMovingPosition;
+				jDesc["Use Child"] = eSaveEffectDesc.bUseChild;
+				jDesc["Spread"] = eSaveEffectDesc.bSpread;
+				jDesc["FreeMove"] = eSaveEffectDesc.bFreeMove;
+#pragma  endregion	EFFECTDESC
+				jObject["Desc"].push_back(jDesc);
+
+				_int iDTextureCnt = 0, iMTextureCnt = 0;
+				jObject["Have DTextureCnt"] = pEffect->Get_TotalDTextureCnt();
+				jObject["Have MTextureCnt"] = pEffect->Get_TotalMTextureCnt();
+
+				_float4x4 WorldMatrix;
+				XMStoreFloat4x4(&WorldMatrix, pEffect->Get_WorldMatrix());
+				for (_int i = 0; i < 16; i++)
+				{
+					_float fWorldMatrix = 0.0f;
+					memcpy(&fWorldMatrix, ((_float*)&WorldMatrix) + i, sizeof(_float));
+
+					jObject["WorldMatrix"].push_back(fWorldMatrix);
+				}
+
+				// FreeMove
+				if (eSaveEffectDesc.bFreeMove == true)
+				{
+					vector<_float4>* FreePos = pEffect->Get_FreePos();
+					_float fFreePos = 0.0f;
+					for (_int i = 0; i < FreePos->size(); i++)
+					{
+						for (_int j = 0; j < 4; j++)
+						{
+							fFreePos = 0.0f;
+							memcpy(&fFreePos, (_float*)&FreePos[i] + j, sizeof(_float));
+							jObject["FreePos"].push_back(fFreePos);
+						}
+					}
+				}
+
+				// Trail
+				if (eSaveEffectDesc.IsTrail == true)
+				{
+					char     szPrototypeTag[MAX_PATH] = "";
+					char     szClonetypeTag[MAX_PATH] = "";
+
+					if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+					{
+						vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_TrailEffect();
+						_int iTrailSize = (_int)vecTrail.size();
+						for (auto& pvecTrail : vecTrail)
+						{
+							CUtile::WideCharToChar(pvecTrail->Get_ProtoObjectName(), szPrototypeTag);
+							CUtile::WideCharToChar(pvecTrail->Get_ObjectCloneName(), szClonetypeTag);
+							jObject["Trail Index"] = pvecTrail->Get_ParticleIdx();
+						}
+					}
+					else
+					{
+						CEffect_Trail* pEffectTrail = dynamic_cast<CEffect_Base*>(pGameObject)->Get_Trail();
+						CUtile::WideCharToChar(pEffectTrail->Get_ProtoObjectName(), szPrototypeTag);
+						CUtile::WideCharToChar(pEffectTrail->Get_ObjectCloneName(), szClonetypeTag);
+					}
+					jObject["Trail ProtoTag"] = szPrototypeTag;
+					jObject["Trail CloneTag"] = szClonetypeTag;
+				}
+
+				_int iChildCnt = pEffect->Get_ChildCnt();
+				jObject["Child Count"] = iChildCnt;
+				json jChildDesc;
+
+				// Child
+				if (iChildCnt != 0)
+				{
+					vector<CEffect_Base*>* pvecChild = dynamic_cast<CEffect_Base*>(pCloneObject->second)->Get_vecChild();
+					for (auto& iter = pvecChild->begin(); iter != pvecChild->end(); iter++)
+					{
+						char     szPrototypeTag[MAX_PATH] = "";
+						char     szClonetypeTag[MAX_PATH] = "";
+
+						CUtile::WideCharToChar((*iter)->Get_ProtoObjectName(), szPrototypeTag);
+						CUtile::WideCharToChar((*iter)->Get_ObjectCloneName(), szClonetypeTag);
+						jChildDesc["Child ProtoTag"] = szPrototypeTag;
+						jChildDesc["Child CloneTag"] = szClonetypeTag;
+
+#pragma  region	EFFECTDESC
+						CEffect_Base::EFFECTDESC eChildEffectDesc = (*iter)->Get_EffectDesc();
+
+						jChildDesc["Effect Type"] = eChildEffectDesc.eEffectType;
+						jChildDesc["Mesh Type"] = eChildEffectDesc.eMeshType;
+						jChildDesc["Particle Type"] = eChildEffectDesc.eParticleType;
+						jChildDesc["TextureRender Type"] = eChildEffectDesc.eTextureRenderType;
+						jChildDesc["Texture Type"] = eChildEffectDesc.eTextureType;
+						jChildDesc["Blend Type"] = eChildEffectDesc.eBlendType;
+						jChildDesc["MoveDir Type"] = eChildEffectDesc.eMoveDir;
+						jChildDesc["Rotation Type"] = eChildEffectDesc.eRotation;
+
+						jChildDesc["PassCnt"] = eChildEffectDesc.iPassCnt;
+
+						_float fFrame = 0.0f, fMaskFrame;
+						for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
+						{
+							fFrame = 0.0f;
+							memcpy(&fFrame, &eChildEffectDesc.fFrame[i], sizeof(_float));
+							jChildDesc["DiffuseTexture Index"].push_back(fFrame);
+						}
+						for (_int i = 0; i < MAX_TEXTURECNT; ++i) // Texture Idx
+						{
+							fMaskFrame = 0.0f;
+							memcpy(&fMaskFrame, &eChildEffectDesc.fMaskFrame[i], sizeof(_float));
+							jChildDesc["MaskTexture Index"].push_back(fMaskFrame);
+						}
+
+						_float	vColor = 0.f, vScale = 0.f;
+						for (_int i = 0; i < 4; ++i)
+						{
+							vColor = 0.0f;
+							memcpy(&vColor, (_float*)&eChildEffectDesc.vColor + i, sizeof(_float));
+							jChildDesc["Color"].push_back(vColor);
+						}
+						for (_int i = 0; i < 4; ++i)
+						{
+							vScale = 0.0f;
+							memcpy(&vScale, (_float*)&eChildEffectDesc.vScale + i, sizeof(_float));
+							jChildDesc["Scale"].push_back(vColor);
+						}
+
+						jChildDesc["NormalTexture Index"] = eChildEffectDesc.fNormalFrame;
+						jChildDesc["Width Frame"] = eChildEffectDesc.fWidthFrame;
+						jChildDesc["Height Frame"] = eChildEffectDesc.fHeightFrame;
+
+						jChildDesc["SeparateWidth"] = eChildEffectDesc.iSeparateWidth;
+						jChildDesc["SeparateHeight"] = eChildEffectDesc.iSeparateHeight;
+						jChildDesc["WidthCnt"] = eChildEffectDesc.iWidthCnt;
+						jChildDesc["HeightCnt"] = eChildEffectDesc.iHeightCnt;
+						jChildDesc["DurationTime"] = eChildEffectDesc.fTimeDelta;
+
+						jChildDesc["CreateRange"] = eChildEffectDesc.fCreateRange;
+						jChildDesc["Range"] = eChildEffectDesc.fRange;
+						jChildDesc["Angle"] = eChildEffectDesc.fAngle;
+						jChildDesc["MoveDurationTime"] = eChildEffectDesc.fMoveDurationTime;
+						jChildDesc["Start"] = eChildEffectDesc.bStart;
+
+						_float	vInitPos = 0.f, vPixedDir = 0.f;
+						for (_int i = 0; i < 4; ++i)
+						{
+							vInitPos = 0.0f;
+							memcpy(&vInitPos, (_float*)&eChildEffectDesc.vInitPos + i, sizeof(_float));
+							jChildDesc["Init Pos"].push_back(vInitPos);
+						}
+						for (_int i = 0; i < 4; ++i)
+						{
+							vPixedDir = 0.0f;
+							memcpy(&vPixedDir, (_float*)&eChildEffectDesc.vPixedDir + i, sizeof(_float));
+							jChildDesc["Pixed Dir"].push_back(vPixedDir);
+						}
+
+						jChildDesc["Have Trail"] = eChildEffectDesc.IsTrail;
+						if (eChildEffectDesc.IsTrail == true)
+						{
+							jChildDesc["Active"] = eChildEffectDesc.bActive;
+							jChildDesc["Alpha Trail"] = eChildEffectDesc.bAlpha;
+							jChildDesc["Life"] = eChildEffectDesc.fLife;
+							jChildDesc["Width"] = eChildEffectDesc.fWidth;
+							jChildDesc["SegmentSize"] = eChildEffectDesc.fSegmentSize;
+						}
+
+						jChildDesc["Alpha"] = eChildEffectDesc.fAlpha;
+						jChildDesc["Billboard"] = eChildEffectDesc.IsBillboard;
+						jChildDesc["Use Normal"] = eChildEffectDesc.IsNormal;
+						jChildDesc["Use Mask"] = eChildEffectDesc.IsMask;
+						jChildDesc["Trigger"] = eChildEffectDesc.IsTrigger;
+						jChildDesc["MovingPosition"] = eChildEffectDesc.IsMovingPosition;
+						jChildDesc["Use Child"] = eChildEffectDesc.bUseChild;
+						jChildDesc["Spread"] = eChildEffectDesc.bSpread;
+						jChildDesc["FreeMove"] = eChildEffectDesc.bFreeMove;
+
+						_float4x4 WorldMatrix;
+						XMStoreFloat4x4(&WorldMatrix, (*iter)->Get_WorldMatrix());
+						for (_int i = 0; i < 16; i++)
+						{
+							_float fWorldMatrix = 0.0f;
+							memcpy(&fWorldMatrix, ((_float*)&WorldMatrix) + i, sizeof(_float));
+
+							jChildDesc["WorldMatrix"].push_back(fWorldMatrix);
+						}
+
+#pragma  endregion	EFFECTCHILDDESC
+						jObject["ChildDesc"].push_back(jChildDesc);
+						jChildDesc.clear();
+					}
+				}
+
+				json jData;
+				// Component Desc 저장
+				if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+				{
+					char     szVIBufferTag[MAX_PATH] = "";
+					const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_VIBufferProtoTag();
+					CUtile::WideCharToChar(szVIBufferWidecharTag, szVIBufferTag);
+
+					CEffect_Point_Instancing* pPointInstance = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
+					CVIBuffer_Point_Instancing*	pVIBufferPointInstancing = (CVIBuffer_Point_Instancing*)pPointInstance->Find_Component(L"Com_VIBuffer");
+					jObject["CloneObject Component ProtoTag"] = szVIBufferTag;
+
+#pragma region Instance Data
+
+					CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = pVIBufferPointInstancing->Get_InstanceData();
+
+					_int iInstanceNum = pVIBufferPointInstancing->Get_InstanceNum();
+					_float fPos = 0.0f;
+					jObject["Instance DataCnt"] = iInstanceNum;
+					for (_int k = 0; k < 4; k++)
+					{
+						fPos = 0.0f;
+						memcpy(&fPos, (_float*)&InstanceData->fPos + k, sizeof(_float));
+						jObject["CloneObject Component InstnaceData Position"].push_back(fPos);
+					}
+
+					jObject["CloneObject Component InstnaceData Speed"] = InstanceData->pSpeeds;
+					jObject["CloneObject Component InstnaceData SpeedMinMin"] = InstanceData->SpeedMinMax.x;
+					jObject["CloneObject Component InstnaceData SpeedMinMax"] = InstanceData->SpeedMinMax.y;
+					jObject["CloneObject Component InstnaceData PSizeX"] = InstanceData->fPSize.x;
+					jObject["CloneObject Component InstnaceData PSizeY"] = InstanceData->fPSize.y;
+#pragma endregion Instance Data
+
+					CVIBuffer_Point_Instancing::POINTDESC* PointDesc = pVIBufferPointInstancing->Get_PointDesc();
+					_float fDir = 0.0f, fMin = 0.0f, fMax = 0.0f, fCirclePos = 0.0f, fConeRange = 0.0f, vOriginPos, vExplosionDir;
+					jObject["Point Data"] = "PointDesc Data";
+
+#pragma region PointDesc Data
+					for (_int k = 0; k < 3; k++)
+					{
+						fMin = 0.0f;
+						memcpy(&fMin, (_float*)&PointDesc->fMin + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc Min"].push_back(fMin);
+					}
+					for (_int k = 0; k < 3; k++)
+					{
+						fMax = 0.0f;
+						memcpy(&fMax, (_float*)&PointDesc->fMax + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc Max"].push_back(fMax);
+					}
+					for (_int k = 0; k < 4; k++)
+					{
+						fCirclePos = 0.0f;
+						memcpy(&fCirclePos, (_float*)&PointDesc->vCirclePos + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc CirclePos"].push_back(fCirclePos);
+					}
+					for (_int k = 0; k < 2; k++)
+					{
+						fConeRange = 0.0f;
+						memcpy(&fCirclePos, (_float*)&PointDesc->fConeRange + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc ConeRange"].push_back(fConeRange);
+					}
+					for (_int k = 0; k < 4; k++)
+					{
+						vOriginPos = 0.0f;
+						memcpy(&vOriginPos, (_float*)&PointDesc->vOriginPos + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc OriginPos"].push_back(vOriginPos);
+					}
+					for (_int k = 0; k < 4; k++)
+					{
+						vExplosionDir = 0.0f;
+						memcpy(&vExplosionDir, (_float*)&PointDesc->vExplosionDir + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc ExplosionDir"].push_back(vExplosionDir);
+					}
+					for (_int k = 0; k < 4; k++)
+					{
+						fDir = 0.0f;
+						memcpy(&fDir, (_float*)&PointDesc->vDir + k, sizeof(_float));
+						jObject["CloneObject Component PointDesc Dir"].push_back(fDir);
+					}
+
+					jObject["CloneObject Component PointDesc ShapeType"] = PointDesc->eShapeType;
+					jObject["CloneObject Component PointDesc RotXYZ"] = PointDesc->eRotXYZ;
+					jObject["CloneObject Component PointDesc Range"] = PointDesc->fRange;
+					jObject["CloneObject Component PointDesc CreateInstance"] = PointDesc->iCreateInstance;
+					jObject["CloneObject Component PointDesc InstanceIndex"] = PointDesc->iInstanceIndex;
+					jObject["CloneObject Component PointDesc Spread"] = PointDesc->bSpread;
+					jObject["CloneObject Component PointDesc IsAlive"] = PointDesc->bIsAlive;
+					jObject["CloneObject Component PointDesc bMoveY"] = PointDesc->bMoveY;
+					jObject["CloneObject Component PointDesc Rotation"] = PointDesc->bRotation;
+					jObject["CloneObject Component PointDesc MoveY"] = PointDesc->fMoveY;
+					jObject["CloneObject Component PointDesc CreateRange"] = PointDesc->fCreateRange;
+					jObject["CloneObject Component PointDesc DurationTime"] = PointDesc->fDurationTime;
+					jObject["CloneObject Component PointDesc MaxTime"] = PointDesc->fMaxTime;
+					jObject["CloneObject Component PointDesc RangeOffset"] = PointDesc->fRangeOffset;
+					jObject["CloneObject Component PointDesc RangeY"] = PointDesc->fRangeY;
+				}
+				jData["Object Data"].push_back(jObject);
+				jLayer["Object"].push_back(jData);
+				jDesc.clear();
+				jObject.clear();
+				jData.clear();
+#pragma endregion PointDesc Data
+			}
+			char	szDash[128] = "\\";
+			strcat_s(szDash, szSaveFileName);
+			strSaveFileDirectory += string(szDash);
+			strSaveFileDirectory += ".json"; 
+			ofstream	file(strSaveFileDirectory.c_str());
+			file << jLayer;
+			file.close();
+			//
 			bDescSave = false;
 			iSaveLevel = 0;
 			strcpy_s(szSaveFileName, "");
@@ -1270,44 +1256,61 @@ void CImgui_Effect::Imgui_RenderWindow()
 		}
 	}
 
-	
+	/* Load All */
 	if (ImGuiFileDialog::Instance()->Display("Select EffectLoad"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
-#pragma region LoadData
+#pragma region SaveData
 			Json	jLayer;
-			string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
 
-			ifstream	file(strFilePath.c_str());
+			ifstream	file("../Bin/Data/Effect/E_HitSet.json");
 			file >> jLayer;
 			file.close();
-
+			
 			_int iCurLevel = 0, iSave2LoadLevel = 0;
 			string strLayerTag = "";
 			jLayer["0.Save Level"].get_to<int>(iCurLevel);
 			jLayer["1.Save2Load Level"].get_to<int>(iSave2LoadLevel);
 			jLayer["2.Layer Tag"].get_to<string>(strLayerTag);
 
+		
 			// Clone GameObject
 			_int iEnum = 0, iEffectType = 0;
 			CEffect_Base::EFFECTDESC eLoadEffectDesc;
+
 			Json	jData;
 			Json	jDesc;
 			Json	jObject;
 			Json	jChildDesc;
+			//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+			CGameObject* pGameObeject = nullptr;
+			static _bool bHave = false;
+
+			_tchar* szDefaultTag = L"";
+			_tchar* szCloneConvertTag = L"";
 
 			//jData = jLayer["Pulse Test"];
-			for (auto jData : jLayer["Pulse Test"])
+			for (auto jData : jLayer["Object"])
 			{
 				for (auto jObject : jData["Object Data"])
 				{
 					for (auto jDesc : jObject["Desc"])
 					{
+						pGameObeject = nullptr;
+						bHave = false;
+
+						string strPrototypeTag = "";
+						string strCloneTag = "";
+						szDefaultTag = L"";
+						szCloneConvertTag = L"";
+
+						jDesc["Object ProtoTag"].get_to<string>(strPrototypeTag);
+						jDesc["Object CloneTag"].get_to<string>(strCloneTag);
 
 #pragma  region	EFFECTDESC
-						jDesc["Effect Type"].get_to<_int>(iEffectType);
-						eLoadEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
+						jDesc["Effect Type"].get_to<_int>(iEnum);
+						eLoadEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEnum;
 
 						iEnum = 0;
 						jDesc["Mesh Type"].get_to<_int>(iEnum);
@@ -1330,6 +1333,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 						jDesc["Rotation Type"].get_to<_int>(iEnum);
 						eLoadEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+						iEnum = 0;
+						jDesc["PassCnt"].get_to<_int>(iEnum);
+						eLoadEffectDesc.iPassCnt = iEnum;
 
 						_int i = 0;
 						for (_float fFrame : jDesc["DiffuseTexture Index"])
@@ -1387,21 +1394,71 @@ void CImgui_Effect::Imgui_RenderWindow()
 						jDesc["Spread"].get_to<_bool>(eLoadEffectDesc.bSpread);
 						jDesc["FreeMove"].get_to<_bool>(eLoadEffectDesc.bFreeMove);
 #pragma  endregion	EFFECTDESC
-					//	memcpy(&m_eEFfectDesc, &eLoadEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
+
+						/* Create */
+						_tchar szPrototag[128] = L"";
+						CUtile::CharToWideChar(strPrototypeTag.c_str(), szPrototag);
+
+						_tchar szCloneTag[128] = L"";
+						CUtile::CharToWideChar(strCloneTag.c_str(), szCloneTag);
+
+						szDefaultTag = CUtile::Create_String(szPrototag);
+						pGameInstance->Add_String(szDefaultTag);
+
+						szCloneConvertTag = CUtile::Create_String(szCloneTag);
+						pGameInstance->Add_String(szCloneConvertTag);
+
+						map<const _tchar*, class CGameObject*>&	 pGameObjects = pGameInstance->Get_ProtoTypeObjects();
+						for (auto& pCloneObject = pGameObjects.begin(); pCloneObject != pGameObjects.end(); pCloneObject++)
+						{
+							if (!lstrcmp(pCloneObject->first, szDefaultTag))
+							{
+								bHave = true;
+								break;
+							}
+						}
+
+						if (bHave == false)
+						{
+							if (eLoadEffectDesc.eEffectType == CEffect_Base::EFFECTDESC::EFFECTTYPE::EFFECT_PLANE)
+							{
+								if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_T::Create(m_pDevice, m_pContext))))
+								{
+									RELEASE_INSTANCE(CGameInstance);
+									return;
+								}
+							}
+							if (eLoadEffectDesc.eEffectType == CEffect_Base::EFFECTDESC::EFFECTTYPE::EFFECT_MESH)
+							{
+								if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
+								{
+									RELEASE_INSTANCE(CGameInstance);
+									return;
+								}
+								break;
+							}
+						}
+					}
+
+					/* Clone */
+					if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Effect", szDefaultTag, szCloneConvertTag, &eLoadEffectDesc, &pGameObeject)))
+					{
+						RELEASE_INSTANCE(CGameInstance);
+						return;
 					}
 
 					_int iDTextureCnt = 0, iMTextureCnt = 0;
 					jObject["Have DTextureCnt"].get_to<_int>(iDTextureCnt);
 					jObject["Have MTextureCnt"].get_to<_int>(iMTextureCnt);
 
-// 					m_iTotalDTextureComCnt = iDTextureCnt;
-// 					m_iTotalMTextureComCnt = iMTextureCnt;
+					dynamic_cast<CEffect_Base*>(pGameObeject)->Set_TotalDTextureCnt(iDTextureCnt);
+					dynamic_cast<CEffect_Base*>(pGameObeject)->Set_TotalMTextureCnt(iMTextureCnt);
 
-					_matrix WorldMatrix;
+					_matrix WorldMatrix = XMMatrixIdentity();
 					_int i = 0;
 					for (_float fElement : jObject["WorldMatrix"])
 						memcpy(((_float*)&WorldMatrix) + (i++), &fElement, sizeof(_float));
-					dynamic_cast<CEffect_Base*>(this)->Set_InitMatrix(WorldMatrix);
+					dynamic_cast<CEffect_Base*>(pGameObeject)->Get_TransformCom()->Set_WorldMatrix(WorldMatrix);
 
 					// FreeMove
 					_int j = 0;
@@ -1418,7 +1475,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 							}
 							memcpy((_float*)&fFreePos + (j++), &fFree, sizeof(_float4));
 						}
-						dynamic_cast<CEffect_Base*>(this)->Set_InitPos(FreePos);
+						dynamic_cast<CEffect_Base*>(pGameObeject)->Set_InitPos(FreePos);
 						FreePos.clear();
 					}
 
@@ -1426,9 +1483,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 					string strTrailPrototypeTag = "", strTrailCloneTag = "";
 					if (eLoadEffectDesc.IsTrail == true)
 					{
-						CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 						_int iParticleIndex = 0, iTrailEffectType = 0;
-						jObject["Trail EffectType"].get_to<_int>(iTrailEffectType);
+
 						if (iEffectType == 1) // VIBuffer_Point_Instancing Data Save
 						{
 							jObject["Trail ProtoTag"].get_to<string>(strTrailPrototypeTag);
@@ -1440,7 +1496,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 							_tchar* szTrailPrototypeTag = CUtile::Create_String(szConvertTag);
 							pGameInstance->Add_String(szTrailPrototypeTag);
 
-							dynamic_cast<CEffect_Point_Instancing*>(this)->Set_Trail(dynamic_cast<CEffect_Point_Instancing*>(this), szTrailPrototypeTag);
+							dynamic_cast<CEffect_Point_Instancing*>(pGameObeject)->Set_Trail(dynamic_cast<CEffect_Point_Instancing*>(this), szTrailPrototypeTag);
 						}
 						else
 						{
@@ -1452,9 +1508,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 							_tchar* szTrailPrototypeTag = CUtile::Create_String(szConvertTag);
 							pGameInstance->Add_String(szTrailPrototypeTag);
 
-							dynamic_cast<CEffect_Base*>(this)->Set_InitTrail(szTrailPrototypeTag, 1);
+							dynamic_cast<CEffect_Base*>(pGameObeject)->Set_InitTrail(szTrailPrototypeTag, 1);
 						}
-						RELEASE_INSTANCE(CGameInstance);
 					}
 
 					_int iChildCnt = 0;
@@ -1463,128 +1518,147 @@ void CImgui_Effect::Imgui_RenderWindow()
 					// Child
 					if (iChildCnt != 0)
 					{
-						for (_int j = 0; j < iChildCnt; j++)
+						CEffect_Base::EFFECTDESC eChildEffectDesc;
+						ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
+
+						for (auto jChildDesc : jObject["ChildDesc"])
 						{
+#pragma  region	EFFECTDESC
 							string strPrototypeTag = "";
 							string strCloneTag = "";
 
-							jObject["Child ProtoTag"].get_to<string>(strPrototypeTag);
-							jObject["Child CloneTag"].get_to<string>(strCloneTag);
+							jChildDesc["Child ProtoTag"].get_to<string>(strPrototypeTag);
+							jChildDesc["Child CloneTag"].get_to<string>(strCloneTag);
 
-							CEffect_Base::EFFECTDESC eChildEffectDesc;
-							ZeroMemory(&eChildEffectDesc, sizeof(CEffect_Base::EFFECTDESC));
 
-							for (auto jChildDesc : jObject["ChildDesc"])
+							jChildDesc["Effect Type"].get_to<_int>(iEffectType);
+							eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
+
+							iEnum = 0;
+							jChildDesc["Mesh Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eMeshType = (CEffect_Base::EFFECTDESC::MESHTYPE)iEnum;
+
+							jChildDesc["Particle Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eParticleType = (CEffect_Base::EFFECTDESC::PARTICLETYPE)iEnum;
+
+							jChildDesc["TextureRender Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eTextureRenderType = (CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE)iEnum;
+
+							jChildDesc["Texture Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eTextureType = (CEffect_Base::EFFECTDESC::TEXTURETYPE)iEnum;
+
+							jChildDesc["Blend Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eBlendType = (CEffect_Base::EFFECTDESC::BLENDSTATE)iEnum;
+
+							jChildDesc["MoveDir Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eMoveDir = (CEffect_Base::EFFECTDESC::MOVEDIR)iEnum;
+
+							jChildDesc["Rotation Type"].get_to<_int>(iEnum);
+							eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
+
+							iEnum = 0;
+							jChildDesc["PassCnt"].get_to<_int>(iEnum);
+							eChildEffectDesc.iPassCnt = iEnum;
+
+							_int i = 0;
+							for (_float fFrame : jChildDesc["DiffuseTexture Index"])
+								memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
+							i = 0;
+							for (_float fMaskFrame : jChildDesc["MaskTexture Index"])
+								memcpy(((_float*)&eChildEffectDesc.fMaskFrame) + (i++), &fMaskFrame, sizeof(_float));
+							i = 0;
+							for (_float vColor : jChildDesc["Color"])
+								memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
+							i = 0;
+							for (_float vScale : jChildDesc["vScale"])
+								memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
+
+							jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
+							jChildDesc["Width Frame"].get_to<_float>(eChildEffectDesc.fWidthFrame);
+							jChildDesc["Height Frame"].get_to<_float>(eChildEffectDesc.fHeightFrame);
+
+							jChildDesc["SeparateWidth"].get_to<_int>(eChildEffectDesc.iSeparateWidth);
+							jChildDesc["SeparateHeight"].get_to<_int>(eChildEffectDesc.iSeparateHeight);
+							jChildDesc["WidthCnt"].get_to<_int>(eChildEffectDesc.iWidthCnt);
+							jChildDesc["HeightCnt"].get_to<_int>(eChildEffectDesc.iHeightCnt);
+							jChildDesc["DurationTime"].get_to<_float>(eChildEffectDesc.fTimeDelta);
+
+							jChildDesc["CreateRange"].get_to<_float>(eChildEffectDesc.fCreateRange);
+							jChildDesc["Range"].get_to<_float>(eChildEffectDesc.fRange);
+							jChildDesc["Angle"].get_to<_float>(eChildEffectDesc.fAngle);
+							jChildDesc["MoveDurationTime"].get_to<_float>(eChildEffectDesc.fMoveDurationTime);
+							jChildDesc["Start"].get_to<_bool>(eChildEffectDesc.bStart);
+
+							i = 0;
+							for (_float vInitPos : jChildDesc["Init Pos"])
+								memcpy(((_float*)&eChildEffectDesc.vInitPos) + (i++), &vInitPos, sizeof(_float));
+							i = 0;
+							for (_float vPixedDir : jChildDesc["Pixed Dir"])
+								memcpy(((_float*)&eChildEffectDesc.vPixedDir) + (i++), &vPixedDir, sizeof(_float));
+
+							jChildDesc["Have Trail"].get_to<_bool>(eChildEffectDesc.IsTrail);
+							if (eChildEffectDesc.IsTrail == true)
 							{
-#pragma  region	EFFECTDESC
-								jChildDesc["Effect Type"].get_to<_int>(iEffectType);
-								eChildEffectDesc.eEffectType = (CEffect_Base::EFFECTDESC::EFFECTTYPE)iEffectType;
-
-								iEnum = 0;
-								jChildDesc["Mesh Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eMeshType = (CEffect_Base::EFFECTDESC::MESHTYPE)iEnum;
-
-								jChildDesc["Particle Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eParticleType = (CEffect_Base::EFFECTDESC::PARTICLETYPE)iEnum;
-
-								jChildDesc["TextureRender Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eTextureRenderType = (CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE)iEnum;
-
-								jChildDesc["Texture Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eTextureType = (CEffect_Base::EFFECTDESC::TEXTURETYPE)iEnum;
-
-								jChildDesc["Blend Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eBlendType = (CEffect_Base::EFFECTDESC::BLENDSTATE)iEnum;
-
-								jChildDesc["MoveDir Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eMoveDir = (CEffect_Base::EFFECTDESC::MOVEDIR)iEnum;
-
-								jChildDesc["Rotation Type"].get_to<_int>(iEnum);
-								eChildEffectDesc.eRotation = (CEffect_Base::EFFECTDESC::ROTXYZ)iEnum;
-
-								_int i = 0;
-								for (_float fFrame : jChildDesc["DiffuseTexture Index"])
-									memcpy(((_float*)&eChildEffectDesc.fFrame) + (i++), &fFrame, sizeof(_float));
-								i = 0;
-								for (_float fMaskFrame : jChildDesc["MaskTexture Index"])
-									memcpy(((_float*)&eChildEffectDesc.fMaskFrame) + (i++), &fMaskFrame, sizeof(_float));
-								i = 0;
-								for (_float vColor : jChildDesc["Color"])
-									memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
-								i = 0;
-								for (_float vScale : jChildDesc["vScale"])
-									memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
-
-								jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
-								jChildDesc["Width Frame"].get_to<_float>(eChildEffectDesc.fWidthFrame);
-								jChildDesc["Height Frame"].get_to<_float>(eChildEffectDesc.fHeightFrame);
-
-								jChildDesc["SeparateWidth"].get_to<_int>(eChildEffectDesc.iSeparateWidth);
-								jChildDesc["SeparateHeight"].get_to<_int>(eChildEffectDesc.iSeparateHeight);
-								jChildDesc["WidthCnt"].get_to<_int>(eChildEffectDesc.iWidthCnt);
-								jChildDesc["HeightCnt"].get_to<_int>(eChildEffectDesc.iHeightCnt);
-								jChildDesc["DurationTime"].get_to<_float>(eChildEffectDesc.fTimeDelta);
-
-								jChildDesc["CreateRange"].get_to<_float>(eChildEffectDesc.fCreateRange);
-								jChildDesc["Range"].get_to<_float>(eChildEffectDesc.fRange);
-								jChildDesc["Angle"].get_to<_float>(eChildEffectDesc.fAngle);
-								jChildDesc["MoveDurationTime"].get_to<_float>(eChildEffectDesc.fMoveDurationTime);
-								jChildDesc["Start"].get_to<_bool>(eChildEffectDesc.bStart);
-
-								i = 0;
-								for (_float vInitPos : jChildDesc["Init Pos"])
-									memcpy(((_float*)&eChildEffectDesc.vInitPos) + (i++), &vInitPos, sizeof(_float));
-								i = 0;
-								for (_float vPixedDir : jChildDesc["Pixed Dir"])
-									memcpy(((_float*)&eChildEffectDesc.vPixedDir) + (i++), &vPixedDir, sizeof(_float));
-
-								jChildDesc["Have Trail"].get_to<_bool>(eChildEffectDesc.IsTrail);
-								if (eChildEffectDesc.IsTrail == true)
-								{
-									jChildDesc["Active"].get_to<_bool>(eChildEffectDesc.bActive);
-									jChildDesc["Alpha Trail"].get_to<_bool>(eChildEffectDesc.bAlpha);
-									jChildDesc["Life"].get_to<_float>(eChildEffectDesc.fLife);
-									jChildDesc["Width"].get_to<_float>(eChildEffectDesc.fWidth);
-									jChildDesc["SegmentSize"].get_to<_float>(eChildEffectDesc.fSegmentSize);
-								}
-
-								jChildDesc["Alpha"].get_to<_float>(eChildEffectDesc.fAlpha);
-								jChildDesc["Billboard"].get_to<_bool>(eChildEffectDesc.IsBillboard);
-								jChildDesc["Use Normal"].get_to<_bool>(eChildEffectDesc.IsNormal);
-								jChildDesc["Use Mask"].get_to<_bool>(eChildEffectDesc.IsMask);
-								jChildDesc["Trigger"].get_to<_bool>(eChildEffectDesc.IsTrigger);
-								jChildDesc["MovingPosition"].get_to<_bool>(eChildEffectDesc.IsMovingPosition);
-								jChildDesc["Use Child"].get_to<_bool>(eChildEffectDesc.bUseChild);
-								jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
-								jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
-#pragma  endregion	EFFECTDESC
+								jChildDesc["Active"].get_to<_bool>(eChildEffectDesc.bActive);
+								jChildDesc["Alpha Trail"].get_to<_bool>(eChildEffectDesc.bAlpha);
+								jChildDesc["Life"].get_to<_float>(eChildEffectDesc.fLife);
+								jChildDesc["Width"].get_to<_float>(eChildEffectDesc.fWidth);
+								jChildDesc["SegmentSize"].get_to<_float>(eChildEffectDesc.fSegmentSize);
 							}
 
-							char* szProtoTag = CUtile::Create_String(strPrototypeTag.c_str());
-							dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, szProtoTag);
+							jChildDesc["Alpha"].get_to<_float>(eChildEffectDesc.fAlpha);
+							jChildDesc["Billboard"].get_to<_bool>(eChildEffectDesc.IsBillboard);
+							jChildDesc["Use Normal"].get_to<_bool>(eChildEffectDesc.IsNormal);
+							jChildDesc["Use Mask"].get_to<_bool>(eChildEffectDesc.IsMask);
+							jChildDesc["Trigger"].get_to<_bool>(eChildEffectDesc.IsTrigger);
+							jChildDesc["MovingPosition"].get_to<_bool>(eChildEffectDesc.IsMovingPosition);
+							jChildDesc["Use Child"].get_to<_bool>(eChildEffectDesc.bUseChild);
+							jChildDesc["Spread"].get_to<_bool>(eChildEffectDesc.bSpread);
+							jChildDesc["FreeMove"].get_to<_bool>(eChildEffectDesc.bFreeMove);
+
+							_matrix WorldMatrix = XMMatrixIdentity();
+							i = 0;
+							for (_float fElement : jChildDesc["WorldMatrix"])
+								memcpy(((_float*)&WorldMatrix) + (i++), &fElement, sizeof(_float));
+
+#pragma  endregion	EFFECTDESC
+							dynamic_cast<CEffect_Base*>(pGameObeject)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str(), WorldMatrix);
+							jChildDesc.clear();
 						}
 					}
 
+					_int iCnt = 0;
 					// Component Desc 저장
 					if (iEffectType == 1) // VIBuffer_Point_Instancing Data Save
 					{
+						string strVIBufferTag = "";
+						if (jObject.contains("CloneObject Component ProtoTag"))
+							jObject["CloneObject Component ProtoTag"].get_to<string>(strVIBufferTag);
+
+						_tchar szVIBufferTag[MAX_PATH] = L"";
+						CUtile::CharToWideChar(strVIBufferTag.c_str(), szVIBufferTag);
+
+						_tchar* szVIBufferFinalTag = CUtile::Create_String(szVIBufferTag);
+						pGameInstance->Add_String(szVIBufferFinalTag);
+
+						dynamic_cast<CEffect_Point_Instancing*>(pGameObeject)->Set_VIBufferProtoTag(szVIBufferFinalTag);
+
+						iCnt = 0;
+						jObject["Instance DataCnt"].get_to<_int>(iCnt);
+
+						CVIBuffer_Point_Instancing* pVIBuffer = nullptr;
+						if (FAILED(pGameInstance->Add_Prototype(g_LEVEL, szVIBufferFinalTag, pVIBuffer = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCnt))))
+							return ;
 
 #pragma region Instance Data
-						_int iInstanceDataCnt = 0, iInstanceDataIdx = 0;
-						//	jObject = jCloneObjects["CloneObject Component"];
-
-						CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = new CVIBuffer_Point_Instancing::INSTANCEDATA[iInstanceDataCnt];
-						ZeroMemory(InstanceData, sizeof(CVIBuffer_Point_Instancing::INSTANCEDATA)*iInstanceDataCnt);
+						CVIBuffer_Point_Instancing::INSTANCEDATA* InstanceData = nullptr;
+						InstanceData = pVIBuffer->Get_InstanceData();
 
 						_int k = 0;
 						for (_float fPos : jObject["CloneObject Component InstnaceData Position"])
 							memcpy((_float*)&InstanceData->fPos + (k++), &fPos, sizeof(_float));
 
 						jObject["CloneObject Component InstnaceData Speed"].get_to<_double>(InstanceData->pSpeeds);
-
-						_float2 SpeedMinMax = { 0.0f,0.0f };
-						_float2 PSize = { 0.0f,0.0f };
-
 						jObject["CloneObject Component InstnaceData SpeedMinMin"].get_to<_float>(InstanceData->SpeedMinMax.x);
 						jObject["CloneObject Component InstnaceData SpeedMinMax"].get_to<_float>(InstanceData->SpeedMinMax.y);
 						jObject["CloneObject Component InstnaceData PSizeX"].get_to<_float>(InstanceData->fPSize.x);
@@ -1593,11 +1667,11 @@ void CImgui_Effect::Imgui_RenderWindow()
 #pragma endregion Instance Data
 
 #pragma region Point Desc Data
-						CVIBuffer_Point_Instancing::POINTDESC* PointDesc = new CVIBuffer_Point_Instancing::POINTDESC[iInstanceDataCnt];
-						ZeroMemory(PointDesc, sizeof(CVIBuffer_Point_Instancing::POINTDESC)*iInstanceDataCnt);
-						string strPointDataTag = "";
+						CVIBuffer_Point_Instancing::POINTDESC* PointDesc = nullptr;
+						PointDesc = pVIBuffer->Get_PointDesc();
 
-						jObject["0. Point Data"].get_to<string>(strPointDataTag);
+						string strPointDataTag = "";
+						jObject["Point Data"].get_to<string>(strPointDataTag);
 
 						k = 0;
 						for (_float fMin : jObject["CloneObject Component PointDesc Min"])
@@ -1624,7 +1698,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 							memcpy((_float*)&PointDesc->vExplosionDir + (k++), &vExplosionDir, sizeof(_float));
 
 						k = 0;
-						for (_float fDir : jObject["CloneObject Component PointDesc ExplosionDir"])
+						for (_float fDir : jObject["CloneObject Component PointDesc Dir"])
 							memcpy((_float*)&PointDesc->vDir + (k++), &fDir, sizeof(_float));
 
 						iEnum = 0;
@@ -1649,133 +1723,18 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 #pragma endregion Point Desc Data
 
-						dynamic_cast<CEffect_Point_Instancing*>(this)->Set_PointInstanceDesc(PointDesc);
-						dynamic_cast<CEffect_Point_Instancing*>(this)->Set_InstanceData(InstanceData);
-						dynamic_cast<CEffect_Point_Instancing*>(this)->Set_ShapePosition();
-
-						Safe_Delete_Array(PointDesc);
-						Safe_Delete_Array(InstanceData);
 					}
 				}
 			}
-#pragma endregion LoadData
-			ImGuiFileDialog::Instance()->Close();
-		}
-		if (!ImGuiFileDialog::Instance()->IsOk())
-		{
+#pragma endregion SaveDesc
 			bLoad = false;
 			iSaveLevel = 0;
 			strcpy_s(szSaveFileName, "");
 			ImGuiFileDialog::Instance()->Close();
 		}
-	}
-
-	if (ImGuiFileDialog::Instance()->Display("Select EffectComponentLoad"))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-#pragma region LoadData
-			string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
-
-			Json	jLayer;
-			Json	jComponent;
-			Json	jPrototypeObjects;
-			Json	jCloneObjects;
-			Json	jCloneComponentDesc;
-
-			ifstream	file(strFilePath.c_str());
-			file >> jLayer;
-			file.close();
-
-			//pGameInstance->Clear_Level(iCurLevel);
-
-			_int iCurLevel = 0, iSave2LoadLevel = 0;
-			string strLayerTag = "";
-			jLayer["0.Save Level"].get_to<int>(iCurLevel);
-			jLayer["1.Save2Load Level"].get_to<int>(iSave2LoadLevel);
-			jLayer["2.Layer Tag"].get_to<string>(strLayerTag);
-
-			pGameInstance->Clear_Level(iCurLevel);
-			// Component Create
-			for (auto jComponent : jLayer["3.Prototype Component"])
-			{
-				string		strComponentTag = "";
-				_int		iComponentCnt = 0;
-
-				jComponent["0.Component Tag"].get_to<string>(strComponentTag);
-				jComponent["1.Component Cnt"].get_to<int>(iComponentCnt);
-
-				_tchar szComponentTag[128] = L"";
-				CUtile::CharToWideChar(strComponentTag.c_str(), szComponentTag);
-				_tchar* szComponentFinalTag = CUtile::Create_String(szComponentTag);
-				pGameInstance->Add_String(szComponentFinalTag);
-
-				if (FAILED(pGameInstance->Add_Prototype(iSave2LoadLevel, szComponentFinalTag, CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iComponentCnt))))
-					return;
-			}
-
-			for (auto jPrototypeObjects : jLayer["4.Prototype GameObject"])
-			{
-				string		strPrototypeTag = "";
-				string		strComponentTag = "";
-				_tchar*     szComponentTag = nullptr;
-				_int		iEffectType = 0;
-				_tchar*    szComponentFinalTag = L"";
-				_tchar    szVIBufferTag[128] = L"";
-
-				jPrototypeObjects["0.Prototype Proto Tag"].get_to<string>(strPrototypeTag);
-				jPrototypeObjects["1.Prototype Type"].get_to<_int>(iEffectType);
-				// enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_TRAIL, EFFECT_END };
-
-				_tchar szProtoTag[128] = L"";
-				CUtile::CharToWideChar(strPrototypeTag.c_str(), szProtoTag);
-				_tchar* szPrototypeFinalTag = CUtile::Create_String(szProtoTag);
-				pGameInstance->Add_String(szPrototypeFinalTag);
-
-				switch (iEffectType)
-				{
-				case 0:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_T::Create(m_pDevice, m_pContext))))
-					{
-						RELEASE_INSTANCE(CGameInstance);
-						return;
-					}
-					break;
-				case 1:
-					jPrototypeObjects["2.Prototype VIBufferComponent Tag"].get_to<string>(strComponentTag);
-
-					CUtile::CharToWideChar(strComponentTag.c_str(), szVIBufferTag);
-					szComponentFinalTag = CUtile::Create_String(szVIBufferTag);
-					pGameInstance->Add_String(szComponentFinalTag);
-
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Point_Instancing_T::Create(m_pDevice, m_pContext, szComponentFinalTag))))
-					{
-						RELEASE_INSTANCE(CGameInstance);
-						return;
-					}
-					break;
-				case 2:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
-					{
-						RELEASE_INSTANCE(CGameInstance);
-						return;
-					}
-					break;
-				case 3:
-					if (FAILED(pGameInstance->Add_Prototype(szPrototypeFinalTag, CEffect_Trail_T::Create(m_pDevice, m_pContext))))
-					{
-						RELEASE_INSTANCE(CGameInstance);
-						return;
-					}
-					break;
-				}
-			}
-#pragma endregion LoadComponentData
-			ImGuiFileDialog::Instance()->Close();
-		}
 		if (!ImGuiFileDialog::Instance()->IsOk())
 		{
-			bComponentLoad = false;
+			bLoad = false;
 			iSaveLevel = 0;
 			strcpy_s(szSaveFileName, "");
 			ImGuiFileDialog::Instance()->Close();
@@ -2025,7 +1984,7 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	ImGui::Begin("Moving Particle Option Window");
-	CEffect_Point_Instancing* pParticle = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
+	CEffect_Point_Instancing_T* pParticle = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect);
 	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = pParticle->Get_PointInstanceDesc();
 	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = pParticle->Get_InstanceData();
 
@@ -3066,6 +3025,8 @@ void CImgui_Effect::CreateEffect_Plane(_int& iCurSelect, _int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+				ImGui::InputInt("PassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 
 				ImGui::BulletText("Option : ");
@@ -3267,7 +3228,7 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 	static _float4 fVector = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 	static _float4 fColor = _float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	CEffect_Point_Instancing* pEffect = nullptr;
+	CEffect_Point_Instancing_T* pEffect = nullptr;
 	// 2. Texture Create
 	if (iSelectObject != -1)
 	{
@@ -3284,7 +3245,7 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 
 		if (iCurSelect != iSelectObject)
 		{
-			pEffect = dynamic_cast<CEffect_Point_Instancing*>(iter->second);
+			pEffect = dynamic_cast<CEffect_Point_Instancing_T*>(iter->second);
 			if (pEffect == nullptr)
 				return;
 
@@ -3352,6 +3313,8 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+				ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 
 				ImGui::BulletText("Option : ");
@@ -3618,6 +3581,9 @@ void CImgui_Effect::CreateEffect_Mesh(_int& iSelectObject)
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+				ImGui::Separator();
+
+				ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 
 				ImGui::BulletText("Option : ");
@@ -3887,6 +3853,8 @@ void CImgui_Effect::Show_ChildWindow(CEffect_Base * pEffect)
 				eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
 			if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
 				eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
+
+			ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 			ImGui::Separator();
 
 			ImGui::BulletText("Option : ");

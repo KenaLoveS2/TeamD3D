@@ -100,6 +100,12 @@ public: /* For.Object_Manager */
 
 	HRESULT Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pCloneObjectTag);
 	void		  RoomIndex_Object_Clear(_int iCurLevel, const _tchar* LayerTag, _int iRoomIndex);
+
+	void		Set_SingleLayer(_uint iCurLevel, const _tchar* pLayerTag);
+	void		Get_Back();
+
+
+
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg = nullptr, class CGameObject* pOwner = nullptr);

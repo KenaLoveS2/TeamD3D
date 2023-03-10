@@ -73,12 +73,12 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
-	if (m_TerrainDesc.iHeightBmpNum == 0)
-		return S_OK;
+	// if (m_TerrainDesc.iHeightBmpNum == 0) return S_OK;
 
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
+	m_pVIBufferCom->Create_PxTriangleMeshActor(Create_PxUserData(this, true, COL_GROUND));
 	m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
-
+	
 	return S_OK;
 }
 

@@ -27,6 +27,7 @@ private:
 public:
 	_double					Get_AnimationPlayTime();
 	const _bool&				Is_Attack() const { return m_bAttack; }
+	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
@@ -69,6 +70,7 @@ private:
 	_bool					m_bAttack = false;
 	_bool					m_bCommonHit = false;
 	_bool					m_bHeavyHit = false;
+	_bool					m_bChargeLight = false;
 	_bool					m_bSprint = false;
 
 	_float					m_fInertia = 5.f;
@@ -99,9 +101,12 @@ private:
 	HRESULT					SetUp_State();
 
 private:	/* Animation Event Func */
-	void						Test(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
+	void					Test(_bool bIsInit, _float fTimeDelta);
+	void					TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void					TurnOffAttack(_bool bIsInit, _float fTimeDelta);
+
+	void					TurnOnCharge(_bool bIsInit, _float fTimeDelta);
+	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
@@ -112,7 +117,7 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos) override;
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }

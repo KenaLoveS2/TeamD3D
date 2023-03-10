@@ -307,13 +307,6 @@ HRESULT CEffect_Point_Instancing_T::Render()
 
 HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 {
-	_int iCurLevel = 0;
-#ifdef TESTPLAY
-	iCurLevel = LEVEL_TESTPLAY;
-#else 
-	iCurLevel = LEVEL_EFFECT;
-#endif // TESTPLAY
-
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
@@ -325,7 +318,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_VIBuffer => 버퍼마다 갯수가 다르기 때문에 이름지정함 ~~ */ 
-	if (FAILED(__super::Add_Component(iCurLevel, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIInstancingBufferCom)))
 		return E_FAIL;
 
@@ -344,7 +337,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
 			return E_FAIL;
 	}
 
@@ -357,7 +350,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(iCurLevel, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
 			return E_FAIL;
 	}
 

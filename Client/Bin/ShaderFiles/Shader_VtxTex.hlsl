@@ -25,6 +25,7 @@ unsigned int g_State = 0;
 
 float g_fDiffuseAlpha = 1.f;
 float g_fMaskAlpha = 0.f;
+bool g_IsGray = false;
 
 struct VS_IN
 {
@@ -135,6 +136,30 @@ PS_OUT PS_MAIN_AlphaBlend(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	return Out;
+} 
+PS_OUT PS_MAIN_ALPHATESTCOLOR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	Out.vColor.a *= g_fAlpha;
+
+	if (Out.vColor.a > 0.9)
+		Out.vColor.rgb = g_vColor.rgb;
+	else
+		discard;
+	//Out.vColor.rbg = saturate(Out.vColor.rgb);
+
+	return Out;
+}
+PS_OUT PS_MAIN_ONLYALPHA(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor.rgb = 0.f;
+	Out.vColor.a = g_Texture.Sample(LinearSampler, In.vTexUV).r;
 
 	return Out;
 }
@@ -430,12 +455,30 @@ PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 
-	vDiffuse.a *= g_fDiffuseAlpha;
-	vMask.a *= g_fMaskAlpha;
+	
+	if (0 == g_iCheck) // Level0 Blocked
+	{
+		float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+		vDiffuse.a *= g_fDiffuseAlpha;
+		vMask.a *= g_fMaskAlpha;
+		Out.vColor = vDiffuse + vMask;
+	}
+	else if (1 == g_iCheck) // Level1~ Blocked or Locked
+	{
+		// grayScaling
+		float gray = dot(vDiffuse.rgb, float3(0.3333, 0.3333, 0.3333));
+		float4 grayColor = float4(gray, gray, gray, vDiffuse.a);
 
-	Out.vColor = vDiffuse + vMask;
+		// 채도 보존
+		float4 result = lerp(grayColor, vDiffuse, 0.1);
+		Out.vColor.rgb = result.rgb;
+		Out.vColor.a = vDiffuse.a;
+	}
+	else
+	{
+		Out.vColor = vDiffuse;
+	}
 
 	return Out;
 }
@@ -660,5 +703,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_MASKALPHA();
+	}
+
+	pass OnlyAlphaTexture // 17
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ONLYALPHA();
+	}
+
+	pass AlphaTestColor // 18
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ALPHATESTCOLOR();
 	}
 }

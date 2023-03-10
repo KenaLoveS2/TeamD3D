@@ -14,6 +14,7 @@ public:
 		RENDER_NONLIGHT,
 		RENDER_ALPHABLEND,
 		RENDER_UI,
+		RENDER_UILAST,
 		RENDER_VIEWER,
 		RENDER_END };
 
@@ -72,6 +73,7 @@ private:
 	HRESULT Render_HDR();
 	HRESULT Render_PostProcess();
 	HRESULT Render_UI();
+	HRESULT Render_UILast();
 	HRESULT Render_Viewer();		// Model Viewer
 
 #ifdef _DEBUG

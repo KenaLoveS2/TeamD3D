@@ -95,6 +95,7 @@ public:
 	}
 	void Set_BrushRange(_float fRange) { m_vBrushRange = fRange;	}
 	void Connect_TriangleActor(_float4x4 Matrix);
+	
 };
 
 END

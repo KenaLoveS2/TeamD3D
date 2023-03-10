@@ -39,7 +39,10 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-// 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+	if(m_pModelCom == nullptr)
+		Set_ModelCom(m_eEFfectDesc.eMeshType);
+
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
@@ -92,13 +95,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 	/* 빌보드가 필요한거 같긴함 */
 
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
-	}
-
 	// FreeMoveing Tick
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
@@ -124,21 +120,11 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 			}
 		}
 	}
-
-	if (nullptr != m_pEffectTrail)
-		dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -374,14 +360,6 @@ HRESULT CEffect_Mesh::SetUp_Components()
 		TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
-
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	Set_ModelCom(m_eEFfectDesc.eMeshType);
 
 	/***********
 	*  TEXTURE *

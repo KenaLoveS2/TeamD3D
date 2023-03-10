@@ -42,6 +42,10 @@ public:
 
 	void		SwitchOnOff_Shadow(_bool bSwitch);
 
+	/* For. Stop Gameplay And Activate Specific Layer */
+	void		Set_SingleLayer(_uint iCurLevel, const _tchar* pLayerTag);
+	void		Get_Back();
+
 private:	/* Prototypes */
 	map<const _tchar*, class CGameObject*>			m_Prototypes;
 	typedef map<const _tchar*, class CGameObject*>	PROTOTYPES;
@@ -66,6 +70,11 @@ private:
 private: /*For.Imgui*/
 	string							m_strComponentTag = "";
 	wstring							m_wstrSelecteObject_LayerTag = L"";
+
+	/* For. Stop Gameplay And Activate Specific Layer */
+	CLayer*			m_pSingleLayer = nullptr;
+	_bool			m_bCheckLateTick = false;
+
 private:
 	class CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
 

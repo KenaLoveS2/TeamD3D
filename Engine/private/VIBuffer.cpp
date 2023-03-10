@@ -21,8 +21,6 @@ CVIBuffer::CVIBuffer(const CVIBuffer & rhs)
 	, m_eIndexFormat(rhs.m_eIndexFormat)
 	, m_eTopology(rhs.m_eTopology)
 	, m_iNumIndices(rhs.m_iNumIndices)
-
-
 	,m_pPxVertices(rhs.m_pPxVertices)
 	,m_pPxIndicies(rhs.m_pPxIndicies)
 {
@@ -111,7 +109,7 @@ void CVIBuffer::Free()
 }
 
 // kbj physx
-HRESULT CVIBuffer::Create_PxActor()
+HRESULT CVIBuffer::Create_PxTriangleMeshActor(PX_USER_DATA* pUserData)
 {	
 	if (m_pPxActor) return E_FAIL;
 
@@ -125,7 +123,7 @@ HRESULT CVIBuffer::Create_PxActor()
 	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	TriangleMeshDesc.triangles.data = m_pPxIndicies;
 	
-	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc);
+	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, pUserData);
 
 	return S_OK;
 }
