@@ -89,12 +89,17 @@ HRESULT CE_KenaTrail::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	/* Instance Buffer */
+	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_KenaInfoMatrix")))
+		return E_FAIL;
+	/* Instance Buffer */
+
 	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_TrailflowTexture", m_iTrailFlowTexture)))
+	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaFlowTexture", m_iTrailFlowTexture)))
 		return E_FAIL;
 
 	/* Type */
-	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_TrailTypeTexture", m_iTrailTypeTexture)))
+	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))

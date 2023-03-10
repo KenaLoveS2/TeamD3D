@@ -14,6 +14,14 @@ CEffect_Trail::CEffect_Trail(const CEffect_Trail & rhs)
 {
 }
 
+void CEffect_Trail::ResetInfo()
+{
+	if (m_pVITrailBufferCom == nullptr)
+		return;
+
+	m_pVITrailBufferCom->ResetInfo();
+}
+
 HRESULT CEffect_Trail::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -205,8 +213,7 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InfoMatrix")))
-		return E_FAIL;
+
 	if (FAILED(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize")))
 		return E_FAIL;
 

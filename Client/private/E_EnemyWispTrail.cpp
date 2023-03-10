@@ -35,8 +35,11 @@ HRESULT CE_EnemyWispTrail::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Trail Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this)))
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture[0], this)))
 		return E_FAIL;
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_OutflowTexture", (CComponent**)&m_pTrailflowTexture[1], this)))
+		return E_FAIL;
+
 	/* Trail Texture */
 
 	/* Trail Option */
@@ -49,7 +52,6 @@ HRESULT CE_EnemyWispTrail::Initialize(void * pArg)
 	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
-	m_iTrailFlowTexture = 0;
 	m_eEFfectDesc.bActive = true;
 	return S_OK;
 }
@@ -58,6 +60,41 @@ void CE_EnemyWispTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+
+	ImGui::Begin("test");
+	if (ImGui::Button("rebuild"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::InputInt("flow", (_int*)&m_iTrailFlowTexture[0]);
+	ImGui::InputInt("texture", (_int*)&m_iTrailFlowTexture[1]);
+
+	ImGui::Checkbox("Trail", &m_eEFfectDesc.IsTrail);
+	ImGui::Checkbox("bAlpha", &m_eEFfectDesc.bAlpha);
+
+	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+	ImGui::InputFloat("fLife", &m_eEFfectDesc.fLife);
+	ImGui::InputFloat("fAlpha", &m_eEFfectDesc.fAlpha);
+	ImGui::InputFloat("fSegmentSize", &m_eEFfectDesc.fSegmentSize);
+
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
+
+	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
+
+	ImGui::End();
 }
 
 void CE_EnemyWispTrail::Late_Tick(_float fTimeDelta)
@@ -84,10 +121,17 @@ HRESULT CE_EnemyWispTrail::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_TrailflowTexture", m_iTrailFlowTexture)))
+	/* Instance Buffer */
+	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_WispInfoMatrix")))
 		return E_FAIL;
-	
+	/* Instance Buffer */
+
+	/* Flow */
+	if (FAILED(m_pTrailflowTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_WispflowTexture", m_iTrailFlowTexture[1])))
+		return E_FAIL;
+	if (FAILED(m_pTrailflowTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_WispOutTexture", m_iTrailFlowTexture[1])))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))
 		return E_FAIL;
 
@@ -125,5 +169,6 @@ void CE_EnemyWispTrail::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTrailflowTexture);
+	for (auto& pTextureCom : m_pTrailflowTexture)
+		Safe_Release(pTextureCom);
 }

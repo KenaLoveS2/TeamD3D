@@ -224,7 +224,7 @@ PS_OUT PS_MAIN_E_CHARGING(PS_IN In)
 	albedo.a = albedo.r;
 	albedo.a = albedo.g * 0.55;
 
-	albedo.rgb = g_vColor * 1.3f;
+	albedo.rgb = g_vColor.rgb * 1.3f;
 
 	Out.vColor = albedo;
 	return Out;
