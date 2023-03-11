@@ -4,6 +4,8 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
+#include "Pulse_Plate_Anim.h"
+
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -38,14 +40,22 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
-	//if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_GO_UP)
-	//m_pModelCom->Instaincing_GimmkicInit(CGimmick_EnviObj::Gimmick_TYPE_GO_UP);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//else if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE)
-	//	m_pModelCom->Instaincing_MoveControl(CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE);
+	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
+	{
 
-	//else if (m_GimmickType == CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE)
-	//	m_pModelCom->Instaincing_MoveControl(CGimmick_EnviObj::Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE);
+		CPulse_Plate_Anim* pPluse_Plate = dynamic_cast<CPulse_Plate_Anim*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"1_PulsePlate_Anim"));
+		assert(pPluse_Plate != nullptr && "CGimmick_EnviObj::Late_Initialize_RoomIndex 1");
+		pPluse_Plate->m_Gimmick_PulsePlateDelegate.bind(this, &CGimmick_EnviObj::Set_Gimmick_Active);
+
+	}
+	else if (m_EnviromentDesc.iRoomIndex == 1)
+	{
+
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -54,14 +64,9 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	if (pGameInstance->Key_Down(DIK_UP))
-		m_bGimmick_Active = !m_bGimmick_Active;
+	Gimmik_Start(fTimeDelta);
 
-	Gimmik_Start(Gimmick_TYPE_GO_UP,fTimeDelta);
-
-
-	RELEASE_INSTANCE(CGameInstance);
+	
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -93,27 +98,25 @@ HRESULT CGimmick_EnviObj::Render()
 	return S_OK;
 }
 
-void CGimmick_EnviObj::Gimmik_Start(_int iRoomNumber, _float fTimeDelta)
+void CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 {
 	if (m_bGimmick_Active == false)
 		return;
 
-	switch (iRoomNumber)
+	switch (m_EnviromentDesc.eChapterType)
 	{
-	case 0:
+	case Gimmick_TYPE_GO_UP:
 		Gimmick_Go_up(fTimeDelta);
 		break;
-
 	default:
 		break;
 	}
 
-	//Gimmick_Go_up(fTimeDelta);
 }
 
 void CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
 {
-	m_pModelCom->Instaincing_MoveControl(_int(Gimmick_TYPE_GO_UP),fTimeDelta);
+	m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
 
 }
 

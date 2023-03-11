@@ -141,7 +141,6 @@ HRESULT CObject_Manager::Clone_GameObject(_uint iLevelIndex, const _tchar * pLay
 		*ppOut = pGameObject;
 	}
 
-	pGameObject->Late_Initialize();
 	return S_OK;
 }
 

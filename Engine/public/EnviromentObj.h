@@ -18,16 +18,17 @@ public:
 	};
 
 	enum  CHAPTER {
-		CHAPTER_ONE_CAVE, CHAPTER_TWO_FOREST,	CHAPTER_END};
+		Gimmick_TYPE_NONE, Gimmick_TYPE_GO_UP, Gimmick_TYPE_DISSOLVE, Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE,
+		Gimmick_TYPE_END};
 
 	typedef struct tagEnviromnetObjectDesc
 	{	
 		CGameObject::GAMEOBJECTDESC ObjectDesc;
 		wstring			szProtoObjTag  =  TEXT("");
 		wstring			szModelTag =  TEXT("");
-		_uint				iRoomIndex = 0;
-		CHAPTER		eChapterType = CHAPTER_END;
-		_int				iCurLevel = 0;				//이건 툴에서만 일단.
+		_uint			iRoomIndex = 0;
+		CHAPTER			eChapterType = Gimmick_TYPE_END;
+		_int			iCurLevel = 0;				//이건 툴에서만 일단.
 		
 		tagEnviromnetObjectDesc()
 		{

@@ -9,9 +9,6 @@ BEGIN(Engine)
 class CInstancing_Mesh  final : public CVIBuffer_Instancing
 {
 private:
-	enum INST_MOVE { INST_MOVE_UP, INST_MOVE_DOWN, INST_MOVE_LEFT, INST_MOVE_RIGHT, INST_MOVE_END};
-
-private:
 	CInstancing_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CInstancing_Mesh(const CInstancing_Mesh& rhs);
 	virtual ~CInstancing_Mesh() = default;
@@ -38,9 +35,9 @@ public:
 
 
 public:
-	void	Instaincing_MoveControl(_int iOption,_float fTimeDelta);
+	void	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 
-	void	Instaincing_GimmkicInit(_int iOption);
+	void	InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);

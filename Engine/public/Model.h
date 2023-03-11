@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Animation.h"
 #include "PhysX_Defines.h"
+#include "EnviromentObj.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
@@ -72,8 +73,8 @@ public:
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 			
-	void				Instaincing_GimmkicInit(_int iOption);
-	void				Instaincing_MoveControl(_int iOption,_float fTimeDelta);
+	void				Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+	void				Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 private:
 	void				MODELMATERIAL_Create_Model(const char* jSonPath);
 	

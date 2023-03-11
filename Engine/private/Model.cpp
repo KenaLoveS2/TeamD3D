@@ -1501,22 +1501,22 @@ void CModel::Set_PxMatrix(_float4x4& Matrix)
 	}
 }
 
-void CModel::Instaincing_GimmkicInit(_int iOption)
+void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	if (m_bIsInstancing == false)
 		return;
 
 	for (auto &pInstMesh : m_InstancingMeshes)
-		pInstMesh->Instaincing_GimmkicInit(iOption);
+		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
 }
 
-void CModel::Instaincing_MoveControl(_int iOption, _float fTimeDelta)
+void CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
 	if (m_bIsInstancing == false)
 		return;
 
 	for (auto &pInstMesh : m_InstancingMeshes)
-		pInstMesh->Instaincing_MoveControl(iOption, fTimeDelta);
+		pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
 }
 
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)

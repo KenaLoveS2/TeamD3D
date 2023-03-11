@@ -242,9 +242,6 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-
-	
-
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		_float4 vRight = ((VTXMATRIX*)SubResource.pData)[i].vRight;
@@ -253,7 +250,7 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)) * (_float)iSize);
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)) * (_float)iSize);
-		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) * iSize);
+		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)) *(_float)iSize);
 
 		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vRight, &vRight, sizeof(_float4));
 		memcpy(&((VTXMATRIX*)SubResource.pData)[i].vUp, &vUp, sizeof(_float4));
@@ -480,9 +477,9 @@ void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix Pi
 	}
 }
 
-void CInstancing_Mesh::Instaincing_MoveControl(_int iOption,_float fTimeDelta)
+void CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta)
 {
-	if (iOption == (_int)INST_MOVE_UP)
+	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
 	{
 		D3D11_MAPPED_SUBRESOURCE			SubResource;
 		ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -495,26 +492,22 @@ void CInstancing_Mesh::Instaincing_MoveControl(_int iOption,_float fTimeDelta)
 				continue;
 
 			_float fMaxSpeed = fmax((i + 1)*1.5f, 3.f);
-
-
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed) * fTimeDelta;
-			
 		}
-
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
 	}
 
 
 }
 
-void CInstancing_Mesh::Instaincing_GimmkicInit(_int iOption)
+void CInstancing_Mesh::InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	if (iOption == _int(INST_MOVE_UP))
+	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
 	{
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
