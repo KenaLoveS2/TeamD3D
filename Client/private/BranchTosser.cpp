@@ -45,6 +45,7 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 
 HRESULT CBranchTosser::Late_Initialize(void * pArg)
 {
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(0.f, 5.f, -15.f);

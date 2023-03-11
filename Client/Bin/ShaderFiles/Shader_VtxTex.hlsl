@@ -17,6 +17,7 @@ float4	g_vMinColor = { 0.f, 0.f, 0.f,0.f };
 
 float	g_fAlpha = 1.f;
 float	g_fAmount = 1.f; /* Guage Data (normalized) */
+float	g_fEnd = 0.f;
 
 int		g_iCheck = 0;
 
@@ -297,6 +298,31 @@ PS_OUT PS_MAIN_BARGUAGE(PS_IN In)
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
 	Out.vColor = vDiffuse * vColor;
+
+	return Out;
+
+}
+
+PS_OUT PS_MAIN_MONSTERBAR(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	/* Discard pixel depends on original UV.x */
+	float4 vWhite = { 1.f, 1.f, 1.f, 1.f };
+	if (In.vTexUV.x > g_fEnd && In.vTexUV.x <= g_fAmount)
+		Out.vColor = vWhite;
+	else if(In.vTexUV.x <= g_fEnd)
+	{
+		float4 vColor = g_vColor;
+		vColor.r = g_vColor.r * (In.vTexUV.x);
+		vColor.g = g_vColor.g * (In.vTexUV.x);
+		vColor.b = g_vColor.b * (In.vTexUV.x);
+
+		Out.vColor.rgb *= vColor.rgb;
+		Out.vColor.rgb += g_vMinColor.rgb;
+	}
 
 	return Out;
 
@@ -758,5 +784,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SPRITECOLOR();
+	}
+
+	pass MonsterHPBar // 20
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MONSTERBAR();
 	}
 }

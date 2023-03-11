@@ -22,7 +22,10 @@ public:
 
 
 public:
+	_float* Get_CameraNear();
 	_float* Get_CameraFar();
+	_float* Get_CameraFov();
+
 	map<const _tchar*, class CCamera*>*	Get_CameraContainer() { return &m_Cameras; }
 
 	virtual void Free() override;

@@ -334,6 +334,12 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
       <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\07. MapTitle">
+      <UniqueIdentifier>{fdcdd51e-07ad-4131-928a-43cd36bf000d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Monster">
+      <UniqueIdentifier>{f3607a59-9297-48c0-8507-be40ac9751b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -761,7 +767,7 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeConfWindow.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
-    </ClInclude>      
+    </ClInclude>
     <ClInclude Include="..\public\E_KenaCharge.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
     </ClInclude>
@@ -788,6 +794,21 @@
     </ClInclude>
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasMapTitle.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\07. MapTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Pip.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Focus.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Billboard.h">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_MonsterHP.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
@@ -1224,6 +1245,21 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasMapTitle.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\07. MapTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Pip.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Focus.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Billboard.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_MonsterHP.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
