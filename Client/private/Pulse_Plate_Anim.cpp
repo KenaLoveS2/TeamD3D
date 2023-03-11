@@ -40,43 +40,43 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 {
 
-	//m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-	//if (m_pKena == nullptr)
-	//	return S_OK;
-	//
-	//assert(m_pKena != nullptr && "CRot::Late_Initialize");
+	/*m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	if (m_pKena == nullptr)
+		return S_OK;
 
-	//m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
-	//assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
+	assert(m_pKena != nullptr && "CRot::Late_Initialize");
 
-	//_float3 vPos;
-	//XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
+	assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
 
-	//_float3 vSize = _float3(2.5f, 0.7f, 2.5f);
-	//
-	//CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
-	//
-	//CPhysX_Manager::PX_BOX_DESC BoxDesc;
-	//BoxDesc.pActortag = m_szCloneObjectTag;
-	//BoxDesc.eType = BOX_STATIC;
-	//BoxDesc.vPos = vPos;
-	//BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
-	//BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-	//BoxDesc.fDegree = 0.f;
-	//BoxDesc.isGravity = true;
-	//BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
-	//BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	//BoxDesc.fDensity = 0.2f;
-	//BoxDesc.fMass = 150.f;
-	//BoxDesc.fLinearDamping = 10.f;
-	//BoxDesc.fAngularDamping = 5.f;
-	//BoxDesc.bCCD = false;
-	//BoxDesc.fDynamicFriction = 0.5f;
-	//BoxDesc.fStaticFriction = 0.5f;
-	//BoxDesc.fRestitution = 0.1f;
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	//pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
-	//m_pRendererCom->Set_PhysXRender(true);
+	_float3 vSize = _float3(2.5f, 0.7f, 2.5f);
+
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = true;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
+	m_pRendererCom->Set_PhysXRender(true);*/
 
 
 	/*CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
@@ -247,28 +247,28 @@ HRESULT CPulse_Plate_Anim::SetUp_ShaderResources()
 	return S_OK;
 }
 
-//_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
-//{
-//	// To. DO 
-//	// 1) Gimmci_Plat 충돌 체크확인
-//	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
-//
-//	m_bPlayerColl = true;
-//
-//	
-//
-//	return 0;
-//}
-//
-//_int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
-//{
-//	return 0;
-//}
-//
-//_int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
-//{
-//	return 0;
-//}
+_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	// To. DO 
+	// 1) Gimmci_Plat 충돌 체크확인
+	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
+
+	m_bPlayerColl = true;
+
+	
+
+	return 0;
+}
+
+_int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
+_int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
 
 CPulse_Plate_Anim * CPulse_Plate_Anim::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
