@@ -75,6 +75,8 @@ void CE_PulseObject::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
+	m_pTransformCom->Set_Scaled(_float3(3.f,3.f,3.f));
+
 	__super::Tick(fTimeDelta);
 
 }
