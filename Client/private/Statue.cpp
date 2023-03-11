@@ -109,17 +109,6 @@ HRESULT CStatue::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComT
 	return S_OK;
 }
 
-void CStatue::ImGui_ShaderValueProperty()
-{
-	__super::ImGui_ShaderValueProperty();
-
-	if (ImGui::Button("Recompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
-}
-
 HRESULT CStatue::SetUp_Components()
 {
 	/* For.Com_Renderer */

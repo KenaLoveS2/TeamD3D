@@ -25,14 +25,9 @@ public:
 	virtual HRESULT		Render() override;
 
 private:
-	CShader*									m_pShaderCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;	 
 	class CControlMove*				m_pControlMoveCom = nullptr;
-
-
-	
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex,const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;

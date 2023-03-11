@@ -75,9 +75,9 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 
 	// if (m_TerrainDesc.iHeightBmpNum == 0) return S_OK;
 
-	//_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
-	//m_pVIBufferCom->Create_PxTriangleMeshActor(Create_PxUserData(this, true, COL_GROUND));
-	//m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat4x4();
+	m_pVIBufferCom->Create_PxTriangleMeshActor(Create_PxUserData(this, true, COL_GROUND));
+	m_pVIBufferCom->Set_PxMatrix(WorldMatrix);
 	
 	return S_OK;
 }

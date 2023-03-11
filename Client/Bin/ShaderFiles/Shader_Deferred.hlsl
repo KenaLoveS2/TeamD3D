@@ -30,11 +30,7 @@ Texture2D<float4>		g_SpecularTexture;
 
 Texture2D<float4>		g_ShadowTexture;
 Texture2D<float4>		g_MtrlAmbientTexture;
-Texture2D<float4>		g_SSAOTexture;
-
-
-
-
+//Texture2D<float4>		g_SSAOTexture;
 
 float3 CalculateDiffuse(float3 albedo, float3 normal, float3 lightColor, float3 lightDirection)
 {
@@ -199,7 +195,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vSSAODesc = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vSSAODesc = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -309,7 +305,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float3 diffuse = DiffuseLight.rgb / PI;
 
 	// Final color
-	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight))) * vSSAODesc.r;
+	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)))/* * vSSAODesc.r*/;
 	Out.vSpecular = float4(specular * dot(N, L), 1.f);
 
 	return Out;
