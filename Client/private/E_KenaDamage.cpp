@@ -66,9 +66,9 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 void CE_KenaDamage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	ImGui::Begin("Damage");
-	ImGui::Checkbox("Avtice", &m_eEFfectDesc.bActive);
-	ImGui::End();
+	//ImGui::Begin("Damage");
+	//ImGui::Checkbox("Avtice", &m_eEFfectDesc.bActive);
+	//ImGui::End();
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
