@@ -40,22 +40,22 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
-	/*CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
-	{
+	//if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
+	//{
 
-		CPulse_Plate_Anim* pPluse_Plate = dynamic_cast<CPulse_Plate_Anim*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"1_PulsePlate_Anim"));
-		assert(pPluse_Plate != nullptr && "CGimmick_EnviObj::Late_Initialize_RoomIndex 1");
-		pPluse_Plate->m_Gimmick_PulsePlateDelegate.bind(this, &CGimmick_EnviObj::Set_Gimmick_Active);
+	//	CPulse_Plate_Anim* pPluse_Plate = dynamic_cast<CPulse_Plate_Anim*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"1_PulsePlate_Anim"));
+	//	assert(pPluse_Plate != nullptr && "CGimmick_EnviObj::Late_Initialize_RoomIndex 1");
+	//	pPluse_Plate->m_Gimmick_PulsePlateDelegate.bind(this, &CGimmick_EnviObj::Set_Gimmick_Active);
 
-	}
-	else if (m_EnviromentDesc.iRoomIndex == 1)
-	{
+	//}
+	//else if (m_EnviromentDesc.iRoomIndex == 1)
+	//{
 
-	}
+	//}
 
-	RELEASE_INSTANCE(CGameInstance);*/
+	//RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
