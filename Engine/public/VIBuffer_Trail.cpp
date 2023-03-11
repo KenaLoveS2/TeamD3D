@@ -113,6 +113,7 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 
 	Safe_Delete_Array(pInstanceVertices);
 #pragma endregion
+
 	m_vecInstanceInfo.reserve(m_iInitNumInstance);
 	return S_OK;
 }

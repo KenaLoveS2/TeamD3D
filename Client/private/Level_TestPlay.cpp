@@ -78,11 +78,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Layer_Effect");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//{
+	//	MSG_BOX("Layer_Effect");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 	{
@@ -381,7 +381,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
-
+	
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
 	//	return E_FAIL;
 

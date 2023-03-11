@@ -49,7 +49,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 		m_bAim = true;
 	else
 		m_bAim = false;
-
+	m_CameraDesc.fFovy = XMConvertToRadians(75.f);
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
 		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(LEVEL_GAMEPLAY, L"Layer_Player", L"Kena"));

@@ -355,13 +355,13 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 	float4 vLine = g_LineTexture.Sample(LinearSampler, In.vTexUV);
 
 	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
-	float  base = dot(In.vNormal, -In.vViewDir);
+	float  base = dot(In.vNormal.rgb, -In.vViewDir.rgb);
 	float  exponential = /*vMask * */pow(base, 2.f);
 	float4 fresnelcolor = float4(197.f, 57.f, 57.f, 13.f) / 255.f;
 	float4 fresnel = exponential + fresnelcolor * (1.0f - exponential);
 
 	// rim
-	float  rim = dot(In.vNormal, In.vViewDir);
+	float  rim = dot(In.vNormal.rgb, In.vViewDir.rgb);
 	float4 vOutline = pow(1.f - rim, 5.f);
 
 	if (g_bDissolve)

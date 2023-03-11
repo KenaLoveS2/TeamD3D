@@ -496,6 +496,7 @@ void CKena::Push_EventFunctions()
 	TurnOffAttack(true, 0.f);
 	TurnOnCharge(true, 0.f);
 	TurnOffCharge(true, 0.f);
+	TurnOnPulseJump(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -551,9 +552,23 @@ HRESULT CKena::Ready_Effects()
 	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
+
+	/* Damage */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDamage", L"Damage"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaDamage", pEffectBase);
+
+	/* Hit */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaHit", pEffectBase);
+
+	/* PulseJump */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaJump", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -1572,6 +1587,26 @@ void CKena::TurnOffCharge(_bool bIsInit, _float fTimeDelta)
 	m_bChargeLight = false;
 }
 
+void CKena::TurnOnPulseJump(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseJump);
+		return;
+	}
+	m_mapEffect["KenaJump"]->Set_Active(true);
+
+	/* JumpPos Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	_matrix matrJump = m_mapEffect["KenaJump"]->Get_TransformCom()->Get_WorldMatrix();
+	matrJump.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaJump"]->Get_TransformCom()->Set_WorldMatrix(matrJump);
+	/* JumpPos Update */
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -1635,11 +1670,48 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	{
 		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
 
+		CGameObject* pGameObject = nullptr;
+
 		if (iColliderIndex == COL_MONSTER_WEAPON)
 		{
+			// 맞은거
+			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
+			//	return -1;
+
+			for (auto& Effect : m_mapEffect)
+			{
+				if (Effect.first == "KenaDamage")
+				{
+					Effect.second->Set_Active(true);
+					Effect.second->Set_Position(vCollisionPos);
+				}
+			}
+
 			m_bCommonHit = true;
 			//m_bHeavyHit = true;
 		}
+
+		if (iColliderIndex == COL_PLAYER_WEAPON)
+		{
+			// 때린거 
+			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
+			//	return -1;
+
+			for (auto& Effect : m_mapEffect)
+			{
+				if (Effect.first == "KenaHit")
+				{
+					Effect.second->Set_Active(true);
+					Effect.second->Set_Position(vCollisionPos);
+				}
+			}
+
+			pGameObject->Set_Position(vCollisionPos);
+
+			// m_bCommonHit = true;
+			// m_bHeavyHit = true;
+		}
+
 	}
 	
 	return 0;
