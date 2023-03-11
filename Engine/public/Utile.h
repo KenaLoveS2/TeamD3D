@@ -51,6 +51,8 @@ public:
 	inline static _float4 Float_3to4(_float3& vValue, _float fW) { return _float4(vValue.x, vValue.y, vValue.z, fW); }
 
 	static void Execute_BillBoard(class CTransform* pTransform, _float3 vScale);
+	static void Execute_BillBoardOrtho(class CTransform* pTransform, _float3 vScale, _float fCamDist);
+
 
 	static _tchar* Create_DummyString();
 

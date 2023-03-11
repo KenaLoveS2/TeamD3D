@@ -76,6 +76,9 @@ HRESULT CUI_Event_Guage::SetUp_ShaderResources(CShader * pShader)
 	if (FAILED(pShader->Set_RawValue("g_fAmount", &m_fGuage, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(pShader->Set_RawValue("g_fEnd", &m_fGuageNew, sizeof(_float))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -222,6 +225,7 @@ HRESULT CUI_Event_Guage::Load_Data(wstring fileName)
 	i = 0;
 	for (float fElement : jLoad["MinColor"])
 		memcpy(((float*)&m_vMinColor) + (i++), &fElement, sizeof(float));
+
 
 	return S_OK;
 }

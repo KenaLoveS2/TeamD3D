@@ -66,7 +66,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	//jData = jLayer["Pulse Test"];
-	for (auto jData : jLayer["Pulse Test"])
+	for (auto jData : jLayer["Object"])
 	{
 		for (auto jObject : jData["Object Data"])
 		{

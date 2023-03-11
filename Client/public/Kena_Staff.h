@@ -33,9 +33,7 @@ private:
 	map<const string, class CEffect_Base*>   m_mapEffect;
 
 	_float m_fTimeDelta = 0.0f;
-	_float4 m_vColor;
-
-	_float2 m_fUV;
+	_float  m_fBowDurationTime = 0.0f;
 
 public:
 	static CKena_Staff*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -1,7 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "Delegator.h"
-#include "UI_ClientManager.h"
 #include "Monster_Status.h"
 
 BEGIN(Engine)
@@ -12,7 +10,7 @@ class CFSMComponent;
 END
 
 BEGIN(Client)
-
+class CUI_MonsterHP;
 class CMonster  : public CGameObject
 {
 protected:
@@ -47,6 +45,7 @@ protected:
 
 public:
 	const _double&			Get_AnimationPlayTime();
+	_fvector				Get_Position();
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -92,7 +91,7 @@ protected:
 	class CGameObject*		m_pKena = nullptr;
 	_float4							m_vKenaPos;
 
-	
+	CUI_MonsterHP*		m_pUIHPBar;
 
 protected:
 	_bool	m_bWeaklyHit = false;
@@ -106,6 +105,7 @@ protected:
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual  HRESULT			SetUp_ShadowShaderResources() PURE;
+	virtual HRESULT			SetUp_UI();
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr)  PURE;

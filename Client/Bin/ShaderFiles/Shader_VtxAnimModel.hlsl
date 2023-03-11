@@ -29,6 +29,8 @@ Texture2D<float4>		g_DetailNormal;
 Texture2D		g_NoiseTexture;
 Texture2D		g_SwipeTexture;
 Texture2D		g_GradientTexture;
+
+float			g_BowDurationTime;
 /* Kena Bow_String Texture */
 
 float								g_fHairLength = 1.f;
@@ -374,7 +376,11 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 	if (Out.vDiffuse.a < 0.01)
 		discard;
 
-	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f;
+	if (g_BowDurationTime > 4.f)
+		Out.vDiffuse.rgb = Out.vDiffuse.rgb * 4.f ;
+	else
+		Out.vDiffuse.rgb = Out.vDiffuse.rgb * g_BowDurationTime;
+
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = Out.vDiffuse;
@@ -403,11 +409,14 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	float4 mask_texture = float4(lerp(vMask, mask_alpha, mask_distance));
 
 	mask_texture = saturate(mask_texture * 2.f * MaskColor);
+
 	mask_texture.a = mask_texture.r;
 	if (mask_texture.a < 0.01)
 		discard;
-	mask_texture.rgb = mask_texture.rgb * 1.5f;
+
+	mask_texture.rgb = mask_texture.rgb * g_BowDurationTime;
 	mask_texture = mask_texture + MaskColor;
+
 	/* Mask */
 
 	Out.vDiffuse = mask_texture;

@@ -69,6 +69,11 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		CGameInstance::GetInstance()->Get_Back();
 		m_bActive = false;
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(true);
+
+
 		return;
 	}
 
@@ -213,6 +218,10 @@ void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_
 		m_bActive = true;
 		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(false);
 		break;
 	case CUI_ClientManager::INV_KARMA:
 		static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma((_int)fValue);

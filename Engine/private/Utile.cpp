@@ -5,6 +5,7 @@
 #include <fstream>
 #include "GameInstance.h"
 #include "String_Manager.h"
+#include "Camera.h"
 
 CUtile::CUtile() { }
 CUtile::~CUtile() { }
@@ -881,6 +882,46 @@ void CUtile::Execute_BillBoard(CTransform* pTransform, _float3 vScale)
 
 	pTransform->Set_WorldMatrix(worldmatrix);
 	pTransform->Set_Scaled(vScale);
+}
+
+void CUtile::Execute_BillBoardOrtho(CTransform * pTransform, _float3 vScale, _float fCamDist)
+{
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+
+	_matrix worldmatrix = _smatrix::CreateBillboard(
+		pTransform->Get_State(CTransform::STATE_TRANSLATION),
+		pPipeLine->Get_CamPosition_Float3(),
+		pPipeLine->Get_CamUp_Float3(),
+		&pPipeLine->Get_CamLook_Float3());
+
+	pTransform->Set_WorldMatrix(worldmatrix);
+
+	_float fFar = *CGameInstance::GetInstance()->Get_CameraFar();
+	_float fNear = *CGameInstance::GetInstance()->Get_CameraNear();
+	_float fFov = *CGameInstance::GetInstance()->Get_CameraFov();
+	_float fWidth = tanf(fFov*0.5f / fNear);
+
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_float4 vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vDist = vCamPos - vPos;
+	//_float  fDist = XMVectorGetX(XMVector3Length(vDist));
+	_float  fDist = XMVectorGetX(XMVector3Dot(XMLoadFloat4(&vDist), XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook_Float4())));
+
+	_smatrix matView = CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW);
+	_float4 vViewPos = XMVector3TransformCoord(vPos, matView);
+
+	_float3 vScaleOrtho =
+	{
+		fWidth / fNear * (fDist/fFar) * vScale.x,
+		fWidth / fNear * (fDist/fFar) * vScale.y,
+		1.f,
+	};
+	//_float3 vScaleOrtho = { fNear* vScale.y / fDist , fNear*vScale.y / fDist, fNear*vScale.z / fDist };
+	//_float3 vScaleOrtho = { fDist * vScale.y / fNear , fDist*vScale.y / fNear, fDist*vScale.z / fNear };
+
+	pTransform->Set_Scaled(vScaleOrtho);
+
+	//pTransform->Set_Scaled(vScale);
 }
 
 _tchar* CUtile::Create_DummyString()

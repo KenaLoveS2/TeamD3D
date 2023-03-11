@@ -44,6 +44,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {	
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);

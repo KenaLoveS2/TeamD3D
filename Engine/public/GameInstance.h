@@ -189,6 +189,8 @@ public: /* For.PipeLine */
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		class CCamera* Get_WorkCameraPtr();
 		_float*		Get_CameraFar();
+		_float*		Get_CameraNear();
+		_float*		Get_CameraFov();
 		map<const _tchar*, class CCamera*>*	Get_CameraContainer();
 		_bool IsWorkCamera(const _tchar * pCameraTag);
 

@@ -126,9 +126,9 @@ HRESULT CUI_NodeQuest::Render()
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 25.f, g_iWinSizeY*0.5f - vPos.y - 10.f};
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Render_Font(TEXT("Font_Basic1"), m_szQuest,
+	pGameInstance->Render_Font(TEXT("Font_Comic"), m_szQuest,
 		vNewPos /* position */,
-		0.f, _float2(1.f, 1.f)/* size */, 
+		0.f, _float2(0.4f, 0.4f)/* size */, 
 		XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);
 	RELEASE_INSTANCE(CGameInstance); 
 

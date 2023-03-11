@@ -36,9 +36,9 @@ HRESULT CE_KenaCharge::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_eEFfectDesc.bActive = false;
-	
+
 	Set_Child();
-	m_InitScale = _float3(0.5f, 0.5f, 0.5f);
+	m_InitScale = m_eEFfectDesc.vScale;
 	m_pTransformCom->Set_Scaled(m_InitScale);
 	m_InitColor = m_eEFfectDesc.vColor;
 	return S_OK;
@@ -47,17 +47,20 @@ HRESULT CE_KenaCharge::Initialize(void * pArg)
 void CE_KenaCharge::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	_float3 m_CurScale = m_pTransformCom->Get_Scaled();
+	_vector fCurScale = m_eEFfectDesc.vScale;
 
 	if (m_eEFfectDesc.bActive == true)
 	{
-		m_fScale += 0.3f;
-		m_pTransformCom->Set_Scaled(m_CurScale * m_fScale);
+		m_fScale += 0.4 * 1.5f;
+		m_eEFfectDesc.vScale = fCurScale * m_fScale;
+
+		if (XMVectorGetX(m_eEFfectDesc.vScale) > 3.f)
+			m_eEFfectDesc.bActive = false;
 	}
 	else
 	{
-		m_pTransformCom->Set_Scaled(_float3(0.3f, 0.3f, 0.3f));
 		m_fScale = 0.0f;
+		fCurScale = m_eEFfectDesc.vScale = _float3(1.f, 1.f, 1.f);
 	}
 
 	for (auto& pChild : m_vecChild)
