@@ -24,6 +24,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 
 private:
 	CModel*									m_pModelCom = nullptr;

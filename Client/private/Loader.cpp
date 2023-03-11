@@ -1354,15 +1354,8 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_PulsePlateAnim",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
-
-
 	m_fCur += 1.f;
-	/* For.Prototype_Component_Model_PulsePlateAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_PulsePlateAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
+
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PowerCrystal", true, false, true)))
 		assert(!"Issue");
 	m_fCur += 1.f;

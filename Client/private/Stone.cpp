@@ -44,8 +44,8 @@ void CStone::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//if (m_pRendererCom)
-	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if (m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CStone::Render()
@@ -211,21 +211,6 @@ HRESULT CStone::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
 			m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
-		}
-	}
-	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble01")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_BlendDiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DetailNormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPRINT_EMISSIVE, "g_MaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
 		}
 	}
 	else
