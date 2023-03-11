@@ -334,6 +334,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
       <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Jump">
+      <UniqueIdentifier>{45fa896a-2d62-4bc9-a79d-9ba3aeee6ce7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -761,7 +764,7 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeConfWindow.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
-    </ClInclude>      
+    </ClInclude>
     <ClInclude Include="..\public\E_KenaCharge.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
     </ClInclude>
@@ -791,6 +794,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
+    <ClInclude Include="..\public\E_KenaJump.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1227,6 +1233,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
+    <ClCompile Include="..\private\E_KenaJump.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

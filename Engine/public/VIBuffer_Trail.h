@@ -27,7 +27,7 @@ public:
 	void			ResetInfo() { m_vecInstanceInfo.clear(); }
 
 private:
-	_uint			m_iInitNumInstance = 0;
+	_uint			  m_iInitNumInstance = 0;
 	vector<VTXMATRIX> m_vecInstanceInfo;
 
 public:

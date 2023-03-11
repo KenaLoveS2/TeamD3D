@@ -56,16 +56,12 @@ void CEffect_Trail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	// Set_TrailDesc();
-
 	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
 
 void CEffect_Trail::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.bActive == false)
-		return;
 
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
@@ -92,7 +88,6 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			fPreLife = m_pVITrailBufferCom->Get_InstanceInfo()->back().vPosition.w;
 
 		_uint  iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
-
 		_vector vPrepos = vPoint1;
 
 		_float  fWeight = 0.0f, fRadian = 0.0f;
@@ -139,7 +134,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
+		(CComponent**)&m_pRendererCom))) 
 		return E_FAIL;
 
 /* For.Com_Shader */

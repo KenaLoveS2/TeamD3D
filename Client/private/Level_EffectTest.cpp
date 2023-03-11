@@ -177,17 +177,17 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

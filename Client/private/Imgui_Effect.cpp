@@ -134,6 +134,21 @@ void CImgui_Effect::Imgui_RenderWindow()
 		bLoad = true;
 	};
 	ImGui::SameLine();
+	if (ImGui::Button("Desc_Save"))
+	{
+		bDescSave = true;
+	};
+	ImGui::SameLine();
+	if (ImGui::Button("Reset_Data"))
+	{
+		iSelectEffectType = 0;
+		bReset = true;
+		pGameObject = nullptr;
+		m_bIsRectLayer = false;
+		m_bIsParticleLayer = false;
+		m_bIsMeshLayer = false;
+		iSelectEffectType = -1;
+	}
 	if (ImGui::Button("Delete_Data"))
 	{
 		if (pGameObject != nullptr)
@@ -148,20 +163,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 		}
 	};
 	ImGui::SameLine();
-	if (ImGui::Button("Reset_Data"))
-	{
-		iSelectEffectType = 0;
-		bReset = true;
-		pGameObject = nullptr;
-		m_bIsRectLayer = false;
-		m_bIsParticleLayer = false;
-		m_bIsMeshLayer = false;
-		iSelectEffectType = -1;
-	}
-	if (ImGui::Button("Desc_Save"))
-	{
-		bDescSave = true;
-	};	
 
 	static	char szSaveFileName[MAX_PATH] = "";
 	char*        szLevelName[] = { "Loading", "Logo", "GamePlay", "MapTool", "TestPlay", "EffectTool" };
@@ -793,7 +794,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 			}
 			json jData;
 			jData["Object Data"].push_back(jObject);
-			jLayer["Pulse Test"].push_back(jData);
+			jLayer["Object"].push_back(jData);
 			jObject.clear();
 
 			ofstream	file(strSaveDirectory.c_str());
@@ -1264,7 +1265,10 @@ void CImgui_Effect::Imgui_RenderWindow()
 #pragma region SaveData
 			Json	jLayer;
 
-			ifstream	file("../Bin/Data/Effect/E_HitSet.json");
+			string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
+			ifstream	file(strFilePath.c_str());
+
+			//ifstream	file("../Bin/Data/Effect/E_HitSet.json");
 			file >> jLayer;
 			file.close();
 			

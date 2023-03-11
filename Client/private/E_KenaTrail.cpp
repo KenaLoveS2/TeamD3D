@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_KenaTrail.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CE_KenaTrail::CE_KenaTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -55,12 +56,17 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 	m_iTrailFlowTexture = 5;
 	m_iTrailTypeTexture = 7;
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
 void CE_KenaTrail::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+	{
+		m_pVITrailBufferCom->ResetInfo();
+		return;
+	}
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 }

@@ -205,6 +205,7 @@
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
     <ClInclude Include="..\public\E_KenaHit.h" />
+    <ClInclude Include="..\public\E_KenaJump.h" />
     <ClInclude Include="..\public\E_KenaPulse.h" />
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\E_KenaPulseDot.h" />
@@ -349,6 +350,7 @@
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
     <ClCompile Include="..\private\E_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_KenaJump.cpp" />
     <ClCompile Include="..\private\E_KenaPulse.cpp" />
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\E_KenaPulseDot.cpp" />

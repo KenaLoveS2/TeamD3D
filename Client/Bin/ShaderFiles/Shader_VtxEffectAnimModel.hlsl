@@ -21,11 +21,9 @@ texture2D		g_SmoothTexture;
 
 // Type
 int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask, g_IsUseNormal;
-
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-
+bool    g_IsUseMask, g_IsUseNormal;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
 float2  g_UV;
