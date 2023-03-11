@@ -337,6 +337,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Jump">
       <UniqueIdentifier>{45fa896a-2d62-4bc9-a79d-9ba3aeee6ce7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Pulse">
+      <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -797,6 +800,9 @@
     <ClInclude Include="..\public\E_KenaJump.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_PulseObject.h">
+      <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1235,6 +1241,9 @@
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
     <ClCompile Include="..\private\E_KenaJump.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_PulseObject.cpp">
+      <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

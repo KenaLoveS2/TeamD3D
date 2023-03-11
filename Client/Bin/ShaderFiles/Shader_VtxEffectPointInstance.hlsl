@@ -20,13 +20,13 @@ float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
 
 /* Trail  */
-bool	g_IsTrail;
+bool	  g_IsTrail;
 
-matrix  g_WispInfoMatrix[300];
+matrix    g_WispInfoMatrix[300];
 texture2D g_WispflowTexture;
 texture2D g_WispOutTexture;
 
-matrix  g_KenaInfoMatrix[300];
+matrix    g_KenaInfoMatrix[300];
 texture2D g_KenaFlowTexture;
 texture2D g_KenaTypeTexture;
 
@@ -36,10 +36,8 @@ float	g_fLife;
 bool    g_bDistanceAlpha;
 float   g_fAlpha;
 
-float	  g_BeforeUV, g_AfterUV;
-
-float2 g_UV;
-float  g_Time;
+float2  g_UV;
+float   g_Time;
 /* ~Trail */
 
 struct VS_IN
@@ -199,7 +197,6 @@ void GS_KENATRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 
 	if (In[0].InstanceID == 0) 
 	{
-
 		float3  vResultPos;
 		vResultPos = vPosition;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
@@ -282,32 +279,30 @@ void GS_WISPTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	float		fCurWidth = g_fWidth * (In[0].fLife / g_fLife) * 0.5f;
 	float4x4    WorldMatrix = In[0].Matrix;
 	float3      vUp = matrix_up(WorldMatrix)* fCurWidth;
+	float3		vPosition = matrix_postion(WorldMatrix);
 
 	if (In[0].InstanceID == 0)
 	{
-		float4x4    WorldMatrix = In[0].Matrix;
-		float3		vPosition = matrix_postion(In[0].Matrix);
-
 		float3  vResultPos;
-		vResultPos = vPosition - vUp;
+		vResultPos = vPosition;
 		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
-		Out[0].vTexUV = float2(0.f, 0.f); 
-		Out[0].fLife = (g_WispInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = vPosition + vUp;
+		vResultPos = vPosition;
 		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
-		Out[1].vTexUV = float2(1.0f, 0.f); 
+		Out[1].vTexUV = float2(1.0f, 0.f);
 		Out[1].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition + vUp;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
-		Out[2].vTexUV = float2(1.0f, 1.f); 
+		Out[2].vTexUV = float2(1.0f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = vPosition - vUp;
 		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
-		Out[3].vTexUV = float2(0.f, 1.f); 
-		Out[3].fLife = (g_WispInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife / g_fLife;
 
 		Vertices.Append(Out[0]);
 		Vertices.Append(Out[1]);
@@ -321,8 +316,8 @@ void GS_WISPTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	}
 	else
 	{
-		matrix      PreWorldMatrix = g_WispInfoMatrix[In[0].InstanceID - 1];
-		matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
+		matrix PreWorldMatrix = g_WispInfoMatrix[In[0].InstanceID - 1];
+		matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
 		float3 vPreRight = matrix_right(PreWorldMatrix) * fCurWidth;
 		float3 vPrelook = matrix_look(PreWorldMatrix);
@@ -333,23 +328,19 @@ void GS_WISPTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 		
 		float3 vResultPos; 
 		vResultPos = matrix_postion(PreWorldMatrix) + vPreUp;
-		Out[0].vPosition = vector(vResultPos, 1.f);
-		Out[0].vPosition = mul(Out[0].vPosition, matVP);
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[0].fLife = (g_WispInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
 
 		vResultPos = matrix_postion(WorldMatrix) + vUp;
-		Out[1].vPosition = vector(vResultPos, 1.f);
-		Out[1].vPosition = mul(Out[1].vPosition, matVP);
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[1].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = matrix_postion(WorldMatrix) - vUp;
-		Out[2].vPosition = vector(vResultPos, 1.f);
-		Out[2].vPosition = mul(Out[2].vPosition, matVP);
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
 		vResultPos = matrix_postion(PreWorldMatrix) - vPreUp;
-		Out[3].vPosition = vector(vResultPos, 1.f);
-		Out[3].vPosition = mul(Out[3].vPosition, matVP);
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[3].fLife = (g_WispInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
 
 		Out[0].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 0.f);
@@ -529,28 +520,18 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector   vflow_Red = g_WispflowTexture.Sample(LinearSampler, In.vTexUV);
-	vector   vflow_Green = g_WispOutTexture.Sample(LinearSampler, In.vTexUV);
+	vector   vWispTrailTexture = g_WispflowTexture.Sample(LinearSampler, In.vTexUV);
+	vector   vWispflowTexture = g_WispOutTexture.Sample(LinearSampler, In.vTexUV);
+	vWispTrailTexture.a = vWispTrailTexture.r;
+	vWispflowTexture.a = vWispflowTexture.r;
 
-	/* Green Channel */ /* Out Position */
-	vflow_Green.rgb = (float3)vflow_Green.g;
-	/* Red Channel */   /* In Position */
-	vflow_Red.rgb = (float3)vflow_Red.r;
+	//vector vWispTrailColor = vector(255.f, 97.f, 0.f, 255.f) / 255.f;
+	vector vWispTrailColor = vector(255.f, 200.f, 108.f, 255.f) / 255.f;
+	vector vWispflowColor = vector(255.f, 22.f, 22.f, 255.f) / 255.f;
+	vWispTrailTexture.rgb = vWispTrailTexture.rgb + vWispTrailColor.rgb;
+	vWispflowTexture.rgb = vWispflowTexture.rgb + vWispflowColor.rgb * 2.f;
 
-//	float4  finalColor = lerp(vflow_Red, vflow_Green, vflow_Green.r);
-	//float4  finalColor = lerp(vflow_Red , vflow_Green, vflow_Green.a);
-	//float3 vColor = float3(247.f, 52.f, 115.f) / 255.f;
-	//if (vflow.r > vColor.r && vflow.g >= vColor.g && vflow.b >= vColor.b)
-	//	vflow.rgb = vflow.rgb * g_vColor.rgb;
-//	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 3.f);
-//	vector   orange = vector(228.f, 65.f, 24.f, 255.f) / 255.f;
-
-	half4 c = lerp(vflow_Green, vflow_Red, vflow_Green * vflow_Red);
-
-	//Out.vColor = vflow + orange;
-	//if (Out.vColor.a > 0.6)
-	//	Out.vColor = Out.vColor * vector(255.f, 144.f, 50.f, 110.f) / 255.f;
-	Out.vColor = c + g_vColor;
+	Out.vColor = vWispflowTexture + vWispTrailTexture;
 	return Out;
 }
 

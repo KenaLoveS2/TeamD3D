@@ -39,17 +39,18 @@ HRESULT CE_EnemyWispTrail::Initialize(void * pArg)
 		return E_FAIL;
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_OutflowTexture", (CComponent**)&m_pTrailflowTexture[1], this)))
 		return E_FAIL;
-
 	/* Trail Texture */
+
+	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300);
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.08f;
-	m_eEFfectDesc.fLife = 0.5f; 
+	m_eEFfectDesc.fWidth = 0.4f;
+	m_eEFfectDesc.fLife = 1.0f; 
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.001f; 
-	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
+	m_eEFfectDesc.vColor = XMVectorSet(255.f, 97.f, 0.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
 	m_eEFfectDesc.bActive = true;
@@ -58,6 +59,9 @@ HRESULT CE_EnemyWispTrail::Initialize(void * pArg)
 
 void CE_EnemyWispTrail::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
@@ -99,6 +103,9 @@ void CE_EnemyWispTrail::Tick(_float fTimeDelta)
 
 void CE_EnemyWispTrail::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 }
 

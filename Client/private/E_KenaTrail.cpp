@@ -43,6 +43,8 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 		return E_FAIL;
 	/* Trail Texture */
 
+	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300);
+
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.6f; //5.f
@@ -73,6 +75,9 @@ void CE_KenaTrail::Tick(_float fTimeDelta)
 
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 }
 

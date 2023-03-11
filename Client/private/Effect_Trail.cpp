@@ -91,7 +91,12 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 		_vector vPrepos = vPoint1;
 
 		_float  fWeight = 0.0f, fRadian = 0.0f;
-		_vector vSplinePos, vRight, vUp, vLook, vDir;
+		_vector vSplinePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+		_vector vRight = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vUp = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
 		for (_uint i = 0; i < iSegmentCnt; ++i)
 		{
 			fWeight = _float(i + 1) / (_float)iSegmentCnt;
@@ -101,8 +106,8 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			vDir = XMVector3Normalize(vCamPos - vSplinePos);
 
 			fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
-			if (fRadian < 5.f)
-				continue;
+			//if (fRadian < 5.f)
+			//	continue;
 
 			vUp = XMVector3Cross(vRight, vDir);
 			vLook = XMVector3Cross(vRight, vUp);
@@ -142,10 +147,10 @@ HRESULT CEffect_Trail::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVITrailBufferCom)))
-		return E_FAIL;
+// 	/* For.Com_VIBuffer */
+// 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
+// 		(CComponent**)&m_pVITrailBufferCom)))
+// 		return E_FAIL;
 
 	/***********
 	*  TEXTURE *
