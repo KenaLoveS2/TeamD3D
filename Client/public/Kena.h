@@ -45,7 +45,7 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 

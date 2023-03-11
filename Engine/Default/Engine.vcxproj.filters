@@ -136,12 +136,6 @@
     <Filter Include="01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{5f31b866-d974-45b7-813f-40177f6a2f9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\09.RenderTargets">
-      <UniqueIdentifier>{8256d089-8a01-4aa4-b1fa-60afeceeb336}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\09.RenderTargets\Manager">
-      <UniqueIdentifier>{8b81c84f-77ba-488c-be7a-1f6749335cca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\10.Sounds">
       <UniqueIdentifier>{b4eb2c82-4b70-4530-95df-32436ec89073}</UniqueIdentifier>
     </Filter>
@@ -228,6 +222,12 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\09.Status">
       <UniqueIdentifier>{4413bce5-2e46-4c0c-8e31-200d2f76c6eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\10.Sounds\09.RenderTargets">
+      <UniqueIdentifier>{8256d089-8a01-4aa4-b1fa-60afeceeb336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\10.Sounds\09.RenderTargets\Manager">
+      <UniqueIdentifier>{8b81c84f-77ba-488c-be7a-1f6749335cca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -370,10 +370,10 @@
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RenderTarget.h">
-      <Filter>01.Utility\09.RenderTargets</Filter>
+      <Filter>01.Utility\10.Sounds\09.RenderTargets</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Target_Manager.h">
-      <Filter>01.Utility\09.RenderTargets\Manager</Filter>
+      <Filter>01.Utility\10.Sounds\09.RenderTargets\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sound.h">
       <Filter>01.Utility\10.Sounds</Filter>
@@ -532,6 +532,7 @@
     <ClInclude Include="..\public\AnimationState.h">
       <Filter>01.Utility\15. ASM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui_PhysX.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -664,10 +665,10 @@
       <Filter>01.Utility\03.Components\02.VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RenderTarget.cpp">
-      <Filter>01.Utility\09.RenderTargets</Filter>
+      <Filter>01.Utility\10.Sounds\09.RenderTargets</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Target_Manager.cpp">
-      <Filter>01.Utility\09.RenderTargets\Manager</Filter>
+      <Filter>01.Utility\10.Sounds\09.RenderTargets\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sound.cpp">
       <Filter>01.Utility\10.Sounds</Filter>
@@ -790,6 +791,7 @@
     <ClCompile Include="..\private\AnimationState.cpp">
       <Filter>01.Utility\15. ASM</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ImGui_PhysX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -803,6 +805,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PhysX.hlsl">
       <Filter>00.System\01.PhysX</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
+      <Filter>01.Utility\13. HDR</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

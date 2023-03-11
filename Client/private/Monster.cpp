@@ -2,20 +2,28 @@
 #include "Monster.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+#include "UI_MonsterHP.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
+	, m_pUIHPBar(nullptr)
 {
 }
 
 CMonster::CMonster(const CMonster & rhs)
 	: CGameObject(rhs)
+	, m_pUIHPBar(nullptr)
 {
 }
 
 const _double & CMonster::Get_AnimationPlayTime()
 {
 	return m_pModelCom->Get_PlayTime();
+}
+
+_fvector CMonster::Get_Position()
+{
+	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 }
 
 HRESULT CMonster::Initialize_Prototype()
@@ -54,12 +62,26 @@ HRESULT CMonster::Initialize(void* pArg)
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
 	return S_OK;
 }
 
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	if (nullptr != m_pUIHPBar)
+		m_pUIHPBar->Imgui_RenderProperty();
+
+	static _float fGuage = 1.f;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	{
+		fGuage -= 0.1f;
+		m_pUIHPBar->Set_Guage(fGuage);
+	}
+#endif
 
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
@@ -85,6 +107,15 @@ void CMonster::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
+
+	if (ImGui::Button("BIND"))
+		m_bBind = true;
+
+	if (ImGui::Button("STRONGLYDMG"))
+		m_bStronglyHit = true;
+
+	if (ImGui::Button("WEALKYDMG"))
+		m_bWeaklyHit = true;
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -229,6 +260,28 @@ HRESULT CMonster::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CMonster::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CUI_MonsterHP::BBDESC tDesc;
+	tDesc.fileName = L"UI_Monster_Normal_HP";
+	tDesc.pOwner = this;
+	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 0.2f ;
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_MonsterHP"),
+		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
+	{
+		MSG_BOX("Failed To make UI");
+		return E_FAIL;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	return S_OK;
+}
+
 void CMonster::Free()
 {
 	__super::Free();
@@ -246,7 +299,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	{
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// Å¸°Ý
+			// Å¸ï¿½ï¿½
 		}
 	}
 

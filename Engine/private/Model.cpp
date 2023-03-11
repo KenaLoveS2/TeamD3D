@@ -723,6 +723,8 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 		*NewMatrix = InstanceMatrixVec[i];
 		m_pInstancingMatrix.push_back(NewMatrix);
 	}
+
+
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 
@@ -1139,6 +1141,91 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 	return S_OK;
 }
 
+void CModel::Imgui_MaterialPath()
+{
+	for(_uint i = 0; i < m_iNumMaterials; ++i)
+	{
+		ImGui::Text("Materials : %d", i);
+		for(_uint j = 0; j < WJTextureType_UNKNOWN; ++j)
+		{
+			if(m_Materials[i].pTexture[j] == nullptr)
+				continue;
+
+			if(j == WJTextureType_NONE)
+			{
+				ImGui::Text("WJTextureType_NONE");
+			}
+			else if (j == WJTextureType_DIFFUSE)
+			{
+				ImGui::Text("WJTextureType_DIFFUSE");
+			}
+			else if (j == WJTextureType_SPECULAR)
+			{
+				ImGui::Text("WJTextureType_SPECULAR");
+			}
+			else if (j == WJTextureType_AMBIENT)
+			{
+				ImGui::Text("WJTextureType_AMBIENT");
+			}
+			else if (j == WJTextureType_EMISSIVE)
+			{
+				ImGui::Text("WJTextureType_EMISSIVE");
+			}
+			else if (j == WJTextureType_EMISSIVEMASK)
+			{
+				ImGui::Text("WJTextureType_EMISSIVEMASK");
+			}
+			else if (j == WJTextureType_NORMALS)
+			{
+				ImGui::Text("WJTextureType_NORMALS");
+			}
+			else if (j == WJTextureType_MASK)
+			{
+				ImGui::Text("WJTextureType_MASK");
+			}
+			else if (j == WJTextureType_SSS_MASK)
+			{
+				ImGui::Text("WJTextureType_BLEND_DIFFUSE");
+			}
+			else if (j == WJTextureType_SPRINT_EMISSIVE)
+			{
+				ImGui::Text("WJTextureType_BLEND_MASK");
+			}
+			else if (j == WJTextureType_HAIR_DEPTH)
+			{
+				ImGui::Text("WJTextureType_BLEND_NORMAL");
+			}
+			else if (j == WJTextureType_HAIR_ROOT)
+			{
+				ImGui::Text("WJTextureType_PULSE_GLOW_MAP");
+			}
+			else if (j == WJTextureType_COMP_MSK_CURV)
+			{
+				ImGui::Text("WJTextureType_COMP_MSK_CURV");
+			}
+			else if (j == WJTextureType_COMP_H_R_AO)
+			{
+				ImGui::Text("WJTextureType_COMP_H_R_AO");
+			}
+			else if (j == WJTextureType_COMP_E_R_AO)
+			{
+				ImGui::Text("WJTextureType_COMP_E_R_AO");
+			}
+			else if (j == WJTextureType_ROUGHNESS)
+			{
+				ImGui::Text("WJTextureType_ROUGHNESS");
+			}
+			else if (j == WJTextureType_AMBIENT_OCCLUSION)
+			{
+				ImGui::Text("WJTextureType_AMBIENT_OCCLUSION");
+			}
+			wstring wstr =	m_Materials[i].pTexture[j]->Get_FilePath();
+			ImGui::Text(CUtile::WstringToString(wstr).c_str());
+			ImGui::Image(m_Materials[i].pTexture[j]->Get_Texture(), ImVec2(100.f, 100.f));
+		}
+	}
+}
+
 
 HRESULT CModel::Load_MeshMaterial(const wstring & wstrModelFilePath)
 {
@@ -1477,6 +1564,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
 
+
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
 	for (auto &iter : m_Meshes)
@@ -1501,6 +1589,23 @@ void CModel::Set_PxMatrix(_float4x4& Matrix)
 	}
 }
 
+void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for (auto &pInstMesh : m_InstancingMeshes)
+		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
+}
+
+void CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for (auto &pInstMesh : m_InstancingMeshes)
+		pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+}
 
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 {

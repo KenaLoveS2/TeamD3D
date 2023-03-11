@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Animation.h"
 #include "PhysX_Defines.h"
+#include "EnviromentObj.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
@@ -15,15 +16,15 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
+	_uint							Get_NumMeshes() const { return m_iNumMeshes; }
 	_matrix						Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
 	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	class CBone*			Get_BonePtr(const char* pBoneName);
 	const _double&		Get_PlayTime() const;
 	const _bool&			Get_PausePlay() const { return m_bPausePlay; }
 	const _bool&			Get_Preview() const { return m_bPreview; }
-	const _uint&			Get_AnimIndex() const { return m_iCurrentAnimIndex; }
-	const _uint&			Get_LastAnimIndex() const { return m_iPreAnimIndex; }
+	const _uint&				Get_AnimIndex() const { return m_iCurrentAnimIndex; }
+	const _uint&				Get_LastAnimIndex() const { return m_iPreAnimIndex; }
 	const _bool&			Get_AnimationFinish() const;
 	void							Set_PlayTime(_double dPlayTime);
 	void							Set_PausePlay(_bool bPausePlay) { m_bPausePlay = bPausePlay; }
@@ -68,29 +69,33 @@ public:
 	virtual void			Imgui_RenderProperty() override;
 
 public:
-	void					Play_Animation(_float fTimeDelta);
+	void						Play_Animation(_float fTimeDelta);
 	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
+	void						Imgui_MaterialPath();
 
+			
+	void				Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+	void				Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 private:
-	void				MODELMATERIAL_Create_Model(const char* jSonPath);
+	void						MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
-	TYPE					m_eType = TYPE_END;
-	wstring				m_wstrModelFilePath = L"";
-	DWORD				m_dwBeginBoneData = 0;
+	TYPE							m_eType = TYPE_END;
+	wstring							m_wstrModelFilePath = L"";
+	DWORD						m_dwBeginBoneData = 0;
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
-	_uint							m_iNumMeshes = 0;
+	_uint									m_iNumMeshes = 0;
 	vector<class CMesh*>		m_Meshes;	
 
-	_uint							m_iNumMaterials = 0;
+	_uint										m_iNumMaterials = 0;
 	vector<MODELMATERIAL>	m_Materials;			
 
 	/* 전체 뼈의 갯수. */
-	_uint							m_iNumBones = 0;
+	_uint										m_iNumBones = 0;
 	vector<class CBone*>			m_Bones;
-	string							m_strRootBone = "";
+	string									m_strRootBone = "";
 
 	_uint							m_iPreAnimIndex = 0;
 	_uint							m_iCurrentAnimIndex = 0;
@@ -104,14 +109,13 @@ private:
 
 	_bool							m_bPreview = false;
 	_bool							m_bPausePlay = false;
-
-	_uint							m_iAdditiveAnimIndexForMonster = 0;
+	_uint								m_iAdditiveAnimIndexForMonster = 0;
 
 /*For.Mesh_Instancing*/
-	_bool							m_bIsInstancing = false;
+	_bool													m_bIsInstancing = false;
 	vector<class CInstancing_Mesh*>		m_InstancingMeshes;
-	vector<_float4x4*>			m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
-	_uint						m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
+	vector<_float4x4*>								m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
+	_uint														m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
 	/*For.Lod*/
 	_bool														m_bIsLodModel = false;
@@ -135,11 +139,10 @@ public:
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 
-
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-
+	
 	
 public:
 	void Create_PxTriangle(PX_USER_DATA *pUserData);

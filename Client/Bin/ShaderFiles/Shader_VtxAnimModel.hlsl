@@ -23,6 +23,8 @@ Texture2D<float4>		g_HairDepthTexture;
 Texture2D<float4>		g_HairAlphaTexture;
 Texture2D<float4>		g_HairRootTexture;
 
+Texture2D<float4>		g_DetailNormal;
+
 /* Kena Bow_String Texture */
 Texture2D		g_NoiseTexture;
 Texture2D		g_SwipeTexture;
@@ -152,7 +154,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = vDiffuse;
 
 	return Out;
 }//0
@@ -225,7 +227,7 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 	vector		vEmissive			 = g_EmissiveTexture.Sample(LinearSampler, vTexUV);
 	vector		vNormalDesc	 = g_NormalTexture.Sample(LinearSampler, vTexUV);
 
-	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3		vNormal = (vNormalDesc.xyz) * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
@@ -325,7 +327,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	Out.vDiffuse = float4(vDiffuse.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = Out.vDiffuse;
 
 	return Out;
 }//6
@@ -352,7 +354,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vDiffuse = finalColor;
 	Out.vNormal = (vector)1.f;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = Out.vDiffuse;
 
 	return Out;
 }//7
@@ -381,7 +383,7 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = Out.vDiffuse;
 
 	return Out;
 }//8
@@ -420,7 +422,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	Out.vDiffuse = mask_texture;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = Out.vDiffuse;
 
 	return Out;
 }//9
@@ -461,7 +463,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = Out.vDiffuse;
 
 	return Out;
 }//10

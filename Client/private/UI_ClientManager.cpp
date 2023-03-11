@@ -53,6 +53,7 @@
 #include "UI_NodeButton.h"
 #include "UI_NodeConfWindow.h"
 
+#include "UI_MonsterHP.h"
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
 CUI_ClientManager::CUI_ClientManager()
@@ -645,7 +646,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 
-
+	/*test*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterHP"), CUI_MonsterHP::Create(pDevice, pContext))))
+		return E_FAIL;
 
 
 	RELEASE_INSTANCE(CGameInstance);

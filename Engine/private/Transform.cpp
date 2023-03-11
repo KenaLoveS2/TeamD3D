@@ -720,10 +720,9 @@ void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)
 		}
 		else
 		{
-			_float4x4 RetMatrix;
-			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
-			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
-			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+			_float3 vPos = Get_State(STATE_TRANSLATION);
+			vPos += m_vPxPivot;
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos);
 		}
 	}
 }
@@ -740,10 +739,9 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 		}
 		else
 		{
-			_float4x4 RetMatrix;
-			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
-			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
-			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+			_float3 vPos = Get_State(STATE_TRANSLATION);
+			vPos += m_vPxPivot;
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos);
 		}	
 	}		
 }

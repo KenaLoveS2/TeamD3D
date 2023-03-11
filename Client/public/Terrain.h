@@ -69,7 +69,7 @@ public: /*For.IMgui*/
 	void					Erase_FilterCom();
 	void					Change_HeightMap(const _tchar* pHeightMapFilePath);
 
-	_bool				CreateEnvrObj_PickingPos(_float4& vPos);
+	_bool					CreateEnvrObj_PickingPos(_float4& vPos);
 
 public:	
 	
@@ -79,7 +79,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	TERRAIN_DESC					m_TerrainDesc;
+	TERRAIN_DESC						m_TerrainDesc;
 	_bool								m_bLoadData = false;
 
 public:

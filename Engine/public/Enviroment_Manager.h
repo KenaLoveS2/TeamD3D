@@ -1,6 +1,8 @@
 #pragma once
 #include "EnviromentObj.h"
 
+/* ±â¹Í °ü¸® */
+
 BEGIN(Engine)
 class CEnviroment_Manager final : public CBase
 {
@@ -23,15 +25,15 @@ private:
 	class CTransform* m_pTargetTransform = nullptr;
 	
 	vector<ROOM_DESC*> m_vecAllRooms;
-	
 	list<ROOM_DESC*> m_RenderRoomList;
-
 	list<_uint> m_RenderRoomIndexList;
 	
 private:
 	CEnviroment_Manager();
 	virtual ~CEnviroment_Manager() = default;
 	
+	
+
 public:
 	virtual void Free() override;
 	void Tick(_float fTimeDelta);

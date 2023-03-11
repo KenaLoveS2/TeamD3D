@@ -38,6 +38,7 @@ private:
 	_float				m_fGuageSpeed;
 
 	_bool				m_bReArrangeSettingOn;
+
 public:
 	static CUI_Event_Guage*	Create();
 	static CUI_Event_Guage*	Create(wstring fileName);
