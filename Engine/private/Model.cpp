@@ -1020,6 +1020,9 @@ void CModel::Update_BonesMatrix(CModel * pModel)
 	{
 		pBoneName = pBone->Get_Name();
 
+		if (!strcmp(pBoneName, "SK_Staff.ao"))
+			pBoneName = "SK_Kena.ao";
+
 		CBone* pOriginBone = pModel->Get_BonePtr(pBoneName);
 		if (pOriginBone != nullptr)
 		{
