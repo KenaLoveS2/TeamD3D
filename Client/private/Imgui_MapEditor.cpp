@@ -15,6 +15,7 @@
 #include "Imgui_TerrainEditor.h"
 #include "Gimmick_EnviObj.h"
 #include "Pulse_Plate_Anim.h"
+#include "Crystal.h"
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -54,6 +55,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		imgui_ObjectList_Clear();
 
 		imgui_Gimmic_Class_Viewr();
+		Imgui_Crystal_Create_Pulse();
 	}
 
 	ImGui::End();
@@ -783,6 +785,24 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
+}
+
+void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
+{
+	if (ImGui::Button("Create_Crystal_Pulse"))
+	{
+
+		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+		{
+			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+				continue;
+		
+			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse();
+		}
+
+
+	}
+
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)

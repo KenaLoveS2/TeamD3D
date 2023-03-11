@@ -50,7 +50,7 @@ private:		/*Logic*/
 	void														Imgui_Maptool_Terrain_Selecte();
 
 
-
+	void										Imgui_Crystal_Create_Pulse();
 
 private: /*For_Tool*/
 	string														m_strChapter[MAX_CHATERNUM];

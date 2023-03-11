@@ -58,7 +58,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	vector		vPosition = mul(float4(In.vPosition, 1.f), Transform);
 
 	Out.vPosition = mul(float4(vPosition), matWVP);
-	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), Transform));
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
@@ -89,7 +89,12 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	float4x4	Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
 	vector		vPosition = mul(float4(In.vPosition, 1.f), Transform);
-	vector		vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	vector		vNormal = mul(float4(In.vNormal, 0.f), Transform);
+
+	vector      vPosition = mul(float4(In.vPosition.xyz, 1.f), In.Matrix);
+	vector      vNormal = mul(float4(In.vNormal.xyz, 0.f), In.Matrix);
+	vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), In.Matrix);
+
 
 	Out.vPosition = vPosition.xyz;
 	Out.vNormal = In.vNormal;

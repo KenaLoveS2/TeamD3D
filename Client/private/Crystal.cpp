@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Effect_Base.h"
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -31,6 +32,20 @@ HRESULT CCrystal::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
+
+	return S_OK;
+}
+
+HRESULT CCrystal::Late_Initialize(void * pArg)
+{
+	
+	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
+	/* Pulse */
+	m_pPulseEffect = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
+	NULL_CHECK_RETURN(m_pPulseEffect, E_FAIL);
+
+	m_pPulseEffect->Set_Parent(this);
+
 
 	return S_OK;
 }
@@ -68,6 +83,14 @@ HRESULT CCrystal::Render()
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
+}
+
+void CCrystal::Create_Pulse()
+{
+	if (m_pPulseEffect != nullptr)
+	{
+		m_pPulseEffect->Set_Active(true);
+	}
 }
 
 HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
