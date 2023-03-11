@@ -3,7 +3,8 @@
 /**********Constant Buffer***********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vBrushPos;
-float			g_fBrushRange = 5.f;
+float				g_fBrushRange = 5.f;
+float				g_fFar = 300.f;
 /*************************************/
 /* 재질정보 */
 
@@ -75,6 +76,7 @@ struct PS_OUT
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
+	float4		vAmbient : SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -147,13 +149,13 @@ PS_OUT PS_MAIN(PS_IN In)
 		{
 			vMtrlDiffuse = vDestDiffuse0;
 		}
-
 	}
 
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vDiffuse.a = 1.f;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }

@@ -69,6 +69,10 @@ HRESULT CBorder::Render()
 	return S_OK;
 }
 
+void CBorder::ImGui_ShaderValueProperty()
+{
+}
+
 HRESULT CBorder::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);

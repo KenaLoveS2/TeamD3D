@@ -5,10 +5,20 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
 float				g_fFar = 300.f;
+float				g_fStonePulseIntensity = 0.f;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
+Texture2D<float4>		g_EmissiveTexture;
+
+Texture2D<float4>		g_HRAOTexture;
+Texture2D<float4>		g_MRAOTexture;
+Texture2D<float4>		g_ERAOTexture;
+
+Texture2D<float4>		g_BlendDiffuseTexture;
+Texture2D<float4>		g_DetailNormalTexture;
+Texture2D<float4>		g_MaskTexture;
 
 struct VS_IN
 {
@@ -46,7 +56,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	float4x4	Transform = float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
 
 	vector		vPosition = mul(float4(In.vPosition, 1.f), Transform);
-
 
 	Out.vPosition = mul(float4(vPosition), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
@@ -120,9 +129,9 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 {
 	PatchTess		pt;
 
-	pt.EdgeTess[0] = 1;
-	pt.EdgeTess[1] = 1;
-	pt.EdgeTess[2] = 1;
+	pt.EdgeTess[0] = 4;
+	pt.EdgeTess[1] = 4;
+	pt.EdgeTess[2] = 4;
 
 	pt.InsideTess = (pt.EdgeTess[0] + pt.EdgeTess[1] + pt.EdgeTess[2]) / 3.f;
 	// Assign Positions
@@ -161,14 +170,13 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 
 struct HullOut
 {
-	float3	vPosition : POSITION;
-	float3	vNormal : NORMAL;
-	float2	vTexUV : TEXCOORD0;
+	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
-
 
 [domain("tri")]
 [partitioning("fractional_odd")]
@@ -200,7 +208,6 @@ struct DomainOut
 	float4		vProjPos : TEXCOORD1;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
-
 };
 
 [domain("tri")]
@@ -295,16 +302,202 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-
-	if (0.9f <= vDiffuse.r && 0.9f <= vDiffuse.g && 0.9f <= vDiffuse.b )
-		discard;
-
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 	return Out;
-}
+}//1
+
+PS_OUT_TESS PS_MAIN_H_R_AO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vHRAODesc = g_HRAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vHRAODesc.b, vHRAODesc.g, vHRAODesc.r, vHRAODesc.a);
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//2
+
+PS_OUT_TESS PS_MAIN_MRAO_E(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vMRAODesc.b, vMRAODesc.g, vMRAODesc.r, vMRAODesc.a);
+
+	float4	FinalColor = vDiffuse + (vEmissiveDesc * g_fStonePulseIntensity);
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//3
+
+PS_OUT_TESS PS_MAIN_HRAO_E(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vHRAODesc = g_HRAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vHRAODesc.b, vHRAODesc.g, vHRAODesc.r, vHRAODesc.a);
+
+	float4	FinalColor = vDiffuse + (vEmissiveDesc * g_fStonePulseIntensity);
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//4
+
+// EMPTY
+PS_OUT_TESS PS_MAIN_ERAO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vERAODesc = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vERAODesc.b, vERAODesc.g, vERAODesc.r, vERAODesc.a);
+
+	float4	FinalColor = vDiffuse;
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//5
+
+PS_OUT_TESS PS_MAIN_MRAO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vMRAODesc.b, vMRAODesc.g, vMRAODesc.r, vMRAODesc.a);
+
+	float4	FinalColor = vDiffuse;
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//6
+
+PS_OUT_TESS PS_MAIN_LEAF_MRAO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	if (vDiffuse.r == 1.f && vDiffuse.g == 1.f && vDiffuse.b == 1.f)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vMRAODesc.b, vMRAODesc.g, vMRAODesc.r, vMRAODesc.a);
+
+	float4	FinalColor = vDiffuse;
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//7
+
+PS_OUT_TESS PS_MAIN_RUBBLE(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vHRAODesc = g_HRAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vBlendDiffuse = g_BlendDiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMaskDesc = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDetailNormalDesc = g_DetailNormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float3		vDetailNormal = vDetailNormalDesc.xyz * 2.f - 1.f;
+	vDetailNormal = normalize(mul(vDetailNormal, WorldMatrix));
+
+	vNormal += vDetailNormal;
+	vNormal = normalize(vNormal);
+	
+	float4 vAORM = float4(vHRAODesc.b, vHRAODesc.g, vHRAODesc.r, vHRAODesc.a);
+
+	float4	FinalColor = vDiffuse * (1.f - vMaskDesc.r) + vBlendDiffuse * vMaskDesc.r;
+	FinalColor.a = vDiffuse.a;
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//8
 
 struct PS_IN
 {
@@ -376,4 +569,96 @@ technique11 DefaultTechnique
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
 	}
+
+	pass Comp_H_R_AO
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
+	}//2
+
+	pass Comp_M_R_AO_E
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_MRAO_E();
+	}//3
+
+	pass Comp_H_R_AO_E
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_HRAO_E();
+	}//4
+
+	 // EMPTY
+	pass E_R_AO
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_ERAO();
+	}//5
+
+	pass M_R_AO
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_MRAO();
+	}//6
+
+	pass LEAF_M_R_AO
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_LEAF_MRAO();
+	}//7
+
+	pass RUBBLE
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_RUBBLE();
+	}//8
 }

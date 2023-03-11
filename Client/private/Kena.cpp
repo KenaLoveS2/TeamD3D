@@ -295,6 +295,7 @@ HRESULT CKena::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else if (i == 4)
@@ -384,6 +385,7 @@ void CKena::ImGui_ShaderValueProperty()
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
+		 system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();
@@ -579,6 +581,8 @@ HRESULT CKena::SetUp_Components()
 	m_pModelCom->SetUp_Material(1, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
 	// SSS_MASK
 	m_pModelCom->SetUp_Material(1, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+	// Detail_Normal
+	m_pModelCom->SetUp_Material(1, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/PostProcess/T_FabricDetailNormal.png"));
 
 	// AO_R_M
 	m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));

@@ -85,19 +85,25 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
+	/* For.Target_SSAO */
+	//if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 0.f))))
+	//	return E_FAIL;
+
 	/* For.Target_HDR */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.8f, 0.8f, 0.8f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_LDR */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR1"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
-		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
 	/* For.ModelViewer */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_ModelViewer"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
+
+	// SSAO
+	//if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
+	//	return E_FAIL;
 
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
@@ -108,6 +114,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
 		return E_FAIL;
+
 	// Model_Preview 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_ModelViewer"), TEXT("Target_ModelViewer"))))
 		return E_FAIL;
@@ -141,6 +148,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (m_pShader_PostProcess == nullptr)
 		return E_FAIL;
 
+	m_pShader_SSAO = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements);
+	if (m_pShader_SSAO == nullptr)
+		return  E_FAIL;
+
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
@@ -158,6 +169,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlAmbient"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
+//if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+//	return E_FAIL;
 
 	// For. Lighting
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
@@ -171,7 +184,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	/* For.ModelViewer */
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
 		return E_FAIL;
-
 
 #endif
 	
@@ -235,6 +247,7 @@ HRESULT CRenderer::ReCompile()
 {
 	HRESULT hr;
 	hr = m_pShader->ReCompile();
+	hr = m_pShader_SSAO->ReCompile();
 	hr = m_pShader_PostProcess->ReCompile();
 
 	if (hr == E_FAIL)
@@ -249,6 +262,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
+	//if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+	//	return E_FAIL;
+	//if (FAILED(Render_SSAO()))
+	//	return E_FAIL;
+	//if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
+	//	return E_FAIL;
+	// 빛연산 전에 진행해야함
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
@@ -316,7 +336,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
-	
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
+
 	}
 #endif
 
@@ -427,6 +448,8 @@ HRESULT CRenderer::Render_LightAcc()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlAmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
 		return E_FAIL;
+	//if (FAILED(m_pShader->Set_ShaderResourceView("g_SSAOTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_SSAO")))))
+	//	return E_FAIL;
 
 	CPipeLine*		pPipeLine = GET_INSTANCE(CPipeLine);	
 
@@ -445,6 +468,39 @@ HRESULT CRenderer::Render_LightAcc()
 	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_LightAcc"))))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_SSAO()
+{
+	if (FAILED(m_pShader_SSAO->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_ShaderResourceView("g_NormalTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Normal")))))
+		return E_FAIL;
+
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance)
+
+	if (FAILED(m_pShader_SSAO->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
+
+	m_pShader_SSAO->Begin(0);
+	m_pVIBuffer->Render();
+		
 	return S_OK;
 }
 
@@ -549,10 +605,8 @@ HRESULT CRenderer::Render_AlphaBlend()
 
 HRESULT CRenderer::Render_HDR()
 {
-	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
-	CRenderTarget* pLDR2 = m_pTarget_Manager->Get_Target(L"Target_LDR2");
+	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR");
 	pLDR1->Clear();
-	pLDR2->Clear();
 
 	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
 	return S_OK;
@@ -567,8 +621,7 @@ HRESULT CRenderer::Render_PostProcess()
 	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	CRenderTarget* pLDRSour = m_pTarget_Manager->Get_Target(L"Target_LDR1");
-	CRenderTarget* pLDRDest = m_pTarget_Manager->Get_Target(L"Target_LDR2");
+	CRenderTarget* pLDRSour = m_pTarget_Manager->Get_Target(L"Target_LDR");
 	ID3D11RenderTargetView*	pBackBufferView = nullptr;
 	ID3D11DepthStencilView*		pDepthStencilView = nullptr;
 	m_pContext->OMGetRenderTargets(1, &pBackBufferView, &pDepthStencilView);
@@ -697,6 +750,7 @@ void CRenderer::Free()
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pShader_PostProcess);
+	Safe_Release(m_pShader_SSAO);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

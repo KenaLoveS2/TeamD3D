@@ -26,6 +26,8 @@ protected:
 		AO_R_M_EEM,
 		SEPARATE_AO_R_M_E,
 		MASK,
+		SAPLING_BOMBUP,
+		ALPHA_AO_R_M,
 		PASS_END
 	};
 
@@ -62,6 +64,11 @@ public:
 	virtual void					Push_EventFunctions() override;
 	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
+	void								Bind() { m_bBind = true; }
+	void								Spawn() { m_bSpawn = true; };
+	void								StringlyHit() { m_bStronglyHit = true; }
+	void								WeakleyHit() { m_bWeaklyHit = true; }
+
 public:
 	_bool							AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
@@ -91,6 +98,7 @@ protected:
 	_bool	m_bWeaklyHit = false;
 	_bool	m_bStronglyHit = false;
 	_bool	m_bBind = false;
+	_bool	m_bSpawn = false;
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

@@ -85,6 +85,15 @@ void CMonster::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
+
+	if (ImGui::Button("BIND"))
+		m_bBind = true;
+
+	if (ImGui::Button("STRONGLYDMG"))
+		m_bStronglyHit = true;
+
+	if (ImGui::Button("WEALKYDMG"))
+		m_bWeaklyHit = true;
 }
 
 void CMonster::ImGui_AnimationProperty()
