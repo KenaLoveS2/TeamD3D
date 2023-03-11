@@ -145,7 +145,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 33.793312072753906, 9.559162139892578, 138.99365234375, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Large02",
       "25_Instancing_Transform_matrix": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -50.58958435058594, 0.0, 19.430450439453125, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Large02",
@@ -154,7 +154,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 65.04948425292969, 0.0, 155.30734252929688, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Short02",
       "25_Instancing_Transform_matrix": [ 2.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 31.0, -2.0, -12.0, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Short02",
@@ -163,7 +163,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 84.4681167602539, 0.0, 164.67518615722656, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Short05",
       "25_Instancing_Transform_matrix": [ 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, -24.579357147216797, 0.0, 27.282455444335938, 1.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 66.59707641601563, -2.0, 17.0, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Short05",
@@ -172,7 +172,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 50.61814498901367, 0.0, 164.90480041503906, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Large01",
       "25_Instancing_Transform_matrix": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -37.0, 0.0, 26.470306396484375, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Large01",
@@ -190,7 +190,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 66.49775695800781, 0.0, 165.12319946289063, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Short04",
       "25_Instancing_Transform_matrix": [ 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 74.30314636230469, 0.0, 38.0, 1.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 73.45179748535156, -0.20000076293945313, 24.162841796875, 1.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 71.8048095703125, 0.6670970916748047, -23.803329467773438, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Short04",
@@ -208,7 +208,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 63.75862503051758, 0.0, 166.169921875, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Short03",
       "25_Instancing_Transform_matrix": [ 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 62.91987228393555, -0.8899333477020264, -6.9120941162109375, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Short03",
@@ -226,7 +226,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 12.735858917236328, 0.16386032104492188, 203.59957885742188, 1.0000001192092896 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Med03",
       "25_Instancing_Transform_matrix": [ 3.8252174854278564, 0.0, 1.1694846153259277, 0.0, 0.0, 3.0, 0.0, 0.0, -1.1694846153259277, 0.0, 3.8252174854278564, 0.0, -45.63420486450195, 0.0, -4.751220703125, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Med03",
@@ -244,7 +244,7 @@
       "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 57.90745544433594, 0.0, 185.668212890625, 1.0 ]
     },
     {
-      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "0_ProtoTag": "Prototype_GameObject_Wall",
       "1_ModelTag": "Prototype_Component_Model_Cliff_Wall_Short01",
       "25_Instancing_Transform_matrix": [ 3.590496301651001, 0.0, 1.763043761253357, 0.0, 0.0, 4.0, 0.0, 0.0, -1.763043761253357, 0.0, 3.590496301651001, 0.0, -26.630706787109375, 0.0, 39.37565612792969, 1.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 69.00000762939453, 0.0, 0.0, 1.0 ],
       "3_CloneTag": "1_Cliff_Wall_Short01",

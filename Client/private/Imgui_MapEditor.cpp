@@ -1018,7 +1018,7 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{
-		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
+		//pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
 
 }

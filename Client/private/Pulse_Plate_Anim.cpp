@@ -40,43 +40,43 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 {
 
-	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
-	if (m_pKena == nullptr)
-		return S_OK;
-	
-	assert(m_pKena != nullptr && "CRot::Late_Initialize");
+	//m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	//if (m_pKena == nullptr)
+	//	return S_OK;
+	//
+	//assert(m_pKena != nullptr && "CRot::Late_Initialize");
 
-	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
-	assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
+	//m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
+	//assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
 
-	_float3 vPos;
-	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	//_float3 vPos;
+	//XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	_float3 vSize = _float3(2.5f, 0.7f, 2.5f);
-	
-	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
-	
-	CPhysX_Manager::PX_BOX_DESC BoxDesc;
-	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;
-	BoxDesc.vPos = vPos;
-	BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
-	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-	BoxDesc.fDegree = 0.f;
-	BoxDesc.isGravity = true;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
-	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	BoxDesc.fDensity = 0.2f;
-	BoxDesc.fMass = 150.f;
-	BoxDesc.fLinearDamping = 10.f;
-	BoxDesc.fAngularDamping = 5.f;
-	BoxDesc.bCCD = false;
-	BoxDesc.fDynamicFriction = 0.5f;
-	BoxDesc.fStaticFriction = 0.5f;
-	BoxDesc.fRestitution = 0.1f;
+	//_float3 vSize = _float3(2.5f, 0.7f, 2.5f);
+	//
+	//CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+	//
+	//CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	//BoxDesc.pActortag = m_szCloneObjectTag;
+	//BoxDesc.eType = BOX_STATIC;
+	//BoxDesc.vPos = vPos;
+	//BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
+	//BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	//BoxDesc.fDegree = 0.f;
+	//BoxDesc.isGravity = true;
+	//BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
+	//BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	//BoxDesc.fDensity = 0.2f;
+	//BoxDesc.fMass = 150.f;
+	//BoxDesc.fLinearDamping = 10.f;
+	//BoxDesc.fAngularDamping = 5.f;
+	//BoxDesc.bCCD = false;
+	//BoxDesc.fDynamicFriction = 0.5f;
+	//BoxDesc.fStaticFriction = 0.5f;
+	//BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
-	m_pRendererCom->Set_PhysXRender(true);
+	//pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
+	//m_pRendererCom->Set_PhysXRender(true);
 
 
 	/*CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
@@ -174,7 +174,7 @@ void CPulse_Plate_Anim::ImGui_PhysXValueProperty()
 
 void CPulse_Plate_Anim::ImGui_AnimationProperty()
 {
-		m_pModelCom->Imgui_RenderProperty();
+	m_pModelCom->Imgui_RenderProperty();
 }
 
 HRESULT CPulse_Plate_Anim::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

@@ -478,197 +478,195 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Textures/T_GDC_Grass01_D_NoisyAlpha.png")))))
 		return E_FAIL;
 
-
-
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 
 	/* For.Prototype_Component_Model_DeadZoneTree */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_DeadZoneTree",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
-	//	return E_FAIL;
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_DeadZoneTree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_PulsePlateAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_PulsePlateAnim",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
-		assert(!"Issue");
-#pragma region KENA
-	/* For.Prototype_Component_Model_Kena */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena_Staff",
-		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena_MainOutfit",
-		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
-		return E_FAIL;
-
-
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
-		CKena::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
-		CKena_Staff::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
-		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Player_Camera */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
-		CCamera_Player::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-#pragma endregion  KENA
-
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+	//	assert(!"Issue");
+	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
+	//	assert(!"Issue");
+//#pragma region KENA
+//	/* For.Prototype_Component_Model_Kena */
+//	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
+//		return E_FAIL;
+//
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena_Staff",
+//		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
+//		return E_FAIL;
+//
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena_MainOutfit",
+//		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
+//		return E_FAIL;
+//
+//
+//	/* For.Prototype_GameObject_Player */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
+//		CKena::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
+//		CKena_Staff::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
+//		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_Player_Camera */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+//		CCamera_Player::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//#pragma endregion  KENA
+//
 #pragma region EFFECT
-	/* For.Prototype_Component_Texture_Effect */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Texture_NormalEffect */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_NormalEffect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/NormalTexture/N_Effect_%d.png"), 11))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Texture_PulseShield_Dissolve */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Texture_TrailFlow */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TrailFlow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 10))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Texture_TrailType */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TrailType"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_VIBuffer_Point_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_VIBuffer_Trail"),
-		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
+//	/* For.Prototype_Component_Texture_Effect */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Effect"),
+//		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Texture_NormalEffect */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_NormalEffect"),
+//		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/NormalTexture/N_Effect_%d.png"), 11))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Texture_PulseShield_Dissolve */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"),
+//		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_%d.png"), 4))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Texture_TrailFlow */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TrailFlow"),
+//		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/flow/E_Flow_%d.png"), 10))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Texture_TrailType */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_TrailType"),
+//		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_VIBuffer_Point_Instancing */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_VIBuffer_Trail"),
+//		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
 #pragma region Model Component
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	/* For.Prototype_Component_Model_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cube",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cube.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_Cone */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cone",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cone.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_Cylinder */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cylinder",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cylinder.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_Plane */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Plane",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Plane.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_Sphere */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Sphere",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Sphere.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_shockball */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_shockball",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_shockball3 */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_shockball3",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball3.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
+//	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+//	/* For.Prototype_Component_Model_Cube */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cube",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cube.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_Cone */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cone",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cone.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_Cylinder */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Cylinder",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cylinder.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_Plane */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Plane",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Plane.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_Sphere */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Sphere",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Sphere.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_shockball */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_shockball",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_Component_Model_shockball3 */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_shockball3",
+//		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball3.mdat"), PivotMatrix))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
 #pragma endregion Model Component
-
-	/* For.Prototype_GameObject_KenaPulse */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
-		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaPulseCloud */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
-		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaPulseDot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
-		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaCharge */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
-		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaChargeImpact */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
-		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaDamage */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDamage"),
-		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Damage_Set.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaHit */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
-		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hit.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_KenaStaffTrail */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
-		CE_KenaTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaPulse */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
+//		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaPulseCloud */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
+//		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaPulseDot */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
+//		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaCharge */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
+//		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaChargeImpact */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
+//		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaDamage */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDamage"),
+//		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Damage_Set.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaHit */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
+//		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hit.json"))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
+//
+//	/* For.Prototype_GameObject_KenaStaffTrail */
+//	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
+//		CE_KenaTrail::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	m_fCur += 1.f;
 #pragma endregion EFFECT
-
+//
 
 
 //

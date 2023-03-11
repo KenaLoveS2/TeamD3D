@@ -40,7 +40,7 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	/*CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
 	{
@@ -55,7 +55,7 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance);*/
 
 	return S_OK;
 }
