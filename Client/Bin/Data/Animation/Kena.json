@@ -1101,6 +1101,270 @@
         ]
     },
     {
+        "0. State Name": "BOW_RECHARGE_RUN_FORWARD",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_FORWARD_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_FORWARD_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_BACKWARD",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_BACKWARD_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_BACKWARD_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RECHARGE_RUN_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Neutral",
+                "4. Joint Index": [
+                    {
+                        "0. Bone Name" : "kena_hip_jnt",
+                        "1. Lock To" : "Lock Child"
+                    },
+                    {
+                        "0. Bone Name" : "kena_spine_mid_jnt",
+                        "1. Lock To" : "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Recharge",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
         "0. State Name": "BOW_RELEASE",
         "1. Looping": false,
         "2. Lerp Duration": 0.0,
@@ -1129,7 +1393,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_FORWARD",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1155,7 +1419,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_FORWARD_LEFT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "A_Kena_Aim_Run_Left",
         "5. Joint Index": "N/A",
@@ -1181,7 +1445,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_FORWARD_RIGHT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Forward",
         "4. Blend Animation": "A_Kena_Aim_Run_Right",
         "5. Joint Index": "N/A",
@@ -1207,7 +1471,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_BACKWARD",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1233,7 +1497,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_BACKWARD_LEFT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "A_Kena_Aim_Run_Left",
         "5. Joint Index": "N/A",
@@ -1259,7 +1523,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_BACKWARD_RIGHT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Backward",
         "4. Blend Animation": "A_Kena_Aim_Run_Right",
         "5. Joint Index": "N/A",
@@ -1285,7 +1549,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_LEFT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Left",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1311,7 +1575,7 @@
     {
         "0. State Name": "BOW_RELEASE_RUN_RIGHT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.2,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Run_Right",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1346,6 +1610,142 @@
                 "0. Ratio Control": 0,
                 "1. Max Additive Ratio": 1.0,
                 "2. Reference Animation": "A_Kena_Aim_RefPose",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_FORWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_BACKWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Left",
+                "3. Additive Animation": "A_Kena_Bow_Return",
+                "4. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_RETURN_RUN_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Ratio Control": 0,
+                "1. Max Additive Ratio": 1.0,
+                "2. Reference Animation": "A_Kena_Aim_Run_Right",
                 "3. Additive Animation": "A_Kena_Bow_Return",
                 "4. Joint Index": "N/A"
             }
