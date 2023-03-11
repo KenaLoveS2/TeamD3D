@@ -55,6 +55,13 @@ _float* CCamera_Manager::Get_CameraFar()
 	return m_pWorkCamera->Get_Far();
 }
 
+_float * CCamera_Manager::Get_CameraFov()
+{
+	if (m_pWorkCamera == nullptr)		return nullptr;
+
+	return m_pWorkCamera->Get_Fov();
+}
+
 void CCamera_Manager::Free()
 {
 	Clear();

@@ -50,8 +50,6 @@ HRESULT CMonster::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
-
-
 	Push_EventFunctions();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -64,6 +62,7 @@ HRESULT CMonster::Initialize(void* pArg)
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	return S_OK;
 }
@@ -72,13 +71,17 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pUIHPBar != nullptr)
+#ifdef _DEBUG
+	if (nullptr != m_pUIHPBar)
+		m_pUIHPBar->Imgui_RenderProperty();
+
+	static _float fGuage = 1.f;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
 	{
-		CUI_MonsterHP::WORLDUIDESC tDesc;
-		tDesc.pOwner = this;
-		tDesc.vPos = { 0.f , 20.f };
-		m_pUIHPBar->Setting(tDesc);
+		fGuage -= 0.1f;
+		m_pUIHPBar->Set_Guage(fGuage);
 	}
+#endif
 
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
@@ -104,6 +107,7 @@ void CMonster::Imgui_RenderProperty()
 	__super::Imgui_RenderProperty();
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
+
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -252,10 +256,12 @@ HRESULT CMonster::SetUp_UI()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CUI_MonsterHP::WORLDUIDESC tDesc;
+	CUI_MonsterHP::BBDESC tDesc;
+	tDesc.fileName = L"UI_Monster_Normal_HP";
 	tDesc.pOwner = this;
-	tDesc.vPos = { 0.f , 20.f };
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, L"Layer_UI",
+	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 0.2f ;
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_MonsterHP"),
 		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
 	{

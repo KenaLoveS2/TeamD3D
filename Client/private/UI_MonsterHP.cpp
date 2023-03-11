@@ -2,19 +2,21 @@
 #include "..\public\UI_MonsterHP.h"
 #include "GameInstance.h"
 #include "Monster.h"
+#include "UI_Event_Guage.h"
 
 CUI_MonsterHP::CUI_MonsterHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
 {
-	m_tWorldDesc.pOwner = nullptr;
-	m_tWorldDesc.vPos = { 0.f, 0.f };
 }
 
 CUI_MonsterHP::CUI_MonsterHP(const CUI_MonsterHP & rhs)
 	:CUI_Billboard(rhs)
 {
-	m_tWorldDesc.pOwner = nullptr;
-	m_tWorldDesc.vPos = { 0.f, 0.f };
+}
+
+void CUI_MonsterHP::Set_Guage(_float fGuage)
+{
+	static_cast<CUI_Event_Guage*>(m_vecEvents[0])->Call_Event(fGuage);
 }
 
 HRESULT CUI_MonsterHP::Initialize_Prototype()
@@ -29,10 +31,16 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(20.f, 10.f, 1.f));
-		m_matInit = m_pTransformCom->Get_WorldMatrixFloat4x4();
+		m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 	}
+	
+	/* It might be faster.... */
+	m_iRenderPass = 20;
+	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+
+
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -40,9 +48,13 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	memcpy(&m_tWorldDesc, pArg, sizeof(WORLDUIDESC));
-
 	m_bActive = true;
+
+
+	/* Events */
+	UIDESC* tDesc = (UIDESC*)pArg;
+	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
+
 	return S_OK;
 }
 
@@ -52,10 +64,6 @@ void CUI_MonsterHP::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-
-	if (m_tWorldDesc.pOwner != nullptr)
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-			(m_tWorldDesc.pOwner->Get_Position()));
 
 }
 
@@ -84,6 +92,7 @@ HRESULT CUI_MonsterHP::Render()
 		return E_FAIL;
 	}
 
+	m_iRenderPass = 20;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -126,6 +135,8 @@ HRESULT CUI_MonsterHP::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
+	//	return E_FAIL;
 	//if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 	//	return E_FAIL;
 

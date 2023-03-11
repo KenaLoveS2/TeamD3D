@@ -870,6 +870,12 @@ _float * CGameInstance::Get_CameraNear()
 	return m_pCamera_Manager->Get_CameraNear();
 }
 
+_float * CGameInstance::Get_CameraFov()
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Get_CameraFov();
+}
+
 map<const _tchar*, class CCamera*>* CGameInstance::Get_CameraContainer()
 {
 	NULL_CHECK_RETURN(m_pCamera_Manager, nullptr);

@@ -5,12 +5,6 @@ BEGIN(Client)
 class CMonster;
 class CUI_MonsterHP final : public CUI_Billboard
 {
-public:
-	typedef struct tagWorldDesc
-	{
-		CMonster*	pOwner;
-		_float2		vPos;
-	}WORLDUIDESC;
 
 private:
 	CUI_MonsterHP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -18,10 +12,8 @@ private:
 	virtual ~CUI_MonsterHP() = default;
 
 public:
-	void	Setting(WORLDUIDESC tDesc) {
-		m_tWorldDesc.pOwner = tDesc.pOwner;
+	void	Set_Guage(_float fGuage);
 
-	}
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -32,9 +24,6 @@ public:
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
-
-private:
-	WORLDUIDESC				m_tWorldDesc;
 
 public:
 	static	CUI_MonsterHP*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
