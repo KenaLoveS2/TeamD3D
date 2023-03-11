@@ -247,28 +247,28 @@ HRESULT CPulse_Plate_Anim::SetUp_ShaderResources()
 	return S_OK;
 }
 
-_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
-{
-	// To. DO 
-	// 1) Gimmci_Plat 충돌 체크확인
-	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
-
-	m_bPlayerColl = true;
-
-	
-
-	return 0;
-}
-
-_int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
-{
-	return 0;
-}
-
-_int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
-{
-	return 0;
-}
+//_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+//{
+//	// To. DO 
+//	// 1) Gimmci_Plat 충돌 체크확인
+//	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
+//
+//	m_bPlayerColl = true;
+//
+//	
+//
+//	return 0;
+//}
+//
+//_int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+//{
+//	return 0;
+//}
+//
+//_int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+//{
+//	return 0;
+//}
 
 CPulse_Plate_Anim * CPulse_Plate_Anim::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
