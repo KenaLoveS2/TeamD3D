@@ -22,10 +22,10 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	class CTexture*			m_pTrailflowTexture = nullptr;
+	class CTexture*			m_pTrailflowTexture[2] = { nullptr };
 
 private:
-	_uint m_iTrailFlowTexture = 0;
+	_uint m_iTrailFlowTexture[2] = { 0,8 };
 
 	_float2  m_fUV = { 1.f,1.f };
 	_float	 m_fTimeDelta = 0.0f;

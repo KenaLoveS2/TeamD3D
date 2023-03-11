@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_KenaTrail.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CE_KenaTrail::CE_KenaTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -42,6 +43,8 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 		return E_FAIL;
 	/* Trail Texture */
 
+	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300);
+
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.6f; //5.f
@@ -55,18 +58,26 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 	m_iTrailFlowTexture = 5;
 	m_iTrailTypeTexture = 7;
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
 void CE_KenaTrail::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+	{
+		m_pVITrailBufferCom->ResetInfo();
+		return;
+	}
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 }
 
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -89,12 +100,17 @@ HRESULT CE_KenaTrail::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	/* Instance Buffer */
+	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_KenaInfoMatrix")))
+		return E_FAIL;
+	/* Instance Buffer */
+
 	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_TrailflowTexture", m_iTrailFlowTexture)))
+	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaFlowTexture", m_iTrailFlowTexture)))
 		return E_FAIL;
 
 	/* Type */
-	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_TrailTypeTexture", m_iTrailTypeTexture)))
+	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))

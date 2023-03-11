@@ -2,7 +2,7 @@
     "0.Save Level": 5,
     "1.Save2Load Level": 5,
     "2.Layer Tag": "Layer_Effect",
-    "Pulse Test": [
+    "Object": [
         {
             "Object Data": [
                 {
@@ -14,25 +14,25 @@
                             "Billboard": true,
                             "Blend Type": 0,
                             "Color": [
-                                0.39794921875,
-                                0.5863533020019531,
-                                0.63671875,
-                                0.41960784792900085
+                                0.24774169921875,
+                                0.32099103927612305,
+                                0.515625,
+                                0.6039215922355652
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
-                                65.0,
+                                53.0,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.10000000149011612,
+                            "DurationTime": 0.0,
                             "Effect Type": 0,
                             "FreeMove": false,
                             "Have Trail": false,
                             "Height Frame": 0.0,
-                            "HeightCnt": 2,
+                            "HeightCnt": 0,
                             "Init Pos": [
                                 0.0,
                                 0.0,
@@ -40,7 +40,7 @@
                                 0.0
                             ],
                             "MaskTexture Index": [
-                                0.0,
+                                83.0,
                                 0.0,
                                 0.0,
                                 0.0,
@@ -51,7 +51,6 @@
                             "MoveDurationTime": 0.0,
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
-                            "PassCnt": 0,
                             "Particle Type": 0,
                             "Pixed Dir": [
                                 0.0,
@@ -62,39 +61,39 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.41960784792900085,
-                                0.41960784792900085,
-                                0.41960784792900085,
-                                0.41960784792900085
+                                0.6039215922355652,
+                                0.6039215922355652,
+                                0.6039215922355652,
+                                0.6039215922355652
                             ],
-                            "SeparateHeight": 2,
-                            "SeparateWidth": 2,
+                            "SeparateHeight": 0,
+                            "SeparateWidth": 0,
                             "Spread": false,
                             "Start": false,
                             "Texture Type": 0,
-                            "TextureRender Type": 1,
+                            "TextureRender Type": 0,
                             "Trigger": false,
                             "Use Child": false,
-                            "Use Mask": false,
+                            "Use Mask": true,
                             "Use Normal": false,
-                            "Width Frame": 1.0,
-                            "WidthCnt": 2
+                            "Width Frame": 0.0,
+                            "WidthCnt": 0
                         }
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
                     "WorldMatrix": [
-                        0.8413898944854736,
-                        0.33815380930900574,
-                        -0.4215625822544098,
+                        -0.7429112792015076,
+                        -0.1696474403142929,
+                        0.6475356817245483,
                         0.0,
-                        -0.40464159846305847,
-                        0.9112566113471985,
-                        -0.07665874809026718,
+                        -0.21491047739982605,
+                        0.9765894412994385,
+                        0.009291350841522217,
                         0.0,
-                        0.35822924971580505,
-                        0.23508165776729584,
-                        0.9035532474517822,
+                        -0.6339528560638428,
+                        -0.1322595775127411,
+                        -0.7619784474372864,
                         0.0,
                         0.0,
                         0.0,

@@ -1,39 +1,38 @@
 {
     "0.Save Level": 5,
-    "1.Save2Load Level": 4,
+    "1.Save2Load Level": 5,
     "2.Layer Tag": "Layer_Effect",
-    "Pulse Test": [
+    "Object": [
         {
             "Object Data": [
                 {
                     "Child Count": 0,
                     "Desc": [
                         {
-                            "PassCnt": 1,
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": true,
-                            "Blend Type": 1,
+                            "Blend Type": 0,
                             "Color": [
-                                0.2151602804660797,
-                                0.44557538628578186,
-                                0.49794238805770874,
-                                1.0
+                                0.48235294222831726,
+                                0.9176470637321472,
+                                1.0,
+                                0.22745098173618317
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
-                                8.0,
+                                72.0,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0
                             ],
+                            "DurationTime": 0.5,
                             "Effect Type": 0,
-                            "DurationTime": 0.3,
                             "FreeMove": false,
                             "Have Trail": false,
                             "Height Frame": 3.0,
-                            "HeightCnt": 7,
+                            "HeightCnt": 5,
                             "Init Pos": [
                                 0.0,
                                 0.0,
@@ -41,7 +40,7 @@
                                 0.0
                             ],
                             "MaskTexture Index": [
-                                48.0,
+                                0.0,
                                 0.0,
                                 0.0,
                                 0.0,
@@ -53,6 +52,7 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
+                            "PassCnt": 0,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
@@ -62,39 +62,39 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
+                                0.22745098173618317,
+                                0.22745098173618317,
+                                0.22745098173618317,
+                                0.22745098173618317
                             ],
-                            "SeparateHeight": 8,
-                            "SeparateWidth": 8,
+                            "SeparateHeight": 5,
+                            "SeparateWidth": 5,
                             "Spread": false,
                             "Start": false,
                             "Texture Type": 0,
                             "TextureRender Type": 1,
                             "Trigger": false,
                             "Use Child": false,
-                            "Use Mask": true,
+                            "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 3.0,
-                            "WidthCnt": 7
+                            "Width Frame": 2.0,
+                            "WidthCnt": 5
                         }
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
                     "WorldMatrix": [
-                        2.3,
+                        0.4678327739238739,
+                        0.012058950960636139,
+                        0.8837347626686096,
                         0.0,
+                        0.6638355851173401,
+                        0.6553317904472351,
+                        -0.36036452651023865,
                         0.0,
-                        0.0,
-                        0.0,
-                        2.3,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        2.3,
+                        -0.5834850668907166,
+                        0.7552449107170105,
+                        0.298580527305603,
                         0.0,
                         0.0,
                         0.0,
