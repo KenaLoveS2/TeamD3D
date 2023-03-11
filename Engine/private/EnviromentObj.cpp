@@ -166,6 +166,17 @@ HRESULT CEnviromentObj::Render()
 	return S_OK;
 }
 
+void CEnviromentObj::ImGui_ShaderValueProperty()
+{
+	if(ImGui::Button("Recompile"))
+	{
+		if (m_pShaderCom)
+			m_pShaderCom->ReCompile();
+		if (m_pRendererCom)
+			m_pRendererCom->ReCompile();
+	}
+}
+
 HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	m_CurComponenteTag.push_back(pComTag);
@@ -229,8 +240,7 @@ HRESULT CEnviromentObj::Set_UpTexture_FilePathToMaterial(CModel * pModel , const
 	{
 		pModel->SetUp_Material(i, Type, TexturePath);
 	}
-
-
+	
 	return S_OK;
 }
 

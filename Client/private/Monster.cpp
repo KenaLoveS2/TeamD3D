@@ -108,6 +108,14 @@ void CMonster::Imgui_RenderProperty()
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
 
+	if (ImGui::Button("BIND"))
+		m_bBind = true;
+
+	if (ImGui::Button("STRONGLYDMG"))
+		m_bStronglyHit = true;
+
+	if (ImGui::Button("WEALKYDMG"))
+		m_bWeaklyHit = true;
 }
 
 void CMonster::ImGui_AnimationProperty()
@@ -291,7 +299,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	{
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// Å¸°Ý
+			// Å¸ï¿½ï¿½
 		}
 	}
 

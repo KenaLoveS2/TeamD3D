@@ -239,6 +239,7 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\LoadingIcon.h" />
     <ClInclude Include="..\Public\LodObject.h" />
+    <ClInclude Include="..\public\Mage.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
@@ -263,6 +264,8 @@
     <ClInclude Include="..\public\Rot_State.h" />
     <ClInclude Include="..\public\RuinKit.h" />
     <ClInclude Include="..\public\Sapling.h" />
+    <ClInclude Include="..\public\ShieldStick.h" />
+    <ClInclude Include="..\public\ShieldStick_Weapon.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\Public\Slope.h" />
     <ClInclude Include="..\Public\Stair.h" />
@@ -388,6 +391,7 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingIcon.cpp" />
     <ClCompile Include="..\Private\LodObject.cpp" />
+    <ClCompile Include="..\private\Mage.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
@@ -412,6 +416,8 @@
     <ClCompile Include="..\private\Rot_State.cpp" />
     <ClCompile Include="..\private\RuinKit.cpp" />
     <ClCompile Include="..\private\Sapling.cpp" />
+    <ClCompile Include="..\private\ShieldStick.cpp" />
+    <ClCompile Include="..\private\ShieldStick_Weapon.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\Private\Slope.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
