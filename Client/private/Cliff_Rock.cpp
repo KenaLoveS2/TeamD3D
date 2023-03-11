@@ -58,16 +58,79 @@ HRESULT CCliff_Rock::Render()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Ledge_04" 
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Ledge_03"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Ledge_01")
 	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_HRAOTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DetailNormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 9);
+		}
 	}
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Wall_Short02"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Wall_Large02"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Wall_Large01")
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DetailNormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 10);
+		}
+	}
+	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_Wall_Med03")
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_BlendDiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 11);
+		}
+	}
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_02"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_03"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_05")
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DetailNormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 9);
+		}
+	}
+	else
+	{
+		// 쉐이더 안한건 안그릴꺼야
+		//for (_uint i = 0; i < iNumMeshes; ++i)
+		//{
+		//	/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+		//	//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
+		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		//	//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
+		//	m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
+		//}
+	}
+
 	return S_OK;
+}
+
+void CCliff_Rock::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+	m_pModelCom->Imgui_MaterialPath();
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CCliff_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -127,21 +190,6 @@ HRESULT CCliff_Rock::SetUp_Components()
 
 		m_iShaderOption = 4;
 	}
-
-	//if (FAILED(__super::Add_Component(m_EnviromentDesc.iCurLevel, TEXT("Prototype_Component_Texture_Cave_Rock_MasterDiffuse"), TEXT("Com_MasterTextureD"),
-	//	(CComponent**)&m_pMasterDiffuseBlendTexCom)))
-	//	return E_FAIL;
-
-	/************************** ex ***********************/
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-	//for (_uint i = 0; i < iNumMeshes; ++i)
-	//{
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_MSK_CURV, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_MASK, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_H_R_AO, ex(path));
-	//	m_pModelCom->SetUp_Material(i, WJTextureType_COMP_AMBIENT_OCCLUSION, ex(path));
-	//}
-	/******************************************************/
 
 	return S_OK;
 }
