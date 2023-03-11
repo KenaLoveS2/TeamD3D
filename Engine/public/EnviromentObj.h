@@ -53,7 +53,6 @@ public:
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
 
-
 	
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -61,8 +60,8 @@ public:
 	virtual void Tick(_float fTimeDelta);
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
-
-
+	virtual 	void ImGui_ShaderValueProperty();
+	
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
 	virtual  void				Imgui_RenderComponentProperties()override;
@@ -79,13 +78,14 @@ protected:
 
 	_bool										m_bRenderActive = false;
 	_uint											m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 
+	class CShader*							m_pShaderCom = nullptr;
+	class CRenderer*						m_pRendererCom = nullptr;
 
 private:/*For.ImguiTool*/
 	string										m_str_Imgui_ComTag = "";
 	_int											m_iImgui_ComponentOption = 0;
 	_bool										m_bWireFrame_Rendering = false;
 	//vector<const _tchar*>				m_vecStr_textureFilePath;				//Texture °æ·Îµé
-	
 
 public:		
 	virtual CGameObject* Clone(void* pArg) { return nullptr; };

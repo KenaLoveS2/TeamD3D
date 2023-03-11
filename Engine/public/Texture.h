@@ -11,7 +11,7 @@ protected:
 	virtual ~CTexture() = default;
 
 public:
-	_uint              Get_TextureIdx() { return m_iNumTextures; }
+	_uint											    Get_TextureIdx() { return m_iNumTextures; }
 	ID3D11ShaderResourceView*      Get_Texture(_uint iTextureIdx = 0) const { return m_pTextures[iTextureIdx]; }
 
 	const	_int	Get_SelectedTextureNum()const { return m_iSelectedTextureNum; }
@@ -30,16 +30,14 @@ public:
 
 
 private:
-	_uint										m_iNumTextures = 0;
+	_uint															m_iNumTextures = 0;
 	ID3D11ShaderResourceView**					m_pTextures = nullptr;
-
-	_int										m_iSelectedTextureNum = -1;
+	_int															m_iSelectedTextureNum = -1;
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1,_bool bddsLoad=false);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
-
 };
 
 END
