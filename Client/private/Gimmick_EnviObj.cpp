@@ -4,6 +4,9 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
+#include "Pulse_Plate_Anim.h"
+
+/* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
 {
@@ -35,9 +38,35 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
+{
+	/*CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
+	{
+
+		CPulse_Plate_Anim* pPluse_Plate = dynamic_cast<CPulse_Plate_Anim*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"1_PulsePlate_Anim"));
+		assert(pPluse_Plate != nullptr && "CGimmick_EnviObj::Late_Initialize_RoomIndex 1");
+		pPluse_Plate->m_Gimmick_PulsePlateDelegate.bind(this, &CGimmick_EnviObj::Set_Gimmick_Active);
+
+	}
+	else if (m_EnviromentDesc.iRoomIndex == 1)
+	{
+
+	}
+
+	RELEASE_INSTANCE(CGameInstance);*/
+
+	return S_OK;
+}
+
 void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Gimmik_Start(fTimeDelta);
+
+	
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -67,6 +96,28 @@ HRESULT CGimmick_EnviObj::Render()
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
+}
+
+void CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
+{
+	if (m_bGimmick_Active == false)
+		return;
+
+	switch (m_EnviromentDesc.eChapterType)
+	{
+	case Gimmick_TYPE_GO_UP:
+		Gimmick_Go_up(fTimeDelta);
+		break;
+	default:
+		break;
+	}
+
+}
+
+void CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
+{
+	m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
+
 }
 
 HRESULT CGimmick_EnviObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

@@ -723,6 +723,8 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 		*NewMatrix = InstanceMatrixVec[i];
 		m_pInstancingMatrix.push_back(NewMatrix);
 	}
+
+
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 
@@ -1562,6 +1564,7 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 }
 
+
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
 	for (auto &iter : m_Meshes)
@@ -1586,6 +1589,23 @@ void CModel::Set_PxMatrix(_float4x4& Matrix)
 	}
 }
 
+void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for (auto &pInstMesh : m_InstancingMeshes)
+		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
+}
+
+void CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for (auto &pInstMesh : m_InstancingMeshes)
+		pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+}
 
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 {

@@ -223,7 +223,7 @@ void CSticks01::ImGui_ShaderValueProperty()
 	CMonster::ImGui_ShaderValueProperty();
 }
 
-void CSticks01::ImGui_PhysXValueProperty()
+void CSticks01::ImGui_PhysXValueProperty()		
 {
 	CMonster::ImGui_PhysXValueProperty();
 
@@ -242,7 +242,7 @@ void CSticks01::ImGui_PhysXValueProperty()
 
 	_uint nActorListCount = static_cast<_uint>(m_pTransformCom->Get_ActorList()->size());
 
-	ImGui::BulletText("ColliderLists");
+	ImGui::BulletText("ColliderLists");			// ¹«±â
 	{
 		static _int iSelect = -1;
 		char** ppObjectTag = new char*[nActorListCount];

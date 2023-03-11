@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/BombPlatform/Platforms/Materials/MI_RuinPlatform05.MI_RuinPlatform05'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/BombPlatform/Platforms/Materials/MI_RuinPlatform05.MI_RuinPlatform05'
+        MaterialSlotName = MI_RuinPlatform05
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 1484.07, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=20.5895, Y=26.2526, Z=-87.0391 }
+    BoxExtent = { X=376.925, Y=357.091, Z=233.527 }
+    SphereRadius = 452.375
+}

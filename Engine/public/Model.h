@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Animation.h"
 #include "PhysX_Defines.h"
+#include "EnviromentObj.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
@@ -73,6 +74,9 @@ public:
 	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 	void						Imgui_MaterialPath();
 
+			
+	void				Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+	void				Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
 	
@@ -138,7 +142,8 @@ public:
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-
+	
+	
 public:
 	void Create_PxTriangle(PX_USER_DATA *pUserData);
 	void Set_PxPosition(_float3 vPosition);
