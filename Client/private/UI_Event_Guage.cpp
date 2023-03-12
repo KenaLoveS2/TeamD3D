@@ -230,6 +230,12 @@ HRESULT CUI_Event_Guage::Load_Data(wstring fileName)
 	return S_OK;
 }
 
+void CUI_Event_Guage::Initialize(_float4 vMinColor, _float4 vColor)
+{
+	m_vMinColor = vMinColor;
+	m_vColor = vColor;
+}
+
 CUI_Event_Guage * CUI_Event_Guage::Create()
 {
 	CUI_Event_Guage* pInstance = new CUI_Event_Guage();
@@ -241,6 +247,15 @@ CUI_Event_Guage * CUI_Event_Guage::Create(wstring fileName)
 	CUI_Event_Guage* pInstance = new CUI_Event_Guage();
 	if (pInstance != nullptr)
 		pInstance->Load_Data(fileName);
+
+	return pInstance;
+}
+
+CUI_Event_Guage * CUI_Event_Guage::Create(_float4 vMinColor, _float4 vColor)
+{
+	CUI_Event_Guage* pInstance = new CUI_Event_Guage();
+	if (nullptr != pInstance)
+		pInstance->Initialize(vMinColor, vColor);
 
 	return pInstance;
 }

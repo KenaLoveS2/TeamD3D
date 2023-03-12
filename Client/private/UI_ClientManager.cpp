@@ -53,7 +53,10 @@
 #include "UI_NodeButton.h"
 #include "UI_NodeConfWindow.h"
 
+/* World UI */
 #include "UI_MonsterHP.h"
+#include "UI_RotIcon.h"
+
 IMPLEMENT_SINGLETON(CUI_ClientManager)
 
 CUI_ClientManager::CUI_ClientManager()
@@ -393,7 +396,13 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_BGGlow");
 
 
-
+	/********************************************/
+	/*				For. World_UI				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotFocus"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Focusing/T_RotAction_Icon.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_RotFocus");
 
 
 
@@ -646,10 +655,13 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 
-	/*test*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterHP"), CUI_MonsterHP::Create(pDevice, pContext))))
+	/********************************************/
+	/*				For. WorldUI				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_MonsterHP"), CUI_MonsterHP::Create(pDevice, pContext))))
 		return E_FAIL;
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_RotFocuss"), CUI_RotIcon::Create(pDevice, pContext))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

@@ -1,25 +1,30 @@
 #include "stdafx.h"
-#include "..\public\UI_MonsterHP.h"
+#include "..\public\UI_RotIcon.h"
 #include "GameInstance.h"
-#include "Monster.h"
-#include "UI_Event_Guage.h"
 
-CUI_MonsterHP::CUI_MonsterHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_RotIcon::CUI_RotIcon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
+	,m_pTarget(nullptr)
 {
 }
 
-CUI_MonsterHP::CUI_MonsterHP(const CUI_MonsterHP & rhs)
-	:CUI_Billboard(rhs)
+CUI_RotIcon::CUI_RotIcon(const CUI_RotIcon & rhs)
+	: CUI_Billboard(rhs)
+	,m_pTarget(nullptr)
 {
 }
 
-void CUI_MonsterHP::Set_Guage(_float fGuage)
+void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 {
-	static_cast<CUI_Event_Guage*>(m_vecEvents[0])->Call_Event(fGuage);
+	if (pTarget == nullptr)
+		return;
+
+	m_bActive = true;
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
+		pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 }
 
-HRESULT CUI_MonsterHP::Initialize_Prototype()
+HRESULT CUI_RotIcon::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -27,19 +32,18 @@ HRESULT CUI_MonsterHP::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_MonsterHP::Initialize(void * pArg)
+HRESULT CUI_RotIcon::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 	}
-	
+
 	/* It might be faster.... */
-	m_iRenderPass = 20;
+	m_iRenderPass = 1;
 	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
-
 
 
 	if (FAILED(SetUp_Components()))
@@ -50,24 +54,18 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 
 	m_bActive = true;
 
-
-	/* Events */
-	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Guage::Create({ 1.f, 0.f, 0.f, 1.f }, { 1.f, 0.f, 0.f,1.f }));
-
 	return S_OK;
 }
 
-void CUI_MonsterHP::Tick(_float fTimeDelta)
+void CUI_RotIcon::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
 
 	__super::Tick(fTimeDelta);
-
 }
 
-void CUI_MonsterHP::Late_Tick(_float fTimeDelta)
+void CUI_RotIcon::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
@@ -78,7 +76,7 @@ void CUI_MonsterHP::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
-HRESULT CUI_MonsterHP::Render()
+HRESULT CUI_RotIcon::Render()
 {
 	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
 		return S_OK;
@@ -99,7 +97,7 @@ HRESULT CUI_MonsterHP::Render()
 	return S_OK;
 }
 
-HRESULT CUI_MonsterHP::SetUp_Components()
+HRESULT CUI_RotIcon::SetUp_Components()
 {
 	/* Renderer */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
@@ -114,13 +112,13 @@ HRESULT CUI_MonsterHP::SetUp_Components()
 		return E_FAIL;
 
 	/* Diffuse Texture */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleBar"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotFocus"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CUI_MonsterHP::SetUp_ShaderResources()
+HRESULT CUI_RotIcon::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -158,29 +156,29 @@ HRESULT CUI_MonsterHP::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CUI_MonsterHP * CUI_MonsterHP::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_RotIcon * CUI_RotIcon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CUI_MonsterHP*	pInstance = new CUI_MonsterHP(pDevice, pContext);
+	CUI_RotIcon*	pInstance = new CUI_RotIcon(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed To Create : CUI_MonsterHP");
+		MSG_BOX("Failed To Create : CUI_RotIcon");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject * CUI_MonsterHP::Clone(void * pArg)
+CGameObject * CUI_RotIcon::Clone(void * pArg)
 {
-	CUI_MonsterHP*	pInstance = new CUI_MonsterHP(*this);
+	CUI_RotIcon*	pInstance = new CUI_RotIcon(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed To Clone : CUI_NodeRotGuage");
+		MSG_BOX("Failed To Clone : CUI_RotIcon");
 		Safe_Release(pInstance);
 	}
-	return pInstance;
+	return pInstance;;
 }
 
-void CUI_MonsterHP::Free()
+void CUI_RotIcon::Free()
 {
 	__super::Free();
 }

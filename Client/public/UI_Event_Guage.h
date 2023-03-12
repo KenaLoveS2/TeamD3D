@@ -24,6 +24,8 @@ public:
 public:
 	virtual HRESULT		Save_Data(Json* json);
 	virtual HRESULT		Load_Data(wstring fileName);
+public:
+	void				Initialize(_float4 vMinColor, _float4 vColor);
 
 private:
 	_uint				m_iRenderPass;
@@ -42,6 +44,8 @@ private:
 public:
 	static CUI_Event_Guage*	Create();
 	static CUI_Event_Guage*	Create(wstring fileName);
+	static CUI_Event_Guage*	Create(_float4 vMinColor, _float4 vColor);
+
 	virtual void				Free();
 };
 END

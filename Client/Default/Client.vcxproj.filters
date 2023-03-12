@@ -340,6 +340,9 @@
     <Filter Include="02.GameObjects\UI\03. WorldUI\Monster">
       <UniqueIdentifier>{f3607a59-9297-48c0-8507-be40ac9751b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Environment">
+      <UniqueIdentifier>{1423d3bd-ca5c-4830-a228-28029866f7cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -812,6 +815,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
+    <ClInclude Include="..\public\Mage.h" />
+    <ClInclude Include="..\public\ShieldStick.h" />
+    <ClInclude Include="..\public\ShieldStick_Weapon.h" />
+    <ClInclude Include="..\public\UI_RotIcon.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1263,6 +1272,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
+    <ClCompile Include="..\private\Mage.cpp" />
+    <ClCompile Include="..\private\ShieldStick.cpp" />
+    <ClCompile Include="..\private\ShieldStick_Weapon.cpp" />
+    <ClCompile Include="..\private\UI_RotIcon.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

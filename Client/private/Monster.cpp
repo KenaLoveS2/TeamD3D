@@ -57,12 +57,20 @@ HRESULT CMonster::Initialize(void* pArg)
 	m_pKena = pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
 
 	RELEASE_INSTANCE(CGameInstance)
+
+	m_bRotable = true;
+
 	return S_OK;
 }
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
+	/* Is In Camera? */
+
+
+
 
 	return S_OK;
 }
@@ -270,7 +278,7 @@ HRESULT CMonster::SetUp_UI()
 	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 0.2f ;
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
-		TEXT("Prototype_GameObject_MonsterHP"),
+		TEXT("Prototype_GameObject_UI_MonsterHP"),
 		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
 	{
 		MSG_BOX("Failed To make UI");

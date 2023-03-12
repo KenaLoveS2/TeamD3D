@@ -11,14 +11,17 @@
 #include "Terrain.h"
 #include "Rope_RotRock.h"
 #include "Rot.h"
+#include "UI_RotIcon.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
+	, m_pFocusRot(nullptr)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
+	, m_pFocusRot(nullptr)
 {
 }
 
@@ -109,6 +112,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
 	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
+
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	return S_OK;
 }
@@ -1510,6 +1515,23 @@ HRESULT CKena::SetUp_State()
 	pAnimState->m_fLerpDuration = 0.2f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL_INTO_RUN);
 	m_pAnimation->Add_State(pAnimState);
+
+	return S_OK;
+}
+
+HRESULT CKena::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_UI_RotFocuss"),
+		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pFocusRot)))
+	{
+		MSG_BOX("Failed To make UI : Kena");
+		return E_FAIL;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
 
 	return S_OK;
 }
