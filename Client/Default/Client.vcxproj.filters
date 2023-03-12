@@ -819,12 +819,6 @@
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Pip.h">
-      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Monster_Focus.h">
-      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_Billboard.h">
       <Filter>02.GameObjects\UI\03. WorldUI</Filter>
     </ClInclude>
@@ -1284,12 +1278,6 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Pip.cpp">
-      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Monster_Focus.cpp">
-      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Billboard.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI</Filter>
