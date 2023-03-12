@@ -18,12 +18,14 @@ public:
 		_float		   fPulseMaxSize;
 		_float			fIncreseRatio;
 		_float3			vResetSize;
+		_float4			vResetPos;
 		tag_PulseObject()
 		{
 			eObjType = PULSE_OBJ_DELIVER;
 			fPulseMaxSize =	3.f;
 			fIncreseRatio = 1.f;
 			vResetSize = _float3(1.f, 1.f, 1.f);
+			vResetPos = _float4(0.f, 0.f, 0.f, 1.f);
 		}
 	}E_PulseObject_DESC;
 
@@ -45,9 +47,12 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT	Late_Initialize(void* pArg = nullptr)override;
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+	virtual void	ImGui_PhysXValueProperty()override;
 
 private:
 	HRESULT SetUp_ShaderResources();

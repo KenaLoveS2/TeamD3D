@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Environment/Prototype/Assets/Foliage/Materials/Foliage_DeadBush_INST.Foliage_DeadBush_INST'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Environment/Prototype/Assets/Foliage/Materials/Foliage_DeadBush_INST.Foliage_DeadBush_INST'
+        MaterialSlotName = Foliage-BushDead_01_INST
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 186.018, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=12.062, Y=-1.29666, Z=78.5974 }
+    BoxExtent = { X=102.771, Y=111.683, Z=85.6904 }
+    SphereRadius = 129.993
+}

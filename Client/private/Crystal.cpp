@@ -40,9 +40,13 @@ HRESULT CCrystal::Initialize(void * pArg)
 
 HRESULT CCrystal::Late_Initialize(void * pArg)
 {
-	
+	if (lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
+		return S_OK;
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
-	
 	CEffect_Base* pEffectObj = nullptr;
 	/*Deliver_PulseE*/
 
@@ -52,11 +56,11 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	PulseObj_Desc.fIncreseRatio = 1.02f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(2.f, 2.f, 2.f);
+	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
 		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
 	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
-
 	m_pCrystal_EffectList.push_back(pEffectObj);
 
 	/*Recived_PulseE*/
@@ -64,20 +68,19 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;
 	PulseObj_Desc.fIncreseRatio = 1.05f;
 	PulseObj_Desc.fPulseMaxSize = 5.f;
-	m_ePulseDesc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
+	PulseObj_Desc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
+	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
 		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
 	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
 	m_pCrystal_EffectList.push_back(pEffectObj);
 
-	_float4 vPos;
-	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	
+
 	for (auto& pEffectObj : m_pCrystal_EffectList)
-		pEffectObj->Set_Position(vPos);
-
-
+	{
+		pEffectObj->Late_Initialize();
+	}
 	return S_OK;
 }
 
@@ -88,8 +91,12 @@ void CCrystal::Tick(_float fTimeDelta)
 	
 	for (auto& pEffectObj : m_pCrystal_EffectList)
 	{
-		if(pEffectObj != nullptr)
+		if (pEffectObj != nullptr)
+		{
+			pEffectObj->ImGui_PhysXValueProperty();
 			pEffectObj->Tick(fTimeDelta);
+			
+		}
 	}
 }
 

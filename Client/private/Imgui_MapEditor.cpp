@@ -797,23 +797,24 @@ void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
 				continue;
 		
-			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
+			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
 		}
 	}
 
-	if (ImGui::Button("Stop_Crystal_Pulse"))
-	{
+	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//{
 
-		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-		{
-			if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-				continue;
+	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+	//	{
+	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//			continue;
 
-			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
-		}
+	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	}
 
 
-	}
+	//}
 
 }
 
