@@ -19,6 +19,7 @@ public:
 		_float			fIncreseRatio;
 		_float3			vResetSize;
 		_float4			vResetPos;
+	
 		tag_PulseObject()
 		{
 			eObjType = PULSE_OBJ_DELIVER;
@@ -43,6 +44,9 @@ public:
 		ZeroMemory(&m_ePulseDesc, sizeof(m_ePulseDesc));
 		memcpy(&m_ePulseDesc, &PulseDesc, sizeof(m_ePulseDesc));
 	}
+
+	 _bool Get_Finish()const { return m_bFinish; }
+	void	Set_Finish(_bool bFinish) { m_bFinish = bFinish; }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -69,7 +73,7 @@ private:
 
 private:
 	E_PulseObject_DESC			m_ePulseDesc;
-
+	_bool						m_bFinish = false;
 
 public:
 	static  CE_PulseObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
