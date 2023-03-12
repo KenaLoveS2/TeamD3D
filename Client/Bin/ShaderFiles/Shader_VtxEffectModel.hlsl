@@ -200,6 +200,7 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
 	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
 
+
 	return Out;
 }
 

@@ -3,6 +3,9 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Effect_Base.h"
+#include "E_PulseObject.h"
+
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -35,14 +38,79 @@ HRESULT CCrystal::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CCrystal::Late_Initialize(void * pArg)
+{
+#ifdef FOR_MAP_GIMMICK
+	if (lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
+		return S_OK;
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
+	CEffect_Base* pEffectObj = nullptr;
+	/*Deliver_PulseE*/
+
+	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER;
+	PulseObj_Desc.fIncreseRatio = 1.02f;
+	PulseObj_Desc.fPulseMaxSize = 10.f;
+	PulseObj_Desc.vResetSize = _float3(2.f, 2.f, 2.f);
+	PulseObj_Desc.vResetPos = vPos;
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_pCrystal_EffectList.push_back(pEffectObj);
+
+	/*Recived_PulseE*/
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;
+	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fPulseMaxSize = 5.f;
+	PulseObj_Desc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
+	PulseObj_Desc.vResetPos = vPos;
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_pCrystal_EffectList.push_back(pEffectObj);
+
+
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		pEffectObj->Late_Initialize();
+	}
+#endif
+	return S_OK;
+}
+
 void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		if (pEffectObj != nullptr)
+		{
+			pEffectObj->ImGui_PhysXValueProperty();
+			pEffectObj->Tick(fTimeDelta);
+			
+		}
+	}
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		if (pEffectObj != nullptr)
+			pEffectObj->Late_Tick(fTimeDelta);
+	}
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -58,16 +126,24 @@ HRESULT CCrystal::Render()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//for (_uint i = 0; i < iNumMeshes; ++i)
-	//{
-	//	/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-	//	//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
-	//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-	//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-	//	//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-	//	m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
-	//}
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+	}
 	return S_OK;
+}
+
+void CCrystal::Create_Pulse(_bool bActive)
+{
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		if (pEffectObj != nullptr)
+			pEffectObj->Set_Active(bActive);
+	}
 }
 
 HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

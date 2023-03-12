@@ -15,6 +15,7 @@
 #include "Imgui_TerrainEditor.h"
 #include "Gimmick_EnviObj.h"
 #include "Pulse_Plate_Anim.h"
+#include "Crystal.h"
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -54,6 +55,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		imgui_ObjectList_Clear();
 
 		imgui_Gimmic_Class_Viewr();
+		Imgui_Crystal_Create_Pulse();
 	}
 
 	ImGui::End();
@@ -785,6 +787,37 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 		return;
 }
 
+void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
+{
+	if (ImGui::Button("Create_Crystal_Pulse"))
+	{
+
+		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+		{
+			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+				continue;
+		
+			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
+		}
+	}
+
+	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//{
+
+	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+	//	{
+	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//			continue;
+
+	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	}
+
+
+	//}
+
+}
+
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
 {
 	assert(nullptr != pGameObject && "CImgui_MapEditor::Load_ComTagToCreate");
@@ -1016,10 +1049,11 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 
 	pModel->Set_InstancePos(vecMatrixVec);
 
+#ifdef FOR_MAP_GIMMICK
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{
 		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
-
+#endif
 }
 
