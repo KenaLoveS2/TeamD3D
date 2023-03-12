@@ -320,6 +320,7 @@
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
     <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
+    <ClInclude Include="..\public\UI_NodeTitle.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
@@ -476,6 +477,7 @@
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
+    <ClCompile Include="..\private\UI_NodeTitle.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />

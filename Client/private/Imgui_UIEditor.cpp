@@ -70,7 +70,7 @@ void CImgui_UIEditor::Imgui_FreeRender()
 				{
 					CUI::tagUIDesc tDesc;
 					tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
-					if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_Canvas",
+					if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
 						(*pCanvasProtoTags)[selected_canvasType].c_str(),
 						(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
 						MSG_BOX("Failed To Clone Canvas : UIEditor");

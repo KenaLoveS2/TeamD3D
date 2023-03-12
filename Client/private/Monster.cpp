@@ -106,7 +106,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
 	_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
-	if (20.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+	if (10.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 		Call_RotIcon();
 }
 

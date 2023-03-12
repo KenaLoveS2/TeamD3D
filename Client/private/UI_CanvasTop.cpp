@@ -89,6 +89,7 @@ HRESULT CUI_CanvasTop::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -102,16 +103,18 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//string KarmaTag = "Node_Karma";
-	//CUI* pKarma = nullptr;
-	//CUI::UIDESC tKara;
-	//_tchar* karmaCloneTag = CUtile::StringToWideChar(KarmaTag);
-	//tKara.fileName = karmaCloneTag;
-	//pKarma = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Karma", karmaCloneTag, &tKara));
-	//if (FAILED(Add_Node(pKarma)))
-	//	return E_FAIL;
-	//m_vecNodeCloneTag.push_back(KarmaTag);
-	//pGameInstance->Add_String(karmaCloneTag);
+	{ /* LetterBox */
+		string strTag = "Node_MapTitle";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_MapTitle", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 

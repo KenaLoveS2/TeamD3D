@@ -863,6 +863,9 @@
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeTitle.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\TitleCard</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1334,6 +1337,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeTitle.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\TitleCard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

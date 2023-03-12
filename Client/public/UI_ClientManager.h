@@ -26,6 +26,7 @@ public:
 		QUEST_, QUEST_LINE,
 		INV_, INV_KARMA, INV_NUMROTS, INV_CRYSTAL,
 		
+		TOP_TITLE,
 		LETTERBOX_AIM,
 
 		/*Must Be Last ... ! */
