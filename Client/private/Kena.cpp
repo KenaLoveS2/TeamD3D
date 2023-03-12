@@ -119,6 +119,12 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
 	
+
+	if (m_bAim && m_bJump)
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+	else
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
 	__super::Tick(fTimeDelta);
 
 	// Test_Raycast();

@@ -341,7 +341,7 @@ void CTransform::Speed_Boost(_bool bKeyState, _float fValue)
 	if (bKeyState)
 		m_TransformDesc.fSpeedPerSec = m_fInitSpeed * fValue;
 	else
-		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
+		m_TransformDesc.fSpeedPerSec = m_TransformDesc.fSpeedPerSec;
 }
 
 void CTransform::Speed_Down(_bool bKeyState, _float fValue)
@@ -349,7 +349,7 @@ void CTransform::Speed_Down(_bool bKeyState, _float fValue)
 	if (bKeyState)
 		m_TransformDesc.fSpeedPerSec = m_fInitSpeed / fValue;
 	else
-		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
+		m_TransformDesc.fSpeedPerSec = m_TransformDesc.fSpeedPerSec;
 }
 
 void CTransform::Orbit(_fvector vTargetPos, _fvector vAxis, const _float & fDistance, _float fTimeDelta)

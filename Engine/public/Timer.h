@@ -11,12 +11,13 @@ public:
 	virtual ~CTimer() = default;
 
 public:
-	_float Get_TimeDelta() { return m_fTimeDelta; }
-	void Set_TimeRate(_float fRate) { m_fTimeRate = fRate; }
+	_float			Get_TimeDelta() { return m_fTimeDelta; }
+	const _float	Get_TimeRate() const { return m_fTimeRate; }
+	void			Set_TimeRate(_float fRate) { m_fTimeRate = fRate; }
 
 public:
 	HRESULT		Ready_Timer();
-	void		Update_Timer();
+	void			Update_Timer();
 
 private:
 	LARGE_INTEGER		m_CurrentTime;
