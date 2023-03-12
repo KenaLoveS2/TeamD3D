@@ -253,24 +253,29 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 		m_pPreAnim = m_pCurAnim;
 		m_fCurLerpTime = 0.f;
 
-		if (pAnim->m_pMainAnim != m_pPreAnim->m_pMainAnim)
+		if (m_pPreAnim != pAnim)
 		{
-			pAnim->m_pMainAnim->Reset_Animation();
-			if (pAnim->m_pBlendAnim != nullptr)
+			if (pAnim->m_pMainAnim != m_pPreAnim->m_pMainAnim)
 			{
-				if (pAnim->m_pBlendAnim == m_pPreAnim->m_pMainAnim)
-					pAnim->m_pMainAnim->Set_PlayTime(pAnim->m_pBlendAnim->Get_PlayTime());
-				else
-					pAnim->m_pBlendAnim->Reset_Animation();
+				pAnim->m_pMainAnim->Reset_Animation();
+				if (pAnim->m_pBlendAnim != nullptr)
+				{
+					if (pAnim->m_pBlendAnim == m_pPreAnim->m_pMainAnim)
+						pAnim->m_pMainAnim->Set_PlayTime(pAnim->m_pBlendAnim->Get_PlayTime());
+					else
+						pAnim->m_pBlendAnim->Reset_Animation();
+				}
+			}
+			else
+			{
+				if (pAnim->m_pBlendAnim != nullptr)
+					pAnim->m_pBlendAnim->Set_PlayTime(m_pPreAnim->m_pMainAnim->Get_PlayTime());
+				//else
+				//	pAnim->m_pMainAnim->Reset_Animation();
 			}
 		}
 		else
-		{
-			if (pAnim->m_pBlendAnim != nullptr)
-				pAnim->m_pBlendAnim->Set_PlayTime(m_pPreAnim->m_pMainAnim->Get_PlayTime());
-			//else
-			//	pAnim->m_pMainAnim->Reset_Animation();
-		}
+			pAnim->m_pMainAnim->Reset_Animation();
 	}
 	else
 		m_fCurLerpTime = m_fLerpDuration;

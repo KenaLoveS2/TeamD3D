@@ -1877,10 +1877,10 @@
         ]
     },
     {
-        "0. State Name": "BOW_RETURN_RUN_RIGHT",
+        "0. State Name": "BOW_AIR_CHARGE",
         "1. Looping": false,
         "2. Lerp Duration": 0.20000000298023224,
-        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "3. Main Animation": "A_Kena_Aim_Air_RefPose",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
         "6. Additive Animation": [
@@ -1888,8 +1888,104 @@
                 "0. Blend Type": "ADDITIVE",
                 "1. Ratio Control": "MAX",
                 "2. Max Additive Ratio": 1.0,
-                "3. Reference Animation": "A_Kena_Aim_Run_Right",
-                "4. Additive Animation": "A_Kena_Bow_Return",
+                "3. Reference Animation": "A_Kena_Aim_Air_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "5. Joint Index": "N/A"
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Charge",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_AIR_CHARGE_LOOP",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "5. Joint Index": "N/A"
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_ChargeLoop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_AIR_RECHARGE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "5. Joint Index": "N/A"
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Bow_Air_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Recharge",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_AIR_RELEASE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.0,
+        "3. Main Animation": "A_Kena_Aim_Air_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_AIR_RETURN",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Air_Return",
                 "5. Joint Index": "N/A"
             }
         ]

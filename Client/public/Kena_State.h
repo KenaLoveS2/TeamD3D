@@ -542,6 +542,12 @@ private:
 	void						Start_Bow_Return_Run_Backward_Right(_float fTimeDelta);
 	void						Start_Bow_Return_Run_Left(_float fTimeDelta);
 	void						Start_Bow_Return_Run_Right(_float fTimeDelta);
+	/* BOW AIR */
+	void						Start_Bow_Air_Charge(_float fTimeDelta);
+	void						Start_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Air_Recharge(_float fTimeDelta);
+	void						Start_Bow_Air_Release(_float fTimeDelta);
+	void						Start_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						Start_Idle_Into_Lock_On(_float fTimeDelta);
 	void						Start_Lock_On_Idle(_float fTimeDelta);
@@ -689,6 +695,12 @@ private:
 	void						Tick_Bow_Recharge_Run(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
 	void						Tick_Bow_Return_Run(_float fTimeDelta);
+	/* BOW AIR */
+	void						Tick_Bow_Air_Charge(_float fTimeDelta);
+	void						Tick_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						Tick_Bow_Air_Recharge(_float fTimeDelta);
+	void						Tick_Bow_Air_Release(_float fTimeDelta);
+	void						Tick_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						Tick_Idle_Into_Lock_On(_float fTimeDelta);
 	void						Tick_Lock_On_Idle(_float fTimeDelta);
@@ -829,6 +841,12 @@ private:
 	void						End_Bow_Recharge_Run(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);
 	void						End_Bow_Return_Run(_float fTimeDelta);
+	/* BOW AIR */
+	void						End_Bow_Air_Charge(_float fTimeDelta);
+	void						End_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						End_Bow_Air_Recharge(_float fTimeDelta);
+	void						End_Bow_Air_Release(_float fTimeDelta);
+	void						End_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						End_Idle_Into_Lock_On(_float fTimeDelta);
 	void						End_Lock_On_Idle(_float fTimeDelta);

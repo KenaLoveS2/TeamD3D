@@ -186,12 +186,14 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent, const string & strImGui
 
 	if (iSelectEvent != -1)
 	{
+		auto iter = m_mapEvent.begin();
+		for (_int i = 0; i < iSelectEvent; ++i)
+			++iter;
+
+		m_PlayTime = iter->first;
+
 		if (ImGui::Button("Erase"))
 		{
-			auto	iter = m_mapEvent.begin();
-			for (_int i = 0; i < iSelectEvent; ++i)
-				++iter;
-
 			m_mapEvent.erase(iter);
 			iSelectEvent = -1;
 		}

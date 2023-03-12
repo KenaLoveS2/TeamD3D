@@ -43,6 +43,9 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 void CCamera_Player::Tick(_float fTimeDelta)
 {
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	fTimeDelta /= fTimeRate;
+
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
 	if (CGameInstance::GetInstance()->Key_Pressing(DIK_LSHIFT))

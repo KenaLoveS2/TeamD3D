@@ -139,8 +139,10 @@ void CKena::Tick(_float fTimeDelta)
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
 
+	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
 	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
+		m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 

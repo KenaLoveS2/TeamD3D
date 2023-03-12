@@ -167,8 +167,9 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::MouseInput_Left)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
-		//.Init_Changer(L"AIM_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"AIM_LOOP")
@@ -311,7 +312,8 @@ HRESULT CKena_State::SetUp_State_Aim_Air()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Air_Into)
 		.Init_End(this, &CKena_State::End_Aim_Air_Into)
 		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN", this, &CKena_State::OnGround)
+		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
 		.Init_Changer(L"AIM_AIR_LOOP", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"AIM_AIR_LOOP")
@@ -319,7 +321,9 @@ HRESULT CKena_State::SetUp_State_Aim_Air()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Air_Loop)
 		.Init_End(this, &CKena_State::End_Aim_Air_Loop)
 		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"AIM_RUN", this, &CKena_State::OnGround)
+		.Init_Changer(L"FALL", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
 
 		.Finish_Setting();
 
@@ -1208,7 +1212,49 @@ HRESULT CKena_State::SetUp_State_Bow()
 
 HRESULT CKena_State::SetUp_State_Bow_Air()
 {
-	//m_pStateMachine->Add_State(L"")
+	m_pStateMachine->Add_State(L"BOW_AIR_CHARGE")
+		.Init_Start(this, &CKena_State::Start_Bow_Air_Charge)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Charge)
+		.Init_End(this, &CKena_State::End_Bow_Air_Charge)
+		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
+		.Init_Changer(L"BOW_AIR_RELEASE", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_AIR_CHARGE_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_AIR_CHARGE_LOOP")
+		.Init_Start(this, &CKena_State::Start_Bow_Air_Charge_Loop)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Charge_Loop)
+		.Init_End(this, &CKena_State::End_Bow_Air_Charge_Loop)
+		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_AIR_RELEASE", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
+
+		.Add_State(L"BOW_AIR_RECHARGE")
+		.Init_Start(this, &CKena_State::Start_Bow_Air_Recharge)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Recharge)
+		.Init_End(this, &CKena_State::End_Bow_Air_Recharge)
+		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_AIR_RELEASE", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
+
+		.Add_State(L"BOW_AIR_RELEASE")
+		.Init_Start(this, &CKena_State::Start_Bow_Air_Release)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Release)
+		.Init_End(this, &CKena_State::End_Bow_Air_Release)
+		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_AIR_RECHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_AIR_RETURN", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
+
+		.Add_State(L"BOW_AIR_RETURN")
+		.Init_Start(this, &CKena_State::Start_Bow_Air_Return)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Return)
+		.Init_End(this, &CKena_State::End_Bow_Air_Return)
+		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
+		.Init_Changer(L"AIM_AIR_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
 
 	return S_OK;
 }
@@ -2011,7 +2057,8 @@ HRESULT CKena_State::SetUp_State_Jump()
 		.Init_Changer(L"AIM_AIR_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"AIR_ATTACK_1", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"AIR_ATTACK_SLAM_INTO", this, &CKena_State::MouseDown_Right)
-		.Init_Changer(L"LAND", this, &CKena_State::OnGround)
+		.Init_Changer(L"LAND_RUNNING", this, &CKena_State::OnGround, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"LAND", this, &CKena_State::OnGround, &CKena_State::KeyInput_None)
 
 		.Finish_Setting();
 
@@ -2056,7 +2103,7 @@ HRESULT CKena_State::SetUp_State_Land()
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
 		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"INTO_SPRINT", this, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"INTO_PULSE_FROM_FUN", this, &CKena_State::KeyInput_E)
+		.Init_Changer(L"INTO_PULSE_FROM_RUN", this, &CKena_State::KeyInput_E)
 		.Init_Changer(L"RUN_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
 
@@ -2064,6 +2111,10 @@ HRESULT CKena_State::SetUp_State_Land()
 		.Init_Start(this, &CKena_State::Start_Bow_Land)
 		.Init_Tick(this, &CKena_State::Tick_Bow_Land)
 		.Init_End(this, &CKena_State::End_Bow_Land)
+		.Init_Changer(L"AIM_LOOP", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
+		.Init_Changer(L"AIM_RUN", this, &CKena_State::KeyInput_Direction, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.2f)
+		//.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
+		//.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
 
 		.Add_State(L"LEDGE_LAND")
 		.Init_Start(this, &CKena_State::Start_Ledge_Land)
@@ -2112,7 +2163,7 @@ void CKena_State::Start_Run_Stop(_float fTimeDelta)
 
 void CKena_State::Start_Aim_Into(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("AIM_INTO_FROM_RUN");
+	m_pAnimationState->State_Animation("AIM_INTO");
 
 	m_pKena->m_bAim = true;
 
@@ -2349,6 +2400,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_FORWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
@@ -2356,6 +2408,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_FORWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
@@ -2363,6 +2416,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_FORWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
@@ -2370,6 +2424,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_BACKWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
@@ -2377,6 +2432,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_BACKWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
@@ -2384,6 +2440,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_BACKWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
@@ -2391,6 +2448,7 @@ void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
@@ -2398,6 +2456,7 @@ void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_RUN_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
@@ -2413,6 +2472,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Forward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_FORWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Forward_Left(_float fTimeDelta)
@@ -2420,6 +2480,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Forward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_FORWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Forward_Right(_float fTimeDelta)
@@ -2427,6 +2488,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Forward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_FORWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Backward(_float fTimeDelta)
@@ -2434,6 +2496,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Backward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_BACKWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Backward_Left(_float fTimeDelta)
@@ -2441,6 +2504,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Backward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_BACKWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Backward_Right(_float fTimeDelta)
@@ -2448,6 +2512,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Backward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_BACKWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Left(_float fTimeDelta)
@@ -2455,6 +2520,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Full_Run_Right(_float fTimeDelta)
@@ -2462,6 +2528,7 @@ void CKena_State::Start_Bow_Charge_Full_Run_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_CHARGE_FULL_RUN_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Charge_Loop(_float fTimeDelta)
@@ -2554,6 +2621,7 @@ void CKena_State::Start_Bow_Release_Run_Forward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_FORWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
@@ -2561,6 +2629,7 @@ void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_FORWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
@@ -2568,6 +2637,7 @@ void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_FORWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
@@ -2575,6 +2645,7 @@ void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_BACKWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
@@ -2582,6 +2653,7 @@ void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_BACKWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
@@ -2589,6 +2661,7 @@ void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_BACKWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
@@ -2596,6 +2669,7 @@ void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
@@ -2603,6 +2677,7 @@ void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RELEASE_RUN_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Recharge(_float fTimeDelta)
@@ -2623,6 +2698,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_FORWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
@@ -2630,6 +2706,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_FORWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
@@ -2637,6 +2714,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_FORWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
@@ -2644,6 +2722,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_BACKWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
@@ -2651,6 +2730,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_BACKWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
@@ -2658,6 +2738,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_BACKWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
@@ -2665,6 +2746,7 @@ void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
@@ -2672,6 +2754,7 @@ void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RECHARGE_RUN_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Bow_Return(_float fTimeDelta)
@@ -2687,6 +2770,7 @@ void CKena_State::Start_Bow_Return_Run_Forward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_FORWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Forward_Left(_float fTimeDelta)
@@ -2694,6 +2778,7 @@ void CKena_State::Start_Bow_Return_Run_Forward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_FORWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Forward_Right(_float fTimeDelta)
@@ -2701,6 +2786,7 @@ void CKena_State::Start_Bow_Return_Run_Forward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_FORWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Backward(_float fTimeDelta)
@@ -2708,6 +2794,7 @@ void CKena_State::Start_Bow_Return_Run_Backward(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_BACKWARD");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Backward_Left(_float fTimeDelta)
@@ -2715,6 +2802,7 @@ void CKena_State::Start_Bow_Return_Run_Backward_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_BACKWARD_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Backward_Right(_float fTimeDelta)
@@ -2722,6 +2810,7 @@ void CKena_State::Start_Bow_Return_Run_Backward_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_BACKWARD_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Left(_float fTimeDelta)
@@ -2729,6 +2818,7 @@ void CKena_State::Start_Bow_Return_Run_Left(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_LEFT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Return_Run_Right(_float fTimeDelta)
@@ -2736,6 +2826,51 @@ void CKena_State::Start_Bow_Return_Run_Right(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_RETURN_RUN_RIGHT");
 
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+}
+
+void CKena_State::Start_Bow_Air_Charge(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_AIR_CHARGE");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+}
+
+void CKena_State::Start_Bow_Air_Charge_Loop(_float fTimeDelta)
+{
+	if (m_pAnimationState->Get_CurrentAnimIndex() == (_uint)BOW_AIR_CHARGE_ADD ||
+		m_pAnimationState->Get_CurrentAnimIndex() == (_uint)BOW_AIR_RECHARGE_ADD)
+		m_pAnimationState->State_Animation("BOW_AIR_CHARGE_LOOP", 0.f);
+	else
+		m_pAnimationState->State_Animation("BOW_AIR_CHARGE_LOOP");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+}
+
+void CKena_State::Start_Bow_Air_Recharge(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_AIR_RECHARGE");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+}
+
+void CKena_State::Start_Bow_Air_Release(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_AIR_RELEASE");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+}
+
+void CKena_State::Start_Bow_Air_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_AIR_RETURN");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
 }
 
 void CKena_State::Start_Idle_Into_Lock_On(_float fTimeDelta)
@@ -3238,12 +3373,22 @@ void CKena_State::Tick_Aim_Air_Into(_float fTimeDelta)
 {
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
 	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Aim_Air_Loop(_float fTimeDelta)
 {
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
 
 	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
 }
@@ -3400,6 +3545,66 @@ void CKena_State::Tick_Bow_Return_Run(_float fTimeDelta)
 	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
+void CKena_State::Tick_Bow_Air_Charge(_float fTimeDelta)
+{
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
+	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Bow_Air_Charge_Loop(_float fTimeDelta)
+{
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
+	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Bow_Air_Recharge(_float fTimeDelta)
+{
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
+	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Bow_Air_Release(_float fTimeDelta)
+{
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
+	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
+}
+
+void CKena_State::Tick_Bow_Air_Return(_float fTimeDelta)
+{
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
+	if (m_pKena->m_fCurJumpSpeed > 0.f)
+		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+
+	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
+}
+
 void CKena_State::Tick_Idle_Into_Lock_On(_float fTimeDelta)
 {
 }
@@ -3485,10 +3690,18 @@ void CKena_State::Tick_Roll_Into_Fall(_float fTimeDelta)
 
 void CKena_State::Tick_Fall(_float fTimeDelta)
 {
+	CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+	Move(fTimeDelta, m_eDir);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 }
 
 void CKena_State::Tick_Fall_Into_Run(_float fTimeDelta)
 {
+	CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
+	Move(fTimeDelta, m_eDir);
+
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 }
 
 void CKena_State::Tick_Heavy_Attack_1_Charge(_float fTimeDelta)
@@ -3624,6 +3837,7 @@ void CKena_State::Tick_Land_Running(_float fTimeDelta)
 
 void CKena_State::Tick_Bow_Land(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Ledge_Land(_float fTimeDelta)
@@ -3924,6 +4138,7 @@ void CKena_State::End_Bow_Release(_float fTimeDelta)
 void CKena_State::End_Bow_Release_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::End_Bow_Recharge(_float fTimeDelta)
@@ -3939,11 +4154,40 @@ void CKena_State::End_Bow_Recharge_Run(_float fTimeDelta)
 void CKena_State::End_Bow_Return(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::End_Bow_Return_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
+}
+
+void CKena_State::End_Bow_Air_Charge(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+}
+
+void CKena_State::End_Bow_Air_Charge_Loop(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+}
+
+void CKena_State::End_Bow_Air_Recharge(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+}
+
+void CKena_State::End_Bow_Air_Release(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
+}
+
+void CKena_State::End_Bow_Air_Return(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::End_Idle_Into_Lock_On(_float fTimeDelta)
