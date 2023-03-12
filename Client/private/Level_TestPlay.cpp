@@ -180,7 +180,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
+	
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");
 	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");*/
@@ -237,15 +239,25 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	//CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
+	//CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	//CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	//CameraDesc.fFovy = XMConvertToRadians(90.0f);
+	//CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
+	//CameraDesc.fNear = 0.1f;
+	//CameraDesc.fFar = 1000.f;
+	//CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+	//CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+
+	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(90.0f);
-	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
-	CameraDesc.fNear = 0.1f;
-	CameraDesc.fFar = 1000.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);

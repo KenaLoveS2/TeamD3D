@@ -1423,228 +1423,228 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	
 	_matrix			PivotMatrix = XMMatrixIdentity();
-	///* For.Prototype_Component_Model_DeadZoneTree */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_DeadZoneTree",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
-	//	return E_FAIL;
+	/* For.Prototype_Component_Model_DeadZoneTree */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_DeadZoneTree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_PulsePlateAnim*/
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_PulsePlateAnim",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* For.Prototype_Component_Model_PulsePlateAnim*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_PulsePlateAnim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PowerCrystal", true, false, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PluseStone_Big", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulseStoneRock", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PowerCrystal", true, false, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PluseStone_Big", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulseStoneRock", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_LedgeStone", true, true, true)))
 	//	return E_FAIL;
 	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Pillar", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Brick", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Pillar", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Brick", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
 	//	return E_FAIL;
 	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Arch", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinPlatform", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Big", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Rock", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Cap", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W3", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, true, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Glitter", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Sheer", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue/Owl_WrapShrine", false, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsWall", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/Ruinskit_Collum", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Arch", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinPlatform", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Big", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Rock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Cap", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W3", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Glitter", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Sheer", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue/Owl_WrapShrine", false, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsWall", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/Ruinskit_Collum", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
 	//	return E_FAIL;
 	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Bridge", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Stairs", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Giant", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Fallen", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Dead", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Bare", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Billboard", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Canopy", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/GodTree", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Tree_Branch", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Canopy", true, true, true)))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Save_StoneTree", true, true)))// json NonUse
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneClumps", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneGroudCover", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneHeart", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneWall", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Gate", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Trees", true, true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/BushDead_02", true, true)))
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/Rot_Rock", true, true)))// json NonUse
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/RotCarry_Piece", true, true)))// json NonUse
-	//	assert(!"Issue");
-	//m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Bridge", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Stairs", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Giant", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Fallen", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Dead", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Bare", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Billboard", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Canopy", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/GodTree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Tree_Branch", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Canopy", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Save_StoneTree", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneClumps", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneGroudCover", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneHeart", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneWall", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Gate", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Trees", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/BushDead_02", true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/Rot_Rock", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/RotCarry_Piece", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
 #pragma endregion ~ 0~4 MapObj
 
 
@@ -1935,8 +1935,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-
 
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */

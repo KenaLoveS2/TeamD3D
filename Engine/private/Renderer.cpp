@@ -86,8 +86,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	/* For.Target_SSAO */
-	//if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 0.f))))
-	//	return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 	/* For.Target_HDR */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.8f, 0.8f, 0.8f, 0.f))))
@@ -102,8 +102,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	// SSAO
-	//if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
-	//	return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
+		return E_FAIL;
 
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
@@ -130,8 +130,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	/* For. SHADOW */
-	m_iShadowWidth = 2000;
-	m_iShadowHeight = 2000;
+	m_iShadowWidth = 8192;
+	m_iShadowHeight = 8192;
 
 	if (FAILED(Initialize_ShadowResources(m_iShadowWidth, m_iShadowHeight)))
 		return E_FAIL;
@@ -169,8 +169,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_MtrlAmbient"), (fSizeX * 0.5f) + fSizeX, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-//if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
-//	return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+		return E_FAIL;
 
 	// For. Lighting
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
@@ -180,6 +180,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	// For. Shadow
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, fSizeY * 0.5f, fSizeX, fSizeY)))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 	/* For.ModelViewer */
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
@@ -204,11 +206,49 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, L"Target_ShadowDepth", iWidth, iHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, L"Target_StaticShadowDepth", iWidth, iHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
 	m_pTarget_Manager->Get_Target(L"Target_ShadowDepth")->SetResizable(false);
+
+	m_pTarget_Manager->Get_Target(L"Target_StaticShadowDepth")->SetResizable(false);
 
 	// For.MRT_ShadowDepth(Shadow)
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightDepth", L"Target_ShadowDepth")))
 		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_StaticLightDepth", L"Target_StaticShadowDepth")))
+		return E_FAIL;
+
+	// shadow depth용 depthStencil view 생성
+	{
+		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
+
+		D3D11_TEXTURE2D_DESC	TextureDesc;
+		ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+		TextureDesc.Width = iWidth;
+		TextureDesc.Height = iHeight;
+		TextureDesc.MipLevels = 1;
+		TextureDesc.ArraySize = 1;
+		TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		TextureDesc.SampleDesc.Quality = 0;
+		TextureDesc.SampleDesc.Count = 1;
+
+		TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		TextureDesc.CPUAccessFlags = 0;
+		TextureDesc.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+			return E_FAIL;
+
+		if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pStaticShadowDepthStencilView)))
+			return E_FAIL;
+
+		Safe_Release(pDepthStencilTexture);
+	}
 
 	// shadow depth용 depthStencil view 생성
 	{
@@ -239,8 +279,15 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 
 		Safe_Release(pDepthStencilTexture);
 	}
-
 	return S_OK;
+}
+
+void CRenderer::Imgui_RenderProperty()
+{
+	if(ImGui::Button("StaticShadow"))
+	{
+		m_bStaticShadow = true;
+	}
 }
 
 HRESULT CRenderer::ReCompile()
@@ -258,17 +305,23 @@ HRESULT CRenderer::ReCompile()
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
+	if(m_bStaticShadow)
+	{
+		if (FAILED(Render_StaticShadow()))
+			return E_FAIL;
+		m_bStaticShadow = false;
+	}
+
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
-	//if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
-	//	return E_FAIL;
-	//if (FAILED(Render_SSAO()))
-	//	return E_FAIL;
-	//if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
-	//	return E_FAIL;
-	// 빛연산 전에 진행해야함
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+		return E_FAIL;
+	if (FAILED(Render_SSAO()))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
+		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
@@ -335,9 +388,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_StaticLightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
-
 	}
 #endif
 
@@ -398,6 +451,45 @@ HRESULT CRenderer::Render_Shadow()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_StaticShadow()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	m_pContext->ClearDepthStencilView(m_pStaticShadowDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	D3D11_VIEWPORT			ViewportDesc;
+	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
+
+	_uint			iNumViewports = 1;
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	D3D11_VIEWPORT			DepthViewportDesc = ViewportDesc;
+	DepthViewportDesc.Width = (_float)m_iShadowWidth;
+	DepthViewportDesc.Height = (_float)m_iShadowHeight;
+	m_pContext->RSSetViewports(iNumViewports, &DepthViewportDesc);
+
+	/* Shadow */
+	if (FAILED(m_pTarget_Manager->Begin_MRTwithDepthStencil(m_pContext, TEXT("MRT_StaticLightDepth"), m_pStaticShadowDepthStencilView)))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_STATIC_SHADOW])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->RenderShadow();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_STATIC_SHADOW].clear();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_StaticLightDepth"))))
+		return E_FAIL;
+
+	m_pContext->RSSetViewports(iNumViewports, &ViewportDesc);
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_NonAlphaBlend()
 {
 	if (nullptr == m_pTarget_Manager)
@@ -448,9 +540,7 @@ HRESULT CRenderer::Render_LightAcc()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_MtrlAmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
 		return E_FAIL;
-	//if (FAILED(m_pShader->Set_ShaderResourceView("g_SSAOTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_SSAO")))))
-	//	return E_FAIL;
-
+	
 	CPipeLine*		pPipeLine = GET_INSTANCE(CPipeLine);	
 
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pPipeLine->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
@@ -486,6 +576,9 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 
 	if (FAILED(m_pShader_SSAO->Set_ShaderResourceView("g_NormalTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Normal")))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_SSAO->Set_ShaderResourceView("g_AmbientTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_MtrlAmbient")))))
 		return E_FAIL;
 
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance)
@@ -526,6 +619,11 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_ShadowDepth")))))
 		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_StaticShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_StaticShadowDepth")))))
+		return E_FAIL;
+	/* For.SSAO*/
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_SSAOTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_SSAO")))))
+		return E_FAIL;
 
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance)
 
@@ -550,7 +648,7 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
@@ -756,4 +854,5 @@ void CRenderer::Free()
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pShadowDepthStencilView);
+	Safe_Release(m_pStaticShadowDepthStencilView);
 }

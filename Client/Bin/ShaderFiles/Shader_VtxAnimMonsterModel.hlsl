@@ -127,7 +127,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//0
