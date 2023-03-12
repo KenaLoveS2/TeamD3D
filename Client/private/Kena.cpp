@@ -510,6 +510,14 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
+void CKena::Call_RotIcon(CGameObject * pTarget)
+{
+	if (m_pFocusRot == nullptr)
+		return;
+
+	m_pFocusRot->Set_Pos(pTarget);
+}
+
 HRESULT CKena::Ready_Parts()
 {
 	CKena_Parts*	pPart = nullptr;

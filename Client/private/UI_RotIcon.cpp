@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_RotIcon.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CUI_RotIcon::CUI_RotIcon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
@@ -19,6 +20,7 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 	if (pTarget == nullptr)
 		return;
 
+	m_pTarget = pTarget;
 	m_bActive = true;
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
 		pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
@@ -36,13 +38,13 @@ HRESULT CUI_RotIcon::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(40.f, 40.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 	}
 
 	/* It might be faster.... */
 	m_iRenderPass = 1;
-	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(40.f, 40.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 
@@ -63,6 +65,21 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
+
+	if (nullptr != m_pTarget)
+	{
+		/* calculate camera */
+		_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+		_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+		_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
+		if (50.f < XMVectorGetX(XMVector3Length(vDir)) || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))))
+		{
+			m_pTarget = nullptr;
+			m_bActive = false;
+		}
+	}
+
 }
 
 void CUI_RotIcon::Late_Tick(_float fTimeDelta)
@@ -90,7 +107,7 @@ HRESULT CUI_RotIcon::Render()
 		return E_FAIL;
 	}
 
-	m_iRenderPass = 20;
+	m_iRenderPass = 1;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -127,16 +144,39 @@ HRESULT CUI_RotIcon::SetUp_ShaderResources()
 
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
+	//if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
+
+	if (nullptr != m_pTarget)
+	{
+		_float4 vPos = m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		vPos = XMVector3TransformCoord(vPos, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+		vPos = XMVector3TransformCoord(vPos, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+		_matrix matWorld = XMMatrixScaling(m_vOriginalSettingScale.x, m_vOriginalSettingScale.y, m_vOriginalSettingScale.z);
+		matWorld = matWorld * XMMatrixTranslation(vPos.x * g_iWinSizeX * 0.5f, vPos.y * g_iWinSizeY * 0.5f, vPos.z);
+		_float4x4 worldFloat4x4;
+		XMStoreFloat4x4(&worldFloat4x4, matWorld);
+		//worldFloat4x4._41 -= g_iWinSizeX * 0.5f;
+		worldFloat4x4._43 = 0.f;
+
+		if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &worldFloat4x4)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+			return E_FAIL;
+	}
+
+
+	//if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
+		return E_FAIL;
 
 	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
 	{

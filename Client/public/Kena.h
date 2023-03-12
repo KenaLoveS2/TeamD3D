@@ -48,6 +48,9 @@ public:
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
+public:
+	void					Call_RotIcon(CGameObject* pTarget);
+
 private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;

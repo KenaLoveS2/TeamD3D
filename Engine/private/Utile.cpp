@@ -903,7 +903,7 @@ void CUtile::Execute_BillBoardOrtho(CTransform * pTransform, _float3 vScale, _fl
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 	_float4 vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_float4 vDist = vCamPos - vPos;
+	_float4 vDist = vPos - vCamPos;
 	//_float  fDist = XMVectorGetX(XMVector3Length(vDist));
 	_float  fDist = XMVectorGetX(XMVector3Dot(XMLoadFloat4(&vDist), XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook_Float4())));
 

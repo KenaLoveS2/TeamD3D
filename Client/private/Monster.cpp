@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "UI_MonsterHP.h"
+#include "Camera.h"
+#include "Kena.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -98,6 +100,14 @@ void CMonster::Tick(_float fTimeDelta)
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	/* calculate camera */
+	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+	_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
+	if (50.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+		Call_RotIcon();
 }
 
 HRESULT CMonster::Render()
@@ -258,6 +268,14 @@ _float CMonster::Calc_PlayerLookAtDirection()
 
 void CMonster::AdditiveAnim(_float fTimeDelta)
 {
+}
+
+void CMonster::Call_RotIcon()
+{
+	if (nullptr == m_pKena)
+		return;
+
+	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
 }
 
 HRESULT CMonster::SetUp_Components()
