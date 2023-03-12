@@ -176,6 +176,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
 
 	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
@@ -186,12 +187,18 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		_float fTag = 0.f;
-		_float fCurrency[3] = { 200.f, 13.f, 230.f };
-		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
-		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
-		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
+		static _float fTag = 0.0f;
+		if (fTag < 1.0f)
+			fTag = 1.0f;
+		else
+			fTag = 0.0f;
+		m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
+		//_float fTag = 0.f;
+		//_float fCurrency[3] = { 200.f, 13.f, 230.f };
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
+		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
+		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
 
 		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}

@@ -53,6 +53,10 @@
 #include "UI_NodeButton.h"
 #include "UI_NodeConfWindow.h"
 
+/* Bottom */
+#include "UI_CanvasBottom.h"
+#include "UI_NodeLetterBox.h"
+
 /* World UI */
 #include "UI_MonsterHP.h"
 #include "UI_RotIcon.h"
@@ -397,15 +401,38 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 
 	/********************************************/
+	/*				For. Bottom					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_KeyboardIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/02. KeyboardIcon/SS_XboxKBMIconAtlas.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_KeyboardIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LetterBox"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/08. Title/LetterBox.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_LetterBox");
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+	/********************************************/
 	/*				For. World_UI				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_RotFocus"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/Focusing/T_RotAction_Icon.png")))))
 		return E_FAIL;
-	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_RotFocus");
-
-
-
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -652,6 +679,20 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Window"), CUI_NodeConfWindow::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
+
+
+	/********************************************/
+	/*				For. Bottom					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Bottom"), CUI_CanvasBottom::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Bottom");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_LetterBox"), CUI_NodeLetterBox::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_LetterBox");
+
+
 
 
 
