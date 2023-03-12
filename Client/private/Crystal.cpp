@@ -41,8 +41,7 @@ HRESULT CCrystal::Initialize(void * pArg)
 HRESULT CCrystal::Late_Initialize(void * pArg)
 {
 #ifdef FOR_MAP_GIMMICK
-	if (lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
-		return S_OK;
+
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -51,34 +50,35 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	CEffect_Base* pEffectObj = nullptr;
 	/*Deliver_PulseE*/
 
-	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;
+	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
-	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER;
-	PulseObj_Desc.fIncreseRatio = 1.02f;
-	PulseObj_Desc.fPulseMaxSize = 10.f;
-	PulseObj_Desc.vResetSize = _float3(2.f, 2.f, 2.f);
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0¹ø  :PULSE_OBJ_RECIVE
+	PulseObj_Desc.fIncreseRatio = 1.15f;
+	PulseObj_Desc.fPulseMaxSize = 2.f;
+	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
+	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_VecCrystal_Effect.push_back(pEffectObj);
+
+
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1¹ø  :PULSE_OBJ_DELIVER
+	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fPulseMaxSize = 14.f;
+	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
 		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
 	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
-	m_pCrystal_EffectList.push_back(pEffectObj);
+	m_VecCrystal_Effect.push_back(pEffectObj);
 
 	/*Recived_PulseE*/
-	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
-	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;
-	PulseObj_Desc.fIncreseRatio = 1.05f;
-	PulseObj_Desc.fPulseMaxSize = 5.f;
-	PulseObj_Desc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
-	PulseObj_Desc.vResetPos = vPos;
-	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
-		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
-	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
-	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
-	m_pCrystal_EffectList.push_back(pEffectObj);
 
-
-	for (auto& pEffectObj : m_pCrystal_EffectList)
+	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		pEffectObj->Late_Initialize();
 	}
@@ -90,27 +90,40 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+
+#ifdef FOR_MAP_GIMMICK
+	if (m_VecCrystal_Effect.size() == 0)
+		return;
+
+	if (static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Get_Finish())
+	{
+		static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Set_Finish(false);
+		m_VecCrystal_Effect[1]->Set_Active(true);
+	}
 	
-	for (auto& pEffectObj : m_pCrystal_EffectList)
+
+	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		if (pEffectObj != nullptr)
-		{
-			pEffectObj->ImGui_PhysXValueProperty();
 			pEffectObj->Tick(fTimeDelta);
-			
-		}
 	}
+#endif
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	for (auto& pEffectObj : m_pCrystal_EffectList)
-	{
-		if (pEffectObj != nullptr)
-			pEffectObj->Late_Tick(fTimeDelta);
+#ifdef FOR_MAP_GIMMICK
+	if (m_VecCrystal_Effect.size() != 0)
+	{ 
+		for (auto& pEffectObj : m_VecCrystal_Effect)
+		{
+			if (pEffectObj != nullptr)
+				pEffectObj->Late_Tick(fTimeDelta);
+		}
 	}
+#endif 
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -139,11 +152,8 @@ HRESULT CCrystal::Render()
 
 void CCrystal::Create_Pulse(_bool bActive)
 {
-	for (auto& pEffectObj : m_pCrystal_EffectList)
-	{
-		if (pEffectObj != nullptr)
-			pEffectObj->Set_Active(bActive);
-	}
+	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
+		m_VecCrystal_Effect[0]->Set_Active(bActive);
 }
 
 HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -168,6 +178,12 @@ HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pCom
 		return S_OK;
 
 	return S_OK;
+}
+
+_int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+
+	return _int();
 }
 
 HRESULT CCrystal::SetUp_Components()
