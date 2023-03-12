@@ -177,7 +177,7 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_PUNCH].c_str(), pivotMatrix);
 	}
 	
-	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f),_float4());
+	m_pTransformCom->Set_Position(_float4(19.f, 0.3f, 14.f, 1.f));
 
 	return S_OK;
 }
@@ -188,10 +188,7 @@ void CWoodKnight::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -261,8 +258,8 @@ void CWoodKnight::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	if (ImGui::Button("WEALKYDMG"))
-		m_bWeaklyHit = true;
+	if (ImGui::Button("SPAWN"))
+		m_bSpawn = true;
 
 	if (ImGui::Button("BLOCK"))
 		m_bBlock = true;
@@ -413,7 +410,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddTransition("ALERT to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ALERT);
+		return AnimFinishChecker(ALERT) && m_bSpawn;
 	})
 
 		.AddState("IDLE")
@@ -790,29 +787,23 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(HITDEFLECT);
 	})
+
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
 	{
+		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_ALT);
+		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_B);
+		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_L);
+		m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_R);
+
 		if(m_PlayerLookAt_Dir == FRONT)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_ALT);
 			m_pModelCom->Set_AnimIndex(STAGGER_ALT);
-		}
 		else if (m_PlayerLookAt_Dir == BACK)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_B);
 			m_pModelCom->Set_AnimIndex(STAGGER_B);
-		}
 		else if (m_PlayerLookAt_Dir == LEFT)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_L);
 			m_pModelCom->Set_AnimIndex(STAGGER_L);
-		}
 		else if (m_PlayerLookAt_Dir == RIGHT)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(STAGGER_R);
 			m_pModelCom->Set_AnimIndex(STAGGER_R);
-		}
 	})
 		.OnExit([this]()
 	{
@@ -835,11 +826,11 @@ HRESULT CWoodKnight::SetUp_State()
 	})
 
 		.AddState("DEATH")
-		.Tick([this](_float fTimeDelta)
+		.OnStart([this]()
 	{
+		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
 	})
-
 		.Build();
 
 	return S_OK;

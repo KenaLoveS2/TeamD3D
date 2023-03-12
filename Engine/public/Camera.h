@@ -27,7 +27,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 
+	_float* Get_Near() { return &m_CameraDesc.fNear; }
 	_float* Get_Far()  { return &m_CameraDesc.fFar; }
+	_float* Get_Fov() { return &m_CameraDesc.fFovy; }
+
 
 protected:
 	class CPipeLine*			m_pPipeLine = nullptr;

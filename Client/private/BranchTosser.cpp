@@ -45,6 +45,7 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 
 HRESULT CBranchTosser::Late_Initialize(void * pArg)
 {
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(0.f, 5.f, -15.f);
@@ -127,7 +128,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Translation(_float4(0.f, 10.f, -15.f, 1.f), _float4());
+	m_pTransformCom->Set_Position(_float4(20.f + (float)(rand() % 10), 3.f, 0.f, 1.f));
 
 	return S_OK;
 }

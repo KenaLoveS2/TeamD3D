@@ -121,7 +121,6 @@ private:
 	void Reset_BlockAfterType();
 
 private:
-	_bool	m_bSpawn = false;
 	_float	m_fIdletoAttackTime = 0.f;
 
 	_int		m_iAttackType = ATTACKTYPE_END;

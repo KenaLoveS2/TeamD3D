@@ -44,6 +44,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {	
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -121,7 +123,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Translation(_float4(20.f + (float)(rand() % 10), 0.f, 0.f, 1.f), _float4());
+	m_pTransformCom->Set_Position(_float4(24.f, 0.3f, 6.f, 1.f));
 
 	return S_OK;
 }
@@ -132,10 +134,7 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -195,16 +194,8 @@ void CSticks01::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
 
-	m_pFSM->Imgui_RenderProperty();
-
-	if (ImGui::Button("WeaklyDamage"))
-		m_bWeaklyHit = true;
-
-	if (ImGui::Button("StronglyDamage"))
-		m_bStronglyHit = true;
-
-	if (ImGui::Button("BIND"))
-		m_bBind = true;
+	if (ImGui::Button("SPAWN"))
+		m_bSpawn = true;
 }
 
 void CSticks01::ImGui_AnimationProperty()
@@ -234,7 +225,7 @@ void CSticks01::ImGui_ShaderValueProperty()
 	CMonster::ImGui_ShaderValueProperty();
 }
 
-void CSticks01::ImGui_PhysXValueProperty()
+void CSticks01::ImGui_PhysXValueProperty()		
 {
 	CMonster::ImGui_PhysXValueProperty();
 
@@ -253,7 +244,7 @@ void CSticks01::ImGui_PhysXValueProperty()
 
 	_uint nActorListCount = static_cast<_uint>(m_pTransformCom->Get_ActorList()->size());
 
-	ImGui::BulletText("ColliderLists");
+	ImGui::BulletText("ColliderLists");			// 무기
 	{
 		static _int iSelect = -1;
 		char** ppObjectTag = new char*[nActorListCount];
@@ -312,13 +303,13 @@ HRESULT CSticks01::SetUp_State()
 	{
 		if(!m_bSpawn)
 			m_pModelCom->ResetAnimIdx_PlayTime(RESURRECT);
-
+		
 		m_pModelCom->Set_AnimIndex(RESURRECT);
 	})
 		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(RESURRECT);
+		return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
 		.AddState("COMBATIDLE")
@@ -683,7 +674,6 @@ HRESULT CSticks01::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		// 맞는 애니메이션일때도 맞는가?
 		m_bBind = false;
 		Reset_Attack();
 	})
@@ -694,7 +684,7 @@ HRESULT CSticks01::SetUp_State()
 		return AnimFinishChecker(BIND);
 	})
 
-	// 어느 타이밍에 패링이 되는지?
+		// 어느 타이밍에 패링이 되는지?
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
@@ -707,7 +697,7 @@ HRESULT CSticks01::SetUp_State()
 		return AnimFinishChecker(PARRIED);
 	})
 
-	// 항상 폭탄이 날라오면 이렇게 뛰는가?
+		// 항상 폭탄이 날라오면 이렇게 뛰는가?
 		.AddState("RECEIVEBOMB")
 		.OnStart([this]()
 	{
@@ -955,6 +945,8 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 			m_bRealAttack = true;
 		break;
 	case AT_ROCKTHROW:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 4.f);
+		if (DistanceTrigger(4.f))
 		m_bRealAttack = true;
 	default:
 		break;

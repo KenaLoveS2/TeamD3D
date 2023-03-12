@@ -30,6 +30,7 @@ Texture2D<float4>		g_SpecularTexture;
 
 Texture2D<float4>		g_ShadowTexture;
 Texture2D<float4>		g_MtrlAmbientTexture;
+//Texture2D<float4>		g_SSAOTexture;
 
 float3 CalculateDiffuse(float3 albedo, float3 normal, float3 lightColor, float3 lightDirection)
 {
@@ -106,7 +107,7 @@ float3 diffuseBurley(float3 diffuseLightColor, float3 Albedo, float3 N, float3 V
 	return diffuse * diffuseLightColor;
 }
 
-float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float ao, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
+float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Metallic, float Roughness, float3 diffuseLightColor, float3 ambientLightColor, float4 specularLightColor)
 {
 	float3 N = normalize(Normal);
 	float3 V = normalize(View) * -1.f;
@@ -127,7 +128,7 @@ float4 PBR(float3 Albedo, float3 Normal, float3 View, float3 LightDir, float Met
 	float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0);
 
 	float3 specular = numerator / max(denominator, 0.001);
-	float3 ambient = ambientLightColor * Albedo * ao;
+	float3 ambient = ambientLightColor * Albedo;
 	float3 diffuse = diffuseBurley(diffuseLightColor, Albedo, N, V, L, H, Roughness, specularLightColor);
 
 	return float4(ambient + diffuse + specular, 1.f);
@@ -190,66 +191,75 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
 	PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
 
-	vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
+	//vector		vSSAODesc = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 	vector		vWorldPos;
+
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
 	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthDesc.x; /* 0 ~ 1 */
 	vWorldPos.w = 1.0f;
 	vWorldPos *= fViewZ;
+
 	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
 	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = normalize(vWorldPos - g_vCamPosition);
+
 	float			fAO = vAmbientDesc.r;
 	float			fRoughness = vAmbientDesc.g;
 	float			fMetalic = vAmbientDesc.b;
 
-	// Calculate the specular reflectance using the GGX distribution and Smith's shadowing function
+	float3 N = normalize(vNormal.xyz);
+	float3 V = normalize(vLook.xyz) * -1.f;
+	float3 L = normalize(g_vLightDir.xyz) * -1.f;
+	float3 H = normalize(V + L);
+
 	/* first algorithm */
-	//float3		Lo = (float3)0.f;
-	//float3		P = vWorldPos.xyz;
-	//float3		V = normalize(vLook.xyz);
-	//float3		N = normalize(vNormal.xyz);
-	//float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
-	//float3 LightColor = g_vLightDiffuse.rgb;
-	////LightColor *= min(174.25f/* / 255.f*/, length(LightColor));
-	//float3 L = normalize(g_vLightDir.xyz);
-	//float3 H = normalize(V + L);
-	//float  cosTheta = max(dot(H, V), 0.0f);
-	//float  distance = length(g_vLightPos - vWorldPos); 
-	//float attenuation = 1 / (distance * distance);
-	//float3 radiance = LightColor * attenuation;
-	//float3 F = FresnelSchlick(dot(H, V), F0);
-	//float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
-	//float G = GeometrySmith(N, V, L, fRoughness);
-	//float3 numerator = NDF * G * F;
-	//float denomenator = (4 * max(0.0f, dot(N, L)) * max(0.0f, dot(N, V)));
-	//float3 specular = numerator / (denomenator + 0.0001f);
-	//float3 kS = F;
-	//float3 kD = (float3)1.f - kS;
-	//kD *= 1.f - fMetalic;
-	//float nl = max(0.f, dot(N, L));
-	//Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
-	//kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
-	//kD = (float3)1.f - kS;
-	//float3 irradiance = float3(1.f, 1.f, 1.f); // È¯°æ¸Ê
-	//float3 diffuse = irradiance * vDiffuse.xyz;
-	//float3 ambient = kD * diffuse;
-	//float4 color = float4(ambient + Lo, 1.f);
-	////float gamma = 2.2f;
-	////color = color / (color + (float4)1.f);
-	////color = pow(color, (float4)(1.f / gamma));
-	//Out.vShade = color;
-	//Out.vShade.a = vDiffuse.a;
-	//Out.vSpecular = float4(specular, 0.f);
-	//Out.vSpecular.a = 0.f;
+	/* float3		Lo = (float3)0.f;
+	float3		P = vWorldPos.xyz;
+	float3		V = normalize(vLook.xyz);
+	float3		N = normalize(vNormal.xyz);
+	float3		F0 = lerp(float3(0.04f, 0.04f, 0.04f), vDiffuse.rgb, fMetalic);
+	float3 LightColor = g_vLightDiffuse.rgb;
+	//LightColor *= min(174.25f/* / 255.f, length(LightColor));
+	float3 L = normalize(g_vLightDir.xyz);
+	float3 H = normalize(V + L);
+	float  cosTheta = max(dot(H, V), 0.0f);
+	float  distance = length(g_vLightPos - vWorldPos); 
+	float attenuation = 1 / (distance * distance);
+	float3 radiance = LightColor * attenuation;
+	float3 F = FresnelSchlick(dot(H, V), F0);
+	float NDF = DistributionGGX(N, H, clamp(fRoughness, 0.3f, 1.f));
+	float G = GeometrySmith(N, V, L, fRoughness);
+	float3 numerator = NDF * G * F;
+	float denomenator = (4 * max(0.0f, dot(N, L)) * max(0.0f, dot(N, V)));
+	float3 specular = numerator / (denomenator + 0.0001f);
+	float3 kS = F;
+	float3 kD = (float3)1.f - kS;
+	kD *= 1.f - fMetalic;
+	float nl = max(0.f, dot(N, L));
+	Lo += (kD * vDiffuse.xyz / PI + specular) * radiance * nl;
+	kS = FresnelSchlick(max(dot(N, V), 0.f), F0);
+	kD = (float3)1.f - kS;
+	float3 irradiance = float3(1.f, 1.f, 1.f); // È¯°æ¸Ê
+	float3 diffuse = irradiance * vDiffuse.xyz;
+	float3 ambient = kD * diffuse;
+	float4 color = float4(ambient + Lo, 1.f);
+	float gamma = 2.2f;
+	color = color / (color + (float4)1.f);
+	color = pow(color, (float4)(1.f / gamma));
+	Out.vShade = color + (vSSAODesc.r * fAO);
+	Out.vShade.a = vDiffuse.a;
+	Out.vSpecular = float4(specular, 0.f);
+	Out.vSpecular.a = 0.f; */
 
 	/* second algorithm */
 	//float3 diffuse = CalculateDiffuse(vDiffuse.rgb, vNormal, g_vLightDiffuse.rgb, g_vLightDir);
@@ -263,9 +273,41 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (float4)1.f;*/
 
 	/* fourth algorithm */
-	Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz,fMetalic, fRoughness, fAO, g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular);
-	Out.vShade.a = vDiffuse.a;
-	Out.vSpecular = (float4)1.f;
+	//Out.vShade = PBR(vDiffuse.rgb, vNormal.xyz, vLook.xyz, g_vLightDir.xyz, fMetalic, fRoughness,
+	//		g_vLightDiffuse.rgb, g_vLightAmbient.rgb, g_vLightSpecular)
+	//		* vSSAODesc.r * fAO;
+	//Out.vShade.a = vDiffuse.a;
+	//Out.vSpecular = (float4)1.f;
+
+	/* five algorithm */
+	float4 DiffuseLight = g_vLightDiffuse;
+	float4 AmbientLight = g_vLightAmbient;
+
+	DiffuseLight *= 5.f;
+	AmbientLight *= 5.f;
+
+	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), DiffuseLight.rgb, fMetalic);
+
+	// Fresnel term
+	float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
+
+	// Roughness term
+	float alpha = fRoughness * fRoughness;
+
+	// Geometric attenuation
+	float G = smith_G1(V, N, alpha) * smith_G1(N, L, alpha);
+
+	// Specular (reflection) term
+	float3 D = disney_D(H, N, L, alpha, fMetalic);
+	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
+
+	// Diffuse (Lambertian) term
+	float3 diffuse = DiffuseLight.rgb / PI;
+
+	// Final color
+	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)))/* * vSSAODesc.r*/;
+	Out.vSpecular = float4(specular * dot(N, L), 1.f);
+
 	return Out;
 }
 
@@ -327,8 +369,8 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	//Out.vColor =	CalcHDRColor(vShade, vDepthDesc.b) /*+ vSpecular * 0.001f*/;
-	Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
+	Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/;
+	//Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
 	//Out.vColor = vShade;
 
 	if (Out.vColor.a == 0.0f)

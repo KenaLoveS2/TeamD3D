@@ -31,15 +31,15 @@ protected:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void		Tick(_float fTimeDelta) override;
+	virtual void		Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
-	virtual void				Imgui_RenderProperty() override;
-	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void		Imgui_RenderProperty() override;
+	virtual void		ImGui_ShaderValueProperty() override;
 
 public:
-	void						Model_Synchronization(_bool bPausePlay);
+	void				Model_Synchronization(_bool bPausePlay);
 
 protected:
 	CRenderer*			m_pRendererCom = nullptr;

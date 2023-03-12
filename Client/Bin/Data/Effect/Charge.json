@@ -1,0 +1,180 @@
+	switch (iSelectEffectType)
+	{
+	case 0:
+		iSelectEffectType = 0;
+		bIsCreate = false;
+		bReset = true;
+		strcpy_s(szEffectTag, "");
+		break;
+
+	case EFFECT_PLANE:
+		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateCnt", &iCreateCnt);
+		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectTag, 64); ImGui::SameLine();
+
+		if (ImGui::Button("Confirm"))
+		{
+			wstring	strEffectTag(szEffectTag, &szEffectTag[64]);
+			strDefault = strDefault + strEffectTag;
+
+			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
+			pGameInstance->Add_String(szDefaultTag);
+
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_T::Create(m_pDevice, m_pContext))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			for (_int i = 0; i < iCreateCnt; ++i)
+			{
+				_tchar   szDefault[64] = L"";
+				wsprintf(szDefault, L"Effect_Plane_%d", iCreateRectCnt);
+
+				_tchar* szEffectCloneTag = CUtile::Create_String(szDefault);
+				pGameInstance->Add_String(szEffectCloneTag);
+
+				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag, nullptr, &pEffectBase)))
+				{
+					RELEASE_INSTANCE(CGameInstance);
+					return;
+				}
+				iCreateRectCnt++;
+			}
+			iSelectEffectType = 0;
+			iCreateCnt = 0;
+			bIsCreate = true;
+			m_bIsRectLayer = true;
+			strcpy_s(szEffectTag, "");
+
+		}
+		ImGui::Separator();
+		if (iSelectObj != -1 && bIsCreate == true && m_bIsRectLayer == true)
+			CreateEffect_Plane(iCurSelect, iSelectObj);
+
+		break;
+
+	case EFFECT_PARTICLE:
+		ImGui::Separator();
+		ImGui::BulletText("CreateCnt : ");  ImGui::InputInt("##CreateParticleCnt", &iCreateCnt);
+
+		ImGui::InputTextWithHint("EffectTag", "Only Input Tagname.", szEffectTag, 64);
+		ImGui::InputTextWithHint("VIBufferTag", "Only Input ComponentTag.", szEffectComponentTag, 64); ImGui::SameLine();
+
+		if (ImGui::Button("Confirm"))
+		{
+			// VIBuffer Create
+			wstring	strVIBufferTag(szEffectComponentTag, &szEffectComponentTag[64]);
+			strComponentDefault = strComponentDefault + strVIBufferTag;
+
+			_tchar* szComponentTag = CUtile::Create_String(strComponentDefault.c_str());
+			pGameInstance->Add_String(szComponentTag);
+			_int iCurLevel = CGameInstance::GetInstance()->Get_CurLevelIndex();
+
+			if (FAILED(pGameInstance->Add_Prototype(iCurLevel, szComponentTag, CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, iCreateCnt))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			// Effect ProtoCreate
+			wstring	strEffectTag(szEffectTag, &szEffectTag[64]);
+			strDefault = strDefault + strEffectTag;
+
+			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
+			pGameInstance->Add_String(szDefaultTag);
+
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_Point_Instancing_T::Create(m_pDevice, m_pContext, szComponentTag))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+			// ~Effect ProtoCreate
+
+			_tchar   szDefault[64] = L"";
+			wsprintf(szDefault, L"Effect_Particle_%d", iCreateParticleCnt);
+
+			_tchar* szEffectCloneTag = CUtile::Create_String(szDefault);
+			pGameInstance->Add_String(szEffectCloneTag);
+
+			if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag)))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+			iCreateParticleCnt++;
+
+			iSelectEffectType = 0;
+			bIsCreate = true;
+			m_bIsParticleLayer = true;
+			iCreateCnt = 0;
+			strcpy_s(szEffectTag, "");
+			strcpy_s(szEffectComponentTag, "");
+		}
+		ImGui::Separator();
+
+		if (iSelectObj != -1 && bIsCreate == true && m_bIsParticleLayer == true)
+			CreateEffect_Particle(iCreateCnt, iCurSelect, iSelectObj);
+		break;
+
+	case EFFECT_MESH:
+		// iSelectEffectMeshType MESH_PLANE, MESH_CUBE, MESH_CONE, MESH_SPHERE, MESH_CYLINDER
+		ImGui::Separator();
+		ImGui::BulletText("Select Create Mesh Type : ");
+		ImGui::RadioButton("MeshPlane", &iSelectEffectMeshType, 0); ImGui::SameLine();
+		ImGui::RadioButton("MeshCube", &iSelectEffectMeshType, 1); ImGui::SameLine();
+		ImGui::RadioButton("MeshCone", &iSelectEffectMeshType, 2);
+		ImGui::RadioButton("MeshSphere", &iSelectEffectMeshType, 3); ImGui::SameLine();
+		ImGui::RadioButton("MeshCylinder", &iSelectEffectMeshType, 4);
+
+		ImGui::Separator();
+		ImGui::BulletText("CreateMeshCnt : ");  ImGui::InputInt("##CreateMeshCnt", &iCreateCnt);
+		ImGui::InputTextWithHint("##EffectTag", "Only Input Tagname.", szEffectMeshTag, 64); ImGui::SameLine();
+
+		if (ImGui::Button("Confirm"))
+		{
+			wstring	strEffectTag(szEffectMeshTag, &szEffectMeshTag[64]);
+			strDefault = strDefault + strEffectTag;
+
+			_tchar* szDefaultTag = CUtile::Create_String(strDefault.c_str());
+			pGameInstance->Add_String(szDefaultTag);
+
+			if (FAILED(pGameInstance->Add_Prototype(szDefaultTag, CEffect_Mesh_T::Create(m_pDevice, m_pContext))))
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			const _tchar* szEffectMeshType[] = { L"MeshPlane", L"MeshCube", L"MeshCone", L"MeshSphere" ,L"MeshCylinder" };
+			//	static _int iCreateMeshtCnt[5] = { MESH_PLANE, MESH_CUBE, MESH_CONE, MESH_SPHERE, MESH_CYLINDER };
+			for (_int i = 0; i < iCreateCnt; ++i)
+			{
+				wstring strEffectMeshTag = L"Effect_";
+				strEffectMeshTag += szEffectMeshType[iSelectEffectMeshType];
+				strEffectMeshTag.push_back('_');
+				strEffectMeshTag += to_wstring(iCreateMeshtCnt[iSelectEffectMeshType]);
+
+				_tchar* szEffectCloneTag = CUtile::Create_String(strEffectMeshTag.c_str());
+				pGameInstance->Add_String(szEffectCloneTag);
+
+				CEffect_Base::EFFECTDESC eEffectType;
+				Set_MeshType(eEffectType, iSelectEffectMeshType);
+
+				if (FAILED(pGameInstance->Clone_GameObject(iCurLevel, L"Layer_Effect", szDefaultTag, szEffectCloneTag, &eEffectType)))
+				{
+					RELEASE_INSTANCE(CGameInstance);
+					return;
+				}
+				iCreateMeshtCnt[iSelectEffectMeshType]++;
+			}
+			iSelectEffectType = 0;
+			iCreateCnt = 0;
+			bIsCreate = true;
+			m_bIsMeshLayer = true;
+			strcpy_s(szEffectTag, "");
+		}
+		ImGui::Separator();
+
+		if (iSelectObj != -1 && bIsCreate == true && m_bIsMeshLayer == true)
+			CreateEffect_Mesh(iSelectObj);
+		break;
+	}
