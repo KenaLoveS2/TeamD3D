@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "UI_MonsterHP.h"
+#include "Camera.h"
+#include "Kena.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -57,12 +59,20 @@ HRESULT CMonster::Initialize(void* pArg)
 	m_pKena = pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
 
 	RELEASE_INSTANCE(CGameInstance)
+
+	m_bRotable = true;
+
 	return S_OK;
 }
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
+	/* Is In Camera? */
+
+
+
 
 	return S_OK;
 }
@@ -90,6 +100,14 @@ void CMonster::Tick(_float fTimeDelta)
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	/* calculate camera */
+	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+	_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
+	if (20.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+		Call_RotIcon();
 }
 
 HRESULT CMonster::Render()
@@ -252,6 +270,14 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 {
 }
 
+void CMonster::Call_RotIcon()
+{
+	if (nullptr == m_pKena)
+		return;
+
+	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -270,7 +296,7 @@ HRESULT CMonster::SetUp_UI()
 	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 0.2f ;
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
-		TEXT("Prototype_GameObject_MonsterHP"),
+		TEXT("Prototype_GameObject_UI_MonsterHP"),
 		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
 	{
 		MSG_BOX("Failed To make UI");

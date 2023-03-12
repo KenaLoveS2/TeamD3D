@@ -25,7 +25,8 @@ public:
 		AIM_, AIM_ARROW, AIM_BOMB,
 		QUEST_, QUEST_LINE,
 		INV_, INV_KARMA, INV_NUMROTS, INV_CRYSTAL,
-
+		
+		LETTERBOX_AIM,
 
 		/*Must Be Last ... ! */
 		UI_CONFIRM,
@@ -61,6 +62,11 @@ public:
 	void					Set_Effect(UI_EFFECT eID, CUI_NodeEffect* pEffect);
 	CUI_NodeEffect*			Get_Effect(UI_EFFECT eID);
 	void					Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller = nullptr);
+
+public: /* OnOff Canvas Setting */
+
+
+
 
 private:
 	vector<CUI_Canvas*>		m_vecCanvas;
