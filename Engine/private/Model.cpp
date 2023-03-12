@@ -1107,7 +1107,6 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 	else
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
@@ -1122,6 +1121,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 			m_InstancingMeshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
 		}
+
 		pShader->Begin(iPassIndex);
 		m_InstancingMeshes[iMeshIndex]->Render();
 	}

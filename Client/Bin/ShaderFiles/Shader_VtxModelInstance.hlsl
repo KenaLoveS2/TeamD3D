@@ -160,7 +160,7 @@ HullOut HS_MAIN(InputPatch<VS_OUT_TESS, 3> p, uint i : SV_OutputControlPointID, 
 	hout.vProjPos = p[i].vProjPos;
 	hout.vTangent = p[i].vTangent;
 	hout.vBinormal = p[i].vBinormal;
-
+		
 	return hout;
 }
 
@@ -206,7 +206,7 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
 
 	// Compute normal from quadratic control points and barycentric coords
 	float3 n = tri[0].vNormal * fWW +
-		tri[1].vNormal * fUU +
+		tri[1].vNormal * fUU +	
 		tri[2].vNormal * fVV +
 		PatchTess.vecNormal_1 * fW * fU +
 		PatchTess.vecNormal_2 * fU * fV +
@@ -346,7 +346,7 @@ PS_OUT_TESS PS_MAIN_HRAO_E(PS_IN_TESS In)
 	return Out;
 }//4
 
- // EMPTY
+// EMPTY
 PS_OUT_TESS PS_MAIN_ERAO(PS_IN_TESS In)
 {
 	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
@@ -448,7 +448,7 @@ PS_OUT_TESS PS_MAIN_RUBBLE(PS_IN_TESS In)
 
 	vNormal += vDetailNormal;
 	vNormal = normalize(vNormal);
-
+	
 	float4 vAORM = float4(vHRAODesc.b, vHRAODesc.g, vHRAODesc.r, vHRAODesc.a);
 
 	float4	FinalColor = vDiffuse * (1.f - vMaskDesc.r) + vBlendDiffuse * vMaskDesc.r;
@@ -527,6 +527,41 @@ PS_OUT_TESS PS_MAIN_NOAO_DETAILNORMAL(PS_IN_TESS In)
 	Out.vAmbient = vAORM;
 	return Out;
 }//10
+
+PS_OUT_TESS PS_MAIN_NOAO_DN_BM(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDetailNormalDesc = g_DetailNormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vBlendDiffuse = g_BlendDiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMaskDesc = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float3		vDetailNormal = vDetailNormalDesc.xyz * 2.f - 1.f;
+	vDetailNormal = normalize(mul(vDetailNormal, WorldMatrix));
+
+	vNormal += vDetailNormal;
+	vNormal = normalize(vNormal);
+
+	float4 vAORM = (float4)1.f;
+
+	float4	FinalColor = vDiffuse * (1.f - vMaskDesc.r) + vBlendDiffuse * vMaskDesc.r;
+	FinalColor.a = vDiffuse.a;
+
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//11
 
 technique11 DefaultTechnique
 {
@@ -672,5 +707,18 @@ technique11 DefaultTechnique
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_NOAO_DETAILNORMAL();
+	}//10
+
+	pass NOAO_DN_BM
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_NOAO_DN_BM();
 	}//10
 }
