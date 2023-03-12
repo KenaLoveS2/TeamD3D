@@ -10,6 +10,8 @@ class CTexture;
 END
 
 BEGIN(Client) 
+
+/* 아마 이펙트 다수를 가질 거 같음*/
 class CCrystal final : public CEnviromentObj
 {
 private:
@@ -20,18 +22,30 @@ private:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg = nullptr)override;
+	
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 
-private:
+public:
+	void			Create_Pulse(_bool bActive);
+
+
+private:	
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	
+private:
+	vector<class CEffect_Base*>			m_VecCrystal_Effect;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+
+public:
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+
 
 private:
 	HRESULT SetUp_Components();

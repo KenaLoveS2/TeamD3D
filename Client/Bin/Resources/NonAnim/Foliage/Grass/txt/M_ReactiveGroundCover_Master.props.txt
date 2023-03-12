@@ -1,0 +1,295 @@
+TwoSided = true
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[5] =
+{
+    ReferencedTextures[0] = Texture2D'/Engine/EngineMaterials/Good64x64TilingNoiseHighFreq.Good64x64TilingNoiseHighFreq'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Specular_Tex.Grass_thick_Atlas_Specular_Tex'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Tex.Grass_thick_Atlas_Tex'
+    ReferencedTextures[3] = Texture2D'/Game/ThirdParty/Chameleon/Textures/T_Black.T_Black'
+    ReferencedTextures[4] = Texture2D'/Game/ThirdParty/PyroParticlePack/Textures/World/FlatNormal_01.FlatNormal_01'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[33] =
+                {
+                    ParameterInfos[0] = { Name=Diffuse_ColorIntensity }
+                    ParameterInfos[1] = { Name=Roughness }
+                    ParameterInfos[2] = { Name=Trunk_BendFactor }
+                    ParameterInfos[3] = { Name=WindShakeStrength }
+                    ParameterInfos[4] = { Name=Height }
+                    ParameterInfos[5] = { Name=FadeLength }
+                    ParameterInfos[6] = { Name=Metallic }
+                    ParameterInfos[7] = { Name=OvergrowthScale }
+                    ParameterInfos[8] = { Name=FadeOffset }
+                    ParameterInfos[9] = { Name=Specular }
+                    ParameterInfos[10] = { Name=BranchWindStrength }
+                    ParameterInfos[11] = { Name=Emissive_Intensity }
+                    ParameterInfos[12] = { Name=PixelDepth_Dither_NearFade }
+                    ParameterInfos[13] = { Name=CameraScalingDistanceStop }
+                    ParameterInfos[14] = { Name=DeadDesaturation }
+                    ParameterInfos[15] = { Name=CameraScalingPower }
+                    ParameterInfos[16] = { Name=WindStrengthCap }
+                    ParameterInfos[17] = { Name=WindDisplacement }
+                    ParameterInfos[18] = { Name=InitialScale }
+                    ParameterInfos[19] = { Name=DeadzoneScale }
+                    ParameterInfos[20] = { Name=WindMask_Variation }
+                    ParameterInfos[21] = { Name=CameraScalingScale }
+                    ParameterInfos[22] = { Name=TrunkWindStrength }
+                    ParameterInfos[23] = { Name=DitherRandomness }
+                    ParameterInfos[24] = { Name=Global_WindStrength }
+                    ParameterInfos[25] = { Name=Rough_Min }
+                    ParameterInfos[26] = { Name=Desaturate_Diffuse }
+                    ParameterInfos[27] = { Name=WindShakeStrengthCap }
+                    ParameterInfos[28] = { Name=CameraScalingDistanceStart }
+                    ParameterInfos[29] = { Name=Rough_Max }
+                    ParameterInfos[30] = { Name=LeafWindStrength }
+                    ParameterInfos[31] = { Name=SS Stength }
+                    ParameterInfos[32] = { Name=PixelDepth_Dither }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[6] =
+                {
+                    ParameterInfos[0] = { Name=OvergrownColor }
+                    ParameterInfos[1] = { Name=DeadColor }
+                    ParameterInfos[2] = { Name=Emissive_ColorOverlay }
+                    ParameterInfos[3] = { Name=SubsurfaceColorTint }
+                    ParameterInfos[4] = { Name=Diffuse_Color_Overlay }
+                    ParameterInfos[5] = { Name=SubsurfaceColorTint_Dead }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[6] =
+                {
+                    ParameterInfos[0] = { Name=Tex_Emissive }
+                    ParameterInfos[1] = { Name=Tex_Diffuse }
+                    ParameterInfos[2] = { Name=DZ_MajorMask }
+                    ParameterInfos[3] = { Name=Tex_Comp_MR }
+                    ParameterInfos[4] = { Name=DZ_Mask }
+                    ParameterInfos[5] = { Name=Tex_Normal }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[33] =
+        {
+            ScalarValues[0] = 1
+            ScalarValues[1] = 0.4
+            ScalarValues[2] = 1.1
+            ScalarValues[3] = 0
+            ScalarValues[4] = 1000
+            ScalarValues[5] = 50
+            ScalarValues[6] = 0
+            ScalarValues[7] = 1.1
+            ScalarValues[8] = 100
+            ScalarValues[9] = 0.5
+            ScalarValues[10] = 1
+            ScalarValues[11] = 1
+            ScalarValues[12] = 256
+            ScalarValues[13] = 200
+            ScalarValues[14] = 0
+            ScalarValues[15] = 0.5
+            ScalarValues[16] = 20
+            ScalarValues[17] = 20
+            ScalarValues[18] = 1
+            ScalarValues[19] = 0.7
+            ScalarValues[20] = 0.5
+            ScalarValues[21] = 0.3
+            ScalarValues[22] = 1
+            ScalarValues[23] = 1
+            ScalarValues[24] = 1
+            ScalarValues[25] = 0
+            ScalarValues[26] = 0
+            ScalarValues[27] = 10
+            ScalarValues[28] = 10
+            ScalarValues[29] = 1
+            ScalarValues[30] = 1
+            ScalarValues[31] = 1
+            ScalarValues[32] = 10
+        }
+        VectorValues[6] =
+        {
+            VectorValues[0] = { R=16, G=20, B=16, A=1 }
+            VectorValues[1] = { R=0.244792, G=0.195997, B=0.084066, A=1 }
+            VectorValues[2] = { R=1, G=1, B=1, A=0 }
+            VectorValues[3] = { R=1, G=1, B=1, A=1 }
+            VectorValues[4] = { R=1, G=1, B=1, A=1 }
+            VectorValues[5] = { R=1, G=1, B=1, A=0 }
+        }
+        TextureValues[6] =
+        {
+            TextureValues[0] = Texture2D'/Game/ThirdParty/Chameleon/Textures/T_Black.T_Black'
+            TextureValues[1] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Tex.Grass_thick_Atlas_Tex'
+            TextureValues[3] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Specular_Tex.Grass_thick_Atlas_Specular_Tex'
+            TextureValues[5] = Texture2D'/Game/ThirdParty/PyroParticlePack/Textures/World/FlatNormal_01.FlatNormal_01'
+        }
+    }
+    ReferencedTextures[9] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Tex.Grass_thick_Atlas_Tex'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Specular_Tex.Grass_thick_Atlas_Specular_Tex'
+        ReferencedTextures[2] = Texture2D'/Game/ThirdParty/PyroParticlePack/Textures/World/FlatNormal_01.FlatNormal_01'
+        ReferencedTextures[5] = Texture2D'/Engine/EngineMaterials/Good64x64TilingNoiseHighFreq.Good64x64TilingNoiseHighFreq'
+        ReferencedTextures[7] = Texture2D'/Game/ThirdParty/Chameleon/Textures/T_Black.T_Black'
+    }
+}
+BlendMode = BLEND_Masked (1)
+OpacityMaskClipValue = 0.44
+CollectedTextureParameters[6] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/ThirdParty/Chameleon/Textures/T_Black.T_Black'
+        Name = Tex_Emissive
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Tex.Grass_thick_Atlas_Tex'
+        Name = Tex_Diffuse
+        Group = None
+    }
+    CollectedTextureParameters[2] = { Texture=None, Name=DZ_MajorMask, Group=None }
+    CollectedTextureParameters[3] =
+    {
+        Texture = Texture2D'/Game/Mochi/Environment/Tests/Foliage/Grass/Grass_thick_Atlas_Specular_Tex.Grass_thick_Atlas_Specular_Tex'
+        Name = Tex_Comp_MR
+        Group = None
+    }
+    CollectedTextureParameters[4] = { Texture=None, Name=DZ_Mask, Group=None }
+    CollectedTextureParameters[5] =
+    {
+        Texture = Texture2D'/Game/ThirdParty/PyroParticlePack/Textures/World/FlatNormal_01.FlatNormal_01'
+        Name = Tex_Normal
+        Group = None
+    }
+}
+CollectedScalarParameters[33] =
+{
+    CollectedScalarParameters[0] = { Value=1, Name=Diffuse_ColorIntensity, Group=None }
+    CollectedScalarParameters[1] = { Value=0.4, Name=Roughness, Group=None }
+    CollectedScalarParameters[2] = { Value=1.1, Name=Trunk_BendFactor, Group=None }
+    CollectedScalarParameters[3] = { Value=0, Name=WindShakeStrength, Group=None }
+    CollectedScalarParameters[4] = { Value=1000, Name=Height, Group=None }
+    CollectedScalarParameters[5] = { Value=50, Name=FadeLength, Group=None }
+    CollectedScalarParameters[6] = { Value=0, Name=Metallic, Group=None }
+    CollectedScalarParameters[7] = { Value=1.1, Name=OvergrowthScale, Group=None }
+    CollectedScalarParameters[8] = { Value=100, Name=FadeOffset, Group=None }
+    CollectedScalarParameters[9] = { Value=0.5, Name=Specular, Group=None }
+    CollectedScalarParameters[10] = { Value=1, Name=BranchWindStrength, Group=None }
+    CollectedScalarParameters[11] = { Value=1, Name=Emissive_Intensity, Group=None }
+    CollectedScalarParameters[12] =
+    {
+        Value = 256
+        Name = PixelDepth_Dither_NearFade
+        Group = None
+    }
+    CollectedScalarParameters[13] =
+    {
+        Value = 200
+        Name = CameraScalingDistanceStop
+        Group = None
+    }
+    CollectedScalarParameters[14] = { Value=0, Name=DeadDesaturation, Group=None }
+    CollectedScalarParameters[15] = { Value=0.5, Name=CameraScalingPower, Group=None }
+    CollectedScalarParameters[16] = { Value=20, Name=WindStrengthCap, Group=None }
+    CollectedScalarParameters[17] = { Value=20, Name=WindDisplacement, Group=None }
+    CollectedScalarParameters[18] = { Value=1, Name=InitialScale, Group=None }
+    CollectedScalarParameters[19] = { Value=0.7, Name=DeadzoneScale, Group=None }
+    CollectedScalarParameters[20] = { Value=0.5, Name=WindMask_Variation, Group=None }
+    CollectedScalarParameters[21] = { Value=0.3, Name=CameraScalingScale, Group=None }
+    CollectedScalarParameters[22] = { Value=1, Name=TrunkWindStrength, Group=None }
+    CollectedScalarParameters[23] = { Value=1, Name=DitherRandomness, Group=None }
+    CollectedScalarParameters[24] = { Value=1, Name=Global_WindStrength, Group=None }
+    CollectedScalarParameters[25] = { Value=0, Name=Rough_Min, Group=None }
+    CollectedScalarParameters[26] = { Value=0, Name=Desaturate_Diffuse, Group=None }
+    CollectedScalarParameters[27] = { Value=10, Name=WindShakeStrengthCap, Group=None }
+    CollectedScalarParameters[28] =
+    {
+        Value = 10
+        Name = CameraScalingDistanceStart
+        Group = None
+    }
+    CollectedScalarParameters[29] = { Value=1, Name=Rough_Max, Group=None }
+    CollectedScalarParameters[30] = { Value=1, Name=LeafWindStrength, Group=None }
+    CollectedScalarParameters[31] = { Value=1, Name=SS Stength, Group=None }
+    CollectedScalarParameters[32] = { Value=10, Name=PixelDepth_Dither, Group=None }
+}
+CollectedVectorParameters[6] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=16, G=20, B=16, A=1 }
+        Name = OvergrownColor
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=0.244792, G=0.195997, B=0.084066, A=1 }
+        Name = DeadColor
+        Group = None
+    }
+    CollectedVectorParameters[2] =
+    {
+        Value = { R=1, G=1, B=1, A=0 }
+        Name = Emissive_ColorOverlay
+        Group = None
+    }
+    CollectedVectorParameters[3] =
+    {
+        Value = { R=1, G=1, B=1, A=1 }
+        Name = SubsurfaceColorTint
+        Group = None
+    }
+    CollectedVectorParameters[4] =
+    {
+        Value = { R=1, G=1, B=1, A=1 }
+        Name = Diffuse_Color_Overlay
+        Group = None
+    }
+    CollectedVectorParameters[5] =
+    {
+        Value = { R=1, G=1, B=1, A=0 }
+        Name = SubsurfaceColorTint_Dead
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = FlatNormal_01
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = Grass_thick_Atlas_Specular_Tex
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = Grass_thick_Atlas_Tex
+    }
+}

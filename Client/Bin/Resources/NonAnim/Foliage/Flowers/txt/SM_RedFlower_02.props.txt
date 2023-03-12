@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_RedFlower.MI_RedFlower'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_RedFlower.MI_RedFlower'
+        MaterialSlotName = MI_RedFlower
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 224.671, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-3.03345, Y=-1.62488, Z=75.5911 }
+    BoxExtent = { X=75.1782, Y=63.7632, Z=80.3525 }
+    SphereRadius = 110.255
+}

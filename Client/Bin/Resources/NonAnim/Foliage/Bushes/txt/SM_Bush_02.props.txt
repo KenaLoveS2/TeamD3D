@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Bush.MI_Bush'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Bush_CheapLOD.MI_Bush_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Bush.MI_Bush'
+        MaterialSlotName = MI_Bushes
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 176.929, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Bush_CheapLOD.MI_Bush_CheapLOD'
+        MaterialSlotName = MI_Bush_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 176.065, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=3.69282, Y=9.47722, Z=98.1484 }
+    BoxExtent = { X=131.579, Y=143.62, Z=93.8454 }
+    SphereRadius = 176.539
+}

@@ -14,7 +14,7 @@ class CAnimationState;
 END
 
 BEGIN(Client)
-
+class CUI_RotIcon;
 class CKena final : public CGameObject
 {
 	friend class CKena_State;
@@ -48,6 +48,9 @@ public:
 	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
+
+public:
+	void					Call_RotIcon(CGameObject* pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
@@ -95,6 +98,8 @@ private:
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
 
+	CUI_RotIcon*			m_pFocusRot;
+
 private:
 	HRESULT					Ready_Parts();
 	HRESULT					Ready_Effects();
@@ -102,6 +107,7 @@ private:
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
+	HRESULT					SetUp_UI();
 
 private:	/* Animation Event Func */
 	void					Test(_bool bIsInit, _float fTimeDelta);

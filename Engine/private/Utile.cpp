@@ -888,13 +888,24 @@ void CUtile::Execute_BillBoardOrtho(CTransform * pTransform, _float3 vScale, _fl
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 
-	_matrix worldmatrix = _smatrix::CreateBillboard(
-		pTransform->Get_State(CTransform::STATE_TRANSLATION),
-		pPipeLine->Get_CamPosition_Float3(),
-		pPipeLine->Get_CamUp_Float3(),
-		&pPipeLine->Get_CamLook_Float3());
+	//_matrix worldmatrix = _smatrix::CreateBillboard(
+	//	pTransform->Get_State(CTransform::STATE_TRANSLATION),
+	//	pPipeLine->Get_CamPosition_Float3(),
+	//	pPipeLine->Get_CamUp_Float3(),
+	//	&pPipeLine->Get_CamLook_Float3());
 
-	pTransform->Set_WorldMatrix(worldmatrix);
+	pTransform->Set_Look(pPipeLine->Get_CamLook_Float4());
+
+	//_float3 vLook = pTransform->Get_State(CTransform::STATE_LOOK);
+	//_float3 vRight = pTransform->Get_State(CTransform::STATE_RIGHT);
+	//_matrix worldmatrix = _smatrix::CreateConstrainedBillboard(
+	//	pTransform->Get_State(CTransform::STATE_TRANSLATION),
+	//	vRight,
+	//	pPipeLine->Get_CamRight_Float3(),
+	//	&pPipeLine->Get_CamLook_Float3(),
+	//	&vLook);
+
+	//pTransform->Set_WorldMatrix(worldmatrix);
 
 	_float fFar = *CGameInstance::GetInstance()->Get_CameraFar();
 	_float fNear = *CGameInstance::GetInstance()->Get_CameraNear();
@@ -903,7 +914,7 @@ void CUtile::Execute_BillBoardOrtho(CTransform * pTransform, _float3 vScale, _fl
 
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 	_float4 vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_float4 vDist = vCamPos - vPos;
+	_float4 vDist = vPos - vCamPos;
 	//_float  fDist = XMVectorGetX(XMVector3Length(vDist));
 	_float  fDist = XMVectorGetX(XMVector3Dot(XMLoadFloat4(&vDist), XMLoadFloat4(&CGameInstance::GetInstance()->Get_CamLook_Float4())));
 

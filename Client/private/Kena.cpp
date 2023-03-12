@@ -11,14 +11,17 @@
 #include "Terrain.h"
 #include "Rope_RotRock.h"
 #include "Rot.h"
+#include "UI_RotIcon.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
+	, m_pFocusRot(nullptr)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
+	, m_pFocusRot(nullptr)
 {
 }
 
@@ -110,6 +113,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
 	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
 
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -119,6 +124,12 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
 	
+
+	if (m_bAim && m_bJump)
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+	else
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
 	__super::Tick(fTimeDelta);
 
 	// Test_Raycast();
@@ -133,8 +144,10 @@ void CKena::Tick(_float fTimeDelta)
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
 
+	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
 	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
+		m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
@@ -171,6 +184,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
 
 	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
@@ -181,12 +195,18 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		_float fTag = 0.f;
-		_float fCurrency[3] = { 200.f, 13.f, 230.f };
-		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
-		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
-		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
+		static _float fTag = 0.0f;
+		if (fTag < 1.0f)
+			fTag = 1.0f;
+		else
+			fTag = 0.0f;
+		m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
+		//_float fTag = 0.f;
+		//_float fCurrency[3] = { 200.f, 13.f, 230.f };
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
+		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
+		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
 
 		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
@@ -502,6 +522,14 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CKena::Call_RotIcon(CGameObject * pTarget)
+{
+	if (m_pFocusRot == nullptr)
+		return;
+
+	m_pFocusRot->Set_Pos(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -1520,6 +1548,23 @@ HRESULT CKena::SetUp_State()
 	pAnimState->m_fLerpDuration = 0.2f;
 	pAnimState->m_pMainAnim = m_pModelCom->Find_Animation((_uint)CKena_State::FALL_INTO_RUN);
 	m_pAnimation->Add_State(pAnimState);
+
+	return S_OK;
+}
+
+HRESULT CKena::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_UI_RotFocuss"),
+		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pFocusRot)))
+	{
+		MSG_BOX("Failed To make UI : Kena");
+		return E_FAIL;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
 
 	return S_OK;
 }

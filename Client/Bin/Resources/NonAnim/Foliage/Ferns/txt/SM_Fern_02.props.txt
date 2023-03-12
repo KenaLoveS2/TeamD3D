@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern_02.MI_Fern_02'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern_02_CheapLOD.MI_Fern_02_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern_02.MI_Fern_02'
+        MaterialSlotName = MI_Fern_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 226.935, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern_02_CheapLOD.MI_Fern_02_CheapLOD'
+        MaterialSlotName = MI_Fern_02_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 220.112, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-9.57379, Y=-7.62366, Z=85.3383 }
+    BoxExtent = { X=215.961, Y=214.237, Z=85.681 }
+    SphereRadius = 241.912
+}
