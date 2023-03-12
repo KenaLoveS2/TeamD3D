@@ -29,8 +29,9 @@ Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
 
 Texture2D<float4>		g_ShadowTexture;
+Texture2D<float4>		g_StaticShadowTexture;
 Texture2D<float4>		g_MtrlAmbientTexture;
-//Texture2D<float4>		g_SSAOTexture;
+Texture2D<float4>		g_SSAOTexture;
 
 float3 CalculateDiffuse(float3 albedo, float3 normal, float3 lightColor, float3 lightDirection)
 {
@@ -191,11 +192,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
 	PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
 
-	//vector		vDiffuse		   = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc   = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
-	//vector		vSSAODesc = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	float			fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -305,7 +304,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float3 diffuse = DiffuseLight.rgb / PI;
 
 	// Final color
-	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)))/* * vSSAODesc.r*/;
+	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)));
 	Out.vSpecular = float4(specular * dot(N, L), 1.f);
 
 	return Out;
@@ -368,10 +367,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vShade				 = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc		 = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/;
-	//Out.vColor = CalcHDRColor(vShade, vDepthDesc.b);
-	//Out.vColor = vShade;
+	Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/ * vSSAODesc.r;
 
 	if (Out.vColor.a == 0.0f)
 		discard;
@@ -410,10 +408,22 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 		{
 			float2 offset = float2(x, y) * TexcelSize;
 			vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vNewUV + offset);
-			if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
+			vector  vStaticShadowDesc = g_StaticShadowTexture.Sample(LinearSampler, vNewUV + offset);
+			if (vPosition.z - 0.1f > (vShadowDesc.r * vStaticShadowDesc.r) * g_fFar)
 				fShadowRate += 1.f;
 		}
 	}
+
+	//for (int y = -1; y <= 1; ++y)
+	//{
+	//	for (int x = -1; x <= 1; ++x)
+	//	{
+	//		float2 offset = float2(x, y) * TexcelSize;
+	//		vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vNewUV + offset);
+	//		if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
+	//			fShadowRate += 1.f;
+	//	}
+	//}
 
 	fShadowRate /= 9.f;
 	fShadowRate *= 0.3f;

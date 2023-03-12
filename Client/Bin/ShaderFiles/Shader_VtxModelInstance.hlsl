@@ -59,7 +59,7 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	Out.vPosition = vPosition.xyz;
 	Out.vNormal = vNormal.xyz;
 	Out.vTexUV = In.vTexUV;
-	Out.vProjPos = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vProjPos = mul(float4(In.vPosition, 1.f), Transform);
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), Transform));
 	Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
 
@@ -224,7 +224,7 @@ DomainOut DS_MAIN(PatchTess PatchTess, float3 uvw : SV_DomainLocation,
 	Out.vPosition = mul(vector(p, 1.f), matWVP);
 	Out.vTexUV = tri[0].vTexUV * fW + tri[1].vTexUV * fU + tri[2].vTexUV * fV;
 	Out.vNormal = normalize(mul(vector(n, 0.f), g_WorldMatrix));
-	Out.vProjPos = vProjPos;
+	Out.vProjPos = Out.vPosition;
 	Out.vTangent = vTangent;
 	Out.vBinormal = vBinormal.xyz;
 	return Out;
@@ -563,9 +563,38 @@ PS_OUT_TESS PS_MAIN_NOAO_DN_BM(PS_IN_TESS In)
 	return Out;
 }//11
 
+struct PS_IN_SHADOW
+{
+	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float4		vTangent : TANGENT;
+	float3		vBinormal : BINORMAL;
+};
+
+struct PS_OUT_SHADOW
+{
+	vector			vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	if (0.f == vDiffuse.a)
+		discard;
+
+	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
+	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
-	pass MESH_INStancing
+	pass Shadow
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -575,7 +604,7 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_TESS();
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}//0
 
 	pass MESH_INStancing_Lod//
