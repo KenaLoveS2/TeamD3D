@@ -797,7 +797,19 @@ void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
 				continue;
 		
-			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse();
+			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
+		}
+	}
+
+	if (ImGui::Button("Stop_Crystal_Pulse"))
+	{
+
+		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+		{
+			if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+				continue;
+
+			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
 		}
 
 

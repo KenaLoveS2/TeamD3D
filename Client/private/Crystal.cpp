@@ -4,6 +4,8 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Effect_Base.h"
+#include "E_PulseObject.h"
+
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -40,11 +42,40 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 {
 	
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
-	/* Pulse */
-	m_pPulseEffect = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
-	NULL_CHECK_RETURN(m_pPulseEffect, E_FAIL);
+	
+	CEffect_Base* pEffectObj = nullptr;
+	/*Deliver_PulseE*/
 
-	m_pPulseEffect->Set_Parent(this);
+	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER;
+	PulseObj_Desc.fIncreseRatio = 1.02f;
+	PulseObj_Desc.fPulseMaxSize = 10.f;
+	PulseObj_Desc.vResetSize = _float3(2.f, 2.f, 2.f);
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+
+	m_pCrystal_EffectList.push_back(pEffectObj);
+
+	/*Recived_PulseE*/
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;
+	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fPulseMaxSize = 5.f;
+	m_ePulseDesc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_pCrystal_EffectList.push_back(pEffectObj);
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+		pEffectObj->Set_Position(vPos);
 
 
 	return S_OK;
@@ -53,11 +84,24 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		if(pEffectObj != nullptr)
+			pEffectObj->Tick(fTimeDelta);
+	}
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	for (auto& pEffectObj : m_pCrystal_EffectList)
+	{
+		if (pEffectObj != nullptr)
+			pEffectObj->Late_Tick(fTimeDelta);
+	}
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -85,11 +129,12 @@ HRESULT CCrystal::Render()
 	return S_OK;
 }
 
-void CCrystal::Create_Pulse()
+void CCrystal::Create_Pulse(_bool bActive)
 {
-	if (m_pPulseEffect != nullptr)
+	for (auto& pEffectObj : m_pCrystal_EffectList)
 	{
-		m_pPulseEffect->Set_Active(true);
+		if (pEffectObj != nullptr)
+			pEffectObj->Set_Active(bActive);
 	}
 }
 

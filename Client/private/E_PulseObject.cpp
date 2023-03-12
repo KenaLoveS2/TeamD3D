@@ -65,7 +65,13 @@ HRESULT CE_PulseObject::Initialize(void * pArg)
 	Set_ModelCom(m_eEFfectDesc.eMeshType);
 	/* ~Component */
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
+	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
+
+
+
+	m_pTransformCom->Set_Scaled(_float3(3.f, 3.f, 3.f));
+
 	return S_OK;
 }
 
@@ -75,8 +81,10 @@ void CE_PulseObject::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	m_pTransformCom->Set_Scaled(_float3(3.f,3.f,3.f));
+	Type_Tick(fTimeDelta);
 
+
+	
 	__super::Tick(fTimeDelta);
 
 }
@@ -112,6 +120,37 @@ HRESULT CE_PulseObject::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_PulseObject::Type_Tick(_float TimeDelta)
+{
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+
+	if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
+	{
+		m_ePulseDesc.fIncreseRatio = 1.02f;
+		m_ePulseDesc.fPulseMaxSize = 10.f;
+		m_ePulseDesc.vResetSize = _float3(2.f, 2.f, 2.f);
+	}
+	else if (m_ePulseDesc.eObjType == PULSE_OBJ_RECIVE)
+	{
+		m_ePulseDesc.fIncreseRatio = 1.05f;
+		m_ePulseDesc.fPulseMaxSize = 5.f;
+		m_ePulseDesc.vResetSize = _float3(0.5f, 0.5f, 0.5f);
+	}
+	vScale *= m_ePulseDesc.fIncreseRatio;
+
+	if (vScale.x >= m_ePulseDesc.fPulseMaxSize)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);	// 기믹에 실패했을때 
+	}
+	else
+	{
+		m_pTransformCom->Set_Scaled(vScale);
+	}
+
+
 }
 
 CE_PulseObject * CE_PulseObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

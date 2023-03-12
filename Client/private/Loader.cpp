@@ -635,43 +635,55 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
-		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulse.json"))))
+		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaPulseCloud */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
-		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseCloude.json"))))
+		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulseCloude.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaPulseDot */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseDot"),
-		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/KenaPulseDot.json"))))
+		CE_KenaPulseDot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulseDot.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaCharge */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaCharge"),
-		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Set.json"))))
+		CE_KenaCharge::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Charge_Set.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaChargeImpact */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaChargeImpact"),
-		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Charge_Impact.json"))))
+		CE_KenaChargeImpact::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Charge_Impact.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaDamage */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDamage"),
-		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Damage_Set.json"))))
+		CE_KenaDamage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Damage_Set.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_KenaHit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
-		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hit.json"))))
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HitSet.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaJump */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaJump"),
+		CE_KenaJump::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_JumpSet.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_PulseObject */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseObject"),
+		CE_PulseObject::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_PulseObject.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
