@@ -1,0 +1,124 @@
+Parent = Material3'/Game/ThirdParty/Megascans/MSPresets/Foliage_Material/Foliage_Material.Foliage_Material'
+ScalarParameterValues[3] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Roughness Intensity }
+        ParameterValue = 0.85
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Specular }
+        ParameterValue = 0.2
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[5] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Albedo }
+        ParameterValue = Texture2D'/Game/ThirdParty/Megascans/3D_Plants/Basil_vgpochzia/Albedo_4K_vgpochzia.Albedo_4K_vgpochzia'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Roughness }
+        ParameterValue = Texture2D'/Game/ThirdParty/Megascans/3D_Plants/Basil_vgpochzia/Roughness_4K_vgpochzia.Roughness_4K_vgpochzia'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Opacity }
+        ParameterValue = Texture2D'/Game/ThirdParty/Megascans/3D_Plants/Basil_vgpochzia/Opacity_4K_vgpochzia.Opacity_4K_vgpochzia'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=Normal }
+        ParameterValue = Texture2D'/Game/ThirdParty/Megascans/3D_Plants/Basil_vgpochzia/Normal_4K_vgpochzia.Normal_4K_vgpochzia'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=Translucency }
+        ParameterValue = Texture2D'/Game/ThirdParty/Megascans/3D_Plants/Basil_vgpochzia/Translucency_4K_vgpochzia.Translucency_4K_vgpochzia'
+        ParameterName = None
+    }
+}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color Overlay }
+        ParameterValue = { R=0.053819, G=0.053819, B=0.053819, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=SSS Color Tint }
+        ParameterValue = { R=0.305555, G=0.305555, B=0.305555, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Masked (1)
+    bOverride_TwoSided = false
+    TwoSided = true
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[1] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Enable_TreeWind }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = Albedo_4K_vgpochzia
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = Normal_4K_vgpochzia
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = Translucency_4K_vgpochzia
+    }
+}

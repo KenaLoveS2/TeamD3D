@@ -53,7 +53,7 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
+	m_vecEvents.push_back(CUI_Event_Guage::Create({ 1.f, 0.f, 0.f, 1.f }, { 1.f, 0.f, 0.f,1.f }));
 
 	return S_OK;
 }

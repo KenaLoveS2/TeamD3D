@@ -78,6 +78,7 @@ public:
 	_float							Calc_PlayerLookAtDirection();
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
+	void							Call_RotIcon();
 
 protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;

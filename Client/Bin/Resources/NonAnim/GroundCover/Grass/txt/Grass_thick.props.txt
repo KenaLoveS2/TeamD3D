@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Grass_WhiteFlower_DZ.MI_Grass_WhiteFlower_DZ'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Grass_WhiteFlower_DZ.MI_Grass_WhiteFlower_DZ'
+        MaterialSlotName = MI_Cover_Grass
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = true
+            LocalUVDensities[4] = { 239.67, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.05976, Y=21.3238, Z=27.2187 }
+    BoxExtent = { X=69.9885, Y=69.5173, Z=30.4337 }
+    SphereRadius = 98.6782
+}

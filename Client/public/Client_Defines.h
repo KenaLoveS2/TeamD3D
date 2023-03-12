@@ -7,7 +7,9 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-#define FOR_MAPTOOL
+//#define FOR_MAP_GIMMICK
+
+//#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
 
 #define LIFT_ROT_COUNT		6
@@ -41,7 +43,7 @@ namespace Client
 		COL_MONSTER, COL_MONSTER_WEAPON,
 		
 		COL_GROUND, COL_ENVIROMENT,COL_PULSE_PLATE,
-
+		COL_PULSE,
 		COLLIDER_INDEX_END,
 	};
 

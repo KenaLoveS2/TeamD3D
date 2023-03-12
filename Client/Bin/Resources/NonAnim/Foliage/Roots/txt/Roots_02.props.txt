@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Environment/Prototype/Assets/Tiles/Materials/TileableTextures_TreeRoot_01_INST.TileableTextures_TreeRoot_01_INST'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Environment/Prototype/Assets/Tiles/Materials/TileableTextures_TreeRoot_01_INST.TileableTextures_TreeRoot_01_INST'
+        MaterialSlotName = root
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 20.121, 235.244, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=9.17381, Y=22.539, Z=-2.33483 }
+    BoxExtent = { X=108.211, Y=179.129, Z=28.4476 }
+    SphereRadius = 196.449
+}
