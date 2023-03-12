@@ -205,11 +205,13 @@
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
     <ClInclude Include="..\public\E_KenaHit.h" />
+    <ClInclude Include="..\public\E_KenaJump.h" />
     <ClInclude Include="..\public\E_KenaPulse.h" />
     <ClInclude Include="..\public\E_KenaPulseCloud.h" />
     <ClInclude Include="..\public\E_KenaPulseDot.h" />
     <ClInclude Include="..\public\E_KenaCharge.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
+    <ClInclude Include="..\public\E_PulseObject.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
@@ -359,11 +361,13 @@
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
     <ClCompile Include="..\private\E_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_KenaJump.cpp" />
     <ClCompile Include="..\private\E_KenaPulse.cpp" />
     <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
     <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
     <ClCompile Include="..\private\E_KenaCharge.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
+    <ClCompile Include="..\private\E_PulseObject.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />

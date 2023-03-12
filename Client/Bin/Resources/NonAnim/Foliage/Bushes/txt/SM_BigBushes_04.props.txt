@@ -1,0 +1,50 @@
+Materials[3] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_3.MI_BigBushes_3'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_2.MI_BigBushes_2'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_3_CheapLOD.MI_BigBushes_3_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[3] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_3.MI_BigBushes_3'
+        MaterialSlotName = MI_BigBushes_4
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 172.704, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_2.MI_BigBushes_2'
+        MaterialSlotName = MI_BigBushes_5
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 290.531, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Bushes/Materials/MI_BigBushes_3_CheapLOD.MI_BigBushes_3_CheapLOD'
+        MaterialSlotName = MI_BigBushes_3_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 537.674, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=3.68143, Y=23.79, Z=136.164 }
+    BoxExtent = { X=275.614, Y=399.599, Z=200.315 }
+    SphereRadius = 433.597
+}

@@ -15,6 +15,8 @@ public:
 	void	Set_WorldMatrix(_matrix WorldMatrix) { m_pTransformCom->Set_WorldMatrix(WorldMatrix); }
 	void	Set_TrailPosition(_vector vPosition) { m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition); }
 
+	void	ResetInfo();
+
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;

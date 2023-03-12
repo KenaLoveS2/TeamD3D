@@ -14,6 +14,14 @@ CEffect_Trail::CEffect_Trail(const CEffect_Trail & rhs)
 {
 }
 
+void CEffect_Trail::ResetInfo()
+{
+	if (m_pVITrailBufferCom == nullptr)
+		return;
+
+	m_pVITrailBufferCom->ResetInfo();
+}
+
 HRESULT CEffect_Trail::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -48,16 +56,12 @@ void CEffect_Trail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	// Set_TrailDesc();
-
 	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
 
 void CEffect_Trail::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.bActive == false)
-		return;
 
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
@@ -84,11 +88,15 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			fPreLife = m_pVITrailBufferCom->Get_InstanceInfo()->back().vPosition.w;
 
 		_uint  iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
-
 		_vector vPrepos = vPoint1;
 
 		_float  fWeight = 0.0f, fRadian = 0.0f;
-		_vector vSplinePos, vRight, vUp, vLook, vDir;
+		_vector vSplinePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+		_vector vRight = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vUp = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
 		for (_uint i = 0; i < iSegmentCnt; ++i)
 		{
 			fWeight = _float(i + 1) / (_float)iSegmentCnt;
@@ -98,8 +106,8 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			vDir = XMVector3Normalize(vCamPos - vSplinePos);
 
 			fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
-			if (fRadian < 5.f)
-				continue;
+			//if (fRadian < 5.f)
+			//	continue;
 
 			vUp = XMVector3Cross(vRight, vDir);
 			vLook = XMVector3Cross(vRight, vUp);
@@ -131,7 +139,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
+		(CComponent**)&m_pRendererCom))) 
 		return E_FAIL;
 
 /* For.Com_Shader */
@@ -139,10 +147,10 @@ HRESULT CEffect_Trail::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVITrailBufferCom)))
-		return E_FAIL;
+// 	/* For.Com_VIBuffer */
+// 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
+// 		(CComponent**)&m_pVITrailBufferCom)))
+// 		return E_FAIL;
 
 	/***********
 	*  TEXTURE *
@@ -205,8 +213,7 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_InfoMatrix")))
-		return E_FAIL;
+
 	if (FAILED(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize")))
 		return E_FAIL;
 

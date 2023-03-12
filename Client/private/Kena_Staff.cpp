@@ -61,14 +61,13 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-	for (auto& Effect : m_mapEffect)
-	{
-		if (Effect.first == "KenaTrail")
-			Effect.second->Set_Active(m_pPlayer->Is_Attack());
+	if (m_pPlayer->Is_Bow())
+		m_fBowDurationTime += fTimeDelta ;
+	else
+		m_fBowDurationTime = 0.5f;
 
-		else if (Effect.first == "KenaCharge")
-			Effect.second->Set_Active(m_pPlayer->Is_ChargeLight());
-	}
+	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -77,10 +76,6 @@ void CKena_Staff::Tick(_float fTimeDelta)
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	// bow_string_jnt_top
-	// staff_skin8_jnt
-	// staff_skin7_jnt
 
 	/* Weapon Update */
 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
@@ -133,32 +128,34 @@ HRESULT CKena_Staff::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 		}
 
-		if (i == 2)
+		if(m_pPlayer->Is_Bow() == true)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
-		}
+			if (i == 2)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
+			}
 
-		if (i == 3) // M_bowTrails == 3
-		{
-			continue;
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
-		}
+			if (i == 3) // M_bowTrails == 3
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+			}
 
-		if (i == 4)
-		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+			if (i == 4)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+			}
 		}
 	}
 
@@ -270,7 +267,7 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float));
-	
+	m_pShaderCom->Set_RawValue("g_BowDurationTime", &m_fBowDurationTime, sizeof(_float));
 	return S_OK;
 }
 

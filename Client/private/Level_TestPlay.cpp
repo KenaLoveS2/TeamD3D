@@ -78,11 +78,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Layer_Effect");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//{
+	//	MSG_BOX("Layer_Effect");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 	{
@@ -145,7 +145,7 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
 	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
-	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
+	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
 	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
 	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
@@ -381,7 +381,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
-
+	
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
 	//	return E_FAIL;
 

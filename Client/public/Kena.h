@@ -27,6 +27,7 @@ private:
 public:
 	_double					Get_AnimationPlayTime();
 	const _bool&				Is_Attack() const { return m_bAttack; }
+	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 
 public:
@@ -76,6 +77,7 @@ private:
 	_bool					m_bChargeLight = false;
 	_bool					m_bSprint = false;
 	_bool					m_bAim = false;
+	_bool					m_bBow = false;
 
 	_float					m_fInertia = 5.f;
 	_float					m_fVelocity = 0.f;
@@ -89,9 +91,9 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				    m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4				    m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				    m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
@@ -114,6 +116,8 @@ private:	/* Animation Event Func */
 
 	void					TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
+
+	void					TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
