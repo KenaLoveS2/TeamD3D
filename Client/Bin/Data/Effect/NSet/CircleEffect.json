@@ -1,0 +1,107 @@
+{
+    "0.Save Level": 5,
+    "1.Save2Load Level": 5,
+    "2.Layer Tag": "Layer_Effect",
+    "Object": [
+        {
+            "Object Data": [
+                {
+                    "Child Count": 0,
+                    "Desc": [
+                        {
+                            "Alpha": 0.0,
+                            "Angle": 0.0,
+                            "Billboard": true,
+                            "Blend Type": 0,
+                            "Color": [
+                                0.146484375,
+                                0.6771087646484375,
+                                0.78125,
+                                1.0
+                            ],
+                            "CreateRange": 0.0,
+                            "DiffuseTexture Index": [
+                                48.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "DurationTime": 0.0,
+                            "Effect Type": 0,
+                            "FreeMove": false,
+                            "Have Trail": false,
+                            "Height Frame": 0.0,
+                            "HeightCnt": 0,
+                            "Init Pos": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "MaskTexture Index": [
+                                23.0,
+                                48.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Mesh Type": 0,
+                            "MoveDir Type": 0,
+                            "MoveDurationTime": 0.0,
+                            "MovingPosition": false,
+                            "NormalTexture Index": 0.0,
+                            "Particle Type": 0,
+                            "Pixed Dir": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Range": 0.0,
+                            "Rotation Type": 0,
+                            "Scale": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "SeparateHeight": 0,
+                            "SeparateWidth": 0,
+                            "Spread": false,
+                            "Start": false,
+                            "Texture Type": 0,
+                            "TextureRender Type": 0,
+                            "Trigger": false,
+                            "Use Child": false,
+                            "Use Mask": true,
+                            "Use Normal": false,
+                            "Width Frame": 0.0,
+                            "WidthCnt": 0
+                        }
+                    ],
+                    "Have DTextureCnt": 1,
+                    "Have MTextureCnt": 2,
+                    "WorldMatrix": [
+                        -0.3415609300136566,
+                        -0.010513583198189735,
+                        -0.9398007988929749,
+                        0.0,
+                        -0.9274949431419373,
+                        0.16543518006801605,
+                        0.3352377712726593,
+                        0.0,
+                        0.15195156633853912,
+                        0.9861646890640259,
+                        -0.06625749170780182,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

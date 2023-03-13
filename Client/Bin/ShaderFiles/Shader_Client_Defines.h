@@ -13,8 +13,8 @@ AddressV = wrap;
 sampler PointSampler = sampler_state
 {
 	filter = min_mag_mip_Point;
-AddressU = wrap;
-AddressV = wrap;
+	AddressU = wrap;
+	AddressV = wrap;
 };
 
 sampler BorderSampler = sampler_state
@@ -96,8 +96,8 @@ DepthWriteMask = zero;
 DepthStencilState DSS_Default
 {
 	DepthEnable = true;
-DepthWriteMask = all;
-DepthFunc = less_equal;
+	DepthWriteMask = all;
+	DepthFunc = less_equal;
 };
 
 

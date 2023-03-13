@@ -5,6 +5,7 @@
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
+#include "Imgui_TerrainEditor.h"
 #include "Imgui_ShaderEditor.h"
 #include "Imgui_Effect.h"
 #include "Layer.h"
@@ -77,11 +78,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Layer_Effect");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	//{
+	//	MSG_BOX("Layer_Effect");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 	{
@@ -91,6 +92,8 @@ HRESULT CLevel_TestPlay::Initialize()
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
+
+	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -142,9 +145,9 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, 1.f, 1.0f, 0.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
 	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
-	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
+	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
 	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
 	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
@@ -164,8 +167,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
-		return E_FAIL;
+	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -174,8 +180,22 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");*/
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_First.json");
+	//for(auto &pGameObject : *pGameInstance->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects())
+	//{
+	//	if (FAILED(pGameInstance->Add_ShaderValueObject(g_LEVEL, pGameObject.second)))
+	//		return E_FAIL;
+	//}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -219,15 +239,25 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	//CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
+	//CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	//CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	//CameraDesc.fFovy = XMConvertToRadians(90.0f);
+	//CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
+	//CameraDesc.fNear = 0.1f;
+	//CameraDesc.fFar = 1000.f;
+	//CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+	//CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+
+	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(90.0f);
-	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
-	CameraDesc.fNear = 0.1f;
-	CameraDesc.fFar = 1000.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
@@ -260,17 +290,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Moth"), L"Moth_0", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-	//	return E_FAIL;
-
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr, &pGameObject)))
 	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
+
+	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;*/
 
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_RotEater"), L"RotEater_0", nullptr, &pGameObject)))
 	//	return E_FAIL;
@@ -284,41 +314,41 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_1", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_VillageGuard"), L"VillageGuard_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_2", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WoodKnight"), L"WoodKnight_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_VillageGuard"), L"VillageGuard_0", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sapling"), L"Sapling_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WoodKnight"), L"WoodKnight_0", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sapling"), L"Sapling_0", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 		
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -366,7 +396,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
-
+	
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
 	//	return E_FAIL;
 

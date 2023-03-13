@@ -620,6 +620,20 @@ void CGameInstance::Update_Timer(const _tchar * pTimerTag)
 	m_pTimer_Manager->Update_Timer(pTimerTag);
 }
 
+const _float CGameInstance::Get_TimeRate(const _tchar * pTimerTag)
+{
+	NULL_CHECK_RETURN(m_pTimer_Manager, 0.f);
+
+	return m_pTimer_Manager->Get_TimeRate(pTimerTag);
+}
+
+void CGameInstance::Set_TimeRate(const _tchar * pTimerTag, _float Time)
+{
+	NULL_CHECK_RETURN(m_pTimer_Manager, );
+
+	return m_pTimer_Manager->Set_TimeRate(pTimerTag, Time);
+}
+
 const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)
 {
 	if (nullptr == m_pLight_Manager)
@@ -862,6 +876,18 @@ _float* CGameInstance::Get_CameraFar()
 {
 	if (m_pCamera_Manager == nullptr) return nullptr;
 	return m_pCamera_Manager->Get_CameraFar();
+}
+
+_float * CGameInstance::Get_CameraNear()
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Get_CameraNear();
+}
+
+_float * CGameInstance::Get_CameraFov()
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Get_CameraFov();
 }
 
 map<const _tchar*, class CCamera*>* CGameInstance::Get_CameraContainer()

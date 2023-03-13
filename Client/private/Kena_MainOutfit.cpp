@@ -44,9 +44,7 @@ void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -72,6 +70,7 @@ HRESULT CKena_MainOutfit::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else	if(i==1 || i ==2)
@@ -105,7 +104,7 @@ HRESULT CKena_MainOutfit::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -188,6 +187,8 @@ HRESULT CKena_MainOutfit::SetUp_Components()
 	m_pModelCom->SetUp_Material(0, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
 	// SSS_MASK
 	m_pModelCom->SetUp_Material(0, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+	// Detail_Normal
+	m_pModelCom->SetUp_Material(1, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/PostProcess/T_FabricDetailNormal.png"));
 
 	// 1~2 For. props
 	for (_uint i = 1; i < 3; ++i)
@@ -237,15 +238,12 @@ HRESULT CKena_MainOutfit::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 

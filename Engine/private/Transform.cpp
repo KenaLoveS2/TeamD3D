@@ -46,6 +46,47 @@ void CTransform::Scaling(STATE eState, _float fScale)
 	Set_State(eState, Get_State(eState) * fScale);	
 }
 
+void CTransform::Set_Look(_fvector vLook)
+{
+	/* x: right ,y:up, z:look */
+	_float3 vScale = Get_Scaled();
+
+	_vector vNormalizedLook = XMVector3Normalize(vLook);
+	Set_State(STATE_LOOK, vScale.z * vNormalizedLook);
+
+	_vector vNormalizedRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vNormalizedLook));
+	Set_State(STATE_RIGHT, vScale.x * vNormalizedRight);
+
+	Set_State(STATE_UP, vScale.y * XMVector3Normalize(XMVector3Cross(vNormalizedLook, vNormalizedRight)));
+}
+
+void CTransform::Set_Right(_fvector vRight)
+{
+	_float3 vScale = Get_Scaled();
+
+	_vector vNormalizedRight = XMVector3Normalize(vRight);
+	Set_State(STATE_RIGHT, vScale.x * vNormalizedRight);
+
+	_vector vNormalizedLook = XMVector3Normalize(XMVector3Cross(vNormalizedRight, _vector{ 0.f, 1.f,0.f,0.f }));
+	Set_State(STATE_LOOK, vScale.z * vNormalizedLook);
+
+	Set_State(STATE_UP, vScale.y * XMVector3Normalize(XMVector3Cross(vNormalizedLook, vNormalizedRight)));
+
+}
+
+void CTransform::Set_Up(_fvector vUp)
+{
+	_float3 vScale = Get_Scaled();
+
+	_vector vNormalizedUp = XMVector3Normalize(vUp);
+	Set_State(STATE_UP, vScale.y * vNormalizedUp);
+
+	_vector vNormalizedLook = XMVector3Normalize(XMVector3Cross(_vector{ 1.f, 0.f, 0.f,0.f }, vNormalizedUp));
+	Set_State(STATE_LOOK, vScale.z * vNormalizedLook);
+
+	Set_State(STATE_RIGHT, vScale.x * XMVector3Normalize(XMVector3Cross(vNormalizedUp, vNormalizedLook)));
+}
+
 HRESULT CTransform::Initialize_Prototype()
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -341,7 +382,7 @@ void CTransform::Speed_Boost(_bool bKeyState, _float fValue)
 	if (bKeyState)
 		m_TransformDesc.fSpeedPerSec = m_fInitSpeed * fValue;
 	else
-		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
+		m_TransformDesc.fSpeedPerSec = m_TransformDesc.fSpeedPerSec;
 }
 
 void CTransform::Speed_Down(_bool bKeyState, _float fValue)
@@ -349,7 +390,7 @@ void CTransform::Speed_Down(_bool bKeyState, _float fValue)
 	if (bKeyState)
 		m_TransformDesc.fSpeedPerSec = m_fInitSpeed / fValue;
 	else
-		m_TransformDesc.fSpeedPerSec = m_fInitSpeed;
+		m_TransformDesc.fSpeedPerSec = m_TransformDesc.fSpeedPerSec;
 }
 
 void CTransform::Orbit(_fvector vTargetPos, _fvector vAxis, const _float & fDistance, _float fTimeDelta)
@@ -720,10 +761,9 @@ void CTransform::Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix)
 		}
 		else
 		{
-			_float4x4 RetMatrix;
-			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
-			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
-			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+			_float3 vPos = Get_State(STATE_TRANSLATION);
+			vPos += m_vPxPivot;
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos);
 		}
 	}
 }
@@ -740,10 +780,9 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 		}
 		else
 		{
-			_float4x4 RetMatrix;
-			_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
-			XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
-			m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
+			_float3 vPos = Get_State(STATE_TRANSLATION);
+			vPos += m_vPxPivot;
+			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos);
 		}	
 	}		
 }

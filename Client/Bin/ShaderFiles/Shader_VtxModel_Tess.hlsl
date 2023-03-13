@@ -10,6 +10,7 @@ Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_MRAOTexture;
 
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -309,26 +310,21 @@ PS_OUT_TESS PS_MAIN_TESS_COMP_MRAO(PS_IN_TESS In)
 {
 	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
 
-	vector		vDiffuse         = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vMRAODesc	  = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vMRAODesc.b, vMRAODesc.g, vMRAODesc.r, vMRAODesc.a);
 
-	vector vAORM = (vector)1.f;
-
-	vAORM.r = vMRAODesc.b;
-	vAORM.g = vMRAODesc.g;
-	vAORM.b = vMRAODesc.r;
-	vAORM.a = vMRAODesc.a;
-
-	Out.vDiffuse = vDiffuse;
+	float4	FinalColor = vDiffuse;
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = vAORM;

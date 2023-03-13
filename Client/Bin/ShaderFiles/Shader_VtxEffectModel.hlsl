@@ -23,6 +23,9 @@ float4  g_WorldCamPosition;
 bool g_bDissolve;
 float g_fDissolveTime;
 
+bool	g_bPulseRecive = false;
+
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -185,6 +188,41 @@ PS_OUT PS_EFFECT_HIT(PS_IN In)
 	return Out;
 }
 
+//PS_EFFECT_PULSEOBJECT
+PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 outglowcolor = float4(0.0f, 62.f, 102.f, 50.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(8, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+//	vDiffuse.rgb = vDiffuse.rgb *4.f;
+
+	Out.vDiffuse = vDiffuse * outglow * 4.f;
+	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
+
+	if(true==g_bPulseRecive)
+		Out.vDiffuse.b *=10.f;
+
+	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
+
+
+	return Out;
+}
+
+// PS_EFFECT_DEADZONE
+PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+
+	Out.vDiffuse = vDiffuse;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
@@ -225,4 +263,31 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_HIT();
 	}
+
+	pass Effect_PulseObject // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_EFFECT_PULSEOBJECT();
+	}
+
+	pass Effect_DeadZone // 4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_EFFECT_DEADZONE();
+	}
+
 }

@@ -23,10 +23,10 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 
 private:
-	CShader*									m_pShaderCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
@@ -37,6 +37,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CRuinKit*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

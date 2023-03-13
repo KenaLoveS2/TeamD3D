@@ -43,13 +43,16 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 void CCamera_Player::Tick(_float fTimeDelta)
 {
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	fTimeDelta /= fTimeRate;
+
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
 	if (CGameInstance::GetInstance()->Key_Pressing(DIK_LSHIFT))
 		m_bAim = true;
 	else
 		m_bAim = false;
-
+	m_CameraDesc.fFovy = XMConvertToRadians(75.f);
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
 		m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(LEVEL_GAMEPLAY, L"Layer_Player", L"Kena"));

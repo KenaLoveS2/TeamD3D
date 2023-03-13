@@ -13,6 +13,9 @@
 
 #include "Imgui_Manager.h"
 #include "Imgui_TerrainEditor.h"
+#include "Gimmick_EnviObj.h"
+#include "Pulse_Plate_Anim.h"
+#include "Crystal.h"
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -50,6 +53,9 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_SelectObject_InstancingControl();
 		Imgui_Control_ViewerCamTransform();
 		imgui_ObjectList_Clear();
+
+		imgui_Gimmic_Class_Viewr();
+		Imgui_Crystal_Create_Pulse();
 	}
 
 	ImGui::End();
@@ -57,10 +63,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 
 void CImgui_MapEditor::Imgui_SelectOption()
 {
-#pragma region 생성시 사용되는 챕터
-	ImGui::RadioButton("CHAPTER_ONE_CAVE", &m_iChapterOption, _int(CEnviromentObj::CHAPTER_ONE_CAVE));
-	ImGui::RadioButton("CHAPTER_TWO_FOREST", &m_iChapterOption, _int(CEnviromentObj::CHAPTER_TWO_FOREST));
-#pragma endregion  ~생성시 사용되는 챕터
+
 
 #pragma region 생성시 사용되는 프로토 타입
 	if (ImGui::CollapsingHeader("ProtoType"))
@@ -346,7 +349,7 @@ void CImgui_MapEditor::Imgui_CreateEnviromentObj()
 	if (m_wstrProtoName == L"" || m_wstrModelName == L"")
 		return;
 
-	if (m_bUseTerrainPicking)
+	if (m_bUseTerrainPicking && m_pSelectedTerrain != nullptr)
 	{
 		m_bIstancingObjPicking = false;
 		_float4 fCreatePos;
@@ -749,8 +752,8 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
-
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -782,6 +785,37 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
+}
+
+void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
+{
+	if (ImGui::Button("Create_Crystal_Pulse"))
+	{
+
+		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+		{
+			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+				continue;
+		
+			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
+		}
+	}
+
+	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//{
+
+	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+	//	{
+	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//			continue;
+
+	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	}
+
+
+	//}
+
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
@@ -897,11 +931,17 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
+		
+		if (dynamic_cast<CPulse_Plate_Anim*>(pLoadObject) != nullptr)
+		{
+			pGameInstance->Add_AnimObject(g_LEVEL, pLoadObject);
+		}
+		
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec);
-
-		pLoadObject->Late_Initialize();
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
+		//pLoadObject->Late_Initialize();
+		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -994,7 +1034,11 @@ void CImgui_MapEditor::imgui_ObjectList_Clear()
 	}
 }
 
-void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec)
+void CImgui_MapEditor::imgui_Gimmic_Class_Viewr()
+{
+}
+
+void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec,CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
 	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
@@ -1002,7 +1046,14 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 	if (false == pModel->Get_IStancingModel())
 		return;
 
+
 	pModel->Set_InstancePos(vecMatrixVec);
 
+#ifdef FOR_MAP_GIMMICK
+	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
+	{
+		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
+	}
+#endif
 }
 

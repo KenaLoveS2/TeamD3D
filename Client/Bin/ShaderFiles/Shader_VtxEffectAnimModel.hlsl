@@ -21,11 +21,9 @@ texture2D		g_SmoothTexture;
 
 // Type
 int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask, g_IsUseNormal;
-
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-
+bool    g_IsUseMask, g_IsUseNormal;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
 float2  g_UV;
@@ -168,10 +166,10 @@ PS_OUT PS_EFFECT_ENEMYWISP(PS_IN In)
 
 	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
 	float4 fresnelcolor = float4(255.f, 122.f, 180.f, 255.f) / 255.f;
-	float4 fresnel = float4(fresnel_glow(3, 3, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir), fresnelcolor.a);
+	float4 fresnel = float4(fresnel_glow(3, 3, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
 
 	// rim
-	float  rim = dot(In.vNormal, In.vViewDir);
+	float  rim = dot(In.vNormal.rgb, In.vViewDir.rgb);
 	float4 rimcolor = float4(66.f, 9.f, 0.f, 118.f) / 255.f;
 	float4 vOutline = rimcolor * pow(1.f - rim, 2.f);
 

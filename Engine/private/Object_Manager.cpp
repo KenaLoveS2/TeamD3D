@@ -156,7 +156,7 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 
 	pGameObject->Set_CloneTag(pCloneObjectTag);
 	pGameObject->Set_ProtoTag(pPrototypeTag);
-	pGameObject->Late_Initialize();
+	//pGameObject->Late_Initialize();
 
 	return pGameObject;	
 }

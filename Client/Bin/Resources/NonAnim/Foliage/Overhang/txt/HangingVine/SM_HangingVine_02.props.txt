@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGodSpiritStatue_Plants.MI_RotGodSpiritStatue_Plants'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_RotGodSpiritStatue_Plants.MI_RotGodSpiritStatue_Plants'
+        MaterialSlotName = RotGodSpiritStatueVine
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 85.8428, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-91.3305, Y=-0.508545, Z=-120.782 }
+    BoxExtent = { X=94.5441, Y=24.2781, Z=127.451 }
+    SphereRadius = 158.271
+}

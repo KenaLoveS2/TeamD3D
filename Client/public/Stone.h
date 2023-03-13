@@ -23,13 +23,17 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual void				ImGui_ShaderValueProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CModel*				m_pModelCom = nullptr;
+	CModel*									m_pModelCom = nullptr; 
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
+
+	_bool										m_bPulseTest = false;
+	_float										m_fEmissivePulse = 0.f;
+	_float										m_fNegativeQuantity = 1.f;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
@@ -37,6 +41,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CStone*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

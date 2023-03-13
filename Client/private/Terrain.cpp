@@ -95,7 +95,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	//m_pVIBufferCom->Culling(m_pTransformCom->Get_WorldMatrix());
 
-	m_pRendererCom && 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+	m_pRendererCom && 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	m_pGroundMark->Late_Tick(fTimeDelta);
 }
 
@@ -243,6 +243,13 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResources(m_pShaderCom, "g_FilterTexture")))
 		return E_FAIL;
+
+	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", p_game_instance->Get_CameraFar(), sizeof(_float))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
 		return E_FAIL;

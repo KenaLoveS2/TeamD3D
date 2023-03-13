@@ -26,7 +26,7 @@ public:
 public:
 	static				void									Load_MapObjects(_uint iLevel, string JsonFileName);
 	static				void									Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec);
+	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec, CEnviromentObj::CHAPTER eChapter);
 
 private:
 	void														Imgui_SelectOption();						// 컴포넌트 기능 선택
@@ -38,6 +38,8 @@ private:
 	void														Imgui_TexturePathNaming();
 	void														Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
 	void														imgui_ObjectList_Clear();
+	void														imgui_Gimmic_Class_Viewr();
+
 
 private:		/*Logic*/
 	void														Imgui_Save_Func();
@@ -47,6 +49,8 @@ private:		/*Logic*/
 
 	void														Imgui_Maptool_Terrain_Selecte();
 
+
+	void										Imgui_Crystal_Create_Pulse();
 
 private: /*For_Tool*/
 	string														m_strChapter[MAX_CHATERNUM];
@@ -73,7 +77,7 @@ private: /*Use.Terrain*/
 
 
 private:	/*Use_Data*/
-	_int														m_iChapterOption = static_cast<_uint>(CEnviromentObj::CHAPTER_END);
+	_int														m_iChapterOption = static_cast<_uint>(CEnviromentObj::Gimmick_TYPE_NONE);
 	_int														m_iCreateObjRoom_Option = 0;
 	array<_bool, CEnviromentObj::COMPONENTS_END>				m_bComOptions;
 

@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Clovers.MI_Clovers'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Clovers/MI_Clovers_Billboard.MI_Clovers_Billboard'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/_MASTER/Foliage/MI_Clovers.MI_Clovers'
+        MaterialSlotName = MI_Grass_Fronds
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = true
+            LocalUVDensities[4] = { 41.1617, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Clovers/MI_Clovers_Billboard.MI_Clovers_Billboard'
+        MaterialSlotName = Billboard
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = true
+            LocalUVDensities[4] = { 150.964, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.178047, Y=-0.896297, Z=7.95792 }
+    BoxExtent = { X=37.2807, Y=36.5167, Z=9.41635 }
+    SphereRadius = 39.0939
+}

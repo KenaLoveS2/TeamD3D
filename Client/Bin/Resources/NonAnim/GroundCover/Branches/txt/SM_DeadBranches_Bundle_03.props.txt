@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_DeadBranches.MI_DeadBranches'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_DeadBranches.MI_DeadBranches'
+        MaterialSlotName = MI_DeadBranches1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 751.637, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=12.3864, Y=7.83217, Z=10.2343 }
+    BoxExtent = { X=211.457, Y=143.455, Z=40.3693 }
+    SphereRadius = 220.176
+}

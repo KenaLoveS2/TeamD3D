@@ -64,7 +64,7 @@ HRESULT CBridge::Render()
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
 	}
 	return S_OK;
 }

@@ -24,8 +24,10 @@ public:
 	HRESULT			Bind_ShaderResouce(class CShader* pShaderCom, const char* pConstanctName);
 	HRESULT			Bind_RawValue(CShader * pShaderCom, const char * pConstanctName);
 
+	void			ResetInfo() { m_vecInstanceInfo.clear(); }
+
 private:
-	_uint			m_iInitNumInstance = 0;
+	_uint			  m_iInitNumInstance = 0;
 	vector<VTXMATRIX> m_vecInstanceInfo;
 
 public:

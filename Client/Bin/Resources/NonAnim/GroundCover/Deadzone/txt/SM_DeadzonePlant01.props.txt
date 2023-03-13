@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Plants.MI_DZ_GroundCover_Plants'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Plants_CheapLOD.MI_DZ_GroundCover_Plants_CheapLOD'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Plants.MI_DZ_GroundCover_Plants'
+        MaterialSlotName = MI_DZ_GroundCover_Plants
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 94.3708, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Plants_CheapLOD.MI_DZ_GroundCover_Plants_CheapLOD'
+        MaterialSlotName = MI_DZ_GroundCover_Plants_CheapLOD
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 85.4388, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-3.70733, Y=0.599838, Z=20.5901 }
+    BoxExtent = { X=57.4691, Y=57.949, Z=24.4517 }
+    SphereRadius = 67.18
+}

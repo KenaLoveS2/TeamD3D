@@ -32,7 +32,7 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
 	GraphicDesc.eWindowMode = GRAPHIC_DESC::WINMODE_WIN;
-	GraphicDesc.pSoundFileTag = "";
+	GraphicDesc.pSoundFileTag = "../Bin/Resources/Sound/";
 	GraphicDesc.iNumManualSounds = 10;
 	GraphicDesc.iNumCopyPrototypes = 0;
 

@@ -61,14 +61,13 @@ void CKena_Staff::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
-	for (auto& Effect : m_mapEffect)
-	{
-		if (Effect.first == "KenaTrail")
-			Effect.second->Set_Active(m_pPlayer->Is_Attack());
+	if (m_pPlayer->Is_Bow())
+		m_fBowDurationTime += fTimeDelta ;
+	else
+		m_fBowDurationTime = 0.5f;
 
-		else if (Effect.first == "KenaCharge")
-			Effect.second->Set_Active(m_pPlayer->Is_ChargeLight());
-	}
+	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -77,10 +76,6 @@ void CKena_Staff::Tick(_float fTimeDelta)
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	// bow_string_jnt_top
-	// staff_skin8_jnt
-	// staff_skin7_jnt
 
 	/* Weapon Update */
 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
@@ -106,8 +101,7 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -133,31 +127,34 @@ HRESULT CKena_Staff::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
 		}
 
-		if (i == 2)
+		if(m_pPlayer->Is_Bow() == true)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
-		}
+			if (i == 2)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
+			}
 
-		if (i == 3) // M_bowTrails == 3
-		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
-		}
+			if (i == 3) // M_bowTrails == 3
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+			}
 
-		if (i == 4)
-		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+			if (i == 4)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
+				/******************************************************************/
+				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
+			}
 		}
 	}
 
@@ -175,7 +172,7 @@ HRESULT CKena_Staff::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -269,7 +266,7 @@ HRESULT CKena_Staff::SetUp_ShaderResource()
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float));
-	
+	m_pShaderCom->Set_RawValue("g_BowDurationTime", &m_fBowDurationTime, sizeof(_float));
 	return S_OK;
 }
 
@@ -278,15 +275,12 @@ HRESULT CKena_Staff::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 

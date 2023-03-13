@@ -21,6 +21,53 @@ float4 ToneMap(float4 color)
 	return mappedColor;
 }
 
+float smith_G1(float3 V, float3 N, float alpha)
+{
+	float dotNV = dot(N, V);
+	return 2.0 / (1.0 + sqrt(1.0 + alpha * alpha * (1.0 - dotNV * dotNV) / (dotNV * dotNV)));
+}
+
+float3 disney_D(float3 H, float3 N, float3 L, float alpha, float metallic)
+{
+	float dotNH = dot(N, H);
+	float dotNL = dot(N, L);
+	float dotHL = dot(H, L);
+
+	float alpha2 = alpha * alpha;
+	float invPI = 1.0 / PI;
+
+	float D_ggx = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNH * dotNH - 1.0), 2.0);
+	float D_ggx90 = (alpha2 * invPI) / pow(1.0 + alpha2 * (dotNL * dotNL - 1.0), 2.0);
+
+	float3 D = lerp(float3(1.f, 1.f, 1.f), exp((D_ggx + D_ggx90) * metallic), metallic);
+	return D;
+}
+
+float3 DisneyBRDF(float3 V, float3 L, float3 N, float3 albedo, float metallic, float roughness, float3 F0)
+{
+	// Half vector
+	float3 H = normalize(L + V);
+
+	// Fresnel term
+	float3 F = F0 + (1.0 - F0) * pow(1.0 - dot(V, H), 5.0);
+
+	// Roughness term
+	float alpha = roughness * roughness;
+
+	// Geometric attenuation
+	float G = smith_G1(V, N, alpha) * smith_G1(L, N, alpha);
+
+	// Specular (reflection) term
+	float3 D = disney_D(H, N, L, alpha, metallic);
+	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(L, N));
+
+	// Diffuse (Lambertian) term
+	float3 diffuse = albedo / PI;
+
+	// Final color
+	return (diffuse + specular) * dot(L, N);
+}
+
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
@@ -45,6 +92,45 @@ float DistributionGGX(float3 N, float3 H, float roughness)
 	return num / denom;
 }
 
+float NormalDistributionGGXTR(float3 n, float3 h, float a)
+{
+	float a2 = a * a;
+	float NdotH = saturate(dot(n, h));
+	float NdotH2 = NdotH * NdotH;
+
+	float nom = a2;
+	float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+	denom = PI * denom * denom;
+
+	return nom / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float roughness)  // k is a remapping of roughness based on direct lighting or IBL lighting
+{
+	float r = roughness + 1.0f;
+	float k = (r * r) / 8.0f;
+
+	//float k = (roughness * roughness) / 2.0f;
+
+	float nom = NdotV;
+	float denom = NdotV * (1.0f - k) + k;
+
+	return nom / denom;
+}
+
+float GeometrySmith(float3 n, float3 v, float3 l, float k)
+{
+	//  Geometry Obstruction
+	float NdotV = saturate(dot(n, v));
+	//  Geometry Shadowing
+	float NdotL = saturate(dot(n, l));
+
+	float ggx2 = GeometrySchlickGGX(NdotV, k);
+	float ggx1 = GeometrySchlickGGX(NdotL, k);
+
+	return ggx1 * ggx2;
+}
+
 float GeometrySmithGGX(float3 N, float3 V, float3 L, float roughness)
 {
 	float alpha = roughness * roughness;
@@ -58,25 +144,6 @@ float GeometrySmithGGX(float3 N, float3 V, float3 L, float roughness)
 	float Gl = NdotL / (NdotL + (1.0 - NdotL) * k);
 
 	return Gv * Gl;
-}
-
-float GeometrySchlickGGX(float NdotV, float roughness)
-{
-	float a = roughness * roughness;
-	float k = a / 2.0;
-
-	float denom = NdotV * (1.0 - k) + k;
-	return NdotV / denom;
-}
-
-float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
-{
-	float NdotV = max(dot(N, V), 0.0);
-	float NdotL = max(dot(N, L), 0.0);
-	float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
-
-	return ggx1 * ggx2;
 }
 
 float2 Get_FlipBookUV(float2 vRectUV, float fCurTime, float fFrameTime, int iRowCnt, int iColCnt)

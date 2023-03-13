@@ -76,6 +76,9 @@ HRESULT CUI_Event_Guage::SetUp_ShaderResources(CShader * pShader)
 	if (FAILED(pShader->Set_RawValue("g_fAmount", &m_fGuage, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(pShader->Set_RawValue("g_fEnd", &m_fGuageNew, sizeof(_float))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -223,7 +226,14 @@ HRESULT CUI_Event_Guage::Load_Data(wstring fileName)
 	for (float fElement : jLoad["MinColor"])
 		memcpy(((float*)&m_vMinColor) + (i++), &fElement, sizeof(float));
 
+
 	return S_OK;
+}
+
+void CUI_Event_Guage::Initialize(_float4 vMinColor, _float4 vColor)
+{
+	m_vMinColor = vMinColor;
+	m_vColor = vColor;
 }
 
 CUI_Event_Guage * CUI_Event_Guage::Create()
@@ -237,6 +247,15 @@ CUI_Event_Guage * CUI_Event_Guage::Create(wstring fileName)
 	CUI_Event_Guage* pInstance = new CUI_Event_Guage();
 	if (pInstance != nullptr)
 		pInstance->Load_Data(fileName);
+
+	return pInstance;
+}
+
+CUI_Event_Guage * CUI_Event_Guage::Create(_float4 vMinColor, _float4 vColor)
+{
+	CUI_Event_Guage* pInstance = new CUI_Event_Guage();
+	if (nullptr != pInstance)
+		pInstance->Initialize(vMinColor, vColor);
 
 	return pInstance;
 }

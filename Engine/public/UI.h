@@ -47,6 +47,7 @@ public: /* Set */
 		if(m_pTextureCom[TEXTURE_DIFFUSE]!=nullptr)
 			m_iTextureIdx = iIdx; 
 	}
+	void					Set_OriginalSettingScale(_float3 vScale) { m_vOriginalSettingScale = vScale; }
 	void					Set_LocalTranslation(_float4 vPos)	{ 
 		m_matLocal._41 = vPos.x;
 		m_matLocal._42 = vPos.y;
@@ -69,6 +70,8 @@ public:
 public:
 	virtual HRESULT			Save_Data() { return S_OK; }
 	virtual HRESULT			Load_Data(wstring fileName) { return S_OK; }
+
+
 
 protected:
 	virtual HRESULT			SetUp_Components() = 0;

@@ -94,7 +94,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	m_vWakeUpPosition = _float4(10.f, 0.f, 5.f, 1.f);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f));
+	CPhysX_Manager::GetInstance()->Create_Trigger(
+		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f)
+	);
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);

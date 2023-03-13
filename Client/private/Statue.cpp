@@ -31,6 +31,7 @@ HRESULT CStatue::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 
 	return S_OK;
 }
@@ -45,7 +46,9 @@ void CStatue::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CStatue::Render()
@@ -60,29 +63,70 @@ HRESULT CStatue::Render()
 
 	if (m_pModelCom->Get_IStancingModel())
 	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
+		if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_JizoStatue"
+			|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FoxStatue")
 		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+			}
 		}
 	}
 	else
 	{
-
-	
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, ONLY_MRAO);
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
-	}
+			if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RotGod_Statue_Crumbled")
+			{
+				for (_uint i = 0; i < iNumMeshes; ++i)
+				{
+					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
+					m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+				}
+			}
 	}
 	return S_OK;
+}
+
+HRESULT CStatue::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RotGod_Statue_Crumbled")
+		return S_OK;
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+
+	return S_OK;
+}
+
+void CStatue::ImGui_ShaderValueProperty()
+{
+	__super::ImGui_ShaderValueProperty();
+	//ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+	//m_pModelCom->Imgui_MaterialPath();
+	//m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CStatue::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -107,17 +151,6 @@ HRESULT CStatue::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComT
 		return S_OK;
 
 	return S_OK;
-}
-
-void CStatue::ImGui_ShaderValueProperty()
-{
-	__super::ImGui_ShaderValueProperty();
-
-	if (ImGui::Button("Recompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
 }
 
 HRESULT CStatue::SetUp_Components()
@@ -168,6 +201,26 @@ HRESULT CStatue::SetUp_ShaderResources()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CStatue::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;

@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_Moss_Flowers.MI_Moss_Flowers'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Interactables/RotGodStatue/Materials/MI_Moss_Flowers.MI_Moss_Flowers'
+        MaterialSlotName = Moss
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 228.122, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-7.08974, Y=12.8277, Z=24.3587 }
+    BoxExtent = { X=136.171, Y=172.684, Z=50.2994 }
+    SphereRadius = 180.275
+}

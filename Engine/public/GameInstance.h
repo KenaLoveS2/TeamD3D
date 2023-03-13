@@ -132,6 +132,8 @@ public: /* For.PipeLine */
 		_float Get_TimeDelta(const _tchar* pTimerTag);
 		HRESULT Ready_Timer(const _tchar* pTimerTag);
 		void Update_Timer(const _tchar* pTimerTag);
+		const _float	Get_TimeRate(const _tchar* pTimerTag);
+		void			Set_TimeRate(const _tchar* pTimerTag, _float Time);
 
 	public: /* For.Light_Manager */
 		const LIGHTDESC* Get_LightDesc(_uint iIndex);
@@ -189,6 +191,8 @@ public: /* For.PipeLine */
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		class CCamera* Get_WorkCameraPtr();
 		_float*		Get_CameraFar();
+		_float*		Get_CameraNear();
+		_float*		Get_CameraFov();
 		map<const _tchar*, class CCamera*>*	Get_CameraContainer();
 		_bool IsWorkCamera(const _tchar * pCameraTag);
 

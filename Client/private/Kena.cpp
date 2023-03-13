@@ -11,16 +11,22 @@
 #include "Terrain.h"
 #include "Rope_RotRock.h"
 #include "Rot.h"
+
 #include "Kena_Status.h"
 #include "Monster.h"
 
+#include "UI_RotIcon.h"
+
+
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
+	, m_pFocusRot(nullptr)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
+	, m_pFocusRot(nullptr)
 {
 }
 
@@ -69,7 +75,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 	m_fGravity = 9.81f;
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
-	m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
+	m_fInitJumpSpeed = 0.35f;
 	
 	m_iObjectProperty = OP_PLAYER;
 
@@ -111,6 +118,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
 	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
 
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -120,6 +129,11 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
 	
+	if (m_bAim && m_bJump)
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+	else
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
 	__super::Tick(fTimeDelta);
 
 	Test_Raycast();
@@ -134,8 +148,10 @@ void CKena::Tick(_float fTimeDelta)
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
 
+	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
 	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
+		m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
@@ -172,6 +188,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
 
 	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
@@ -182,12 +199,18 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		_float fTag = 0.f;
-		_float fCurrency[3] = { 200.f, 13.f, 230.f };
-		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
-		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
-		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
+		static _float fTag = 0.0f;
+		if (fTag < 1.0f)
+			fTag = 1.0f;
+		else
+			fTag = 0.0f;
+		m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
+		//_float fTag = 0.f;
+		//_float fCurrency[3] = { 200.f, 13.f, 230.f };
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
+		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
+		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
 
 		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
@@ -263,9 +286,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
@@ -296,6 +317,7 @@ HRESULT CKena::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 		else if (i == 4)
@@ -336,7 +358,7 @@ HRESULT CKena::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -385,6 +407,7 @@ void CKena::ImGui_ShaderValueProperty()
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
+		 system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();
@@ -495,6 +518,7 @@ void CKena::Push_EventFunctions()
 	TurnOffAttack(true, 0.f);
 	TurnOnCharge(true, 0.f);
 	TurnOffCharge(true, 0.f);
+	TurnOnPulseJump(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -502,6 +526,14 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CKena::Call_RotIcon(CGameObject * pTarget)
+{
+	if (m_pFocusRot == nullptr)
+		return;
+
+	m_pFocusRot->Set_Pos(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -550,11 +582,26 @@ HRESULT CKena::Ready_Effects()
 	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
 
+	/* Damage */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDamage", L"Damage"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaDamage", pEffectBase);
+
+	/* Hit */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaHit", pEffectBase);
+
+	/* PulseJump */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaJump", pEffectBase);
+
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -579,6 +626,8 @@ HRESULT CKena::SetUp_Components()
 	m_pModelCom->SetUp_Material(1, WJTextureType_SPRINT_EMISSIVE, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_sprint_EMISSIVE.png"));
 	// SSS_MASK
 	m_pModelCom->SetUp_Material(1, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_cloth_SSS_MASK.png"));
+	// Detail_Normal
+	m_pModelCom->SetUp_Material(1, WJTextureType_HAIR_DEPTH, TEXT("../Bin/Resources/Anim/Kena/PostProcess/T_FabricDetailNormal.png"));
 
 	// AO_R_M
 	m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_AO_R_M.png"));
@@ -623,15 +672,12 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -1513,6 +1559,23 @@ HRESULT CKena::SetUp_State()
 	return S_OK;
 }
 
+HRESULT CKena::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_UI_RotFocuss"),
+		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pFocusRot)))
+	{
+		MSG_BOX("Failed To make UI : Kena");
+		return E_FAIL;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
+
+	return S_OK;
+}
+
 void CKena::Test(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1569,6 +1632,26 @@ void CKena::TurnOffCharge(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_bChargeLight = false;
+}
+
+void CKena::TurnOnPulseJump(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseJump);
+		return;
+	}
+	m_mapEffect["KenaJump"]->Set_Active(true);
+
+	/* JumpPos Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	_matrix matrJump = m_mapEffect["KenaJump"]->Get_TransformCom()->Get_WorldMatrix();
+	matrJump.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaJump"]->Get_TransformCom()->Set_WorldMatrix(matrJump);
+	/* JumpPos Update */
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -1635,11 +1718,48 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	{
 		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
 
+		CGameObject* pGameObject = nullptr;
+
 		if (iColliderIndex == COL_MONSTER_WEAPON)
 		{
+			// 맞은거
+			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
+			//	return -1;
+
+			for (auto& Effect : m_mapEffect)
+			{
+				if (Effect.first == "KenaDamage")
+				{
+					Effect.second->Set_Active(true);
+					Effect.second->Set_Position(vCollisionPos);
+				}
+			}
+
 			m_bCommonHit = true;
 			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 		}
+
+		if (iColliderIndex == COL_PLAYER_WEAPON)
+		{
+			// 때린거 
+			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
+			//	return -1;
+
+			for (auto& Effect : m_mapEffect)
+			{
+				if (Effect.first == "KenaHit")
+				{
+					Effect.second->Set_Active(true);
+					Effect.second->Set_Position(vCollisionPos);
+				}
+			}
+
+			pGameObject->Set_Position(vCollisionPos);
+
+			// m_bCommonHit = true;
+			// m_bHeavyHit = true;
+		}
+
 	}
 	
 	return 0;

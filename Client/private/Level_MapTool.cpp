@@ -8,8 +8,9 @@
 #include "Imgui_MapEditor.h"
 #include "Imgui_ShaderEditor.h"
 #include "Imgui_TerrainEditor.h"
-
-
+#include "ImGui_PhysX.h"
+#include "Tool_Settings.h"
+#include "Tool_Animation.h"
 
 CLevel_MapTool::CLevel_MapTool(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -25,12 +26,19 @@ HRESULT CLevel_MapTool::Initialize()
 		return E_FAIL;
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		p_game_instance->Clear_ImguiObjects();
-
+	p_game_instance->Clear_ImguiObjects();
+	
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
+
+#ifdef FOR_MAP_GIMMICK
+	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+#endif
+
 	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 	RELEASE_INSTANCE(CGameInstance)
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -103,13 +111,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain"))))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Terrain"), TEXT("Terrain2"))))
-	//	return E_FAIL;
-
-	//CImgui_TerrainEditor::LoadFilterData("Room_One_Two_Terrain.json");
+	
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
@@ -123,6 +125,9 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+#ifdef FOR_MAP_GIMMICK
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL,"Test_InstGimmick.json");
+#endif
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -162,6 +167,25 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
 
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
+		return E_FAIL;
+
+#ifdef FOR_MAP_GIMMICK
+	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	CameraDesc.fFovy = XMConvertToRadians(90.0f);
+	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
+	CameraDesc.fNear = 0.1f;
+	CameraDesc.fFar = 1000.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
+	NULL_CHECK_RETURN(pCamera, E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
+#endif
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -170,6 +194,15 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	CGameObject* pGameObject = nullptr;
+
+#ifdef FOR_MAP_GIMMICK
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_MAPTOOL, pGameObject)))
+		return E_FAIL;
+#endif
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
