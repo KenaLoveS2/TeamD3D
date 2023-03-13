@@ -77,34 +77,33 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-// 	/* Weapon Update */
-// 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-// 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-// 	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
-// 
-// 	for (auto& Effect : m_mapEffect)
-// 	{
-// 		if (Effect.first == "KenaCharge")
-// 		{
-// 			_matrix matChargeEffect = Effect.second->Get_TransformCom()->Get_WorldMatrix();
-// 			matChargeEffect.r[3] = matWorldSocket.r[3];
-// 
-// 			Effect.second->Get_TransformCom()->Set_WorldMatrix(matChargeEffect);
-// 		}
-// 		else
-// 			Effect.second->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-// 	}
-// 	/* ~Weapon Update */
-// 
-// 	for (auto& pEffect : m_mapEffect)
-// 		pEffect.second->Late_Tick(fTimeDelta);
- 
- 	if (m_pRendererCom != nullptr)
- 	{
- 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
- 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
- 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
- 	}
+	/* Weapon Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	for (auto& Effect : m_mapEffect)
+	{
+		if (Effect.first == "KenaCharge")
+		{
+			_matrix matChargeEffect = Effect.second->Get_TransformCom()->Get_WorldMatrix();
+			matChargeEffect.r[3] = matWorldSocket.r[3];
+
+			Effect.second->Get_TransformCom()->Set_WorldMatrix(matChargeEffect);
+		}
+		else
+			Effect.second->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	}
+	/* ~Weapon Update */
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
+
+	if (m_pRendererCom != nullptr)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CKena_Staff::Render()
@@ -173,7 +172,7 @@ HRESULT CKena_Staff::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -276,15 +275,12 @@ HRESULT CKena_Staff::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 

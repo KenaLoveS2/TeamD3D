@@ -162,6 +162,10 @@ public:
 	void Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag);
 	void Set_ActorFlag_Simulation(PxRigidActor* pActor, _bool bFlag);
 	PxRigidActor* Find_Actor(const _tchar* pActorTag);
-	void Delete_Actor(PxActor& pActor);
+	
+	void Delete_Actor(PxActor* pActor);
+	void Delete_Actor(class CGameObject* pObject);
+	void Reset();
+
 };
 END

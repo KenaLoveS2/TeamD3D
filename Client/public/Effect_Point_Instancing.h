@@ -63,6 +63,8 @@ protected:
 	_float		                 m_fVIBufferTime = 0.0f;
 	vector<class CEffect_Trail*> m_vecTrailEffect;
 
+	_float						m_fLife = 0.0f;
+
 public:
 	virtual void Free() override;
 };

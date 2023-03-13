@@ -364,6 +364,11 @@ HRESULT CBranchTosser::SetUp_State()
 	{
 		return m_fIdleToAttack >= 3.f;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("ATTACK")
 		.OnStart([this]()
@@ -375,6 +380,11 @@ HRESULT CBranchTosser::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("FLEE")
@@ -388,8 +398,38 @@ HRESULT CBranchTosser::SetUp_State()
 	{
 		return AnimFinishChecker(FLEETONEW);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.AddState("DEATH")
+		.OnStart([this]()
+	{		
+		m_bDeath = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{	
+		
+	})		
+		.OnExit([this]()
+	{		
+		
+	})
 		.Build();
+
 	return S_OK;
 }
 
@@ -400,6 +440,10 @@ HRESULT CBranchTosser::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_BranchTosser", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BranshTosser.json");
+
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -424,7 +468,7 @@ HRESULT CBranchTosser::SetUp_Components()
 	m_pWeapon = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), L"BranchTosserWeapon",&WeaponDesc);
 	assert(m_pWeapon && "BranchTosser Weapon is nullptr");
 	RELEASE_INSTANCE(CGameInstance)
-
+			
 	return S_OK;
 }
 
@@ -436,6 +480,8 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

@@ -9,6 +9,7 @@ class ENGINE_DLL CRenderer final : public CComponent
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
+		RENDER_STATIC_SHADOW,
 		RENDER_SHADOW,
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
@@ -26,9 +27,9 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
+	virtual void Imgui_RenderProperty() override;
 
 	HRESULT ReCompile();
-	void			Imgui_Render();
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
@@ -58,10 +59,16 @@ private:
 	class CShader*							m_pShader_PostProcess = nullptr;
 	class CShader*							m_pShader_SSAO = nullptr;
 	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
+	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
+
 	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
 	_bool										m_bPhysXRenderFlag = false;
+	_bool										m_bStaticShadow = false;
 
+public:
+	HRESULT Render_StaticShadow();
 
 private:
 	HRESULT Render_Priority();

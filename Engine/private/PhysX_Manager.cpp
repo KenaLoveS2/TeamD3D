@@ -1038,11 +1038,6 @@ PxRigidActor* CPhysX_Manager::Find_Actor(const _tchar * pActorTag)
 	return pActor;
 }
 
-void CPhysX_Manager::Delete_Actor(PxActor& pActor)
-{
-	m_pScene->removeActor(pActor);
-}
-
 void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 {
 	if (pTriggerData == nullptr) return;
@@ -1062,4 +1057,50 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 
 	m_pScene->addActor(*pTrigger);
 	pShape->release();
+}
+
+void CPhysX_Manager::Delete_Actor(PxActor* pActor)
+{	
+	m_pScene->removeActor(*pActor);
+}
+
+void CPhysX_Manager::Delete_Actor(CGameObject* pObject)
+{
+	PX_USER_DATA* pUserData = nullptr;	
+	for (auto Pair = m_DynamicActors.begin(); Pair != m_DynamicActors.end();)
+	{
+		pUserData = (PX_USER_DATA*)(*Pair).second->userData;
+		if (pUserData->pOwner == pObject) 
+		{	
+			m_pScene->removeActor(*(*Pair).second);
+			Pair = m_DynamicActors.erase(Pair);
+		}
+		else Pair++;
+	}
+
+	for (auto Pair = m_DynamicColliders.begin(); Pair != m_DynamicColliders.end();)
+	{
+		pUserData = (PX_USER_DATA*)(*Pair).second->userData;
+		if (pUserData->pOwner == pObject)
+		{
+			m_pScene->removeActor(*(*Pair).second);
+			Pair = m_DynamicColliders.erase(Pair);
+		}
+		else Pair++;
+	}	
+}
+
+void CPhysX_Manager::Reset()
+{
+	PxActorTypeFlags actorTypes = PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC;
+
+	PxU32 numActors = m_pScene->getNbActors(actorTypes);
+	PxActor** actors = nullptr;
+	m_pScene->getActors(actorTypes, actors, numActors, 0);
+
+	for (PxU32 i = 0; i < numActors; i++) 
+	{
+		m_pScene->removeActor(*actors[i]);
+		actors[i]->release();
+	}
 }

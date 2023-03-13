@@ -31,7 +31,7 @@ HRESULT CTree::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -47,8 +47,6 @@ void CTree::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-
-	
 }
 
 HRESULT CTree::Render()
@@ -84,7 +82,6 @@ HRESULT CTree::Render()
 	}
 	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Brick04"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_02"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_03"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_01"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_02"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_03"
@@ -97,6 +94,26 @@ HRESULT CTree::Render()
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
 				m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
+	}
+	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_03")
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			if(i == 0)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+			}
+			else if (i == 1)
+			{
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
+				m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+			}
 		}
 	}
 	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeStump_02")
@@ -200,6 +217,28 @@ HRESULT CTree::Render()
 	return S_OK;
 }
 
+HRESULT CTree::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
+		return S_OK;
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+	}
+
+	return S_OK;
+}
+
 void CTree::ImGui_ShaderValueProperty()
 {
 	__super::ImGui_ShaderValueProperty();
@@ -288,6 +327,26 @@ HRESULT CTree::SetUp_ShaderResources()
 
 	return S_OK;
 
+}
+
+HRESULT CTree::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
 }
 
 CTree * CTree::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

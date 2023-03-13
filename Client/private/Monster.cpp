@@ -2,9 +2,12 @@
 #include "Monster.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+
+#include "Kena.h"
+#include "Kena_Status.h"
+
 #include "UI_MonsterHP.h"
 #include "Camera.h"
-#include "Kena.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -56,7 +59,7 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
-	m_pKena = pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
 
 	RELEASE_INSTANCE(CGameInstance)
 
@@ -93,6 +96,9 @@ void CMonster::Tick(_float fTimeDelta)
 	}
 #endif
 
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Tick(fTimeDelta);
+
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 }
@@ -100,6 +106,9 @@ void CMonster::Tick(_float fTimeDelta)
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Late_Tick(fTimeDelta);
 
 	/* calculate camera */
 	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
@@ -278,10 +287,25 @@ void CMonster::Call_RotIcon()
 	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
 }
 
+HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base*  pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
+	pEffectBase->Set_Parent(this);
+	m_pEnemyWisp = pEffectBase;
+	
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture", (CComponent**)&m_pDissolveTextureCom), E_FAIL);
 
 	return S_OK;
 }
@@ -312,22 +336,35 @@ void CMonster::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDissolveTextureCom);
 	Safe_Release(m_pMonsterStatusCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
+
+	if (m_pEnemyWisp != nullptr)
+		Safe_Release(m_pEnemyWisp);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == COL_PLAYER)
 		{
-			// Ÿ��
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 		}
 	}
 
 	return 0;
+}
+
+HRESULT CMonster::Bind_Dissolove(CShader* pShader)
+{	
+	if (FAILED(pShader->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(pShader, "g_DissolveTexture"))) return E_FAIL;
+
+	return S_OK;
 }

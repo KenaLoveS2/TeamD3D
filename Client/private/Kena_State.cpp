@@ -4526,17 +4526,17 @@ _bool CKena_State::CombatTimeToIdle()
 
 _bool CKena_State::HeavyAttack1_Perfect()
 {
-	return m_pAnimationState->Get_AnimationProgress() > 0.7f && m_pAnimationState->Get_AnimationProgress() < 0.75f;
+	return m_pAnimationState->Get_AnimationProgress() > 0.646f && m_pAnimationState->Get_AnimationProgress() < 0.739f;
 }
 
 _bool CKena_State::HeavyAttack2_Perfect()
 {
-	return m_pAnimationState->Get_AnimationProgress() > 0.45f && m_pAnimationState->Get_AnimationProgress() < 0.5f;
+	return m_pAnimationState->Get_AnimationProgress() > 0.45f && m_pAnimationState->Get_AnimationProgress() < 0.552f;
 }
 
 _bool CKena_State::HeavyAttack3_Perfect()
 {
-	return m_pAnimationState->Get_AnimationProgress() > 0.7f && m_pAnimationState->Get_AnimationProgress() < 0.75f;
+	return m_pAnimationState->Get_AnimationProgress() > 0.491f && m_pAnimationState->Get_AnimationProgress() < 0.64f;
 }
 
 _bool CKena_State::Damaged_Dir_Front()
