@@ -939,6 +939,10 @@ private:	/* Changer */
 	_bool	HeavyAttack1_Perfect();
 	_bool	HeavyAttack2_Perfect();
 	_bool	HeavyAttack3_Perfect();
+	_bool	Damaged_Dir_Front();
+	_bool	Damaged_Dir_Back();
+	_bool	Damaged_Dir_Left();
+	_bool	Damaged_Dir_Right();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();

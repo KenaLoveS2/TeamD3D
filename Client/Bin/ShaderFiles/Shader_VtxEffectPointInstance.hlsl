@@ -495,6 +495,32 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_DOT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+
+	/* Diffuse */
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	//if (Diffuse.a < 0.1f)
+	//	discard;
+
+	//if (Out.vColor.a < 0.8f)
+	//	Out.vColor.rgb = (float3)1.f;
+
+	//if (g_fLife > 0.3f)s
+	//	Out.vColor = Out.vColor.r * frac(g_fLife * 0.5f);
+	
+	return Out;
+}
+
 PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -519,19 +545,20 @@ PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
+	float fLife = 2.0f;
 
-	vector   vWispTrailTexture = g_WispflowTexture.Sample(LinearSampler, In.vTexUV);
-	vector   vWispflowTexture = g_WispOutTexture.Sample(LinearSampler, In.vTexUV);
-	vWispTrailTexture.a = vWispTrailTexture.r;
-	vWispflowTexture.a = vWispflowTexture.r;
+	vector   vWispTrailTexture = g_WispflowTexture.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y /1.f));
+	vWispTrailTexture.a = vWispTrailTexture.r * fLife;
 
-	//vector vWispTrailColor = vector(255.f, 97.f, 0.f, 255.f) / 255.f;
-	vector vWispTrailColor = vector(255.f, 200.f, 108.f, 255.f) / 255.f;
-	vector vWispflowColor = vector(255.f, 22.f, 22.f, 255.f) / 255.f;
-	vWispTrailTexture.rgb = vWispTrailTexture.rgb + vWispTrailColor.rgb;
-	vWispflowTexture.rgb = vWispflowTexture.rgb + vWispflowColor.rgb * 2.f;
+	float4 finalcolor = vWispTrailTexture;
+	float3 TrailColor = float3(255.f, 97.f, 0.f) / 255.f;
 
-	Out.vColor = vWispflowTexture + vWispTrailTexture;
+	if (vWispTrailTexture.a < 0.7f)
+		finalcolor.rgb = finalcolor.rgb + TrailColor + float3(1.0f, 0.0, 0.0f) * 2.f;
+	else
+		finalcolor.rgb = finalcolor.rgb + TrailColor * 2.f;
+
+	Out.vColor = finalcolor;
 	return Out;
 }
 
@@ -561,17 +588,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-	pass Effect_Alpha // 1
+	pass Effect_Dot // 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
-		SetBlendState(BS_One, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_MAIN();
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 PS_DOT();
 	}
 	pass Effect_Black // 2
 	{

@@ -59,18 +59,18 @@ HRESULT CKena_Staff::Ready_Effects()
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fTimeDelta += fTimeDelta;
-
-	if (m_pPlayer->Is_Bow())
-		m_fBowDurationTime += fTimeDelta ;
-	else
-		m_fBowDurationTime = 0.5f;
-
-	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
-	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
-
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
+ 	m_fTimeDelta += fTimeDelta;
+ 
+ 	if (m_pPlayer->Is_Bow())
+ 		m_fBowDurationTime += fTimeDelta ;
+ 	else
+ 		m_fBowDurationTime = 0.5f;
+ 
+ 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+ 	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
+ 
+ 	for (auto& pEffect : m_mapEffect)
+ 		pEffect.second->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -278,7 +278,7 @@ HRESULT CKena_Staff::SetUp_ShadowShaderResources()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 

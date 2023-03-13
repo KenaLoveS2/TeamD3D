@@ -25,7 +25,7 @@ private:
 	class CTexture*			m_pTrailflowTexture[2] = { nullptr };
 
 private:
-	_uint m_iTrailFlowTexture[2] = { 0,8 };
+	_uint m_iTrailFlowTexture[2] = { 0,9 };
 
 	_float2  m_fUV = { 1.f,1.f };
 	_float	 m_fTimeDelta = 0.0f;

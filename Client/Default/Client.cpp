@@ -72,7 +72,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 
 	_float			TimerAcc = 0.0;
-	_float			FrameTime = 1.0 / 60.0;
+	_float			FrameTime = 1.0 / 60.0f;
 
 	while (true)
 	{

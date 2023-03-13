@@ -50,6 +50,17 @@ HRESULT CStone::Late_Initialize(void * pArg)
 void CStone::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	if (m_bPulseTest)
+		m_fEmissivePulse += 0.05f;
+	else
+	{
+		m_fEmissivePulse -= 0.05f;
+		if (m_fEmissivePulse <= 0.f)
+			m_fEmissivePulse = 0.f;
+	}
+
+	if (m_fEmissivePulse >= 2.f)
+		m_bPulseTest = false;
 }
 
 void CStone::Late_Tick(_float fTimeDelta)
@@ -260,26 +271,18 @@ HRESULT CStone::RenderShadow()
 	return S_OK;
 }
 
+void CStone::Imgui_RenderProperty()
+{
+	if (ImGui::Button("Emissive"))
+		m_bPulseTest = true;
+}
+
 void CStone::ImGui_ShaderValueProperty()
 {
-	if(ImGui::Button("Emissive"))
-		m_bPulseTest = true;
-
-	if (m_bPulseTest)
-		m_fEmissivePulse += 0.05f;
-	else
-	{
-		m_fEmissivePulse -= 0.05f;
-		if (m_fEmissivePulse <= 0.f)
-			m_fEmissivePulse = 0.f;
-	}
-		
-	if (m_fEmissivePulse >= 2.f)
-		m_bPulseTest = false;
 	__super::ImGui_ShaderValueProperty();
-	//ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
-	//m_pModelCom->Imgui_MaterialPath();
-	//m_pTransformCom->Imgui_RenderProperty();
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+	m_pModelCom->Imgui_MaterialPath();
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 void CStone::ImGui_PhysXValueProperty()

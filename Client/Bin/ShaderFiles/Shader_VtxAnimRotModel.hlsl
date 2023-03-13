@@ -171,6 +171,21 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	return Out;
 }//2
 
+struct PS_OUT_SHADOW
+{
+	vector			vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
+	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}// 3
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -210,6 +225,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HAIR();
+	}
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
 }
 
