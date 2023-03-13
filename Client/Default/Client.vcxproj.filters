@@ -1,361 +1,1463 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{28bcf1ca-5f1c-4e07-a540-09ad25771349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{0ab56a2a-3fff-43ca-9fb6-c65344be4997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{612d8d26-b016-4e58-8379-cd50509c1691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels">
+      <UniqueIdentifier>{b4f73262-606c-417f-8f5a-dbe51f83d2d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\00.Loading">
+      <UniqueIdentifier>{85ea47b1-9b2d-4a32-8f1a-1a8be50ae20a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\01.Logo">
+      <UniqueIdentifier>{26344aaf-cba4-47a2-b6b2-b717d86a6fbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\02.GamePlay">
+      <UniqueIdentifier>{22df0cdb-5b80-4341-b095-9cf9d96f954c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\00.Loading\Loader">
+      <UniqueIdentifier>{971af4d9-cc6e-45cd-8547-bdea84e24691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects">
+      <UniqueIdentifier>{e41e8875-419b-4b63-9229-2273345ad05a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\BackGround">
+      <UniqueIdentifier>{4802a01c-abcc-4482-81b4-37cfe572eb1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{9a0f34b9-2838-4e5d-87a4-eb8bf6420099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Terrain">
+      <UniqueIdentifier>{23e19455-cfaf-455a-9ad1-6af919ff1397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera">
+      <UniqueIdentifier>{4c626d09-478b-44e4-a4c0-07f7b1063670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player">
+      <UniqueIdentifier>{7d1d57d2-8b05-4dc2-89a4-b399e380d07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster">
+      <UniqueIdentifier>{58b49c17-7f0f-4919-b8cd-3e50c06e4b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon">
+      <UniqueIdentifier>{43f509cf-ef76-4907-91a9-2e99095e5d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Sky">
+      <UniqueIdentifier>{38b07e66-7fa6-456c-9e8b-d7a02a00962d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect">
+      <UniqueIdentifier>{5b189f8f-a055-4bd7-ab58-9ab1e12c2df5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.StringManager">
+      <UniqueIdentifier>{44465263-b510-4706-86f3-910693b1091e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Outfit">
+      <UniqueIdentifier>{61f53bdc-7604-49d1-82e9-57d503830bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents">
+      <UniqueIdentifier>{12458085-ac27-41ad-a5a7-a0f8450b80bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Parents\Kena_Parts">
+      <UniqueIdentifier>{abc75d1f-28fb-4536-9fda-986b69c775ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI">
+      <UniqueIdentifier>{8f20614a-79fd-42db-914a-7bc752b6ada4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\00. ClientManager">
+      <UniqueIdentifier>{6def5edd-d47a-4163-b3f1-4f2ae72746d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\01. Tool">
+      <UniqueIdentifier>{805657e9-5f2d-4eb7-947a-2a7c01a3389f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node">
+      <UniqueIdentifier>{11f71599-47bd-4ec9-9fec-24c21c06cc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD">
+      <UniqueIdentifier>{3a10fc7b-5f35-420a-ba5c-cd78bb41e765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD\HP">
+      <UniqueIdentifier>{5808fd0d-4aff-4711-a21b-da1076c64588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD\Rot">
+      <UniqueIdentifier>{1449c90f-1242-44f7-9716-c555cb3d47d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield">
+      <UniqueIdentifier>{c90c793c-5a35-4f78-9f70-1dcfa06e0948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip">
+      <UniqueIdentifier>{74242d5c-e96b-4157-9f9f-328b0e993928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI">
+      <UniqueIdentifier>{1ae4abf1-e21e-4dc5-82dd-c12215645350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment">
+      <UniqueIdentifier>{fb1c8ae7-2f83-49c2-8d0d-0f80606e3836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\03. MapTool">
+      <UniqueIdentifier>{d2dbe52f-ef7e-4eaf-8a30-0d30af8a62bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool">
+      <UniqueIdentifier>{963a3bc8-daf7-423c-98f4-b558da61a187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\Animation">
+      <UniqueIdentifier>{fa94e753-45df-404e-a906-ab3c378a6ead}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Components">
+      <UniqueIdentifier>{76b5df7f-4b61-4e84-b945-76aceba1330d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Effect">
+      <UniqueIdentifier>{087c6b50-f34e-47b3-bbd6-088c0bc88544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\Effect">
+      <UniqueIdentifier>{697c4e6a-ad65-4967-9b27-f2d016a11337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\05. EffectTool">
+      <UniqueIdentifier>{ce34ad4a-d0a5-4dca-b06c-aed4e706f13a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\04. TestPlay">
+      <UniqueIdentifier>{2503939d-7e35-41a8-9fcd-e40a2926e3ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State">
+      <UniqueIdentifier>{6e6de2cd-395c-4900-88d4-ff4763baf2d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\BackGround\LoadingIcon">
+      <UniqueIdentifier>{b52be0e8-53b8-4792-b885-a68c2bdfbd24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Tool\ImGui Setting">
+      <UniqueIdentifier>{51a7fbbd-7b4e-4e0a-bcd0-edaae35666b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events">
+      <UniqueIdentifier>{ff44ad07-8596-4bfd-ab42-0eda2c97469a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Guage">
+      <UniqueIdentifier>{2a06fac5-698b-4498-b602-12ad4adc0726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\ChangeImg">
+      <UniqueIdentifier>{2df87f8c-a285-47cf-a020-dec9336a7d89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Animation">
+      <UniqueIdentifier>{3eb5b0f2-7881-4e8f-a9a4-0cadf00a4573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo">
+      <UniqueIdentifier>{933a747c-097a-4bf4-ad47-e3342acbcb87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow">
+      <UniqueIdentifier>{dfe5e34b-2713-40d1-8b4d-2c18c35a072f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb">
+      <UniqueIdentifier>{2ab0690c-f419-4a38-9612-802b4949f3d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Editor">
+      <UniqueIdentifier>{02bcea38-8995-4c17-9583-014fcd053845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\NonAnim">
+      <UniqueIdentifier>{0921d749-fa88-4bfc-82d4-3b535bda739b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Anim">
+      <UniqueIdentifier>{3abcfc56-e04d-4933-bc6d-ea12a92bfd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Test">
+      <UniqueIdentifier>{ea25f6b4-3a38-421b-9f4b-86b8e0a5ae56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Moth">
+      <UniqueIdentifier>{31ec9960-8b7f-48e4-968c-c8c56244a2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RockGolem">
+      <UniqueIdentifier>{e9cdc3ca-fe1f-4457-bfe8-4e231662a7f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\RotEater">
+      <UniqueIdentifier>{7c2d2602-9fed-475b-9309-9eed04d14fb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Sticks01">
+      <UniqueIdentifier>{9b3c719a-1aa8-4fce-9b69-e04e73c1811c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\VillageGuard">
+      <UniqueIdentifier>{a83df55b-a898-4520-a0de-875ff51deadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\WoodKnight">
+      <UniqueIdentifier>{be0fd327-62ba-4bdd-8310-6fbd06685833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim">
+      <UniqueIdentifier>{d439ed35-6deb-490f-ba56-35a03c5707cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Line">
+      <UniqueIdentifier>{9b30704f-f9cb-4313-ace5-0e71abdbe4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow">
+      <UniqueIdentifier>{424b2212-7764-426a-8f8f-66185f823006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb">
+      <UniqueIdentifier>{1f202079-57bc-4ead-badd-c73ed41a1efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Rot">
+      <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Rot\State">
+      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
+      <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Status">
+      <UniqueIdentifier>{59fd36c9-ad52-4114-98b6-6cc992257140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Status">
+      <UniqueIdentifier>{e6d00557-2a0f-4585-8226-ecf7b21293d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base">
+      <UniqueIdentifier>{f1bb0089-0473-4bd9-b217-56e4bf98b3ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type">
+      <UniqueIdentifier>{6794da63-a7de-46f7-b4c5-b6801782209f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Point_Instance">
+      <UniqueIdentifier>{c5979fa8-644d-493c-85a8-ac292b4a7d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Rect_Instance">
+      <UniqueIdentifier>{a4b28b79-9c09-4fff-87ee-4c973671da3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Trail">
+      <UniqueIdentifier>{5930dbbd-ae58-49f1-8234-88fa722084d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type">
+      <UniqueIdentifier>{b5613899-59c1-4221-a4bf-b1aa49f9c356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object">
+      <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
+      <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Base\Texture Type\Tool">
+      <UniqueIdentifier>{09cd37fc-43e2-44dd-80ec-927535bb78dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Terrain\Editor">
+      <UniqueIdentifier>{a19a615e-bef9-4db1-b549-9f5b7c651190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
+      <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object">
+      <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\Quest">
+      <UniqueIdentifier>{24ff8107-6c9e-4c88-86d2-1d7248a4e696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\05. Real Object\PlayerSkill">
+      <UniqueIdentifier>{0ce8bcf4-bf2b-490f-95b5-a7844980277e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Ground Mark">
+      <UniqueIdentifier>{09bcddae-cf1d-4be0-a1b1-8ea5259ae811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Interaction">
+      <UniqueIdentifier>{2e9685dc-b789-4674-a044-da945aaf8429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Interaction\Rope_RotRock">
+      <UniqueIdentifier>{8e19c382-7d37-455c-9610-31183ac7fb3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\BranchTosser">
+      <UniqueIdentifier>{6cf9411d-1b20-4039-90b6-aa49ddae82bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Sapling">
+      <UniqueIdentifier>{e51a7d50-06bb-4a4b-8041-288a4ea6ecfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\MonsterWeapon">
+      <UniqueIdentifier>{892c09c6-c7c8-4f5f-8c4c-b9a5aeccebb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Mage">
+      <UniqueIdentifier>{14e9057c-bdc6-46ee-92ba-5f2c816260c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\ShieldStick">
+      <UniqueIdentifier>{27d5d57e-6a08-4728-a03b-2fac21da550f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\06. Spirits">
+      <UniqueIdentifier>{c95575e0-3a5d-4ae7-b87c-f484f5dbd15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade">
+      <UniqueIdentifier>{2387facd-2aa7-4dee-8564-2fed99489aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills">
+      <UniqueIdentifier>{6572a000-de65-4577-963d-ce6e11530a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader">
+      <UniqueIdentifier>{01895b87-0395-4e96-8776-c94fa2a6d326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency">
+      <UniqueIdentifier>{a6cd374a-a4de-43a3-ba84-f05c3632b1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab">
+      <UniqueIdentifier>{6414a1b2-8ab6-46fc-8f64-b148da3aa9db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm">
+      <UniqueIdentifier>{4c58d31c-1d1f-4e79-906f-458d328535c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect">
+      <UniqueIdentifier>{6a9bc3f6-fc55-44a7-80e9-197fd833f701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button">
+      <UniqueIdentifier>{5b9db725-cb7e-483a-84a5-7db69fd72ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc">
+      <UniqueIdentifier>{f73c2825-7fbe-4977-ae4e-8adcca69c5d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena">
+      <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Charge">
+      <UniqueIdentifier>{cb2ab0f6-fd16-4a70-b321-1347281d0e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Damage">
+      <UniqueIdentifier>{fcefc623-bcb5-4f71-8875-64b12b1adb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Pulse">
+      <UniqueIdentifier>{f88dbeb1-9787-4a51-af4c-ace4d4aee6e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Trail">
+      <UniqueIdentifier>{ff96dfad-5fab-464e-aea5-e42d5c7b51e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Enemy">
+      <UniqueIdentifier>{2fab38ba-d3bd-4753-86e5-5756678dfe7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Effect">
+      <UniqueIdentifier>{446db465-dba5-46e8-86fe-56034d6c67fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
+      <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Jump">
+      <UniqueIdentifier>{45fa896a-2d62-4bc9-a79d-9ba3aeee6ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Pulse">
+      <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Enemy\Wisp">
+      <UniqueIdentifier>{dde62539-ab54-42c8-9ff3-0760ff1d212a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon\Arrow">
+      <UniqueIdentifier>{0bd76abd-57b1-4681-85a7-d47db57129cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Fade">
+      <UniqueIdentifier>{03c6dc38-a37a-488e-8e9f-011e0ca9c2d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Monster">
+      <UniqueIdentifier>{0793c019-d85f-450a-bce7-cc567629f0b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Focus_RotIcon">
+      <UniqueIdentifier>{a31a358b-f4a0-473e-bfe5-f2956f9e7a6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\07. Map">
+      <UniqueIdentifier>{0bbf0936-77d2-49f4-a655-b453af7ed735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top">
+      <UniqueIdentifier>{97bd2c40-5551-40f7-a8c5-2d651957cfdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom">
+      <UniqueIdentifier>{d2dcdc5f-9309-43b6-8b38-f228e7b7f733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle">
+      <UniqueIdentifier>{1365c1f4-a982-43a6-87b5-ecddc9b0929f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet">
+      <UniqueIdentifier>{3be1f736-5038-4e74-ac53-94864b467bfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp">
+      <UniqueIdentifier>{8b3e7483-de55-4808-b454-6409b0d65a13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\private\BackGround.cpp" />
-    <ClCompile Include="..\Private\Base_Ground.cpp" />
-    <ClCompile Include="..\Private\Border.cpp" />
-    <ClCompile Include="..\Private\BowTarget.cpp" />
-    <ClCompile Include="..\private\BranchTosser.cpp" />
-    <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
-    <ClCompile Include="..\private\Bridge.cpp" />
-    <ClCompile Include="..\private\Camera_Dynamic.cpp" />
-    <ClCompile Include="..\Private\Camera_Player.cpp" />
-    <ClCompile Include="..\private\ControlRoom.cpp" />
-    <ClCompile Include="..\Private\Crystal.cpp" />
-    <ClCompile Include="..\Private\Cliff_Rock.cpp" />
-    <ClCompile Include="..\Private\ControlMove.cpp" />
-    <ClCompile Include="..\Private\DeadZoneObj.cpp" />
-    <ClCompile Include="..\private\Door_Anim.cpp" />
-    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
-    <ClCompile Include="..\private\Effect.cpp" />
-    <ClCompile Include="..\private\Effect_Base.cpp" />
-    <ClCompile Include="..\private\Effect_Mesh.cpp" />
-    <ClCompile Include="..\private\Effect_Mesh_T.cpp" />
-    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp" />
-    <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
-    <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
-    <ClCompile Include="..\private\Effect_T.cpp" />
-    <ClCompile Include="..\private\Effect_Trail.cpp" />
-    <ClCompile Include="..\private\Effect_Trail_T.cpp" />
-    <ClCompile Include="..\private\EnemyWisp.cpp" />
-    <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
-    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
-    <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
-    <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
-    <ClCompile Include="..\private\E_KenaDamage.cpp" />
-    <ClCompile Include="..\private\E_KenaHit.cpp" />
-    <ClCompile Include="..\private\E_KenaJump.cpp" />
-    <ClCompile Include="..\private\E_KenaPulse.cpp" />
-    <ClCompile Include="..\private\E_KenaPulseCloud.cpp" />
-    <ClCompile Include="..\private\E_KenaPulseDot.cpp" />
-    <ClCompile Include="..\private\E_KenaCharge.cpp" />
-    <ClCompile Include="..\private\E_KenaTrail.cpp" />
-    <ClCompile Include="..\private\E_PulseObject.cpp" />
-    <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
-    <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
-    <ClCompile Include="..\Private\FloorMesh.cpp" />
-    <ClCompile Include="..\private\FloorTile.cpp" />
-    <ClCompile Include="..\Private\Flower.cpp" />
-    <ClCompile Include="..\private\Gate.cpp" />
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
-    <ClCompile Include="..\Private\Grass.cpp" />
-    <ClCompile Include="..\private\GroundMark.cpp" />
-    <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
-    <ClCompile Include="..\Private\Interaction_Com.cpp" />
-    <ClCompile Include="..\Private\Kena.cpp" />
-    <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
-    <ClCompile Include="..\Private\Kena_Parts.cpp" />
-    <ClCompile Include="..\private\Imgui_Effect.cpp" />
-    <ClCompile Include="..\Private\Imgui_MapEditor.cpp" />
-    <ClCompile Include="..\Private\Kena_Staff.cpp" />
-    <ClCompile Include="..\Private\Kena_State.cpp" />
-    <ClCompile Include="..\private\Kena_Status.cpp" />
-    <ClCompile Include="..\Private\Level_EffectTest.cpp" />
-    <ClCompile Include="..\private\Level_GamePlay.cpp" />
-    <ClCompile Include="..\private\Level_Loading.cpp" />
-    <ClCompile Include="..\private\Level_Logo.cpp" />
-    <ClCompile Include="..\Private\Level_MapTool.cpp" />
-    <ClCompile Include="..\Private\Level_TestPlay.cpp" />
-    <ClCompile Include="..\private\LiftRot.cpp" />
-    <ClCompile Include="..\private\LiftRot_Master.cpp" />
-    <ClCompile Include="..\private\LightCamera.cpp" />
-    <ClCompile Include="..\private\Loader.cpp" />
-    <ClCompile Include="..\private\LoadingIcon.cpp" />
-    <ClCompile Include="..\Private\LodObject.cpp" />
-    <ClCompile Include="..\private\Mage.cpp" />
-    <ClCompile Include="..\private\MainApp.cpp" />
-    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
-    <ClCompile Include="..\private\Monster.cpp" />
-    <ClCompile Include="..\private\MonsterWeapon.cpp" />
-    <ClCompile Include="..\private\SpiritArrow.cpp" />
-    <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
-    <ClCompile Include="..\private\UI_CanvasTop.cpp" />
-    <ClCompile Include="..\private\UI_MonsterHP.cpp" />
-    <ClCompile Include="..\private\Monster_Status.cpp" />
-    <ClCompile Include="..\private\Moth.cpp" />
-    <ClCompile Include="..\private\Path_Mesh.cpp" />
-    <ClCompile Include="..\Private\Pillar.cpp" />
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
-    <ClCompile Include="..\private\SkillInfo.cpp" />
-    <ClCompile Include="..\Private\PulseStone.cpp" />
-    <ClCompile Include="..\private\Pulse_PlateForm.cpp" />
-    <ClCompile Include="..\private\Quest.cpp" />
-    <ClCompile Include="..\private\RockGolem.cpp" />
-    <ClCompile Include="..\private\Roots.cpp" />
-    <ClCompile Include="..\private\Rot.cpp" />
-    <ClCompile Include="..\private\RotEater.cpp" />
-    <ClCompile Include="..\private\Rope_RotRock.cpp" />
-    <ClCompile Include="..\private\Rot_State.cpp" />
-    <ClCompile Include="..\private\RuinKit.cpp" />
-    <ClCompile Include="..\private\Sapling.cpp" />
-    <ClCompile Include="..\private\ShieldStick.cpp" />
-    <ClCompile Include="..\private\ShieldStick_Weapon.cpp" />
-    <ClCompile Include="..\private\Sky.cpp" />
-    <ClCompile Include="..\Private\Slope.cpp" />
-    <ClCompile Include="..\Private\Stair.cpp" />
-    <ClCompile Include="..\Private\Statue.cpp" />
-    <ClCompile Include="..\private\Sticks01.cpp" />
-    <ClCompile Include="..\Private\Stone.cpp" />
-    <ClCompile Include="..\private\Terrain.cpp" />
-    <ClCompile Include="..\private\Tool_Animation.cpp" />
-    <ClCompile Include="..\private\Tool_Settings.cpp" />
-    <ClCompile Include="..\private\UI_Billboard.cpp" />
-    <ClCompile Include="..\private\UI_CanvasAim.cpp" />
-    <ClCompile Include="..\private\UI_CanvasAmmo.cpp" />
-    <ClCompile Include="..\Private\Tree.cpp" />
-    <ClCompile Include="..\private\UI_CanvasConfirm.cpp" />
-    <ClCompile Include="..\private\UI_CanvasHUD.cpp" />
-    <ClCompile Include="..\private\UI_CanvasInvHeader.cpp" />
-    <ClCompile Include="..\private\UI_CanvasUpgrade.cpp" />
-    <ClCompile Include="..\private\UI_CanvasQuest.cpp" />
-    <ClCompile Include="..\private\UI_ClientManager.cpp" />
-    <ClCompile Include="..\private\Imgui_UIEditor.cpp" />
-    <ClCompile Include="..\private\UI_Event_Animation.cpp" />
-    <ClCompile Include="..\private\UI_Event_Guage.cpp" />
-    <ClCompile Include="..\private\UI_Event_ChangeImg.cpp" />
-    <ClCompile Include="..\private\UI_Event_Transform.cpp" />
-    <ClCompile Include="..\private\UI_NodeAimArrow.cpp" />
-    <ClCompile Include="..\private\UI_NodeAimBomb.cpp" />
-    <ClCompile Include="..\private\UI_NodeAimLine.cpp" />
-    <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp" />
-    <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
-    <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
-    <ClCompile Include="..\private\UI_NodeButton.cpp" />
-    <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
-    <ClCompile Include="..\private\UI_NodeEffect.cpp" />
-    <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDPipBar.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
-    <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
-    <ClCompile Include="..\private\UI_NodeKarma.cpp" />
-    <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
-    <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
-    <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
-    <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
-    <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
-    <ClCompile Include="..\private\UI_NodeSkill.cpp" />
-    <ClCompile Include="..\private\UI_NodeQuest.cpp" />
-    <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
-    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
-    <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
-    <ClCompile Include="..\private\UI_RotIcon.cpp" />
-    <ClCompile Include="..\private\VillageGuard.cpp" />
-    <ClCompile Include="..\Private\Wall.cpp" />
-    <ClCompile Include="..\private\WoodKnight.cpp" />
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="UI_NodeRotSkill.cpp" />
-    <ClCompile Include="..\private\RotForMonster.cpp" />
+    <Text Include="ReadMe.txt" />
+    <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
+      <Filter>02.GameObjects\Player</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
-    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
-    <ClInclude Include="..\public\BackGround.h" />
-    <ClInclude Include="..\Public\Base_Ground.h" />
-    <ClInclude Include="..\Public\Border.h" />
-    <ClInclude Include="..\Public\BowTarget.h" />
-    <ClInclude Include="..\public\BranchTosser.h" />
-    <ClInclude Include="..\public\BranchTosser_Weapon.h" />
-    <ClInclude Include="..\public\Bridge.h" />
-    <ClInclude Include="..\public\Camera_Dynamic.h" />
-    <ClInclude Include="..\Public\Camera_Player.h" />
-    <ClInclude Include="..\public\ControlRoom.h" />
-    <ClInclude Include="..\Public\Crystal.h" />
-    <ClInclude Include="..\Public\Cliff_Rock.h" />
-    <ClInclude Include="..\public\Client_Defines.h" />
-    <ClInclude Include="..\Public\ControlMove.h" />
-    <ClInclude Include="..\Public\DeadZoneObj.h" />
-    <ClInclude Include="..\public\Door_Anim.h" />
-    <ClInclude Include="..\public\DynamicLightCamera.h" />
-    <ClInclude Include="..\public\Effect.h" />
-    <ClInclude Include="..\public\Effect_Base.h" />
-    <ClInclude Include="..\public\Effect_Mesh.h" />
-    <ClInclude Include="..\public\Effect_Mesh_T.h" />
-    <ClInclude Include="..\public\Effect_Point_Instancing.h" />
-    <ClInclude Include="..\public\Effect_Point_Instancing_T.h" />
-    <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
-    <ClInclude Include="..\public\Effect_T.h" />
-    <ClInclude Include="..\public\Effect_Trail.h" />
-    <ClInclude Include="..\public\Effect_Trail_T.h" />
-    <ClInclude Include="..\public\EnemyWisp.h" />
-    <ClInclude Include="..\public\Enviroment_Interaction.h" />
-    <ClInclude Include="..\public\E_EnemyWispBackground.h" />
-    <ClInclude Include="..\public\E_EnemyWispGround.h" />
-    <ClInclude Include="..\public\E_EnemyWispTrail.h" />
-    <ClInclude Include="..\public\E_KenaChargeImpact.h" />
-    <ClInclude Include="..\public\E_KenaDamage.h" />
-    <ClInclude Include="..\public\E_KenaHit.h" />
-    <ClInclude Include="..\public\E_KenaJump.h" />
-    <ClInclude Include="..\public\E_KenaPulse.h" />
-    <ClInclude Include="..\public\E_KenaPulseCloud.h" />
-    <ClInclude Include="..\public\E_KenaPulseDot.h" />
-    <ClInclude Include="..\public\E_KenaCharge.h" />
-    <ClInclude Include="..\public\E_KenaTrail.h" />
-    <ClInclude Include="..\public\E_PulseObject.h" />
-    <ClInclude Include="..\public\E_P_EnemyWisp.h" />
-    <ClInclude Include="..\Public\FloorMesh.h" />
-    <ClInclude Include="..\public\FloorTile.h" />
-    <ClInclude Include="..\Public\Flower.h" />
-    <ClInclude Include="..\public\Gate.h" />
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
-    <ClInclude Include="..\Public\Grass.h" />
-    <ClInclude Include="..\public\GroundMark.h" />
-    <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
-    <ClInclude Include="..\Public\Interaction_Com.h" />
-    <ClInclude Include="..\Public\Kena.h" />
-    <ClInclude Include="..\Public\Kena_MainOutfit.h" />
-    <ClInclude Include="..\Public\Kena_Parts.h" />
-    <ClInclude Include="..\public\Imgui_Effect.h" />
-    <ClInclude Include="..\Public\Imgui_MapEditor.h" />
-    <ClInclude Include="..\Public\Kena_Staff.h" />
-    <ClInclude Include="..\Public\Kena_State.h" />
-    <ClInclude Include="..\public\Kena_Status.h" />
-    <ClInclude Include="..\Public\Level_EffectTest.h" />
-    <ClInclude Include="..\public\Level_GamePlay.h" />
-    <ClInclude Include="..\public\Level_Loading.h" />
-    <ClInclude Include="..\public\Level_Logo.h" />
-    <ClInclude Include="..\Public\Level_MapTool.h" />
-    <ClInclude Include="..\Public\Level_TestPlay.h" />
+    <ClInclude Include="Client.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Client_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Logo.h">
+      <Filter>01.Levels\01.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Loading.h">
+      <Filter>01.Levels\00.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_GamePlay.h">
+      <Filter>01.Levels\02.GamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Loader.h">
+      <Filter>01.Levels\00.Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BackGround.h">
+      <Filter>02.GameObjects\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Dynamic.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Point_Instancing.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Rect_Instancing.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Rect_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasHUD.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_ClientManager.h">
+      <Filter>02.GameObjects\UI\00. ClientManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_UIEditor.h">
+      <Filter>02.GameObjects\UI\01. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDHPBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDHP.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDPip.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDPipBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDRot.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDShield.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHUDShieldBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_MainOutfit.h">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_Parts.h">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena.h">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_MapTool.h">
+      <Filter>01.Levels\03. MapTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_Effect.h">
+      <Filter>95. Tool\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_Staff.h">
+      <Filter>02.GameObjects\Player\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool_Animation.h">
+      <Filter>95. Tool\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interaction_Com.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_EffectTest.h">
+      <Filter>01.Levels\05. EffectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_TestPlay.h">
+      <Filter>01.Levels\04. TestPlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Player.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Kena_State.h">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadingIcon.h">
+      <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool_Settings.h">
+      <Filter>95. Tool\ImGui Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_ChangeImg.h">
+      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Animation.h">
+      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Guage.h">
+      <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAmmo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_MapEditor.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelViewerObject.h">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ControlMove.h">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BowTarget.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crystal.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tree.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LodObject.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Door_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PulseStone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wall.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base_Ground.h">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Border.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pillar.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Roots.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stair.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Statue.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FloorMesh.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Slope.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Moth.h">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RockGolem.h">
+      <Filter>02.GameObjects\Monster\RockGolem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotEater.h">
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sticks01.h">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VillageGuard.h">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WoodKnight.h">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasAim.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimBomb.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeAimLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh.h">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot_State.h">
+      <Filter>02.GameObjects\Rot\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasQuest.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h" />
+    <ClInclude Include="..\public\Bridge.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FloorTile.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gate.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Path_Mesh.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pulse_PlateForm.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RuinKit.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Monster_Status.h">
+      <Filter>02.GameObjects\Monster\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Kena_Status.h">
+      <Filter>02.GameObjects\Player\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Base.h">
+      <Filter>02.GameObjects\Effect\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh_T.h">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bridge.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FloorTile.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gate.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Path_Mesh.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pulse_PlateForm.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RuinKit.h">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Imgui_TerrainEditor.h">
+      <Filter>02.GameObjects\Terrain\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Flower.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Rock.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grass.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeQuest.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Transform.h">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasUpgrade.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GroundMark.h">
+      <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rope_RotRock.h">
+      <Filter>02.GameObjects\Envrioment\Interaction\Rope_RotRock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Enviroment_Interaction.h">
+      <Filter>02.GameObjects\Envrioment\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Point_Instancing_T.h">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BranchTosser.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BranchTosser_Weapon.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sapling.h">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterWeapon.h">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\LiftRot.h" />
     <ClInclude Include="..\public\LiftRot_Master.h" />
-    <ClInclude Include="..\public\LightCamera.h" />
-    <ClInclude Include="..\public\Loader.h" />
-    <ClInclude Include="..\public\LoadingIcon.h" />
-    <ClInclude Include="..\Public\LodObject.h" />
-    <ClInclude Include="..\public\Mage.h" />
-    <ClInclude Include="..\public\MainApp.h" />
-    <ClInclude Include="..\Public\ModelViewerObject.h" />
-    <ClInclude Include="..\public\Monster.h" />
-    <ClInclude Include="..\public\MonsterWeapon.h" />
-    <ClInclude Include="..\public\SpiritArrow.h" />
-    <ClInclude Include="..\public\UI_CanvasBottom.h" />
-    <ClInclude Include="..\public\UI_CanvasTop.h" />
-    <ClInclude Include="..\public\UI_MonsterHP.h" />
-    <ClInclude Include="..\public\Monster_Status.h" />
-    <ClInclude Include="..\public\Moth.h" />
-    <ClInclude Include="..\public\Path_Mesh.h" />
-    <ClInclude Include="..\Public\Pillar.h" />
+    <ClInclude Include="..\Public\DeadZoneObj.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_NodeRotSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SkillInfo.h">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasInvHeader.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeCrystal.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeKarma.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeNumRots.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillDesc.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillName.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillCond.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasConfirm.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeEffect.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeButton.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotLevel.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeConfWindow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaCharge.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaChargeImpact.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDamage.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseCloud.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulseDot.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyWisp.h">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaHit.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
-    <ClInclude Include="..\public\SkillInfo.h" />
-    <ClInclude Include="..\Public\PulseStone.h" />
-    <ClInclude Include="..\public\Pulse_PlateForm.h" />
-    <ClInclude Include="..\public\Quest.h" />
-    <ClInclude Include="..\public\RockGolem.h" />
-    <ClInclude Include="..\public\Roots.h" />
-    <ClInclude Include="..\public\Rot.h" />
-    <ClInclude Include="..\public\RotEater.h" />
-    <ClInclude Include="..\public\Rope_RotRock.h" />
-    <ClInclude Include="..\public\Rot_State.h" />
-    <ClInclude Include="..\public\RuinKit.h" />
-    <ClInclude Include="..\public\Sapling.h" />
-    <ClInclude Include="..\public\ShieldStick.h" />
-    <ClInclude Include="..\public\ShieldStick_Weapon.h" />
-    <ClInclude Include="..\public\Sky.h" />
-    <ClInclude Include="..\Public\Slope.h" />
-    <ClInclude Include="..\Public\Stair.h" />
-    <ClInclude Include="..\Public\Statue.h" />
-    <ClInclude Include="..\public\Sticks01.h" />
-    <ClInclude Include="..\Public\Stone.h" />
-    <ClInclude Include="..\public\Terrain.h" />
-    <ClInclude Include="..\public\Tool_Animation.h" />
-    <ClInclude Include="..\public\Tool_Settings.h" />
-    <ClInclude Include="..\public\UI_Billboard.h" />
-    <ClInclude Include="..\public\UI_CanvasAim.h" />
-    <ClInclude Include="..\public\UI_CanvasAmmo.h" />
-    <ClInclude Include="..\Public\Tree.h" />
-    <ClInclude Include="..\public\UI_CanvasConfirm.h" />
-    <ClInclude Include="..\public\UI_CanvasHUD.h" />
-    <ClInclude Include="..\public\UI_CanvasInvHeader.h" />
-    <ClInclude Include="..\public\UI_CanvasUpgrade.h" />
-    <ClInclude Include="..\public\UI_CanvasQuest.h" />
-    <ClInclude Include="..\public\UI_ClientManager.h" />
-    <ClInclude Include="..\public\Imgui_UIEditor.h" />
-    <ClInclude Include="..\public\UI_Event_Animation.h" />
-    <ClInclude Include="..\public\UI_Event_Guage.h" />
-    <ClInclude Include="..\public\UI_Event_ChangeImg.h" />
-    <ClInclude Include="..\public\UI_Event_Transform.h" />
-    <ClInclude Include="..\public\UI_NodeAimArrow.h" />
-    <ClInclude Include="..\public\UI_NodeAimBomb.h" />
-    <ClInclude Include="..\public\UI_NodeAimLine.h" />
-    <ClInclude Include="..\public\UI_NodeAmmoArrowGuage.h" />
-    <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
-    <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
-    <ClInclude Include="..\public\UI_NodeButton.h" />
-    <ClInclude Include="..\public\UI_NodeCrystal.h" />
-    <ClInclude Include="..\public\UI_NodeEffect.h" />
-    <ClInclude Include="..\public\UI_NodeConfWindow.h" />
-    <ClInclude Include="..\public\UI_NodeHUDHP.h" />
-    <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
-    <ClInclude Include="..\public\UI_NodeHUDPip.h" />
-    <ClInclude Include="..\public\UI_NodeHUDPipBar.h" />
-    <ClInclude Include="..\public\UI_NodeHUDRot.h" />
-    <ClInclude Include="..\public\UI_NodeHUDShield.h" />
-    <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
-    <ClInclude Include="..\public\UI_NodeKarma.h" />
-    <ClInclude Include="..\public\UI_NodeLetterBox.h" />
-    <ClInclude Include="..\public\UI_NodeLvUp.h" />
-    <ClInclude Include="..\public\UI_NodeNumRots.h" />
-    <ClInclude Include="..\public\UI_NodeRotGuage.h" />
-    <ClInclude Include="..\public\UI_NodeRotLevel.h" />
-    <ClInclude Include="..\public\UI_NodeSkill.h" />
-    <ClInclude Include="..\public\UI_NodeQuest.h" />
-    <ClInclude Include="..\public\UI_NodeSkillCond.h" />
-    <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
-    <ClInclude Include="..\public\UI_NodeSkillName.h" />
-    <ClInclude Include="..\public\UI_RotIcon.h" />
-    <ClInclude Include="..\public\VillageGuard.h" />
-    <ClInclude Include="..\Public\Wall.h" />
-    <ClInclude Include="..\public\WoodKnight.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="UI_NodeRotSkill.h" />
-    <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\E_KenaJump.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_PulseObject.h">
+      <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShieldStick_Weapon.h">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShieldStick.h">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mage.h">
+      <Filter>02.GameObjects\Monster\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaPulse.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Fade.h">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpiritArrow.h" />
+    <ClInclude Include="..\public\E_EnemyWispTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispGround.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_EnemyWisp.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispBackground.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h" />
+    <ClInclude Include="..\public\DynamicLightCamera.h" />
+    <ClInclude Include="..\public\UI_MonsterHP.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Billboard.h">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_RotIcon.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_RotIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasBottom.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasTop.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeLetterBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeTitle.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotCnt.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotFrontGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeLvUp.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Client.rc" />
+    <ClCompile Include="Client.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Logo.cpp">
+      <Filter>01.Levels\01.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Loading.cpp">
+      <Filter>01.Levels\00.Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_GamePlay.cpp">
+      <Filter>01.Levels\02.GamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Loader.cpp">
+      <Filter>01.Levels\00.Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BackGround.cpp">
+      <Filter>02.GameObjects\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>02.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Dynamic.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Point_Instancing.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Rect_Instancing.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Rect_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasHUD.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_ClientManager.cpp">
+      <Filter>02.GameObjects\UI\00. ClientManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_UIEditor.cpp">
+      <Filter>02.GameObjects\UI\01. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDHP.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDPip.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDPipBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Pip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDRot.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDShield.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\00. HUD\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_MainOutfit.cpp">
+      <Filter>02.GameObjects\Player\Outfit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_Parts.cpp">
+      <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_MapTool.cpp">
+      <Filter>01.Levels\03. MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_Effect.cpp">
+      <Filter>95. Tool\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_Staff.cpp">
+      <Filter>02.GameObjects\Player\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool_Animation.cpp">
+      <Filter>95. Tool\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Com.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_EffectTest.cpp">
+      <Filter>01.Levels\05. EffectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_TestPlay.cpp">
+      <Filter>01.Levels\04. TestPlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Player.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Kena_State.cpp">
+      <Filter>02.GameObjects\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadingIcon.cpp">
+      <Filter>02.GameObjects\BackGround\LoadingIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool_Settings.cpp">
+      <Filter>95. Tool\ImGui Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_ChangeImg.cpp">
+      <Filter>02.GameObjects\UI\04. Events\ChangeImg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Animation.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Guage.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Guage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAmmo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoArrowGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\01. Ammo\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_MapEditor.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelViewerObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ControlMove.cpp">
+      <Filter>02.GameObjects\Envrioment\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BowTarget.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Rock.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crystal.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tree.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LodObject.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Door_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PulseStone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Base_Ground.cpp">
+      <Filter>02.GameObjects\Envrioment\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Border.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pillar.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Roots.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stair.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Statue.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FloorMesh.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Slope.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Moth.cpp">
+      <Filter>02.GameObjects\Monster\Moth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RockGolem.cpp">
+      <Filter>02.GameObjects\Monster\RockGolem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotEater.cpp">
+      <Filter>02.GameObjects\Monster\RotEater</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sticks01.cpp">
+      <Filter>02.GameObjects\Monster\Sticks01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VillageGuard.cpp">
+      <Filter>02.GameObjects\Monster\VillageGuard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WoodKnight.cpp">
+      <Filter>02.GameObjects\Monster\WoodKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasAim.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimBomb.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeAimLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\02. Aim\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh.cpp">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot_State.cpp">
+      <Filter>02.GameObjects\Rot\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasQuest.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp" />
+    <ClCompile Include="..\Private\Wall.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bridge.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FloorTile.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gate.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Path_Mesh.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pulse_PlateForm.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RuinKit.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Monster_Status.cpp">
+      <Filter>02.GameObjects\Monster\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Kena_Status.cpp">
+      <Filter>02.GameObjects\Player\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Base.cpp">
+      <Filter>02.GameObjects\Effect\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Mesh Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bridge.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FloorTile.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gate.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Path_Mesh.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pulse_PlateForm.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RuinKit.cpp">
+      <Filter>02.GameObjects\Envrioment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp">
+      <Filter>02.GameObjects\Terrain\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Flower.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grass.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeQuest.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Transform.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasUpgrade.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GroundMark.cpp">
+      <Filter>02.GameObjects\Effect\Object\Ground Mark</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rope_RotRock.cpp">
+      <Filter>02.GameObjects\Envrioment\Interaction\Rope_RotRock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Enviroment_Interaction.cpp">
+      <Filter>02.GameObjects\Envrioment\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail_T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Point_Instancing _T.cpp">
+      <Filter>02.GameObjects\Effect\Base\Texture Type\Point_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser_Weapon.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sapling.cpp">
+      <Filter>02.GameObjects\Monster\Sapling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterWeapon.cpp">
+      <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LiftRot.cpp" />
+    <ClCompile Include="..\private\LiftRot_Master.cpp" />
+    <ClCompile Include="..\Private\DeadZoneObj.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeRotSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SkillInfo.cpp">
+      <Filter>02.GameObjects\UI\05. Real Object\PlayerSkill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasInvHeader.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeCrystal.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeKarma.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeNumRots.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\04. InvHeader\currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillDesc.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillName.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillCond.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasConfirm.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeEffect.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeButton.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Node_Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotLevel.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeConfWindow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\99. Common\Canvas_Confirm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaCharge.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaChargeImpact.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDamage.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseCloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulseDot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyWisp.cpp">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaHit.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
+    <ClCompile Include="..\private\E_KenaJump.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_PulseObject.cpp">
+      <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShieldStick.cpp">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShieldStick_Weapon.cpp">
+      <Filter>02.GameObjects\Monster\ShieldStick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mage.cpp">
+      <Filter>02.GameObjects\Monster\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaPulse.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Fade.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispGround.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_EnemyWisp.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp" />
+    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
+    <ClCompile Include="..\private\UI_MonsterHP.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Billboard.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_RotIcon.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_RotIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasBottom.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasTop.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeTitle.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotCnt.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLvUp.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Client.ico" />
-    <Image Include="small.ico" />
+    <Image Include="Client.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98.Default</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt" />
-    <Text Include="ReadMe.txt" />
+    <ResourceCompile Include="Client.rc">
+      <Filter>98.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
   </ItemGroup>
 </Project>

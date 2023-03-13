@@ -82,7 +82,7 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
+/* #ifdef _DEBUG
 	if (nullptr != m_pUIHPBar)
 		m_pUIHPBar->Imgui_RenderProperty();
 
@@ -92,7 +92,7 @@ void CMonster::Tick(_float fTimeDelta)
 		fGuage -= 0.1f;
 		m_pUIHPBar->Set_Guage(fGuage);
 	}
-#endif
+#endif */
 	if (m_bDying)
 		m_fDissolveTime += fTimeDelta * 0.6f;
 	else
@@ -293,13 +293,11 @@ void CMonster::Call_RotIcon()
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CEffect_Base*  pEffectBase = nullptr;
-
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
-	pEffectBase->Set_Parent(this);
-	m_pEnemyWisp = pEffectBase;
 	
+	m_pEnemyWisp = dynamic_cast<CEnemyWisp*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(m_pEnemyWisp, E_FAIL );
+	m_pEnemyWisp->Set_Parent(this);
+		
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -362,6 +360,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 		}
 	}
 

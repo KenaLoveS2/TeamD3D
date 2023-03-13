@@ -113,7 +113,7 @@ void CRot::Tick(_float fTimeDelta)
 	{
 		// m_bWakeUp = true;
 		Temp += 1.f * fTimeDelta;
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, Temp);		
+		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, Temp);
 	}
 
 	if (m_pFSM)

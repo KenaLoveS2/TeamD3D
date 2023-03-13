@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Monster_Status.h"
-#include "Effect_Base.h"
+#include "EnemyWisp.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -98,9 +98,9 @@ protected:
 	CFSMComponent*			m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;	
 
-	CEffect_Base*					m_pEnemyWisp = nullptr;
-	_float4								m_vKenaPos;
 	CUI_MonsterHP*				m_pUIHPBar;
+	class CEnemyWisp*			m_pEnemyWisp = nullptr;
+	_float4								m_vKenaPos;
 
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 

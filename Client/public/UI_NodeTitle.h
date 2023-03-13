@@ -3,12 +3,12 @@
 #include "UI_Node.h"
 
 BEGIN(Client)
-class CUI_NodeLvUp final : public CUI_Node
+class CUI_NodeTitle final : public CUI_Node
 {
 private:
-	CUI_NodeLvUp(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
-	CUI_NodeLvUp(const CUI_NodeLvUp& rhs);
-	virtual ~CUI_NodeLvUp() = default;
+	CUI_NodeTitle(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
+	CUI_NodeTitle(const CUI_NodeTitle& rhs);
+	virtual ~CUI_NodeTitle() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -19,7 +19,7 @@ public:
 	virtual HRESULT			Render()						override;
 
 public:
-	void					Appear(_uint iLevel);
+	void					Appear(wstring title, _uint iIndex);
 
 private:
 	virtual HRESULT			SetUp_Components() override;
@@ -27,10 +27,14 @@ private:
 
 private:
 	_tchar*					m_szTitle;
-	_tchar*					m_szLevel;
+	_bool					m_bStart;
+	_float					m_fAlpha;
+	_float					m_fSpeed;
+	_float					m_fDurTime;
+	_float					m_fDurTimeAcc;
 
 public:
-	static	CUI_NodeLvUp*			Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
+	static	CUI_NodeTitle*			Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual CGameObject*			Clone(void* pArg = nullptr);
 	virtual void					Free() override;
 };

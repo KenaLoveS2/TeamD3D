@@ -264,71 +264,71 @@ void CKena::Late_Tick(_float fTimeDelta)
 		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
 	}
 
-	static _float fNum = 3.f;
-	_float fZero = 0.f;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_U))
-	{
-		static _float fLevel = 0.f;
-		fLevel += 1.f;
-		m_PlayerDelegator.broadcast(eArrowGuage, funcLevelup, fLevel);
-		m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
-		m_PlayerDelegator.broadcast(ePip, funcLevelup, fLevel);
-		m_PlayerDelegator.broadcast(eHP, funcLevelup, fLevel);
+	//static _float fNum = 3.f;
+	//_float fZero = 0.f;
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_U))
+	//{
+	//	static _float fLevel = 0.f;
+	//	fLevel += 1.f;
+	//	m_PlayerDelegator.broadcast(eArrowGuage, funcLevelup, fLevel);
+	//	m_PlayerDelegator.broadcast(eBomb, funcLevelup, fLevel);
+	//	m_PlayerDelegator.broadcast(ePip, funcLevelup, fLevel);
+	//	m_PlayerDelegator.broadcast(eHP, funcLevelup, fLevel);
 
-		m_PlayerDelegator.broadcast(eQuest, funcSwitch, fZero);
+	//	m_PlayerDelegator.broadcast(eQuest, funcSwitch, fZero);
 
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
-	{
-		/* Pip Guage pop test */
-		fNum -= 1.f;
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
-
-
-		/* Rot icon chagne test */
-		static _float fIcon = 0;
-		fIcon = _float(_uint(fIcon + 1) % 4);
-		m_PlayerDelegator.broadcast(eType4, funcDefault, fIcon);
-
-		/* Bomb Guage test */
-		static _float fBomb = 0.f;
-		m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
-
-		/* Arrow Guage test */
-		static _float fArrow = 1.f;
-		m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
-
-		/* Aim Test */
-		static _float fAim = 1.f;
-		m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
-
-		/* Quest Open Test */
-		static _float fQuestIndex = 0.f;
-		m_PlayerDelegator.broadcast(eQuestLine, funcSwitch, fQuestIndex);
-		fQuestIndex += 1.f;
-
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	{
-		fNum -= 0.1f;
-		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
-
-		/* Quest Check Test */
-		static _float fQuestClear = 0.f;
-		m_PlayerDelegator.broadcast(eQuestLine, funcCheck, fQuestClear);
-		fQuestClear += 1.f;
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+	//{
+	//	/* Pip Guage pop test */
+	//	fNum -= 1.f;
+	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
 
 
-	}
-	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
-	{
-		fNum += 0.1f;
-		m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
-		m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
-	}
+	//	/* Rot icon chagne test */
+	//	static _float fIcon = 0;
+	//	fIcon = _float(_uint(fIcon + 1) % 4);
+	//	m_PlayerDelegator.broadcast(eType4, funcDefault, fIcon);
+
+	//	/* Bomb Guage test */
+	//	static _float fBomb = 0.f;
+	//	m_PlayerDelegator.broadcast(eBomb, funcDefault, fBomb);
+
+	//	/* Arrow Guage test */
+	//	static _float fArrow = 1.f;
+	//	m_PlayerDelegator.broadcast(eArrowGuage, funcDefault, fArrow);
+
+	//	/* Aim Test */
+	//	static _float fAim = 1.f;
+	//	m_PlayerDelegator.broadcast(eAim, funcDefault, fAim);
+
+	//	/* Quest Open Test */
+	//	static _float fQuestIndex = 0.f;
+	//	m_PlayerDelegator.broadcast(eQuestLine, funcSwitch, fQuestIndex);
+	//	fQuestIndex += 1.f;
+
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	//{
+	//	fNum -= 0.1f;
+	//	m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
+	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
+	//	m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
+
+	//	/* Quest Check Test */
+	//	static _float fQuestClear = 0.f;
+	//	m_PlayerDelegator.broadcast(eQuestLine, funcCheck, fQuestClear);
+	//	fQuestClear += 1.f;
+
+
+	//}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+	//{
+	//	fNum += 0.1f;
+	//	m_PlayerDelegator.broadcast(eHP, funcDefault, fNum);
+	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fNum);
+	//	m_PlayerDelegator.broadcast(eType3, funcDefault, fNum);
+	//}
 
 	/************** ~Delegator Test *************/
 
@@ -1861,6 +1861,10 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			// ¸ÂÀº°Å
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
 			//	return -1;
+			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			_float fGuage = m_pKenaStatus->Get_PercentHP();
+			m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
 			for (auto& Effect : m_mapEffect)
 			{
