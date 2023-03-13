@@ -353,6 +353,7 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	return pBody;
 }
 
+
 void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 {
 	if (Desc.eType == BOX_STATIC)
@@ -1043,19 +1044,20 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 	if (pTriggerData == nullptr) return;
 
 	PxTransform Transform(CUtile::ConvertPosition_D3DToPx(pTriggerData->vPos));
-	PxRigidStatic* pTrigger = m_pPhysics->createRigidStatic(Transform);	
+
+	pTriggerData->pTriggerStatic = m_pPhysics->createRigidStatic(Transform);
 
 	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
 	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 
-	pTrigger->attachShape(*pShape);
-	pTrigger->userData = pTriggerData;
-	
-	m_TriggerDataes.push_back(pTriggerData);
-	m_Triggers.emplace(CUtile::Create_StringAuto(pTriggerData->pActortag), pTrigger);
+	pTriggerData->pTriggerStatic->attachShape(*pShape);
+	pTriggerData->pTriggerStatic->userData = pTriggerData;
 
-	m_pScene->addActor(*pTrigger);
+	m_TriggerDataes.push_back(pTriggerData);
+	m_Triggers.emplace(CUtile::Create_StringAuto(pTriggerData->pActortag), pTriggerData->pTriggerStatic);
+
+	m_pScene->addActor(*pTriggerData->pTriggerStatic);
 	pShape->release();
 }
 
