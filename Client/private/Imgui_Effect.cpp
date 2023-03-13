@@ -546,9 +546,9 @@ void CImgui_Effect::Imgui_RenderWindow()
 				char     szPrototypeTag[MAX_PATH] = "";
 				char     szClonetypeTag[MAX_PATH] = "";
 
-				if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+				if (dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)) // VIBuffer_Point_Instancing Data Save
 				{
-					vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_TrailEffect();
+					vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)->Get_TrailEffect();
 					_int iTrailSize = (_int)vecTrail.size();
 					for (auto& pvecTrail : vecTrail)
 					{
@@ -695,13 +695,13 @@ void CImgui_Effect::Imgui_RenderWindow()
 			}
 
 			// Component Desc 저장
-			if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+			if (dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)) // VIBuffer_Point_Instancing Data Save
 			{
 				char     szVIBufferTag[MAX_PATH] = "";
-				const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_VIBufferProtoTag();
+				const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)->Get_VIBufferProtoTag();
 				CUtile::WideCharToChar(szVIBufferWidecharTag, szVIBufferTag);
 
-				CEffect_Point_Instancing* pPointInstance = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
+				CEffect_Point_Instancing_T* pPointInstance = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect);
 				CVIBuffer_Point_Instancing*	pVIBufferPointInstancing = (CVIBuffer_Point_Instancing*)pPointInstance->Find_Component(L"Com_VIBuffer");
 				jObject["CloneObject Component ProtoTag"] = szVIBufferTag;
 
@@ -983,9 +983,9 @@ void CImgui_Effect::Imgui_RenderWindow()
 					char     szPrototypeTag[MAX_PATH] = "";
 					char     szClonetypeTag[MAX_PATH] = "";
 
-					if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+					if (dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)) // VIBuffer_Point_Instancing Data Save
 					{
-						vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_TrailEffect();
+						vector<class CEffect_Trail*> vecTrail = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)->Get_TrailEffect();
 						_int iTrailSize = (_int)vecTrail.size();
 						for (auto& pvecTrail : vecTrail)
 						{
@@ -1132,13 +1132,13 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 				json jData;
 				// Component Desc 저장
-				if (dynamic_cast<CEffect_Point_Instancing*>(pEffect)) // VIBuffer_Point_Instancing Data Save
+				if (dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)) // VIBuffer_Point_Instancing Data Save
 				{
 					char     szVIBufferTag[MAX_PATH] = "";
-					const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing*>(pEffect)->Get_VIBufferProtoTag();
+					const _tchar*   szVIBufferWidecharTag = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect)->Get_VIBufferProtoTag();
 					CUtile::WideCharToChar(szVIBufferWidecharTag, szVIBufferTag);
 
-					CEffect_Point_Instancing* pPointInstance = dynamic_cast<CEffect_Point_Instancing*>(pEffect);
+					CEffect_Point_Instancing_T* pPointInstance = dynamic_cast<CEffect_Point_Instancing_T*>(pEffect);
 					CVIBuffer_Point_Instancing*	pVIBufferPointInstancing = (CVIBuffer_Point_Instancing*)pPointInstance->Find_Component(L"Com_VIBuffer");
 					jObject["CloneObject Component ProtoTag"] = szVIBufferTag;
 
@@ -1413,7 +1413,8 @@ void CImgui_Effect::Imgui_RenderWindow()
 						pGameInstance->Add_String(szCloneConvertTag);
 
 						map<const _tchar*, class CGameObject*>&	 pGameObjects = pGameInstance->Get_ProtoTypeObjects();
-						for (auto& pCloneObject = pGameObjects.begin(); pCloneObject != pGameObjects.end(); pCloneObject++)
+						auto& pCloneObject = pGameObjects.begin();
+						for (pCloneObject; pCloneObject != pGameObjects.end(); pCloneObject++)
 						{
 							if (!lstrcmp(pCloneObject->first, szDefaultTag))
 							{
@@ -1441,7 +1442,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 								}
 								break;
 							}
-						}
+						}	
 					}
 
 					/* Clone */
@@ -1450,14 +1451,12 @@ void CImgui_Effect::Imgui_RenderWindow()
 						RELEASE_INSTANCE(CGameInstance);
 						return;
 					}
-
 					_int iDTextureCnt = 0, iMTextureCnt = 0;
 					jObject["Have DTextureCnt"].get_to<_int>(iDTextureCnt);
 					jObject["Have MTextureCnt"].get_to<_int>(iMTextureCnt);
 
-					dynamic_cast<CEffect_Base*>(pGameObeject)->Set_TotalDTextureCnt(iDTextureCnt);
-					dynamic_cast<CEffect_Base*>(pGameObeject)->Set_TotalMTextureCnt(iMTextureCnt);
-
+					dynamic_cast<CEffect_Base*>(pGameObeject)->Edit_TextureComponent(iDTextureCnt, iMTextureCnt);
+					
 					_matrix WorldMatrix = XMMatrixIdentity();
 					_int i = 0;
 					for (_float fElement : jObject["WorldMatrix"])
@@ -1500,7 +1499,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 							_tchar* szTrailPrototypeTag = CUtile::Create_String(szConvertTag);
 							pGameInstance->Add_String(szTrailPrototypeTag);
 
-							dynamic_cast<CEffect_Point_Instancing*>(pGameObeject)->Set_Trail(dynamic_cast<CEffect_Point_Instancing*>(this), szTrailPrototypeTag);
+							dynamic_cast<CEffect_Point_Instancing_T*>(pGameObeject)->Set_Trail(dynamic_cast<CEffect_Point_Instancing_T*>(this), szTrailPrototypeTag);
 						}
 						else
 						{
@@ -1645,7 +1644,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 						_tchar* szVIBufferFinalTag = CUtile::Create_String(szVIBufferTag);
 						pGameInstance->Add_String(szVIBufferFinalTag);
 
-						dynamic_cast<CEffect_Point_Instancing*>(pGameObeject)->Set_VIBufferProtoTag(szVIBufferFinalTag);
+						dynamic_cast<CEffect_Point_Instancing_T*>(pGameObeject)->Set_VIBufferProtoTag(szVIBufferFinalTag);
 
 						iCnt = 0;
 						jObject["Instance DataCnt"].get_to<_int>(iCnt);

@@ -84,17 +84,24 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-//#ifdef _DEBUG
-//	if (nullptr != m_pUIHPBar)
-//		m_pUIHPBar->Imgui_RenderProperty();
-//
-//	static _float fGuage = 1.f;
-//	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-//	{
-//		fGuage -= 0.1f;
-//		m_pUIHPBar->Set_Guage(fGuage);
-//	}
-//#endif
+/* #ifdef _DEBUG
+	if (nullptr != m_pUIHPBar)
+		m_pUIHPBar->Imgui_RenderProperty();
+
+	static _float fGuage = 1.f;
+	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	{
+		fGuage -= 0.1f;
+		m_pUIHPBar->Set_Guage(fGuage);
+	}
+#endif */
+	if (m_bDying)
+		m_fDissolveTime += fTimeDelta * 0.6f;
+	else
+		m_fDissolveTime = 0.0f;
+
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Tick(fTimeDelta);
 
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
@@ -104,12 +111,16 @@ void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* calculate camera */
-	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Late_Tick(fTimeDelta);
 
-	_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
-	if (10.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+	/* calculate camera */
+	_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float fDistance = _float4::Distance(vCamPos, vPos);
+	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+	if (fDistance <= 20.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 		Call_RotIcon();
 }
 
@@ -281,10 +292,25 @@ void CMonster::Call_RotIcon()
 	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
 }
 
+HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base*  pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
+	pEffectBase->Set_Parent(this);
+	m_pEnemyWisp = pEffectBase;
+	
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture", (CComponent**)&m_pDissolveTextureCom), E_FAIL);
 
 	return S_OK;
 }
@@ -315,11 +341,15 @@ void CMonster::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDissolveTextureCom);
 	Safe_Release(m_pMonsterStatusCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
+
+	if (m_pEnemyWisp != nullptr)
+		Safe_Release(m_pEnemyWisp);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -334,4 +364,13 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	}
 
 	return 0;
+}
+
+HRESULT CMonster::Bind_Dissolove(CShader* pShader)
+{	
+	if (FAILED(pShader->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(pShader, "g_DissolveTexture"))) return E_FAIL;
+
+	return S_OK;
 }

@@ -364,6 +364,11 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 3.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("RUN")
 		.OnStart([this]()
@@ -404,6 +409,11 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_bRealAttack && m_bLongRangeAttack;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("SWIPEATTACK")
 		.OnStart([this]()
@@ -438,6 +448,11 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return AnimFinishChecker(SWIPE) && m_iAfterSwipeAttack == 1;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("JUMPBACK")
 		.OnStart([this]()
@@ -459,6 +474,11 @@ HRESULT CRotEater::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(JUMPBACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("JUMPATTACK")
@@ -482,6 +502,11 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return AnimFinishChecker(JUMPATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("LONGRANGEATTACK")
 		.OnStart([this]()
@@ -504,6 +529,11 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return AnimFinishChecker(ATTACK_LONGRANGE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BIND")
 		.OnStart([this]()
@@ -523,6 +553,11 @@ HRESULT CRotEater::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BIND);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("TAKEDAMAGE")
@@ -561,8 +596,13 @@ HRESULT CRotEater::SetUp_State()
 			AnimFinishChecker(STTAGER_BACK) ||
 			AnimFinishChecker(STTAGER_RIGHT);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
-		.AddState("DEATH")
+		.AddState("DYING")
 		.OnStart([this]()
 	{
 		if (m_PlayerLookAt_Dir == FRONT)
@@ -570,13 +610,32 @@ HRESULT CRotEater::SetUp_State()
 			m_pModelCom->ResetAnimIdx_PlayTime(DEATH3);
 			m_pModelCom->Set_AnimIndex(DEATH3);
 		}
-		else	if (m_PlayerLookAt_Dir == BACK)
+		else if (m_PlayerLookAt_Dir == BACK)
 		{
 			m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 			m_pModelCom->Set_AnimIndex(DEATH);
 		}
-	})
 
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_bDeath = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+
+	})
 		.Build();
 
 	return S_OK;

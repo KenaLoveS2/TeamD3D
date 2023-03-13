@@ -183,12 +183,14 @@
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
+    <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\Public\Crystal.h" />
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
     <ClInclude Include="..\Public\ControlMove.h" />
     <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
+    <ClInclude Include="..\public\DynamicLightCamera.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Mesh.h" />
@@ -201,6 +203,8 @@
     <ClInclude Include="..\public\Effect_Trail_T.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
+    <ClInclude Include="..\public\E_EnemyWispBackground.h" />
+    <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -212,6 +216,7 @@
     <ClInclude Include="..\public\E_KenaCharge.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\public\E_PulseObject.h" />
+    <ClInclude Include="..\public\E_P_EnemyWisp.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
@@ -246,6 +251,7 @@
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
     <ClInclude Include="..\public\UI_Event_Fade.h" />
@@ -345,11 +351,13 @@
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
+    <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
     <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
+    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Mesh.cpp" />
@@ -362,6 +370,7 @@
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -373,6 +382,8 @@
     <ClCompile Include="..\private\E_KenaCharge.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\private\E_PulseObject.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
+    <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
@@ -407,6 +418,7 @@
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
     <ClCompile Include="..\private\UI_Event_Fade.cpp" />
@@ -512,6 +524,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />

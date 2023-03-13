@@ -5,6 +5,7 @@
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
 #include "LightCamera.h"
+#include "DynamicLightCamera.h"
 #include "BackGround.h"
 #include "LoadingIcon.h"
 
@@ -224,6 +225,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_UI_LoadSaveIcon_Alpha.png")))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Dissolve"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")))))
+		return E_FAIL;
+
 	Safe_AddRef(m_pRenderer);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", CStateMachine::Create(m_pDevice, m_pContext)), E_FAIL);
@@ -231,7 +236,6 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", CKena_Status::Create(m_pDevice, m_pContext)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", CMonster_Status::Create(m_pDevice, m_pContext)), E_FAIL);
 	
-
 	return S_OK;
 }
 
@@ -248,6 +252,11 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 	/* For.Prototype_GameObject_LightCamera */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LightCamera"),
 		CLightCamera::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_DynamicLightCamera */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DynamicLightCamera"),
+		CDynamicLightCamera::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_BackGround */

@@ -642,6 +642,8 @@ void CAnimation::Free()
 
 HRESULT CAnimation::SetUp_ChannelsBonePtr(CModel* pModel)
 {
+	m_pModel = pModel;
+
 	for (_uint i = 0; i < m_iNumChannels; i++)
 	{
 		if (FAILED(m_Channels[i]->SetUp_BonePtr(pModel)))
