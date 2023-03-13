@@ -35,6 +35,18 @@ _double CKena::Get_AnimationPlayTime()
 	return m_pModelCom->Get_PlayTime();
 }
 
+CKena_Parts * CKena::Get_KenaPart(const _tchar * pCloneObjectTag)
+{
+	const auto	iter = find_if(m_vecPart.begin(), m_vecPart.end(), [pCloneObjectTag](CKena_Parts* pPart) {
+		return !lstrcmp(pCloneObjectTag, pPart->Get_ObjectCloneName());
+	});
+
+	if (iter == m_vecPart.end())
+		return nullptr;
+
+	return *iter;
+}
+
 HRESULT CKena::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -119,6 +131,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
 
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+
+	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
 
 	return S_OK;
 }
@@ -533,6 +547,17 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 	if (m_pFocusRot == nullptr)
 		return;
 
+	if (pTarget != nullptr)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+		if (pGameInstance->Key_Down(DIK_R))
+			static_cast<CMonster*>(pTarget)->Bind();
+
+		RELEASE_INSTANCE(CGameInstance);
+	}
+
+
 	m_pFocusRot->Set_Pos(pTarget);
 }
 
@@ -675,7 +700,7 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
@@ -1576,6 +1601,80 @@ HRESULT CKena::SetUp_UI()
 	return S_OK;
 }
 
+CKena::DAMAGED_FROM CKena::Calc_DirToMonster(CGameObject * pTarget)
+{
+	DAMAGED_FROM		eDir = DAMAGED_FROM_END;
+
+	CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
+	_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vDir.Normalize();
+
+	_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)));
+	_float			fLeftRightAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));;
+
+	if (isnan(fFrontBackAngle) || isnan(fLeftRightAngle))
+		return CKena::DAMAGED_FROM_END;
+
+	if (fFrontBackAngle <= 0.f)
+	{
+		if (fLeftRightAngle >= -0.5f && fLeftRightAngle <= 0.5f)
+			eDir = DAMAGED_FRONT;
+		else if (fLeftRightAngle >= -1.f && fLeftRightAngle <= -0.5f)
+			eDir = DAMAGED_RIGHT;
+		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
+			eDir = DAMAGED_LEFT;
+	}
+	else
+	{
+		if (fLeftRightAngle >= -0.5f && fLeftRightAngle <= 0.5f)
+			eDir = DAMAGED_BACK;
+		else	if (fLeftRightAngle >= -1.f && fLeftRightAngle <= -0.5f)
+			eDir = DAMAGED_RIGHT;
+		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
+			eDir = DAMAGED_LEFT;
+	}
+
+	return eDir;
+}
+
+CKena::DAMAGED_FROM CKena::Calc_DirToMonster(const _float3 & vCollisionPos)
+{
+	DAMAGED_FROM		eDir = DAMAGED_FROM_END;
+
+	_float4		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4		vTargetPos = vCollisionPos;
+	vTargetPos.w = 1.f;
+	_float4		vDir = vTargetPos - vPos;
+	vDir.Normalize();
+
+	_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)));
+	_float			fLeftRightAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));;
+
+	if (isnan(fFrontBackAngle) || isnan(fLeftRightAngle))
+		return CKena::DAMAGED_FROM_END;
+
+	if (fFrontBackAngle <= 0.f)
+	{
+		if (fLeftRightAngle >= -0.5f && fLeftRightAngle <= 0.5f)
+			eDir = DAMAGED_FRONT;
+		else if (fLeftRightAngle >= -1.f && fLeftRightAngle <= -0.5f)
+			eDir = DAMAGED_RIGHT;
+		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
+			eDir = DAMAGED_LEFT;
+	}
+	else
+	{
+		if (fLeftRightAngle >= -0.5f && fLeftRightAngle <= 0.5f)
+			eDir = DAMAGED_BACK;
+		else	if (fLeftRightAngle >= -1.f && fLeftRightAngle <= -0.5f)
+			eDir = DAMAGED_RIGHT;
+		else if (fLeftRightAngle >= 0.5f && fLeftRightAngle <= 1.f)
+			eDir = DAMAGED_LEFT;
+	}
+
+	return eDir;
+}
+
 void CKena::Test(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1736,6 +1835,9 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			}
 
 			m_bCommonHit = true;
+			//m_bHeavyHit = true;
+			//m_eDamagedDir = Calc_DirToMonster(vCollisionPos);
+			m_eDamagedDir = Calc_DirToMonster(pTarget);
 			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 		}
 
@@ -1767,6 +1869,9 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 void CKena::Test_Raycast()
 {
+	//if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
+	//	m_pKenaStatus->Save();
+
 	if (m_pTerrain == nullptr)
 		return;
 

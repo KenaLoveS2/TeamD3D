@@ -2,6 +2,8 @@
 #include "..\public\Loader.h"
 #include "GameInstance.h"
 
+#include "ControlRoom.h"
+
 /* SkyBox */
 #include "Sky.h"
 
@@ -106,7 +108,12 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
+#include "E_EnemyWispTrail.h"
+#include "E_KenaDamage.h"
+#include "E_KenaHit.h"
+#include "E_KenaJump.h"
+#include "E_PulseObject.h"
+#include "SpiritArrow.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -266,6 +273,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_GAMEPLAY, "Spirit_Arrow", false, false, false)))
 		return E_FAIL;
 
 	if (FAILED(LoadNonAnimModel(LEVEL_GAMEPLAY)))
@@ -443,6 +453,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
+		CSpiritArrow::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 #pragma endregion EFFECT
 	/* For.Prototype_Component_Model_EnemyWisp */
@@ -1703,6 +1716,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Spirit_Arrow", false, false, false)))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* NPC */
 	///* Prototype_Component_Model_Beni */
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
@@ -1963,22 +1981,25 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CGate::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+	/* For.Prototype_GameObject_Stone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
 		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+
+	/* For.Prototype_GameObject_Flower */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
 		CFlower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+
+	/* For.Prototype_GameObject_Grass */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
 		CGrass::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -2008,9 +2029,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_ControlRoom */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
+		CControlRoom::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

@@ -149,9 +149,9 @@ HRESULT CCliff_Rock::RenderShadow()
 void CCliff_Rock::ImGui_ShaderValueProperty()
 {
 	__super::ImGui_ShaderValueProperty();
-	//ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
-	//m_pModelCom->Imgui_MaterialPath();
-	//m_pTransformCom->Imgui_RenderProperty();
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+	m_pModelCom->Imgui_MaterialPath();
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CCliff_Rock::Add_AdditionalComponent(_uint iLevelIndex,const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

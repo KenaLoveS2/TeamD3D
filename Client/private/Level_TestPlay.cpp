@@ -48,11 +48,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 		
-	//if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
-	//{
-	//	MSG_BOX("Layer_Enviroment");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	{
+		MSG_BOX("Layer_Enviroment");
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
@@ -87,6 +87,12 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
 	{
 		MSG_BOX("Layer_Canvas");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	{
+		MSG_BOX("Layer_ControlRoom");
 		return E_FAIL;
 	}
 
@@ -191,11 +197,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
-	//for(auto &pGameObject : *pGameInstance->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects())
-	//{
-	//	if (FAILED(pGameInstance->Add_ShaderValueObject(g_LEVEL, pGameObject.second)))
-	//		return E_FAIL;
-	//}
+	for(auto &pGameObject : *pGameInstance->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects())
+	{
+		if (FAILED(pGameInstance->Add_ShaderValueObject(g_LEVEL, pGameObject.second)))
+			return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -235,20 +241,13 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
 
+	/* For.Shadow */
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_DynamicLightCamera"), L"DynamicLightCamera")))
 		return E_FAIL;
 
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	//CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
-	//CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
-	//CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	//CameraDesc.fFovy = XMConvertToRadians(90.0f);
-	//CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
-	//CameraDesc.fNear = 0.1f;
-	//CameraDesc.fFar = 1000.f;
-	//CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
-	//CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
@@ -429,6 +428,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
 		if (pCanvas != nullptr)
 			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
 	}
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
 
 	RELEASE_INSTANCE(CGameInstance);
 
