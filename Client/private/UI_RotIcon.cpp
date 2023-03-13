@@ -54,7 +54,7 @@ HRESULT CUI_RotIcon::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
