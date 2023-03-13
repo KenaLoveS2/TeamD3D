@@ -39,15 +39,14 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 
 HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 {
-
-	/*m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	if (m_pKena == nullptr)
 		return S_OK;
 
 	assert(m_pKena != nullptr && "CRot::Late_Initialize");
 
 	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
-	assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
+	assert(m_pKenaTransform != nullptr && "CPulse_Plate_Anim::Late_Initialize");
 
 	_float3 vPos;
 	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -76,7 +75,7 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
-	m_pRendererCom->Set_PhysXRender(true);*/
+	m_pRendererCom->Set_PhysXRender(true);
 
 
 	/*CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;

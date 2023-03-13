@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern.MI_Fern'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Fern.MI_Fern'
+        MaterialSlotName = M_Foliage_Fronds
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 261.081, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=5.54173, Y=-0.752296, Z=54.637 }
+    BoxExtent = { X=80.4252, Y=86.514, Z=61.8891 }
+    SphereRadius = 100.111
+}

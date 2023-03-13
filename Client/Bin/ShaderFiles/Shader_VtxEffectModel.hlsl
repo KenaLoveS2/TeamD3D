@@ -23,6 +23,9 @@ float4  g_WorldCamPosition;
 bool g_bDissolve;
 float g_fDissolveTime;
 
+bool	g_bPulseRecive = false;
+
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -206,7 +209,12 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 
 	Out.vDiffuse = vDiffuse * outglow * 4.f;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
+
+	if(true==g_bPulseRecive)
+		Out.vDiffuse.b *=10.f;
+
 	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
+
 
 	return Out;
 }
@@ -327,4 +335,5 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_DEADZONE();
 	}
+
 }

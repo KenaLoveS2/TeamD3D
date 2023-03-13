@@ -31,7 +31,7 @@ HRESULT CStone::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -45,7 +45,9 @@ void CStone::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CStone::Render()
@@ -84,8 +86,8 @@ HRESULT CStone::Render()
 			m_pModelCom->Render(m_pShaderCom, i, nullptr, 3);
 		}
 	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ShrineOfDeath_Rock_03"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ShrineOfDeath_Rock_02")
+	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ShrineOfDeath_Rock_02"
+		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ShrineOfDeath_Rock_03")
 	{
 		// 매터리얼 잘못들어가서 수정되야하는 친구임 일단 이렇게 수정
 		for (_uint i = 0; i < iNumMeshes; ++i)
@@ -165,17 +167,6 @@ HRESULT CStone::Render()
 			m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
 		}
 	}
-	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble01")
-	{
-		// Render Off
-		//for (_uint i = 0; i < iNumMeshes; ++i)
-		//{
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-		//	m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
-		//}
-	}
 	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Rock_Medium_06")
 	{
 		for (_uint i = 0; i < iNumMeshes; ++i)
@@ -224,40 +215,41 @@ HRESULT CStone::Render()
 			m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
 		}
 	}
-	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_BlendDiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPRINT_EMISSIVE, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
-		}
-	}
 	else
 	{
-		// 안 안한건 안그릴꺼야
-		int a = 0;
-		//for (_uint i = 0; i < iNumMeshes; ++i)
-		//{
-		//	/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		//	//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		//	m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
-		//}
+		// 쉐이더 안힙인건 안그릴꺼임
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+		}
 	}
 
 	return S_OK;
 }
 
+HRESULT CStone::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+	}
+		
+	return S_OK;
+}
+
 void CStone::ImGui_ShaderValueProperty()
 {
-	__super::ImGui_ShaderValueProperty();
 	if(ImGui::Button("Emissive"))
 		m_bPulseTest = true;
 
@@ -270,13 +262,12 @@ void CStone::ImGui_ShaderValueProperty()
 			m_fEmissivePulse = 0.f;
 	}
 		
-
 	if (m_fEmissivePulse >= 2.f)
 		m_bPulseTest = false;
-
-	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
-	m_pModelCom->Imgui_MaterialPath();
-	m_pTransformCom->Imgui_RenderProperty();
+	__super::ImGui_ShaderValueProperty();
+	//ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+	//m_pModelCom->Imgui_MaterialPath();
+	//m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CStone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -363,6 +354,26 @@ HRESULT CStone::SetUp_ShaderResources()
 
 	return S_OK;
 
+}
+
+HRESULT CStone::SetUp_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
 }
 
 CStone * CStone::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

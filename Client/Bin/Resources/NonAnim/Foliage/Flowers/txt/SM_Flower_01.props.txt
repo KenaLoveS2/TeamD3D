@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Flowers2.MI_Flowers2'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/Foliage/Materials/MI_Flowers2.MI_Flowers2'
+        MaterialSlotName = MI_Flowers3
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 214.028, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-1.0186, Y=4.30497, Z=46.3107 }
+    BoxExtent = { X=40.1819, Y=35.4965, Z=47.5463 }
+    SphereRadius = 55.0361
+}

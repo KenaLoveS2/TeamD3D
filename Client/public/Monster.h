@@ -79,6 +79,7 @@ public:
 	_float							Calc_PlayerLookAtDirection();
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
+	void							Call_RotIcon();
 	virtual HRESULT					Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 
 protected:
@@ -90,7 +91,8 @@ protected:
 	CMonster_Status*			m_pMonsterStatusCom = nullptr;
 
 	CFSMComponent*		m_pFSM = nullptr;
-	class CGameObject*		m_pKena = nullptr;
+	class CKena*		m_pKena = nullptr;	
+
 	CEffect_Base*		m_pEnemyWisp = nullptr;
 	_float4							m_vKenaPos;
 
@@ -114,6 +116,8 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr)  PURE;
 	virtual void					Free() override;
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
+
+	CMonster_Status* Get_MonsterStatusPtr() { return m_pMonsterStatusCom; }
 };
 
 END

@@ -386,12 +386,6 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
 
-			if (m_Channels[i]->Get_BoneLocked() == true)
-			{
-				//m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
-				continue;
-			}
-
  			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
  				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
  			else

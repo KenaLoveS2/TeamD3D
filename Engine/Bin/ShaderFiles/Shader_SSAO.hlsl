@@ -5,8 +5,9 @@ matrix			g_ProjMatrixInv, g_ViewMatrixInv;
 
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_DepthTexture;
+Texture2D<float4>		g_AmbientTexture;
 
-#define TAP_SIZE 0.02
+#define TAP_SIZE 0.001
 #define NUM_TAPS 16
 #define THRESHOLD 0.1
 #define SCALE 1.0
@@ -70,6 +71,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+	float fAO = g_AmbientTexture.Sample(LinearSampler, In.vTexUV).r;
 	float start_Z = g_DepthTexture.Sample(LinearSampler, In.vTexUV).r;
 	float start_Y = 1.f - In.vTexUV.y;
 	float3 start_Pos = float3(In.vTexUV.x, start_Y, start_Z);
@@ -96,7 +98,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		float dotx = diffnorm.x * viewNorm.x;
 
 		float occlusion = max(0.0, dot(viewNorm, diffnorm));// * SCALE / (1.0 + distance);
-		total += (1.0 - occlusion);
+		total += (1.0 - occlusion) * fAO;
 	}
 
 	total /= NUM_TAPS;

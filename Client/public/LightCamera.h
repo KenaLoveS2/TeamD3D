@@ -17,6 +17,7 @@ public:
 	virtual void Tick(_float TimeDelta) override;
 	virtual void Late_Tick(_float TimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void Imgui_RenderProperty() override;
 
 public:
 	static CLightCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

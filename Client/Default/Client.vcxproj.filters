@@ -334,14 +334,41 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
       <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Monster">
+      <UniqueIdentifier>{f3607a59-9297-48c0-8507-be40ac9751b5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\Jump">
       <UniqueIdentifier>{45fa896a-2d62-4bc9-a79d-9ba3aeee6ce7}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Pulse">
       <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Enemy\Wisp">
-      <UniqueIdentifier>{dde62539-ab54-42c8-9ff3-0760ff1d212a}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\RotFocus">
+      <UniqueIdentifier>{1423d3bd-ca5c-4830-a228-28029866f7cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\07. Map">
+      <UniqueIdentifier>{287772dd-9889-44c8-8778-712ee9fa4ce2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top">
+      <UniqueIdentifier>{29043ad8-ebcd-440a-b996-4dbabac5d118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom">
+      <UniqueIdentifier>{2f5bfcb5-112e-4c98-aef7-16f57a7672b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\TitleCard">
+      <UniqueIdentifier>{7bc9b2f7-36f0-4928-a982-7448e1c658fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet">
+      <UniqueIdentifier>{9a0590d2-bc4f-4363-9f67-0aa73825be1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\LevelUp">
+      <UniqueIdentifier>{ad6a6cd9-4d33-4b44-88a4-1638a8f38d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox">
+      <UniqueIdentifier>{c3343fb2-754b-4884-9b86-d5668dcb01d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\SubTitle">
+      <UniqueIdentifier>{bfab2999-58a8-444f-88cf-376a05afa4db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -786,11 +813,35 @@
     <ClInclude Include="..\public\E_KenaTrail.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\EnemyWisp.h">
       <Filter>02.GameObjects\Monster\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Billboard.h">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_MonsterHP.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_RotIcon.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\RotFocus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasTop.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasBottom.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeLvUp.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\LevelUp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeLetterBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
@@ -800,8 +851,6 @@
     <ClInclude Include="..\public\E_PulseObject.h">
       <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Monster_Focus.h" />
-    <ClInclude Include="..\public\Monster_Pip.h" />
     <ClInclude Include="..\public\ShieldStick_Weapon.h">
       <Filter>02.GameObjects\Monster\ShieldStick</Filter>
     </ClInclude>
@@ -811,29 +860,8 @@
     <ClInclude Include="..\public\Mage.h">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_MonsterHP.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_Billboard.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_CanvasMapTitle.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_EnemyWispTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_EnemyWispGround.h">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_EnemyWisp.h">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_EnemyWispBackground.h">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1257,11 +1285,35 @@
     <ClCompile Include="..\private\E_KenaTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\EnemyWisp.cpp">
       <Filter>02.GameObjects\Monster\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Billboard.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_MonsterHP.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_RotIcon.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\RotFocus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasTop.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasBottom.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLvUp.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\LevelUp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
@@ -1271,8 +1323,6 @@
     <ClCompile Include="..\private\E_PulseObject.cpp">
       <Filter>02.GameObjects\Effect\Object\Pulse</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Monster_Focus.cpp" />
-    <ClCompile Include="..\private\Monster_Pip.cpp" />
     <ClCompile Include="..\private\ShieldStick.cpp">
       <Filter>02.GameObjects\Monster\ShieldStick</Filter>
     </ClCompile>
@@ -1282,29 +1332,8 @@
     <ClCompile Include="..\private\Mage.cpp">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Billboard.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasMapTitle.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_MonsterHP.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_EnemyWispGround.cpp">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_EnemyWisp.cpp">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
-      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

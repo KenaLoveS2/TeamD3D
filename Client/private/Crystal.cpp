@@ -3,6 +3,9 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Effect_Base.h"
+#include "E_PulseObject.h"
+
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -35,14 +38,92 @@ HRESULT CCrystal::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CCrystal::Late_Initialize(void * pArg)
+{
+#ifdef FOR_MAP_GIMMICK
+
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
+	CEffect_Base* pEffectObj = nullptr;
+	/*Deliver_PulseE*/
+
+	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0번  :PULSE_OBJ_RECIVE
+	PulseObj_Desc.fIncreseRatio = 1.15f;
+	PulseObj_Desc.fPulseMaxSize = 2.f;
+	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
+	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Recived_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_VecCrystal_Effect.push_back(pEffectObj);
+
+
+	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
+	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1번  :PULSE_OBJ_DELIVER
+	PulseObj_Desc.fIncreseRatio = 1.05f;
+	PulseObj_Desc.fPulseMaxSize = 14.f;
+	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
+	PulseObj_Desc.vResetPos = vPos;
+	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
+		Clone_GameObject(L"Prototype_GameObject_PulseObject", L"Crystal_Deliver_PulseE"));
+	NULL_CHECK_RETURN(pEffectObj, E_FAIL);
+	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
+	m_VecCrystal_Effect.push_back(pEffectObj);
+
+	/*Recived_PulseE*/
+
+	for (auto& pEffectObj : m_VecCrystal_Effect)
+	{
+		pEffectObj->Late_Initialize();
+	}
+#endif
+	return S_OK;
+}
+
 void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+
+#ifdef FOR_MAP_GIMMICK
+	if (m_VecCrystal_Effect.size() == 0)
+		return;
+
+	if (static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Get_Finish())
+	{
+		static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Set_Finish(false);
+		m_VecCrystal_Effect[1]->Set_Active(true);
+	}
+	
+
+	for (auto& pEffectObj : m_VecCrystal_Effect)
+	{
+		if (pEffectObj != nullptr)
+			pEffectObj->Tick(fTimeDelta);
+	}
+#endif
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+#ifdef FOR_MAP_GIMMICK
+	if (m_VecCrystal_Effect.size() != 0)
+	{ 
+		for (auto& pEffectObj : m_VecCrystal_Effect)
+		{
+			if (pEffectObj != nullptr)
+				pEffectObj->Late_Tick(fTimeDelta);
+		}
+	}
+#endif 
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -61,13 +142,18 @@ HRESULT CCrystal::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
 	}
 	return S_OK;
+}
+
+void CCrystal::Create_Pulse(_bool bActive)
+{
+	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
+		m_VecCrystal_Effect[0]->Set_Active(bActive);
 }
 
 HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
@@ -92,6 +178,12 @@ HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pCom
 		return S_OK;
 
 	return S_OK;
+}
+
+_int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+
+	return _int();
 }
 
 HRESULT CCrystal::SetUp_Components()

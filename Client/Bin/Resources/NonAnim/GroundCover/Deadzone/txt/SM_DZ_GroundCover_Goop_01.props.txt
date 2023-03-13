@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Goop.MI_DZ_GroundCover_Goop'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Organic/GroundCover/Deadzone/_Materials/MI_DZ_GroundCover_Goop.MI_DZ_GroundCover_Goop'
+        MaterialSlotName = Goop
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 87.3025, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.0944862, Y=-5.5159, Z=5.00645 }
+    BoxExtent = { X=11.7094, Y=12.7164, Z=5.63567 }
+    SphereRadius = 13.7537
+}

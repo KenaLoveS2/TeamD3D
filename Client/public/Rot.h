@@ -26,7 +26,10 @@ private:
 	CModel* m_pModelCom = nullptr;
 
 	CFSMComponent* m_pFSM = nullptr;
+	
 	class CKena *m_pKena = nullptr;
+	class CKena_Status* m_pkenaState = nullptr;
+
 	CTransform* m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 

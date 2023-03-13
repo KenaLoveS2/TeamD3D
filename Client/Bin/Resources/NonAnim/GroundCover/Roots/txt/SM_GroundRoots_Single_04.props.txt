@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_Cover_Roots.MI_Cover_Roots'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_Cover_Roots.MI_Cover_Roots'
+        MaterialSlotName = MI_Cover_Roots1
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 274.358, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=2.12798, Y=7.05734, Z=2.26939 }
+    BoxExtent = { X=79.9728, Y=54.0279, Z=9.73748 }
+    SphereRadius = 95.006
+}

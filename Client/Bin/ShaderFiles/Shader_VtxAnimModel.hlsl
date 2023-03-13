@@ -1,4 +1,3 @@
-
 #include "Shader_Client_Defines.h"
 
 /***********Constant Buffers***********/
@@ -154,7 +153,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//0
@@ -180,7 +179,7 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = g_vAmbientEyeColor;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//1
@@ -327,7 +326,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	Out.vDiffuse = float4(vDiffuse.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
-	Out.vAmbient = Out.vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//6
@@ -354,7 +353,7 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 	Out.vDiffuse = finalColor;
 	Out.vNormal = (vector)1.f;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = Out.vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//7
@@ -383,7 +382,7 @@ PS_OUT PS_MAIN_STAFF_BOWTRAIL(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = Out.vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//8
@@ -422,7 +421,7 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	Out.vDiffuse = mask_texture;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = Out.vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//9
@@ -463,10 +462,25 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING_PART2(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = Out.vDiffuse;
+	Out.vAmbient = (vector)1.f;
 
 	return Out;
 }//10
+
+struct PS_OUT_SHADOW
+{
+	vector			vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
+	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -481,7 +495,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
+	}// 0
 
 	pass Kena_Eye
 	{
@@ -494,7 +508,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_KENA_EYE();
-	}
+	}// 1
 
 	pass Kena_Body
 	{
@@ -507,7 +521,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_KENA_BODY();
-	}
+	}// 2
 
 	pass Kena_MainOutFit
 	{
@@ -520,7 +534,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_KENA_MAINOUTFIT();
-	}
+	}// 3
 
 	pass Kena_Face
 	{
@@ -533,7 +547,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_FACE();
-	}
+	}// 4
 
 	pass Kena_Staff
 	{
@@ -546,7 +560,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF();
-	}
+	}// 5
 
 	pass Kena_Hair
 	{
@@ -559,7 +573,7 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HAIR();
-	}
+	}// 6
 
 	pass Kena_EyeLash
 	{
@@ -572,8 +586,8 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_EYELASH();
-	}
-	// 8
+	}// 7
+	
 	pass Kena_Staff_BowTrail
 	{
 		SetRasterizerState(RS_Default);
@@ -585,8 +599,8 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWTRAIL();
-	}
-	// 9
+	} // 8
+	
 	pass Kena_Staff_BowString 
 	{
 		SetRasterizerState(RS_Default);
@@ -598,8 +612,8 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWSTRING();
-	}
-	// 10
+	} // 9
+	
 	pass Kena_Staff_BowString_Part2
 	{
 		SetRasterizerState(RS_Default);
@@ -611,5 +625,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_STAFF_BOWSTRING_PART2();
-	}
+	} // 10
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+	}	//11
 }

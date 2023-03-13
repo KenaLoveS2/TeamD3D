@@ -71,6 +71,8 @@ protected:
 
 	_uint m_iObjectProperty = 0;
 
+	_bool	m_bRotable;
+
 protected:
 	map<const _tchar*, class CComponent*>			m_Components;
 

@@ -1018,6 +1018,25 @@ void CModel::Compute_CombindTransformationMatrix()
 		pBone->Compute_CombindTransformationMatrix();
 }
 
+void CModel::Compute_CombindTransformationMatrix(const string & RootBone)
+{
+	CBone*	pRootBone = nullptr;
+
+	for (auto pBone : m_Bones)
+	{
+		if (!strcmp(pBone->Get_Name(), RootBone.c_str()))
+		{
+			pRootBone = pBone;
+			break;
+		}
+	}
+
+	if (pRootBone == nullptr)
+		return;
+
+	pRootBone->Compute_CombindTransformationMatrix_Child();
+}
+
 void CModel::Update_BonesMatrix(CModel * pModel)
 {
 	const char* pBoneName = nullptr;
@@ -1032,6 +1051,13 @@ void CModel::Update_BonesMatrix(CModel * pModel)
 		if (pOriginBone != nullptr)
 		{
 			pBone->Set_CombindMatrix(pOriginBone->Get_CombindMatrix());
+		}
+
+		if (!strcmp(pBoneName, "staff_root_jnt"))
+		{
+			pBoneName = "lf_hand_socket_jnt";
+			pOriginBone = pModel->Get_BonePtr(pBoneName);
+			pOriginBone->Set_CombindMatrix(pBone->Get_CombindMatrix());
 		}
 	}
 }
@@ -1112,7 +1138,6 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 	else
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
@@ -1127,6 +1152,7 @@ HRESULT CModel::Render(CShader* pShader, _uint iMeshIndex, const char* pBoneCons
 			m_InstancingMeshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, XMLoadFloat4x4(&m_PivotMatrix));
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 800);
 		}
+
 		pShader->Begin(iPassIndex);
 		m_InstancingMeshes[iMeshIndex]->Render();
 	}

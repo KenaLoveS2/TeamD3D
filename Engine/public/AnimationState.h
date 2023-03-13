@@ -10,7 +10,10 @@ class CGameObject;
 struct ENGINE_DLL  CAdditiveAnimation : public CBase
 {
 	enum RATIOTYPE { RATIOTYPE_MAX, RATIOTYPE_AUTO, RATIOTYPE_CONTROL, RATIOTYPE_END };
+	enum ADDITIVETYPE { ADDITIVE, REPLACE, ADDITIVETYPE_END };
+
 	RATIOTYPE	m_eControlRatio = RATIOTYPE_MAX;
+	ADDITIVETYPE	m_eAdditiveType = ADDITIVE;
 	_bool			m_bPlayReverse = false;
 	_float			m_fAdditiveRatio = 0.f;
 	_float			m_fMaxAdditiveRatio = 1.f;

@@ -71,6 +71,11 @@ public:
 	void Set_Scaled(_float3 vScale); /* fScale값으로 길이를 변형한다. */
 	void Scaling(STATE eState, _float fScale); /* fScale배수로 늘린다. */
 
+	/* ReCalculate Other Vector Automatically */
+	void Set_Look(_fvector vLook);
+	void Set_Right(_fvector vRight);
+	void Set_Up(_fvector vUp);
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;

@@ -59,6 +59,7 @@ public:
 	HRESULT				Add_Event(_uint iAnimIndex, _float fPlayTime, const string& strFuncName);
 	void						Call_Event(const string& strFuncName);
 	void						Compute_CombindTransformationMatrix();
+	void						Compute_CombindTransformationMatrix(const string& RootBone);
 	void						Update_BonesMatrix(CModel* pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string& strFilePath);

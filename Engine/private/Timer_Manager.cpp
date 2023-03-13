@@ -16,6 +16,14 @@ _float Engine::CTimer_Manager::Get_TimeDelta(const _tchar* pTimerTag)
 	return pTimer->Get_TimeDelta();
 }
 
+const _float CTimer_Manager::Get_TimeRate(const _tchar * pTimerTag)
+{
+	CTimer*	pTimer = Find_Timer(pTimerTag);
+	NULL_CHECK_RETURN(pTimer, 0.f);
+
+	return pTimer->Get_TimeRate();
+}
+
 void CTimer_Manager::Set_TimeRate(const _tchar* pTimerTag, _float Time)
 {
 	CTimer*	pTimer = Find_Timer(pTimerTag);
