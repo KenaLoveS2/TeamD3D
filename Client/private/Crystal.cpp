@@ -41,10 +41,39 @@ HRESULT CCrystal::Initialize(void * pArg)
 HRESULT CCrystal::Late_Initialize(void * pArg)
 {
 #ifdef FOR_MAP_GIMMICK
-
-
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_DYNAMIC;
+	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
+	BoxDesc.vSize = _float3(0.9f, 1.25f, 0.9f);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+	
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
+	m_pTransformCom->Set_PxPivot(_float3(0.f, 1.2f, 0.f));
+	m_pTransformCom->Set_Position(_float4(vPos.x, vPos.y, vPos.z, 1.f));
+
+	if (lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
+		return S_OK;
 
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
@@ -66,8 +95,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1¹ø  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.05f;
-	PulseObj_Desc.fPulseMaxSize = 14.f;
+	PulseObj_Desc.fIncreseRatio = 1.03f;
+	PulseObj_Desc.fPulseMaxSize = 12.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
@@ -83,6 +112,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 		pEffectObj->Late_Initialize();
 	}
 #endif
+
+	
 	return S_OK;
 }
 
@@ -90,6 +121,7 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	
 
 #ifdef FOR_MAP_GIMMICK
 	if (m_VecCrystal_Effect.size() == 0)
@@ -182,8 +214,25 @@ HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pCom
 
 _int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
 
-	return _int();
+
+	return 0;
+}
+
+_int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
+	return 0;
+}
+
+_int CCrystal::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
+	return 0;
 }
 
 HRESULT CCrystal::SetUp_Components()

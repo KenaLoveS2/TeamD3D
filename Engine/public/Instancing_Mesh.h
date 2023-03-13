@@ -15,7 +15,12 @@ private:
 
 public:
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
-
+	_uint Get_NumVertices() {
+		return m_iNumVertices;
+	}
+	_uint Get_NumPrimitive() {
+		return m_iNumPrimitive;
+	}
 public:
 	HRESULT		Save_Mesh(HANDLE& hFile, DWORD& dwByte);
 	HRESULT		Save_MeshBones(HANDLE& hFile, DWORD& dwByte);

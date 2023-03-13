@@ -642,7 +642,7 @@ HRESULT CKena::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 	
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);	
-	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
+	//m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
 
 	return S_OK;
 }
@@ -1767,8 +1767,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 void CKena::Test_Raycast()
 {
-	if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
-		m_pKenaStatus->Save();
+	
 
 	if (m_pTerrain == nullptr)
 		return;

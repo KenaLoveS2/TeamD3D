@@ -111,7 +111,6 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
@@ -125,6 +124,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Emmisve_Test.json");
 #ifdef FOR_MAP_GIMMICK
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL,"Test_InstGimmick.json");
 #endif
@@ -151,7 +151,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CCamera *pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_1"), pCamera, true))) return E_FAIL;
-
+	
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(30.f, 7.f, 30.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);

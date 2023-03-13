@@ -2265,6 +2265,7 @@ void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pM
 	{
 		_uint iNumVertices = m_Meshes[i]->Get_NumVertices();
 		VTXMODEL* pVtxModel = m_Meshes[i]->Get_NonAnimVertices();
+		
 
 		for (_uint j = 0; j < iNumVertices; ++j) {
 			Xmin = min(Xmin, pVtxModel[j].vPosition.x);
@@ -2317,4 +2318,81 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
 	pConnectTransform->Connect_PxActor_Static(pActorName, _float3(0.f, BoxDesc.vSize.y, 0.f));
 	pConnectTransform->Set_WorldMatrix(pConnectTransform->Get_WorldMatrix());
+}
+
+void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
+{
+	_float Xmin = INT_MAX, Xmax = INT_MIN, Ymin = INT_MAX, Ymax = INT_MIN, Zmin = INT_MAX, Zmax = INT_MIN;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		_uint iNumVertices = m_InstancingMeshes[i]->Get_NumVertices();
+		VTXMODEL* pVtxModel = m_InstancingMeshes[i]->Get_NonAnimVertices();
+
+		for (_uint j = 0; j < iNumVertices; ++j) {
+			Xmin = min(Xmin, pVtxModel[j].vPosition.x);
+			Xmax = max(Xmax, pVtxModel[j].vPosition.x);
+
+			Ymin = min(Ymin, pVtxModel[j].vPosition.y);
+			Ymax = max(Ymax, pVtxModel[j].vPosition.y);
+
+			Zmin = min(Zmin, pVtxModel[j].vPosition.z);
+			Zmax = max(Zmax, pVtxModel[j].vPosition.z);
+		}
+	}
+
+	*pMinX = Xmin;
+	*pMaxX = Xmax;
+	*pMinY = Ymin;
+	*pMaxY = Ymax;
+	*pMinZ = Zmin;
+	*pMaxZ = Zmax;
+}
+
+void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,
+	_float3 vSize)
+{
+	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
+
+	Calc_InstMinMax(&fMinX, &fMaxX, &fMinY, &fMaxY, &fMinZ, &fMaxZ);
+
+	_float fLenX = fMaxX - fMinX;
+	_float fLenY = fMaxY - fMinY;
+	_float fLenZ = fMaxZ - fMinZ;
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.pActortag = pActorName;
+	BoxDesc.vPos = _float3(0.f, 0.f , 0.f);
+	BoxDesc.vSize = _float3(fLenX * vSize.x, fLenY * vSize.y, fLenZ * vSize.z);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = true;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+	BoxDesc.eFilterType = FILTER_DEFULAT;
+
+
+	size_t InstMatrixSize = m_pInstancingMatrix.size();
+	for (_uint i = 0; i < InstMatrixSize; ++i)
+	{
+		BoxDesc.pActortag = CUtile::Create_DummyString();
+
+		_float4x4 MatPosTrans = *m_pInstancingMatrix[i];
+		
+		//MatPosTrans.m[3][0] += XYZRatio.x;
+		MatPosTrans.m[3][1] += fLenY * 0.5f;
+		//MatPosTrans.m[3][2] += fLenZ * 0.5f;
+
+
+		_matrix matReal = XMLoadFloat4x4(&MatPosTrans) * pConnectTransform->Get_WorldMatrix();
+		_float4x4 float4x4Mat;
+		XMStoreFloat4x4(&float4x4Mat, matReal);
+
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
+		pPhysX->Set_ActorMatrix(BoxDesc.pActortag, float4x4Mat);
+	}
+
 }

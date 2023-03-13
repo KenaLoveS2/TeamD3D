@@ -38,13 +38,16 @@ public:
 	void							Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
 	void							Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
 
+	vector<MODELMATERIAL>*			Get_Material() { return &m_Materials; }
+
+
 	CModel::TYPE			Get_Type()const { return m_eType; }
 	CAnimation*				Find_Animation(const string& strAnimName);
 	CAnimation*				Find_Animation(_uint iAnimIndex);
 
 	/*for.Instancing*/
 	const	_bool			Get_IStancingModel() const { return m_bIsInstancing; }
-	vector<_float4x4*>*	Get_InstancePos() { return &m_pInstancingMatrix; }
+	vector<_float4x4*>*		Get_InstancePos() { return &m_pInstancingMatrix; }
 	void							Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
 	/*~for.Instancing*/
 	/*for.Lod*/
@@ -152,6 +155,9 @@ public:
 
 	void Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex);
+
+	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
+	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize);
 };
 
 END

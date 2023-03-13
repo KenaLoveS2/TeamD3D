@@ -33,7 +33,7 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_AnimIndex(2);
 	return S_OK;
 }
 
@@ -57,13 +57,13 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.eType = BOX_DYNAMIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
-	BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
+	BoxDesc.vSize = _float3(2.74f, 0.15f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
-	BoxDesc.isGravity = true;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
@@ -74,8 +74,14 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
-	m_pRendererCom->Set_PhysXRender(true);
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
+	
+	m_pTransformCom->Set_PxPivot(_float3(-0.2f, 1.2f, 0.f));
+	m_pTransformCom->Set_Position(_float4(vPos.x, vPos.y, vPos.z, 1.f));
+	
+	CPhysX_Manager::GetInstance()->Create_Trigger(
+		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 3.5f));
 
 
 	/*CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
@@ -106,9 +112,11 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 
 void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 {
+	//ImGui_PhysXValueProperty();
 	__super::Tick(fTimeDelta);
-	m_bPlayerColl = false;			
-
+	
+	if (m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
+		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);
 
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -119,13 +127,10 @@ void CPulse_Plate_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/*if(m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
-		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);*/
+	/*_bool bTest = true;*/
 
-	_bool bTest = true;
-
-	if (CGameInstance::GetInstance()->Key_Up(DIK_E))
-		m_Gimmick_PulsePlateDelegate.broadcast(bTest);
+	/*if (CGameInstance::GetInstance()->Key_Up(DIK_E))
+		m_Gimmick_PulsePlateDelegate.broadcast(bTest);*/
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -252,7 +257,7 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 	// 1) Gimmci_Plat 충돌 체크확인
 	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
 
-	m_bPlayerColl = true;
+	
 
 	
 
@@ -261,11 +266,15 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	m_bPlayerColl = true;
+	m_pModelCom->Set_AnimIndex(1);
 	return 0;
 }
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	m_bPlayerColl = false;
+	m_pModelCom->Set_AnimIndex(0);
 	return 0;
 }
 

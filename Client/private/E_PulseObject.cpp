@@ -69,8 +69,6 @@ HRESULT CE_PulseObject::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = false;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 
-
-
 	m_pTransformCom->Set_Scaled(_float3(3.f, 3.f, 3.f));
 
 	return S_OK;
@@ -85,49 +83,18 @@ HRESULT CE_PulseObject::Late_Initialize(void * pArg)
 	if (m_ePulseDesc.eObjType == PULSE_OBJ_RECIVE)
 		return S_OK;
 
-	_float3 vScale = m_ePulseDesc.vResetSize;
-	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
-
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
-	PxSphereDesc.fRadius = vScale.x;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 1.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PULSE;
-	PxSphereDesc.fDynamicFriction = 0.5f;
-	PxSphereDesc.fStaticFriction = 0.5f;
-	PxSphereDesc.fRestitution = 0.1f;
-
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PULSE));
-	CPhysX_Manager::GetInstance()->Set_ActorFlag_Simulation(m_szCloneObjectTag, false);
-	m_pTransformCom->Add_Collider(m_szCloneObjectTag, m_pTransformCom->Get_WorldMatrixFloat4x4());
-	m_pRendererCom->Set_PhysXRender(true);
 	
-
 	return S_OK;
 }
 
 void CE_PulseObject::Tick(_float fTimeDelta)
 {
-
-	if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
-	{
-		ImGui_PhysXValueProperty();
-
-	}
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
+	
 	Type_Tick(fTimeDelta);
-
 	__super::Tick(fTimeDelta);
-
 }
-
-
 
 void CE_PulseObject::Late_Tick(_float fTimeDelta)
 {
@@ -186,31 +153,15 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 		
 		m_bFinish = true;
 		if(m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
-		{
-			// 원본
-			//m_pTransformCom->Set_PxPivotScale(m_ePulseDesc.vResetSize);				// 피직스용이고 
-			//CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, m_ePulseDesc.vResetSize);
-		
-			m_pTransformCom->Set_PxPivotScale(vScale*1.25f);				// 피직스용이고 
-			CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vScale*1.25f);
-
-
+		{		
+			m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
 			m_bFinish = false;
 		}
-		
 	}
 	else
 	{
 		m_pTransformCom->Set_Scaled(vScale);
-
-		if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
-		{
-			m_pTransformCom->Set_PxPivotScale(vScale*1.1f);
-			CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vScale*1.1f);
-		}
 	}
-
-
 }
 
 void CE_PulseObject::ImGui_PhysXValueProperty()

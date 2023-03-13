@@ -161,7 +161,7 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 }
 
 HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
-{.
+{
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
