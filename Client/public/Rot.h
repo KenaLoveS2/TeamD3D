@@ -12,8 +12,6 @@ END
 BEGIN(Client)
 class CRot final : public CGameObject
 {
-	friend class CRot_State;
-
 private:
 	static _uint m_iEveryRotCount;
 	static _uint m_iKenaFindRotCount;
@@ -23,7 +21,6 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CModel* m_pModelCom = nullptr;
-
 	CFSMComponent* m_pFSM = nullptr;
 	
 	class CKena *m_pKena = nullptr;
@@ -147,14 +144,14 @@ public:
 
 		LIFTSTATUE, LIFTSTATUE3, LIFTSTATUE4,
 
-		LOOKAT_DOWN,		  //ADD
-		LOOKAT_DOWNLEFT,  //ADD
-		LOOKAT_DOWNRIGHT,//ADD
-		LOOKAT_LEFT,		//ADD
-		LOOKAT_RIGHT,		  //ADD
-		LOOKAT_UP,				//ADD
-		LOOKAT_UPLEFT,		//ADD
-		LOOKAT_UPRIGHT,		 //ADD
+		LOOKAT_DOWN,			 //ADD
+		LOOKAT_DOWNLEFT,	 //ADD
+		LOOKAT_DOWNRIGHT,	//ADD
+		LOOKAT_LEFT,				//ADD
+		LOOKAT_RIGHT,			//ADD
+		LOOKAT_UP,					//ADD
+		LOOKAT_UPLEFT,			//ADD
+		LOOKAT_UPRIGHT,		//ADD
 
 		LOSEBALANCE, LOSEBALANCE2, LOSEBALANCE2_ROOTMOTION,
 

@@ -116,6 +116,7 @@ void CRot::Tick(_float fTimeDelta)
 		m_pFSM->Tick(fTimeDelta);
 		
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -370,9 +371,7 @@ HRESULT CRot::SetUp_State()
 		m_vecKenaConnectRot.push_back(this);
 		
 		if (m_iThisRotIndex == 0)
-		{
 			m_pKena->Set_FirstRotPtr(this);
-		}
 
 		m_pTransformCom->Set_Position(m_vWakeUpPosition);
 	})
@@ -404,7 +403,6 @@ HRESULT CRot::SetUp_State()
 
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
-
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -438,16 +436,6 @@ HRESULT CRot::SetUp_State()
 
 		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})
-		.AddTransition("IDLE to FOLLOW_KENA ", "DUMMY")
-		.Predicator([this]()
-	{
-		return false;
-	})		
-		.OnExit([this]()
-	{
-
-	})
-
 
 		.AddState("FOLLOW_KENA")
 		.OnStart([this]()

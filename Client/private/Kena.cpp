@@ -552,7 +552,11 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 		if (pGameInstance->Key_Down(DIK_R))
+		{
 			static_cast<CMonster*>(pTarget)->Bind();
+			m_pFirstRot->Set
+		}
+			
 
 		RELEASE_INSTANCE(CGameInstance);
 	}

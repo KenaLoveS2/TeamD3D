@@ -25,7 +25,7 @@ public:
 
 private:	
 	CRenderer* m_pRendererCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
+	CShader* m_pShaderCom = nullptr; 
 	CModel* m_pModelCom = nullptr;
 
 	CFSMComponent* m_pWorkFSM = nullptr;
