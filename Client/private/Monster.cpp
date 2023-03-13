@@ -84,17 +84,17 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
-	if (nullptr != m_pUIHPBar)
-		m_pUIHPBar->Imgui_RenderProperty();
-
-	static _float fGuage = 1.f;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
-	{
-		fGuage -= 0.1f;
-		m_pUIHPBar->Set_Guage(fGuage);
-	}
-#endif
+//#ifdef _DEBUG
+//	if (nullptr != m_pUIHPBar)
+//		m_pUIHPBar->Imgui_RenderProperty();
+//
+//	static _float fGuage = 1.f;
+//	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+//	{
+//		fGuage -= 0.1f;
+//		m_pUIHPBar->Set_Guage(fGuage);
+//	}
+//#endif
 
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
@@ -326,9 +326,10 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == COL_PLAYER)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 		}
 	}
 
