@@ -18,7 +18,7 @@ const _uint CAnimationState::Get_CurrentAnimIndex() const
 		if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 			return m_pCurAnim->m_pMainAnim->Get_AnimIndex();
 		else
-			return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+			return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimIndex();
 	}
 	else
 		return 10000;
@@ -31,7 +31,7 @@ const _uint CAnimationState::Get_PreAnimIndex() const
 		if (m_pPreAnim->m_vecAdditiveAnim.empty() == true)
 			return m_pPreAnim->m_pMainAnim->Get_AnimIndex();
 		else
-			return m_pPreAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimIndex();
+			return m_pPreAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimIndex();
 	}
 	else
 		return 10000;
@@ -42,7 +42,7 @@ const _bool & CAnimationState::Get_AnimationFinish()
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->IsFinished();
 	else
-		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->IsFinished();
+		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->IsFinished();
 }
 
 const _float CAnimationState::Get_AnimationProgress() const
@@ -50,7 +50,7 @@ const _float CAnimationState::Get_AnimationProgress() const
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->Get_AnimationProgress();
 	else
-		return m_pCurAnim->m_vecAdditiveAnim.front()->m_pAdditiveAnim->Get_AnimationProgress();
+		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationProgress();
 }
 
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
@@ -122,6 +122,8 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 					eLockto = CBone::LOCKTO_ALONE;
 				else if (strLockTo == "Lock Rotate")
 					eLockto = CBone::LOCKTO_ROTATE;
+				else if (strLockTo == "Lock Position")
+					eLockto = CBone::LOCKTO_POSITION;
 				else if (strLockTo == "Unlock Child")
 					eLockto = CBone::UNLOCKTO_CHILD;
 				else if (strLockTo == "Unlock Parent")
@@ -142,25 +144,41 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 			{
 				pAdditive = new CAdditiveAnimation;
 
-				_int	iRatioControl = 0;
-				jAdditive["0. Ratio Control"].get_to<_int>(iRatioControl);
-				pAdditive->m_eControlRatio = (CAdditiveAnimation::RATIOTYPE)iRatioControl;
+				string		strBlendType = "";
+				jAdditive["0. Blend Type"].get_to<string>(strBlendType);
 
-				jAdditive["1. Max Additive Ratio"].get_to<_float>(pAdditive->m_fMaxAdditiveRatio);
+				if (strBlendType == "ADDITIVE")
+					pAdditive->m_eAdditiveType = CAdditiveAnimation::ADDITIVE;
+				else if (strBlendType == "REPLACE")
+					pAdditive->m_eAdditiveType = CAdditiveAnimation::REPLACE;
 
-				jAdditive["2. Reference Animation"].get_to<string>(strMainAnim);
+				string		strRatioType = "";
+				jAdditive["1. Ratio Control"].get_to<string>(strRatioType);
+
+				if (strRatioType == "MAX")
+					pAdditive->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_MAX;
+				else if (strRatioType == "AUTO")
+					pAdditive->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_AUTO;
+				else if (strRatioType == "CONTROL")
+					pAdditive->m_eControlRatio = CAdditiveAnimation::RATIOTYPE_CONTROL;
+				else
+					return E_FAIL;
+
+				jAdditive["2. Max Additive Ratio"].get_to<_float>(pAdditive->m_fMaxAdditiveRatio);
+
+				jAdditive["3. Reference Animation"].get_to<string>(strMainAnim);
 				pAnim = m_pModel->Find_Animation(strMainAnim);
 				NULL_CHECK_RETURN(pAnim, E_FAIL);
 				pAdditive->m_pRefAnim = pAnim;
 
-				jAdditive["3. Additive Animation"].get_to<string>(strBlendAnim);
+				jAdditive["4. Additive Animation"].get_to<string>(strBlendAnim);
 				pAnim = m_pModel->Find_Animation(strBlendAnim);
 				NULL_CHECK_RETURN(pAnim, E_FAIL);
 				pAdditive->m_pAdditiveAnim = pAnim;
 
-				if (jAdditive["4. Joint Index"].is_array() == true)
+				if (jAdditive["5. Joint Index"].is_array() == true)
 				{
-					for (auto jJoint : jAdditive["4. Joint Index"])
+					for (auto jJoint : jAdditive["5. Joint Index"])
 					{
 						jJoint["0. Bone Name"].get_to<string>(strJoint);
 						jJoint["1. Lock To"].get_to<string>(strLockTo);
@@ -174,6 +192,8 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 							eLockto = CBone::LOCKTO_ALONE;
 						else if (strLockTo == "Lock Rotate")
 							eLockto = CBone::LOCKTO_ROTATE;
+						else if (strLockTo == "Lock Position")
+							eLockto = CBone::LOCKTO_POSITION;
 						else if (strLockTo == "Unlock Child")
 							eLockto = CBone::UNLOCKTO_CHILD;
 						else if (strLockTo == "Unlock Parent")
@@ -233,24 +253,29 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 		m_pPreAnim = m_pCurAnim;
 		m_fCurLerpTime = 0.f;
 
-		if (pAnim->m_pMainAnim != m_pPreAnim->m_pMainAnim)
+		if (m_pPreAnim != pAnim)
 		{
-			pAnim->m_pMainAnim->Reset_Animation();
-			if (pAnim->m_pBlendAnim != nullptr)
+			if (pAnim->m_pMainAnim != m_pPreAnim->m_pMainAnim)
 			{
-				if (pAnim->m_pBlendAnim == m_pPreAnim->m_pMainAnim)
-					pAnim->m_pMainAnim->Set_PlayTime(pAnim->m_pBlendAnim->Get_PlayTime());
-				else
-					pAnim->m_pBlendAnim->Reset_Animation();
+				pAnim->m_pMainAnim->Reset_Animation();
+				if (pAnim->m_pBlendAnim != nullptr)
+				{
+					if (pAnim->m_pBlendAnim == m_pPreAnim->m_pMainAnim)
+						pAnim->m_pMainAnim->Set_PlayTime(pAnim->m_pBlendAnim->Get_PlayTime());
+					else
+						pAnim->m_pBlendAnim->Reset_Animation();
+				}
+			}
+			else
+			{
+				if (pAnim->m_pBlendAnim != nullptr)
+					pAnim->m_pBlendAnim->Set_PlayTime(m_pPreAnim->m_pMainAnim->Get_PlayTime());
+				//else
+				//	pAnim->m_pMainAnim->Reset_Animation();
 			}
 		}
 		else
-		{
-			if (pAnim->m_pBlendAnim != nullptr)
-				pAnim->m_pBlendAnim->Set_PlayTime(m_pPreAnim->m_pMainAnim->Get_PlayTime());
-			//else
-			//	pAnim->m_pMainAnim->Reset_Animation();
-		}
+			pAnim->m_pMainAnim->Reset_Animation();
 	}
 	else
 		m_fCurLerpTime = m_fLerpDuration;
@@ -261,8 +286,15 @@ HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLe
 	{
 		for (auto pAdditiveAnim : m_pCurAnim->m_vecAdditiveAnim)
 		{
-			pAdditiveAnim->m_pRefAnim->Reset_Animation();
-			pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
+			//pAdditiveAnim->m_pRefAnim->Reset_Animation();
+			
+			if (m_pPreAnim->m_vecAdditiveAnim.empty() == false)
+			{
+				if (pAdditiveAnim->m_pAdditiveAnim != m_pPreAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim)
+					pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
+			}
+			else
+				pAdditiveAnim->m_pAdditiveAnim->Reset_Animation();
 
 			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 				pAdditiveAnim->m_fAdditiveRatio = 0.f;
@@ -290,7 +322,9 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 	CAnimation*	pMainAnim = m_pCurAnim->m_pMainAnim;
 	CAnimation*	pBlendAnim = m_pCurAnim->m_pBlendAnim;
 	CBone*		pJoint = nullptr;
-
+	//
+	_smatrix		matTransform;
+	//
 	/* Lerp */
 	if (m_fCurLerpTime < m_fLerpDuration)
 	{
@@ -335,34 +369,41 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
-
-				if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
+				if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::ADDITIVE)
 				{
-					if (pAdditiveAnim->m_bPlayReverse == false)
+					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
+
+					if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 					{
-						if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
-							pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
-						else
-							pAdditiveAnim->m_bPlayReverse = true;
-					}
-					else
-					{
-						if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
-							pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+						if (pAdditiveAnim->m_bPlayReverse == false)
+						{
+							if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
+								pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
+							else
+								pAdditiveAnim->m_bPlayReverse = true;
+						}
 						else
 						{
-							pAdditiveAnim->m_fAdditiveRatio = 0.f;
-							pAdditiveAnim->m_bPlayReverse = false;
+							if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
+								pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+							else
+							{
+								pAdditiveAnim->m_fAdditiveRatio = 0.f;
+								pAdditiveAnim->m_bPlayReverse = false;
+							}
 						}
-					}
 
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+					}
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 				}
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+				else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
+				{
+					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
+				}
 			}
 		}
 
@@ -388,9 +429,20 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 		}
 		else
 		{
-			/* 현재 애님에 애디티브 적용 후의 뼈행렬과 러프해야함. */
 			_smatrix	matBonesTransformationForBlend[800];
 			pMainAnim->Update_Bones_ReturnMat(fTimeDelta, matBonesTransformationForBlend, m_strRootBone, pBlendAnim);
+
+			if (m_pPreAnim->m_vecAdditiveAnim.empty() == false)
+			{
+				for (auto pPreAdditiveAnim : m_pPreAnim->m_vecAdditiveAnim)
+				{
+					if (pPreAdditiveAnim->m_pAdditiveAnim == m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim)
+					{
+						pPreAdditiveAnim->m_pAdditiveAnim->Reverse_Play(fTimeDelta);
+						break;
+					}
+				}
+			}
 			
 			for (auto pAdditiveAnim : m_pCurAnim->m_vecAdditiveAnim)
 			{
@@ -406,34 +458,41 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
-				CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
-
-				if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, matBonesTransformationForBlend, m_strRootBone);
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
+				if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::ADDITIVE)
 				{
-					if (pAdditiveAnim->m_bPlayReverse == false)
+					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
+
+					if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, matBonesTransformationForBlend, m_strRootBone);
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 					{
-						if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
-							pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
-						else
-							pAdditiveAnim->m_bPlayReverse = true;
-					}
-					else
-					{
-						if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
-							pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+						if (pAdditiveAnim->m_bPlayReverse == false)
+						{
+							if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
+								pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
+							else
+								pAdditiveAnim->m_bPlayReverse = true;
+						}
 						else
 						{
-							pAdditiveAnim->m_fAdditiveRatio = 0.f;
-							pAdditiveAnim->m_bPlayReverse = false;
+							if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
+								pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+							else
+							{
+								pAdditiveAnim->m_fAdditiveRatio = 0.f;
+								pAdditiveAnim->m_bPlayReverse = false;
+							}
 						}
-					}
 
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformationForBlend, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformationForBlend, m_strRootBone);
+					}
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformationForBlend, m_strRootBone);
 				}
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, matBonesTransformationForBlend, m_strRootBone);
+				else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
+				{
+					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, matBonesTransformationForBlend, m_strRootBone);
+				}
 			}
 
 			pMainAnim->Blend_BoneMatrices(m_fCurLerpTime / m_fLerpDuration, m_matBonesTransformation, matBonesTransformationForBlend, m_strRootBone);
@@ -473,6 +532,10 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					{
 						pJoint = m_pModel->Get_BonePtr(Pair.first.c_str());
 						assert(pJoint != nullptr);
+						//
+						if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE && Pair.first == "kena_spine_low_jnt" && Pair.second == CBone::LOCKTO_POSITION)
+							matTransform = pJoint->Get_TransformMatrix();
+						//
 						pJoint->Set_BoneLocked(Pair.second);
 					}
 				}
@@ -480,39 +543,55 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				//if (pAdditiveAnim->m_pRefAnim != pMainAnim)
 				//	pAdditiveAnim->m_pRefAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
 
-				CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
-
-				if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
+				if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::ADDITIVE)
 				{
-					if (pAdditiveAnim->m_bPlayReverse == false)
+					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
+
+					if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 					{
-						if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
-							pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
-						else
-							pAdditiveAnim->m_bPlayReverse = true;
-					}
-					else
-					{
-						if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
-							pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+						if (pAdditiveAnim->m_bPlayReverse == false)
+						{
+							if (pAdditiveAnim->m_fAdditiveRatio < pAdditiveAnim->m_fMaxAdditiveRatio)
+								pAdditiveAnim->m_fAdditiveRatio += fTimeDelta * 0.05f;
+							else
+								pAdditiveAnim->m_bPlayReverse = true;
+						}
 						else
 						{
-							pAdditiveAnim->m_fAdditiveRatio = 0.f;
-							pAdditiveAnim->m_bPlayReverse = false;
+							if (pAdditiveAnim->m_fAdditiveRatio > 0.f)
+								pAdditiveAnim->m_fAdditiveRatio -= fTimeDelta * 0.05f;
+							else
+							{
+								pAdditiveAnim->m_fAdditiveRatio = 0.f;
+								pAdditiveAnim->m_bPlayReverse = false;
+							}
 						}
-					}
 
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+					}
+					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
 				}
-				else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+				else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
+				{
+					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
+				}
 			}
 		}
 	}
 
 	m_pModel->Compute_CombindTransformationMatrix();
+
+	if (XMMatrixIsIdentity(matTransform) == false)
+	{
+		pJoint = m_pModel->Get_BonePtr("kena_spine_low_jnt");
+		pJoint->Set_TransformMatrix(matTransform);
+		pJoint->Compute_CombindTransformationMatrix();
+		m_pModel->Compute_CombindTransformationMatrix("kena_hip_jnt");
+	}
+
 	
  	for (auto pModel : m_vecNonSyncPart)
  		pModel->Update_BonesMatrix(m_pModel);
@@ -1040,6 +1119,8 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 				jJoint["1. Lock To"] = string("Lock Alone");
 			else if (Joint.second == CBone::LOCKTO_ROTATE)
 				jJoint["1. Lock To"] = string("Lock Rotate");
+			else if (Joint.second == CBone::LOCKTO_POSITION)
+				jJoint["1. Lock To"] = string("Lock Position");
 			else if (Joint.second == CBone::UNLOCKTO_CHILD)
 				jJoint["1. Lock To"] = string("Unlock Child");
 			else if (Joint.second == CBone::UNLOCKTO_PARENT)
@@ -1058,13 +1139,24 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 
 		for (auto pAdditiveAnim : Pair.second->m_vecAdditiveAnim)
 		{
-			jAdditiveAnim["0. Ratio Control"] = (_int)pAdditiveAnim->m_eControlRatio;
-			jAdditiveAnim["1. Max Additive Ratio"] = pAdditiveAnim->m_fMaxAdditiveRatio;
-			jAdditiveAnim["2. Reference Animation"] = string(pAdditiveAnim->m_pRefAnim->Get_Name());
-			jAdditiveAnim["3. Additive Animation"] = string(pAdditiveAnim->m_pAdditiveAnim->Get_Name());
+			if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::ADDITIVE)
+				jAdditiveAnim["0. Blend Type"] = string("ADDITIVE");
+			else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
+				jAdditiveAnim["0. Blend Type"] = string("REPLACE");
+
+			if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
+				jAdditiveAnim["1. Ratio Control"] = string("MAX");
+			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
+				jAdditiveAnim["1. Ratio Control"] = string("AUTO");
+			else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
+				jAdditiveAnim["1. Ratio Control"] = string("CONTROL");
+
+			jAdditiveAnim["2. Max Additive Ratio"] = pAdditiveAnim->m_fMaxAdditiveRatio;
+			jAdditiveAnim["3. Reference Animation"] = string(pAdditiveAnim->m_pRefAnim->Get_Name());
+			jAdditiveAnim["4. Additive Animation"] = string(pAdditiveAnim->m_pAdditiveAnim->Get_Name());
 
 			if (pAdditiveAnim->m_listLockedJoint.empty() == true)
-				jAdditiveAnim["4. Joint Index"] = string("N/A");
+				jAdditiveAnim["5. Joint Index"] = string("N/A");
 
 			for (auto& Joint : pAdditiveAnim->m_listLockedJoint)
 			{
@@ -1078,6 +1170,8 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 					jJoint["1. Lock To"] = string("Lock Alone");
 				else if (Joint.second == CBone::LOCKTO_ROTATE)
 					jJoint["1. Lock To"] = string("Lock Rotate");
+				else if (Joint.second == CBone::LOCKTO_POSITION)
+					jJoint["1. Lock To"] = string("Lock Position");
 				else if (Joint.second == CBone::UNLOCKTO_CHILD)
 					jJoint["1. Lock To"] = string("Unlock Child");
 				else if (Joint.second == CBone::UNLOCKTO_PARENT)
@@ -1087,7 +1181,7 @@ HRESULT CAnimationState::Save(const string & strFilePath)
 				else
 					return E_FAIL;
 
-				jAdditiveAnim["4. Joint Index"].push_back(jJoint);
+				jAdditiveAnim["5. Joint Index"].push_back(jJoint);
 				jJoint.clear();
 			}
 
@@ -1110,6 +1204,7 @@ HRESULT CAnimationState::Load(const string & strFilePath)
 {
 	m_pCurAnim = nullptr;
 	m_pPreAnim = nullptr;
+	m_fCurLerpTime = m_fLerpDuration;
 
 	//m_vecSyncPart.clear();
 	//m_vecNonSyncPart.clear();

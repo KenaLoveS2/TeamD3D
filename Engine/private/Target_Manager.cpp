@@ -67,7 +67,6 @@ HRESULT CTarget_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	return S_OK;
 }
 
-
 HRESULT CTarget_Manager::Add_RenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4 * pClearColor)
 {
 	if (nullptr != Find_RenderTarget(pTargetTag))

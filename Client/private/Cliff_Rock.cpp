@@ -31,7 +31,7 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -44,8 +44,10 @@ void CCliff_Rock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if(  m_pRendererCom )
-		 m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if (m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CCliff_Rock::Render()
@@ -120,6 +122,25 @@ HRESULT CCliff_Rock::Render()
 		//	//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
 		//	m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
 		//}
+	}
+
+	return S_OK;
+}
+
+HRESULT CCliff_Rock::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
 	}
 
 	return S_OK;
@@ -212,6 +233,11 @@ HRESULT CCliff_Rock::SetUp_ShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
+}
+
+HRESULT CCliff_Rock::SetUp_ShadowShaderResources()
+{
+	return E_NOTIMPL;
 }
 
 CCliff_Rock * CCliff_Rock::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

@@ -1013,6 +1013,25 @@ void CModel::Compute_CombindTransformationMatrix()
 		pBone->Compute_CombindTransformationMatrix();
 }
 
+void CModel::Compute_CombindTransformationMatrix(const string & RootBone)
+{
+	CBone*	pRootBone = nullptr;
+
+	for (auto pBone : m_Bones)
+	{
+		if (!strcmp(pBone->Get_Name(), RootBone.c_str()))
+		{
+			pRootBone = pBone;
+			break;
+		}
+	}
+
+	if (pRootBone == nullptr)
+		return;
+
+	pRootBone->Compute_CombindTransformationMatrix_Child();
+}
+
 void CModel::Update_BonesMatrix(CModel * pModel)
 {
 	const char* pBoneName = nullptr;
@@ -1027,6 +1046,13 @@ void CModel::Update_BonesMatrix(CModel * pModel)
 		if (pOriginBone != nullptr)
 		{
 			pBone->Set_CombindMatrix(pOriginBone->Get_CombindMatrix());
+		}
+
+		if (!strcmp(pBoneName, "staff_root_jnt"))
+		{
+			pBoneName = "lf_hand_socket_jnt";
+			pOriginBone = pModel->Get_BonePtr(pBoneName);
+			pOriginBone->Set_CombindMatrix(pBone->Get_CombindMatrix());
 		}
 	}
 }

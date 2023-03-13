@@ -1,0 +1,8 @@
+{
+  "00. m_fInitAttackCoolTime": 0,
+  "01. m_fCurAttackCoolTime": 0,
+  "02. m_iNeedPIP": 0,
+  "CStatus::0. m_iMaxHP": 100,
+  "CStatus::1. m_iHP": 100,
+  "CStatus::2. m_iAttack": 10
+}

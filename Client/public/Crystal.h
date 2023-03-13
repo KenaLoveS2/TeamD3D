@@ -38,11 +38,13 @@ private:
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	
 private:
-	list<class CEffect_Base*>			m_pCrystal_EffectList;
+	vector<class CEffect_Base*>			m_VecCrystal_Effect;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 
+public:
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
 
 private:

@@ -125,8 +125,9 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-
+#ifdef FOR_MAP_GIMMICK
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL,"Test_InstGimmick.json");
+#endif
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
