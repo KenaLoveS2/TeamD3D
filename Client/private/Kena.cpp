@@ -16,7 +16,7 @@
 #include "Monster.h"
 
 #include "UI_RotIcon.h"
-
+#include "RotForMonster.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -134,6 +134,41 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
 
+	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+
+	_tchar szCloneRotTag[32] = { 0, };
+	for (_int i = 0; i < 8; i++)
+	{
+		CGameObject* p_game_object = nullptr;
+		swprintf_s(szCloneRotTag, L"RotForWoodKnight_%d", i);
+		CRotForMonster::DESC desc;
+		ZeroMemory(&desc, sizeof(CRotForMonster::DESC));
+
+		if (i == 0)
+			desc.vPivotPos = _float4(-2.f, 0.f, -2.f, 1.f);
+		else if (i == 1)
+			desc.vPivotPos = _float4(0.f, 0.f, -2.f, 1.f);
+		else if (i == 2)
+			desc.vPivotPos = _float4(2.f, 0.f, -2.f, 1.f);
+		else if (i == 3)
+			desc.vPivotPos = _float4(2.f, 0.f, 0.f, 1.f);
+		else if (i == 4)
+			desc.vPivotPos = _float4(2.f, 0.f, 2.f, 1.f);
+		else if (i == 5)
+			desc.vPivotPos = _float4(0.f, 0.f, 2.f, 1.f);
+		else if (i == 6)
+			desc.vPivotPos = _float4(-2.f, 0.f, 2.f, 1.f);
+		else if (i == 7)
+			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
+
+		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
+			return E_FAIL;
+
+		m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
+	}
+
+	RELEASE_INSTANCE(CGameInstance)
+		
 	return S_OK;
 }
 
@@ -554,13 +589,11 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 		if (pGameInstance->Key_Down(DIK_R))
 		{
 			static_cast<CMonster*>(pTarget)->Bind();
-			m_pFirstRot->Set
+			static_cast<CMonster*>(pTarget)->Setting_Rot(m_pRotForMonster, 8);
 		}
 			
-
 		RELEASE_INSTANCE(CGameInstance);
 	}
-
 
 	m_pFocusRot->Set_Pos(pTarget);
 }

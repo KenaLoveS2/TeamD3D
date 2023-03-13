@@ -27,7 +27,6 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr; 
 	CModel* m_pModelCom = nullptr;
-
 	CFSMComponent* m_pWorkFSM = nullptr;
 	CFSMComponent* m_pLiftFSM = nullptr;
 	CFSMComponent* m_pCuteFSM = nullptr;
@@ -43,7 +42,6 @@ private:
 	_bool m_bLiftDownEnd = false;
 
 	DESC m_Desc;
-	
 	_float4 m_vLiftPos;
 
 private:
@@ -68,13 +66,11 @@ public:
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
 	virtual HRESULT Call_EventFunction(const string& strFuncName) override;
-	virtual void Push_EventFunctions() override;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
-	void Test(_bool bIsInit, _float fTimeDelta);
 	HRESULT SetUp_LiftFSM();
 	HRESULT SetUp_CuteFSM();
 

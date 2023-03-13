@@ -103,6 +103,7 @@
 #include "LodObject.h"
 #include "ModelViewerObject.h"
 #include "Moth.h"
+#include "RotForMonster.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -2016,7 +2017,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
@@ -2280,6 +2280,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
 		CLiftRot_Master::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
+		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

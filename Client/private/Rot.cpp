@@ -155,11 +155,9 @@ HRESULT CRot::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
 		}
-
-		if (i == 1)
+		else	if (i == 1)
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
-
-		if (i == 2)
+		else		if (i == 2)
 		{
 			// 머리카락 모르겠음.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
@@ -295,20 +293,12 @@ HRESULT CRot::SetUp_ShaderResources()
 
 HRESULT CRot::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

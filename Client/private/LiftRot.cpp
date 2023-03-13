@@ -102,9 +102,7 @@ void CLiftRot::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -210,11 +208,6 @@ HRESULT CLiftRot::Call_EventFunction(const string& strFuncName)
 	return CGameObject::Call_EventFunction(strFuncName);
 }
 
-void CLiftRot::Push_EventFunctions()
-{
-	Test(true, 0.f);
-}
-
 HRESULT CLiftRot::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -229,7 +222,6 @@ HRESULT CLiftRot::SetUp_Components()
 	//	 2 : Hair
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
-	// FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 
 	return S_OK;
 }
@@ -251,23 +243,16 @@ HRESULT CLiftRot::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-}
-
-void CLiftRot::Test(_bool bIsInit, _float fTimeDelta)
-{
 }
 
 CLiftRot* CLiftRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -317,15 +302,16 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{
 	
 	})
+		.OnExit([this]()
+	{
+		m_bCreateStart = true;
+	})
 		.AddTransition("SLEEP to CREATE", "CREATE")
 		.Predicator([this]()
 	{
 		return m_bWakeUp;
 	})
-		.OnExit([this]()
-	{
-		m_bCreateStart = true;;
-	})
+		
 		.AddState("CREATE")
 		.OnStart([this]()
 	{
@@ -414,15 +400,10 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{
 
 	})
-		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
-		.Predicator([this]()
-	{
-		return m_pModelCom->Get_AnimationFinish();
-	})
 		.OnExit([this]()
 	{
 		m_bWakeUp = false;
-		m_bCreateStart = false;				
+		m_bCreateStart = false;
 		m_bLiftReady = false;
 		m_bLiftStart = false;
 		m_bLiftEnd = false;
@@ -430,6 +411,11 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		m_bLiftMoveEnd = false;
 		m_bLiftDownEnd = false;
 		m_pTransformCom->Set_Position(m_Desc.vInitPos);
+	})
+		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
 	})
 		.Build();
 
