@@ -2,8 +2,10 @@
 #include "..\public\Rot.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
-#include "Kena.h"
 #include "Rope_RotRock.h"
+
+#include "Kena.h"
+#include "Kena_Status.h"
 
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
@@ -64,6 +66,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
 	assert(m_pKenaTransform != nullptr && "CRot::Late_Initialize");
 
+	m_pkenaState = dynamic_cast<CKena_Status*>(m_pKena->Get_Status());
+	assert(m_pkenaState != nullptr && "CRot::Late_Initialize");
+	
 	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
@@ -87,7 +92,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
-	m_vWakeUpPosition = _float4(-3.f, 0.f, -3.f, 1.f);
+	m_vWakeUpPosition = _float4(10.f, 0.f, 5.f, 1.f);
 
 	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f));
 
@@ -365,6 +370,8 @@ HRESULT CRot::SetUp_State()
 		.OnExit([this]()
 	{
 		m_iThisRotIndex = m_iKenaFindRotCount++;
+		m_pkenaState->Set_RotCount(m_iThisRotIndex);
+
 		m_vecKenaConnectRot.push_back(this);
 		
 		if (m_iThisRotIndex == 0)

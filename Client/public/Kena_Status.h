@@ -12,8 +12,8 @@ private:
 	virtual ~CKena_Status() = default;
 		
 public:
-	virtual HRESULT Initialize_Prototype(const wstring& wstrFilePath) override;
-	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
+	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg, CGameObject * pOwner);
 	virtual void		Tick(_float fTimeDelta) override;
 	virtual void		Imgui_RenderProperty() override;
 
@@ -47,14 +47,63 @@ public: /* skill test */
 	enum STATE { STATE_BLOCKED, STATE_LOCKED, STATE_UNLOCKED, STATE_END };
 	STATE		m_Skill[SKILL_END][LEVEL_END];
 
-private:
-	virtual HRESULT	Save_Status(const _tchar* pFilePath) override;
-	virtual HRESULT	Load_Status(const _tchar* pFilePath) override;
+public:
+	static CKena_Status* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr);
+	virtual void				Free() override;
 
 public:
-	static CKena_Status*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& wstrFilePath = L"");
-	virtual CComponent*	Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
-	virtual void				Free() override;
+	HRESULT Save();
+	HRESULT Load(const string & strFilePath);
+
+public:
+	inline _int Get_MaxShield() { return m_iMaxShield; }
+	inline _int Get_Shield() { return m_iShield; }
+
+	inline _int Get_Karma() { return m_iKarma; }
+	inline _int Get_RotLevel() { return m_iRotLevel; }
+	inline _int Get_RotCount() { return m_iRotCount; }
+	inline _int Get_Crystal() { return m_iCrystal; }
+	
+	inline _int Get_MaxPIPCount() { return m_iMaxPIPCount; }
+	inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	inline _float Get_InitPIPCoolTime() { return m_fInitPIPCoolTime; }
+	inline _float Get_CurPIPCoolTime() { return m_fCurPIPCoolTime; }
+
+	inline _int Get_MaxArrowCount() { return m_iMaxArrowCount; }
+	inline _int Get_CurArrowCount() { return m_iCurArrowCount; }
+	inline _float Get_InitArrowCoolTime() { return m_fInitArrowCoolTime; }
+	inline _float Get_CurArrowCoolTime() { return m_fCurArrowCoolTime; }
+
+	inline _int Get_MaxBombCount() { return m_iMaxBombCount; }
+	inline _int Get_CurBombCount() { return m_iCurBombCount; }
+	inline _float Get_InitBombCoolTime() { return m_fInitBombCoolTime; }
+	inline _float Get_CurBombCoolTime() { return m_fCurBombCoolTime; }
+
+public:
+
+	inline void Set_MaxShield(_int iValue) { m_iMaxShield = iValue; }
+	inline void Set_Shield(_int iValue) { m_iShield = iValue; }
+		   
+	inline void Set_Karma(_int iValue) { m_iKarma = iValue; }
+	inline void Set_RotLevel(_int iValue) { m_iRotLevel = iValue; }
+	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
+	inline void Set_Crystal(_int iValue) { m_iCrystal = iValue; }
+
+	inline void Set_MaxPIPCount(_int iValue) { m_iMaxPIPCount = iValue; }
+	inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
+	inline void Set_InitPIPCoolTime(_float fValue) { m_fInitPIPCoolTime = fValue; }
+	inline void Set_CurPIPCoolTime(_float fValue) { m_fCurPIPCoolTime = fValue; }
+
+	inline void Set_MaxArrowCount(_int iValue) { m_iMaxArrowCount = iValue; }
+	inline void Set_CurArrowCount(_int iValue) { m_iCurArrowCount = iValue; }
+	inline void Set_InitArrowCoolTime(_float fValue) { m_fInitArrowCoolTime = fValue; }
+	inline void Set_CurArrowCoolTime(_float fValue) { m_fCurArrowCoolTime = fValue; }
+
+	inline void Set_MaxBombCount(_int iValue) { m_iMaxBombCount = iValue; }
+	inline void Set_CurBombCount(_int iValue) { m_iCurBombCount = iValue; }
+	inline void Set_InitBombCoolTime(_float fValue) { m_fInitBombCoolTime = fValue; }
+	inline void Set_CurBombCoolTime(_float fValue) { m_fCurBombCoolTime = fValue; }
 };
 
 END

@@ -2,6 +2,8 @@
 #include "Monster.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
+#include "Kena.h"
+#include "Kena_Status.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -46,7 +48,7 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
-	m_pKena = pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
 
 	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
@@ -246,7 +248,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	{
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// Å¸°Ý
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 		}
 	}
 

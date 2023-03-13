@@ -485,12 +485,12 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 
-//
-//
-//#pragma region AncientWells
-//	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells", true, true, true)))
-//		assert(!"Issue");
-//#pragma endregion ~AncientWells
+
+
+#pragma region AncientWells
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "AncientWells", true, true, true)))
+		assert(!"Issue");
+#pragma endregion ~AncientWells
 //
 //#pragma region BowTarget
 //	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Bow_Target", true, true, true)))

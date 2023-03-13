@@ -352,6 +352,10 @@ HRESULT CSapling::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sapling", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_Sapling.json");
+
+
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
