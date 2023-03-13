@@ -386,6 +386,11 @@ HRESULT CMage::SetUp_State()
 	{
 		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
 	})
+		.AddTransition("IDLE to CLOSEATTACK", "CLOSEATTACK")
+		.Predicator([this]()
+	{
+		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
+	})
 
 		.AddState("SUMMON")
 		.OnStart([this]()
@@ -612,13 +617,30 @@ HRESULT CMage::SetUp_State()
 		return AnimFinishChecker(COMMAND);
 	})
 
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDeath = true;
 	})
+		.Tick([this](_float fTimeDelta)
+	{
 
+	})
+		.OnExit([this]()
+	{
+
+	})
 		.Build();
 
 	return S_OK;

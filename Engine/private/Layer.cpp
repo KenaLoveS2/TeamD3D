@@ -2,6 +2,7 @@
 #include "..\public\Layer.h"
 #include "GameObject.h"
 #include "EnviromentObj.h"
+#include "PhysX_Manager.h"
 
 CLayer::CLayer()
 {
@@ -148,6 +149,8 @@ HRESULT CLayer::Delete_GameObject(const _tchar * pCloneObjectTag)
 
 	CGameObject* pBackup = Pair->second;
 	m_GameObjects.erase(Pair);
+		
+	CPhysX_Manager::GetInstance()->Delete_Actor(pBackup);
 	
 	Safe_Release(pBackup);
 

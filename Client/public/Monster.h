@@ -87,6 +87,7 @@ protected:
 
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
+	CTexture*					m_pDissolveTextureCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
 	CMonster_Status*			m_pMonsterStatusCom = nullptr;
 
@@ -103,6 +104,11 @@ protected:
 	_bool	m_bStronglyHit = false;
 	_bool	m_bBind = false;
 	_bool	m_bSpawn = false;
+	_bool	m_bDying = false;
+	_bool	m_bDeath = false;
+
+	_float m_fDissolveTime = 1.f;
+
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
@@ -118,6 +124,7 @@ public:
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 
 	CMonster_Status* Get_MonsterStatusPtr() { return m_pMonsterStatusCom; }
+	HRESULT Bind_Dissolove(class CShader* pShader);
 };
 
 END
