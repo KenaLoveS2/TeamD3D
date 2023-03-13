@@ -13,7 +13,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;
+		_bool isGravity;		
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -21,7 +21,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -38,7 +38,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -57,7 +57,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_CAPSULE_DESC;
 		
 private:

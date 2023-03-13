@@ -164,7 +164,7 @@ void CSticks01::Late_Tick(_float fTimeDelta)
 	if (DistanceTrigger(3.f))
 		bSpawn = true;
 
-	if (bSpawn && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
+	if (bSpawn && m_pEnemyWisp->IsActiveState())
 		m_bSpawn = true;
 
 	if (m_pRendererCom != nullptr)
@@ -218,7 +218,7 @@ void CSticks01::Imgui_RenderProperty()
 	if (ImGui::Button("SPAWN"))
 		bSpawn = true;
 
-	if(bSpawn ==true && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
+	if(bSpawn && m_pEnemyWisp->IsActiveState())
 	{
 		m_bSpawn = true;
 	}
@@ -327,9 +327,11 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("RESURRECT")
 		.Tick([this](_float fTimeDelta)
 	{			
-		if(!m_bSpawn)
+		if (!m_bSpawn)
+		{
 			m_pModelCom->ResetAnimIdx_PlayTime(RESURRECT);
 			m_pModelCom->Set_AnimIndex(RESURRECT);
+		}	
 	})
 		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
