@@ -499,9 +499,6 @@ PS_OUT PS_DOT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	/* Mask */
-	vector Mask = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-
 	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
 	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
 
@@ -512,12 +509,15 @@ PS_OUT PS_DOT(PS_IN In)
 	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	Diffuse.a = Diffuse.r;
 
-	Out.vColor = saturate(Diffuse * Mask);
-	if (Out.vColor.a < 0.8f)
-		Out.vColor.rgb = (float3)1.f;
+	//if (Diffuse.a < 0.1f)
+	//	discard;
 
-	if (g_fLife > 0.3f)
-		Out.vColor = Out.vColor.r * frac(g_fLife * 0.5f);
+	//if (Out.vColor.a < 0.8f)
+	//	Out.vColor.rgb = (float3)1.f;
+
+	//if (g_fLife > 0.3f)s
+	//	Out.vColor = Out.vColor.r * frac(g_fLife * 0.5f);
+	
 	return Out;
 }
 
