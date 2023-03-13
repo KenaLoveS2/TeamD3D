@@ -201,6 +201,8 @@
     <ClInclude Include="..\public\Effect_Trail_T.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
+    <ClInclude Include="..\public\E_EnemyWispBackground.h" />
+    <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -212,6 +214,7 @@
     <ClInclude Include="..\public\E_KenaCharge.h" />
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\public\E_PulseObject.h" />
+    <ClInclude Include="..\public\E_P_EnemyWisp.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
@@ -357,6 +360,7 @@
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -368,6 +372,8 @@
     <ClCompile Include="..\private\E_KenaCharge.cpp" />
     <ClCompile Include="..\private\E_KenaTrail.cpp" />
     <ClCompile Include="..\private\E_PulseObject.cpp" />
+    <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
+    <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />

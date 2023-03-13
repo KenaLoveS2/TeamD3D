@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Monster_Status.h"
+#include "Effect_Base.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -79,6 +80,7 @@ public:
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	void							Call_RotIcon();
+	virtual HRESULT					Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 
 protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
@@ -90,6 +92,8 @@ protected:
 
 	CFSMComponent*		m_pFSM = nullptr;
 	class CKena*		m_pKena = nullptr;	
+
+	CEffect_Base*		m_pEnemyWisp = nullptr;
 	_float4							m_vKenaPos;
 
 	CUI_MonsterHP*		m_pUIHPBar;

@@ -124,26 +124,32 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float time = frac(g_Time * 0.5f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(5.5f, 5.f), float2(0.f, -time));
+	float  time = frac(g_Time * 0.05f);
+	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x / 2.f, In.vTexUV.y / 4.f), float2(1.f, 1.f), float2(0.f, -time));
 
-	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
+	float4 vBase = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 
-	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
-	float4 fresnel_color = g_DTexture_2.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y));
-	float4 fresnel = float4(fresnel_glow(4, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	float4 vMovingDot = g_DTexture_1.Sample(LinearSampler, OffsetUV);
+	float4 vMovingDot_fresnel = float4(fresnel_glow(2.f, 3.5f, vMovingDot.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	vMovingDot_fresnel.a = vMovingDot_fresnel.r * 0.1f;
 
-	float4 BackPulseColor = g_vColor;
-	float4 fresnelColor = float4(0.5, 0.5, 0.5, 0.5);
-	float4 fresnel_Pulse = float4(fresnel_glow(4.5, 2.5, fresnelColor.rgb, In.vNormal.rgb, -In.vViewDir), fresnelColor.a) + fresnel;
+	float4 vMovingMask = g_DTexture_2.Sample(LinearSampler, OffsetUV);
+	float4 vMovingMask_fresnel = float4(fresnel_glow(2.f, 3.5f, vMovingMask.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	vMovingMask_fresnel.a = vMovingMask_fresnel.r * 0.15f;
 
-	float4 mask = g_DTexture_1.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
-	float4 glow = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	float4 fresnelColor = (float4)1.0f;
+	float4 fresnel = float4(fresnel_glow(8.f, 3.5f, fresnelColor.rgb, In.vNormal.rgb, -In.vViewDir), fresnelColor.a);
+	
+	/* Base Color */
+	float4 vBaseColor = float4(20.f, 44.f, 90.f, 15.f) / 255.f;
+	vBaseColor.rgb = fresnel_glow(0.5f, 2.5f, vBase.rgb, In.vNormal.rgb, In.vViewDir) * vBaseColor.rgb + fresnel.rgb * float3(1.0f, 1.0f, 1.0f) ;
 
-	Out.vDiffuse = saturate((mask + glow) * BackPulseColor * 2.f) * fresnel_Pulse + BackPulseColor;
-	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
+	float4 vGreencolor = float4(25.f, 283.f, 189.f, 255.f) / 255.f;
+	vBaseColor.rgb = vBaseColor.rgb * vGreencolor.rgb;
 
-	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
+	float4 vfinaladdcolor = float4(8.0f, 155.f, 125.f, 255.f) / 255.f;
+	vfinaladdcolor.rgb = vfinaladdcolor.rgb * 3.f;
+	Out.vDiffuse = vBaseColor + vMovingDot_fresnel + vMovingMask_fresnel * vfinaladdcolor;
 
 	if (g_bDissolve)
 	{
@@ -165,10 +171,12 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
 		{
 			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(BackPulseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 1.f, 0.f);
 	return Out;
 }
 
@@ -216,10 +224,48 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vDiffuse.a = vDiffuse.r;
+	float  time     = frac(g_Time * 0.35f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(time, 0.0f));
 
-	Out.vDiffuse = vDiffuse;
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, float2(In.vTexUV.x - time, In.vTexUV.y));
+	float4 vMask = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+	float4 vMask1 = g_MTexture_1.Sample(LinearSampler, float2(In.vTexUV.x + time, In.vTexUV.y - time));
+	vDiffuse.a = vDiffuse.r;
+	vMask.a = vMask.r;
+	vMask1.a = vMask1.r;
+
+	float4 LeapMask = lerp(vMask, vMask1, 0.5f);
+	float3 fresnelColor = float3(0.f, 0.0f, 0.0f);
+
+	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelColor, In.vNormal.rgb, -In.vViewDir), 0.2f);
+
+	float4 finalcolor = saturate(vDiffuse * LeapMask);
+
+	if (vDiffuse.a < 0.4f)
+		finalcolor.rgb = finalcolor.rgb + float3(200.f, 21.f, 0.0f) / 255.f  * 4.f;
+	else
+		finalcolor.rgb = finalcolor.rgb + float3(255.f,54.f, 0.0f) / 255.f * 4.f;
+
+	finalcolor.rgb = finalcolor.rgb + fresnel.rgb;
+	Out.vDiffuse = finalcolor * float4(255.f, 192.f, 163.f, 255.f) / 255.f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_MTexture_2.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value >= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		}
+	}
+
 	return Out;
 }
 
@@ -280,7 +326,7 @@ technique11 DefaultTechnique
 	pass Effect_DeadZone // 4
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
