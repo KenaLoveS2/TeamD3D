@@ -65,9 +65,6 @@
 #include "LiftRot.h"
 #include "LiftRot_Master.h"
 
-
-
-
 /* UI */
 #include "BackGround.h"
 
@@ -85,6 +82,14 @@
 //Monster
 #include "EnemyWisp.h"
 
+#include "E_EnemyWispTrail.h"
+#include "E_KenaDamage.h"
+#include "E_KenaHit.h"
+#include "E_KenaJump.h"
+#include "E_PulseObject.h"
+#include "E_EnemyWispBackground.h"
+#include "E_EnemyWispGround.h"
+#include "E_P_EnemyWisp.h"
 /* ~Effects */
 
 /* Components*/
@@ -101,11 +106,7 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_EnemyWispTrail.h"
-#include "E_KenaDamage.h"
-#include "E_KenaHit.h"
-#include "E_KenaJump.h"
-#include "E_PulseObject.h"
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -442,7 +443,38 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
 #pragma endregion EFFECT
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
+		CEnemyWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
+		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	/* ~EnemyWisp Effects */
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
@@ -1356,7 +1388,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 HRESULT CLoader::Loading_ForTestPlay()
 {
-	m_fMax = 144.f;
+	m_fMax = 179.f;
 	m_fCur = m_fCur / m_fMax * 100.f;
 
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -1428,6 +1460,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_DeadZoneTree",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_Component_Model_PulsePlateAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -1809,144 +1842,172 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
 		CLodObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_ModelViewerObject */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
 		CModelViewerObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	/* ~Test*/
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
 		CCliff_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Tree */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
 		CTree::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Crystal */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
 		CCrystal::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_BowTarget */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
 		CBowTarget::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_PulseStone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
 		CPulseStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_BaseGround */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BaseGround"),
 		CBase_Ground::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Wall */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wall"),
 		CWall::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Wall */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Root"),
 		CRoots::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Stair */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"),
 		CStair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Wall */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pillar"),
 		CPillar::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Statue */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"),
 		CStatue::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Border */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Border"),
 		CBorder::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Slope */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Slope"),
 		CSlope::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Bridge */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Bridge"),
 		CBridge::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Path_Mesh */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Path_Mesh"),
 		CPath_Mesh::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_FloorTile */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
 		CFloorTile::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Pulse_PlateForm */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
 		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Gate */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Gate"),
 		CGate::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
 		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
 		CFlower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
 		CGrass::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
+	m_fCur += 1.f;
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
@@ -2095,6 +2156,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
 #pragma endregion EFFECT
 
 	/* For.Prototype_GameObject_Player */
@@ -2193,9 +2255,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* Monster */
+#pragma  region	MONSTER
 	/* For.Prototype_Component_Model_EnemyWisp */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.mdat", PivotMatrix))))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2203,10 +2266,32 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CEnemyWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
 		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* ~Monster */
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	/* ~EnemyWisp Effects */
+#pragma  endregion	MONSTER
 	m_fCur += 1.f;
 
 	m_isFinished = true;
@@ -2379,18 +2464,39 @@ HRESULT CLoader::Loading_ForTestEffect()
 		return E_FAIL;
 
 #pragma  endregion	PLAYER
-	/* Monster */
+
+#pragma  region	MONSTER
 	/* For.Prototype_Component_Model_EnemyWisp */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_EnemyWisp", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.mdat", PivotMatrix))))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_EnemyWisp", 
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
 		CEnemyWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
 		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* ~Monster */
+
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	/* ~EnemyWisp Effects */
+#pragma  endregion	MONSTER
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
