@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "UI_NodeLvUp.h"
+#include "UI_NodeEffect.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -121,6 +122,20 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 		m_vecNodeCloneTag.push_back(strTag);
 		pGameInstance->Add_String(cloneTag);
 	}
+	
+	{ /* CardBackFlare */
+		string strRing = "Node_EffectBackFlare";
+		CUI::UIDESC tDescRing;
+		_tchar* tagRing = CUtile::StringToWideChar(strRing);
+		tDescRing.fileName = tagRing;
+		CUI_NodeEffect* pEffectUI
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
+		if (FAILED(Add_Node(pEffectUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strRing);
+		pGameInstance->Add_String(tagRing);
+		m_vecEffects.push_back(pEffectUI);
+	}
 
 	{ /* RotLvUpCard */
 		string strTag = "Node_RotLvUpCard";
@@ -133,6 +148,34 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strTag);
 		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* FrontFlareRound  */
+		string strRing = "Node_EffectFrontFlareRound";
+		CUI::UIDESC tDescRing;
+		_tchar* tagRing = CUtile::StringToWideChar(strRing);
+		tDescRing.fileName = tagRing;
+		CUI_NodeEffect* pEffectUI
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
+		if (FAILED(Add_Node(pEffectUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strRing);
+		pGameInstance->Add_String(tagRing);
+		m_vecEffects.push_back(pEffectUI);
+	}
+
+	{ /* FrontFlare */
+		string strRing = "Node_EffectFrontFlare";
+		CUI::UIDESC tDescRing;
+		_tchar* tagRing = CUtile::StringToWideChar(strRing);
+		tDescRing.fileName = tagRing;
+		CUI_NodeEffect* pEffectUI
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
+		if (FAILED(Add_Node(pEffectUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strRing);
+		pGameInstance->Add_String(tagRing);
+		m_vecEffects.push_back(pEffectUI);
 	}
 
 
@@ -260,4 +303,6 @@ CGameObject * CUI_CanvasTop::Clone(void * pArg)
 void CUI_CanvasTop::Free()
 {
 	__super::Free();
+
+	m_vecEffects.clear();
 }

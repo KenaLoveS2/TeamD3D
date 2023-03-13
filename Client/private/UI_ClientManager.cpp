@@ -440,8 +440,25 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_LvUpCard");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareBack"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/E_Effect_93.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareBack");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareBack1"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/E_Effect_42.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareBack1");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareRound"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/T_FlareRound_Noise.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareRound");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareShape"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/FlareBomb.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareShape");
 
 
 
@@ -489,8 +506,9 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SpriteColor");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MonsterBar");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "NoDiffuseColorGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaWithColorTexture");
 
-
+	
 
 	/* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");

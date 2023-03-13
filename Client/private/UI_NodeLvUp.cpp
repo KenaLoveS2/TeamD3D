@@ -93,14 +93,14 @@ HRESULT CUI_NodeLvUp::Render()
 	{
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 70.f, g_iWinSizeY*0.5f - vPos.y + 10.f };
+		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 40.f, g_iWinSizeY*0.5f - vPos.y + 0.f };
 
 		if (m_szTitle != nullptr)
 		{
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-			pGameInstance->Render_Font(TEXT("Font_Basic1"), m_szTitle,
+			pGameInstance->Render_Font(TEXT("Font_Comic"), m_szTitle,
 				vNewPos /* position */,
-				0.f, _float2(0.5f, 0.5f)/* size */,
+				0.f, _float2(0.7f, 0.7f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha())/* color */);
 			RELEASE_INSTANCE(CGameInstance);
 		}
@@ -109,14 +109,14 @@ HRESULT CUI_NodeLvUp::Render()
 	{
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -15.f, g_iWinSizeY*0.5f - vPos.y + 10.f };
+		_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f -25.f, g_iWinSizeY*0.5f - vPos.y + 20.f };
 
 		if (m_szLevel != nullptr)
 		{
 			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-			pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szLevel,
+			pGameInstance->Render_Font(TEXT("Font_Comic"), m_szLevel,
 				vNewPos /* position */,
-				0.f, _float2(1.5f, 1.5f)/* size */,
+				0.f, _float2(1.3f, 1.3f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[0])->Get_Alpha())/* color */);
 			RELEASE_INSTANCE(CGameInstance);
 		}
