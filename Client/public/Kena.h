@@ -8,16 +8,20 @@
 BEGIN(Engine)
 class CRenderer;
 class CShader;
-class CRenderer;
 class CStateMachine;
 class CAnimationState;
 END
 
 BEGIN(Client)
+
 class CUI_RotIcon;
+
 class CKena final : public CGameObject
 {
 	friend class CKena_State;
+
+public:
+	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -32,6 +36,7 @@ public:
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
+	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
 	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 
 public:
@@ -47,26 +52,26 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Update_Child() override;
-	virtual HRESULT				Call_EventFunction(const string& strFuncName) override;
+	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void				Push_EventFunctions() override;
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
-	void					Call_RotIcon(CGameObject* pTarget);
+	void						Call_RotIcon(CGameObject* pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
-	CModel*						m_pModelCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
 	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain* m_pTerrain = nullptr;
-	class CRope_RotRock* m_pRopeRotRock = nullptr;
-	class CRot* m_pFirstRot = nullptr;
+	class CTerrain*			m_pTerrain = nullptr;
+	class CRope_RotRock*	m_pRopeRotRock = nullptr;
+	class CRot*				m_pFirstRot = nullptr;
 
 	
 
@@ -79,8 +84,12 @@ private:
 	_bool					m_bAttack = false;
 	_bool					m_bCommonHit = false;
 	_bool					m_bHeavyHit = false;
+	_float4				m_vDamagedDir;
+	DAMAGED_FROM		m_eDamagedDir;
+
 	_bool					m_bChargeLight = false;
 	_bool					m_bSprint = false;
+
 	_bool					m_bAim = false;
 	_bool					m_bBow = false;
 
@@ -96,9 +105,9 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4				    m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4				    m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4				    m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
@@ -113,6 +122,10 @@ private:
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
+
+private:
+	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);
+	DAMAGED_FROM			Calc_DirToMonster(const _float3& vCollisionPos);
 
 private:	/* Animation Event Func */
 	void					Test(_bool bIsInit, _float fTimeDelta);
