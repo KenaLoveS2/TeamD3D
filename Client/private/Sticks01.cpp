@@ -2,6 +2,7 @@
 #include "..\public\Sticks01.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "EnemyWisp.h"
 
 CSticks01::CSticks01(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -33,6 +34,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(L"Sticks01_EnemyWisp"), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
@@ -125,6 +127,10 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 
 	m_pTransformCom->Set_Position(_float4(24.f, 0.3f, 6.f, 1.f));
 
+	/* EnemyWisp */
+	m_pEnemyWisp->Set_Position(_float4(24.f, 0.3f, 6.f, 1.f));
+	/* EnemyWisp */
+
 	return S_OK;
 }
 
@@ -193,9 +199,15 @@ HRESULT CSticks01::RenderShadow()
 void CSticks01::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
+	static _bool bSpawn = false;
 
 	if (ImGui::Button("SPAWN"))
+		bSpawn = true;
+
+	if( bSpawn ==true && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
+	{
 		m_bSpawn = true;
+	}
 }
 
 void CSticks01::ImGui_AnimationProperty()
@@ -300,11 +312,10 @@ HRESULT CSticks01::SetUp_State()
 		.InitState("RESURRECT")
 		.AddState("RESURRECT")
 		.Tick([this](_float fTimeDelta)
-	{
+	{			
 		if(!m_bSpawn)
 			m_pModelCom->ResetAnimIdx_PlayTime(RESURRECT);
-		
-		m_pModelCom->Set_AnimIndex(RESURRECT);
+			m_pModelCom->Set_AnimIndex(RESURRECT);
 	})
 		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()

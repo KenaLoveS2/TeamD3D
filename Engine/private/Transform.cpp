@@ -413,6 +413,9 @@ void CTransform::LookAt(_fvector vTargetPos)
 	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
 	_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
 
+	if (isnan(XMVectorGetX(vLook)) || isnan(XMVectorGetX(vRight)) || isnan(XMVectorGetX(vUp)))
+		return;
+
 	Set_State(CTransform::STATE_RIGHT, vRight);
 	Set_State(CTransform::STATE_UP, vUp);
 	Set_State(CTransform::STATE_LOOK, vLook);

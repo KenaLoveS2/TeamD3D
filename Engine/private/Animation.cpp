@@ -186,12 +186,14 @@ void CAnimation::ImGui_RenderEvents(_int & iSelectEvent, const string & strImGui
 
 	if (iSelectEvent != -1)
 	{
+		auto iter = m_mapEvent.begin();
+		for (_int i = 0; i < iSelectEvent; ++i)
+			++iter;
+
+		m_PlayTime = iter->first;
+
 		if (ImGui::Button("Erase"))
 		{
-			auto	iter = m_mapEvent.begin();
-			for (_int i = 0; i < iSelectEvent; ++i)
-				++iter;
-
 			m_mapEvent.erase(iter);
 			iSelectEvent = -1;
 		}
@@ -646,6 +648,8 @@ void CAnimation::Free()
 
 HRESULT CAnimation::SetUp_ChannelsBonePtr(CModel* pModel)
 {
+	m_pModel = pModel;
+
 	for (_uint i = 0; i < m_iNumChannels; i++)
 	{
 		if (FAILED(m_Channels[i]->SetUp_BonePtr(pModel)))

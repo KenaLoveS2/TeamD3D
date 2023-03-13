@@ -83,6 +83,9 @@ void CMonster::Tick(_float fTimeDelta)
 	}
 #endif
 
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Tick(fTimeDelta);
+
 	if (m_pKena)
 		m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 }
@@ -90,6 +93,9 @@ void CMonster::Tick(_float fTimeDelta)
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Late_Tick(fTimeDelta);
 }
 
 HRESULT CMonster::Render()
@@ -252,6 +258,20 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 {
 }
 
+HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base*  pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
+	pEffectBase->Set_Parent(this);
+	m_pEnemyWisp = pEffectBase;
+	
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -291,6 +311,9 @@ void CMonster::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
+
+	if (m_pEnemyWisp != nullptr)
+		Safe_Release(m_pEnemyWisp);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)

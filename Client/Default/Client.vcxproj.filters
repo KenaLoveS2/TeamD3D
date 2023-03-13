@@ -340,6 +340,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Pulse">
       <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Enemy\Wisp">
+      <UniqueIdentifier>{dde62539-ab54-42c8-9ff3-0760ff1d212a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -783,9 +786,6 @@
     <ClInclude Include="..\public\E_KenaTrail.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_EnemyWispTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\EnemyWisp.h">
       <Filter>02.GameObjects\Monster\Effect</Filter>
     </ClInclude>
@@ -822,6 +822,18 @@
     </ClInclude>
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispGround.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_EnemyWisp.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnemyWispBackground.h">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1245,9 +1257,6 @@
     <ClCompile Include="..\private\E_KenaTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EnemyWisp.cpp">
       <Filter>02.GameObjects\Monster\Effect</Filter>
     </ClCompile>
@@ -1284,6 +1293,18 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispGround.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_EnemyWisp.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
+      <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

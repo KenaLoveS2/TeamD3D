@@ -207,8 +207,12 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pVIInstancingBufferCom->Tick(fTimeDelta);
+	if (m_eEFfectDesc.bActive == true)
+		m_fLife += fTimeDelta;
+	else
+		m_fLife = 0.0f;
 
+	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 	if (m_eEFfectDesc.bStart == true)
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
@@ -217,11 +221,6 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 		if (m_eEFfectDesc.bStart == false)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 	}
-
-	//if (m_eEFfectDesc.IsBillboard == true)
-	//	BillBoardSetting(m_eEFfectDesc.vScale);
-	//else
-	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
@@ -286,7 +285,6 @@ void CEffect_Point_Instancing::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
 }
 
 HRESULT CEffect_Point_Instancing::Render()
@@ -299,7 +297,6 @@ HRESULT CEffect_Point_Instancing::Render()
 
 	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIInstancingBufferCom->Render();
-
 	return S_OK;
 }
 
@@ -323,9 +320,6 @@ HRESULT CEffect_Point_Instancing::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
-	m_iTotalDTextureComCnt = 1;
-	m_iTotalMTextureComCnt = 1;
-
 	/* For.DiffuseTexture */
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
@@ -403,8 +397,8 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
 		return E_FAIL;
-
-	// MaxCnt == 10
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fLife", &m_fLife, sizeof(_float))))
+		return E_FAIL;
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
@@ -431,7 +425,6 @@ HRESULT CEffect_Point_Instancing::SetUp_ShaderResources()
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

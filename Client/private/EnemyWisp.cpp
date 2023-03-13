@@ -28,7 +28,7 @@ HRESULT CEnemyWisp::Initialize(void * pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -40,12 +40,17 @@ HRESULT CEnemyWisp::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_RootBone("EnemyWisp");
+	m_pModelCom->Set_AnimIndex(2);
 
 	FAILED_CHECK_RETURN(Set_WispTrail(), E_FAIL);
-	/* matrix 이상하게 들어감 확인 해봐야함 */
+	FAILED_CHECK_RETURN(Set_WispEffects(), E_FAIL);
+
 	_matrix matiden = XMMatrixIdentity();
 	m_pTransformCom->Set_WorldMatrix(matiden);
+
+	Push_EventFunctions();
+	m_eEFfectDesc.bActive = true;
 
 	return S_OK;
 }
@@ -54,73 +59,34 @@ void CEnemyWisp::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	static _bool bPlay = false;
-
-	ImGui::Begin("EnemyWisp Option");
-	ImGui::Checkbox("Play", &bPlay);
-
-	ImGui::DragFloat("UV_X", (_float*)&m_fUV.x, 0.01f, 0.f, 10.f);
-	ImGui::DragFloat("UV_Y", (_float*)&m_fUV.y, 0.01f, 0.f, 10.f);
-
-	if(bPlay)
-	{
+	if (m_pModelCom->Get_AnimIndex() == 3 &&
+		m_pModelCom->Get_AnimationFinish() == true)
+		m_eEFfectDesc.bActive = false;
+	else
 		m_pModelCom->Play_Animation(fTimeDelta);
-
-		if (m_pModelCom->Get_AnimationFinish() == true)
-			dynamic_cast<CEffect_Trail*>(m_pEffectTrail)->ResetInfo();
-
-		m_pEffectTrail->Tick(fTimeDelta);
-		m_pEffectTrail->Set_Active(true);
-	}
-
-	if (!bPlay)
-		m_pEffectTrail->Set_Active(false);
-
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
-
-	ImGui::End();
 }
 
 void CEnemyWisp::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* Trail */
-	if (m_pEffectTrail != nullptr)
+	/* Trail */ 
+	if(m_vecChild[CHILD_TRAIL]->Get_Active() == true)
 	{
 		CBone*	pWispBonePtr = m_pModelCom->Get_BonePtr("EnemyWisp_Jnt2");
 		_matrix SocketMatrix = pWispBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 
-		m_pEffectTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-		m_pEffectTrail->Late_Tick(fTimeDelta);
+		m_vecChild[CHILD_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+		m_vecChild[CHILD_TRAIL]->Late_Tick(fTimeDelta);
 	}
-
-	if (m_pRendererCom != nullptr)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CEnemyWisp::Render()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
@@ -137,6 +103,40 @@ HRESULT CEnemyWisp::Render()
 	}
 
 	return S_OK;
+}
+
+_bool CEnemyWisp::IsActiveState()
+{
+	m_pModelCom->Set_AnimIndex(3);
+	if (m_pModelCom->Get_AnimationProgress() > 0.8f)
+		return true;
+
+	return false;
+}
+
+void CEnemyWisp::Push_EventFunctions()
+{
+	TurnOnTrail(true, 0.f);
+	TurnOnBack(true, 0.f);
+	TurnOnGround(true, 0.f);
+	TurnOnParticle(true, 0.f);
+
+	TurnOffTrail(true, 0.f);
+	TurnOffBack(true, 0.f);
+	TurnOffGround(true, 0.f);
+	TurnOffParticle(true, 0.f);
+}
+
+void CEnemyWisp::Calc_RootBoneDisplacement(_fvector vDisplacement)
+{
+	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	vPos = vPos + vDisplacement;
+	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CEnemyWisp::ImGui_AnimationProperty()
+{
+	m_pModelCom->Imgui_RenderProperty();
 }
 
 HRESULT CEnemyWisp::SetUp_Components()
@@ -158,8 +158,6 @@ HRESULT CEnemyWisp::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -173,12 +171,142 @@ HRESULT CEnemyWisp::Set_WispTrail()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispTrail", L"EnemyWispTrail"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
-	m_pEffectTrail = pEffectBase;
+	m_vecChild.push_back(pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 	/* Set Trail */
 
 	return S_OK;
+}
+
+HRESULT CEnemyWisp::Set_WispEffects()
+{	
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispBackground", L"EnemyWispBack"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispGround", L"EnemyWispGround"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispParticle", L"EnemyWispParticle"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+void CEnemyWisp::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOnTrail);
+		return;
+	}
+	m_vecChild[CHILD_TRAIL]->Set_Active(true);
+}
+
+void CEnemyWisp::TurnOnBack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOnBack);
+		return;
+	}
+	m_vecChild[CHILD_BACK]->Set_Active(true);
+	if(m_pParent != nullptr)
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.y = 0.0f;
+		m_vecChild[CHILD_BACK]->Set_Position(vPos);
+	}
+}
+
+void CEnemyWisp::TurnOnGround(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOnGround);
+		return;
+	}
+	m_vecChild[CHILD_GROUND]->Set_Active(true);
+	if (m_pParent != nullptr)
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.y = 0.0f;
+		m_vecChild[CHILD_GROUND]->Set_Position(vPos);
+	}
+}
+
+void CEnemyWisp::TurnOnParticle(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOnParticle);
+		return;
+	}
+	m_vecChild[CHILD_PARTICLE]->Set_Active(true);
+	if (m_pParent != nullptr)
+	{
+		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.y = 0.0f;
+		m_vecChild[CHILD_PARTICLE]->Set_Position(vPos);
+	}
+}
+
+void CEnemyWisp::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOffTrail);
+		return;
+	}
+	m_vecChild[CHILD_TRAIL]->Set_Active(false);
+}
+
+void CEnemyWisp::TurnOffBack(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOffBack);
+		return;
+	}
+	m_vecChild[CHILD_BACK]->Set_Active(false);
+}
+
+void CEnemyWisp::TurnOffGround(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOffGround);
+		return;
+	}
+	m_vecChild[CHILD_GROUND]->Set_Active(false);
+}
+
+void CEnemyWisp::TurnOffParticle(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CEnemyWisp::TurnOffParticle);
+		return;
+	}
+	m_vecChild[CHILD_PARTICLE]->Set_Active(false);
 }
 
 CEnemyWisp * CEnemyWisp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
