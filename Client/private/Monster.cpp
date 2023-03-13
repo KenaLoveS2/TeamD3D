@@ -305,6 +305,7 @@ HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture", (CComponent**)&m_pDissolveTextureCom), E_FAIL);
 
 	return S_OK;
 }
@@ -335,6 +336,7 @@ void CMonster::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDissolveTextureCom);
 	Safe_Release(m_pMonsterStatusCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
@@ -349,11 +351,20 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == COL_PLAYER)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 		}
 	}
 
 	return 0;
+}
+
+HRESULT CMonster::Bind_Dissolove(CShader* pShader)
+{	
+	if (FAILED(pShader->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(pShader, "g_DissolveTexture"))) return E_FAIL;
+
+	return S_OK;
 }

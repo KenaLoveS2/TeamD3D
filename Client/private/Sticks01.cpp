@@ -140,7 +140,22 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	 if(m_bDying == false && m_pMonsterStatusCom->IsDead())
+	 {
+		 m_bDying = true;
+		 m_pModelCom->Set_AnimIndex(DEATH);
+	 }
+
+	 if (m_bDying == true)
+	 {
+		  AnimFinishChecker(DEATH);
+		 
+	 }
+	 else
+		 m_pFSM->Tick(fTimeDelta);
+
+		
+
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -182,6 +197,7 @@ HRESULT CSticks01::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_GlowTexture");
+			
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_G);
 	}
 	return S_OK;
@@ -355,6 +371,13 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bStronglyHit;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+
+
 		.AddTransition("COMBATIDLE to CHARGE", "CHEER")
 		.Predicator([this]()
 	{
@@ -369,6 +392,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f) && m_bStrafeRight;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("CHEER")
@@ -395,6 +423,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CHEER);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("STRAFELEFT")
@@ -424,6 +457,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime,3.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("STRAFERIGHT")
 		.OnStart([this]()
@@ -442,7 +480,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bBind;
 	})
-
 		.AddTransition("STRAFERIGHT to TAKEDAMAGE", "TAKEDAMAGE")
 		.Predicator([this]()
 	{
@@ -454,6 +491,17 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 3.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+
 
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
@@ -465,6 +513,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(INTOCHARGE);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("CHARGE")
@@ -521,6 +574,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bRealAttack && m_bThrowRock;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
@@ -546,6 +604,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("JUMPATTACK")
@@ -573,6 +636,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(JUMPATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("ATTACK1")
 		.OnStart([this]()
@@ -598,6 +666,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("ATTACK2")
@@ -625,6 +698,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(ATTACK2);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("COMBOATTACK")
 		.OnStart([this]()
@@ -650,6 +728,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(COMBOATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("ROCKTHROW")
@@ -677,6 +760,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(ROCKTHROW);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BIND")
 		.OnStart([this]()
@@ -701,6 +789,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(BIND);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("PARRIED")
@@ -714,6 +807,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(PARRIED);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		// 항상 폭탄이 날라오면 이렇게 뛰는가?
 		.AddState("RECEIVEBOMB")
@@ -726,6 +824,11 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(RECEIVEBOMB);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("TAKEDAMAGE")
@@ -771,14 +874,38 @@ HRESULT CSticks01::SetUp_State()
 			AnimFinishChecker(TAKEDAMAGER) || 
 			AnimFinishChecker(TAKEDAMAGEBIG);
 	})
-
-		.AddState("DEATH")
-		.Tick([this](_float fTimeDelta)
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
+		return m_pMonsterStatusCom->IsDead();
 	})
 
-				.Build();
+
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_bDeath = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+
+	})
+		.Build();
 
 	return S_OK;
 }
@@ -815,6 +942,8 @@ HRESULT CSticks01::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
+	m_bDying && Bind_Dissolove(m_pShaderCom);
+	
 	return S_OK;
 }
 

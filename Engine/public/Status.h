@@ -34,6 +34,8 @@ public:
 	virtual _bool IsDead();
 	virtual void UnderAttack(CStatus* pEnemyStatus);
 	
+	_float Get_PercentHP() { return (_float)m_iHP / (_float)m_iMaxHP; }
+
 public:
 	inline _int Get_MaxHP() { return m_iMaxHP; }
 	inline _int Get_HP() { return m_iHP; }
