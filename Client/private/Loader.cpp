@@ -106,6 +106,7 @@ unsigned int	g_LEVEL = 0;
 #include "E_KenaHit.h"
 #include "E_KenaJump.h"
 #include "E_PulseObject.h"
+#include "SpiritArrow.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -265,6 +266,9 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena_MainOutfit",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_GAMEPLAY, "Spirit_Arrow", false, false, false)))
 		return E_FAIL;
 
 	if (FAILED(LoadNonAnimModel(LEVEL_GAMEPLAY)))
@@ -440,6 +444,10 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
+		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion EFFECT
@@ -1670,6 +1678,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Spirit_Arrow", false, false, false)))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* NPC */
 	///* Prototype_Component_Model_Beni */
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",

@@ -59,52 +59,52 @@ HRESULT CKena_Staff::Ready_Effects()
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fTimeDelta += fTimeDelta;
-
-	if (m_pPlayer->Is_Bow())
-		m_fBowDurationTime += fTimeDelta ;
-	else
-		m_fBowDurationTime = 0.5f;
-
-	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
-	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
-
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
+// 	m_fTimeDelta += fTimeDelta;
+// 
+// 	if (m_pPlayer->Is_Bow())
+// 		m_fBowDurationTime += fTimeDelta ;
+// 	else
+// 		m_fBowDurationTime = 0.5f;
+// 
+// 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+// 	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
+// 
+// 	for (auto& pEffect : m_mapEffect)
+// 		pEffect.second->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/* Weapon Update */
-	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
-
-	for (auto& Effect : m_mapEffect)
-	{
-		if (Effect.first == "KenaCharge")
-		{
-			_matrix matChargeEffect = Effect.second->Get_TransformCom()->Get_WorldMatrix();
-			matChargeEffect.r[3] = matWorldSocket.r[3];
-
-			Effect.second->Get_TransformCom()->Set_WorldMatrix(matChargeEffect);
-		}
-		else
-			Effect.second->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-	}
-	/* ~Weapon Update */
-
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Late_Tick(fTimeDelta);
-
-	if (m_pRendererCom != nullptr)
-	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
+// 	/* Weapon Update */
+// 	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+// 	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+// 	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+// 
+// 	for (auto& Effect : m_mapEffect)
+// 	{
+// 		if (Effect.first == "KenaCharge")
+// 		{
+// 			_matrix matChargeEffect = Effect.second->Get_TransformCom()->Get_WorldMatrix();
+// 			matChargeEffect.r[3] = matWorldSocket.r[3];
+// 
+// 			Effect.second->Get_TransformCom()->Set_WorldMatrix(matChargeEffect);
+// 		}
+// 		else
+// 			Effect.second->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+// 	}
+// 	/* ~Weapon Update */
+// 
+// 	for (auto& pEffect : m_mapEffect)
+// 		pEffect.second->Late_Tick(fTimeDelta);
+ 
+ 	if (m_pRendererCom != nullptr)
+ 	{
+ 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
+ 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+ 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+ 	}
 }
 
 HRESULT CKena_Staff::Render()

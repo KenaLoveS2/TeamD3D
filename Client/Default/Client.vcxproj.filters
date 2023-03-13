@@ -370,6 +370,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\SubTitle">
       <UniqueIdentifier>{bfab2999-58a8-444f-88cf-376a05afa4db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon\Arrow">
+      <UniqueIdentifier>{0bd76abd-57b1-4681-85a7-d47db57129cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -863,6 +866,7 @@
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpiritArrow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1335,6 +1339,7 @@
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

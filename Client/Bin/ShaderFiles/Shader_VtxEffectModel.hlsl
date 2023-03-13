@@ -290,4 +290,17 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_EFFECT_DEADZONE();
 	}
 
+	pass Effect_SpritArrow // 5
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
 }

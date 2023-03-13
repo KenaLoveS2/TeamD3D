@@ -246,6 +246,7 @@
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h" />
@@ -402,6 +403,7 @@
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp" />

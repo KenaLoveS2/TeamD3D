@@ -21,6 +21,7 @@ CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContex
 {
 	ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
 	m_eEFfectDesc.vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
+	XMStoreFloat4x4(&m_InitWorldMatrix, XMMatrixIdentity());
 }
 
 CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
