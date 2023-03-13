@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Client_Defines.h"
+#include "PhysX_Defines.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -37,6 +38,9 @@ private:
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
 	
+
+	PX_TRIGGER_DATA* m_pTriggerDAta = nullptr;
+
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);

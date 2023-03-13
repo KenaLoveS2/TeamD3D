@@ -91,11 +91,11 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
-	m_vWakeUpPosition = _float4(10.f, 0.f, 5.f, 1.f);
+	m_vWakeUpPosition = _float4(3.f, 0.f, 3.f, 1.f);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(
-		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f)
-	);
+	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
+
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
@@ -103,13 +103,17 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	return S_OK;
 }
 
+_float Temp =  1.f;
+
 void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
 	if (GetKeyState('F') & 0x8000)
 	{
-		m_bWakeUp = true;
+		// m_bWakeUp = true;
+		Temp += 1.f * fTimeDelta;
+		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, Temp);		
 	}
 
 	if (m_pFSM)
