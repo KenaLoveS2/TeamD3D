@@ -409,6 +409,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pBox->setLinearDamping(Desc.fLinearDamping);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
+		pBox->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		pBox->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
 		
 		PxRigidBodyExt::updateMassAndInertia(*pBox, Desc.fDensity);
@@ -494,6 +495,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
+		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		PxRigidBodyExt::updateMassAndInertia(*pSphere, Desc.fDensity);
 
 		if (pUserData)
@@ -574,6 +576,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
+		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
 		
 		if (pUserData)
@@ -595,8 +598,6 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 			CString_Manager::GetInstance()->Add_String(pTag);
 			m_DynamicColliders.emplace(pTag, pCapsule);
 		}
-
-		// pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
 		pShape->release();

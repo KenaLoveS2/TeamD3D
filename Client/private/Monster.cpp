@@ -295,13 +295,11 @@ void CMonster::Call_RotIcon()
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CEffect_Base*  pEffectBase = nullptr;
-
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
-	pEffectBase->Set_Parent(this);
-	m_pEnemyWisp = pEffectBase;
 	
+	m_pEnemyWisp = dynamic_cast<CEnemyWisp*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(m_pEnemyWisp, E_FAIL );
+	m_pEnemyWisp->Set_Parent(this);
+		
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
