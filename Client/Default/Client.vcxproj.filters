@@ -370,6 +370,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\SubTitle">
       <UniqueIdentifier>{bfab2999-58a8-444f-88cf-376a05afa4db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\ControlRoom">
+      <UniqueIdentifier>{31f68c82-fdce-493c-b538-ce927621828d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -863,6 +866,10 @@
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DynamicLightCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1335,6 +1342,10 @@
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DynamicLightCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1400,6 +1411,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -2,6 +2,8 @@
 #include "..\public\Loader.h"
 #include "GameInstance.h"
 
+#include "ControlRoom.h"
+
 /* SkyBox */
 #include "Sky.h"
 
@@ -1909,47 +1911,66 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Gate"),
 		CGate::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_RuinKit */
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Stone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
 		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_RuinKit */
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Flower */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
 		CFlower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_RuinKit */
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Grass */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
 		CGrass::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
 		CDeadZoneObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_DeadZoneObj */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_ControlRoom */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
+		CControlRoom::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

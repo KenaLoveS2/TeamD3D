@@ -6,7 +6,6 @@ BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
-class CRenderer;
 class CFSMComponent;
 END
 
