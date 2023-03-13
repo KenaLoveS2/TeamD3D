@@ -47,7 +47,6 @@ static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravit
 	return pData;
 }
 
-
 enum ON_TRIGGER_PARAM {
 	ON_TRIGGER_PARAM_ACTOR,
 	ON_TRIGGER_PARAM_TRIGGER,
@@ -73,7 +72,7 @@ static PX_TRIGGER_DATA* Create_PxTriggerData(const _tchar* pActortag, class CGam
 
 	pData->pActortag = CUtile::Create_StringAuto(pActortag);
 	pData->pOwner = pOwner;
-	pData->iTriggerIndex;
+	pData->iTriggerIndex= iTriggerIndex;
 	pData->vPos = vPos;
 	pData->fRadius = fRadius;
 		

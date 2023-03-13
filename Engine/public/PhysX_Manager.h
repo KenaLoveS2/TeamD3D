@@ -6,14 +6,14 @@ class ENGINE_DLL CPhysX_Manager : public CBase
 {
 	DECLARE_SINGLETON(CPhysX_Manager)
 
-public:	
+public:
 	typedef struct tagPhysxActorBoxDesc
-	{	
+	{
 		ACTOR_TYPE eType;
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;		
+		_bool isGravity;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -22,6 +22,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorBoxDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -39,6 +46,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorSphereDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -58,8 +72,14 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorCapsuleDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_CAPSULE_DESC;
-		
 private:
 	PxDefaultAllocator m_PxDefaultAllocatorCallback;
 	PxDefaultErrorCallback m_PxDefaultErrorCallback;

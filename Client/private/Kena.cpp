@@ -134,6 +134,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
 
+	
+
+
 	return S_OK;
 }
 
@@ -624,6 +627,7 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaJump", pEffectBase);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

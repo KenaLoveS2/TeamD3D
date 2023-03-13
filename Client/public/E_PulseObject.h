@@ -73,9 +73,11 @@ private:
 	_float	m_fActivePlusScale = 1.3f;
 	_float4x4 m_SaveInitWorldMatrix;
 	_float	m_fDissolveTime = 0.0f;
+	_float	m_fPulseResetTimer = 0.f;
+
 
 private:
-	 PX_TRIGGER_DATA*		m_pTriggerDAta = nullptr;
+	 PX_TRIGGER_DATA*		m_pTriggerData = nullptr;
 	
 	E_PulseObject_DESC			m_ePulseDesc;
 	_bool						m_bFinish = false;

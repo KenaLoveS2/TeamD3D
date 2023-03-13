@@ -33,7 +33,7 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
-	m_pModelCom->Set_AnimIndex(2);
+	m_pModelCom->Set_AnimIndex(3);
 	return S_OK;
 }
 
@@ -59,7 +59,7 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
-	BoxDesc.vSize = _float3(2.74f, 0.15f, 2.45f);
+	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
@@ -77,7 +77,7 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
 
 	CPhysX_Manager::GetInstance()->Create_Trigger(
-		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 3.5f));
+		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
 
 	return S_OK;
 }
@@ -86,9 +86,24 @@ void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 {
 	//ImGui_PhysXValueProperty();
 	__super::Tick(fTimeDelta);
-	
+
 	if (m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
+	{
 		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);
+		m_pModelCom->Set_AnimIndex(2);
+	}
+
+	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())
+		 || (m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(1);
+	}
+	else if (false == m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 4 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(3);
+	}
+
+
 
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -235,14 +250,15 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
 	m_bPlayerColl = true;
-	m_pModelCom->Set_AnimIndex(1);
+
+	m_pModelCom->Set_AnimIndex(0);	
 	return 0;
 }
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
 	m_bPlayerColl = false;
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_AnimIndex(4);
 	return 0;
 }
 

@@ -83,14 +83,25 @@ HRESULT CE_PulseObject::Late_Initialize(void * pArg)
 	if (m_ePulseDesc.eObjType == PULSE_OBJ_RECIVE)
 		return S_OK;
 
-	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, vPos, 1.f);
-	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, vPos, 1.f);
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
 
 	return S_OK;
 }
 
 void CE_PulseObject::Tick(_float fTimeDelta)
 {
+	if (m_bFinish == true )//&& m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
+	{
+		m_fPulseResetTimer += fTimeDelta;
+		m_eEFfectDesc.bActive = false;
+	}
+
+	if (m_fPulseResetTimer >= 3.f)
+	{
+		m_bFinish = false;
+		m_fPulseResetTimer = 0.f;
+	}
 	if (m_eEFfectDesc.bActive == false)
 		return;
 	
@@ -154,18 +165,17 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 		m_eEFfectDesc.bActive = false;
 		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
 		
-		m_bFinish = true;
 		if(m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, m_ePulseDesc.vResetSize.x);
-			m_bFinish = false;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, m_ePulseDesc.vResetSize.x);
 		}
+		m_bFinish = true;
 	}
 	else
 	{
 		if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *5.f);
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, vScale.x *5.f);
 		}
 
 		m_pTransformCom->Set_Scaled(vScale);

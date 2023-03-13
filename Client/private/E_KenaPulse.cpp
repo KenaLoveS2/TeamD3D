@@ -96,6 +96,18 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
+{	
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+
+	return S_OK;
+
+}
+
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -134,6 +146,14 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 		_float3 vScale = Get_InitMatrixScaled();
 		Set_InitMatrixScaled(vScale * 1.3f);
+		
+		_float4 vPos;
+		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+
+		CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
+		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *0.5f );
+
 		if (m_fDissolveTime > 1.f)
 		{
 			m_eEFfectDesc.bActive = false;
@@ -141,7 +161,10 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			m_bDesolve = true;
 			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 			m_fDissolveTime = 0.0f;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
 		}
+	
+	
 	}
 
 	if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
