@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Monster_Status.h"
+#include "Effect_Base.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -80,17 +81,21 @@ public:
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	void							Call_RotIcon();
+	virtual HRESULT					Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 
 protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
 
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*					m_pShaderCom = nullptr;
+	CTexture*					m_pDissolveTextureCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
 	CMonster_Status*			m_pMonsterStatusCom = nullptr;
 
 	CFSMComponent*		m_pFSM = nullptr;
 	class CKena*		m_pKena = nullptr;	
+
+	CEffect_Base*		m_pEnemyWisp = nullptr;
 	_float4							m_vKenaPos;
 
 	CUI_MonsterHP*		m_pUIHPBar;
@@ -100,6 +105,11 @@ protected:
 	_bool	m_bStronglyHit = false;
 	_bool	m_bBind = false;
 	_bool	m_bSpawn = false;
+	_bool	m_bDying = false;
+	_bool	m_bDeath = false;
+
+	_float m_fDissolveTime = 1.f;
+
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
@@ -115,6 +125,7 @@ public:
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 
 	CMonster_Status* Get_MonsterStatusPtr() { return m_pMonsterStatusCom; }
+	HRESULT Bind_Dissolove(class CShader* pShader);
 };
 
 END

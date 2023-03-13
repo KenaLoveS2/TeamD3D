@@ -21,6 +21,7 @@ public:
 	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	class CBone*			Get_BonePtr(const char* pBoneName);
 	const _double&		Get_PlayTime() const;
+	const _float		Get_AnimationProgress() const;
 	const _bool&			Get_PausePlay() const { return m_bPausePlay; }
 	const _bool&			Get_Preview() const { return m_bPreview; }
 	const _uint&				Get_AnimIndex() const { return m_iCurrentAnimIndex; }

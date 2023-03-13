@@ -225,6 +225,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/01. Loading/T_UI_LoadSaveIcon_Alpha.png")))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Dissolve"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")))))
+		return E_FAIL;
+
 	Safe_AddRef(m_pRenderer);
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", CStateMachine::Create(m_pDevice, m_pContext)), E_FAIL);

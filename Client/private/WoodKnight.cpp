@@ -443,6 +443,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BLOCK_INTO")
 		.OnStart([this]()
@@ -454,6 +459,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BLOCK_INTO);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("BLOCK_LOOP")
@@ -471,6 +481,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return TimeTrigger(m_fBlocktoAttackTime, 5.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BLOCK_EXIT")
 		.OnStart([this]()
@@ -482,6 +497,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BLOCK_EXIT);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("BLOCK_AFTER")
@@ -518,6 +538,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_bBlockAfterBack;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BLOCK_COUNTERATTACK")
 		.OnStart([this]()
@@ -530,6 +555,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(BLOCK_COUNTERATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BLOCKATTACK_180")
 		.OnStart([this]()
@@ -541,6 +571,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BLOCKATTACK_180);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("WALK")
@@ -598,6 +633,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_bRealAttack && m_bUppercutAttack;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
@@ -610,6 +650,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(INTOCHARGE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("INTOCHARGE_BACKUP")
 		.OnStart([this]()
@@ -621,6 +666,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(INTOCHARGE_BACKUP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("CHARGEATTACK")
@@ -644,6 +694,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("RANGEDATTACK")
 		.OnStart([this]()
@@ -665,6 +720,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(RANGEDATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("COMBOATTACK_LUNGE")
@@ -688,6 +748,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(COMBOATTACK_LUNGE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("COMBOATTACK_OVERHEAD")
 		.OnStart([this]()
@@ -709,6 +774,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(COMBOATTACK_OVERHEAD);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("DOUBLEATTACK")
@@ -732,6 +802,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(DOUBLEATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("UPPERCUTATTACK")
 		.OnStart([this]()
@@ -754,6 +829,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(UPPERCUTATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BIND")
 		.OnStart([this]()
@@ -774,6 +854,11 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return AnimFinishChecker(BIND);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("HITDEFLECT")
@@ -786,6 +871,11 @@ HRESULT CWoodKnight::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(HITDEFLECT);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("TAKEDAMAGE")
@@ -824,12 +914,36 @@ HRESULT CWoodKnight::SetUp_State()
 			AnimFinishChecker(STAGGER_B) || 
 			AnimFinishChecker(STAGGER_R);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
+
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDeath = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+
 	})
 		.Build();
 

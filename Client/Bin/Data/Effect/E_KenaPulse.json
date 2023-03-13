@@ -8,27 +8,26 @@
                 {
                     "Child Count": 0,
                     "Desc": [
-                        {  
-                            "PassCnt": 1,
+                        {
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": false,
-                            "Blend Type": 1,
+                            "Blend Type": 0,
                             "Color": [
-                                0.2151602804660797,
-                                0.44557538628578186,
-                                0.49794238805770874,
+                                0.0,
+                                0.8817203044891357,
+                                1.0,
                                 1.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
-                                54.0,
-                                99.0,
+                                77.0,
                                 105.0,
+                                63.0,
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.5,
+                            "DurationTime": 0.0,
                             "Effect Type": 2,
                             "FreeMove": false,
                             "Have Trail": false,
@@ -51,8 +50,9 @@
                             "MoveDir Type": 0,
                             "MoveDurationTime": 0.0,
                             "MovingPosition": false,
-                            "NormalTexture Index": 10.0,
+                            "NormalTexture Index": 0.0,
                             "Particle Type": 0,
+                            "PassCnt": 1,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
@@ -76,7 +76,7 @@
                             "Trigger": false,
                             "Use Child": false,
                             "Use Mask": false,
-                            "Use Normal": true,
+                            "Use Normal": false,
                             "Width Frame": 0.0,
                             "WidthCnt": 0
                         }

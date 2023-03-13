@@ -256,7 +256,12 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return TimeTrigger(m_fIdletoAttackTime, 5.f);
 		})
-	
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
+
 			.AddState("WALK")
 			.OnStart([this]()
 		{
@@ -292,6 +297,11 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return m_bRealAttack && m_bExplodeAttack; // 어디든 상관없을듯 
 		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
 
 			.AddState("CHARGEATTACK")
 			.OnStart([this]()
@@ -304,6 +314,11 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(CHARGEATTACK);
 		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
 
 			.AddState("SLAMATTACK")
 			.OnStart([this]()
@@ -315,6 +330,11 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return AnimFinishChecker(CHARGESLAM);
+		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
 		})
 
 			.AddState("EXPLODEATTACK")
@@ -333,6 +353,11 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return m_bHit;
 		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
 
 			.AddState("TAKEDAMAGE")
 			.OnStart([this]()
@@ -344,6 +369,11 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return AnimFinishChecker(TAKEDAMAGE);
+		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
 		})
 
 			.AddState("WISPIN")
@@ -357,7 +387,12 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(WISPIN);
 		})
-	
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
+
 			.AddState("WISPOUT")
 			.OnStart([this]()
 		{
@@ -368,6 +403,37 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return AnimFinishChecker(WISPOUT);
+		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
+
+
+			.AddState("DYING")
+			.OnStart([this]()
+		{
+			m_pModelCom->Set_AnimIndex(ANIMATION_END);
+			m_bDying = true;
+		})
+			.AddTransition("DYING to DEATH", "DEATH")
+			.Predicator([this]()
+		{
+			return m_pModelCom->Get_AnimationFinish();
+		})
+			.AddState("DEATH")
+			.OnStart([this]()
+		{
+			m_bDeath = true;
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+
+		})
+			.OnExit([this]()
+		{
+
 		})
 			.Build();
 

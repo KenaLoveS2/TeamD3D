@@ -272,6 +272,11 @@ HRESULT CSapling::SetUp_State()
 	{
 		return m_bWeaklyHit || m_bStronglyHit;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("TAKEDAMAGE")
 		.OnStart([this]()
@@ -289,6 +294,11 @@ HRESULT CSapling::SetUp_State()
 	{
 		return AnimFinishChecker(TAKEDAMAGE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("ALERTED")
 		.OnStart([this]()
@@ -300,6 +310,11 @@ HRESULT CSapling::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ALERTED);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("BOMBCHARGEUP")
@@ -314,6 +329,11 @@ HRESULT CSapling::SetUp_State()
 	{
 		return AnimFinishChecker(BOMBCHARGEUP);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("CHARGE")
 		.Tick([this](_float fTimeDelta)
@@ -326,6 +346,11 @@ HRESULT CSapling::SetUp_State()
 	{
 		return DistanceTrigger(5.f);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
@@ -333,12 +358,41 @@ HRESULT CSapling::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
 	})	// 원래는 이거하고 사라져야함 ㅇㅇ 근데 일단 IDLE 상태로 돌아가게 하는것임
-		.AddTransition("CHARGEATTACK to IDLE", "IDLE")
+		.AddTransition("CHARGEATTACK to IDLE", "DYING")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(WISPOUT);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_bDeath = true;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+
+	})
 		.Build();
 
 	return S_OK;
