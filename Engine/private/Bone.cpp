@@ -116,6 +116,17 @@ void CBone::Compute_CombindTransformationMatrix()
 
 }
 
+void CBone::Compute_CombindTransformationMatrix_Child()
+{
+	if (m_pParent == nullptr)
+		return;
+
+	XMStoreFloat4x4(&m_CombindTransformMatrix, XMLoadFloat4x4(&m_TransformMatrix) * XMLoadFloat4x4(&m_pParent->m_CombindTransformMatrix));
+
+	for (auto pChildBone : m_vecChild)
+		pChildBone->Compute_CombindTransformationMatrix_Child();
+}
+
 CBone * CBone::Create(HANDLE hFile)
 {
 	CBone* pInstance = new CBone();
@@ -164,6 +175,8 @@ void CBone::Set_BoneLocked(LOCKTO eLockTo)
 		m_bLock = true;
 	else if (eLockTo == CBone::LOCKTO_ROTATE)
 		m_bRotateLock = true;
+	else if (eLockTo == CBone::LOCKTO_POSITION)
+		m_bPositionLock = true;
 	else if (eLockTo == CBone::UNLOCKTO_CHILD)
 	{
 		m_bLock = false;

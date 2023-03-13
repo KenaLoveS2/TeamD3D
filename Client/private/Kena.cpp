@@ -11,7 +11,12 @@
 #include "Terrain.h"
 #include "Rope_RotRock.h"
 #include "Rot.h"
+
+#include "Kena_Status.h"
+#include "Monster.h"
+
 #include "UI_RotIcon.h"
+
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -124,9 +129,14 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
 	
+	if (m_bAim && m_bJump)
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
+	else
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+
 	__super::Tick(fTimeDelta);
 
-	// Test_Raycast();
+	Test_Raycast();
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -138,8 +148,10 @@ void CKena::Tick(_float fTimeDelta)
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
 
+	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+
 	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta);
+		m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
@@ -274,9 +286,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 
@@ -348,7 +358,7 @@ HRESULT CKena::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 
 	return S_OK;
 }
@@ -630,6 +640,9 @@ HRESULT CKena::SetUp_Components()
 	m_pModelCom->SetUp_Material(6, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
+	
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);	
+	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
 
 	return S_OK;
 }
@@ -659,15 +672,12 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -1688,6 +1698,7 @@ void CKena::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pKenaStatus);
 }
 
 _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -1725,7 +1736,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			}
 
 			m_bCommonHit = true;
-			//m_bHeavyHit = true;
+			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 		}
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)
@@ -1753,8 +1764,12 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	
 	return 0;
 }
+
 void CKena::Test_Raycast()
 {
+	if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
+		m_pKenaStatus->Save();
+
 	if (m_pTerrain == nullptr)
 		return;
 

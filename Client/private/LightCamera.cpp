@@ -30,13 +30,13 @@ HRESULT CLightCamera::Initialize(void * pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
 	else 
 	{
-		CameraDesc.vEye = _float4(0.f, 9.f, 0.f, 1.f);
+		CameraDesc.vEye = _float4(-30.f, 120.f, -50.f, 1.f);
 		CameraDesc.vAt = _float4(60.f, 0.f, 60.f, 1.f);
 		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 		CameraDesc.fFovy = XMConvertToRadians(90.0f);
 		CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
 		CameraDesc.fNear = 0.1f;
-		CameraDesc.fFar = 300.f;
+		CameraDesc.fFar = 1000.f;
 		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
@@ -51,7 +51,6 @@ void CLightCamera::Tick(_float TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
-	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTPROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
 	RELEASE_INSTANCE(CGameInstance)
 }
 
@@ -63,6 +62,15 @@ void CLightCamera::Late_Tick(_float TimeDelta)
 HRESULT CLightCamera::Render()
 {
 	return S_OK;
+}
+
+void CLightCamera::Imgui_RenderProperty()
+{
+	float fAt[3] = { m_CameraDesc.vAt.x,m_CameraDesc.vAt.y, m_CameraDesc.vAt.z};
+	ImGui::DragFloat3("At", fAt, 0.1f, -1000.f, 1000.f);
+	m_CameraDesc.vAt.x = fAt[0];
+	m_CameraDesc.vAt.y = fAt[1];
+	m_CameraDesc.vAt.z = fAt[2];
 }
 
 CLightCamera * CLightCamera::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

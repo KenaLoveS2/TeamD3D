@@ -160,8 +160,6 @@ PS_OUT_MODEL_VIEWER PS_MAIN_MODEL_VIEWER(PS_IN In)
 	return Out;
 }
 
-
-
 struct VS_IN_SHADOW
 {
 	float3	vPosition : POSITION;

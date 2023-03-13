@@ -418,12 +418,14 @@ private:
 	HRESULT					SetUp_State_Idle();
 	HRESULT					SetUp_State_Run();
 	HRESULT					SetUp_State_Aim();
+	HRESULT					SetUp_State_Aim_Air();
 	HRESULT					SetUp_State_Air_Attack();
 	HRESULT					SetUp_State_Attack1();
 	HRESULT					SetUp_State_Attack2();
 	HRESULT					SetUp_State_Attack3();
 	HRESULT					SetUp_State_Attack4();
 	HRESULT					SetUp_State_Bow();
+	HRESULT					SetUp_State_Bow_Air();
 	HRESULT					SetUp_State_Combat();
 	HRESULT					SetUp_State_Damaged_Common();
 	HRESULT					SetUp_State_Damaged_Heavy();
@@ -457,6 +459,9 @@ private:
 	void						Start_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Start_Aim_Run_Left(_float fTimeDelta);
 	void						Start_Aim_Run_Right(_float fTimeDelta);
+	/* AIM AIR */
+	void						Start_Aim_Air_Into(_float fTimeDelta);
+	void						Start_Aim_Air_Loop(_float fTimeDelta);
 	/* AIR ATTACK */
 	void						Start_Air_Attack_1(_float fTimeDelta);
 	void						Start_Air_Attack_2(_float fTimeDelta);
@@ -484,7 +489,23 @@ private:
 	void						Start_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						Start_Bow_Charge(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Charge_Full(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Charge_Full_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop_Run_Forward(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop_Run_Forward_Left(_float fTimeDelta);
@@ -495,8 +516,38 @@ private:
 	void						Start_Bow_Charge_Loop_Run_Left(_float fTimeDelta);
 	void						Start_Bow_Charge_Loop_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Release(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Release_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Recharge(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Recharge_Run_Right(_float fTimeDelta);
 	void						Start_Bow_Return(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Forward(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Backward(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Left(_float fTimeDelta);
+	void						Start_Bow_Return_Run_Right(_float fTimeDelta);
+	/* BOW AIR */
+	void						Start_Bow_Air_Charge(_float fTimeDelta);
+	void						Start_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						Start_Bow_Air_Recharge(_float fTimeDelta);
+	void						Start_Bow_Air_Release(_float fTimeDelta);
+	void						Start_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						Start_Idle_Into_Lock_On(_float fTimeDelta);
 	void						Start_Lock_On_Idle(_float fTimeDelta);
@@ -603,6 +654,9 @@ private:
 	void						Tick_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						Tick_Aim_Run_Left(_float fTimeDelta);
 	void						Tick_Aim_Run_Right(_float fTimeDelta);
+	/* AIM AIR */
+	void						Tick_Aim_Air_Into(_float fTimeDelta);
+	void						Tick_Aim_Air_Loop(_float fTimeDelta);
 	/* AIR ATTACK */
 	void						Tick_Air_Attack_1(_float fTimeDelta);
 	void						Tick_Air_Attack_2(_float fTimeDelta);
@@ -630,12 +684,23 @@ private:
 	void						Tick_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						Tick_Bow_Charge(_float fTimeDelta);
+	void						Tick_Bow_Charge_Run(_float fTimeDelta);
 	void						Tick_Bow_Charge_Full(_float fTimeDelta);
+	void						Tick_Bow_Charge_Full_Run(_float fTimeDelta);
 	void						Tick_Bow_Charge_Loop(_float fTimeDelta);
 	void						Tick_Bow_Charge_Loop_Run(_float fTimeDelta);
 	void						Tick_Bow_Release(_float fTimeDelta);
+	void						Tick_Bow_Release_Run(_float fTimeDelta);
 	void						Tick_Bow_Recharge(_float fTimeDelta);
+	void						Tick_Bow_Recharge_Run(_float fTimeDelta);
 	void						Tick_Bow_Return(_float fTimeDelta);
+	void						Tick_Bow_Return_Run(_float fTimeDelta);
+	/* BOW AIR */
+	void						Tick_Bow_Air_Charge(_float fTimeDelta);
+	void						Tick_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						Tick_Bow_Air_Recharge(_float fTimeDelta);
+	void						Tick_Bow_Air_Release(_float fTimeDelta);
+	void						Tick_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						Tick_Idle_Into_Lock_On(_float fTimeDelta);
 	void						Tick_Lock_On_Idle(_float fTimeDelta);
@@ -735,6 +800,9 @@ private:
 	void						End_Aim_Run_Backward_Right(_float fTimeDelta);
 	void						End_Aim_Run_Left(_float fTimeDelta);
 	void						End_Aim_Run_Right(_float fTimeDelta);
+	/* AIM AIR */
+	void						End_Aim_Air_Into(_float fTimeDelta);
+	void						End_Aim_Air_Loop(_float fTimeDelta);
 	/* AIR ATTACK */
 	void						End_Air_Attack_1(_float fTimeDelta);
 	void						End_Air_Attack_2(_float fTimeDelta);
@@ -762,12 +830,23 @@ private:
 	void						End_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
 	void						End_Bow_Charge(_float fTimeDelta);
+	void						End_Bow_Charge_Run(_float fTimeDelta);
 	void						End_Bow_Charge_Full(_float fTimeDelta);
+	void						End_Bow_Charge_Full_Run(_float fTimeDelta);
 	void						End_Bow_Charge_Loop(_float fTimeDelta);
 	void						End_Bow_Charge_Loop_Run(_float fTimeDelta);
 	void						End_Bow_Release(_float fTimeDelta);
+	void						End_Bow_Release_Run(_float fTimeDelta);
 	void						End_Bow_Recharge(_float fTimeDelta);
+	void						End_Bow_Recharge_Run(_float fTimeDelta);
 	void						End_Bow_Return(_float fTimeDelta);
+	void						End_Bow_Return_Run(_float fTimeDelta);
+	/* BOW AIR */
+	void						End_Bow_Air_Charge(_float fTimeDelta);
+	void						End_Bow_Air_Charge_Loop(_float fTimeDelta);
+	void						End_Bow_Air_Recharge(_float fTimeDelta);
+	void						End_Bow_Air_Release(_float fTimeDelta);
+	void						End_Bow_Air_Return(_float fTimeDelta);
 	/* COMBAT */
 	void						End_Idle_Into_Lock_On(_float fTimeDelta);
 	void						End_Lock_On_Idle(_float fTimeDelta);

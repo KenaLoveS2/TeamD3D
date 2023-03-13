@@ -87,6 +87,9 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	m_pTransformCom->Speed_Boost(pGameInstance->Key_Pressing(DIK_LSHIFT), 5.f);
 	m_pTransformCom->Speed_Down(pGameInstance->Key_Pressing(DIK_LCONTROL), 5.f);
 
+	if (!pGameInstance->Key_Pressing(DIK_LSHIFT) && !pGameInstance->Key_Pressing(DIK_LCONTROL))
+		m_pTransformCom->Set_Speed(10.f);
+
 	if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
 	{
 		long	MouseMove = 0;

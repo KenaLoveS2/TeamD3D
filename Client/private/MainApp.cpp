@@ -9,6 +9,8 @@
 #include "LoadingIcon.h"
 
 #include "UI_ClientManager.h"
+
+#include "Kena_Status.h"
 #include "Monster_Status.h"
 
 CMainApp::CMainApp()
@@ -30,7 +32,7 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
 	GraphicDesc.eWindowMode = GRAPHIC_DESC::WINMODE_WIN;
-	GraphicDesc.pSoundFileTag = "";
+	GraphicDesc.pSoundFileTag = "../Bin/Resources/Sound/";
 	GraphicDesc.iNumManualSounds = 10;
 	GraphicDesc.iNumCopyPrototypes = 0;
 
@@ -226,6 +228,7 @@ HRESULT CMainApp::Ready_Prototype_Component()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", CStateMachine::Create(m_pDevice, m_pContext)), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", CKena_Status::Create(m_pDevice, m_pContext)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", CMonster_Status::Create(m_pDevice, m_pContext)), E_FAIL);
 	
 
