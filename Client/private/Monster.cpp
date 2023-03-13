@@ -84,7 +84,7 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
+/* #ifdef _DEBUG
 	if (nullptr != m_pUIHPBar)
 		m_pUIHPBar->Imgui_RenderProperty();
 
@@ -94,7 +94,7 @@ void CMonster::Tick(_float fTimeDelta)
 		fGuage -= 0.1f;
 		m_pUIHPBar->Set_Guage(fGuage);
 	}
-#endif
+#endif */
 	if (m_bDying)
 		m_fDissolveTime += fTimeDelta * 0.6f;
 	else
@@ -357,6 +357,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 		if (iColliderIndex == COL_PLAYER)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 		}
 	}
 
