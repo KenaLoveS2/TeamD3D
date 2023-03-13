@@ -445,6 +445,36 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 
 #pragma endregion EFFECT
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
+		CEnemyWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
+		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	/* ~EnemyWisp Effects */
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
