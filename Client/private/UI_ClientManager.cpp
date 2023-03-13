@@ -63,6 +63,7 @@
 #include "UI_NodeRotCnt.h"
 #include "UI_NodeRotFrontGuage.h"
 #include "UI_NodeRotArrow.h"
+#include "UI_NodeLvUp.h"
 
 /* World UI */
 #include "UI_MonsterHP.h"
@@ -429,7 +430,15 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_MapTitle");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_IconArrowUp"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/RotLevel/T_ArrowRight.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_IconArrowUp");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LvUpCard"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/RotLevel/T_TitleCard_RotLevel.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_LvUpCard");
 
 
 
@@ -478,14 +487,18 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaTexture");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTestColor");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SpriteColor");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MonsterBar");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "NoDiffuseColorGuage");
 
 
 
-																					 /* Event List */
+	/* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Transform");
+	//pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Transform");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Fade");
+
 
 
 
@@ -727,11 +740,13 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotFrontGuage");
 
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotArrow"), CUI_NodeRotArrow::Create(pDevice, pContext))))
-	//	return E_FAIL;
-	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotArrow");
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotArrow"), CUI_NodeRotArrow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotArrow");
 
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLvUpCard"), CUI_NodeLvUp::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
 
 
 

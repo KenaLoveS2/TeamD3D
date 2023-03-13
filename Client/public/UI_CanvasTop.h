@@ -8,7 +8,7 @@ class CUI_CanvasTop final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_END };
+	enum UI_ORDER { UI_MAPTITLE, UI_ROTLVUP, UI_ROTCNT, UI_ROTGUAGE, UI_ROTARROW, UI_END };
 private:
 	CUI_CanvasTop(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasTop(const CUI_CanvasTop& rhs);

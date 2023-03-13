@@ -2,6 +2,7 @@
 #include "..\public\UI_CanvasTop.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "UI_NodeLvUp.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -60,6 +61,11 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	{
+		static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(1);
+	}
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -103,13 +109,66 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	{ /* LetterBox */
+	{ /* MapTitle */
 		string strTag = "Node_MapTitle";
 		CUI* pUI = nullptr;
 		CUI::UIDESC tDesc;
 		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
 		tDesc.fileName = cloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_MapTitle", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* RotLvUpCard */
+		string strTag = "Node_RotLvUpCard";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotLvUpCard", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+
+	{ /* NodeRotMax */
+		string strTag = "Node_RotMaxCnt";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotMaxCnt", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* RotGuage */
+		string strTag = "Node_RotFrontGuage";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotFrontGuage", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* RotArrow */
+		string strTag = "Node_RotArrow";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_RotArrow", cloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strTag);

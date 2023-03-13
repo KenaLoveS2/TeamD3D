@@ -370,6 +370,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\SubTitle">
       <UniqueIdentifier>{bfab2999-58a8-444f-88cf-376a05afa4db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Fade">
+      <UniqueIdentifier>{03c6dc38-a37a-488e-8e9f-011e0ca9c2d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -875,6 +878,9 @@
     <ClInclude Include="..\public\UI_NodeRotArrow.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Fade.h">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1358,6 +1364,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeRotArrow.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Fade.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

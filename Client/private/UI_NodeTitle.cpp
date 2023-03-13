@@ -137,12 +137,17 @@ HRESULT CUI_NodeTitle::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 90.f, g_iWinSizeY*0.5f - vPos.y + 10.f};
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
-		vNewPos /* position */,
-		0.f, _float2(1.5f, 1.5f)/* size */,
-		XMVectorSet(1.f ,1.f, 1.f, m_fAlpha)/* color */);
-	RELEASE_INSTANCE(CGameInstance);
+
+	if (m_szTitle != nullptr)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
+			vNewPos /* position */,
+			0.f, _float2(1.5f, 1.5f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, m_fAlpha)/* color */);
+		RELEASE_INSTANCE(CGameInstance);
+	}
+
 
 	return S_OK;
 }

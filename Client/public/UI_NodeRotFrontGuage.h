@@ -14,7 +14,8 @@ private:
 	virtual ~CUI_NodeRotFrontGuage() = default;
 
 public: /* Events */
-	void	Set_Guage(_float fGuage);
+	void		Set_Guage(_float fGuage);
+	_float		Get_CurrentGuage();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -27,6 +28,9 @@ public:
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
+
+private:
+	_tchar*				m_szTitle;
 
 public:
 	static	CUI_NodeRotFrontGuage*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

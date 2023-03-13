@@ -5,18 +5,24 @@
 
 CUI_NodeRotFrontGuage::CUI_NodeRotFrontGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
+	, m_szTitle(nullptr)
 {
 }
 
 CUI_NodeRotFrontGuage::CUI_NodeRotFrontGuage(const CUI_NodeRotFrontGuage & rhs)
 	: CUI_Node(rhs)
+	, m_szTitle(nullptr)
 {
 }
 
 void CUI_NodeRotFrontGuage::Set_Guage(_float fGuage)
 {
-	fGuage = 1.f;
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
+}
+
+_float CUI_NodeRotFrontGuage::Get_CurrentGuage()
+{
+	return static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Get_GuageNow();
 }
 
 HRESULT CUI_NodeRotFrontGuage::Initialize_Prototype()
@@ -43,6 +49,7 @@ HRESULT CUI_NodeRotFrontGuage::Initialize(void * pArg)
 
 
 	m_bActive = true;
+	m_szTitle = CUtile::Create_StringAuto(L"부식령 발견!");
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
@@ -61,6 +68,13 @@ void CUI_NodeRotFrontGuage::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	{
+		static _float fGuage = 0.f;
+		fGuage += 0.1f;
+		Set_Guage(fGuage);
+	}
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -74,8 +88,36 @@ void CUI_NodeRotFrontGuage::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_NodeRotFrontGuage::Render()
 {
+	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
+		return E_FAIL;
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	//if (FAILED(SetUp_ShaderResources()))
+	//{
+	//	MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
+	//	return E_FAIL;
+	//}
+
+	//m_pShaderCom->Begin(m_iRenderPass);
+	//m_pVIBufferCom->Render();
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 80.f, g_iWinSizeY*0.5f - vPos.y -80.f };
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (m_szTitle != nullptr)
+	{
+		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
+			vNewPos /* position */,
+			0.f, _float2(1.f, 1.f)/* size */,
+			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

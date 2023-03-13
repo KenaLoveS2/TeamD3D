@@ -297,7 +297,9 @@ PS_OUT PS_MAIN_BARGUAGE(PS_IN In)
 
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor = vDiffuse * vColor;
+	//Out.vColor = vDiffuse * vColor;
+	Out.vColor.rgb = vDiffuse.rgb * vColor.rgb;
+	Out.vColor.a = vDiffuse.a;
 
 	return Out;
 
@@ -323,6 +325,35 @@ PS_OUT PS_MAIN_MONSTERBAR(PS_IN In)
 		Out.vColor.rgb *= vColor.rgb;
 		Out.vColor.rgb += g_vMinColor.rgb;
 	}
+
+	return Out;
+
+}
+
+PS_OUT PS_MAIN_NoDiffuseColorGuage(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+
+	float4 vColor = g_vColor;
+	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	/* Discard pixel depends on original UV.x */
+	if (In.vTexUV.x > g_fAmount)
+	{
+		vColor = vDiffuse;
+	}
+	else
+	{
+		vColor.r = g_vColor.r * (In.vTexUV.x + g_vMinColor.r); // 0.1f
+		vColor.g = g_vColor.g * (In.vTexUV.x + g_vMinColor.g); // 0.3f
+		vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); // 0.5f
+		vColor.a = g_vColor.a;
+	}
+
+	//Out.vColor = vDiffuse * vColor;
+	Out.vColor.rgb = vColor.rgb;
+	Out.vColor.a = vDiffuse.a;
 
 	return Out;
 
@@ -797,5 +828,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_MONSTERBAR();
+	}
+
+	pass NoDiffuseColorGuage //21
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_NoDiffuseColorGuage();
 	}
 }

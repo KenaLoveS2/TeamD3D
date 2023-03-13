@@ -56,7 +56,6 @@ void CUI_NodeRotCnt::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-
 	__super::Tick(fTimeDelta);
 }
 
@@ -65,7 +64,7 @@ void CUI_NodeRotCnt::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	__super::Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CUI_NodeRotCnt::Render()
@@ -76,18 +75,18 @@ HRESULT CUI_NodeRotCnt::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
-		return E_FAIL;
-	}
+	//if (FAILED(SetUp_ShaderResources()))
+	//{
+	//	MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
+	//	return E_FAIL;
+	//}
 
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
+	//m_pShaderCom->Begin(m_iRenderPass);
+	//m_pVIBufferCom->Render();
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 80.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 410.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -95,7 +94,7 @@ HRESULT CUI_NodeRotCnt::Render()
 	{
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szInfo,
 				vNewPos /* position */,
-				0.f, _float2(0.8f, 0.8f)/* size */,
+				0.f, _float2(1.f, 1.f)/* size */,
 				XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
 
@@ -150,6 +149,12 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
+	_float fAlpha = 1.f;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
+		return E_FAIL;
+	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
