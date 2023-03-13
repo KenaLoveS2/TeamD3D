@@ -3,6 +3,7 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_ProjMatrixInv, g_ViewMatrixInv;
 matrix			g_LightViewMatrix, g_LightProjMatrix;
+matrix			g_DynamicLightViewMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
@@ -374,6 +375,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	if (Out.vColor.a == 0.0f)
 		discard;
 
+
+	/* For. Shadow */
+
 	float		fViewZ = vDepthDesc.y * g_fFar;
 
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
@@ -391,13 +395,21 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	// 월드 상
 	vPosition = mul(vPosition, g_ViewMatrixInv);
+
+	vector vDynamicPos = mul(vPosition, g_DynamicLightViewMatrix);
+
 	vPosition = mul(vPosition, g_LightViewMatrix);
 
 	vector	vUVPos = mul(vPosition, g_LightProjMatrix);
-	float2	vNewUV;
 
+	vector  vDynamicUVPos = mul(vDynamicPos, g_LightProjMatrix);
+
+	float2	vNewUV, vDynamicUV;
 	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
 	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
+
+	vDynamicUV.x = (vDynamicUVPos.x / vDynamicUVPos.w) * 0.5f + 0.5f;
+	vDynamicUV.y = (vDynamicUVPos.y / vDynamicUVPos.w) * -0.5f + 0.5f;
 
 	float2 TexcelSize = float2(1.0f /g_fTexcelSizeX, 1.0f / g_fTexcelSizeY);
 	float fShadowRate = 0.f;
@@ -407,23 +419,12 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 		for (int x = -1; x <= 1; ++x)
 		{
 			float2 offset = float2(x, y) * TexcelSize;
-			vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vNewUV + offset);
+			vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vDynamicUV + offset);
 			vector  vStaticShadowDesc = g_StaticShadowTexture.Sample(LinearSampler, vNewUV + offset);
 			if (vPosition.z - 0.1f > (vShadowDesc.r * vStaticShadowDesc.r) * g_fFar)
 				fShadowRate += 1.f;
 		}
 	}
-
-	//for (int y = -1; y <= 1; ++y)
-	//{
-	//	for (int x = -1; x <= 1; ++x)
-	//	{
-	//		float2 offset = float2(x, y) * TexcelSize;
-	//		vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vNewUV + offset);
-	//		if (vPosition.z - 0.1f > vShadowDesc.r * g_fFar)
-	//			fShadowRate += 1.f;
-	//	}
-	//}
 
 	fShadowRate /= 9.f;
 	fShadowRate *= 0.3f;

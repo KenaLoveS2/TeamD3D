@@ -27,6 +27,7 @@ protected:
 		MASK,
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
+		SHADOW,
 		PASS_END
 	};
 

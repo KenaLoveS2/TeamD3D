@@ -5,6 +5,7 @@
 #include "Level_Loading.h"
 #include "Camera_Dynamic.h"
 #include "LightCamera.h"
+#include "DynamicLightCamera.h"
 #include "BackGround.h"
 #include "LoadingIcon.h"
 
@@ -251,6 +252,11 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 	/* For.Prototype_GameObject_LightCamera */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LightCamera"),
 		CLightCamera::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_DynamicLightCamera */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DynamicLightCamera"),
+		CDynamicLightCamera::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_BackGround */
