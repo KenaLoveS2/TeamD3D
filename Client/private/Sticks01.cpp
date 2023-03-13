@@ -142,9 +142,6 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
-
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -154,6 +151,13 @@ void CSticks01::Tick(_float fTimeDelta)
 void CSticks01::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
+
+	static _bool bSpawn = false;
+	if (DistanceTrigger(8.f))
+		bSpawn = true;
+
+	if (bSpawn && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
+		m_bSpawn = true;
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -207,7 +211,7 @@ void CSticks01::Imgui_RenderProperty()
 	if (ImGui::Button("SPAWN"))
 		bSpawn = true;
 
-	if( bSpawn ==true && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
+	if(bSpawn ==true && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)
 	{
 		m_bSpawn = true;
 	}

@@ -60,8 +60,8 @@ void CE_EnemyWispGround::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pParent != nullptr)
-		m_pTransformCom->Set_Position(m_pParent->Get_WorldMatrix().r[3]);
+	//if (m_pParent != nullptr)
+	//	m_pTransformCom->Set_Position(m_pParent->Get_WorldMatrix().r[3]);
 }
 
 HRESULT CE_EnemyWispGround::Render()

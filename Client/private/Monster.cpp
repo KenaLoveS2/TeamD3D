@@ -107,6 +107,9 @@ void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (m_pEnemyWisp)
+		m_pEnemyWisp->Late_Tick(fTimeDelta);
+
 	/* calculate camera */
 	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
 	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);

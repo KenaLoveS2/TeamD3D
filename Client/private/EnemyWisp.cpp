@@ -57,17 +57,19 @@ HRESULT CEnemyWisp::Initialize(void * pArg)
 
 void CEnemyWisp::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
 
-	if (m_pModelCom->Get_AnimIndex() == 3 &&
-		m_pModelCom->Get_AnimationFinish() == true)
-		m_eEFfectDesc.bActive = false;
-	else
-		m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CEnemyWisp::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	/* Trail */ 
@@ -78,7 +80,6 @@ void CEnemyWisp::Late_Tick(_float fTimeDelta)
 		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 
 		m_vecChild[CHILD_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-		m_vecChild[CHILD_TRAIL]->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -107,9 +108,23 @@ HRESULT CEnemyWisp::Render()
 
 _bool CEnemyWisp::IsActiveState()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return false;
+
 	m_pModelCom->Set_AnimIndex(3);
-	if (m_pModelCom->Get_AnimationProgress() > 0.8f)
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_pTransformCom->Set_Position(vPos);
+
+	if (m_pModelCom->Get_AnimIndex() == 3 && 
+		m_pModelCom->Get_AnimationProgress() > 0.8f)
+	{
+		m_eEFfectDesc.bActive = false;
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+
 		return true;
+	}
 
 	return false;
 }
@@ -226,7 +241,6 @@ void CEnemyWisp::TurnOnBack(_bool bIsInit, _float fTimeDelta)
 	if(m_pParent != nullptr)
 	{
 		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.y = 0.0f;
 		m_vecChild[CHILD_BACK]->Set_Position(vPos);
 	}
 }
@@ -243,7 +257,6 @@ void CEnemyWisp::TurnOnGround(_bool bIsInit, _float fTimeDelta)
 	if (m_pParent != nullptr)
 	{
 		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.y = 0.0f;
 		m_vecChild[CHILD_GROUND]->Set_Position(vPos);
 	}
 }
@@ -260,7 +273,6 @@ void CEnemyWisp::TurnOnParticle(_bool bIsInit, _float fTimeDelta)
 	if (m_pParent != nullptr)
 	{
 		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.y = 0.0f;
 		m_vecChild[CHILD_PARTICLE]->Set_Position(vPos);
 	}
 }
