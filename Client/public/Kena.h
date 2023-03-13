@@ -32,6 +32,8 @@ public:
 
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
+	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
+
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
@@ -59,11 +61,14 @@ private:
 	CStateMachine*			m_pStateMachine = nullptr;
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena_State*		m_pKenaState = nullptr;
+	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
 	class CTerrain* m_pTerrain = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 	class CRot* m_pFirstRot = nullptr;
+
+	
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;
@@ -133,7 +138,7 @@ public:
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
-
+	class CKena_Status*	Get_KenaStatusPtr() { return m_pKenaStatus; }
 };
 
 END

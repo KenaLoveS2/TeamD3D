@@ -11,7 +11,12 @@
 #include "Terrain.h"
 #include "Rope_RotRock.h"
 #include "Rot.h"
+
+#include "Kena_Status.h"
+#include "Monster.h"
+
 #include "UI_RotIcon.h"
+
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -124,7 +129,6 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
 	
-
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -132,7 +136,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	// Test_Raycast();
+	Test_Raycast();
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -636,6 +640,9 @@ HRESULT CKena::SetUp_Components()
 	m_pModelCom->SetUp_Material(6, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
+	
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);	
+	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
 
 	return S_OK;
 }
@@ -1691,6 +1698,7 @@ void CKena::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pKenaStatus);
 }
 
 _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -1728,7 +1736,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			}
 
 			m_bCommonHit = true;
-			//m_bHeavyHit = true;
+			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 		}
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)
@@ -1756,8 +1764,12 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	
 	return 0;
 }
+
 void CKena::Test_Raycast()
 {
+	if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
+		m_pKenaStatus->Save();
+
 	if (m_pTerrain == nullptr)
 		return;
 

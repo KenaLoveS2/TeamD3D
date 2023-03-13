@@ -586,7 +586,6 @@ HRESULT CRotEater::SetUp_Components()
 {
 	__super::SetUp_Components();
 
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_RotEater", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/RotEater/rot_eater_body_uv_AO_R_M.png")), E_FAIL);
@@ -596,6 +595,9 @@ HRESULT CRotEater::SetUp_Components()
 
 	m_pModelCom->Set_RootBone("Rot_Eater_RIG");
 	
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_RotEater.json");
+
 	return S_OK;
 }
 
