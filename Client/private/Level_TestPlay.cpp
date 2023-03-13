@@ -185,6 +185,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
+	return S_OK; // 임시 조치
+
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
@@ -217,7 +219,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 	CameraDesc.fFovy = XMConvertToRadians(90.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
+	CameraDesc.fNear = 0.2f;	
 	CameraDesc.fFar = 300.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
