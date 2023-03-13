@@ -343,6 +343,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Enemy\Wisp">
       <UniqueIdentifier>{dde62539-ab54-42c8-9ff3-0760ff1d212a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon\Arrow">
+      <UniqueIdentifier>{0bd76abd-57b1-4681-85a7-d47db57129cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -818,6 +821,7 @@
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
@@ -1299,6 +1303,7 @@
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
