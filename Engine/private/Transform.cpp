@@ -797,7 +797,7 @@ void CTransform::Tick(_float fTimeDelta)
 	_matrix m;
 
 	if (m_pPxActor && m_bIsStaticPxActor == false)
-	{
+	{		
 		XMStoreFloat4x4(&RetMatrix, XMMatrixTranslation(m_vPxPivot.x, m_vPxPivot.y, m_vPxPivot.z) * World);
 		m = XMLoadFloat4x4(&RetMatrix);
 		m.r[0] = XMVector3Normalize(m.r[0]);
@@ -805,7 +805,7 @@ void CTransform::Tick(_float fTimeDelta)
 		m.r[2] = XMVector3Normalize(m.r[2]);
 		m_pPhysX_Manager->Set_ActorMatrixExecptTranslation(m_pPxActor, RetMatrix);
 	}
-
+	
 	for (auto& iter : m_ActorList)
 	{
 		XMStoreFloat4x4(&RetMatrix, XMLoadFloat4x4(&iter.PivotMatrix) * World);

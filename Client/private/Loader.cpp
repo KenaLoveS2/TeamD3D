@@ -140,7 +140,6 @@ _uint APIENTRY LoadingThread(void* pArg)
 	case LEVEL_TESTPLAY:
 		pLoader->Loading_ForTestPlay();
 		break;
-
 	case LEVEL_MAPTOOL:
 		pLoader->Loading_ForMapTool();
 		break;
@@ -551,10 +550,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_Component_Model_PulsePlateAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_PulsePlateAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.mdat"), PivotMatrix))))
 		return E_FAIL;
 
-	/*if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
 		assert(!"Issue");
@@ -569,7 +568,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-		assert(!"Issue");*/
+		assert(!"Issue");
 
 #pragma  endregion ANIM_OBJ
 

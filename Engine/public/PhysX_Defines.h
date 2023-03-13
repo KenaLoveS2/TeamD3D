@@ -61,19 +61,22 @@ typedef struct tagPhysXTriggerData
 	_uint iTriggerIndex;
 	_float3 vPos;
 	_float fRadius;
+	
+	PxRigidStatic* pTriggerStatic;
 
 } PX_TRIGGER_DATA;
 
 static PX_TRIGGER_DATA* Create_PxTriggerData(const _tchar* pActortag, class CGameObject* pOwner, _uint iTriggerIndex, _float3 vPos, _float fRadius)
 {
 	PX_TRIGGER_DATA* pData = new PX_TRIGGER_DATA;
+	ZeroMemory(pData, sizeof(PX_TRIGGER_DATA));
 
 	pData->pActortag = CUtile::Create_StringAuto(pActortag);
 	pData->pOwner = pOwner;
 	pData->iTriggerIndex;
 	pData->vPos = vPos;
 	pData->fRadius = fRadius;
-
+		
 	return pData;
 }
 

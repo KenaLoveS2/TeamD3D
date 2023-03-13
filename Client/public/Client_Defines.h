@@ -7,9 +7,9 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-//#define FOR_MAP_GIMMICK
+#define FOR_MAP_GIMMICK
 
-#define FOR_MAPTOOL
+//#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
 
 #define LIFT_ROT_COUNT		6
@@ -50,6 +50,7 @@ namespace Client
 	enum TRIGGER_INDEX {
 		TRIGGER_ROT,
 		TRIGGER_PULSE_PLATE,
+		TRIGGER_PULSE,
 		TRIGGER_END
 	};
 }

@@ -83,7 +83,9 @@ HRESULT CE_PulseObject::Late_Initialize(void * pArg)
 	if (m_ePulseDesc.eObjType == PULSE_OBJ_RECIVE)
 		return S_OK;
 
-	
+	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, vPos, 1.f);
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+
 	return S_OK;
 }
 
@@ -146,20 +148,26 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 
 	vScale *= m_ePulseDesc.fIncreseRatio;
 
+	
 	if (vScale.x >= m_ePulseDesc.fPulseMaxSize)
 	{
 		m_eEFfectDesc.bActive = false;
-		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);	// 기믹에 실패했을때  보여주는용이고
+		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
 		
 		m_bFinish = true;
 		if(m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
-		{		
-			m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
+		{
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, m_ePulseDesc.vResetSize.x);
 			m_bFinish = false;
 		}
 	}
 	else
 	{
+		if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
+		{
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *5.f);
+		}
+
 		m_pTransformCom->Set_Scaled(vScale);
 	}
 }
@@ -183,7 +191,6 @@ void CE_PulseObject::ImGui_PhysXValueProperty()
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
 }
-
 
 
 CE_PulseObject * CE_PulseObject::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)
