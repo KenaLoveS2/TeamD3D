@@ -140,22 +140,15 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	 if(m_bDying == false && m_pMonsterStatusCom->IsDead())
-	 {
-		 m_bDying = true;
-		 m_pModelCom->Set_AnimIndex(DEATH);
-	 }
+	if(m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 
-	 if (m_bDying == true)
-	 {
-		  AnimFinishChecker(DEATH);
-		 
-	 }
-	 else
-		 m_pFSM->Tick(fTimeDelta);
-
-		
-
+	ImGui::Begin("CSticks01");
+	if (ImGui::Button("Dying"))
+		m_bDying = !m_bDying;
+	if (ImGui::Button("Rebuild"))
+		m_pShaderCom->ReCompile();
+	ImGui::End();
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -496,12 +489,7 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
+		
 
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
