@@ -59,18 +59,18 @@ HRESULT CKena_Staff::Ready_Effects()
 void CKena_Staff::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-// 	m_fTimeDelta += fTimeDelta;
-// 
-// 	if (m_pPlayer->Is_Bow())
-// 		m_fBowDurationTime += fTimeDelta ;
-// 	else
-// 		m_fBowDurationTime = 0.5f;
-// 
-// 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
-// 	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
-// 
-// 	for (auto& pEffect : m_mapEffect)
-// 		pEffect.second->Tick(fTimeDelta);
+ 	m_fTimeDelta += fTimeDelta;
+ 
+ 	if (m_pPlayer->Is_Bow())
+ 		m_fBowDurationTime += fTimeDelta ;
+ 	else
+ 		m_fBowDurationTime = 0.5f;
+ 
+ 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+ 	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
+ 
+ 	for (auto& pEffect : m_mapEffect)
+ 		pEffect.second->Tick(fTimeDelta);
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)

@@ -108,7 +108,7 @@ protected:
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
 
-	_float m_fDissolveTime = 1.f;
+	_float m_fDissolveTime = 0.0f;
 
 
 protected:

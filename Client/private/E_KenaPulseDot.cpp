@@ -44,29 +44,32 @@ void CE_KenaPulseDot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//ImGui::Begin("dot");
-	//if (ImGui::Button("DotConfirm"))
-	//	m_pShaderCom->ReCompile();
+	if (m_fLife > 0.4f)
+		m_fLife = 0.0f;
 
-	//static bool alpha_preview = true;
-	//static bool alpha_half_preview = false;
-	//static bool drag_and_drop = true;
-	//static bool options_menu = true;
-	//static bool hdr = false;
+	ImGui::Begin("dot");
+	if (ImGui::Button("DotConfirm"))
+		m_pShaderCom->ReCompile();
 
-	//ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
 
-	//static bool   ref_color = false;
-	//static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-	//static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vSelectColor = m_eEFfectDesc.vColor;
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	//ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	//m_eEFfectDesc.vColor = vSelectColor;
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
 
-	//ImGui::End();
+	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
+
+	ImGui::End();
 }
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)

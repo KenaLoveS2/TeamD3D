@@ -123,6 +123,22 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		//Dissolve function
+		half dissolve_value = Dissolve.r;
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
+
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
@@ -149,6 +165,22 @@ PS_OUT PS_MAIN_AO_R_M(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	FinalColor = vDiffuse;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		//Dissolve function
+		half dissolve_value = Dissolve.r;
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -177,6 +209,22 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	FinalColor = vDiffuse +	(vDiffuse * vEmissiveDesc);
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		//Dissolve function
+		half dissolve_value = Dissolve.r;
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -209,6 +257,21 @@ PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
 		FinalColor = vDiffuse;
 	else
 		FinalColor = vDiffuse + vGlowDesc;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = Dissolve.r;
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -253,7 +316,7 @@ PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
@@ -299,7 +362,7 @@ PS_OUT PS_MAIN_AO_R_M_EEM(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
@@ -347,7 +410,7 @@ PS_OUT PS_MAIN_SEPARATE_AO_R_M_E(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
@@ -391,7 +454,7 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
@@ -427,21 +490,7 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 	float  rim = dot(In.vNormal.rgb, In.vViewDir.rgb);
 	float4 vOutline = pow(1.f - rim, 5.f);
 
-	if (g_bDissolve)
-	{
-		float fDissolveAmount = g_fDissolveTime;
-
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
-
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
-	}
+	float4 FinalColor = finalcolor * vOutline * fresnel;
 
 	if (g_bDissolve)
 	{
@@ -455,11 +504,11 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 
-	Out.vDiffuse = finalcolor * vOutline * fresnel;
+	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = (vector)1.f;
@@ -500,7 +549,7 @@ PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
 
 		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
-			Out.vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
 		}
 	}
 

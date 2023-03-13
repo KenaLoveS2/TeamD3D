@@ -95,6 +95,10 @@ void CMonster::Tick(_float fTimeDelta)
 		m_pUIHPBar->Set_Guage(fGuage);
 	}
 #endif
+	if (m_bDying)
+		m_fDissolveTime += fTimeDelta * 0.6f;
+	else
+		m_fDissolveTime = 0.0f;
 
 	if (m_pEnemyWisp)
 		m_pEnemyWisp->Tick(fTimeDelta);
