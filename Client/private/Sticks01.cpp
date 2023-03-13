@@ -168,7 +168,7 @@ void CSticks01::Late_Tick(_float fTimeDelta)
 	CMonster::Late_Tick(fTimeDelta);
 
 	static _bool bSpawn = false;
-	if (DistanceTrigger(8.f))
+	if (DistanceTrigger(3.f))
 		bSpawn = true;
 
 	if (bSpawn && dynamic_cast<CEnemyWisp*>(m_pEnemyWisp)->IsActiveState() == true)

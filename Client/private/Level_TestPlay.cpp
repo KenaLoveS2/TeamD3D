@@ -48,11 +48,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 		
-	//if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
-	//{
-	//	MSG_BOX("Layer_Enviroment");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	{
+		MSG_BOX("Layer_Enviroment");
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
