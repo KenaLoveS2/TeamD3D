@@ -313,6 +313,9 @@
     <ClInclude Include="..\public\UI_NodeLetterBox.h" />
     <ClInclude Include="..\public\UI_NodeLvUp.h" />
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
+    <ClInclude Include="..\public\UI_NodeRotArrow.h" />
+    <ClInclude Include="..\public\UI_NodeRotCnt.h" />
+    <ClInclude Include="..\public\UI_NodeRotFrontGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotLevel.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
@@ -470,6 +473,9 @@
     <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
     <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotArrow.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotCnt.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />

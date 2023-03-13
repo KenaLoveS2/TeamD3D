@@ -866,6 +866,15 @@
     <ClInclude Include="..\public\UI_NodeTitle.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\TitleCard</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotCnt.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotFrontGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1340,6 +1349,15 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeTitle.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\TitleCard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotCnt.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

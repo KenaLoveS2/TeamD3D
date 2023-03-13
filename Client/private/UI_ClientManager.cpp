@@ -60,6 +60,9 @@
 /* Top */
 #include "UI_CanvasTop.h"
 #include "UI_NodeTitle.h"
+#include "UI_NodeRotCnt.h"
+#include "UI_NodeRotFrontGuage.h"
+#include "UI_NodeRotArrow.h"
 
 /* World UI */
 #include "UI_MonsterHP.h"
@@ -706,7 +709,7 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 	/********************************************/
-	/*				For. Bottom					*/
+	/*				For. Top					*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Top"), CUI_CanvasTop::Create(pDevice, pContext))))
 		return E_FAIL;
@@ -715,6 +718,18 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_MapTitle"), CUI_NodeTitle::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_MapTitle");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotMaxCnt"), CUI_NodeRotCnt::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotMaxCnt");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotFrontGuage"), CUI_NodeRotFrontGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotFrontGuage");
+
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotArrow"), CUI_NodeRotArrow::Create(pDevice, pContext))))
+	//	return E_FAIL;
+	//Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotArrow");
 
 
 
