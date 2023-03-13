@@ -1767,9 +1767,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 void CKena::Test_Raycast()
 {
-	if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
-		m_pKenaStatus->Save();
-
 	if (m_pTerrain == nullptr)
 		return;
 
