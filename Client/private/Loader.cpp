@@ -820,6 +820,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Spirit_Arrow", false, false, false)))
+		return E_FAIL;
+
 #pragma endregion EFFECT
 #endif 
 
@@ -2767,8 +2771,6 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 
 HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial)
 {
-	return S_OK; // 임시 조치
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
