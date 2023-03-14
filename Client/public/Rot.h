@@ -1,20 +1,18 @@
 #pragma once
 #include "GameObject.h"
 #include "Client_Defines.h"
+#include "PhysX_Defines.h"
 
 BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
-class CRenderer;
 class CFSMComponent;
 END
 
 BEGIN(Client)
 class CRot final : public CGameObject
 {
-	friend class CRot_State;
-
 private:
 	static _uint m_iEveryRotCount;
 	static _uint m_iKenaFindRotCount;
@@ -24,7 +22,6 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CModel* m_pModelCom = nullptr;
-
 	CFSMComponent* m_pFSM = nullptr;
 	
 	class CKena *m_pKena = nullptr;
@@ -41,6 +38,9 @@ private:
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
 	
+
+	PX_TRIGGER_DATA* m_pTriggerDAta = nullptr;
+
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -148,14 +148,14 @@ public:
 
 		LIFTSTATUE, LIFTSTATUE3, LIFTSTATUE4,
 
-		LOOKAT_DOWN,		  //ADD
-		LOOKAT_DOWNLEFT,  //ADD
-		LOOKAT_DOWNRIGHT,//ADD
-		LOOKAT_LEFT,		//ADD
-		LOOKAT_RIGHT,		  //ADD
-		LOOKAT_UP,				//ADD
-		LOOKAT_UPLEFT,		//ADD
-		LOOKAT_UPRIGHT,		 //ADD
+		LOOKAT_DOWN,			 //ADD
+		LOOKAT_DOWNLEFT,	 //ADD
+		LOOKAT_DOWNRIGHT,	//ADD
+		LOOKAT_LEFT,				//ADD
+		LOOKAT_RIGHT,			//ADD
+		LOOKAT_UP,					//ADD
+		LOOKAT_UPLEFT,			//ADD
+		LOOKAT_UPRIGHT,		//ADD
 
 		LOSEBALANCE, LOSEBALANCE2, LOSEBALANCE2_ROOTMOTION,
 

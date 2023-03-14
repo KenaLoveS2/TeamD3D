@@ -29,11 +29,6 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalDTextureComCnt(rhs.m_iTotalDTextureComCnt)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
-	//, m_iHaveChildCnt(rhs.m_iHaveChildCnt)
-	//, m_vecProPos(rhs.m_vecProPos)
-	//, m_vecFreePos(rhs.m_vecFreePos)
-	//, m_pEffectTrail(rhs.m_pEffectTrail)
-	//, m_vecChild(rhs.m_vecChild)
 {
 	m_vecChild.assign(rhs.m_vecChild.begin(), rhs.m_vecChild.end());
 
@@ -766,46 +761,27 @@ void CEffect_Base::Free()
 	__super::Free();
 
 	// Shader, Renderer Release
-	if (nullptr != m_pShaderCom)
-		Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
 
-	if (nullptr != m_pRendererCom)
-		Safe_Release(m_pRendererCom);
+	// Diffuse Release
+	for (auto& pTextureCom : m_pDTextureCom)
+		Safe_Release(pTextureCom);
 
-	// Texture
-	if (nullptr != m_pDTextureCom)
-	{
-		// Diffuse Release
-		for (auto& pTextureCom : m_pDTextureCom)
-			Safe_Release(pTextureCom);
-	}
+	// Mask Release
+	for (auto& pTextureCom : m_pMTextureCom)
+		Safe_Release(pTextureCom);
 
-	if (nullptr != m_pMTextureCom)
-	{
-		// Mask Release
-		for (auto& pTextureCom : m_pMTextureCom)
-			Safe_Release(pTextureCom);
-	}
-
-	if (nullptr != m_pNTextureCom)
-		Safe_Release(m_pNTextureCom);
+	Safe_Release(m_pNTextureCom);
 
 	// VIBuffer Release
-	if (nullptr != m_pVIBufferCom)
-		Safe_Release(m_pVIBufferCom);
-
-	if (nullptr != m_pVIInstancingBufferCom)
-		Safe_Release(m_pVIInstancingBufferCom);
-
-	if (nullptr != m_pVITrailBufferCom)
-		Safe_Release(m_pVITrailBufferCom);
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pVIInstancingBufferCom);
+	Safe_Release(m_pVITrailBufferCom);
 
 	// Mesh Release
-	if (nullptr != m_pModelCom)
-		Safe_Release(m_pModelCom);
-
-	if (nullptr != m_pEffectTrail)
-		Safe_Release(m_pEffectTrail);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pEffectTrail);
 
 	for (auto& pChild : m_vecChild)
 		Safe_Release(pChild);

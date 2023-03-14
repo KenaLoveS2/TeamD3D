@@ -57,6 +57,14 @@
 #include "UI_CanvasBottom.h"
 #include "UI_NodeLetterBox.h"
 
+/* Top */
+#include "UI_CanvasTop.h"
+#include "UI_NodeTitle.h"
+#include "UI_NodeRotCnt.h"
+#include "UI_NodeRotFrontGuage.h"
+#include "UI_NodeRotArrow.h"
+#include "UI_NodeLvUp.h"
+
 /* World UI */
 #include "UI_MonsterHP.h"
 #include "UI_RotIcon.h"
@@ -414,11 +422,43 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_LetterBox");
 
 
-	
+	/********************************************/
+	/*				For. Top					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_MapTitle"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/08. Title/MapTitle/TitleCard_%d.png"), 4))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_MapTitle");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_IconArrowUp"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/RotLevel/T_ArrowRight.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_IconArrowUp");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LvUpCard"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/03. PlayerUI/RotLevel/T_TitleCard_RotLevel.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_LvUpCard");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareBack"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/E_Effect_93.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareBack");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareBack1"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/E_Effect_42.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareBack1");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareRound"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/T_FlareRound_Noise.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareRound");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FlareShape"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/99. Effect/FlareBomb.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareShape");
 
 
 
@@ -464,14 +504,19 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaTexture");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "AlphaTestColor");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "SpriteColor");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MonsterBar");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "NoDiffuseColorGuage");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaWithColorTexture");
 
+	
 
-
-																					 /* Event List */
+	/* Event List */
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Guage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_ChangeImg");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Animation");
-	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Transform");
+	//pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Transform");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_EVENT, "Event_Fade");
+
 
 
 
@@ -693,6 +738,33 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_LetterBox");
 
 
+
+	/********************************************/
+	/*				For. Top					*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Top"), CUI_CanvasTop::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Top");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_MapTitle"), CUI_NodeTitle::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_MapTitle");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotMaxCnt"), CUI_NodeRotCnt::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotMaxCnt");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotFrontGuage"), CUI_NodeRotFrontGuage::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotFrontGuage");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotArrow"), CUI_NodeRotArrow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotArrow");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLvUpCard"), CUI_NodeLvUp::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
 
 
 

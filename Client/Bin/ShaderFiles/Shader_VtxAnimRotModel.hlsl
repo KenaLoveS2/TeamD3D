@@ -8,6 +8,7 @@ matrix g_ViewMatrix;
 matrix g_ProjMatrix;
 float	   g_fFar = 300.f;
 float4 g_vCamPosition;
+float  g_fHairTransparency = 5.f;
 /**************************************/
 
 
@@ -157,19 +158,35 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4	vBaseColor = float4(0.018114f, 0.016204f, 0.020833f, 1.f);
+	float fAlpha = g_fHairTransparency * vAlphaDesc.r;
 
-	/*if (0.1f > vAlphaDesc.r)
-		vAlphaDesc.r = 0.1f;*/
+	if (fAlpha < 0.1f)
+		discard;
 
-	vBaseColor *= (vAlphaDesc.r + 0.001f);
+	vBaseColor *= fAlpha;
 
 	Out.vDiffuse = vBaseColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
-	Out.vAmbient = (vector)1.f;
+	Out.vAmbient = vector(1.f, 1.f, 1.f, 1.f);
 
 	return Out;
 }//2
+
+struct PS_OUT_SHADOW
+{
+	vector			vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN In)
+{
+	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
+
+	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
+	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}// 3
 
 technique11 DefaultTechnique
 {
@@ -210,6 +227,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HAIR();
+	}
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
 }
 
