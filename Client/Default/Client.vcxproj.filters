@@ -385,6 +385,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp">
       <UniqueIdentifier>{8b3e7483-de55-4808-b454-6409b0d65a13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Born_GroundCover">
+      <UniqueIdentifier>{94de96e3-0860-4b24-afda-ebe8b8e74e64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -915,6 +918,7 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\Public\Born_GroundCover.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1424,6 +1428,7 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\Private\Born_GroundCover.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1491,6 +1496,9 @@
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

@@ -147,7 +147,8 @@ public:
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-	
+	void		 Imgui_MeshInstancingyPosControl(_float yPos);
+
 	
 public:
 	void Create_PxTriangle(PX_USER_DATA *pUserData);

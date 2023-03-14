@@ -627,15 +627,15 @@ void CModel::Imgui_RenderProperty()
 		}
 	}
 
-	if (m_bIsInstancing == true)
-	{
+	//if (m_bIsInstancing == true)
+	//{
 
 
-		for (auto &pInstanceMesh : m_InstancingMeshes)
-		{
-			//pInstanceMesh->Set_Position(); 
-		}
-	}
+	//	for (auto &pInstanceMesh : m_InstancingMeshes)
+	//	{
+	//		//pInstanceMesh->Set_Position(); 
+	//	}
+	//}
 
 }
 
@@ -734,6 +734,7 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 
 }
+
 
 HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 {
@@ -1575,10 +1576,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
-
-
-
-
 	/*수정 부분*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
@@ -1592,6 +1589,16 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
+}
+
+void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
+{
+	if (m_bIsInstancing == true)
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstaincingMesh_yPosControl(yPos);
+	}
+
 }
 
 

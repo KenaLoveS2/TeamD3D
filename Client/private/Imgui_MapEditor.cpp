@@ -780,7 +780,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -924,9 +924,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		//pLoadObject->Late_Initialize();
-		
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -934,6 +932,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		StrComTagVec.clear();
 		strFilePaths_arr.fill("");
 	}
+
+
+
 
 }
 
@@ -985,17 +986,17 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
-#ifdef	_DEBUG
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
-#endif
+
 		}
 	}
 	else
 	{
-#ifdef	_DEBUG
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
-#endif
 	}
+
+	
+	
 
 	ImGui::End();
 
