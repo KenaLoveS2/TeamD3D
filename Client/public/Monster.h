@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Monster_Status.h"
-#include "Effect_Base.h"
+#include "EnemyWisp.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -27,6 +27,7 @@ protected:
 		MASK,
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
+		SHADOW,
 		PASS_END
 	};
 
@@ -78,26 +79,30 @@ public:
 	_float							DistanceBetweenPlayer();
 	_float							Calc_PlayerLookAtDirection();
 
+	CModel*						Get_Model() { return m_pModelCom; }
+
 	virtual void					AdditiveAnim(_float fTimeDelta);
-	void							Call_RotIcon();
-	virtual HRESULT					Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
+	void								Call_RotIcon();
+	virtual HRESULT			Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
+	void								Setting_Rot(class CRotForMonster* pGameObject[], _int iRotCnt);
 
 protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
 
-	CRenderer*					m_pRendererCom = nullptr;
-	CShader*					m_pShaderCom = nullptr;
-	CTexture*					m_pDissolveTextureCom = nullptr;
-	CModel*						m_pModelCom = nullptr;
+	CRenderer*						m_pRendererCom = nullptr;
+	CShader*							m_pShaderCom = nullptr;
+	CTexture*							m_pDissolveTextureCom = nullptr;
+	CModel*							m_pModelCom = nullptr;
 	CMonster_Status*			m_pMonsterStatusCom = nullptr;
 
-	CFSMComponent*		m_pFSM = nullptr;
-	class CKena*		m_pKena = nullptr;	
+	CFSMComponent*			m_pFSM = nullptr;
+	class CKena*					m_pKena = nullptr;	
 
-	CEffect_Base*		m_pEnemyWisp = nullptr;
-	_float4							m_vKenaPos;
+	CUI_MonsterHP*				m_pUIHPBar;
+	class CEnemyWisp*			m_pEnemyWisp = nullptr;
+	_float4								m_vKenaPos;
 
-	CUI_MonsterHP*		m_pUIHPBar;
+	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 
 protected:
 	_bool	m_bWeaklyHit = false;
@@ -107,8 +112,8 @@ protected:
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
 
+	_int    m_iRotForMonsterCnt = 1;
 	_float m_fDissolveTime = 0.0f;
-
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

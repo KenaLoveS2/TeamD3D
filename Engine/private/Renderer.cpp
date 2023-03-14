@@ -282,14 +282,6 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	return S_OK;
 }
 
-void CRenderer::Imgui_RenderProperty()
-{
-	if(ImGui::Button("StaticShadow"))
-	{
-		m_bStaticShadow = true;
-	}
-}
-
 HRESULT CRenderer::ReCompile()
 {
 	HRESULT hr;
@@ -652,6 +644,9 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_DynamicLightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)

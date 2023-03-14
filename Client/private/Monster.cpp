@@ -6,6 +6,8 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 
+#include "RotForMonster.h"
+
 #include "UI_MonsterHP.h"
 #include "Camera.h"
 
@@ -73,10 +75,6 @@ HRESULT CMonster::Late_Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	/* Is In Camera? */
-
-
-
-
 	return S_OK;
 }
 
@@ -84,7 +82,7 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
+/* #ifdef _DEBUG
 	if (nullptr != m_pUIHPBar)
 		m_pUIHPBar->Imgui_RenderProperty();
 
@@ -94,7 +92,7 @@ void CMonster::Tick(_float fTimeDelta)
 		fGuage -= 0.1f;
 		m_pUIHPBar->Set_Guage(fGuage);
 	}
-#endif
+#endif */
 	if (m_bDying)
 		m_fDissolveTime += fTimeDelta * 0.6f;
 	else
@@ -115,11 +113,12 @@ void CMonster::Late_Tick(_float fTimeDelta)
 		m_pEnemyWisp->Late_Tick(fTimeDelta);
 
 	/* calculate camera */
-	_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-	_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
-	_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
-	if (20.f >= XMVectorGetX(XMVector3Length(vDir)) && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+	_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float fDistance = _float4::Distance(vCamPos, vPos);
+	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+	if (fDistance <= 20.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 		Call_RotIcon();
 }
 
@@ -288,21 +287,25 @@ void CMonster::Call_RotIcon()
 	if (nullptr == m_pKena)
 		return;
 
-	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
+	m_pKena->Call_RotIcon(this);
 }
 
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CEffect_Base*  pEffectBase = nullptr;
-
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL );
-	pEffectBase->Set_Parent(this);
-	m_pEnemyWisp = pEffectBase;
 	
+	m_pEnemyWisp = dynamic_cast<CEnemyWisp*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWisp", szEnemyWispCloneTag));
+	NULL_CHECK_RETURN(m_pEnemyWisp, E_FAIL );
+	m_pEnemyWisp->Set_Parent(this);
+		
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CMonster::Setting_Rot(CRotForMonster * pGameObject[], _int iRotCnt)
+{
+	for(_int i = 0; i<iRotCnt; ++i)
+		m_pRotForMonster[i] = pGameObject[i];
 }
 
 HRESULT CMonster::SetUp_Components()
@@ -332,7 +335,6 @@ HRESULT CMonster::SetUp_UI()
 	}
 	RELEASE_INSTANCE(CGameInstance);
 
-
 	return S_OK;
 }
 
@@ -355,9 +357,10 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER)
+		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 		}
 	}
 

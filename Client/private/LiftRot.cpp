@@ -23,7 +23,6 @@ const _double& CLiftRot::Get_AnimationPlayTime()
 HRESULT CLiftRot::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-
 	return S_OK;
 }
 
@@ -79,7 +78,6 @@ HRESULT CLiftRot::Late_Initialize(void * pArg)
 
 	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
-	
 	m_pTransformCom->Set_Position(m_Desc.vInitPos);
 
 	return S_OK;
@@ -89,8 +87,8 @@ void CLiftRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pWorkFSM)
-		m_pWorkFSM->Tick(fTimeDelta);
+	if (m_pLiftFSM)
+		m_pLiftFSM->Tick(fTimeDelta);
 		
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -104,9 +102,7 @@ void CLiftRot::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -175,12 +171,6 @@ void CLiftRot::ImGui_AnimationProperty()
 		ImGui::EndTabItem();
 	}
 
-	//if (ImGui::BeginTabItem("State"))
-	//{
-	//	m_pStateMachine->Imgui_RenderProperty();
-	//	ImGui::EndTabItem();
-	//}
-
 	ImGui::EndTabBar();
 }
 
@@ -211,30 +201,11 @@ void CLiftRot::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
-
-	// 이게 사실상 px 매니저 imgui_render에 있긴함
-	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
-	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
-	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
 }
 
 HRESULT CLiftRot::Call_EventFunction(const string& strFuncName)
 {
 	return CGameObject::Call_EventFunction(strFuncName);
-}
-
-void CLiftRot::Push_EventFunctions()
-{
-	Test(true, 0.f);
 }
 
 HRESULT CLiftRot::SetUp_Components()
@@ -249,12 +220,8 @@ HRESULT CLiftRot::SetUp_Components()
 	//  0 : Body
 	//	 1 : Eye
 	//	 2 : Hair
-
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
-
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
-
-	// FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 
 	return S_OK;
 }
@@ -276,23 +243,16 @@ HRESULT CLiftRot::SetUp_ShadowShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-}
-
-void CLiftRot::Test(_bool bIsInit, _float fTimeDelta)
-{
 }
 
 CLiftRot* CLiftRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -326,7 +286,7 @@ void CLiftRot::Free()
 	__super::Free();
 
 	Safe_Release(m_pCuteFSM);
-	Safe_Release(m_pLiftFSM);
+	Safe_Release(m_pWorkFSM);
 	Safe_Release(m_pLiftFSM);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
@@ -342,15 +302,16 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{
 	
 	})
+		.OnExit([this]()
+	{
+		m_bCreateStart = true;
+	})
 		.AddTransition("SLEEP to CREATE", "CREATE")
 		.Predicator([this]()
 	{
 		return m_bWakeUp;
 	})
-		.OnExit([this]()
-	{
-		m_bCreateStart = true;;
-	})
+		
 		.AddState("CREATE")
 		.OnStart([this]()
 	{
@@ -358,18 +319,12 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		// if(m_pModelCom->Get_AnimationFinish()) m_pModelCom->Set_AnimIndex(CRot::IDLE);
 	})
 		.AddTransition("CREATE to LIFT_POS_MOVE", "LIFT_POS_MOVE")
 		.Predicator([this]()
 	{			
 		return m_pModelCom->Get_AnimationFinish();
 	})
-		.OnExit([this]()
-	{
-
-	})
-
 
 		.AddState("LIFT_POS_MOVE")
 		.OnStart([this]()
@@ -389,11 +344,6 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 
 		return m_bLiftStart;
 	})		
-		.OnExit([this]()
-	{
-
-	})
-
 
 		.AddState("LIFT")
 		.OnStart([this]()
@@ -410,10 +360,6 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		m_bLiftEnd = m_iAnimationIndex == CRot::LIFT && m_pModelCom->Get_AnimationFinish();
 		return m_bLiftMoveStart;
 	})		
-		.OnExit([this]()
-	{
-
-	})
 
 		.AddState("LIFT_MOVE")
 		.OnStart([this]()
@@ -428,10 +374,6 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 		.Predicator([this]()
 	{		
 		return m_bLiftMoveEnd;
-	})
-		.OnExit([this]()
-	{
-
 	})
 
 		.AddState("LIFT_DOWN")
@@ -448,11 +390,6 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{
 		return m_bLiftDownEnd;
 	})
-		.OnExit([this]()
-	{
-
-	})
-
 
 		.AddState("GO_SLEEP")
 		.OnStart([this]()
@@ -463,23 +400,22 @@ HRESULT CLiftRot::SetUp_LiftFSM()
 	{
 
 	})
-		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
-		.Predicator([this]()
-	{
-		return m_pModelCom->Get_AnimationFinish();
-	})
 		.OnExit([this]()
 	{
 		m_bWakeUp = false;
-		m_bCreateStart = false;				
+		m_bCreateStart = false;
 		m_bLiftReady = false;
 		m_bLiftStart = false;
 		m_bLiftEnd = false;
 		m_bLiftMoveStart = false;
 		m_bLiftMoveEnd = false;
 		m_bLiftDownEnd = false;
-
 		m_pTransformCom->Set_Position(m_Desc.vInitPos);
+	})
+		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
 	})
 		.Build();
 
@@ -500,10 +436,7 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 	{
 		return m_bCuteStart;
 	})
-		.OnExit([this]()
-	{
-		
-	})
+
 		.AddState("CUTE")
 		.OnStart([this]()
 	{
@@ -519,10 +452,7 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 	{	
 		return m_bCuteEnd;
 	})
-		.OnExit([this]()
-	{
-	
-	})
+
 		.AddState("GO_SLEEP")
 		.OnStart([this]()
 	{
@@ -533,11 +463,6 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 	{
 		
 	})
-		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
-		.Predicator([this]()
-	{
-		return m_pModelCom->Get_AnimationFinish();
-	})
 		.OnExit([this]()
 	{
 		// 사라지는 이펙트
@@ -545,6 +470,12 @@ HRESULT CLiftRot::SetUp_CuteFSM()
 		m_bCuteEnd = false;
 		m_pTransformCom->Set_Position(m_Desc.vInitPos);
 	})
+		.AddTransition("GO_SLEEP to SLEEP", "SLEEP")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
 		.Build();
 
 	return S_OK;

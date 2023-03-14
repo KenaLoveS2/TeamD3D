@@ -358,6 +358,33 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Dust">
       <UniqueIdentifier>{0331d69f-7e6f-44e9-ad14-142a5ac3c41c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Fade">
+      <UniqueIdentifier>{03c6dc38-a37a-488e-8e9f-011e0ca9c2d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Monster">
+      <UniqueIdentifier>{0793c019-d85f-450a-bce7-cc567629f0b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Focus_RotIcon">
+      <UniqueIdentifier>{a31a358b-f4a0-473e-bfe5-f2956f9e7a6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\07. Map">
+      <UniqueIdentifier>{0bbf0936-77d2-49f4-a655-b453af7ed735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top">
+      <UniqueIdentifier>{97bd2c40-5551-40f7-a8c5-2d651957cfdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom">
+      <UniqueIdentifier>{d2dcdc5f-9309-43b6-8b38-f228e7b7f733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle">
+      <UniqueIdentifier>{1365c1f4-a982-43a6-87b5-ecddc9b0929f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet">
+      <UniqueIdentifier>{3be1f736-5038-4e74-ac53-94864b467bfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp">
+      <UniqueIdentifier>{8b3e7483-de55-4808-b454-6409b0d65a13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -824,14 +851,11 @@
     <ClInclude Include="..\public\Mage.h">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_MonsterHP.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_Billboard.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_KenaPulse.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Event_Fade.h">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h">
@@ -846,20 +870,40 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h" />
+    <ClInclude Include="..\public\DynamicLightCamera.h" />
+    <ClInclude Include="..\public\UI_MonsterHP.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Billboard.h">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_RotIcon.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_RotIcon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasBottom.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_CanvasTop.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeLetterBox.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeTitle.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotArrow.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotCnt.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeRotFrontGuage.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeLvUp.h">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_P_Flower.h">
       <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
@@ -1315,14 +1359,11 @@
     <ClCompile Include="..\private\Mage.cpp">
       <Filter>02.GameObjects\Monster\Mage</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_Billboard.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_MonsterHP.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_KenaPulse.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_Fade.cpp">
+      <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
@@ -1337,20 +1378,40 @@
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasBottom.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+    <ClCompile Include="..\private\ControlRoom.cpp" />
+    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
+    <ClCompile Include="..\private\UI_MonsterHP.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasTop.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeLvUp.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+    <ClCompile Include="..\private\UI_Billboard.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_RotIcon.cpp">
-      <Filter>02.GameObjects\UI</Filter>
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_RotIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasBottom.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasTop.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeTitle.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotArrow.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotCnt.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotGet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeLvUp.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_P_Flower.cpp">
       <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
@@ -1427,5 +1488,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
   </ItemGroup>
 </Project>

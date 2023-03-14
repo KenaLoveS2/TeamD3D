@@ -29,7 +29,6 @@ const _double& CRot::Get_AnimationPlayTime()
 HRESULT CRot::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-
 	return S_OK;
 }
 
@@ -92,11 +91,11 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
-	m_vWakeUpPosition = _float4(10.f, 0.f, 5.f, 1.f);
+	m_vWakeUpPosition = _float4(3.f, 0.f, 3.f, 1.f);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(
-		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 2.f)
-	);
+	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
+
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
@@ -104,19 +103,24 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	return S_OK;
 }
 
+_float Temp =  1.f;
+
 void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
 	if (GetKeyState('F') & 0x8000)
 	{
-		m_bWakeUp = true;
+		// m_bWakeUp = true;
+		Temp += 1.f * fTimeDelta;
+		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, Temp);
 	}
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
 		
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -128,9 +132,7 @@ void CRot::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom != nullptr)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -153,11 +155,9 @@ HRESULT CRot::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
 		}
-
-		if (i == 1)
+		else	if (i == 1)
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
-
-		if (i == 2)
+		else		if (i == 2)
 		{
 			// 머리카락 모르겠음.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
@@ -179,7 +179,7 @@ HRESULT CRot::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 
 	return S_OK;
 }
@@ -273,12 +273,8 @@ HRESULT CRot::SetUp_Components()
 	//  0 : Body
 	//	 1 : Eye
 	//	 2 : Hair
-
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
-
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
-
-	// FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
 
 	return S_OK;
 }
@@ -297,20 +293,12 @@ HRESULT CRot::SetUp_ShaderResources()
 
 HRESULT CRot::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
 }
@@ -377,9 +365,7 @@ HRESULT CRot::SetUp_State()
 		m_vecKenaConnectRot.push_back(this);
 		
 		if (m_iThisRotIndex == 0)
-		{
 			m_pKena->Set_FirstRotPtr(this);
-		}
 
 		m_pTransformCom->Set_Position(m_vWakeUpPosition);
 	})
@@ -411,7 +397,6 @@ HRESULT CRot::SetUp_State()
 
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
-
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -445,16 +430,6 @@ HRESULT CRot::SetUp_State()
 
 		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})
-		.AddTransition("IDLE to FOLLOW_KENA ", "DUMMY")
-		.Predicator([this]()
-	{
-		return false;
-	})		
-		.OnExit([this]()
-	{
-
-	})
-
 
 		.AddState("FOLLOW_KENA")
 		.OnStart([this]()

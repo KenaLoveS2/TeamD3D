@@ -11,6 +11,7 @@ CUI_NodeEffect::CUI_NodeEffect(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 	, m_eType(TYPE_END)
 	, m_fTime(0.f)
 	, m_fAlpha(1.f)
+	, m_vColor(1.f, 1.f, 1.f, 1.f)
 {
 }
 
@@ -20,6 +21,7 @@ CUI_NodeEffect::CUI_NodeEffect(const CUI_NodeEffect & rhs)
 	, m_eType(TYPE_END)
 	, m_fTime(0.f)
 	, m_fAlpha(1.f)
+	, m_vColor(1.f, 1.f, 1.f, 1.f)
 {
 }
 
@@ -147,12 +149,14 @@ void CUI_NodeEffect::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	/* Test */
+		/* Test */
 	if (m_eType == TYPE_RING)
 	{
 		m_fTime += 10.f* fTimeDelta;
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-m_fTime));
 	}
+
+
 
 	/* think it's old one but keep it */
 	/*if (m_pParent != nullptr)
@@ -195,9 +199,23 @@ void CUI_NodeEffect::Imgui_RenderProperty()
 	static int eType;
 	eType = m_eType;
 	if (ImGui::InputInt("EffectType", &eType))
+	{
 		m_eType = (TYPE)eType;
+		m_bActive = true;
+	}
 
 	ImGui::InputFloat("Effect Alpha", &m_fAlpha);
+
+	static float vColor[3];
+	vColor[0] = m_vColor.x;
+	vColor[1] = m_vColor.y;
+	vColor[2] = m_vColor.z;
+	if (ImGui::InputFloat3("Effect Color", vColor))
+	{
+		m_vColor.x = vColor[0];
+		m_vColor.y = vColor[1];
+		m_vColor.z = vColor[2];
+	}
 
 	__super::Imgui_RenderProperty();
 }
@@ -208,7 +226,15 @@ HRESULT CUI_NodeEffect::Save_Data()
 
 	json["Alpha"] = m_fAlpha;
 	
-	_smatrix matWorld = m_matLocalOriginal;
+	_float fColor = 0.f;
+	for (int i = 0; i < 4; ++i)
+	{
+		fColor = 0.f;
+		memcpy(&fColor, (float*)&m_vColor + i, sizeof(_float));
+		json["color"].push_back(fColor);
+	}
+
+	_smatrix matWorld = m_matLocal; // m_matLocalOriginal;
 	_float fValue = 0.f;
 	for (int i = 0; i < 16; ++i)
 	{
@@ -334,6 +360,13 @@ HRESULT CUI_NodeEffect::Load_Data(wstring fileName)
 	for (float fElement : jLoad["localMatrix"])
 		memcpy(((float*)&matLocal) + (i++), &fElement, sizeof(float));
 
+	if (jLoad.contains("color"))
+	{
+		int i = 0;
+		for (float fElement : jLoad["color"])
+			memcpy(((float*)&m_vColor) + (i++), &fElement, sizeof(float));
+	}
+
 	this->Set_LocalMatrix(matLocal);
 	m_matLocalOriginal = matLocal;
 
@@ -386,7 +419,7 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-	
+
 	switch (m_eType)
 	{
 	case TYPE_SEPERATOR:
@@ -399,7 +432,14 @@ HRESULT CUI_NodeEffect::SetUp_ShaderResources()
 		break;
 	}
 
+	if (m_iRenderPass == 22)
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+			return E_FAIL;
 
+	}
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

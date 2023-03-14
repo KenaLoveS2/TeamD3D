@@ -353,6 +353,7 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	return pBody;
 }
 
+
 void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 {
 	if (Desc.eType == BOX_STATIC)
@@ -408,6 +409,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pBox->setLinearDamping(Desc.fLinearDamping);
 		pBox->setAngularDamping(Desc.fAngularDamping);
 		pBox->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
+		pBox->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		pBox->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
 		
 		PxRigidBodyExt::updateMassAndInertia(*pBox, Desc.fDensity);
@@ -491,6 +493,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pSphere->setAngularDamping(Desc.fAngularDamping);
 		pSphere->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));		
 		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
+		pSphere->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		PxRigidBodyExt::updateMassAndInertia(*pSphere, Desc.fDensity);
 
 		if (pUserData)
@@ -571,6 +574,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pCapsule->setAngularDamping(Desc.fAngularDamping);
 		pCapsule->setLinearVelocity(PxVec3(Desc.vVelocity.x, Desc.vVelocity.y, Desc.vVelocity.z));
 		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, Desc.bCCD);
+		pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, Desc.bKinematic);
 		PxRigidBodyExt::updateMassAndInertia(*pCapsule, Desc.fDensity);
 		
 		if (pUserData)
@@ -592,8 +596,6 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 			CString_Manager::GetInstance()->Add_String(pTag);
 			m_DynamicColliders.emplace(pTag, pCapsule);
 		}
-
-		// pCapsule->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 		m_pScene->addActor(*pCapsule);
 		pShape->release();
@@ -1043,19 +1045,20 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 	if (pTriggerData == nullptr) return;
 
 	PxTransform Transform(CUtile::ConvertPosition_D3DToPx(pTriggerData->vPos));
-	PxRigidStatic* pTrigger = m_pPhysics->createRigidStatic(Transform);	
+
+	pTriggerData->pTriggerStatic = m_pPhysics->createRigidStatic(Transform);
 
 	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
 	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 
-	pTrigger->attachShape(*pShape);
-	pTrigger->userData = pTriggerData;
-	
-	m_TriggerDataes.push_back(pTriggerData);
-	m_Triggers.emplace(CUtile::Create_StringAuto(pTriggerData->pActortag), pTrigger);
+	pTriggerData->pTriggerStatic->attachShape(*pShape);
+	pTriggerData->pTriggerStatic->userData = pTriggerData;
 
-	m_pScene->addActor(*pTrigger);
+	m_TriggerDataes.push_back(pTriggerData);
+	m_Triggers.emplace(CUtile::Create_StringAuto(pTriggerData->pActortag), pTriggerData->pTriggerStatic);
+
+	m_pScene->addActor(*pTriggerData->pTriggerStatic);
 	pShape->release();
 }
 

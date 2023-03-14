@@ -2,6 +2,8 @@
 #include "..\public\Loader.h"
 #include "GameInstance.h"
 
+#include "ControlRoom.h"
+
 /* SkyBox */
 #include "Sky.h"
 
@@ -111,6 +113,7 @@
 #include "LodObject.h"
 #include "ModelViewerObject.h"
 #include "Moth.h"
+#include "RotForMonster.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -1985,22 +1988,25 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CGate::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_RuinKit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
 		CRuinKit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+	/* For.Prototype_GameObject_Stone */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
 		CStone::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+
+	/* For.Prototype_GameObject_Flower */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
 		CFlower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-	/* For.Prototype_GameObject_RuinKit */
+
+	/* For.Prototype_GameObject_Grass */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
 		CGrass::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -2017,7 +2023,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-
 	/*Anim*/
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
@@ -2030,9 +2035,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_ControlRoom */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
+		CControlRoom::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2315,6 +2327,17 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
+		CRotForMonster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+#pragma  region	MONSTER
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 	m_isFinished = true;
 

@@ -13,7 +13,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;
+		_bool isGravity;		
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -21,7 +21,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -38,7 +38,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -57,7 +57,7 @@ public:
 		// Dynamic Parameter
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
-		_bool bCCD;
+		_bool bCCD, bKinematic;
 	} PX_CAPSULE_DESC;
 		
 private:
@@ -121,6 +121,8 @@ public:
 	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
 	
 	void Create_Trigger(PX_TRIGGER_DATA* pTriggerData);
+	void Create_TriggerStatic(PX_TRIGGER_DATA* pTriggerData);
+	
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
@@ -139,7 +141,7 @@ public:
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
-
+	
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
 	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
 
