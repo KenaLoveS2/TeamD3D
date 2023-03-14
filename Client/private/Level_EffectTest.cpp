@@ -40,6 +40,9 @@ HRESULT CLevel_EffectTest::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Background"))))
+		return E_FAIL;
+
 	if (FAILED(pGameInstance->Late_Initialize(LEVEL_EFFECT)))
 		return E_FAIL;
 
@@ -159,6 +162,22 @@ HRESULT CLevel_EffectTest::Ready_Layer_Player(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Wind"), L"Wind", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

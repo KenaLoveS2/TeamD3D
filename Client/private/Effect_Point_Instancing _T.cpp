@@ -292,14 +292,7 @@ HRESULT CEffect_Point_Instancing_T::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_DEFAULT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_DEFAULT);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ALPHA)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ALPHA);
-	else if (m_eEFfectDesc.eBlendType == CEffect_Base::tagEffectDesc::BLENDSTATE_ONEEFFECT)
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_ONEEFFECT);
-	else
-		m_pShaderCom->Begin(EFFECTDESC::BLENDSTATE_MIX);
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIInstancingBufferCom->Render();
 
 	return S_OK;

@@ -173,6 +173,18 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sky"), TEXT("Clone_Sky"))))
 		return E_FAIL;
 
+	_uint iCreateWindCount = 10;
+	_tchar szCloneRotTag[32] = { 0, };
+	for (_uint i = 0; i < iCreateWindCount; i++)
+	{
+		swprintf_s(szCloneRotTag, L"Wind_%d", i);
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Wind"), CUtile::Create_StringAuto(szCloneRotTag))))
+			return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
+		return E_FAIL;
+
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");

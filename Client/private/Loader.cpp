@@ -84,6 +84,9 @@
 //Monster
 #include "EnemyWisp.h"
 
+//Arrow
+#include "SpiritArrow.h"
+
 #include "E_EnemyWispTrail.h"
 #include "E_KenaDamage.h"
 #include "E_KenaHit.h"
@@ -92,6 +95,13 @@
 #include "E_EnemyWispBackground.h"
 #include "E_EnemyWispGround.h"
 #include "E_P_EnemyWisp.h"
+#include "E_EnemyWispTrail.h"
+#include "E_KenaDamage.h"
+#include "E_KenaHit.h"
+#include "E_KenaJump.h"
+#include "E_PulseObject.h"
+#include "E_Wind.h"
+#include "E_P_Flower.h"
 /* ~Effects */
 
 /* Components*/
@@ -109,12 +119,8 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_EnemyWispTrail.h"
-#include "E_KenaDamage.h"
-#include "E_KenaHit.h"
-#include "E_KenaJump.h"
-#include "E_PulseObject.h"
-#include "SpiritArrow.h"
+#include "E_KenaDust.h"
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1402,7 +1408,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 HRESULT CLoader::Loading_ForTestPlay()
 {
-	m_fMax = 179.f;
+	m_fMax = 183.f;
 	m_fCur = m_fCur / m_fMax * 100.f;
 
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -2043,7 +2049,8 @@ HRESULT CLoader::Loading_ForTestPlay()
 	m_fCur += 1.f;
 
 	// Effect
-#pragma region EFFECT
+#pragma region EFFECT_COMPONENT
+	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Effect"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
@@ -2074,13 +2081,13 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
-#pragma region Model Component
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	/* For.Prototype_Component_Model_Cube */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Cube",
@@ -2123,8 +2130,22 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball3.mdat"), PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
-#pragma endregion Model Component
 
+	/* For.Prototype_Component_Model_Wind */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Wind",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Wind.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_Component_Model_WindLoop */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WindLoop",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/WindLoop.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+#pragma endregion EFFECT_COMPONENT
+
+#pragma region Effect_Object
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
@@ -2185,7 +2206,64 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-#pragma endregion EFFECT
+	/* For.Prototype_GameObject_Wind */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wind"),
+		CE_Wind::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EffectFlower */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EffectFlower"),
+		CE_P_Flower::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Flower.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDust"),
+		CE_KenaDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaDust.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+#pragma endregion Effect_Object
+
+#pragma  region	MONSTER
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
+		CEnemyWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
+		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+	/* ~EnemyWisp Effects */
+#pragma  endregion	MONSTER
 
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
@@ -2289,43 +2367,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 	m_fCur += 1.f;
 
 #pragma  region	MONSTER
-	/* For.Prototype_Component_Model_EnemyWisp */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_EnemyWisp",
-		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
-		CEnemyWisp::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* EnemyWisp Effects */
-	/* For.Prototype_GameObject_EnemyWispTrail */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
-		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_EnemyWispBackground */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
-		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_EnemyWispGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
-		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_EnemyWispParticle */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
-		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
-		return E_FAIL;
-	/* ~EnemyWisp Effects */
-#pragma  endregion	MONSTER
-	m_fCur += 1.f;
 
 	m_isFinished = true;
 
@@ -2341,7 +2382,42 @@ HRESULT CLoader::Loading_ForTestEffect()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-#pragma region EFFECT
+	_matrix			PivotMatrix = XMMatrixIdentity();
+
+#pragma  region	PLAYER
+	/* For.Prototype_Component_Model_Kena */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_Staff", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player_Camera */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
+		CKena::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
+		CKena_Staff::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
+		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#pragma  endregion	PLAYER
+
+#pragma region EFFECT_COMPONENT
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"),
@@ -2374,8 +2450,6 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
 		return E_FAIL;
 
-#pragma region Model Component
-	_matrix			PivotMatrix = XMMatrixIdentity();
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	/* For.Prototype_Component_Model_Cube */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Cube",
@@ -2411,8 +2485,20 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_shockball3",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/shockball3.mdat"), PivotMatrix))))
 		return E_FAIL;
-#pragma endregion Model Component
 
+	/* For.Prototype_Component_Model_Wind */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Wind",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Wind.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_WindLoop */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_WindLoop",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/WindLoop.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+#pragma endregion EFFECT_COMPONENT
+
+#pragma region Effect_Object
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
@@ -2463,40 +2549,22 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-#pragma endregion EFFECT
-
-#pragma  region	PLAYER
-	/* For.Prototype_Component_Model_Kena */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
+	/* For.Prototype_GameObject_Wind */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wind"),
+		CE_Wind::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_Staff", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
+	/* For.Prototype_GameObject_EffectFlower */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EffectFlower"),
+		CE_P_Flower::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Flower.json"))))
+		return E_FAIL;
+	
+	/* For.Prototype_GameObject_KenaDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDust"),
+		CE_KenaDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaDust.json"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Player_Camera */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
-		CCamera_Player::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
-		CKena::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
-		CKena_Staff::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
-		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-#pragma  endregion	PLAYER
+#pragma endregion Effect_Object
 
 #pragma  region	MONSTER
 	/* For.Prototype_Component_Model_EnemyWisp */
