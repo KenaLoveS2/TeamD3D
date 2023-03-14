@@ -2266,6 +2266,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
 		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"),
 		CMoth::Create(m_pDevice, m_pContext))))
@@ -2681,7 +2682,7 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 
 HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial)
 {
-	return S_OK; // 임시 조치
+	//return S_OK; // 임시 조치
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
