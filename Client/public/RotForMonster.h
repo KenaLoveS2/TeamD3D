@@ -27,6 +27,9 @@ private:
 	virtual ~CRotForMonster() = default;
 
 public:
+	class CMonster*		Get_Target() { return m_pTarget; }
+	void				Set_Target(CMonster* pMonster) { m_pTarget = pMonster; }
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Late_Initialize(void * pArg);

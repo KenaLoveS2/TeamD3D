@@ -995,9 +995,6 @@
     <ClCompile Include="..\Private\Kena_Parts.cpp">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Kena.cpp">
-      <Filter>02.GameObjects\Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
     </ClCompile>
@@ -1424,6 +1421,9 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

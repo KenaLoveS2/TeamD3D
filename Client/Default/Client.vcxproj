@@ -400,7 +400,7 @@
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
-    <ClCompile Include="..\Private\Kena.cpp" />
+    <ClCompile Include="..\private\Kena.cpp" />
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
     <ClCompile Include="..\Private\Kena_Parts.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp" />

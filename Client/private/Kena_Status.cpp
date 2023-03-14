@@ -128,6 +128,9 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
 	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
 
+	m_iPipLevel = 1;
+	m_eRotState = RS_GOOD;
+
 	m_strJsonFilePath = strJsonFilePath;
 
 	return S_OK;
@@ -149,4 +152,22 @@ _int CKena_Status::Get_RotMax()
 	}
 
 	return 0;
+}
+
+_int CKena_Status::Get_MaxPIPCount()
+{
+	switch (m_iPipLevel)
+	{
+	case 1:
+		m_iMaxPIPCount = 1;
+		break;
+	case 2:
+		m_iMaxPIPCount = 2;
+		break;
+	case 3:
+		m_iMaxPIPCount = 3;
+		break;
+	}
+
+	return m_iMaxPIPCount;
 }

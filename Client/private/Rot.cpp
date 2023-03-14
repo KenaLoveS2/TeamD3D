@@ -360,7 +360,7 @@ HRESULT CRot::SetUp_State()
 		.OnExit([this]()
 	{
 		m_iThisRotIndex = m_iKenaFindRotCount++;
-		m_pkenaState->Set_RotCount(m_iThisRotIndex);
+		m_pkenaState->Set_RotCount(m_iKenaFindRotCount);
 
 		m_vecKenaConnectRot.push_back(this);
 		

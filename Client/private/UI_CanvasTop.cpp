@@ -2,6 +2,7 @@
 #include "..\public\UI_CanvasTop.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "Kena_Status.h"
 #include "UI_NodeLvUp.h"
 #include "UI_NodeEffect.h"
 
@@ -96,7 +97,7 @@ HRESULT CUI_CanvasTop::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -274,8 +275,9 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
+void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
+
 }
 
 CUI_CanvasTop * CUI_CanvasTop::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
