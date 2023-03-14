@@ -74,7 +74,7 @@ static PX_TRIGGER_DATA* Create_PxTriggerData(const _tchar* pActortag, class CGam
 
 	pData->pActortag = CUtile::Create_StringAuto(pActortag);
 	pData->pOwner = pOwner;
-	pData->iTriggerIndex;
+	pData->iTriggerIndex = iTriggerIndex;
 	pData->vPos = vPos;
 	pData->fRadius = fRadius;
 		

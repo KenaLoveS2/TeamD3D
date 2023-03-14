@@ -346,8 +346,7 @@ void CMonster::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
 
-	if (m_pEnemyWisp != nullptr)
-		Safe_Release(m_pEnemyWisp);
+	Safe_Release(m_pEnemyWisp);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)

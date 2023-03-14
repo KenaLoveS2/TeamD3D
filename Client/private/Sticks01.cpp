@@ -34,7 +34,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(L"Sticks01_EnemyWisp"), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
@@ -125,12 +125,10 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(24.f, 0.3f, 6.f, 1.f));
-
-	/* EnemyWisp */
-	m_pEnemyWisp->Set_Position(_float4(24.f, 0.3f, 6.f, 1.f));
-	/* EnemyWisp */
-
+	_float4 vInitPos = _float4(10.f, 0.2f, 0.f, 1.f);
+	m_pTransformCom->Set_Position(vInitPos);	
+	m_pEnemyWisp->Set_Position(vInitPos);
+	
 	return S_OK;
 }
 
@@ -140,8 +138,7 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if(m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if(m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	ImGui::Begin("CSticks01");
 	if (ImGui::Button("Dying"))
@@ -160,14 +157,7 @@ void CSticks01::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
 
-	static _bool bSpawn = false;
-	if (DistanceTrigger(3.f))
-		bSpawn = true;
-
-	if (bSpawn && m_pEnemyWisp->IsActiveState())
-		m_bSpawn = true;
-
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom != nullptr && m_bSpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -218,10 +208,12 @@ void CSticks01::Imgui_RenderProperty()
 	if (ImGui::Button("SPAWN"))
 		bSpawn = true;
 
+	/*
 	if(bSpawn && m_pEnemyWisp->IsActiveState())
 	{
 		m_bSpawn = true;
 	}
+	*/
 }
 
 void CSticks01::ImGui_AnimationProperty()
@@ -322,6 +314,12 @@ void CSticks01::Push_EventFunctions()
 
 HRESULT CSticks01::SetUp_State()
 {
+	/*
+	static _bool bSpawn = false;
+	if (DistanceTrigger(3.f)) bSpawn = true;
+	if (bSpawn && m_pEnemyWisp->IsActiveState()) m_bSpawn = true;
+	*/
+
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("RESURRECT")
 		.AddState("RESURRECT")
@@ -336,9 +334,16 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(RESURRECT) && m_bSpawn;
-	})
+		return DistanceTrigger(1.f);
 
+		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
+	})
+		.OnExit([this]()
+	{		
+		m_pEnemyWisp->IsActiveState();
+		m_bSpawn = true;
+	})
+		
 		.AddState("COMBATIDLE")
 		.OnStart([this]()
 	{

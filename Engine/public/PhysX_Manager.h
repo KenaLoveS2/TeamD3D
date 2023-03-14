@@ -22,6 +22,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorBoxDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -39,6 +46,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorSphereDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -58,6 +72,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorCapsuleDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_CAPSULE_DESC;
 		
 private:

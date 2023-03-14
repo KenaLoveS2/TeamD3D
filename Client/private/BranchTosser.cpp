@@ -128,7 +128,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(20.f + (float)(rand() % 10), 3.f, 0.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(7.f, 0.f, 7.f, 1.f));
 
 	return S_OK;
 }

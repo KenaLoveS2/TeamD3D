@@ -33,6 +33,7 @@ HRESULT CRotEater::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
@@ -55,7 +56,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -121,7 +122,9 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(27.f, 0.3f, 6.f, 1.f));
+	_float4 vInitPos = _float4(13.f, 0.2f, 0.f, 1.f);
+	m_pTransformCom->Set_Position(vInitPos);
+	m_pEnemyWisp->Set_Position(vInitPos);
 
 	return S_OK;
 }
@@ -145,6 +148,15 @@ void CRotEater::Tick(_float fTimeDelta)
 void CRotEater::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
+
+	static _bool bSpawn = false;
+
+	if (DistanceTrigger(3.f))
+		bSpawn = true;
+
+	if (bSpawn && m_pEnemyWisp->IsActiveState())
+		m_bSpawn = true;
+
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -320,6 +332,9 @@ HRESULT CRotEater::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		m_bSpawn = DistanceTrigger(3.f) && m_pEnemyWisp->IsActiveState();
+
+
 		if(!m_bSpawn)
 		{
 			m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);

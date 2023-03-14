@@ -75,7 +75,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(26.f, 0.3f, 15.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(20.f, 0.f, 20.f, 1.f));
 
 	return S_OK;
 }
@@ -226,7 +226,8 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
 		{
-			return m_bSpawn && DistanceTrigger(20.f);
+			m_bSpawn = DistanceTrigger(3.f);
+			return m_bSpawn;
 		})
 
 			.AddState("INTOSLEEP")

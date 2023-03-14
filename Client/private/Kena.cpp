@@ -134,6 +134,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
 
+	m_pTransformCom->Set_Position(_float4(0.f, 0.f, 0.f, 1.f));
+
 	return S_OK;
 }
 
