@@ -2,6 +2,8 @@
 #include "..\public\UI_RotIcon.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Monster.h"
+#include "RotForMonster.h"
 
 CUI_RotIcon::CUI_RotIcon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
@@ -22,8 +24,7 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 
 	m_pTarget = pTarget;
 	m_bActive = true;
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
-		pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 }
 
 HRESULT CUI_RotIcon::Initialize_Prototype()
@@ -68,18 +69,23 @@ void CUI_RotIcon::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pTarget)
 	{
-		/* calculate camera */
-		_vector vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-		_vector vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
-		_vector vDir = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vCamPos);
-		if (10.f < XMVectorGetX(XMVector3Length(vDir)) || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))))
+		CMonster* pMonster =  dynamic_cast<CMonster*>(m_pTarget);
+		if (pMonster != nullptr)
 		{
-			m_pTarget = nullptr;
-			m_bActive = false;
+			/* calculate camera */
+			_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float fDistance = _float4::Distance(vCamPos, vPos);
+			_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+
+			if (10.f < fDistance || (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) <= cosf(XMConvertToRadians(20.f))) || pMonster->Get_Bind())
+			{
+				m_pTarget = nullptr;
+				m_bActive = false;
+			}
 		}
 	}
-
 }
 
 void CUI_RotIcon::Late_Tick(_float fTimeDelta)
