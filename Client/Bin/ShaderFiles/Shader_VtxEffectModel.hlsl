@@ -269,6 +269,22 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 	return Out;
 }
 
+//PS_WIND
+PS_OUT PS_WIND(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time  * 0.1f);
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV) * 2.f;
+
+	float fTIme = min(time, 1.f);
+	if (In.vTexUV.y < fTIme)
+		vDiffuse.a *= (1.f - fTIme);
+
+	Out.vDiffuse = vDiffuse;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
@@ -349,4 +365,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
+	pass Effect_Wind // 6
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_WIND();
+	}
 }

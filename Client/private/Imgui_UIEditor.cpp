@@ -8,6 +8,7 @@
 #include "UI_Event_Guage.h"
 #include "UI_Event_ChangeImg.h"
 #include "UI_Event_Animation.h"
+#include "UI_Event_Fade.h"
 
 /* Defines for Imgui */
 #define		AND			ImGui::SameLine()
@@ -70,7 +71,7 @@ void CImgui_UIEditor::Imgui_FreeRender()
 				{
 					CUI::tagUIDesc tDesc;
 					tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
-					if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(), L"Layer_Canvas",
+					if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
 						(*pCanvasProtoTags)[selected_canvasType].c_str(),
 						(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
 						MSG_BOX("Failed To Clone Canvas : UIEditor");
@@ -145,6 +146,9 @@ void CImgui_UIEditor::EventList()
 			break;
 		case CUI_ClientManager::EVENT_ANIMATION:
 			m_pUI->Add_Event(CUI_Event_Animation::Create(m_pUI));
+			break;
+		case CUI_ClientManager::EVENT_FADE:
+			m_pUI->Add_Event(CUI_Event_Fade::Create());
 			break;
 		}
 	}
