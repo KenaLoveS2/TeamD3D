@@ -28,7 +28,8 @@ private:
 	_int				m_iCrystal = 0;
 
 	_int				m_iMaxPIPCount = 0;
-	_int				m_iCurPIPCount = 0;
+	//_int				m_iCurPIPCount = 0;
+	_float				m_fCurPIPGuage = 0.f;
 	_float				m_fInitPIPCoolTime = 0.f;
 	_float				m_fCurPIPCoolTime = 0.f;
 
@@ -68,7 +69,9 @@ public:
 	inline _int Get_Crystal() { return m_iCrystal; }
 	
 	inline _int Get_MaxPIPCount() { return m_iMaxPIPCount; }
-	inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	//inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	inline _int Get_CurPIPCount() { return (_int)m_fCurPIPGuage; }
+	inline _float Get_CurPIPGuage() { return m_fCurPIPGuage;  }
 	inline _float Get_InitPIPCoolTime() { return m_fInitPIPCoolTime; }
 	inline _float Get_CurPIPCoolTime() { return m_fCurPIPCoolTime; }
 
@@ -92,8 +95,11 @@ public:
 	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
 	inline void Set_Crystal(_int iValue) { m_iCrystal = iValue; }
 
+	inline void Upgrade_MaxPIPCount() { m_iMaxPIPCount++; }
 	inline void Set_MaxPIPCount(_int iValue) { m_iMaxPIPCount = iValue; }
-	inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
+	//inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
+	inline void Set_CurPIPGuage(_float fGuage) { m_fCurPIPGuage = fGuage; }
+	inline void Cal_CurPIPGuage(_float fGuage) { m_fCurPIPGuage += fGuage; }
 	inline void Set_InitPIPCoolTime(_float fValue) { m_fInitPIPCoolTime = fValue; }
 	inline void Set_CurPIPCoolTime(_float fValue) { m_fCurPIPCoolTime = fValue; }
 

@@ -589,6 +589,15 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 	if (m_pFocusRot == nullptr)
 		return;
 
+	/* This Action needs Pip */
+	if (0 == m_pKenaStatus->Get_CurPIPCount())
+	{
+		m_pFocusRot->Set_Pos(nullptr);
+		return;
+	}
+
+
+
 	if (pTarget != nullptr)
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -1894,6 +1903,10 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			// ¶§¸°°Å 
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
 			//	return -1;
+
+			/* Increase Pip Guage */
+			m_pKenaStatus->
+
 
 			for (auto& Effect : m_mapEffect)
 			{

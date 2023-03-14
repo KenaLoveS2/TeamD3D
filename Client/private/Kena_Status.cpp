@@ -78,7 +78,8 @@ HRESULT CKena_Status::Save()
 	jKenaStatus["04. m_iRotCount"] = m_iRotCount;
 	jKenaStatus["05. m_iCrystal"] = m_iCrystal;
 	jKenaStatus["06. m_iMaxPIPCount"] = m_iMaxPIPCount;
-	jKenaStatus["07. m_iCurPIPCount"] = m_iCurPIPCount;
+	//jKenaStatus["07. m_iCurPIPCount"] = m_iCurPIPCount;
+	jKenaStatus["07. m_fCurPIPGuage"] = m_fCurPIPGuage;
 	jKenaStatus["08. m_fInitPIPCoolTime"] = m_fInitPIPCoolTime;
 	jKenaStatus["09. m_fCurPIPCoolTime"] = m_fCurPIPCoolTime;
 	jKenaStatus["10. m_iMaxArrowCount"] = m_iMaxArrowCount;
@@ -114,7 +115,8 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["04. m_iRotCount"].get_to<_int>(m_iRotCount);
 	jKenaStatus["05. m_iCrystal"].get_to<_int>(m_iCrystal);
 	jKenaStatus["06. m_iMaxPIPCount"].get_to<_int>(m_iMaxPIPCount);
-	jKenaStatus["07. m_iCurPIPCount"].get_to<_int>(m_iCurPIPCount);
+	//jKenaStatus["07. m_iCurPIPCount"].get_to<_int>(m_iCurPIPCount);
+	jKenaStatus["07. m_fCurPIPGuage"].get_to<_float>(m_fCurPIPGuage);
 	jKenaStatus["08. m_fInitPIPCoolTime"].get_to<_float>(m_fInitPIPCoolTime);
 	jKenaStatus["09. m_fCurPIPCoolTime"].get_to<_float>(m_fCurPIPCoolTime);
 	jKenaStatus["10. m_iMaxArrowCount"].get_to<_int>(m_iMaxArrowCount);
@@ -125,10 +127,6 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["15. m_iCurBombCount"].get_to<_int>(m_iCurBombCount);
 	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
 	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
-
-	/* Temp */
-	m_iKarma = 500;
-	m_iCrystal = 500;
 
 	m_strJsonFilePath = strJsonFilePath;
 
