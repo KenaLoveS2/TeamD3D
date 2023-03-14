@@ -43,7 +43,7 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	if (m_pKena == nullptr)
 		return S_OK;
 
-	assert(m_pKena != nullptr && "CRot::Late_Initialize");
+	assert(m_pKena != nullptr && "Pulse_Plate_Anim::Late_Initialize");
 
 	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
 	assert(m_pKenaTransform != nullptr && "CPulse_Plate_Anim::Late_Initialize");
@@ -102,8 +102,6 @@ void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(3);
 	}
-
-
 
 
 	m_pTransformCom->Tick(fTimeDelta);

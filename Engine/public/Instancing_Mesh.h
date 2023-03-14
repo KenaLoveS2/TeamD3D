@@ -40,7 +40,7 @@ public:
 
 
 public:
-	void	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 
 	void	InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
 

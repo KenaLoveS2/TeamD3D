@@ -131,9 +131,9 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	
 #ifdef FOR_MAP_GIMMICK
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
-	//CImgui_MapEditor::Load_MapObjects(LEVEL_MAPTOOL, "Test_Emmisve_Test.json");
-
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
+	CImgui_MapEditor::Load_MapObjects(LEVEL_MAPTOOL, "Test_Emmisve_Test.json");
+*/
 	
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");*/
 

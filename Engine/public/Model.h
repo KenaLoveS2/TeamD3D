@@ -81,7 +81,7 @@ public:
 
 			
 	void						Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
-	void						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	_bool						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
 	

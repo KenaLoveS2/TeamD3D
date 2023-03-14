@@ -490,7 +490,7 @@ void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix Pi
 	}
 }
 
-void CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta)
+_bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta)
 {
 	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
 	{
@@ -499,17 +499,30 @@ void CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterG
 
 		m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
+		_int iFinishCnt = 0;
+
 		for (_uint i = 0; i < m_iNumInstance; ++i)
 		{
-			if(m_vecOriginYPos[i] <=((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+			if (m_vecOriginYPos[i] <= ((VTXMATRIX*)SubResource.pData)[i].vPosition.y)
+			{
+				iFinishCnt += 0;
 				continue;
-
+			}
 			_float fMaxSpeed = fmax((i + 1)*1.5f, 3.f);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fMaxSpeed) * fTimeDelta;
+			iFinishCnt += 1;
 		}
 		m_pContext->Unmap(m_pInstanceBuffer, 0);
+	
+	
+		if (iFinishCnt == 0)
+			return true;
+		
 	}
 
+
+
+	return false;
 
 }
 

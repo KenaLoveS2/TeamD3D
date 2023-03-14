@@ -1641,13 +1641,28 @@ void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
 		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
 }
 
-void CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
+_bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
 	if (m_bIsInstancing == false)
-		return;
+		return false;
 
+	_bool bGimmickFinishCheck = false;
+	_int	iGimmickFinishCheck = 0;
 	for (auto &pInstMesh : m_InstancingMeshes)
-		pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+	{
+		bGimmickFinishCheck = pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+	
+		if (bGimmickFinishCheck == false)
+			iGimmickFinishCheck += 1;
+		else
+			iGimmickFinishCheck += 0;
+	}
+
+
+	if (iGimmickFinishCheck == 0)
+		return true;
+
+	return false;
 }
 
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
@@ -2276,7 +2291,7 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 
 void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)
 {
-	_float Xmin = INT_MAX, Xmax = INT_MIN, Ymin = INT_MAX, Ymax = INT_MIN, Zmin = INT_MAX, Zmax = INT_MIN;
+	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = (_float)INT_MIN;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
@@ -2339,7 +2354,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 
 void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
 {
-	_float Xmin = INT_MAX, Xmax = INT_MIN, Ymin = INT_MAX, Ymax = INT_MIN, Zmin = INT_MAX, Zmax = INT_MIN;
+	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = INT_MIN;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
@@ -2378,38 +2393,43 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 	_float fLenZ = fMaxZ - fMinZ;
 
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
-	BoxDesc.eType = BOX_STATIC;
-	BoxDesc.pActortag = pActorName;
-	BoxDesc.vPos = _float3(0.f, 0.f , 0.f);
-	BoxDesc.vSize = _float3(fLenX * vSize.x, fLenY * vSize.y, fLenZ * vSize.z);
-	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-	BoxDesc.fDegree = 0.f;
-	BoxDesc.isGravity = true;
-	BoxDesc.fStaticFriction = 0.5f;
-	BoxDesc.fDynamicFriction = 0.5f;
-	BoxDesc.fRestitution = 0.1f;
-	BoxDesc.eFilterType = FILTER_DEFULAT;
+	ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 
-
+	_float4x4 MatPosTrans;
+	_float4 vPos,vRight,vUp,vLook;
+	_float  fXSize, fYSize, fZSize;
 	size_t InstMatrixSize = m_pInstancingMatrix.size();
 	for (_uint i = 0; i < InstMatrixSize; ++i)
 	{
+
+		MatPosTrans = *m_pInstancingMatrix[i];
+		XMStoreFloat4x4(&MatPosTrans, XMLoadFloat4x4(&MatPosTrans) * pConnectTransform->Get_WorldMatrix());
+
+		memcpy(&vRight, &MatPosTrans.m[0], sizeof(_float4));
+		memcpy(&vUp, &MatPosTrans.m[1], sizeof(_float4));
+		memcpy(&vLook, &MatPosTrans.m[2], sizeof(_float4));
+		memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
+
+		fXSize =XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+		fYSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vUp)));
+		fZSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vLook)));
+
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.eType = BOX_STATIC;
 		BoxDesc.pActortag = CUtile::Create_DummyString();
-
-		_float4x4 MatPosTrans = *m_pInstancingMatrix[i];
-		
-		//MatPosTrans.m[3][0] += XYZRatio.x;
-		MatPosTrans.m[3][1] += fLenY * 0.5f;
-		//MatPosTrans.m[3][2] += fLenZ * 0.5f;
-
-
-		_matrix matReal = XMLoadFloat4x4(&MatPosTrans) * pConnectTransform->Get_WorldMatrix();
-		_float4x4 float4x4Mat;
-		XMStoreFloat4x4(&float4x4Mat, matReal);
+		BoxDesc.vPos = CUtile::Float_4to3(vPos);
+		BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f)* vSize.x, fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.eFilterType = FILTER_DEFULAT;
 
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
-		pPhysX->Set_ActorMatrix(BoxDesc.pActortag, float4x4Mat);
+		
 	}
 
 }

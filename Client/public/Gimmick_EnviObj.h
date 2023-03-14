@@ -29,10 +29,10 @@ public:
 	virtual HRESULT		Render() override;
 
 public:
-	void				Gimmik_Start(_float fTimeDelta);
+	_bool				Gimmik_Start(_float fTimeDelta);
 
 private:
-	void				Gimmick_Go_up(_float fTimeDelta);
+	_bool				Gimmick_Go_up(_float fTimeDelta);
 
 private:
 	CShader*						m_pShaderCom = nullptr;
@@ -44,10 +44,7 @@ private:
 private:
 	_float4							m_vOriginPos;
 	_bool							m_bGimmick_Active = false;
-
-public:
-
-
+	_bool							m_bColliderOn = false;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
