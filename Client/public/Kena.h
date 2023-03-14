@@ -22,6 +22,7 @@ class CKena final : public CGameObject
 
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
+	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -29,15 +30,16 @@ private:
 	virtual ~CKena() = default;
 
 public:
+	class CKena_State*		Get_State() { return m_pKenaState; }
+	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
+	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 	_double					Get_AnimationPlayTime();
+	const string&				Get_AnimationState() const;
+
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 
-public:
-	class CKena_State*		Get_State() { return m_pKenaState; }
-	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -112,6 +114,12 @@ private:
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
 
+	/* PhysX */
+	vector<wstring>		m_vecColliderName;
+	vector<_float3>		m_vecPivot;
+	vector<_float3>		m_vecPivotScale;
+	vector<_float3>		m_vecPivotRot;
+
 	CUI_RotIcon*			m_pFocusRot;
 
 private:
@@ -122,6 +130,7 @@ private:
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
+	void						Update_Collider(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);

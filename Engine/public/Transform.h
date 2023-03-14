@@ -57,6 +57,7 @@ public:
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
 	}
 	void			Set_Speed(_float fSpeedPerSec) { m_TransformDesc.fSpeedPerSec = fSpeedPerSec; }
+	void			Set_RotatePerSecond(_float fRotatePerSec) { m_TransformDesc.fRotationPerSec = fRotatePerSec; }
 
 	void Set_WorldMatrix_float4x4(_float4x4& fWorldMatrix);
 	void Set_WorldMatrix(_fmatrix WorldMatrix);
@@ -97,6 +98,10 @@ public:
 	void Speed_Down(_bool bKeyState, _float fValue);
 	void Orbit(_fvector vTargetPos, _fvector vAxis, const _float& fDistance, _float fTimeDelta);
 
+	/* Arrow */
+	void Arrow(_fvector vTargetPos, _fvector vFirePosition, _float fMaxAngle, _float fTimeDelta, _bool& bReach);
+	void Projectile_Motion(_float fMaxAngle, _float fTimeDelta);
+
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _float fTimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
@@ -120,6 +125,7 @@ public:
 	};
 
 	list<ActorData>* Get_ActorList() { return &m_ActorList; }
+	ActorData* FindActorData(const _tchar* pActorTag);
 
 private:	
 	_float4x4							m_WorldMatrix;
@@ -133,7 +139,6 @@ private:
 	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
 	_float3 m_vPxPivotScale = { 1.f,1.f,1.f };
 
-	ActorData* FindActorData(const _tchar* pActorTag);
 	list<ActorData> m_ActorList;
 	
 public:
@@ -158,6 +163,8 @@ public:
 	_float Calc_Distance_XZ(CTransform* pTransform);	
 	_float Calc_Distance_XY(CTransform* pTransform);
 	_float Calc_Distance_YZ(CTransform* pTransform);
+
+	_float	Calc_Pitch();
 
 	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
 	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
