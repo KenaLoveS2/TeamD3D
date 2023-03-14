@@ -416,13 +416,6 @@ map<const _tchar*, class CGameObject*>& CGameInstance::Get_ProtoTypeObjects()
 	return m_pObject_Manager->Get_ProtoTypeObjects();
 }
 
-void CGameInstance::SwitchOnOff_Shadow(_bool bSwitch)
-{
-	if (nullptr == m_pObject_Manager)
-		return;
-	m_pObject_Manager->SwitchOnOff_Shadow(bSwitch);
-}
-
 CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
 {
 	assert(nullptr != m_pObject_Manager&& "CGameInstance::Find_Layer");
@@ -932,7 +925,6 @@ void CGameInstance::Release_Engine()
 	CString_Manager::GetInstance()->DestroyInstance();
 	CEnviroment_Manager::GetInstance()->DestroyInstance();
 	CImgui_Manager::GetInstance()->DestroyInstance();
-
 }
 
 void CGameInstance::Free()

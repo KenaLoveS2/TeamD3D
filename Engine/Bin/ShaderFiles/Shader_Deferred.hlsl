@@ -21,6 +21,9 @@ float				g_fTexcelSizeY;
 vector			g_vMtrlAmbient = (vector)1.f;
 vector			g_vMtrlSpecular = (vector)1.f;
 
+bool				g_bShadow = true;
+bool				g_bSSAO = true;
+
 Texture2D<float4>		g_Texture; /* 디버그용텍스쳐*/
 
 Texture2D<float4>		g_NormalTexture;
@@ -370,66 +373,70 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/ * vSSAODesc.r;
+	if(g_bSSAO)
+		Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/ * vSSAODesc.r;
+	else
+		Out.vColor = CalcHDRColor(vDiffuse * vShade, vDepthDesc.b);
 
 	if (Out.vColor.a == 0.0f)
 		discard;
 
-
-	/* For. Shadow */
-
-	float		fViewZ = vDepthDesc.y * g_fFar;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
-	vector		vPosition;
-	vPosition.x = In.vTexUV.x * 2.f - 1.f;
-	vPosition.y = In.vTexUV.y * -2.f + 1.f;
-	vPosition.z = vDepthDesc.x; /* 0 ~ 1 */
-	vPosition.w = 1.0f;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
-	vPosition *= fViewZ;
-
-	// 뷰 상
-	vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	// 월드 상
-	vPosition = mul(vPosition, g_ViewMatrixInv);
-
-	vector vDynamicPos = mul(vPosition, g_DynamicLightViewMatrix);
-
-	vPosition = mul(vPosition, g_LightViewMatrix);
-
-	vector	vUVPos = mul(vPosition, g_LightProjMatrix);
-
-	vector  vDynamicUVPos = mul(vDynamicPos, g_LightProjMatrix);
-
-	float2	vNewUV, vDynamicUV;
-	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
-	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
-
-	vDynamicUV.x = (vDynamicUVPos.x / vDynamicUVPos.w) * 0.5f + 0.5f;
-	vDynamicUV.y = (vDynamicUVPos.y / vDynamicUVPos.w) * -0.5f + 0.5f;
-
-	float2 TexcelSize = float2(1.0f /g_fTexcelSizeX, 1.0f / g_fTexcelSizeY);
-	float fShadowRate = 0.f;
-
-	for (int y = -1; y <= 1; ++y)
+	if(g_bShadow)
 	{
-		for (int x = -1; x <= 1; ++x)
-		{
-			float2 offset = float2(x, y) * TexcelSize;
-			vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vDynamicUV + offset);
-			vector  vStaticShadowDesc = g_StaticShadowTexture.Sample(LinearSampler, vNewUV + offset);
-			if (vPosition.z - 0.1f > (vShadowDesc.r * vStaticShadowDesc.r) * g_fFar)
-				fShadowRate += 1.f;
-		}
-	}
+		/* For. Shadow */
+		float		fViewZ = vDepthDesc.y * g_fFar;
 
-	fShadowRate /= 9.f;
-	fShadowRate *= 0.3f;
-	
-	Out.vColor *= (1.f - fShadowRate);
+		/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
+		vector		vPosition;
+		vPosition.x = In.vTexUV.x * 2.f - 1.f;
+		vPosition.y = In.vTexUV.y * -2.f + 1.f;
+		vPosition.z = vDepthDesc.x; /* 0 ~ 1 */
+		vPosition.w = 1.0f;
+
+		/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+		vPosition *= fViewZ;
+
+		// 뷰 상
+		vPosition = mul(vPosition, g_ProjMatrixInv);
+
+		// 월드 상
+		vPosition = mul(vPosition, g_ViewMatrixInv);
+
+		vector vDynamicPos = mul(vPosition, g_DynamicLightViewMatrix);
+
+		vPosition = mul(vPosition, g_LightViewMatrix);
+
+		vector	vUVPos = mul(vPosition, g_LightProjMatrix);
+
+		vector  vDynamicUVPos = mul(vDynamicPos, g_LightProjMatrix);
+
+		float2	vNewUV, vDynamicUV;
+		vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+		vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
+
+		vDynamicUV.x = (vDynamicUVPos.x / vDynamicUVPos.w) * 0.5f + 0.5f;
+		vDynamicUV.y = (vDynamicUVPos.y / vDynamicUVPos.w) * -0.5f + 0.5f;
+
+		float2 TexcelSize = float2(1.0f /g_fTexcelSizeX, 1.0f / g_fTexcelSizeY);
+		float fShadowRate = 0.f;
+
+		for (int y = -1; y <= 1; ++y)
+		{
+			for (int x = -1; x <= 1; ++x)
+			{
+				float2 offset = float2(x, y) * TexcelSize;
+				vector	vShadowDesc = g_ShadowTexture.Sample(LinearSampler, vDynamicUV + offset);
+				vector  vStaticShadowDesc = g_StaticShadowTexture.Sample(LinearSampler, vNewUV + offset);
+				if (vPosition.z - 0.1f > (vShadowDesc.r * vStaticShadowDesc.r) * g_fFar)
+					fShadowRate += 1.f;
+			}
+		}
+
+		fShadowRate /= 9.f;
+		fShadowRate *= 0.3f;
+		
+		Out.vColor *= (1.f - fShadowRate);
+	}
 
 	return Out;
 }

@@ -93,9 +93,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	m_vWakeUpPosition = _float4(3.f, 0.f, 3.f, 1.f);
 
-	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
+	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
@@ -106,7 +106,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-		
+
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
 		
@@ -189,13 +189,6 @@ void CRot::ImGui_AnimationProperty()
 		m_pModelCom->Imgui_RenderProperty();
 		ImGui::EndTabItem();
 	}
-
-	//if (ImGui::BeginTabItem("State"))
-	//{
-	//	m_pStateMachine->Imgui_RenderProperty();
-	//	ImGui::EndTabItem();
-	//}
-
 	ImGui::EndTabBar();
 }
 
@@ -226,44 +219,14 @@ void CRot::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
-
-	// 이게 사실상 px 매니저 imgui_render에 있긴함
-	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
-	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
-	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
-}
-
-HRESULT CRot::Call_EventFunction(const string& strFuncName)
-{
-	return CGameObject::Call_EventFunction(strFuncName);
-}
-
-void CRot::Push_EventFunctions()
-{
-	Test(true, 0.f);
 }
 
 HRESULT CRot::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimRotModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_pModelCom->Set_RootBone("Rot_RIG");
-
-	//  0 : Body
-	//	 1 : Eye
-	//	 2 : Hair
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
 
@@ -292,10 +255,6 @@ HRESULT CRot::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
-}
-
-void CRot::Test(_bool bIsInit, _float fTimeDelta)
-{
 }
 
 CRot* CRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

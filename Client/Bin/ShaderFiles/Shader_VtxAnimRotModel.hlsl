@@ -8,7 +8,7 @@ matrix g_ViewMatrix;
 matrix g_ProjMatrix;
 float	   g_fFar = 300.f;
 float4 g_vCamPosition;
-float  g_fHairTransparency = 5.f;
+float  g_fHairTransparency = 0.3f;
 /**************************************/
 
 
