@@ -213,20 +213,24 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		static _float fTag = 0.0f;
-		if (fTag < 1.0f)
-			fTag = 1.0f;
-		else
-			fTag = 0.0f;
-		m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
-		//_float fTag = 0.f;
-		//_float fCurrency[3] = { 200.f, 13.f, 230.f };
-		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
-		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
-		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
+		//static _float fTag = 0.0f;
+		//if (fTag < 1.0f)
+		//	fTag = 1.0f;
+		//else
+		//	fTag = 0.0f;
+		//m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
 
-		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
+		/* Inventory */
+		_float fTag = 0.f;
+		_float fKarma = (_float)m_pKenaStatus->Get_Karma();
+		_float fRots = (_float)m_pKenaStatus->Get_RotCount();
+		_float fCrystal = (_float)m_pKenaStatus->Get_Crystal();
+
+		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		m_PlayerDelegator.broadcast(eKarma, funcDefault, fKarma);
+		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fRots);
+		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCrystal);
+
 	}
 
 	//static _float fNum = 3.f;

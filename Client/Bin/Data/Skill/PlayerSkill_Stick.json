@@ -3,13 +3,13 @@
     "ImagePath": "../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Stick/Stick%d.png",
     "Level0":[
         {
-            "Name": "스틱이름0",
-            "Desc": "스틱설명0",
+            "Name": "근접 공격",
+            "Desc": "좌클릭 일반공격, 우클릭 강공격을 할 수 있습니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
                     "RotLevel"  : 1,
-                    "Karma"     : 50
+                    "Karma"     : 0
                 }
             ],
             "State": 0
@@ -17,13 +17,13 @@
     ],
     "Level1":[
         {
-            "Name": "스틱이름1",
-            "Desc": "스틱설명1",
+            "Name": "빠른 질주 공격",
+            "Desc": "질주 도중 좌클릭을 눌러 빠른 범위 공격을 합니다.",
             "Condition": [
                 {
-                    "PrevSkill" : -1,
+                    "PrevSkill" : 0,
                     "RotLevel"  : 1,
-                    "Karma"     : 100
+                    "Karma"     : 50
                 }
             ],
             "State": 0
@@ -31,13 +31,13 @@
     ],
     "Level2":[
         {
-            "Name": "스틱이름2",
-            "Desc": "스틱설명2",
+            "Name": "강한 질주 공격",
+            "Desc": "질주 도중 우클릭을 눌러 강력한 머리 위 공격을 합니다.",
             "Condition": [
                 {
                     "PrevSkill" : 1,
-                    "RotLevel"  : 2,
-                    "Karma"     : 150
+                    "RotLevel"  : 1,
+                    "Karma"     : 100
                 }
             ],
             "State": 0
@@ -45,13 +45,13 @@
     ],
     "Level3":[
         {
-            "Name": "스틱이름3",
-            "Desc": "스틱설명3",
+            "Name": "공중 내려찍기",
+            "Desc": "점프 도중 우클릭을 눌러 강력한 내려찍기 공격을 합니다.",
             "Condition": [
                 {
                     "PrevSkill" : 2,
-                    "RotLevel"  : 3,
-                    "Karma"     : 200
+                    "RotLevel"  : 1,
+                    "Karma"     : 150
                 }
             ],
             "State": 0
@@ -59,13 +59,13 @@
     ],
     "Level4":[
         {
-            "Name": "스틱이름4",
-            "Desc": "스틱설명4",
+            "Name": "완벽한 충전",
+            "Desc": "정확한 타이밍에 강한 공격을 가해 엄청난 피해를 입힙니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
-                    "RotLevel"  : 4,
-                    "Karma"     : 300
+                    "RotLevel"  : 1,
+                    "Karma"     : 200
                 }
             ],
             "State": 0
