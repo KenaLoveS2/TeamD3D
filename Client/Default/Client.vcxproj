@@ -206,6 +206,8 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h" />
     <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
+    <ClInclude Include="..\public\E_KenaDust.h" />
+    <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
     <ClInclude Include="..\public\E_KenaHit.h" />
@@ -217,6 +219,7 @@
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\public\E_PulseObject.h" />
     <ClInclude Include="..\public\E_P_EnemyWisp.h" />
+    <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
@@ -251,9 +254,11 @@
     <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
+    <ClInclude Include="..\public\UI_Event_Fade.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h" />
     <ClInclude Include="..\public\Monster_Status.h" />
     <ClInclude Include="..\public\Moth.h" />
@@ -319,6 +324,9 @@
     <ClInclude Include="..\public\UI_NodeLetterBox.h" />
     <ClInclude Include="..\public\UI_NodeLvUp.h" />
     <ClInclude Include="..\public\UI_NodeNumRots.h" />
+    <ClInclude Include="..\public\UI_NodeRotArrow.h" />
+    <ClInclude Include="..\public\UI_NodeRotCnt.h" />
+    <ClInclude Include="..\public\UI_NodeRotFrontGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotLevel.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
@@ -326,6 +334,7 @@
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
     <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
+    <ClInclude Include="..\public\UI_NodeTitle.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
@@ -367,6 +376,8 @@
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
+    <ClCompile Include="..\private\E_KenaDust.cpp" />
+    <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
     <ClCompile Include="..\private\E_KenaHit.cpp" />
@@ -379,6 +390,7 @@
     <ClCompile Include="..\private\E_PulseObject.cpp" />
     <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
     <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
+    <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
@@ -413,9 +425,11 @@
     <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
+    <ClCompile Include="..\private\UI_Event_Fade.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp" />
     <ClCompile Include="..\private\Monster_Status.cpp" />
     <ClCompile Include="..\private\Moth.cpp" />
@@ -481,6 +495,9 @@
     <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
     <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
     <ClCompile Include="..\private\UI_NodeNumRots.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotArrow.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotCnt.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />
@@ -488,6 +505,7 @@
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
+    <ClCompile Include="..\private\UI_NodeTitle.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />

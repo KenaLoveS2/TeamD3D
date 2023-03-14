@@ -567,8 +567,15 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector	 flower = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	// flower.a = flower.r;
-	flower.rgb = g_vColor.rgb;
+	flower.a = flower.r;
+	flower.rgb = flower.rgb + 1.f;
+
+	float3 flowetcolor = float3(98.f, 98.f, 98.f) / 255.f;
+
+	if (flower.a < 0.5f)
+		flower.rgb = flower.rgb + g_vColor + float3(1.f, 0.0f, 0.0f);
+	else
+		flower.rgb = (float3)1.f;
 
 	Out.vColor = flower;
 	return Out;

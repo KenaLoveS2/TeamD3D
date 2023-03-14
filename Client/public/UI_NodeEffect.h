@@ -41,6 +41,7 @@ private:
 	/* For. Simple Action  */
 	_float					m_fTime;
 	_float					m_fAlpha;
+	_float4					m_vColor;
 
 
 
