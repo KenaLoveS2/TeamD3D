@@ -226,7 +226,8 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
 		{
-			return m_bSpawn && DistanceTrigger(20.f);
+			m_bSpawn = DistanceTrigger(3.f);
+			return m_bSpawn;
 		})
 
 			.AddState("INTOSLEEP")

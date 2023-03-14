@@ -2,7 +2,6 @@
 #include "..\public\Sticks01.h"
 #include "GameInstance.h"
 #include "Bone.h"
-#include "EnemyWisp.h"
 
 CSticks01::CSticks01(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -27,7 +26,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(L"Sticks01_EnemyWisp"), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -46,7 +45,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 HRESULT CSticks01::Late_Initialize(void * pArg)
 {	
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
 	// ¸öÅë
 	{
@@ -126,21 +125,20 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-	/* EnemyWisp */
 	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
-	/* EnemyWisp */
 
 	return S_OK;
 }
 
 void CSticks01::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	if(m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if(m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	ImGui::Begin("CSticks01");
 	if (ImGui::Button("Dying"))
@@ -157,16 +155,11 @@ void CSticks01::Tick(_float fTimeDelta)
 
 void CSticks01::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	static _bool bSpawn = false;
-	if (DistanceTrigger(3.f))
-		bSpawn = true;
-
-	if (bSpawn && m_pEnemyWisp->IsActiveState())
-		m_bSpawn = true;
-
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -217,10 +210,12 @@ void CSticks01::Imgui_RenderProperty()
 	if (ImGui::Button("SPAWN"))
 		bSpawn = true;
 
+	/*
 	if(bSpawn && m_pEnemyWisp->IsActiveState())
 	{
 		m_bSpawn = true;
 	}
+	*/
 }
 
 void CSticks01::ImGui_AnimationProperty()
@@ -332,11 +327,29 @@ HRESULT CSticks01::SetUp_State()
 			m_pModelCom->Set_AnimIndex(RESURRECT);
 		}	
 	})
-		.AddTransition("RESURRECT to INTOCHARGE", "INTOCHARGE")
+		.OnExit([this]()
+	{		
+		m_pEnemyWisp->IsActiveState();		
+	})
+		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(RESURRECT) && m_bSpawn;
+		return DistanceTrigger(7.f) || m_bSpawnByMage;
+		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
+
+
+		.AddState("READY_SPAWN")		
+		.OnExit([this]()
+	{		
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to INTOCHARGE", "INTOCHARGE")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+
 
 		.AddState("COMBATIDLE")
 		.OnStart([this]()
@@ -345,7 +358,7 @@ HRESULT CSticks01::SetUp_State()
 		Set_AFType();
 	})
 		.Tick([this](_float fTimeDelta)
-	{
+	{	
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(COMBATIDLE);
 	})
@@ -513,7 +526,7 @@ HRESULT CSticks01::SetUp_State()
 		Set_AttackType();
 	})
 		.Tick([this](_float fTimeDelta)
-	{
+	{	
 		m_pModelCom->Set_AnimIndex(CHARGE);
 		Tick_Attack(fTimeDelta);
 	})
@@ -879,19 +892,15 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+
+
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-
-	})
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
+	})		
 		.Build();
 
 	return S_OK;
@@ -928,7 +937,8 @@ HRESULT CSticks01::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
+	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
 	m_bDying && Bind_Dissolove(m_pShaderCom);
 	
 	return S_OK;
@@ -1141,3 +1151,10 @@ void CSticks01::Free()
 {
 	CMonster::Free();
 }
+
+void CSticks01::Spawn_ByMage(_float4 vPos)
+{
+	m_pTransformCom->Set_Position(vPos);
+	m_pEnemyWisp->Set_Position(vPos);
+	m_bSpawnByMage = true;
+};

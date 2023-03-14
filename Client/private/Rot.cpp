@@ -103,21 +103,12 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	return S_OK;
 }
 
-_float Temp =  1.f;
-
 void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (GetKeyState('F') & 0x8000)
-	{
-		// m_bWakeUp = true;
-		Temp += 1.f * fTimeDelta;
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, Temp);
-	}
-
-	//if (m_pFSM)
-	//	m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM)
+		m_pFSM->Tick(fTimeDelta);
 		
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -311,25 +302,24 @@ HRESULT CRot::SetUp_State()
 	{
 	
 	})
+		.OnExit([this]()
+	{
+		m_iThisRotIndex = m_iKenaFindRotCount++;
+		m_pkenaState->Set_RotCount(m_iKenaFindRotCount);
+
+		m_vecKenaConnectRot.push_back(this);
+
+		if (m_iThisRotIndex == FIRST_ROT)
+			m_pKena->Set_FirstRotPtr(this);
+
+		m_pTransformCom->Set_Position(m_vWakeUpPosition);
+	})
 		.AddTransition("SLEEP to WAKE_UP", "WAKE_UP")
 		.Predicator([this]()
 	{
 		return m_bWakeUp;
 	})
-		.OnExit([this]()
-	{
-		m_iThisRotIndex = m_iKenaFindRotCount++;
-		m_pkenaState->Set_RotCount(m_iThisRotIndex);
-
-		m_vecKenaConnectRot.push_back(this);
 		
-		if (m_iThisRotIndex == 0)
-			m_pKena->Set_FirstRotPtr(this);
-
-		m_pTransformCom->Set_Position(m_vWakeUpPosition);
-	})
-
-
 		.AddState("WAKE_UP")
 		.OnStart([this]()
 	{	
@@ -339,15 +329,16 @@ HRESULT CRot::SetUp_State()
 	{
 
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("WAKE_UP to COLLECT ", "COLLECT")
 		.Predicator([this]()
 	{	
 		return m_pModelCom->Get_AnimationFinish();
 	})
-		.OnExit([this]()
-	{
-
-	})
+		
 		.AddState("COLLECT")
 		.OnStart([this]()
 	{
@@ -362,16 +353,17 @@ HRESULT CRot::SetUp_State()
 	{
 
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("COLLECT to IDLE ", "IDLE")
 		.Predicator([this]()
 	{
 		_bool bCuteAnimFinish = (m_iCuteAnimIndex == m_pModelCom->Get_AnimIndex()) && m_pModelCom->Get_AnimationFinish();
 		return bCuteAnimFinish;
 	})
-		.OnExit([this]()
-	{
-
-	})
+		
 
 		.AddState("IDLE")
 		.OnStart([this]()
@@ -399,16 +391,17 @@ HRESULT CRot::SetUp_State()
 	{
 		m_pTransformCom->Chase(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta, 1.f);
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
 		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
 		return m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})		
-		.OnExit([this]()
-	{
-
-	})
+		
 
 		.Build();
 

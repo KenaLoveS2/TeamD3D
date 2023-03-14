@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "Utile.h"
+#include "Sticks01.h"
 
 CMage::CMage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -27,6 +28,7 @@ HRESULT CMage::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -44,6 +46,8 @@ HRESULT CMage::Initialize(void* pArg)
 
 HRESULT CMage::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -67,7 +71,7 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this,true,COL_MONSTER));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
@@ -126,19 +130,21 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(19.f, 0.3f, 20.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(5.f, 0.3f, 5.f, 1.f));
+	m_pEnemyWisp->Set_Position(_float4(5.f, 0.3f, 5.f, 1.f));
 
 	return S_OK;
 }
 
 void CMage::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -148,9 +154,11 @@ void CMage::Tick(_float fTimeDelta)
 
 void CMage::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+	
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -317,19 +325,42 @@ void CMage::Push_EventFunctions()
 HRESULT CMage::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("SPAWN")
-		.AddState("SPAWN")
-		.Tick([this](_float fTimeDelta)
+		.InitState("NONE")
+		.AddState("NONE")
+		.OnExit([this]()
 	{
-		if (!m_bSpawn)
-			m_pModelCom->ResetAnimIdx_PlayTime(ENTER);
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(3.f);
+	})
+
+
+		.AddState("READY_SPAWN")
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to SPAWN", "SPAWN")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+
+		
+		.AddState("SPAWN")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(ENTER);
 
 		m_pModelCom->Set_AnimIndex(ENTER);
-	})
+	})		
 		.AddTransition("SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ENTER) && m_bSpawn;
+		return AnimFinishChecker(ENTER);
 	})
 
 		.AddState("IDLE")
@@ -390,6 +421,11 @@ HRESULT CMage::SetUp_State()
 	{
 		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("SUMMON")
 		.OnStart([this]()
@@ -412,6 +448,11 @@ HRESULT CMage::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(SUMMON);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("RANGEDATTACK")
@@ -439,6 +480,11 @@ HRESULT CMage::SetUp_State()
 	{
 			return AnimFinishChecker(RANGEDATTACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("CLOSEATTACK")
 		.OnStart([this]()
@@ -464,6 +510,11 @@ HRESULT CMage::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CLOSEATTACK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("DASH")
@@ -501,6 +552,11 @@ HRESULT CMage::SetUp_State()
 			AnimFinishChecker(DASH_B) ||
 			AnimFinishChecker(DASH_F);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("PARRIED")
@@ -524,6 +580,11 @@ HRESULT CMage::SetUp_State()
 	{
 		return AnimFinishChecker(PARRY);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("ENTER")
@@ -537,6 +598,11 @@ HRESULT CMage::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(EXIT);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		// 어느 타이밍에 패링이 되는지?
@@ -565,6 +631,11 @@ HRESULT CMage::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ENTER);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("TAKEDAMAGE")
@@ -603,6 +674,11 @@ HRESULT CMage::SetUp_State()
 			AnimFinishChecker(STAGGER_B) ||
 			AnimFinishChecker(STAGGER_R);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 
 		.AddState("BIND")
 		.OnStart([this]()
@@ -627,19 +703,15 @@ HRESULT CMage::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+
+
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-
-	})
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
+	})		
 		.Build();
 
 	return S_OK;
@@ -647,10 +719,8 @@ HRESULT CMage::SetUp_State()
 
 HRESULT CMage::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
+	__super::SetUp_Components();
+		
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Mage", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Mage/WoodMage_UV_02_AO_R_M.png")), E_FAIL);
@@ -658,8 +728,12 @@ HRESULT CMage::SetUp_Components()
 
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Mage/WoodMage_UV_01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Mage/WoodMage_UV_01_CRYSTALMASK.png")), E_FAIL);
-
+	
 	m_pModelCom->Set_RootBone("WoodMage");
+
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_Mage.json");
+
 
 	return S_OK;
 }
@@ -673,6 +747,9 @@ HRESULT CMage::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
+
 	return S_OK;
 }
 
@@ -684,7 +761,7 @@ HRESULT CMage::SetUp_ShadowShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
@@ -814,9 +891,9 @@ void CMage::Summon()
 			&pGameObject);
 		pGameObject->Late_Initialize();
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.z += 3.f;
-		pGameObject->Get_TransformCom()->Set_Position(vPos);
-		static_cast<CMonster*>(pGameObject)->Spawn();
+		vPos.z += 3.f;	
+
+		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
 		m_SticksList.push_back(pGameObject);
 	}
 	// 내 옆으로
@@ -827,8 +904,8 @@ void CMage::Summon()
 		pGameObject->Late_Initialize();
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		vPos.x += 3.f;
-		pGameObject->Get_TransformCom()->Set_Position(vPos);
-		static_cast<CMonster*>(pGameObject)->Spawn();
+
+		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
 		m_SticksList.push_back(pGameObject);
 	}
 	// 내 옆으로
@@ -839,8 +916,8 @@ void CMage::Summon()
 		pGameObject->Late_Initialize();
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		vPos.x -= 3.f;
-		pGameObject->Get_TransformCom()->Set_Position(vPos);
-		static_cast<CMonster*>(pGameObject)->Spawn();
+
+		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
 		m_SticksList.push_back(pGameObject);
 	}
 

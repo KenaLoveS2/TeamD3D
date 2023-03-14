@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Monster_Status.h"
 #include "EnemyWisp.h"
+#include "UI_MonsterHP.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -127,7 +128,7 @@ protected:
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual  HRESULT			SetUp_ShadowShaderResources() PURE;
-	virtual HRESULT			SetUp_UI();
+	virtual HRESULT			SetUp_UI(_float fOffsetY = 0.2f);
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr)  PURE;

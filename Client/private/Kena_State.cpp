@@ -368,6 +368,7 @@ HRESULT CKena_State::SetUp_State_Air_Attack()
 		.Init_Tick(this, &CKena_State::Tick_Air_Attack_Slam_Into)
 		.Init_End(this, &CKena_State::End_Air_Attack_Slam_Into)
 		.Init_Changer(L"AIR_ATTACK_SLAM_LOOP", this, &CKena_State::Animation_Finish)
+		.Init_Changer(L"AIR_ATTACK_SLAM_FINISH", this, &CKena_State::OnGround)
 
 		.Add_State(L"AIR_ATTACK_SLAM_LOOP")
 		.Init_Start(this, &CKena_State::Start_Air_Attack_Slam_Loop)
@@ -1340,12 +1341,12 @@ HRESULT CKena_State::SetUp_State_Combat()
 HRESULT CKena_State::SetUp_State_Damaged_Common()
 {
 	m_pStateMachine->Add_State(L"TAKE_DAMAGE")
-.Init_Changer(L"TAKE_DAMAGE_FRONT", this, &CKena_State::Damaged_Dir_Front)
-.Init_Changer(L"TAKE_DAMAGE_BACK", this, &CKena_State::Damaged_Dir_Back)
-.Init_Changer(L"TAKE_DAMAGE_LEFT", this, &CKena_State::Damaged_Dir_Left)
-.Init_Changer(L"TAKE_DAMAGE_RIGHT", this, &CKena_State::Damaged_Dir_Right)
+		.Init_Changer(L"TAKE_DAMAGE_FRONT", this, &CKena_State::Damaged_Dir_Front)
+		.Init_Changer(L"TAKE_DAMAGE_BACK", this, &CKena_State::Damaged_Dir_Back)
+		.Init_Changer(L"TAKE_DAMAGE_LEFT", this, &CKena_State::Damaged_Dir_Left)
+		.Init_Changer(L"TAKE_DAMAGE_RIGHT", this, &CKena_State::Damaged_Dir_Right)
 
-	.Add_State(L"TAKE_DAMAGE_FRONT")
+		.Add_State(L"TAKE_DAMAGE_FRONT")
 		.Init_Start(this, &CKena_State::Start_Take_Damage_Front)
 		.Init_Tick(this, &CKena_State::Tick_Take_Damage_Front)
 		.Init_End(this, &CKena_State::End_Take_Damage_Front)
@@ -2481,7 +2482,10 @@ void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
 
 void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("BOW_CHARGE_FULL");
+	if (m_pAnimationState->Get_CurrentAnimName() == "BOW_CHARGE")
+		m_pAnimationState->State_Animation("BOW_CHARGE_FULL");
+	else
+		m_pAnimationState->State_Animation("BOW_CHARGE_FULL", 0.2f);
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
