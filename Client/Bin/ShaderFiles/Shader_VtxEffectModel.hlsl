@@ -269,6 +269,17 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 	return Out;
 }
 
+//PS_SPRITARROW
+PS_OUT PS_SPRITARROW(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV) * 2.f;
+
+	Out.vDiffuse = vDiffuse;
+	return Out;
+}
+
 //PS_WIND
 PS_OUT PS_WIND(PS_IN In)
 {
@@ -362,7 +373,7 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 PS_SPRITARROW();
 	}
 
 	pass Effect_Wind // 6

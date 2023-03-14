@@ -2599,6 +2599,10 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* ~EnemyWisp Effects */
 #pragma  endregion	MONSTER
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
+		CRotForMonster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
 	m_isFinished = true;
