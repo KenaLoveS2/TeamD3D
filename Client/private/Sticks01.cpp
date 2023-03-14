@@ -336,6 +336,7 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return DistanceTrigger(1.f);
 
+
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 		.OnExit([this]()
