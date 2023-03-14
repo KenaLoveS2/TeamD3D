@@ -150,6 +150,81 @@ void CGameObject::Imgui_RenderComponentProperties()
 	}
 }
 
+void CGameObject::ImGui_PhysXValueProperty()
+{
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
+
+	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	m_pTransformCom->Set_PxPivot(vPxPivot);
+
+	list<CTransform::ActorData>*	pActorList = m_pTransformCom->Get_ActorList();
+	_uint iActorCount = (_uint)pActorList->size();
+
+	ImGui::BulletText("ColliderLists");
+	{
+		static _int iSelect = -1;
+		char** ppObjectTag = new char*[iActorCount];
+		_uint iTagLength = 0;
+		_uint i = 0;
+		for (auto& Pair : *pActorList)
+			ppObjectTag[i++] = CUtile::WideCharToChar(Pair.pActorTag);
+		ImGui::ListBox("Collider List", &iSelect, ppObjectTag, iActorCount);
+
+		if (iSelect != -1)
+		{
+			ImGui::BulletText("Current Collider Object : %s", ppObjectTag[iSelect]);
+
+			_tchar*	pActorTag = CUtile::CharToWideChar(ppObjectTag[iSelect]);
+			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(pActorTag);
+			PxRigidActor*		pActor = pActorData->pActor;
+
+			PxShape*			pShape = nullptr;
+			pActor->getShapes(&pShape, sizeof(PxShape));
+			PxCapsuleGeometry& Geometry = pShape->getGeometry().capsule();
+			_float&	fScaleX = Geometry.radius;
+			_float&	fScaleY = Geometry.halfHeight;
+
+			/* Scale */
+			ImGui::BulletText("Scale Setting");
+			ImGui::DragFloat("Scale X", &fScaleX, 0.05f);
+			ImGui::DragFloat("Scale Y", &fScaleY, 0.05f);
+
+			pShape->setGeometry(Geometry);
+
+			/* Rotate & Position */
+			ImGui::Separator();
+			ImGui::BulletText("Rotate Setting");
+
+			_smatrix		matPivot = pActorData->PivotMatrix;
+			_float4		vScale, vRot, vTrans;
+			ImGuizmo::DecomposeMatrixToComponents((_float*)&matPivot, (_float*)&vTrans, (_float*)&vRot, (_float*)&vScale);
+
+			ImGui::DragFloat3("Rotate", (_float*)&vRot, 0.01f);
+			ImGui::DragFloat3("Translation", (_float*)&vTrans, 0.01f);
+
+			ImGuizmo::RecomposeMatrixFromComponents((_float*)&vTrans, (_float*)&vRot, (_float*)&vScale, (_float*)&matPivot);
+
+			pActorData->PivotMatrix = matPivot;
+
+			Safe_Delete_Array(pActorTag);
+		}
+
+		for (_uint i = 0; i < iActorCount; ++i)
+			Safe_Delete_Array(ppObjectTag[i]);
+		Safe_Delete_Array(ppObjectTag);
+	}
+}
+
 void CGameObject::Set_Position(_float4& vPosition)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&vPosition));

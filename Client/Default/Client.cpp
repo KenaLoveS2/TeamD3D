@@ -71,8 +71,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_60"))))
 		return FALSE;
 
-	_float			TimerAcc = 0.0;
-	_float			FrameTime = 1.0 / 60.0f;
+	_float			TimerAcc = 0.f;
+	_float			FrameTime = 1.f / 60.0f;
 
 	while (true)
 	{
