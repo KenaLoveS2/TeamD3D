@@ -21,7 +21,7 @@ public:
 	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	class CBone*			Get_BonePtr(const char* pBoneName);
 	const _double&		Get_PlayTime() const;
-	const _float		Get_AnimationProgress() const;
+	const _float				Get_AnimationProgress() const;
 	const _bool&			Get_PausePlay() const { return m_bPausePlay; }
 	const _bool&			Get_Preview() const { return m_bPreview; }
 	const _uint&				Get_AnimIndex() const { return m_iCurrentAnimIndex; }
@@ -68,10 +68,10 @@ public:
 	void						Print_Animation_Names(const string& strFilePath);
 
 public:	
-	HRESULT 				Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
+	HRESULT 					Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
 		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor);
 	virtual HRESULT		Initialize(void* pArg, class CGameObject* pOwner);
-	virtual void			Imgui_RenderProperty() override;
+	virtual void				Imgui_RenderProperty() override;
 
 public:
 	void						Play_Animation(_float fTimeDelta);
@@ -80,19 +80,19 @@ public:
 	void						Imgui_MaterialPath();
 
 			
-	void				Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
-	void				Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	void						Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+	void						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
 	
 private:
-	TYPE							m_eType = TYPE_END;
-	wstring							m_wstrModelFilePath = L"";
-	DWORD						m_dwBeginBoneData = 0;
+	TYPE									m_eType = TYPE_END;
+	wstring									m_wstrModelFilePath = L"";
+	DWORD								m_dwBeginBoneData = 0;
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
-	_uint									m_iNumMeshes = 0;
-	vector<class CMesh*>		m_Meshes;	
+	_uint										m_iNumMeshes = 0;
+	vector<class CMesh*>			m_Meshes;	
 
 	_uint										m_iNumMaterials = 0;
 	vector<MODELMATERIAL>	m_Materials;			
@@ -102,19 +102,19 @@ private:
 	vector<class CBone*>			m_Bones;
 	string									m_strRootBone = "";
 
-	_uint							m_iPreAnimIndex = 0;
-	_uint							m_iCurrentAnimIndex = 0;
-	_uint							m_iNumAnimations = 0;
+	_uint										m_iPreAnimIndex = 0;
+	_uint										m_iCurrentAnimIndex = 0;
+	_uint										m_iNumAnimations = 0;
 	vector<class CAnimation*>	m_Animations;
 
-	_float4x4						m_PivotMatrix;
+	_float4x4								m_PivotMatrix;
 
-	_float							m_fBlendDuration = 0.2f;
-	_float							m_fBlendCurTime = 0.2f;
+	_float									m_fBlendDuration = 0.2f;
+	_float									m_fBlendCurTime = 0.2f;
 
-	_bool							m_bPreview = false;
-	_bool							m_bPausePlay = false;
-	_uint								m_iAdditiveAnimIndexForMonster = 0;
+	_bool									m_bPreview = false;
+	_bool									m_bPausePlay = false;
+	_uint										m_iAdditiveAnimIndexForMonster = 0;
 
 /*For.Mesh_Instancing*/
 	_bool													m_bIsInstancing = false;
@@ -123,9 +123,8 @@ private:
 	_uint														m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
 	/*For.Lod*/
-	_bool														m_bIsLodModel = false;
-
-	class	CTransform*										m_pInstanceTransform = nullptr;
+	_bool													m_bIsLodModel = false;
+	class	CTransform*									m_pInstanceTransform = nullptr;
 
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);

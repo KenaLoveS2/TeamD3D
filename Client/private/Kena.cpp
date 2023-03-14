@@ -218,7 +218,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	for (_int i = 0; i < 8; i++)
 	{
 		CGameObject* p_game_object = nullptr;
-		swprintf_s(szCloneRotTag, L"RotForWoodKnight_%d", i);
+		swprintf_s(szCloneRotTag, L"RotForMonster_%d", i);
 		CRotForMonster::DESC desc;
 		ZeroMemory(&desc, sizeof(CRotForMonster::DESC));
 
@@ -722,10 +722,7 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 		if (pGameInstance->Key_Down(DIK_R))
-		{
-			static_cast<CMonster*>(pTarget)->Bind();
-			static_cast<CMonster*>(pTarget)->Setting_Rot(m_pRotForMonster, 8);
-		}
+			static_cast<CMonster*>(pTarget)->Bind(m_pRotForMonster, 8);
 			
 		RELEASE_INSTANCE(CGameInstance);
 	}

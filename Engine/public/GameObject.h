@@ -60,7 +60,6 @@ protected:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 	_bool					m_isCloned = { false };
 	_float					m_fCamDistance = { 0.0 };
-	_bool					m_bShadow = true;
 
 	const _tchar*		m_szCloneObjectTag = TEXT("");
 	const _tchar*		m_szProtoObjectTag = TEXT("");
@@ -87,8 +86,6 @@ public:
 public:	
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
-
-	void	SwitchOnOff_Shadow(_bool bSwitch) { m_bShadow = bSwitch; }
 
 public: /* imgui */
 	virtual  void Imgui_RenderComponentProperties();

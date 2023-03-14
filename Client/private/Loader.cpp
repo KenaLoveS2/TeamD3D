@@ -111,7 +111,6 @@
 
 /*Test Objects*/
 #include "LodObject.h"
-#include "ModelViewerObject.h"
 #include "Moth.h"
 #include "RotForMonster.h"
 
@@ -506,8 +505,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 HRESULT CLoader::Loading_ForMapTool()
 {
-	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	CGameInstance*		pGameInstance =GET_INSTANCE(CGameInstance);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	///* For.Prototype_Component_Texture_Terrain */
@@ -1268,7 +1266,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	//if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true)))// json NonUse
 	//	assert(!"Issue");
 
-
 #pragma endregion ~Start_Forest_Room
 
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1306,6 +1303,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
+
 	/* ~Test*/
 	///* For.Prototype_GameObject_Cave_Rock */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
@@ -1454,6 +1452,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
 		CGroundMark::Create(m_pDevice, m_pContext))))
@@ -1475,7 +1474,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	m_isFinished = true;
 
-	Safe_Release(pGameInstance);
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -1934,17 +1933,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* ~Test*/
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
 		CLodObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	m_fCur += 1.f;
-	/* For.Prototype_GameObject_ModelViewerObject */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
-		CModelViewerObject::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* ~Test*/
 	m_fCur += 1.f;
 
 	/* For.Prototype_GameObject_Cave_Rock */
@@ -2356,6 +2348,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
 		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"),
 		CMoth::Create(m_pDevice, m_pContext))))

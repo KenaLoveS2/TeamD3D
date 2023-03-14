@@ -43,20 +43,18 @@ public:
 
 	void Bind(_bool bBind, class CMonster* pGameObject);
 
-
 private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
-	HRESULT SetUp_FSM();
-	_bool		AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
+	HRESULT				SetUp_Components();
+	HRESULT				SetUp_ShaderResources();
+	HRESULT				SetUp_ShadowShaderResources();
+	HRESULT				SetUp_FSM();
+	_bool					AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
+
 private:
 	CRenderer*			 m_pRendererCom = nullptr;
 	CShader*				 m_pShaderCom = nullptr;
 	CModel*				 m_pModelCom = nullptr;
 	CFSMComponent* m_pFSM = nullptr;
-
-	_float m_fLimit = 0.5f;
 
 private:
 	_bool						  m_bWakeUp = false;
@@ -64,6 +62,7 @@ private:
 	_bool						  m_bBind = false;
 	class CMonster*		  m_pTarget = nullptr;
 	DESC						  m_Desc;
+
 public:
 	static CRotForMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

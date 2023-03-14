@@ -8,7 +8,6 @@
 #include <fstream>
 
 #include "EnviromentObj.h"
-#include "ModelViewerObject.h"
 #include "Terrain.h"
 
 #include "Imgui_Manager.h"
@@ -51,7 +50,6 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_Save_Load_Json();
 
 		Imgui_SelectObject_InstancingControl();
-		Imgui_Control_ViewerCamTransform();
 		imgui_ObjectList_Clear();
 
 		imgui_Gimmic_Class_Viewr();
@@ -268,40 +266,6 @@ void CImgui_MapEditor::Imgui_SelectOption()
 	}
 
 #pragma endregion ~생성시 사용되는 모델 이름
-
-#pragma region		선택된 오브젝트들 보여주기
-
-	char szSelctedObject_Name[256], szSelctedModel_Name[256];
-	CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
-	CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
-
-	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
-	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
-	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
-
-	if(m_bModelChange ==true)
-	{
-		/* 모델 프로토 타입이 널이 아닐때 바꾸기*/
-		if (m_wstrModelName != L"")
-		{
-			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-			if (false == m_bOnceSearch)
-			{
-				m_pViewerObject = static_cast<CModelViewerObject*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_BackGround"), TEXT("VIEWER_Objcet")));
-				m_bOnceSearch = true;
-			}
-
-			if (m_pViewerObject != nullptr)
-				m_pViewerObject->Change_Model(pGameInstance->Get_CurLevelIndex(), m_wstrModelName.c_str());
-
-			RELEASE_INSTANCE(CGameInstance);
-			m_bModelChange = false;
-		}
-	}
-
-
-#pragma endregion ~선택된 오브젝트들 보여주기
 }
 
 void CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront(CGameInstance *pGameInstace, CGameObject* pGameObject)
@@ -499,39 +463,6 @@ void CImgui_MapEditor::Imgui_SelectObject_InstancingControl()
 	{
 		Imgui_Instancing_control(pSelectEnviObj);
 	}
-}
-
-void CImgui_MapEditor::Imgui_Control_ViewerCamTransform()
-{
-	ImGui::Separator();
-
-	if (m_pViewerObject != nullptr)
-	{
-		static float fYPos_Num = 0.1f;
-		static float fXAngle_Num = 0.1f;
-		static float fZPos_Num = -5.f;
-
-		_float fViewerCamYPos = m_pViewerObject->Get_ViewerCamYPos();
-		_float fViewerCamXAngle = m_pViewerObject->Get_ViewerCamXAngle();
-
-
-		ImGui::Text("ViewerCam ZPos, %f", &fZPos_Num);
-		ImGui::Text("ViewerCam YPos, %f", &fViewerCamYPos);
-		ImGui::Text("ViewerCam XAngle, %f", fViewerCamXAngle);
-
-
-		ImGui::InputFloat("ZPosNum", &fZPos_Num); ImGui::SameLine();
-		if (ImGui::Button("zPos Chagne"))
-			m_pViewerObject->Set_ViewerCamZPos(fZPos_Num);
-		ImGui::InputFloat("YPos_Increase&Reduce_Num", &fYPos_Num);
-		ImGui::InputFloat("xAngle_Increase&Reduce_Num", &fXAngle_Num);
-		// Is Picking?
-		m_pViewerObject->Set_ViewerCamMoveRatio(fYPos_Num, fXAngle_Num);
-	
-	
-	}
-	
-
 }
 
 void CImgui_MapEditor::Imgui_TexturePathNaming()

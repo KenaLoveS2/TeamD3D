@@ -235,35 +235,6 @@ HRESULT CRotForMonster::SetUp_FSM()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
-		/*.AddState("SLEEP")
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-		m_bCreateStart = true;
-	})
-		.AddTransition("SLEEP to CREATE", "CREATE")
-		.Predicator([this]()
-	{
-		return m_bWakeUp;
-	})
-
-		.AddState("CREATE")
-		.OnStart([this]()
-	{
-		m_pModelCom->Set_AnimIndex(CRot::TELEPORT6);
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-	})
-		.AddTransition("CREATE to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return m_pModelCom->Get_AnimationFinish();
-	})*/
-
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
@@ -324,12 +295,9 @@ HRESULT CRotForMonster::SetUp_FSM()
 	})
 
 		.AddState("BIND_MONSTER")
-		.OnStart([this]()
-	{
-		m_fLimit = CUtile::Get_RandomFloat(0.1f, 1.f);
-	})
 		.Tick([this](_float fTimeDelta)
 	{
+		m_pModelCom->Set_AnimIndex(CRot::SQUISH_U);
 		if(m_pTarget != nullptr)
 		{
 			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
@@ -347,8 +315,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
 
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
-			m_pTransformCom->Chase(vPos, fTimeDelta, m_fLimit);
-			//m_pTransformCom->Set_WorldMatrix_float4x4(pivotMatrix);
+			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
 		}
 	})
 		.AddTransition("BIND_MONSTER to IDLE", "IDLE")

@@ -235,7 +235,6 @@ HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar * pLayerTag)
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-
 }
 
 HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
@@ -265,6 +264,5 @@ CLevel_MapTool * CLevel_MapTool::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 void CLevel_MapTool::Free()
 {
 	__super::Free();
-	
 }
 

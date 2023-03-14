@@ -60,13 +60,9 @@ HRESULT CMonster::Initialize(void* pArg)
 	Push_EventFunctions();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
-
 	RELEASE_INSTANCE(CGameInstance)
-
 	m_bRotable = true;
-
 	return S_OK;
 }
 
@@ -137,6 +133,13 @@ void CMonster::Imgui_RenderProperty()
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
 
+	if(ImGui::Button("AddShaderValue"))
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Add_ShaderValueObject(g_LEVEL, this);
+			RELEASE_INSTANCE(CGameInstance)
+	}
+
 	if (ImGui::Button("BIND"))
 		m_bBind = true;
 
@@ -168,20 +171,18 @@ void CMonster::ImGui_PhysXValueProperty()
 	__super::ImGui_PhysXValueProperty();
 }
 
-HRESULT CMonster::Call_EventFunction(const string & strFuncName)
-{
-	return S_OK;
-}
-
-void CMonster::Push_EventFunctions()
-{
-}
-
 void CMonster::Calc_RootBoneDisplacement(_fvector vDisplacement)
 {
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CMonster::Bind(CRotForMonster * pGameObject[], _int iRotCnt)
+{
+	m_bBind = true;
+	for (_int i = 0; i<iRotCnt; ++i)
+		m_pRotForMonster[i] = pGameObject[i];
 }
 
 _bool CMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
@@ -299,12 +300,6 @@ HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 		
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
-}
-
-void CMonster::Setting_Rot(CRotForMonster * pGameObject[], _int iRotCnt)
-{
-	for(_int i = 0; i<iRotCnt; ++i)
-		m_pRotForMonster[i] = pGameObject[i];
 }
 
 HRESULT CMonster::SetUp_Components()

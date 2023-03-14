@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
+    <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
@@ -252,7 +253,6 @@
     <ClInclude Include="..\Public\LodObject.h" />
     <ClInclude Include="..\public\Mage.h" />
     <ClInclude Include="..\public\MainApp.h" />
-    <ClInclude Include="..\Public\ModelViewerObject.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
@@ -400,6 +400,7 @@
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
+    <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
     <ClCompile Include="..\Private\Kena.cpp" />
@@ -424,7 +425,6 @@
     <ClCompile Include="..\Private\LodObject.cpp" />
     <ClCompile Include="..\private\Mage.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
-    <ClCompile Include="..\Private\ModelViewerObject.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
