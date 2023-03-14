@@ -1473,7 +1473,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
 		assert(!"Issue");
 
-	
+
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_DeadZoneTree */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -1749,11 +1749,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	///* Prototype_Component_Model_ShieldStick */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_ShieldStick */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 	/* Prototype_Component_Model_ShieldStick_Weapon */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",
@@ -2325,9 +2325,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"),
-		CBranchTosser_Weapon::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	// if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"), CBranchTosser_Weapon::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	m_fCur += 1.f;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"),
@@ -2701,6 +2699,8 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 
 HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial)
 {
+	return S_OK; // 임시 조치
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 

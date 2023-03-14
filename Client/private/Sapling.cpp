@@ -33,6 +33,7 @@ HRESULT CSapling::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
@@ -44,6 +45,8 @@ HRESULT CSapling::Initialize(void* pArg)
 
 HRESULT CSapling::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -78,25 +81,20 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 	}
 
 	m_pTransformCom->Set_Position(_float4(22.f, 0.5f, 5.f, 1.f));
+	m_pEnemyWisp->Set_Position(_float4(22.f, 0.5f, 5.f, 1.f));
 
 	return S_OK;
 }
 
 void CSapling::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
-	if (DistanceTrigger(10.f))
-		m_bSpawn = true;
-
-	if (m_bDesolve)
-		m_fDissolveTime += fTimeDelta;
-	else
-		m_fDissolveTime = 0.0f;
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -104,9 +102,11 @@ void CSapling::Tick(_float fTimeDelta)
 
 void CSapling::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -241,19 +241,41 @@ void CSapling::Push_EventFunctions()
 HRESULT CSapling::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("WISPOUT")
-		.AddState("WISPOUT")
-		.Tick([this](_float fTimeDelta)
+		.InitState("NONE")
+		.AddState("NONE")
+		.OnExit([this]()
 	{
-		if (!m_bSpawn)
-			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(10.f);
+	})
 
+
+		.AddState("READY_SPAWN")		
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to AWAKE", "WISPOUT")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+
+
+		.AddState("WISPOUT")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
 		m_pModelCom->Set_AnimIndex(WISPOUT);
 	})
 		.AddTransition("WISPOUT to IDLE" , "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(WISPOUT) && m_bSpawn;
+		return AnimFinishChecker(WISPOUT);
 	})
 
 		.AddState("IDLE")
@@ -380,19 +402,15 @@ HRESULT CSapling::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+
+
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-
-	})
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
+	})	
 		.Build();
 
 	return S_OK;
@@ -400,10 +418,8 @@ HRESULT CSapling::SetUp_State()
 
 HRESULT CSapling::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
+	__super::SetUp_Components();
+	
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sapling", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
@@ -448,13 +464,8 @@ HRESULT CSapling::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
-	/* Dissolve */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
-		return E_FAIL;
-	/* Dissolve */
-
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

@@ -33,11 +33,10 @@ HRESULT CRotEater::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
-	m_pTransformCom->Set_Translation(_float4(10.f, 0.f, 0.f, 1.f), _float4());
-
 	m_pModelCom->Set_AllAnimCommonType();
 
 	return S_OK;
@@ -45,6 +44,8 @@ HRESULT CRotEater::Initialize(void* pArg)
 
 HRESULT CRotEater::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+	
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -55,7 +56,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -121,13 +122,17 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(27.f, 0.3f, 6.f, 1.f));
+	_float4 vInitPos = _float4(13.f, 0.2f, 0.f, 1.f);
+	m_pTransformCom->Set_Position(vInitPos);
+	m_pEnemyWisp->Set_Position(vInitPos);
 
 	return S_OK;
 }
 
 void CRotEater::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
@@ -144,9 +149,11 @@ void CRotEater::Tick(_float fTimeDelta)
 
 void CRotEater::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -307,31 +314,43 @@ HRESULT CRotEater::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("NONE")
 		.AddState("NONE")
-		.AddTransition("NONE to AWAKE", "AWAKE")
+		.OnExit([this]()
+	{
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return true;
+		return DistanceTrigger(5.f);
 	})
+		
+
+		.AddState("READY_SPAWN")
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to AWAKE", "AWAKE")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+		
+
 
 		.AddState("AWAKE")
 		.OnStart([this]()
 	{
+		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
+		m_pModelCom->ResetAnimIdx_PlayTime(AWAKEALT);
+
 		m_iAwakeType = rand() % 2;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		if(!m_bSpawn)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
-			m_pModelCom->ResetAnimIdx_PlayTime(AWAKEALT);
-		}
-		else
-		{
-			if (m_iAwakeType == AWAKE_0)
-				m_pModelCom->Set_AnimIndex(AWAKE);
-			else if (m_iAwakeType == AWAKE_1)
-				m_pModelCom->Set_AnimIndex(AWAKEALT);
-		}
+		
+		m_pModelCom->Set_AnimIndex(AWAKE + m_iAwakeType);
 	})
 		.AddTransition("AWAKE to IDLE" , "IDLE")
 		.Predicator([this]()
@@ -623,19 +642,14 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+		
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-
-	})
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
+	})		
 		.Build();
 
 	return S_OK;
@@ -668,6 +682,9 @@ HRESULT CRotEater::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

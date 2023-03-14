@@ -246,7 +246,11 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	}
 
 	RELEASE_INSTANCE(CGameInstance)
-		
+	
+
+	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
+
+
 	return S_OK;
 }
 

@@ -56,7 +56,7 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
-
+	
 	Push_EventFunctions();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -93,11 +93,9 @@ void CMonster::Tick(_float fTimeDelta)
 		m_pUIHPBar->Set_Guage(fGuage);
 	}
 #endif */
-	if (m_bDying)
-		m_fDissolveTime += fTimeDelta * 0.6f;
-	else
-		m_fDissolveTime = 0.0f;
-
+		
+	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;
+	
 	if (m_pEnemyWisp)
 		m_pEnemyWisp->Tick(fTimeDelta);
 
@@ -318,14 +316,14 @@ HRESULT CMonster::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CMonster::SetUp_UI()
+HRESULT CMonster::SetUp_UI(_float fOffsetY)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CUI_MonsterHP::BBDESC tDesc;
 	tDesc.fileName = L"UI_Monster_Normal_HP";
 	tDesc.pOwner = this;
-	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 0.2f ;
+	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + fOffsetY;
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_MonsterHP"),
@@ -350,15 +348,14 @@ void CMonster::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pFSM);
 
-	if (m_pEnemyWisp != nullptr)
-		Safe_Release(m_pEnemyWisp);
+	Safe_Release(m_pEnemyWisp);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == COL_PLAYER) // COL_PLAYER_WEAPON
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
@@ -370,9 +367,8 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 HRESULT CMonster::Bind_Dissolove(CShader* pShader)
 {	
-	if (FAILED(pShader->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)))) return E_FAIL;
 	if (FAILED(pShader->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
 	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(pShader, "g_DissolveTexture"))) return E_FAIL;
-
+	
 	return S_OK;
 }
