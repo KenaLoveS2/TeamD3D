@@ -37,13 +37,13 @@ HRESULT CStone::Initialize(void * pArg)
 
 HRESULT CStone::Late_Initialize(void * pArg)
 {
-	if (m_pModelCom->Get_IStancingModel() == false)
-		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
-	else
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT
-		, _float3(0.5f, 0.5f, 0.5f)); //(0~1)
+	//if (m_pModelCom->Get_IStancingModel() == false)
+	//	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	//else
+	//	m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT
+	//	, _float3(0.5f, 0.5f, 0.5f)); //(0~1)
 
-	m_pRendererCom->Set_PhysXRender(true);
+	//m_pRendererCom->Set_PhysXRender(true);
 	return S_OK;
 }
 
@@ -397,7 +397,7 @@ HRESULT CStone::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -407,7 +407,7 @@ HRESULT CStone::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	
 
 	return S_OK;
 
@@ -421,14 +421,14 @@ HRESULT CStone::SetUp_ShadowShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	
 
 	return S_OK;
 }

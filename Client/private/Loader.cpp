@@ -539,6 +539,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
 
+
 #pragma region ANIM_OBJ
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_DeadZoneTree */
@@ -553,6 +554,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
 
+	
+
+#pragma  endregion ANIM_OBJ
+
+#ifdef FOR_MAP_GIMMICK
+
+#pragma region Test_Gimmick_OBJ
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
@@ -569,13 +577,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
 		assert(!"Issue");
+#pragma endregion
 
-#pragma  endregion ANIM_OBJ
-
-#ifdef FOR_MAP_GIMMICK
 
 #pragma region KENA
-	/* For.Prototype_Component_Model_Kena */
+		/* For.Prototype_Component_Model_Kena */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Kena",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
@@ -694,7 +700,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	m_fCur += 1.f;
 #pragma endregion Model Component
-
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
@@ -1468,7 +1473,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
 		assert(!"Issue");
 
-	
+
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_DeadZoneTree */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -2497,7 +2502,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 
 #pragma  region	MONSTER
 	/* For.Prototype_Component_Model_EnemyWisp */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_EnemyWisp", 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_EnemyWisp",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
 		return E_FAIL;
 

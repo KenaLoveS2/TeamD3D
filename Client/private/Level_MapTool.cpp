@@ -25,7 +25,7 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+	CGameInstance* p_game_instance = CGameInstance::GetInstance();
 	p_game_instance->Clear_ImguiObjects();
 	
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
@@ -39,29 +39,24 @@ HRESULT CLevel_MapTool::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-	RELEASE_INSTANCE(CGameInstance)
+	
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-			return E_FAIL;
-
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
-
-	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+	
+	/*if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
 		return E_FAIL;
-
+*/
 	return S_OK;
 }
 
@@ -111,7 +106,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
@@ -125,8 +120,14 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 #ifdef FOR_MAP_GIMMICK
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
+
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Emmisve_Test.json");
+
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");*/
+
 #endif
 
 	RELEASE_INSTANCE(CGameInstance);

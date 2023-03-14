@@ -674,7 +674,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	ifstream      file(strLoadDirectory.c_str());
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -763,7 +763,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		vecInstnaceMatrixVec.clear();
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -789,33 +788,19 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 
 void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 {
-	if (ImGui::Button("Create_Crystal_Pulse"))
-	{
 
-		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-		{
-			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-				continue;
-		
-			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
-				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
-		}
-	}
-
-	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//if (ImGui::Button("Create_Crystal_Pulse"))
 	//{
 
 	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
 	//	{
-	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//		if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
 	//			continue;
-
-	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	
+	//		if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+	//			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
 	//	}
-
-
 	//}
-
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)

@@ -33,7 +33,7 @@ public:
 
 
 private:	
-	CModel*									m_pModelCom = nullptr;
+	CModel*							m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	

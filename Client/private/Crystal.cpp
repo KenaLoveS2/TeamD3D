@@ -321,4 +321,8 @@ void CCrystal::Free()
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
 
+	for (auto &pEffect : m_VecCrystal_Effect)
+		Safe_Release(pEffect);
+	m_VecCrystal_Effect.clear();
+
 }

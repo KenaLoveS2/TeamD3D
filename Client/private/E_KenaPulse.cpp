@@ -254,4 +254,5 @@ void CE_KenaPulse::Free()
 	__super::Free();
 
 	Safe_Release(m_pDissolveTexture);
+	
 }
