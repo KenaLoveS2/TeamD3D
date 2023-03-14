@@ -142,7 +142,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	lstrcpy(pTag, m_szCloneObjectTag);
 	lstrcat(pTag, wszTag);
 
-	CUtile::Create_StringAuto(pTag);
+	CGameInstance::GetInstance()->Add_String(pTag);
 
 	vPivotScale = _float3(0.5f, 0.5f, 1.f);
 
