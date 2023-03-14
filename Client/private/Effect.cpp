@@ -49,10 +49,7 @@ HRESULT CEffect::Initialize(void * pArg)
 void CEffect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-		m_fShaderBindTime += fTimeDelta;
-
-	if (m_eEFfectDesc.bActive == false)
-		return;
+	m_fShaderBindTime += fTimeDelta;
 
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
@@ -153,10 +150,6 @@ void CEffect::Tick(_float fTimeDelta)
 void CEffect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-//	__super::Compute_CamDistance();
-
-	if (m_eEFfectDesc.bActive == false)
-		return;
 
 	if (m_eEFfectDesc.IsBillboard == true)
 		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
@@ -284,8 +277,6 @@ HRESULT CEffect::SetUp_Components()
 	/***********
 	*  TEXTURE *
 	************/
-	m_iTotalDTextureComCnt = 1;
-	m_iTotalMTextureComCnt = 1;
 
 	/* For.DiffuseTexture */
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
