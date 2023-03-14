@@ -33,7 +33,7 @@ HRESULT CPulse_Plate_Anim::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_AnimIndex(3);
 	return S_OK;
 }
 
@@ -43,7 +43,7 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	if (m_pKena == nullptr)
 		return S_OK;
 
-	assert(m_pKena != nullptr && "CRot::Late_Initialize");
+	assert(m_pKena != nullptr && "Pulse_Plate_Anim::Late_Initialize");
 
 	m_pKenaTransform = dynamic_cast<CTransform*>(m_pKena->Get_TransformCom());
 	assert(m_pKenaTransform != nullptr && "CPulse_Plate_Anim::Late_Initialize");
@@ -57,13 +57,13 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
-	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
-	BoxDesc.vSize = _float3(2.1f, 0.1f, 2.1f);
+	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
-	BoxDesc.isGravity = true;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
@@ -74,41 +74,34 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 
-	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_PULSE_PLATE));
-	m_pRendererCom->Set_PhysXRender(true);
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
 
-
-	/*CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_STATIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
-	PxSphereDesc.fRadius = vPivotScale.x;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 1.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-	
-	PxSphereDesc.fLinearDamping = 1.f;
-	PxSphereDesc.bCCD = true;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PULSE_PLATE;
-	PxSphereDesc.fDynamicFriction = 0.5f;
-	PxSphereDesc.fStaticFriction = 0.5f;
-	PxSphereDesc.fRestitution = 0.1f;
-
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PULSE_PLATE));
-*/
-	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-
-	
-
+	CPhysX_Manager::GetInstance()->Create_Trigger(
+		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
 
 	return S_OK;
 }
 
 void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 {
+	//ImGui_PhysXValueProperty();
 	__super::Tick(fTimeDelta);
-	m_bPlayerColl = false;			
 
+	if (m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
+	{
+		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);
+		m_pModelCom->Set_AnimIndex(2);
+	}
+
+	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())
+		 || (m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(1);
+	}
+	else if (false == m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 4 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(3);
+	}
 
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -119,13 +112,6 @@ void CPulse_Plate_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/*if(m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
-		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);*/
-
-	_bool bTest = true;
-
-	if (CGameInstance::GetInstance()->Key_Up(DIK_E))
-		m_Gimmick_PulsePlateDelegate.broadcast(bTest);
 
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -252,7 +238,7 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 	// 1) Gimmci_Plat 충돌 체크확인
 	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
 
-	m_bPlayerColl = true;
+	
 
 	
 
@@ -261,11 +247,16 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	m_bPlayerColl = true;
+
+	m_pModelCom->Set_AnimIndex(0);	
 	return 0;
 }
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	m_bPlayerColl = false;
+	m_pModelCom->Set_AnimIndex(4);
 	return 0;
 }
 

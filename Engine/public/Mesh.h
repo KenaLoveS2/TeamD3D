@@ -41,7 +41,7 @@ private:
 	vector<class CBone*>	m_Bones;
 
 	string* m_pBoneNames = nullptr;
-	VTXMODEL* m_pNonAnimVertices = nullptr;
+	VTXMODEL*			m_pNonAnimVertices = nullptr;
 	VTXANIMMODEL*		m_pAnimVertices = nullptr;
 	FACEINDICES32*			m_pIndices = nullptr;
 

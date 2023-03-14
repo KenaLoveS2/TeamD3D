@@ -41,15 +41,37 @@ HRESULT CCrystal::Initialize(void * pArg)
 HRESULT CCrystal::Late_Initialize(void * pArg)
 {
 #ifdef FOR_MAP_GIMMICK
-
-
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_DYNAMIC;
+	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vSize = _float3(0.9f, 1.25f, 0.9f);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f; 
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+	BoxDesc.bKinematic = true;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
+	
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
-	/*Deliver_PulseE*/
 
+	/*Recived_PulseE*/
 	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0번  :PULSE_OBJ_RECIVE
@@ -63,11 +85,11 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
 	m_VecCrystal_Effect.push_back(pEffectObj);
 
-
+	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1번  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.05f;
-	PulseObj_Desc.fPulseMaxSize = 14.f;
+	PulseObj_Desc.fIncreseRatio = 1.03f;
+	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
 	pEffectObj = dynamic_cast<CEffect_Base*>(pGameInstance->
@@ -76,13 +98,13 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	static_cast<CE_PulseObject*>(pEffectObj)->Set_PulseObject_DESC(PulseObj_Desc);
 	m_VecCrystal_Effect.push_back(pEffectObj);
 
-	/*Recived_PulseE*/
-
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		pEffectObj->Late_Initialize();
 	}
 #endif
+
+	
 	return S_OK;
 }
 
@@ -90,6 +112,15 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	
+	//if (m_VecCrystal_Effect.size() != 0)
+	//{
+	//	for (auto& pEffectObj : m_VecCrystal_Effect)
+	//	{
+	//		if (pEffectObj != nullptr)
+	//			pEffectObj->Set_Active(false);
+	//	}
+	//}
 
 #ifdef FOR_MAP_GIMMICK
 	if (m_VecCrystal_Effect.size() == 0)
@@ -97,7 +128,6 @@ void CCrystal::Tick(_float fTimeDelta)
 
 	if (static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Get_Finish())
 	{
-		static_cast<CE_PulseObject*>(m_VecCrystal_Effect[0])->Set_Finish(false);
 		m_VecCrystal_Effect[1]->Set_Active(true);
 	}
 	
@@ -182,8 +212,23 @@ HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pCom
 
 _int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
+	return 0;
+}
 
-	return _int();
+_int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	// 콜라이더 인덱스 우리가 Client에서  정의 한  인덱스
+
+	if (iColliderIndex == (_int)TRIGGER_PULSE)
+		m_VecCrystal_Effect[0]->Set_Active(true);
+	return 0;
+}
+
+_int CCrystal::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)TRIGGER_PULSE)
+		_bool b = false;
+	return 0;
 }
 
 HRESULT CCrystal::SetUp_Components()
@@ -275,5 +320,10 @@ void CCrystal::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
+
+	for (auto &pEffect : m_VecCrystal_Effect)
+		Safe_Release(pEffect);
+	m_VecCrystal_Effect.clear();
+
 
 }
