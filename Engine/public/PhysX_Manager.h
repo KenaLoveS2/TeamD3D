@@ -52,7 +52,6 @@ public:
 			bCCD = false;
 			bKinematic = false;
 		}
-
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc

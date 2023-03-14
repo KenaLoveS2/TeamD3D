@@ -87,6 +87,8 @@ public:
 	virtual HRESULT			Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 	void								Setting_Rot(class CRotForMonster* pGameObject[], _int iRotCnt);
 
+	_bool							Get_Bind() { return m_bBind; }
+
 protected:
 	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
 

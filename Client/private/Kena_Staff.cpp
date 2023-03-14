@@ -35,6 +35,11 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CKena_Staff::Late_Initialize(void * pArg)
+{
+	return S_OK;
+}
+
 HRESULT CKena_Staff::Ready_Effects()
 {
 	CEffect_Base* pEffectBase = nullptr;

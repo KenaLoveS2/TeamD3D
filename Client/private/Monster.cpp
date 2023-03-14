@@ -116,7 +116,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = _float4::Distance(vCamPos, vPos);
 	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
-	if (fDistance <= 20.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+
+	if (fDistance <= 10.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))) && !m_bBind)
 		Call_RotIcon();
 }
 
