@@ -1598,6 +1598,12 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
+	if (m_Meshes.size() == 0) 
+	{
+		Safe_Delete(pUserData);
+		return;
+	}
+
 	for (auto &iter : m_Meshes)
 	{
 		iter->Create_PxTriangleMeshActor(pUserData);

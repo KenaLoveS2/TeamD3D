@@ -34,6 +34,7 @@ HRESULT CShieldStick::Initialize(void* pArg)
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
 	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
 	//	Push_EventFunctions();
@@ -45,6 +46,8 @@ HRESULT CShieldStick::Initialize(void* pArg)
 
 HRESULT CShieldStick::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(0.f, 5.f, -15.f);
@@ -77,19 +80,21 @@ HRESULT CShieldStick::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));	
+	m_pEnemyWisp->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));
 
 	return S_OK;
 }
 
 void CShieldStick::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	//if (m_pFSM)
-	//	m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	if(m_isWeapon)
 		m_pWeapon->Tick(fTimeDelta);
@@ -101,12 +106,14 @@ void CShieldStick::Tick(_float fTimeDelta)
 
 void CShieldStick::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
 	if(m_isWeapon)
 		m_pWeapon->Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -211,19 +218,82 @@ HRESULT CShieldStick::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("NONE")
-		.AddState("NONE")
+		.AddState("NONE")		
+		.OnExit([this]()
+	{
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(3.f);
+	})
+		
+		.AddState("READY_SPAWN")
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+
+		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+
+	})
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		
+
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(DEATH);
+		m_bDying = true;
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
+
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_bDeath = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
+	})
 		.Build();
+
 	return S_OK;
 }
 
 HRESULT CShieldStick::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	__super::SetUp_Components();
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_ShieldStick", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_ShieldSticks.json");
+		
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, L"../Bin/Resources/Anim/Enemy/ShieldSticks/stick_03_AO_R_M.png");
@@ -241,11 +311,11 @@ HRESULT CShieldStick::SetUp_Components()
 	Safe_AddRef(m_pTransformCom);
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-		m_pWeapon = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ShieldStickWeapon"), L"ShieldStickWeapon", &WeaponDesc);
+	m_pWeapon = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ShieldStickWeapon"), L"ShieldStickWeapon", &WeaponDesc);
 	assert(m_pWeapon && "ShieldStick Weapon is nullptr");
 	RELEASE_INSTANCE(CGameInstance)
 
-		return S_OK;
+	return S_OK;
 }
 
 HRESULT CShieldStick::SetUp_ShaderResources()

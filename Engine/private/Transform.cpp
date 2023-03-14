@@ -849,11 +849,27 @@ void CTransform::Set_Position(_fvector vPos)
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPos);
 		}
-		else			
+		else
+		{
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + XMLoadFloat3(&m_vPxPivot));
+			Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}			
 	}
 	else
 	{
 		Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
+}
+
+void CTransform::Clear_Actor()
+{
+	if (m_pPxActor)
+	{
+		m_pPhysX_Manager->Delete_DynamicActor(m_pPxActor);		
+	}
+	
+	for (auto& iter : m_ActorList)
+	{
+		m_pPhysX_Manager->Delete_Actor(iter.pActor);
 	}
 }

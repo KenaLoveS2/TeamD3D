@@ -180,6 +180,7 @@ public:
 	_bool IsClosed_XZ(_float3& vTargetPos, _float fDIstance = 0.1f);
 
 	void Set_Position(_fvector vPos);
+	void Clear_Actor();
 };
 
 END

@@ -189,6 +189,7 @@ public:
 	void Delete_Actor(PxActor* pActor);
 	void Delete_Actor(class CGameObject* pObject);
 	void Reset();
-
+	
+	void Delete_DynamicActor(PxRigidActor* pActor);
 };
 END

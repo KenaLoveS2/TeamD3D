@@ -54,10 +54,7 @@ private:
 	_bool m_bBombUp = false;
 
 	_float m_fIdletoAttack = 0.f;
-
-	_bool   m_bDesolve = false;
-	_float  m_fDissolveTime = 0.0f;
-
+		
 public:
 	static CSapling*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
