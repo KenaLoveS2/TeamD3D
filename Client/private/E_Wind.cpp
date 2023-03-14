@@ -38,11 +38,12 @@ HRESULT CE_Wind::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(CUtile::Get_RandomFloat(-100.f, 100.f), CUtile::Get_RandomFloat(1.5f, 3.f),
 		CUtile::Get_RandomFloat(-100.f, 100.f), 1.f));
-	m_eEFfectDesc.vInitPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_eEFfectDesc.fFrame[0] = 20.f;
 	m_eEFfectDesc.iPassCnt = 6;
+	m_eEFfectDesc.vInitPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_eEFfectDesc.vPixedDir = m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
 	m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(-90.f));
+	m_pTransformCom->Set_Scaled(_float3(2.f, 1.f, 1.f));
 	/* Set Option */
 	return S_OK;
 }

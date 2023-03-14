@@ -914,6 +914,7 @@
     <ClInclude Include="..\public\E_KenaDust.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RotForMonster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1422,6 +1423,7 @@
     <ClCompile Include="..\private\E_KenaDust.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RotForMonster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1488,6 +1490,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
