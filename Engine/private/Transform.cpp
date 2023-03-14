@@ -372,7 +372,7 @@ void CTransform::Go_AxisNegY(_float fTimeDelta)
 	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
 	_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	_vector vDist = XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
-	vPos -= XMVector3Normalize(vUp) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
+	vPos -= vDist;
 
 	Set_Translation(vPos, -vDist);
 }
@@ -402,6 +402,76 @@ void CTransform::Orbit(_fvector vTargetPos, _fvector vAxis, const _float & fDist
 	{
 		Set_State(STATE_TRANSLATION, vTargetPos - XMVector3Normalize(Get_State(STATE_LOOK)) * fDistance);
 		LookAt(vTargetPos);
+	}
+}
+
+void CTransform::Arrow(_fvector vTargetPos, _fvector vFirePosition, _float fMaxAngle, _float fTimeDelta, _bool & bReach)
+{
+	_vector	vLook = XMVector3Normalize(Get_State(CTransform::STATE_LOOK));
+	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vDir = vTargetPos - vFirePosition;
+	_float		fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPos));
+
+	_float		fAngle = XMVectorGetX(XMVector3Dot(vLook, XMVector3Normalize(vTargetPos - vPos)));
+
+	if (fAngle > 0.f)
+		LookAt(vTargetPos);
+	else
+	{
+		if (bReach == false)
+		{
+			_vector	vCamLook = XMVector3Normalize(XMVectorSetY(CGameInstance::GetInstance()->Get_CamLook_Float4(), 0.f));
+			vLook = XMVector3Normalize(XMVectorSetY(vLook, 0.f));
+
+			fAngle = acosf(XMVectorGetX(XMVector3Dot(vLook, vCamLook)));
+
+			RotationFromNow(XMVectorSet(0.f, 1.f, 0.f, 0.f), -fAngle);
+
+			bReach = true;
+		}
+
+		Projectile_Motion(fMaxAngle, fTimeDelta);
+	}
+
+	Go_Straight(fTimeDelta);
+}
+
+void CTransform::Projectile_Motion(_float fMaxAngle, _float fTimeDelta)
+{
+	_vector	vLook = XMVector3Normalize(Get_State(CTransform::STATE_LOOK));
+
+	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(vLook, XMVectorSet(0.f, 1.f, 0.f, 0.f))));
+
+	if (fAngle < fMaxAngle)
+	{
+// 		_float		fNextPitch = fPitch + m_TransformDesc.fRotationPerSec * fTimeDelta;
+// 
+// 		if (fNextPitch > fMaxPitch)
+// 		{
+// 			_vector	vRight = Get_State(CTransform::STATE_RIGHT);
+// 			_vector	vUp = Get_State(CTransform::STATE_UP);
+// 			_vector	vLook = Get_State(CTransform::STATE_LOOK);
+// 
+// 			_matrix	matRotation = XMMatrixRotationAxis(vRight, fMaxPitch - fPitch);
+// 
+// 			Set_State(CTransform::STATE_RIGHT, XMVector4Transform(vRight, matRotation));
+// 			Set_State(CTransform::STATE_UP, XMVector4Transform(vUp, matRotation));
+// 			Set_State(CTransform::STATE_LOOK, XMVector4Transform(vLook, matRotation));
+// 		}
+// 		else if (fNextPitch < -fMaxPitch)
+// 		{
+// 			_vector	vRight = Get_State(CTransform::STATE_RIGHT);
+// 			_vector	vUp = Get_State(CTransform::STATE_UP);
+// 			_vector	vLook = Get_State(CTransform::STATE_LOOK);
+// 
+// 			_matrix	matRotation = XMMatrixRotationAxis(vRight, -fMaxPitch - fPitch);
+// 
+// 			Set_State(CTransform::STATE_RIGHT, XMVector4Transform(vRight, matRotation));
+// 			Set_State(CTransform::STATE_UP, XMVector4Transform(vUp, matRotation));
+// 			Set_State(CTransform::STATE_LOOK, XMVector4Transform(vLook, matRotation));
+// 		}
+// 		else
+		Turn(Get_State(CTransform::STATE_RIGHT), fTimeDelta);
 	}
 }
 
@@ -685,6 +755,11 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
+_float CTransform::Calc_Pitch()
+{
+	return -asinf(XMVectorGetX(XMVector3Dot(Get_State(STATE_LOOK), XMVectorSet(0.f, 1.f, 0.f, 0.f))));
+}
+
 void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist)
 {
 	m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
@@ -849,11 +924,27 @@ void CTransform::Set_Position(_fvector vPos)
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + vPivot);
 			Set_State(CTransform::STATE_TRANSLATION, vPos);
 		}
-		else			
+		else
+		{
 			m_pPhysX_Manager->Set_ActorPosition(m_pPxActor, vPos + XMLoadFloat3(&m_vPxPivot));
+			Set_State(CTransform::STATE_TRANSLATION, vPos);
+		}			
 	}
 	else
 	{
 		Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
+}
+
+void CTransform::Clear_Actor()
+{
+	if (m_pPxActor)
+	{
+		m_pPhysX_Manager->Delete_DynamicActor(m_pPxActor);		
+	}
+	
+	for (auto& iter : m_ActorList)
+	{
+		m_pPhysX_Manager->Delete_Actor(iter.pActor);
 	}
 }

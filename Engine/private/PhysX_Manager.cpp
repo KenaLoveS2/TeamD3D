@@ -72,17 +72,16 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
 		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON)		||
 		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY)		||
-		
-		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_WEAPON)	||
-		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_WEAPON)		||
-		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_BODY)			||
-		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_BODY)
-		)
+
+		(filterData0.word0 == filterData1.word0) ||	
+
+		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == MONSTER_WEAPON)			||
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)
+	  )
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}
 	
-
 	pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eDETECT_CCD_CONTACT
 		| PxPairFlag::eNOTIFY_TOUCH_CCD
@@ -1107,5 +1106,19 @@ void CPhysX_Manager::Reset()
 	{
 		m_pScene->removeActor(*actors[i]);
 		actors[i]->release();
+	}
+}
+
+void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
+{	
+	for (auto Pair = m_DynamicActors.begin(); Pair != m_DynamicActors.end();)
+	{
+		if (Pair->second == pActor)
+		{
+			m_pScene->removeActor(*(*Pair).second);
+			Pair = m_DynamicActors.erase(Pair);
+			break;
+		}
+		else Pair++;
 	}
 }

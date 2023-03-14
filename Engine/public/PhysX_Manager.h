@@ -52,7 +52,6 @@ public:
 			bCCD = false;
 			bKinematic = false;
 		}
-		
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -188,6 +187,7 @@ public:
 	void Delete_Actor(PxActor* pActor);
 	void Delete_Actor(class CGameObject* pObject);
 	void Reset();
-
+	
+	void Delete_DynamicActor(PxRigidActor* pActor);
 };
 END

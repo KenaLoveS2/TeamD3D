@@ -25,16 +25,23 @@ HRESULT CEffect_Mesh::Initialize_Prototype(const _tchar* pFilePath)
 HRESULT CEffect_Mesh::Initialize(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+	if (pArg == nullptr)
+	{
+		ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	}
+	else
+		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
+
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
+		return E_FAIL;
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_MESH;
 	m_eEFfectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
+	
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;

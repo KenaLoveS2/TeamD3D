@@ -1604,6 +1604,12 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
+	if (m_Meshes.size() == 0) 
+	{
+		Safe_Delete(pUserData);
+		return;
+	}
+
 	for (auto &iter : m_Meshes)
 	{
 		iter->Create_PxTriangleMeshActor(pUserData);

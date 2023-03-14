@@ -23,6 +23,7 @@ enum PX_FILTER_TYPE {
 	PLAYER_BODY, PLAYER_WEAPON, 
 	MONSTER_BODY, MONSTER_WEAPON,
 	FILTER_GROUND, FILTER_WALL,
+	PULSE_PLATE,  PULSE,
 	FILTER_END,
 };
 
@@ -46,6 +47,7 @@ static PX_USER_DATA* Create_PxUserData(class CGameObject* pOwner, _bool isGravit
 	
 	return pData;
 }
+
 
 enum ON_TRIGGER_PARAM {
 	ON_TRIGGER_PARAM_ACTOR,
@@ -72,7 +74,7 @@ static PX_TRIGGER_DATA* Create_PxTriggerData(const _tchar* pActortag, class CGam
 
 	pData->pActortag = CUtile::Create_StringAuto(pActortag);
 	pData->pOwner = pOwner;
-	pData->iTriggerIndex= iTriggerIndex;
+	pData->iTriggerIndex = iTriggerIndex;
 	pData->vPos = vPos;
 	pData->fRadius = fRadius;
 		
