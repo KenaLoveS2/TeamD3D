@@ -204,6 +204,8 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h" />
     <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
+    <ClInclude Include="..\public\E_KenaDust.h" />
+    <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
     <ClInclude Include="..\public\E_KenaHit.h" />
@@ -215,6 +217,7 @@
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\public\E_PulseObject.h" />
     <ClInclude Include="..\public\E_P_EnemyWisp.h" />
+    <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
@@ -363,6 +366,8 @@
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
+    <ClCompile Include="..\private\E_KenaDust.cpp" />
+    <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
     <ClCompile Include="..\private\E_KenaHit.cpp" />
@@ -375,6 +380,7 @@
     <ClCompile Include="..\private\E_PulseObject.cpp" />
     <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
     <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
+    <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
