@@ -85,13 +85,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 		}
 	}
 
-	/* 빌보드가 필요한거 같긴함 */
-	//if (m_eEFfectDesc.IsBillboard == true)
-	//	BillBoardSetting(m_eEFfectDesc.vScale);
-	//else
-	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-	/* 빌보드가 필요한거 같긴함 */
-
 	// FreeMoveing Tick
 	if (m_eEFfectDesc.bFreeMove == true)
 	{

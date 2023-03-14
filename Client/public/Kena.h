@@ -72,6 +72,7 @@ private:
 	class CTerrain*					m_pTerrain = nullptr;
 	class CRope_RotRock*		m_pRopeRotRock = nullptr;
 	class CRot*						m_pFirstRot = nullptr;
+	class CRotForMonster*    m_pRotForMonster[8] = { nullptr, };
 
 private:
 	vector<class CKena_Parts*>	m_vecPart;

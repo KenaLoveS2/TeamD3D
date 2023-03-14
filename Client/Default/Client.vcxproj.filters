@@ -229,9 +229,6 @@
     <Filter Include="02.GameObjects\Effect\Base\Mesh Type">
       <UniqueIdentifier>{b5613899-59c1-4221-a4bf-b1aa49f9c356}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object">
-      <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Base\Mesh Type\Tool">
       <UniqueIdentifier>{74556f3b-02be-4aa5-8de5-5ef0802bfa7f}</UniqueIdentifier>
     </Filter>
@@ -255,9 +252,6 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\05. Real Object\PlayerSkill">
       <UniqueIdentifier>{0ce8bcf4-bf2b-490f-95b5-a7844980277e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Ground Mark">
-      <UniqueIdentifier>{09bcddae-cf1d-4be0-a1b1-8ea5259ae811}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Envrioment\Interaction">
       <UniqueIdentifier>{2e9685dc-b789-4674-a044-da945aaf8429}</UniqueIdentifier>
@@ -310,6 +304,27 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\05 Upgrade\RotDesc">
       <UniqueIdentifier>{f73c2825-7fbe-4977-ae4e-8adcca69c5d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Effect">
+      <UniqueIdentifier>{446db465-dba5-46e8-86fe-56034d6c67fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Weapon\Arrow">
+      <UniqueIdentifier>{0bd76abd-57b1-4681-85a7-d47db57129cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment">
+      <UniqueIdentifier>{ad4f7584-8351-4764-9b38-9b9e7bb2e60d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\Wind">
+      <UniqueIdentifier>{ded38e48-d4f3-4820-8190-f76a5acc5e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Environment\Flower">
+      <UniqueIdentifier>{277278c2-d295-409b-9b1a-12f02a71b8f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object">
+      <UniqueIdentifier>{54b4a25a-1d60-4a3c-9839-ff3d22148a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Ground Mark">
+      <UniqueIdentifier>{09bcddae-cf1d-4be0-a1b1-8ea5259ae811}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena">
       <UniqueIdentifier>{7751fed2-07b4-4bb3-9ecc-c71748d758e4}</UniqueIdentifier>
     </Filter>
@@ -325,26 +340,23 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Trail">
       <UniqueIdentifier>{ff96dfad-5fab-464e-aea5-e42d5c7b51e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Enemy">
-      <UniqueIdentifier>{2fab38ba-d3bd-4753-86e5-5756678dfe7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Effect">
-      <UniqueIdentifier>{446db465-dba5-46e8-86fe-56034d6c67fa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\Hit">
       <UniqueIdentifier>{0dd5b65d-d007-4d53-866e-9759317a5a0f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\Jump">
       <UniqueIdentifier>{45fa896a-2d62-4bc9-a79d-9ba3aeee6ce7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Pulse">
-      <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Effect\Object\Enemy">
+      <UniqueIdentifier>{2fab38ba-d3bd-4753-86e5-5756678dfe7e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Enemy\Wisp">
       <UniqueIdentifier>{dde62539-ab54-42c8-9ff3-0760ff1d212a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\Weapon\Arrow">
-      <UniqueIdentifier>{0bd76abd-57b1-4681-85a7-d47db57129cc}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Effect\Object\Pulse">
+      <UniqueIdentifier>{c17a3a29-4214-4f0b-ad62-260e895c4baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Dust">
+      <UniqueIdentifier>{0331d69f-7e6f-44e9-ad14-142a5ac3c41c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI\04. Events\Fade">
       <UniqueIdentifier>{03c6dc38-a37a-488e-8e9f-011e0ca9c2d6}</UniqueIdentifier>
@@ -893,6 +905,16 @@
     <ClInclude Include="..\public\UI_NodeLvUp.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Flower.h">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Wind.h">
+      <Filter>02.GameObjects\Effect\Environment\Wind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaDust.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotForMonster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1392,6 +1414,16 @@
     <ClCompile Include="..\private\UI_NodeLvUp.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_P_Flower.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Wind.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Wind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaDust.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotForMonster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1458,6 +1490,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

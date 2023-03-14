@@ -6,6 +6,8 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 
+#include "RotForMonster.h"
+
 #include "UI_MonsterHP.h"
 #include "Camera.h"
 
@@ -73,10 +75,6 @@ HRESULT CMonster::Late_Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	/* Is In Camera? */
-
-
-
-
 	return S_OK;
 }
 
@@ -289,7 +287,7 @@ void CMonster::Call_RotIcon()
 	if (nullptr == m_pKena)
 		return;
 
-	static_cast<CKena*>(m_pKena)->Call_RotIcon(this);
+	m_pKena->Call_RotIcon(this);
 }
 
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
@@ -302,6 +300,12 @@ HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 		
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CMonster::Setting_Rot(CRotForMonster * pGameObject[], _int iRotCnt)
+{
+	for(_int i = 0; i<iRotCnt; ++i)
+		m_pRotForMonster[i] = pGameObject[i];
 }
 
 HRESULT CMonster::SetUp_Components()
@@ -331,7 +335,6 @@ HRESULT CMonster::SetUp_UI()
 	}
 	RELEASE_INSTANCE(CGameInstance);
 
-
 	return S_OK;
 }
 
@@ -354,7 +357,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER)
+		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
