@@ -14,6 +14,7 @@
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
 #include "ImGui_PhysX.h"
+#include "ImGui_Monster.h"
 
 #include "UI_ClientManager.h"
 #include "UI.h"
@@ -32,7 +33,7 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		p_game_instance->Clear_ImguiObjects();
+	p_game_instance->Clear_ImguiObjects();
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
@@ -41,6 +42,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -197,7 +199,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
-	//return S_OK; // 임시 조치
+	return S_OK; // 임시 조치
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
@@ -299,15 +301,19 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test.json");
+
+	return S_OK;
+
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CGameObject* pGameObject = nullptr;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr, &pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;
 
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject)))
 		return E_FAIL;
@@ -321,11 +327,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sticks01"), L"Sticks01_0", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_VillageGuard"), L"VillageGuard_0", nullptr, &pGameObject)))
 	//	return E_FAIL;
@@ -345,23 +351,23 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 	//	return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;*/
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-	//	return E_FAIL;
-		
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-	//	return E_FAIL;
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
+		return E_FAIL;*/
 
 	RELEASE_INSTANCE(CGameInstance);
 
