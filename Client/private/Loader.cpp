@@ -321,6 +321,10 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
+		CSpiritArrow::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
@@ -466,11 +470,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
-		CSpiritArrow::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		return E_FAIL;	
 
 #pragma endregion EFFECT
 	/* For.Prototype_Component_Model_EnemyWisp */
@@ -2294,6 +2294,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
+		CSpiritArrow::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"),
 		CMoth::Create(m_pDevice, m_pContext))))

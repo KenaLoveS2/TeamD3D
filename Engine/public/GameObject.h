@@ -96,7 +96,7 @@ public: /* imgui */
 	virtual void Imgui_RenderProperty() {}
 	virtual void ImGui_AnimationProperty() {}
 	virtual void ImGui_ShaderValueProperty() {};
-	virtual void ImGui_PhysXValueProperty() {};
+	virtual void ImGui_PhysXValueProperty();
 
 	void Set_Position(_float4& vPosition);
 	void Set_Position(_float3& vPosition);
