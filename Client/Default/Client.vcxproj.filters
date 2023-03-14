@@ -385,6 +385,12 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp">
       <UniqueIdentifier>{8b3e7483-de55-4808-b454-6409b0d65a13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\HeavyAttack">
+      <UniqueIdentifier>{1675de8d-aea5-4a63-8795-ebd700212bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Rot">
+      <UniqueIdentifier>{e2467762-e353-4430-9da1-fd32b93e9384}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -915,6 +921,21 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\E_KenaHeavyAttack_end.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_RotTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Rot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1424,6 +1445,21 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaHeavyAttack_end.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_RotTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Rot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

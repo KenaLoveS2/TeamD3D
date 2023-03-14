@@ -550,8 +550,13 @@ HRESULT CEffect_Base::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	if (pArg == nullptr)
+	{
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	}
+	else
+		memcpy(&GameObjectDesc, pArg, sizeof pArg);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;

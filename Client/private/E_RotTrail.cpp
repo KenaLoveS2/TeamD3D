@@ -1,0 +1,168 @@
+#include "stdafx.h"
+#include "..\public\E_RotTrail.h"
+#include "GameInstance.h"
+
+CE_RotTrail::CE_RotTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	: CEffect_Trail(pDevice, pContext)
+{
+}
+
+CE_RotTrail::CE_RotTrail(const CE_RotTrail & rhs)
+	: CEffect_Trail(rhs)
+{
+}
+
+HRESULT CE_RotTrail::Initialize_Prototype(const _tchar * pFilePath)
+{
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CE_RotTrail::Initialize(void * pArg)
+{
+	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
+		return E_FAIL;
+
+	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300);
+
+	/* Trail Option */
+	m_eEFfectDesc.IsTrail = true;
+	m_eEFfectDesc.fWidth = 0.3f;
+	m_eEFfectDesc.fLife = 2.0f; 
+	m_eEFfectDesc.bAlpha = false;
+	m_eEFfectDesc.fAlpha = 0.6f;
+	m_eEFfectDesc.fSegmentSize = 0.001f; 
+	m_eEFfectDesc.vColor = XMVectorSet(255.f, 97.f, 0.f, 255.f) / 255.f;
+	/* ~Trail Option */
+
+	m_eEFfectDesc.fFrame[0] = 83.f;
+	m_eEFfectDesc.bActive = false;
+
+	static _int iIdx = 0;
+	m_iIndex = iIdx;
+	iIdx++;
+
+	return S_OK;
+}
+
+void CE_RotTrail::Tick(_float fTimeDelta)
+{
+	m_eEFfectDesc.bActive = true;
+
+	if (m_eEFfectDesc.bActive == false)
+		m_pVITrailBufferCom->Get_InstanceInfo()->clear();
+
+	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
+
+	if(m_iIndex == 1)
+	{
+		ImGui::Begin("RotTrail");
+
+		ImGui::Checkbox("IsTrail", &m_eEFfectDesc.IsTrail);
+		ImGui::Checkbox("bAlpha", &m_eEFfectDesc.bAlpha);
+		ImGui::InputFloat("fWidth", &m_eEFfectDesc.fWidth);
+		ImGui::InputFloat("fLife", &m_eEFfectDesc.fLife);
+		ImGui::InputFloat("fAlpha", &m_eEFfectDesc.fAlpha);
+		ImGui::InputFloat("fSegmentSize", &m_eEFfectDesc.fSegmentSize, 0.f, 0.f, "%.6f");
+
+		if (ImGui::Button("DotConfirm"))
+			m_pShaderCom->ReCompile();
+
+		static bool alpha_preview = true;
+		static bool alpha_half_preview = false;
+		static bool drag_and_drop = true;
+		static bool options_menu = true;
+		static bool hdr = false;
+
+		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+		static bool   ref_color = false;
+		static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+		static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		vSelectColor = m_eEFfectDesc.vColor;
+
+		ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+		ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+		m_eEFfectDesc.vColor = vSelectColor;
+
+		ImGui::End();
+	
+	}
+}
+
+void CE_RotTrail::Late_Tick(_float fTimeDelta)
+{
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
+	__super::Late_Tick(fTimeDelta);
+}
+
+HRESULT CE_RotTrail::Render()
+{
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	m_pShaderCom->Begin(7);
+	m_pVITrailBufferCom->Render();
+
+	return S_OK;
+}
+
+HRESULT CE_RotTrail::SetUp_ShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	/* Instance Buffer */
+	if (FAILED(m_pVITrailBufferCom->Bind_ShaderResouce(m_pShaderCom, "g_RotInfoMatrix")))
+		return E_FAIL;
+	/* Instance Buffer */
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+CE_RotTrail * CE_RotTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
+{
+	CE_RotTrail * pInstance = new CE_RotTrail(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath)))
+	{
+		MSG_BOX("CE_RotTrail Create Failed");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CE_RotTrail::Clone(void * pArg)
+{
+	CE_RotTrail * pInstance = new CE_RotTrail(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("CE_RotTrail Clone Failed");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CE_RotTrail::Free()
+{
+	__super::Free();
+}

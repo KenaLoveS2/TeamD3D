@@ -78,9 +78,16 @@
 #include "E_KenaPulseDot.h"
 //Trail
 #include "E_KenaTrail.h"
+#include "E_RotTrail.h"
+
 //Charge
 #include "E_KenaCharge.h"
 #include "E_KenaChargeImpact.h"
+//Attack 
+#include "E_KenaDust.h"
+#include "E_KenaHeavyAttack_Into.h"
+#include "E_KenaHeavyAttack_end.h"
+
 //Monster
 #include "EnemyWisp.h"
 
@@ -102,6 +109,8 @@
 #include "E_PulseObject.h"
 #include "E_Wind.h"
 #include "E_P_Flower.h"
+#include "E_P_KenaHeavyAttack_Into.h"
+#include "E_P_KenaHeavyAttack_end.h"
 /* ~Effects */
 
 /* Components*/
@@ -119,7 +128,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_KenaDust.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -342,7 +350,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */
@@ -621,7 +629,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region EFFECT
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -1408,7 +1416,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 HRESULT CLoader::Loading_ForTestPlay()
 {
-	m_fMax = 183.f;
+	m_fMax = 184.f;
 	m_fCur = m_fCur / m_fMax * 100.f;
 
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -2053,7 +2061,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2149,6 +2157,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2421,7 +2435,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 108))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */
@@ -2563,6 +2577,24 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDust"),
 		CE_KenaDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaDust.json"))))
 		return E_FAIL;
+	
+	/* For.Prototype_GameObject_KenaHeavyAttackInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto"),
+		CE_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_0.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_KenaHeavyAttackInto_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto_P"),
+		CE_P_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_0.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd"),
+		CE_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_1.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd_P"),
+		CE_P_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_1.json"))))
+		return E_FAIL;
 
 #pragma endregion Effect_Object
 
@@ -2582,6 +2614,11 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_EnemyWispBackground */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
 		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
@@ -2599,9 +2636,21 @@ HRESULT CLoader::Loading_ForTestEffect()
 	/* ~EnemyWisp Effects */
 #pragma  endregion	MONSTER
 
+#pragma region ETC..
+	/* Prototype_Component_Model_RotEater */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_RotEater",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		return E_FAIL;
+
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
 		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+#pragma endregion ETC..
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
