@@ -21,6 +21,9 @@ public:
 
 private:
 	class CGameInstance* m_pGameInstance = nullptr;
+	class CRenderer*			m_pRendererCom = nullptr;
+
+	_bool m_bInit = false;
 
 	_uint	 m_iCurrentLevel = 0;
 	map	<const _tchar*, class CGameObject*>*		m_mapShaderValueObject;

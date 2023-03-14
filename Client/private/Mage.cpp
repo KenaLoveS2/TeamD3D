@@ -24,22 +24,21 @@ HRESULT CMage::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	if (pArg == nullptr)
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	}
-	else
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
+
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-
 	return S_OK;
 }
 

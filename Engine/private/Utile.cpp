@@ -64,9 +64,6 @@ void CUtile::WideCharToChar(const _tchar * pWideStr, char * pOut)
 	::WideCharToMultiByte(CP_ACP, 0, pWideStr, slength, pOut, len, 0, 0);
 }
 
-
-
-
 _tchar * CUtile::StringToWideChar(string str)
 {
 	size_t origsize = 0, convertedChars = 0; // 원래 문자열 길이, 변환된 문자열 길이	
@@ -75,11 +72,6 @@ _tchar * CUtile::StringToWideChar(string str)
 	mbstowcs_s(&convertedChars, t, origsize, str.c_str(), _TRUNCATE);
 	return (_tchar*)t;
 }
-
-
-
-
-
 
 string CUtile::WstringToString(wstring wstr)
 {

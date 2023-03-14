@@ -14,6 +14,13 @@ BEGIN(Client)
 class CUI_MonsterHP;
 class CMonster  : public CGameObject
 {
+public:
+	typedef  struct tagMonsterDesc
+	{
+		_int			iRoomIndex;
+		_float4x4 WorldMatrix;
+	}DESC;
+
 protected:
 	enum MonsterShaderPass
 	{
@@ -47,7 +54,8 @@ protected:
 
 public:
 	const _double&			Get_AnimationPlayTime();
-	_fvector				Get_Position();
+	_fvector						Get_Position();
+	DESC							Get_Desc() { return m_Desc; };
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -61,11 +69,9 @@ public:
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
 	virtual void					ImGui_PhysXValueProperty() override;
-	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void					Push_EventFunctions() override;
 	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
-	void								Bind() { m_bBind = true; }
+	void								Bind(class CRotForMonster* pGameObject[], _int iRotCnt);
 	void								Spawn() { m_bSpawn = true; };
 	void								StringlyHit() { m_bStronglyHit = true; }
 	void								WeakleyHit() { m_bWeaklyHit = true; }
@@ -84,13 +90,12 @@ public:
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	void								Call_RotIcon();
 	virtual HRESULT			Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
-	void								Setting_Rot(class CRotForMonster* pGameObject[], _int iRotCnt);
 
 	_bool							Get_Bind() { return m_bBind; }
 
 protected:
-	PLAYERLOOKAT_DIR	m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
-
+	PLAYERLOOKAT_DIR		m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
+	DESC								m_Desc;
 	CRenderer*						m_pRendererCom = nullptr;
 	CShader*							m_pShaderCom = nullptr;
 	CTexture*							m_pDissolveTextureCom = nullptr;
@@ -114,7 +119,6 @@ protected:
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
 
-	_int    m_iRotForMonsterCnt = 1;
 	_float m_fDissolveTime = 0.0f;
 
 protected:

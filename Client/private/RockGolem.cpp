@@ -22,19 +22,19 @@ HRESULT CRockGolem::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	if (pArg == nullptr)
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	}
-	else
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
+
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 	
@@ -64,7 +64,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
@@ -75,7 +75,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(26.f, 0.3f, 15.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	return S_OK;
 }

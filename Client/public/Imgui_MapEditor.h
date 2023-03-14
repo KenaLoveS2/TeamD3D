@@ -34,7 +34,6 @@ private:
 	void														Imgui_CreateEnviromentObj();
 	void														Imgui_ViewMeshOption(class CGameObject* pSelecteObj);
 	void														Imgui_SelectObject_InstancingControl();
-	void														Imgui_Control_ViewerCamTransform();
 	void														Imgui_TexturePathNaming();
 	void														Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
 	void														imgui_ObjectList_Clear();
@@ -57,17 +56,16 @@ private: /*For_Tool*/
 	wstring														m_wstrProtoName = TEXT("");
 	wstring														m_wstrModelName = TEXT("");
 	wstring														m_wstrTexturelName = TEXT("");
-	char														m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
+	char															m_strCloneTag[CLONE_TAG_BUFF_SIZE] = "";
 
 	_bool														m_bWireFrame = false;
 	string														m_strFileName = "";
 	_bool														m_bSaveWrite = false;
-	class CModelViewerObject*									m_pViewerObject = nullptr;
 	_bool														m_bOnceSearch = false;
 	_bool														m_bModelChange = false;
-	_int														m_iTexturePathNum = false;
+	_int															m_iTexturePathNum = false;
 
-	_int														m_iSelectMeshIndex = -1;
+	_int															m_iSelectMeshIndex = -1;
 
 
 private: /*Use.Terrain*/

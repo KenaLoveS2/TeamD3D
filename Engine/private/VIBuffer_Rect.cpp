@@ -110,8 +110,6 @@ HRESULT CVIBuffer_Rect::Initialize(void * pArg, CGameObject * pOwner)
 }
 
 
-
-
 CVIBuffer_Rect * CVIBuffer_Rect::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CVIBuffer_Rect*		pInstance = new CVIBuffer_Rect(pDevice, pContext);

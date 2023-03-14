@@ -156,7 +156,6 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, co
 
 	pGameObject->Set_CloneTag(pCloneObjectTag);
 	pGameObject->Set_ProtoTag(pPrototypeTag);
-	//pGameObject->Late_Initialize();
 
 	return pGameObject;	
 }
@@ -279,9 +278,6 @@ void CObject_Manager::Tick(_float fTimeDelta)
 			}
 		}
 	}
-
-
-
 }
 
 void CObject_Manager::Late_Tick(_float fTimeDelta)
@@ -315,7 +311,6 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 		m_bCheckLateTick = false;
 	}
 
-
 	//for (_uint i = 0; i < m_iNumLevels; ++i)
 	//{
 	//	for (auto& Pair : m_pLayers[i])
@@ -326,27 +321,15 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 	//}
 }
 
-void CObject_Manager::SwitchOnOff_Shadow(_bool bSwitch)
-{
-	for (_uint i = 0; i < m_iNumLevels; ++i)
-	{
-		for (auto& Pair : m_pLayers[i])
-		{
-			if (nullptr != Pair.second)
-				Pair.second->SwitchOnOff_Shadow(bSwitch);
-		}
-	}
-}
-
 void CObject_Manager::Set_SingleLayer(_uint iCurLevel, const _tchar * pLayerTag)
 {
 	if (iCurLevel < 0 || iCurLevel >= m_iNumLevels || pLayerTag == nullptr)
 		return;
 
 	CLayer* pLayer = Find_Layer(iCurLevel, pLayerTag);
+
 	if (nullptr != pLayer)
 		m_pSingleLayer = pLayer;
-
 }
 
 void CObject_Manager::Get_Back()
