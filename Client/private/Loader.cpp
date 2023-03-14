@@ -560,13 +560,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_PulsePlateAnim",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
-
-	
-
 #pragma  endregion ANIM_OBJ
-
-#ifdef FOR_MAP_GIMMICK
-
+	
 #pragma region Test_Gimmick_OBJ
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
 		assert(!"Issue");
@@ -585,6 +580,10 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
 		assert(!"Issue");
 #pragma endregion
+
+
+#ifdef FOR_MAP_GIMMICK
+
 
 
 #pragma region KENA
@@ -768,7 +767,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	m_fCur += 1.f;
 #pragma endregion EFFECT
 #endif 
-
 
 #ifdef FOR_MAPTOOL
 #pragma region GroundCover
@@ -1217,7 +1215,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
 		assert(!"Issue");
 
-
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
@@ -1251,15 +1248,15 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
 	/* ~Test*/
-	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
-		CLodObject::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_ModelViewerObject */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
-		CModelViewerObject::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* ~Test*/
+	///* For.Prototype_GameObject_Cave_Rock */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
+	//	CLodObject::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+	///* For.Prototype_GameObject_ModelViewerObject */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ModelViewerObject"),
+	//	CModelViewerObject::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+	///* ~Test*/
 
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),

@@ -1460,7 +1460,6 @@ void CModel::Free()
 			Safe_Release(pInstMesh);
 		m_InstancingMeshes.clear();
 
-
 		for (auto &pInstMatrix : m_pInstancingMatrix)
 		{
 			Safe_Delete(pInstMatrix);

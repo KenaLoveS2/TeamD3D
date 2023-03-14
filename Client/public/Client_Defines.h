@@ -9,7 +9,7 @@ extern bool g_bFrameLimit;
 
 //#define FOR_MAP_GIMMICK
 
-#define FOR_MAPTOOL
+//#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
 
 #define LIFT_ROT_COUNT		6

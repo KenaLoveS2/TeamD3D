@@ -325,4 +325,5 @@ void CCrystal::Free()
 		Safe_Release(pEffect);
 	m_VecCrystal_Effect.clear();
 
+
 }

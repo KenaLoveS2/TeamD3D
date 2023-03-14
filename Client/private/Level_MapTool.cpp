@@ -6,11 +6,18 @@
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
-#include "Imgui_ShaderEditor.h"
 #include "Imgui_TerrainEditor.h"
-#include "ImGui_PhysX.h"
+#include "Imgui_ShaderEditor.h"
+#include "Imgui_Effect.h"
+#include "Layer.h"
+#include "GameObject.h"
 #include "Tool_Settings.h"
 #include "Tool_Animation.h"
+#include "Imgui_UIEditor.h"
+#include "ImGui_PhysX.h"
+
+#include "UI_ClientManager.h"
+#include "UI.h"
 
 CLevel_MapTool::CLevel_MapTool(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -27,19 +34,14 @@ HRESULT CLevel_MapTool::Initialize()
 
 	CGameInstance* p_game_instance = CGameInstance::GetInstance();
 	p_game_instance->Clear_ImguiObjects();
-	
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
-	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
-
-#ifdef FOR_MAP_GIMMICK
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
+	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-#endif
-
-	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-	
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -54,9 +56,9 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 	
-	/*if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
 		return E_FAIL;
-*/
+
 	return S_OK;
 }
 
@@ -93,6 +95,7 @@ HRESULT CLevel_MapTool::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -119,10 +122,12 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Emmisve_Test.json");
 #ifdef FOR_MAP_GIMMICK
 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Emmisve_Test.json");
+	
 
 	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");

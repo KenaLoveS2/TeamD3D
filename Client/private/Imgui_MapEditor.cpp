@@ -753,7 +753,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		
+		pGameInstance->Add_ShaderValueObject(g_LEVEL, pLoadObject); // Ãß°¡
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -837,7 +837,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -935,7 +935,6 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		strFilePaths_arr.fill("");
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
