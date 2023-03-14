@@ -6,14 +6,14 @@ class ENGINE_DLL CPhysX_Manager : public CBase
 {
 	DECLARE_SINGLETON(CPhysX_Manager)
 
-public:	
+public:
 	typedef struct tagPhysxActorBoxDesc
-	{	
+	{
 		ACTOR_TYPE eType;
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;		
+		_bool isGravity;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -22,6 +22,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorBoxDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_BOX_DESC;
 
 	typedef struct tagPhysxActorSphereDesc
@@ -39,6 +46,13 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorSphereDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -58,24 +72,31 @@ public:
 		_float3 vVelocity;
 		_float fDensity, fAngularDamping, fMass, fLinearDamping;
 		_bool bCCD, bKinematic;
+
+		tagPhysxActorCapsuleDesc()
+		{
+			bCCD = false;
+			bKinematic = false;
+		}
+
 	} PX_CAPSULE_DESC;
-		
+
 private:
 	PxDefaultAllocator m_PxDefaultAllocatorCallback;
 	PxDefaultErrorCallback m_PxDefaultErrorCallback;
-	
-	PxDefaultCpuDispatcher* m_pDispatcher = nullptr;
-	PxTolerancesScale			m_PxTolerancesScale;
 
-	PxFoundation*					m_pFoundation = nullptr;
-	PxPhysics*						m_pPhysics = nullptr;
-	PxScene*							m_pScene = nullptr;
-	PxMaterial*						m_pMaterial = nullptr;
-	PxPvd*								m_pPvd = nullptr;
-	PxCooking*						m_pCooking = nullptr;
-	
+	PxDefaultCpuDispatcher* m_pDispatcher = nullptr;
+	PxTolerancesScale         m_PxTolerancesScale;
+
+	PxFoundation*               m_pFoundation = nullptr;
+	PxPhysics*                  m_pPhysics = nullptr;
+	PxScene*                     m_pScene = nullptr;
+	PxMaterial*                  m_pMaterial = nullptr;
+	PxPvd*                        m_pPvd = nullptr;
+	PxCooking*                  m_pCooking = nullptr;
+
 	CustomSimulationEventCallback m_EventCallback;
-	
+
 private:
 	map<const _tchar*, PxRigidActor*> m_StaticActors;
 	map<const _tchar*, PxRigidActor*> m_DynamicActors;
@@ -91,14 +112,14 @@ private:
 
 #pragma region Render Variable
 #ifdef _DEBUG
-private:	
-	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
-	BasicEffect*												m_pEffect = nullptr;
-	ID3D11InputLayout*									m_pInputLayout = nullptr;
-	_float4														m_vColor;
+private:
+	PrimitiveBatch<VertexPositionColor>*      m_pBatch = nullptr;
+	BasicEffect*                                    m_pEffect = nullptr;
+	ID3D11InputLayout*                           m_pInputLayout = nullptr;
+	_float4                                          m_vColor;
 #endif // _DEBUG
 #pragma endregion
-	
+
 private:
 	CPhysX_Manager();
 	virtual ~CPhysX_Manager() = default;
@@ -109,20 +130,20 @@ public:
 	void Tick(_float fTimeDelta);
 	void Render();
 
-	void	Imgui_Render();
-	PxRigidActor*				Find_StaticGameObject(_int iIndex);
-	PxRigidActor*				Find_DynamicGameObject(_int iIndex);
-	
+	void   Imgui_Render();
+	PxRigidActor*            Find_StaticGameObject(_int iIndex);
+	PxRigidActor*            Find_DynamicGameObject(_int iIndex);
+
 	void Update_Trasnform(_float fTimeDelta);
 
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
 	void Clear();
 
 	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
-	
+
 	void Create_Trigger(PX_TRIGGER_DATA* pTriggerData);
 	void Create_TriggerStatic(PX_TRIGGER_DATA* pTriggerData);
-	
+
 	void Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Sphere(PX_SPHERE_DESC& Desc, PX_USER_DATA* pUserData);
 	void Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserData);
@@ -134,14 +155,14 @@ public:
 	void Set_ActorMatrixExecptTranslation(const _tchar *pActorTag, _float4x4 Matrix);
 	void Set_ActorMatrixExecptTranslation(PxRigidActor* pActor, _float4x4 Matrix);
 	void Set_GravityFlag(const _tchar *pActorTag, _bool bGravityFlag, _bool bNow = false);
-	
+
 	void Add_Force(const _tchar *pActorTag, _float3 vForce);
 	void Add_Force(PxRigidActor* pActor, _float3 vForce);
 
 	PxRigidActor* Find_StaticActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicActor(const _tchar* pActorTag);
 	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
-	
+
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
 	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
 
@@ -156,15 +177,15 @@ public:
 	void Set_ScalingCapsule(PxRigidActor* pActor, _float fRadius, _float fHalfHeight);
 
 	void Set_DynamicParameter(PxRigidActor* pActor, _float fMass, _float fLinearDamping, _float3 vVelocity);
-	void Set_DynamicParameter(const _tchar* pActorTag, _float fMass,  _float fLinearDamping, _float3 vVelocity);
+	void Set_DynamicParameter(const _tchar* pActorTag, _float fMass, _float fLinearDamping, _float3 vVelocity);
 	void Set_Velocity(PxRigidActor* pActor, _float3 vVelocity);
 
-	void Init_Rendering();		
+	void Init_Rendering();
 
 	void Set_ActorFlag_Simulation(const _tchar* pActorTag, _bool bFlag);
 	void Set_ActorFlag_Simulation(PxRigidActor* pActor, _bool bFlag);
 	PxRigidActor* Find_Actor(const _tchar* pActorTag);
-	
+
 	void Delete_Actor(PxActor* pActor);
 	void Delete_Actor(class CGameObject* pObject);
 	void Reset();

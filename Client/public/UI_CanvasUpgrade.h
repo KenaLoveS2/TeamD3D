@@ -7,6 +7,7 @@ BEGIN(Client)
 class CSkillInfo;
 class CUI_NodeSkill;
 class CUI_NodeEffect;
+class CKena;
 class CUI_CanvasUpgrade final : public CUI_Canvas
 {
 public:
@@ -37,6 +38,8 @@ public:
 
 public:
 	virtual void			Common_Function(_bool bResult)	override;
+	virtual void			Set_Caller(CGameObject* pObj)   override;
+
 
 
 private:
@@ -64,7 +67,8 @@ private:
 	CUI_NodeSkill*				m_pSelected; /* LastSelectedOne*/
 	vector<CUI_NodeEffect*>		m_vecEffects;
 	_int						m_iPickedIndex;
-	_bool						m_bPick;
+	_bool						m_bPick; /* Is Skill Icon Picked? */
+	CKena*						m_pPlayer;
 
 public:
 	static	CUI_CanvasUpgrade*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

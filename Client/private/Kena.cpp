@@ -234,9 +234,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
 	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
-	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
-	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
-	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+	//CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
+	//CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
+	//CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
 	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
 
 	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
@@ -261,10 +261,13 @@ void CKena::Late_Tick(_float fTimeDelta)
 		_float fRots = (_float)m_pKenaStatus->Get_RotCount();
 		_float fCrystal = (_float)m_pKenaStatus->Get_Crystal();
 
-		m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		m_PlayerDelegator.broadcast(eKarma, funcDefault, fKarma);
-		m_PlayerDelegator.broadcast(eNumRots, funcDefault, fRots);
-		m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCrystal);
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fKarma);
+		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fRots);
+		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCrystal);
 
 	}
 

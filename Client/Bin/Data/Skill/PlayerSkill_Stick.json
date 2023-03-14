@@ -8,7 +8,7 @@
             "Condition": [
                 {
                     "PrevSkill" : -1,
-                    "RotLevel"  : 1,
+                    "RotLevel"  : 0,
                     "Karma"     : 0
                 }
             ],
@@ -22,7 +22,7 @@
             "Condition": [
                 {
                     "PrevSkill" : 0,
-                    "RotLevel"  : 1,
+                    "RotLevel"  : 0,
                     "Karma"     : 50
                 }
             ],

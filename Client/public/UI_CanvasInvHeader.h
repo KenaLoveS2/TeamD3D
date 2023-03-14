@@ -4,6 +4,7 @@
 #include "UI_ClientManager.h"
 
 BEGIN(Client)
+class CKena;
 class CUI_CanvasInvHeader final : public CUI_Canvas
 {
 public:
@@ -29,6 +30,10 @@ private:
 
 private: /* Bind Functions */
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
+	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena* pPlayer);
+
+private:
+	CKena*	m_pPlayer;
 
 public:
 	static	CUI_CanvasInvHeader*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

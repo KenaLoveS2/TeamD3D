@@ -24,6 +24,7 @@ private:
 	_int				m_iKarma = 0;
 	_int				m_iRotLevel = 0;
 	_int				m_iRotCount = 0;
+	_int				m_iRotMax = 0;
 	_int				m_iCrystal = 0;
 
 	_int				m_iMaxPIPCount = 0;
@@ -63,6 +64,7 @@ public:
 	inline _int Get_Karma() { return m_iKarma; }
 	inline _int Get_RotLevel() { return m_iRotLevel; }
 	inline _int Get_RotCount() { return m_iRotCount; }
+	_int	Get_RotMax();
 	inline _int Get_Crystal() { return m_iCrystal; }
 	
 	inline _int Get_MaxPIPCount() { return m_iMaxPIPCount; }

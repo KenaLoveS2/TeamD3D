@@ -126,7 +126,29 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
 	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
 
+	/* Temp */
+	m_iKarma = 500;
+	m_iCrystal = 500;
+
 	m_strJsonFilePath = strJsonFilePath;
 
 	return S_OK;
+}
+
+_int CKena_Status::Get_RotMax()
+{
+	/* Get MaxRot related to rotLevel*/
+	switch (m_iRotLevel)
+	{
+	case 0:
+		return 5;
+	case 1:
+		return 15;
+	case 2:
+		return 35;
+	case 3:
+		return 50;
+	}
+
+	return 0;
 }
