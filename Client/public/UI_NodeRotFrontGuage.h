@@ -6,7 +6,7 @@ BEGIN(Client)
 class CUI_NodeRotFrontGuage final : public CUI_Node
 {
 public:
-	enum EVENT_ID { EVENT_GUAGE, EVENT_END };
+	enum EVENT_ID { EVENT_GUAGE, EVENT_FADE, EVENT_END };
 
 private:
 	CUI_NodeRotFrontGuage(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
