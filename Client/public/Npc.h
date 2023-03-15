@@ -21,6 +21,7 @@ protected:
 		SHADOW,
 		BENI_EYE,
 		AORM,
+		SAIYA_EYE,
 		PASS_END
 	};
 

@@ -487,6 +487,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_NPC(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Saiya"), L"Saiya");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

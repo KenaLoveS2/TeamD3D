@@ -160,6 +160,32 @@ PS_OUT PS_MAIN_AORM(PS_IN In)
 	return Out;
 }//3
 
+PS_OUT PS_MAIN_SAIYA_EYE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2		vTexUV = In.vTexUV;
+	vTexUV.x -= 0.3f;
+	vTexUV.y -= 0.37f;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(EyeSampler, vTexUV * 3.f);
+	vector		vNormalDesc = g_NormalTexture.Sample(EyeSampler, vTexUV * 3.f);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//4
+
 struct PS_OUT_SHADOW
 {
 	vector			vLightDepth : SV_TARGET0;
@@ -231,6 +257,20 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AORM();
+	}
+
+	//4
+	pass SAIYA_EYE
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SAIYA_EYE();
 	}
 }
 
