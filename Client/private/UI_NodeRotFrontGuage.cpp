@@ -25,6 +25,13 @@ _float CUI_NodeRotFrontGuage::Get_CurrentGuage()
 	return static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Get_GuageNow();
 }
 
+_float CUI_NodeRotFrontGuage::Get_CurrentGuagePosition()
+{
+	_float fGuage = Get_CurrentGuage();
+
+	return m_matLocal._41 + m_matLocal._11*0.5f*fGuage;
+}
+
 HRESULT CUI_NodeRotFrontGuage::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

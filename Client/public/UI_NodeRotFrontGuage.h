@@ -16,6 +16,7 @@ private:
 public: /* Events */
 	void		Set_Guage(_float fGuage);
 	_float		Get_CurrentGuage();
+	_float		Get_CurrentGuagePosition();
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

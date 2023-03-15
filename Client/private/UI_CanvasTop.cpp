@@ -5,14 +5,21 @@
 #include "Kena_Status.h"
 #include "UI_NodeLvUp.h"
 #include "UI_NodeEffect.h"
+#include "UI_NodeRotFrontGuage.h"
+#include "UI_NodeRotCnt.h"
+#include "UI_NodeRotArrow.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
+	, m_iRotNow(0)
+	, m_iRotMax(0)
 {
 }
 
 CUI_CanvasTop::CUI_CanvasTop(const CUI_CanvasTop & rhs)
 	: CUI_Canvas(rhs)
+	, m_iRotNow(0)
+	, m_iRotMax(0)
 {
 }
 
@@ -47,7 +54,7 @@ HRESULT CUI_CanvasTop::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
@@ -63,10 +70,15 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	{
-		static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(1);
-	}
+	static_cast<CUI_NodeRotArrow*>(m_vecNode[UI_ROTARROW])->Set_Arrow(
+		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Get_CurrentGuagePosition()
+	);
+
+
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
+	//{
+	//	static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(1);
+	//}
 
 	__super::Tick(fTimeDelta);
 }
@@ -90,7 +102,7 @@ HRESULT CUI_CanvasTop::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(g_LEVEL,
 		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
 	{
@@ -277,6 +289,28 @@ HRESULT CUI_CanvasTop::SetUp_ShaderResources()
 
 void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 {
+	m_bActive = true;
+
+	switch (eType)
+	{
+	case CUI_ClientManager::TOP_ROTMAX:
+		m_iRotMax = (_uint)fValue;
+		static_cast<CUI_NodeRotCnt*>(m_vecNode[UI_ROTCNT])->Set_Info(m_iRotMax);
+		break;
+	case CUI_ClientManager::TOP_ROTCUR:
+		m_iRotNow = (_uint)fValue;
+		static_cast<CUI_NodeRotArrow*>(m_vecNode[UI_ROTARROW])->Set_Info(m_iRotNow);
+		break;
+	case CUI_ClientManager::TOP_ROTGET:
+		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
+		break;
+	}
+
+
+
+
+
+	static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
 
 }
 

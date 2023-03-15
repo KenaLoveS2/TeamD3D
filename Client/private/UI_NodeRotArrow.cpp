@@ -25,6 +25,11 @@ void CUI_NodeRotArrow::Set_Info(_int iRots)
 	m_szInfo = CUtile::Create_String(to_wstring(m_iRots).c_str());
 }
 
+void CUI_NodeRotArrow::Set_Arrow(_float fX)
+{
+	m_matLocal._41 = fX;
+}
+
 HRESULT CUI_NodeRotArrow::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

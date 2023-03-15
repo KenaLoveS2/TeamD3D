@@ -171,3 +171,25 @@ _int CKena_Status::Get_MaxPIPCount()
 
 	return m_iMaxPIPCount;
 }
+
+void CKena_Status::Set_RotCount(_int iValue)
+{
+	m_iRotCount = iValue;
+
+	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+	_float fRotMax = (_float)Get_RotMax();
+	_float fRotNow = (_float)m_iRotCount;
+	_float fGuage = fRotNow / fRotMax;
+
+	m_StatusDelegator.broadcast(eNow, fRotNow);
+	m_StatusDelegator.broadcast(eMax, fRotMax);
+	m_StatusDelegator.broadcast(eGet, fGuage);
+
+
+	/* think later */
+	if (Get_RotMax() == m_iRotCount)
+		m_iRotLevel++;
+}

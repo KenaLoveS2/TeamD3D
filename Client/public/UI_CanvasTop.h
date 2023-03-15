@@ -34,6 +34,9 @@ private: /* Bind Functions */
 
 private:
 	vector<CUI_NodeEffect*>		m_vecEffects;
+	_uint						m_iRotMax;
+	_uint						m_iRotNow;
+
 public:
 	static	CUI_CanvasTop*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr);

@@ -79,7 +79,6 @@ public:
 	inline ROTSTATE Get_RotState() { return m_eRotState; }
 	_int	Get_RotMax();
 	inline _int Get_Crystal() { return m_iCrystal; }
-	
 	_int Get_MaxPIPCount();// { return m_iMaxPIPCount; }
 	//inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
 	inline _int Get_CurPIPCount() { return (_int)m_fCurPIPGuage; }
@@ -104,7 +103,8 @@ public:
 		   
 	inline void Set_Karma(_int iValue) { m_iKarma = iValue; }
 	inline void Set_RotLevel(_int iValue) { m_iRotLevel = iValue; }
-	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
+//	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
+	void Set_RotCount(_int iValue);
 	inline void Set_RotState(ROTSTATE iValue) { m_eRotState = iValue; }
 	inline void Set_Crystal(_int iValue) { m_iCrystal = iValue; }
 

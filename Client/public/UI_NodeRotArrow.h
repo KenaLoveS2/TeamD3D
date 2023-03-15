@@ -12,6 +12,7 @@ private:
 
 public:
 	void	Set_Info(_int iRots);
+	void	Set_Arrow(_float fX);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
