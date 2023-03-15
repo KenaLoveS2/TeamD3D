@@ -62,6 +62,7 @@ HRESULT CUI_NodeRotFrontGuage::Initialize(void * pArg)
 	UIDESC* tDesc = (UIDESC*)pArg;
 	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 
+	m_vecEvents[EVENT_GUAGE]->Call_Event(0.f);
 	return S_OK;
 }
 
@@ -74,13 +75,6 @@ void CUI_NodeRotFrontGuage::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-
-	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	{
-		static _float fGuage = 0.f;
-		fGuage += 0.1f;
-		Set_Guage(fGuage);
-	}
 
 	__super::Tick(fTimeDelta);
 }

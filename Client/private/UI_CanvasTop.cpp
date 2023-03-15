@@ -75,6 +75,7 @@ void CUI_CanvasTop::Tick(_float fTimeDelta)
 	);
 
 
+
 	//if (CGameInstance::GetInstance()->Key_Down(DIK_K))
 	//{
 	//	static_cast<CUI_NodeLvUp*>(m_vecNode[UI_ROTLVUP])->Appear(1);
@@ -305,12 +306,6 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
 		break;
 	}
-
-
-
-
-
-	static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
 
 }
 
