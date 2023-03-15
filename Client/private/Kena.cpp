@@ -5,6 +5,7 @@
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Kena_Staff.h"
+#include "SpiritArrow.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 
@@ -79,7 +80,7 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
-	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+	m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
@@ -103,6 +104,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 HRESULT CKena::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
+
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
@@ -210,8 +213,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
-	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
-
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 
 	_tchar szCloneRotTag[32] = { 0, };
@@ -239,10 +240,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
-			return E_FAIL;
+		//if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
+		//	return E_FAIL;
 
-		m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
+		//m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
 	}
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -281,6 +282,8 @@ void CKena::Tick(_float fTimeDelta)
 		m_pStateMachine->Tick(fTimeDelta);
 	}
 
+	m_pKenaStatus->Tick(fTimeDelta);
+
 	Update_Collider(fTimeDelta);
 
 	m_bCommonHit = false;
@@ -296,8 +299,15 @@ void CKena::Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	/* Delegator Arrow */
+	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
+	/* ~Delegator */
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -431,6 +441,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Late_Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 }
@@ -503,6 +516,12 @@ HRESULT CKena::RenderShadow()
 
 void CKena::Imgui_RenderProperty()
 {
+	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
+	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
+
+	_float2	ArrowCoolTime{ m_pKenaStatus->Get_CurArrowCoolTime(), m_pKenaStatus->Get_InitArrowCoolTime() };
+	ImGui::InputFloat2("Arrow CoolTime", (_float*)&ArrowCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
 	__super::Imgui_RenderProperty();
 }
 
@@ -525,7 +544,7 @@ void CKena::ImGui_AnimationProperty()
 		{
 			m_pStateMachine->Rebuild();
 			Safe_Release(m_pKenaState);
-			m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+			m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 		}
 		m_pStateMachine->Imgui_RenderProperty();
 		ImGui::Separator();
@@ -770,6 +789,26 @@ HRESULT CKena::Ready_Parts()
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Arrows()
+{
+	_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
+	_tchar*	pTag = nullptr;
+	CSpiritArrow*	pArrow = nullptr;
+
+	for (_uint i = 0; i < iArrowCount; ++i)
+	{
+		pTag = CUtile::Create_DummyString(L"SpiritArrow", i);
+
+		pArrow = dynamic_cast<CSpiritArrow*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_SpiritArrow", pTag, nullptr));
+		pArrow->Late_Initialize(nullptr);
+		pArrow->Reset();
+		m_vecArrow.push_back(pArrow);
+	}
+
 
 	return S_OK;
 }
@@ -1116,6 +1155,10 @@ void CKena::Free()
 	for (auto& pPart : m_vecPart)
 		Safe_Release(pPart);
 	m_vecPart.clear();
+
+	for (auto pArrow : m_vecArrow)
+		Safe_Release(pArrow);
+	m_vecArrow.clear();
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
