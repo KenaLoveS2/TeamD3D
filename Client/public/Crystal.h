@@ -33,7 +33,7 @@ public:
 
 
 private:	
-	CModel*									m_pModelCom = nullptr;
+	CModel*							m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	
@@ -45,6 +45,8 @@ public:
 
 public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 
 private:

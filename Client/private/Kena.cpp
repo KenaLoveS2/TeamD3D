@@ -4,6 +4,8 @@
 #include "AnimationState.h"
 #include "Kena_State.h"
 #include "Kena_Parts.h"
+#include "Kena_Staff.h"
+#include "SpiritArrow.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 
@@ -30,11 +32,6 @@ CKena::CKena(const CKena & rhs)
 {
 }
 
-_double CKena::Get_AnimationPlayTime()
-{
-	return m_pModelCom->Get_PlayTime();
-}
-
 CKena_Parts * CKena::Get_KenaPart(const _tchar * pCloneObjectTag)
 {
 	const auto	iter = find_if(m_vecPart.begin(), m_vecPart.end(), [pCloneObjectTag](CKena_Parts* pPart) {
@@ -45,6 +42,16 @@ CKena_Parts * CKena::Get_KenaPart(const _tchar * pCloneObjectTag)
 		return nullptr;
 
 	return *iter;
+}
+
+_double CKena::Get_AnimationPlayTime()
+{
+	return m_pModelCom->Get_PlayTime();
+}
+
+const string & CKena::Get_AnimationState() const
+{
+	return m_pAnimation->Get_CurrentAnimName();
 }
 
 HRESULT CKena::Initialize_Prototype()
@@ -73,7 +80,7 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
-	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+	m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
@@ -97,6 +104,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 HRESULT CKena::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
+
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
@@ -121,18 +130,88 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 
-	// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	m_pRendererCom->Set_PhysXRender(true);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
 	m_pTransformCom->Set_PxPivot(vPivotPos);
 
+	/* Bump Collider */
+	_tchar*	pTag = nullptr;
+	_tchar		wszTag[6] = L"_Bump";
+	_uint		iTagLength = lstrlen(m_szCloneObjectTag) + 7;
+
+	pTag = new _tchar[iTagLength];
+	lstrcpy(pTag, m_szCloneObjectTag);
+	lstrcat(pTag, wszTag);
+
+	CGameInstance::GetInstance()->Add_String(pTag);
+
+	vPivotScale = _float3(0.5f, 0.5f, 1.f);
+
+	_float4x4		matIdentity;
+	XMStoreFloat4x4(&matIdentity, XMMatrixTranslation(0.f, 0.7f, 0.f));
+
+	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+	PxCapsuleDesc.pActortag = pTag;
+	PxCapsuleDesc.vPos = vPos;
+	PxCapsuleDesc.fRadius = vPivotScale.x;
+	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.fDensity = 1.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+	PxCapsuleDesc.fMass = 59.f;
+	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.bCCD = true;
+	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+	PxCapsuleDesc.fDynamicFriction = 0.5f;
+	PxCapsuleDesc.fStaticFriction = 0.5f;
+	PxCapsuleDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
+	m_pTransformCom->Add_Collider(pTag, matIdentity);
+
+	/* Staff Collider */
+	CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
+	CModel*			pStaffModel = dynamic_cast<CModel*>(pStaff->Find_Component(L"Com_Model"));
+	CBone*			pStaffRootJnt = pStaffModel->Get_BonePtr("staff_root_jnt");
+	_matrix			matSocket = pStaffRootJnt->Get_OffsetMatrix() * pStaffRootJnt->Get_CombindMatrix() * pStaffModel->Get_PivotMatrix();
+
+	matSocket.r[0] = XMVector3Normalize(matSocket.r[0]);
+	matSocket.r[1] = XMVector3Normalize(matSocket.r[1]);
+	matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);
+
+	vPos = _float3(0.f, 0.f, 0.f);
+	vPivotScale = _float3(0.03f, 0.35f, 1.f);
+	vPivotPos = _float3(0.f, 0.015f, -1.04f);
+
+	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.f, 0.015f, -1.04f);
+	matPivot = matPivot * matSocket;
+
+	ZeroMemory(&PxCapsuleDesc, sizeof(CPhysX_Manager::PX_CAPSULE_DESC));
+	PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+	PxCapsuleDesc.pActortag = pStaff->Get_ObjectCloneName();
+	PxCapsuleDesc.vPos = vPos;
+	PxCapsuleDesc.fRadius = vPivotScale.x;
+	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxCapsuleDesc.fDensity = 1.f;
+	PxCapsuleDesc.fAngularDamping = 0.5f;
+	PxCapsuleDesc.fMass = 59.f;
+	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.bCCD = true;
+	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_WEAPON;
+	PxCapsuleDesc.fDynamicFriction = 0.5f;
+	PxCapsuleDesc.fStaticFriction = 0.5f;
+	PxCapsuleDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_WEAPON));
+	m_pTransformCom->Add_Collider(pStaff->Get_ObjectCloneName(), matPivot);
+
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
 	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
 
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
-
-	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 
@@ -140,7 +219,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	for (_int i = 0; i < 8; i++)
 	{
 		CGameObject* p_game_object = nullptr;
-		swprintf_s(szCloneRotTag, L"RotForWoodKnight_%d", i);
+		swprintf_s(szCloneRotTag, L"RotForMonster_%d", i);
 		CRotForMonster::DESC desc;
 		ZeroMemory(&desc, sizeof(CRotForMonster::DESC));
 
@@ -161,10 +240,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
-			return E_FAIL;
+		//if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
+		//	return E_FAIL;
 
-		m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
+		//m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
 	}
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -174,6 +253,17 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
 	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
+
+	
+
+	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
+
+	for (auto& pEffect : m_mapEffect)
+	{
+		if(pEffect.second != nullptr )
+			pEffect.second->Late_Initialize();
+	}
+
 
 	return S_OK;
 }
@@ -198,7 +288,10 @@ void CKena::Tick(_float fTimeDelta)
 		m_pKenaState->Tick(fTimeDelta);
 		m_pStateMachine->Tick(fTimeDelta);
 	}
-	m_pTransformCom->Tick(fTimeDelta);
+
+	m_pKenaStatus->Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
 
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
@@ -213,8 +306,15 @@ void CKena::Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	/* Delegator Arrow */
+	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
+	/* ~Delegator */
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -385,6 +485,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Late_Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 }
@@ -457,6 +560,12 @@ HRESULT CKena::RenderShadow()
 
 void CKena::Imgui_RenderProperty()
 {
+	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
+	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
+
+	_float2	ArrowCoolTime{ m_pKenaStatus->Get_CurArrowCoolTime(), m_pKenaStatus->Get_InitArrowCoolTime() };
+	ImGui::InputFloat2("Arrow CoolTime", (_float*)&ArrowCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
 	__super::Imgui_RenderProperty();
 }
 
@@ -479,7 +588,7 @@ void CKena::ImGui_AnimationProperty()
 		{
 			m_pStateMachine->Rebuild();
 			Safe_Release(m_pKenaState);
-			m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+			m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 		}
 		m_pStateMachine->Imgui_RenderProperty();
 		ImGui::Separator();
@@ -562,22 +671,22 @@ void CKena::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
 
-	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+	//_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 
-	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
-	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
-	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
-	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+	//float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	//ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	//vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	//CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	//m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
 
-	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
+	//_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
 
-	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
-	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
-	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
-	m_pTransformCom->Set_PxPivot(vPxPivot);
+	//float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	//ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	//vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	//m_pTransformCom->Set_PxPivot(vPxPivot);
 
-	// ÀÌ°Ô »ç½Ç»ó px ¸Å´ÏÀú imgui_render¿¡ ÀÖ±äÇÔ
+	// ï¿½Ì°ï¿½ ï¿½ï¿½Ç»ï¿½ px ï¿½Å´ï¿½ï¿½ï¿½ imgui_renderï¿½ï¿½ ï¿½Ö±ï¿½ï¿½ï¿½
 	//PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
 	// 	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
 	// 	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
@@ -590,6 +699,71 @@ void CKena::ImGui_PhysXValueProperty()
 	// 	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
 	// 	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
 	//CPhysX_Manager::GetInstance()->Set_Velocity(pRigidActor, _float3(0.f, m_fCurJumpSpeed, 0.f));
+	//list<CTransform::ActorData>*	pActorList = m_pTransformCom->Get_ActorList();
+	//_uint iActorCount = (_uint)pActorList->size();
+
+	//ImGui::BulletText("ColliderLists");
+	//{
+	//	static _int iSelect = -1;
+	//	char** ppObjectTag = new char*[iActorCount];
+	//	_uint iTagLength = 0;
+	//	_uint i = 0;
+	//	for (auto& Pair : *pActorList)
+	//		ppObjectTag[i++] = CUtile::WideCharToChar(Pair.pActorTag);
+	//	ImGui::ListBox("Collider List", &iSelect, ppObjectTag, iActorCount);
+
+	//	if (iSelect != -1)
+	//	{
+	//		ImGui::BulletText("Current Collider Object : %s", ppObjectTag[iSelect]);
+
+	//		_tchar*	pActorTag = CUtile::CharToWideChar(ppObjectTag[iSelect]);
+	//		CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(pActorTag);
+	//		PxRigidActor*		pActor = pActorData->pActor;
+
+	//		PxShape*			pShape = nullptr;
+	//		pActor->getShapes(&pShape, sizeof(PxShape));
+	//		PxCapsuleGeometry& Geometry = pShape->getGeometry().capsule();
+	//		_float&	fScaleX = Geometry.radius;
+	//		_float&	fScaleY = Geometry.halfHeight;
+	//		
+	//		/* Scale */
+	//		ImGui::BulletText("Scale Setting");
+	//		ImGui::DragFloat("Scale X", &fScaleX, 0.05f);
+	//		ImGui::DragFloat("Scale Y", &fScaleY, 0.05f);
+
+	//		pShape->setGeometry(Geometry);
+
+	//		/* Rotate & Position */
+	//		ImGui::Separator();
+	//		ImGui::BulletText("Rotate Setting");
+
+	//		CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
+	//		CModel*			pStaffModel = dynamic_cast<CModel*>(pStaff->Find_Component(L"Com_Model"));
+	//		CBone*			pStaffRootJnt = pStaffModel->Get_BonePtr("staff_skin6_jnt");
+	//		_matrix			matSocket = pStaffRootJnt->Get_OffsetMatrix() * pStaffRootJnt->Get_CombindMatrix() * pStaffModel->Get_PivotMatrix();
+
+	//		matSocket.r[0] = XMVector3Normalize(matSocket.r[0]);
+	//		matSocket.r[1] = XMVector3Normalize(matSocket.r[1]);
+	//		matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);
+
+	//		_smatrix		matPivot = pActorData->PivotMatrix * XMMatrixInverse(nullptr, matSocket);
+	//		_float4		vScale, vRot, vTrans;
+	//		ImGuizmo::DecomposeMatrixToComponents((_float*)&matPivot, (_float*)&vTrans, (_float*)&vRot, (_float*)&vScale);
+	//		
+	//		ImGui::DragFloat3("Rotate", (_float*)&vRot, 0.01f);
+	//		ImGui::DragFloat3("Translation", (_float*)&vTrans, 0.01f);
+
+	//		ImGuizmo::RecomposeMatrixFromComponents((_float*)&vTrans, (_float*)&vRot, (_float*)&vScale, (_float*)&matPivot);
+
+	//		pActorData->PivotMatrix = matPivot * matSocket;
+
+	//		Safe_Delete_Array(pActorTag);
+	//	}
+
+	//	for (_uint i = 0; i < iActorCount; ++i)
+	//		Safe_Delete_Array(ppObjectTag[i]);
+	//	Safe_Delete_Array(ppObjectTag);
+	//}
 }
 
 void CKena::Update_Child()
@@ -695,6 +869,26 @@ HRESULT CKena::Ready_Parts()
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Arrows()
+{
+	_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
+	_tchar*	pTag = nullptr;
+	CSpiritArrow*	pArrow = nullptr;
+
+	for (_uint i = 0; i < iArrowCount; ++i)
+	{
+		pTag = CUtile::Create_DummyString(L"SpiritArrow", i);
+
+		pArrow = dynamic_cast<CSpiritArrow*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_SpiritArrow", pTag, nullptr));
+		pArrow->Late_Initialize(nullptr);
+		pArrow->Reset();
+		m_vecArrow.push_back(pArrow);
+	}
+
 
 	return S_OK;
 }
@@ -813,7 +1007,6 @@ HRESULT CKena::SetUp_State()
 {
 	m_pModelCom->Set_RootBone("kena_RIG");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
-	return S_OK;
 
 	CAnimState*			pAnimState = nullptr;
 	CAdditiveAnimation*	pAdditiveAnim = nullptr;
@@ -1701,6 +1894,28 @@ HRESULT CKena::SetUp_UI()
 	return S_OK;
 }
 
+void CKena::Update_Collider(_float fTimeDelta)
+{
+	m_pTransformCom->Tick(fTimeDelta);
+
+	CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
+	CModel*			pStaffModel = dynamic_cast<CModel*>(pStaff->Find_Component(L"Com_Model"));
+	CBone*			pStaffRootJnt = pStaffModel->Get_BonePtr("staff_skin6_jnt");
+	_matrix			matSocket = pStaffRootJnt->Get_OffsetMatrix() * pStaffRootJnt->Get_CombindMatrix() * pStaffModel->Get_PivotMatrix();
+	
+	matSocket.r[0] = XMVector3Normalize(matSocket.r[0]);
+	matSocket.r[1] = XMVector3Normalize(matSocket.r[1]);
+	matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);
+
+	_smatrix	matPivot =  XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.f, 0.015f, -1.04f);
+	matPivot = matPivot * matSocket;
+
+	m_pTransformCom->Update_Collider(pStaff->Get_ObjectCloneName(), matPivot);
+
+	matPivot = XMMatrixTranslation(0.f, 0.7f, 0.f);
+	m_pTransformCom->Update_Collider(L"Kena_Bump", matPivot);
+}
+
 CKena::DAMAGED_FROM CKena::Calc_DirToMonster(CGameObject * pTarget)
 {
 	DAMAGED_FROM		eDir = DAMAGED_FROM_END;
@@ -1887,6 +2102,10 @@ void CKena::Free()
 		Safe_Release(pPart);
 	m_vecPart.clear();
 
+	for (auto pArrow : m_vecArrow)
+		Safe_Release(pArrow);
+	m_vecArrow.clear();
+
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
 	m_mapEffect.clear();
@@ -1921,7 +2140,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == COL_MONSTER_WEAPON)
 		{
-			// ¸ÂÀº°Å
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
 			//	return -1;
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
@@ -1947,7 +2166,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// ¶§¸°°Å 
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
 			//	return -1;
 

@@ -22,6 +22,7 @@ class CKena final : public CGameObject
 
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
+	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -29,15 +30,16 @@ private:
 	virtual ~CKena() = default;
 
 public:
+	class CKena_State*		Get_State() { return m_pKenaState; }
+	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
+	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 	_double					Get_AnimationPlayTime();
+	const string&				Get_AnimationState() const;
+
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 
-public:
-	class CKena_State*		Get_State() { return m_pKenaState; }
-	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -60,24 +62,25 @@ public:
 	void						Call_RotIcon(CGameObject* pTarget);
 
 private:
-	CRenderer*						m_pRendererCom = nullptr;
-	CShader*							m_pShaderCom = nullptr;
-	CModel*							m_pModelCom = nullptr;
-	CStateMachine*				m_pStateMachine = nullptr;
-	CAnimationState*				m_pAnimation = nullptr;
-	class CKena_State*			m_pKenaState = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
+	CStateMachine*			m_pStateMachine = nullptr;
+	CAnimationState*		m_pAnimation = nullptr;
+	class CKena_State*		m_pKenaState = nullptr;
 	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain*					m_pTerrain = nullptr;
-	class CRope_RotRock*		m_pRopeRotRock = nullptr;
-	class CRot*						m_pFirstRot = nullptr;
-	class CRotForMonster*    m_pRotForMonster[8] = { nullptr, };
+	class CTerrain*			m_pTerrain = nullptr;
+	class CRope_RotRock*	m_pRopeRotRock = nullptr;
+	class CRot*				m_pFirstRot = nullptr;
+	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 
 private:
-	vector<class CKena_Parts*>	m_vecPart;
-
-	map<const string, class CEffect_Base*>   m_mapEffect;
+	vector<class CKena_Parts*>				m_vecPart;
+	vector<class CSpiritArrow*>				m_vecArrow;
+	class CSpiritArrow*							m_pCurArrow = nullptr;
+	map<const string, class CEffect_Base*>	m_mapEffect;
 
 private:
 	_bool						m_bAttack = false;
@@ -104,23 +107,31 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
+
+	/* PhysX */
+	vector<wstring>		m_vecColliderName;
+	vector<_float3>		m_vecPivot;
+	vector<_float3>		m_vecPivotScale;
+	vector<_float3>		m_vecPivotRot;
 
 	CUI_RotIcon*			m_pFocusRot;
 
 private:
 	HRESULT					Ready_Parts();
+	HRESULT					Ready_Arrows();
 	HRESULT					Ready_Effects();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
+	void						Update_Collider(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);

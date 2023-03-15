@@ -44,15 +44,18 @@ private:
 	_float				m_fInitPIPCoolTime = 0.f;
 	_float				m_fCurPIPCoolTime = 0.f;
 
-	_int				m_iMaxArrowCount = 0;
-	_int				m_iCurArrowCount = 0;
-	_float				m_fInitArrowCoolTime = 0.f;
+	_int				m_iMaxArrowCount = 4;
+	_int				m_iCurArrowCount = 4;
+	_float				m_fInitArrowCoolTime = 3.f;
 	_float				m_fCurArrowCoolTime = 0.f;
 
 	_int				m_iMaxBombCount = 0;
 	_int				m_iCurBombCount = 0;
 	_float				m_fInitBombCoolTime = 0.f;
 	_float				m_fCurBombCoolTime = 0.f;
+
+private:
+	void				Update_ArrowCoolTime(_float fTimeDelta);
 
 public: /* skill test */
 	enum SKILL { SKILL_STICK, SKILL_SHIELD, SKILL_BOW, SKILL_BOBM, SKILL_END };

@@ -28,10 +28,27 @@ HRESULT CKena_Status::Initialize(void* pArg, CGameObject * pOwner)
 
 void CKena_Status::Tick(_float fTimeDelta)
 {
+	Update_ArrowCoolTime(fTimeDelta);
 }
 
 void CKena_Status::Imgui_RenderProperty()
 {
+}
+
+void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
+{
+	if (m_iCurArrowCount >= m_iMaxArrowCount)
+		m_fCurArrowCoolTime = 0.f;
+	else
+	{
+		m_fCurArrowCoolTime += fTimeDelta;
+		
+		if (m_fCurArrowCoolTime >= m_fInitArrowCoolTime)
+		{
+			m_iCurArrowCount++;
+			m_fCurArrowCoolTime -= m_fInitArrowCoolTime;
+		}
+	}
 }
 
 CKena_Status * CKena_Status::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

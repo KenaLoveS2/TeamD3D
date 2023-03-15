@@ -14,10 +14,8 @@ CImgui_ShaderEditor::CImgui_ShaderEditor(ID3D11Device* pDevice, ID3D11DeviceCont
 HRESULT CImgui_ShaderEditor::Initialize(void * pArg)
 {
 	m_szFreeRenderName = "Shader_Editor";
-
 	m_iCurrentLevel = m_pGameInstance->Get_CurLevelIndex();
 	m_mapShaderValueObject = m_pGameInstance->Get_ShaderValueObjects(m_iCurrentLevel);
-
 	return S_OK;
 }
 
@@ -33,20 +31,17 @@ void CImgui_ShaderEditor::Imgui_FreeRender()
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-	if(ImGui::CollapsingHeader("Shadow"))
-	{
-		if (ImGui::Button("Use Shadow"))
-			m_pGameInstance->SwitchOnOff_Shadow(true);
-
-		if (ImGui::Button("Don't Use Shadow"))
-			m_pGameInstance->SwitchOnOff_Shadow(false);
-	}
-
 	if (ImGui::CollapsingHeader("HDR"))
 		CPostFX::GetInstance()->Imgui_Render();
 
 	if (ImGui::CollapsingHeader("Light"))
 		m_pGameInstance->Imgui_LightManagerRender();
+
+	if (ImGui::CollapsingHeader("RENDERER"))
+	{
+		if(m_pRendererCom)
+			m_pRendererCom->Imgui_Render();
+	}
 
 	if(m_mapShaderValueObject->empty())
 	{
@@ -103,6 +98,16 @@ void CImgui_ShaderEditor::Update_Level()
 {
 	m_iCurrentLevel = m_pGameInstance->Get_CurLevelIndex();
 	m_mapShaderValueObject = m_pGameInstance->Get_ShaderValueObjects(m_iCurrentLevel);
+
+	if(!m_bInit)
+	{
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance);
+		m_pRendererCom = static_cast<CRenderer*>(p_game_instance->Get_ComponentPtr(m_iCurrentLevel, L"Layer_Player", L"Kena", L"Com_Renderer"));
+		RELEASE_INSTANCE(CGameInstance);
+
+		if (m_pRendererCom)
+			m_bInit = true;
+	}
 }
 
 CImgui_ShaderEditor * CImgui_ShaderEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)

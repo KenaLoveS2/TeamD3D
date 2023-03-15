@@ -21,8 +21,6 @@ public:
 	HRESULT Late_Initialize();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
-	void	SwitchOnOff_Shadow(_bool bSwitch);
-
 
 	void		Delete_AllObjLayer(_int iRoomIndex);
 

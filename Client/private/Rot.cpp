@@ -87,15 +87,15 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_ROT));
 
-	// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
 	m_vWakeUpPosition = _float4(3.f, 0.f, 3.f, 1.f);
 
-	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
+	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
@@ -103,18 +103,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	return S_OK;
 }
 
-_float Temp =  1.f;
-
 void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (GetKeyState('F') & 0x8000)
-	{
-		// m_bWakeUp = true;
-		Temp += 1.f * fTimeDelta;
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, Temp);
-	}
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
@@ -159,7 +150,7 @@ HRESULT CRot::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 		else		if (i == 2)
 		{
-			// ¸Ó¸®Ä«¶ô ¸ð¸£°ÚÀ½.
+			// ï¿½Ó¸ï¿½Ä«ï¿½ï¿½ ï¿½ð¸£°ï¿½ï¿½ï¿½.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 		}
@@ -198,13 +189,6 @@ void CRot::ImGui_AnimationProperty()
 		m_pModelCom->Imgui_RenderProperty();
 		ImGui::EndTabItem();
 	}
-
-	//if (ImGui::BeginTabItem("State"))
-	//{
-	//	m_pStateMachine->Imgui_RenderProperty();
-	//	ImGui::EndTabItem();
-	//}
-
 	ImGui::EndTabBar();
 }
 
@@ -235,44 +219,14 @@ void CRot::ImGui_PhysXValueProperty()
 	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
 	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	m_pTransformCom->Set_PxPivot(vPxPivot);
-
-	// ÀÌ°Ô »ç½Ç»ó px ¸Å´ÏÀú imgui_render¿¡ ÀÖ±äÇÔ
-	/*PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
-	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
-	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
-	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
-	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
-	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
-	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
-	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
-	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
-	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
-	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
-	CPhysX_Manager::GetInstance()->Set_DynamicParameter(pRigidActor, fMass, fLinearDamping, vVelocity);*/
-}
-
-HRESULT CRot::Call_EventFunction(const string& strFuncName)
-{
-	return CGameObject::Call_EventFunction(strFuncName);
-}
-
-void CRot::Push_EventFunctions()
-{
-	Test(true, 0.f);
 }
 
 HRESULT CRot::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimRotModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Rot", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 	m_pModelCom->Set_RootBone("Rot_RIG");
-
-	//  0 : Body
-	//	 1 : Eye
-	//	 2 : Hair
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Rot/rh_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Rot/rot_fur_ALPHA.png")), E_FAIL);
 
@@ -301,10 +255,6 @@ HRESULT CRot::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
-}
-
-void CRot::Test(_bool bIsInit, _float fTimeDelta)
-{
 }
 
 CRot* CRot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -352,25 +302,24 @@ HRESULT CRot::SetUp_State()
 	{
 	
 	})
-		.AddTransition("SLEEP to WAKE_UP", "WAKE_UP")
-		.Predicator([this]()
-	{
-		return m_bWakeUp;
-	})
 		.OnExit([this]()
 	{
 		m_iThisRotIndex = m_iKenaFindRotCount++;
 		m_pkenaState->Set_RotCount(m_iKenaFindRotCount);
 
 		m_vecKenaConnectRot.push_back(this);
-		
-		if (m_iThisRotIndex == 0)
+
+		if (m_iThisRotIndex == FIRST_ROT)
 			m_pKena->Set_FirstRotPtr(this);
 
 		m_pTransformCom->Set_Position(m_vWakeUpPosition);
 	})
-
-
+		.AddTransition("SLEEP to WAKE_UP", "WAKE_UP")
+		.Predicator([this]()
+	{
+		return m_bWakeUp;
+	})
+		
 		.AddState("WAKE_UP")
 		.OnStart([this]()
 	{	
@@ -380,15 +329,16 @@ HRESULT CRot::SetUp_State()
 	{
 
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("WAKE_UP to COLLECT ", "COLLECT")
 		.Predicator([this]()
 	{	
 		return m_pModelCom->Get_AnimationFinish();
 	})
-		.OnExit([this]()
-	{
-
-	})
+		
 		.AddState("COLLECT")
 		.OnStart([this]()
 	{
@@ -403,16 +353,17 @@ HRESULT CRot::SetUp_State()
 	{
 
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("COLLECT to IDLE ", "IDLE")
 		.Predicator([this]()
 	{
 		_bool bCuteAnimFinish = (m_iCuteAnimIndex == m_pModelCom->Get_AnimIndex()) && m_pModelCom->Get_AnimationFinish();
 		return bCuteAnimFinish;
 	})
-		.OnExit([this]()
-	{
-
-	})
+		
 
 		.AddState("IDLE")
 		.OnStart([this]()
@@ -440,16 +391,17 @@ HRESULT CRot::SetUp_State()
 	{
 		m_pTransformCom->Chase(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta, 1.f);
 	})
+		.OnExit([this]()
+	{
+
+	})
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
 		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
 		return m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})		
-		.OnExit([this]()
-	{
-
-	})
+		
 
 		.Build();
 

@@ -40,14 +40,6 @@ void CLayer::Late_Tick(_float fTimeDelta)
 	}
 }
 
-void CLayer::SwitchOnOff_Shadow(_bool bSwitch)
-{
-	for (auto& Pair : m_GameObjects)
-	{
-		Pair.second ? Pair.second->SwitchOnOff_Shadow(bSwitch) : 0;
-	}
-}
-
 void CLayer::Delete_AllObjLayer(_int iRoomIndex)
 {
 	/*for (auto& Pair : m_GameObjects)
