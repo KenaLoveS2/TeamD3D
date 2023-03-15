@@ -1283,7 +1283,8 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		CGameObject* pGameObject = nullptr;
 
-		if (iColliderIndex == COL_MONSTER_WEAPON)
+		_bool bRealAttack = false;
+		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
 			// ������
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
@@ -1332,6 +1333,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			// m_bHeavyHit = true;
 		}
 
+		int temp = 0;
 	}
 
 	return 0;

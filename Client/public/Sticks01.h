@@ -110,8 +110,8 @@ private:
 private:
 	_float	m_fIdletoAttackTime = 0.f;
 
-	_int		m_iAttackType = ATTACKTYPE_END;
-	_bool	m_bRealAttack = false;
+	_int	m_iAttackType = ATTACKTYPE_END;
+	
 	_bool	m_bChargeAttack = false;
 	_bool	m_bJumpAttack = false;
 	_bool   m_bAttack1 = false;
@@ -119,7 +119,7 @@ private:
 	_bool	m_bComboAttack = false;
 	_bool	m_bThrowRock = false;
 
-	_int		m_iAfterAttackType = AFTYPE_END;
+	_int	m_iAfterAttackType = AFTYPE_END;
 	_bool	m_bCheer = false;
 	_bool	m_bStrafeLeft = false;
 	_bool	m_bStrafeRight = false;

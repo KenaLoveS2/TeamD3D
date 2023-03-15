@@ -104,7 +104,6 @@ private:
 
 	_int m_iAttackType = ATTACKTYPE_END;
 
-	_bool m_bRealAttack = false;
 	_bool m_bCloseAttack = false;
 	_bool m_bRangedAttack = false;
 	_bool m_bSummonAttack = false;

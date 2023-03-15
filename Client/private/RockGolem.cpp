@@ -24,7 +24,9 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -64,7 +66,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
@@ -73,6 +75,35 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
+	}
+
+	// 콜라이더
+	{
+		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
+		_float3 vPivotScale = _float3(1.8f, 0.1f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 1.95f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 20.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
+		m_pTransformCom->Add_Collider(m_szCloneObjectTag, g_IdentityFloat4x4);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
@@ -415,7 +446,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("DYING")
 			.OnStart([this]()
 		{
-			m_pModelCom->Set_AnimIndex(ANIMATION_END);
+			m_pModelCom->Set_AnimIndex(DEPTH);
 			m_bDying = true;
 		})
 			.AddTransition("DYING to DEATH", "DEATH")
@@ -423,19 +454,15 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return m_pModelCom->Get_AnimationFinish();
 		})
+
 			.AddState("DEATH")
 			.OnStart([this]()
 		{
 			m_bDeath = true;
+			m_pUIHPBar->Set_Active(false);
+			m_pTransformCom->Clear_Actor();
 		})
-			.Tick([this](_float fTimeDelta)
-		{
-
-		})
-			.OnExit([this]()
-		{
-
-		})
+			
 			.Build();
 
 	return S_OK;
@@ -471,6 +498,10 @@ HRESULT CRockGolem::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
+
 
 	return S_OK;
 }
