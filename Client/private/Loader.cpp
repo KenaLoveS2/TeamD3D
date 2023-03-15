@@ -2559,6 +2559,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 #pragma endregion Effect_Object
 
 #pragma  region	MONSTER
