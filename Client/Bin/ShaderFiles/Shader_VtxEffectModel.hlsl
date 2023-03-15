@@ -9,7 +9,7 @@ texture2D		g_DissolveTexture[4];
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
-// Type
+/* Type */
 int		g_TextureRenderType, g_BlendType;
 bool    g_IsUseMask, g_IsUseNormal;
 int		g_SeparateWidth, g_SeparateHeight;
@@ -17,14 +17,21 @@ uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
 float4  g_WorldCamPosition;
-// ~Type
+/* ~Type */
 
-// Dissolve
-bool g_bDissolve;
-float g_fDissolveTime;
+/* Dissolve */
+bool    g_bDissolve;
+float   g_fDissolveTime;
+/* ~Dissolve */
+
+/* Arrow */
+float	g_WaveHeight;
+float	g_Speed;
+float	g_WaveFrequency;
+float	g_UVSpeed;
+/* ~Arrow */
 
 bool	g_bPulseRecive = false;
-
 
 struct VS_IN
 {
@@ -54,6 +61,30 @@ VS_OUT VS_MAIN(VS_IN In)
 	matrix		matWV, matWVP;
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
+
+	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+
+	Out.vWorldNormal = normalize(mul(In.vNormal, (float3x3)g_WorldMatrix));
+
+	Out.vWorldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	Out.vViewDir = normalize(Out.vWorldPosition.xyz - g_WorldCamPosition.xyz);
+
+	return Out;
+}
+
+VS_OUT VS_ARROW(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	matrix		matWV, matWVP;
+	matWV = mul(g_WorldMatrix, g_ViewMatrix);
+	matWVP = mul(matWV, g_ProjMatrix);
+
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
@@ -210,11 +241,10 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 	Out.vDiffuse = vDiffuse * outglow * 4.f;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
 
-	if(true==g_bPulseRecive)
-		Out.vDiffuse.b *=10.f;
+	if (true == g_bPulseRecive)
+		Out.vDiffuse.b *= 10.f;
 
 	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
-
 
 	return Out;
 }
@@ -269,6 +299,26 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 	return Out;
 }
 
+//PS_SPRITARROW
+PS_OUT PS_SPRITARROW(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 4.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV * 3.f, float2(1.0f, 1.0f), float2(time, time));
+	
+	float4 outglowcolor = float4(0.0f, 167.f, 255.f, 255.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(8.f, 3.5f, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(PointSampler, OffsetUV);
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	Out.vDiffuse = vDiffuse + outglow;
+	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.2f;
+	return Out;
+}
+
 //PS_WIND
 PS_OUT PS_WIND(PS_IN In)
 {
@@ -282,6 +332,44 @@ PS_OUT PS_WIND(PS_IN In)
 		vDiffuse.a *= (1.f - fTIme);
 
 	Out.vDiffuse = vDiffuse;
+	return Out;
+}
+
+//PS_SPRITARROW_GRAB
+PS_OUT PS_SPRITARROW_GRAB(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.4f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(time, time));
+
+	float4 outglowcolor = float4(2.0f, 6.f, 10.f, 0.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(8, 3.5, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	
+	Out.vDiffuse = vDiffuse * outglow;
+	Out.vDiffuse.a = outglowcolor.r * 0.05f;
+	return Out;
+}
+
+//PS_SPRITARROW_MAINMESH
+PS_OUT PS_SPRITARROW_MAINMESH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 4.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.5f, time));
+
+	float4 outglowcolor = float4(16.0f, 48.f, 85.f, 155.0f) / 255.f;
+	float4 outglow = float4(fresnel_glow(8.f, 2.5f, outglowcolor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = outglowcolor.r;
 	return Out;
 }
 
@@ -354,7 +442,7 @@ technique11 DefaultTechnique
 
 	pass Effect_SpritArrow // 5
 	{
-		SetRasterizerState(RS_CULLNONE);
+		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
@@ -362,7 +450,7 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 PS_SPRITARROW();
 	}
 
 	pass Effect_Wind // 6
@@ -377,4 +465,31 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_WIND();
 	}
+
+	pass Effect_SpritArrowGrab // 7
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SPRITARROW_GRAB();
+	}
+
+	pass Effect_SpritArrowMainMesh // 8
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SPRITARROW_MAINMESH();
+	}
+
 }

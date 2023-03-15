@@ -4,6 +4,7 @@
 #include "Rot.h"
 #include "Bone.h"
 #include "Monster.h"
+#include "E_RotTrail.h"
 
 CRotForMonster::CRotForMonster(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -40,6 +41,7 @@ HRESULT CRotForMonster::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_FSM(), E_FAIL);
+	FAILED_CHECK_RETURN(Set_RotTrail(), E_FAIL);
 
 	m_pModelCom->Set_AnimIndex(CRot::IDLE);
 	m_pModelCom->Set_AllAnimCommonType();
@@ -77,8 +79,6 @@ HRESULT CRotForMonster::Late_Initialize(void* pArg)
 
 void CRotForMonster::Tick(_float fTimeDelta)
 {
-	
-
 	__super::Tick(fTimeDelta);
 	
 	if (m_pFSM)
@@ -90,6 +90,11 @@ void CRotForMonster::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
+
+	/* Trail */
+	if (m_pRotTrail != nullptr)
+		m_pRotTrail->Tick(fTimeDelta);
+	/* Trail */
 }
 
 void CRotForMonster::Late_Tick(_float fTimeDelta)
@@ -98,6 +103,19 @@ void CRotForMonster::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	/* Trail */
+	if (m_pRotTrail != nullptr)
+	{
+		// rot_headTip_a_jnt
+		CBone*	pWispBonePtr = m_pModelCom->Get_BonePtr("rot_headTip_a_jnt");
+		_matrix SocketMatrix = pWispBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+		m_pRotTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+		m_pRotTrail->Late_Tick(fTimeDelta);
+	}
+	/* Trail */
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -332,6 +350,26 @@ HRESULT CRotForMonster::SetUp_FSM()
 		return E_FAIL;
 }
 
+HRESULT CRotForMonster::Set_RotTrail()
+{	
+	/* Set Trail */
+	CE_RotTrail* pRotTrail = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	wstring strMyCloneTag = this->Get_ObjectCloneName();
+	strMyCloneTag += L"_Trail";
+
+	pRotTrail = dynamic_cast<CE_RotTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotTrail", strMyCloneTag.c_str()));
+	NULL_CHECK_RETURN(pRotTrail, E_FAIL);
+	pRotTrail->Set_Parent(this);
+	m_pRotTrail = pRotTrail;
+
+	RELEASE_INSTANCE(CGameInstance);
+	/* Set Trail */
+
+	return S_OK;
+}
+
 _bool CRotForMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
 {
 	return m_pModelCom->Find_Animation(eAnim)->Get_PlayRate() >= FinishRate;
@@ -371,4 +409,5 @@ void CRotForMonster::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pRotTrail);
 }

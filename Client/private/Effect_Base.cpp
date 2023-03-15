@@ -548,11 +548,10 @@ HRESULT CEffect_Base::Initialize_Prototype(const _tchar* pFilePath)
 HRESULT CEffect_Base::Initialize(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
 	if (pArg == nullptr)
 	{
-		ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-
 		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
