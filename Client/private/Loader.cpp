@@ -17,6 +17,8 @@
 
 /* NPCs */
 #include "Rot.h"
+#include "Beni.h"
+#include "CameraForNpc.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -2038,17 +2040,17 @@ HRESULT CLoader::Loading_ForTestPlay()
 	m_fCur += 1.f;
 
 	/* NPC */
-	///* Prototype_Component_Model_Beni */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_Beni */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
-	///* Prototype_Component_Model_Saiya */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_Saiya */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 	// 작업 시작 안한것들은 주석처리.
 
@@ -2174,6 +2176,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_CameraForRot */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
 		CCameraForRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForNpc"),
+		CCameraForNpc::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2710,7 +2718,13 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-#pragma  region	MONSTER
+#pragma  region NPC
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),
+		CBeni::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+#pragma  endregion
 
 	m_isFinished = true;
 
