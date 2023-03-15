@@ -24,6 +24,7 @@ public:
 	_matrix			Get_CombindMatrix() { return XMLoadFloat4x4(&m_CombindTransformMatrix); }
 	_matrix			Get_OffsetMatrix() { return XMLoadFloat4x4(&m_OffsetMatrix); }
 	_matrix			Get_TransformMatrix() { return XMLoadFloat4x4(&m_TransformMatrix); }
+	const _int&		Get_BoneIndex() const { return m_iIndex; }
 	const _bool&		Get_BoneLocked() const { return m_bLock; }
 	const _bool&		Get_BoneRotateLocked() const { return m_bRotateLock; }
 	const _bool&		Get_BonePositioinLocked() const { return m_bPositionLock; }

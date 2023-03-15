@@ -20,6 +20,7 @@ public:
 	_matrix						Get_PivotMatrix() const { return XMLoadFloat4x4(&m_PivotMatrix); }
 	_float4x4						Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	class CBone*					Get_BonePtr(const char* pBoneName);
+	class CBone*					Get_BonePtr(_int iBoneIndex);
 	const _double&				Get_PlayTime() const;
 	const _float					Get_AnimationProgress() const;
 	const _bool&					Get_PausePlay() const { return m_bPausePlay; }

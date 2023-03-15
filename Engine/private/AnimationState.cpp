@@ -206,9 +206,22 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 						pAdditive->m_listLockedJoint.push_back(pair<string, CBone::LOCKTO>{strJoint, eLockto});
 					}
 				}
+
+				if (jAdditive.contains("99. Remove Tracks"))
+				{
+					for (_uint iIndex : jAdditive["99. Remove Tracks"])
+						pAdditive->m_listLockedBoneIndex.push_back(iIndex);
+				}
 				pAnimState->m_vecAdditiveAnim.push_back(pAdditive);
 			}
 		}
+
+		if (jAnimState.contains("99. Remove Tracks"))
+		{
+			for (_uint iIndex : jAnimState["99. Remove Tracks"])
+				pAnimState->m_listLockedBoneIndex.push_back(iIndex);
+		}
+
 		m_mapAnimState.emplace(pAnimState->m_strStateName, pAnimState);
 	}
 
@@ -515,6 +528,17 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				pJoint->Set_BoneLocked(Pair.second);
 			}
 		}
+
+		if (m_pCurAnim->m_listLockedBoneIndex.empty() == false)
+		{
+			for (_uint& iIndex : m_pCurAnim->m_listLockedBoneIndex)
+			{
+				pJoint = m_pModel->Get_BonePtr(iIndex);
+				assert(pJoint != nullptr);
+				pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
+			}
+		}
+
 		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 
 		/* Additive */
@@ -538,6 +562,16 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 							matTransform = pJoint->Get_TransformMatrix();
 						//
 						pJoint->Set_BoneLocked(Pair.second);
+					}
+				}
+
+				if (pAdditiveAnim->m_listLockedBoneIndex.empty() == false)
+				{
+					for (_uint& iIndex : pAdditiveAnim->m_listLockedBoneIndex)
+					{
+						pJoint = m_pModel->Get_BonePtr(iIndex);
+						assert(pJoint != nullptr);
+						pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
 					}
 				}
 

@@ -20,6 +20,7 @@ struct ENGINE_DLL  CAdditiveAnimation : public CBase
 	CAnimation*	m_pRefAnim = nullptr;
 	CAnimation*	m_pAdditiveAnim = nullptr;
 	list<pair<string, CBone::LOCKTO>>	m_listLockedJoint;
+	list<_uint>								m_listLockedBoneIndex;
 
 	virtual void	Free() override {
 		m_listLockedJoint.clear();
@@ -36,6 +37,7 @@ struct ENGINE_DLL CAnimState : public CBase
 	vector<CAdditiveAnimation*>		m_vecAdditiveAnim;
 	list<pair<string, CBone::LOCKTO>>	m_listLockedJoint;
 	map<_float, const string>			m_mapEvent;
+	list<_uint>								m_listLockedBoneIndex;
 
 	//_bool			m_bHasLookAnim = false;
 	//vector<CAdditiveAnimation*>		m_vecLookAnim;

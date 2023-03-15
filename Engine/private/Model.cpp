@@ -80,6 +80,19 @@ CBone * CModel::Get_BonePtr(const char * pBoneName)
 	return *iter;
 }
 
+CBone * CModel::Get_BonePtr(_int iBoneIndex)
+{
+	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+	{
+		return pBone->Get_BoneIndex() == iBoneIndex;
+	});
+
+	if (iter == m_Bones.end())
+		return nullptr;
+
+	return *iter;
+}
+
 const _double& CModel::Get_PlayTime() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
@@ -992,6 +1005,8 @@ HRESULT CModel::Set_BoneIndex(const _tchar * pFilePath)
 		NULL_CHECK_RETURN(pBone, E_FAIL);
 		pBone->Set_BoneIndex(i++);
 	}
+
+	return S_OK;
 }
 
 void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
