@@ -55,12 +55,14 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 
 	vector		vPosition = mul(float4(In.vPosition, 1.f), Transform);
 	vector		vNormal = mul(float4(In.vNormal, 0.f), Transform);
+	vector      vTangent = mul(float4(In.vTangent.xyz, 0.f), Transform);
+
 
 	Out.vPosition = vPosition.xyz;
 	Out.vNormal = vNormal.xyz;
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = mul(float4(In.vPosition, 1.f), Transform);
-	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), Transform));
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
 
 	//Out.vProjPos = Out.vPosition;

@@ -15,7 +15,12 @@ private:
 
 public:
 	VTXMODEL* Get_NonAnimVertices() { return m_pNonAnimVertices; }
-
+	_uint Get_NumVertices() {
+		return m_iNumVertices;
+	}
+	_uint Get_NumPrimitive() {
+		return m_iNumPrimitive;
+	}
 public:
 	HRESULT		Save_Mesh(HANDLE& hFile, DWORD& dwByte);
 	HRESULT		Save_MeshBones(HANDLE& hFile, DWORD& dwByte);
@@ -35,9 +40,11 @@ public:
 
 
 public:
-	void	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 
 	void	InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
+
+	void	InstaincingMesh_yPosControl(_float yPos);
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
@@ -51,10 +58,11 @@ private:				/*For.OriginMeshData*/
 	vector<class CBone*>				m_Bones;
 	string*								m_pBoneNames = nullptr;
 	VTXMODEL*							m_pNonAnimVertices = nullptr;
+	VTXANIMMODEL*						m_pAnimVertices = nullptr;
 	FACEINDICES32*						m_pIndices = nullptr;
 
 private:		/*for.Lod */
-	_bool							m_bLodMesh = false;
+	_bool								m_bLodMesh = false;
 
 private:		/*For.Instancing*/
 	vector<_float4>						m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
@@ -67,6 +75,7 @@ private:		/*For.Instancing*/
 
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
+	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 private:
 	HRESULT	Set_up_Instancing();
 

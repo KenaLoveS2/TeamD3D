@@ -1,7 +1,7 @@
 #pragma once
 #include "Effect_Mesh.h"
 #include "Client_Defines.h"
-
+#include "PhysX_Defines.h"
 BEGIN(Client)
 
 class CE_KenaPulse final : public CEffect_Mesh
@@ -21,6 +21,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Late_Initialize(void* pArg = nullptr)override;
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -31,6 +32,7 @@ private:
 private:
 	class CTexture* m_pDissolveTexture = nullptr;
 
+	PX_TRIGGER_DATA*		m_pTriggerDAta = nullptr;
 private:
 	_bool	m_bDesolve = true;
 	_bool	m_bNoActive = false;

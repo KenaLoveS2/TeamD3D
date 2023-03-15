@@ -40,7 +40,7 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
-#ifdef FOR_MAP_GIMMICK
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
@@ -57,7 +57,7 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-#endif
+
 	return S_OK;
 }
 
@@ -65,9 +65,11 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Gimmik_Start(fTimeDelta);
-
-	
+	if (m_bColliderOn  ==false && true == Gimmik_Start(fTimeDelta))
+	{
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, _float3(0.75f, 0.65f, 0.75f)); //(0~1)
+		m_bColliderOn = true;
+	}
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -99,26 +101,28 @@ HRESULT CGimmick_EnviObj::Render()
 	return S_OK;
 }
 
-void CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
+_bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 {
 	if (m_bGimmick_Active == false)
-		return;
+		return false;
+
+	_bool bResult = false;
 
 	switch (m_EnviromentDesc.eChapterType)
 	{
 	case Gimmick_TYPE_GO_UP:
-		Gimmick_Go_up(fTimeDelta);
+		bResult = Gimmick_Go_up(fTimeDelta);
 		break;
 	default:
 		break;
 	}
 
+	return bResult;
 }
 
-void CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
+_bool CGimmick_EnviObj::Gimmick_Go_up(_float fTimeDelta)
 {
-	m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
-
+	return m_pModelCom->Instaincing_MoveControl(m_EnviromentDesc.eChapterType,fTimeDelta);
 }
 
 HRESULT CGimmick_EnviObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

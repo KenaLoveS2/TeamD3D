@@ -627,15 +627,15 @@ void CModel::Imgui_RenderProperty()
 		}
 	}
 
-	if (m_bIsInstancing == true)
-	{
+	//if (m_bIsInstancing == true)
+	//{
 
 
-		for (auto &pInstanceMesh : m_InstancingMeshes)
-		{
-			//pInstanceMesh->Set_Position(); 
-		}
-	}
+	//	for (auto &pInstanceMesh : m_InstancingMeshes)
+	//	{
+	//		//pInstanceMesh->Set_Position(); 
+	//	}
+	//}
 
 }
 
@@ -734,6 +734,7 @@ void CModel::Set_InstancePos(vector<_float4x4> InstanceMatrixVec)
 		pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
 
 }
+
 
 HRESULT CModel::Save_Model(const wstring & wstrSaveFileDirectory)
 {
@@ -1460,7 +1461,6 @@ void CModel::Free()
 			Safe_Release(pInstMesh);
 		m_InstancingMeshes.clear();
 
-
 		for (auto &pInstMatrix : m_pInstancingMatrix)
 		{
 			Safe_Delete(pInstMatrix);
@@ -1576,10 +1576,6 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 	if (m_iSelectMeshInstace_Index == -1)
 		return;
 
-
-
-
-
 	/*수정 부분*/
 	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
 	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
@@ -1593,6 +1589,16 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
+}
+
+void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
+{
+	if (m_bIsInstancing == true)
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstaincingMesh_yPosControl(yPos);
+	}
+
 }
 
 
@@ -1635,13 +1641,28 @@ void CModel::Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik)
 		pInstMesh->InstaincingMesh_GimmkicInit(eChapterGimmcik);
 }
 
-void CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
+_bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _float fTimeDelta)
 {
 	if (m_bIsInstancing == false)
-		return;
+		return false;
 
+	_bool bGimmickFinishCheck = false;
+	_int	iGimmickFinishCheck = 0;
 	for (auto &pInstMesh : m_InstancingMeshes)
-		pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+	{
+		bGimmickFinishCheck = pInstMesh->Instaincing_MoveControl(eChapterGimmcik, fTimeDelta);
+	
+		if (bGimmickFinishCheck == false)
+			iGimmickFinishCheck += 1;
+		else
+			iGimmickFinishCheck += 0;
+	}
+
+
+	if (iGimmickFinishCheck == 0)
+		return true;
+
+	return false;
 }
 
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
@@ -2270,12 +2291,13 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 
 void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)
 {
-	_float Xmin = INT_MAX, Xmax = INT_MIN, Ymin = INT_MAX, Ymax = INT_MIN, Zmin = INT_MAX, Zmax = INT_MIN;
+	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = (_float)INT_MIN;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		_uint iNumVertices = m_Meshes[i]->Get_NumVertices();
 		VTXMODEL* pVtxModel = m_Meshes[i]->Get_NonAnimVertices();
+		
 
 		for (_uint j = 0; j < iNumVertices; ++j) {
 			Xmin = min(Xmin, pVtxModel[j].vPosition.x);
@@ -2328,4 +2350,86 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
 	pConnectTransform->Connect_PxActor_Static(pActorName, _float3(0.f, BoxDesc.vSize.y, 0.f));
 	pConnectTransform->Set_WorldMatrix(pConnectTransform->Get_WorldMatrix());
+}
+
+void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
+{
+	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = INT_MIN;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		_uint iNumVertices = m_InstancingMeshes[i]->Get_NumVertices();
+		VTXMODEL* pVtxModel = m_InstancingMeshes[i]->Get_NonAnimVertices();
+
+		for (_uint j = 0; j < iNumVertices; ++j) {
+			Xmin = min(Xmin, pVtxModel[j].vPosition.x);
+			Xmax = max(Xmax, pVtxModel[j].vPosition.x);
+
+			Ymin = min(Ymin, pVtxModel[j].vPosition.y);
+			Ymax = max(Ymax, pVtxModel[j].vPosition.y);
+
+			Zmin = min(Zmin, pVtxModel[j].vPosition.z);
+			Zmax = max(Zmax, pVtxModel[j].vPosition.z);
+		}
+	}
+
+	*pMinX = Xmin;
+	*pMaxX = Xmax;
+	*pMinY = Ymin;
+	*pMaxY = Ymax;
+	*pMinZ = Zmin;
+	*pMaxZ = Zmax;
+}
+
+void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,
+	_float3 vSize)
+{
+	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
+
+	Calc_InstMinMax(&fMinX, &fMaxX, &fMinY, &fMaxY, &fMinZ, &fMaxZ);
+
+	_float fLenX = fMaxX - fMinX;
+	_float fLenY = fMaxY - fMinY;
+	_float fLenZ = fMaxZ - fMinZ;
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+
+	_float4x4 MatPosTrans;
+	_float4 vPos,vRight,vUp,vLook;
+	_float  fXSize, fYSize, fZSize;
+	size_t InstMatrixSize = m_pInstancingMatrix.size();
+	for (_uint i = 0; i < InstMatrixSize; ++i)
+	{
+
+		MatPosTrans = *m_pInstancingMatrix[i];
+		XMStoreFloat4x4(&MatPosTrans, XMLoadFloat4x4(&MatPosTrans) * pConnectTransform->Get_WorldMatrix());
+
+		memcpy(&vRight, &MatPosTrans.m[0], sizeof(_float4));
+		memcpy(&vUp, &MatPosTrans.m[1], sizeof(_float4));
+		memcpy(&vLook, &MatPosTrans.m[2], sizeof(_float4));
+		memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
+
+		fXSize =XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+		fYSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vUp)));
+		fZSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vLook)));
+
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.eType = BOX_STATIC;
+		BoxDesc.pActortag = CUtile::Create_DummyString();
+		BoxDesc.vPos = CUtile::Float_4to3(vPos);
+		BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f)* vSize.x, fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.eFilterType = FILTER_DEFULAT;
+
+		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
+		
+	}
+
 }

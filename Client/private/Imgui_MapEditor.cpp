@@ -605,7 +605,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	ifstream      file(strLoadDirectory.c_str());
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -684,7 +684,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		
+		pGameInstance->Add_ShaderValueObject(g_LEVEL, pLoadObject); // Ãß°¡
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -694,7 +694,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		vecInstnaceMatrixVec.clear();
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -712,7 +711,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -720,33 +719,19 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 
 void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 {
-	if (ImGui::Button("Create_Crystal_Pulse"))
-	{
 
-		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-		{
-			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-				continue;
-		
-			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
-				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
-		}
-	}
-
-	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//if (ImGui::Button("Create_Crystal_Pulse"))
 	//{
 
 	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
 	//	{
-	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//		if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
 	//			continue;
-
-	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	
+	//		if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+	//			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
 	//	}
-
-
 	//}
-
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
@@ -783,7 +768,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -870,9 +855,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		//pLoadObject->Late_Initialize();
-		
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -881,7 +864,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		strFilePaths_arr.fill("");
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+
+
+
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
@@ -932,17 +917,17 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
-#ifdef	_DEBUG
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
-#endif
+
 		}
 	}
 	else
 	{
-#ifdef	_DEBUG
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
-#endif
 	}
+
+	
+	
 
 	ImGui::End();
 

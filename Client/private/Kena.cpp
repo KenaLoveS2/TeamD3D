@@ -251,6 +251,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
 
+	for (auto& pEffect : m_mapEffect)
+	{
+		if(pEffect.second != nullptr )
+			pEffect.second->Late_Initialize();
+	}
+
 
 	return S_OK;
 }

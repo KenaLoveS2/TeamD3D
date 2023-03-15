@@ -1,6 +1,7 @@
 #pragma once
 #include "Effect_Mesh.h"
 #include "Client_Defines.h"
+#include "PhysX_Defines.h"
 
 BEGIN(Client)
 
@@ -56,7 +57,9 @@ public:
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
 	virtual void	ImGui_PhysXValueProperty()override;
+	
 
 private:
 	HRESULT SetUp_ShaderResources();
@@ -70,8 +73,12 @@ private:
 	_float	m_fActivePlusScale = 1.3f;
 	_float4x4 m_SaveInitWorldMatrix;
 	_float	m_fDissolveTime = 0.0f;
+	_float	m_fPulseResetTimer = 0.f;
+
 
 private:
+	 PX_TRIGGER_DATA*		m_pTriggerData = nullptr;
+	
 	E_PulseObject_DESC			m_ePulseDesc;
 	_bool						m_bFinish = false;
 
