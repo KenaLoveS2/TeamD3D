@@ -55,10 +55,6 @@ void CE_KenaHit::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//ImGui::Begin("Hit");
-	//ImGui::Checkbox("Avtice", &m_eEFfectDesc.bActive);
-	//ImGui::End();
-
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
 

@@ -40,16 +40,13 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
-
-
 	if (FAILED(SetUp_Components()))
 	{
 		MSG_BOX("Failed To SetUp Components");
 		return E_FAIL;
 	}
 
-	m_bActive = true;
-
+	//m_bActive = true;
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;

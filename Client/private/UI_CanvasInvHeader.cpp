@@ -2,17 +2,20 @@
 #include "..\public\UI_CanvasInvHeader.h"
 #include "GameInstance.h"
 #include "Kena.h"
+#include "Kena_Status.h"
 #include "UI_NodeCrystal.h"
 #include "UI_NodeKarma.h"
 #include "UI_NodeNumRots.h"
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
+	, m_pPlayer(nullptr)
 {
 }
 
 CUI_CanvasInvHeader::CUI_CanvasInvHeader(const CUI_CanvasInvHeader & rhs)
 	: CUI_Canvas(rhs)
+	, m_pPlayer(nullptr)
 {
 }
 
@@ -77,6 +80,15 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		return;
 	}
 
+	if (nullptr != m_pPlayer)
+	{
+		static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma(m_pPlayer->Get_Status()->Get_Karma());
+		static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots(m_pPlayer->Get_Status()->Get_RotCount());
+		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+
+	}
+
+
 
 
 	__super::Tick(fTimeDelta);
@@ -108,7 +120,13 @@ HRESULT CUI_CanvasInvHeader::Bind()
 		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
 	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
+	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
+
+	pKena->m_PlayerPtrDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
+
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -233,6 +251,27 @@ void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_
 		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal((_int)fValue);
 		break;
 	}
+
+
+}
+
+void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena * pPlayer)
+{
+	m_bActive = true;
+	CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM)->Set_Active(false);
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(false);
+
+	m_pPlayer = pPlayer;
+
+	static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma(m_pPlayer->Get_Status()->Get_Karma());
+	static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots(m_pPlayer->Get_Status()->Get_RotCount());
+	static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+
+	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Caller(m_pPlayer);
 
 
 }

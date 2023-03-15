@@ -199,6 +199,9 @@
     <Filter Include="02.GameObjects\Rot">
       <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Rot\State">
+      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
@@ -636,6 +639,9 @@
     <ClInclude Include="..\public\Rot.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rot_State.h">
+      <Filter>02.GameObjects\Rot\State</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_CanvasQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClInclude>
@@ -748,6 +754,8 @@
     <ClInclude Include="..\public\MonsterWeapon.h">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LiftRot.h" />
+    <ClInclude Include="..\public\LiftRot_Master.h" />
     <ClInclude Include="..\Public\DeadZoneObj.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -860,6 +868,7 @@
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ControlRoom.h" />
+    <ClInclude Include="..\public\DynamicLightCamera.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClInclude>
@@ -902,26 +911,9 @@
     <ClInclude Include="..\public\E_KenaDust.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
-    <ClInclude Include="..\public\ImGui_Monster.h">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\DynamicLightCamera.h">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\LiftRot.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\LiftRot_Master.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RotForMonster.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui_Rot.h" />
-    <ClInclude Include="..\public\CameraForRot.h">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1001,9 +993,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Kena_Parts.cpp">
       <Filter>02.GameObjects\Parents\Kena_Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Kena.cpp">
-      <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_MapTool.cpp">
       <Filter>01.Levels\03. MapTool</Filter>
@@ -1155,6 +1144,9 @@
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Rot_State.cpp">
+      <Filter>02.GameObjects\Rot\State</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\UI_CanvasQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClCompile>
@@ -1267,6 +1259,8 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LiftRot.cpp" />
+    <ClCompile Include="..\private\LiftRot_Master.cpp" />
     <ClCompile Include="..\Private\DeadZoneObj.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
@@ -1379,6 +1373,7 @@
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ControlRoom.cpp" />
+    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
@@ -1421,26 +1416,12 @@
     <ClCompile Include="..\private\E_KenaDust.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\Kena.cpp">
+      <Filter>02.GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
-    <ClCompile Include="..\private\ImGui_Monster.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DynamicLightCamera.cpp">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\LiftRot.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\LiftRot_Master.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RotForMonster.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ImGui_Rot.cpp" />
-    <ClCompile Include="..\private\CameraForRot.cpp">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1511,9 +1492,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FXAA.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

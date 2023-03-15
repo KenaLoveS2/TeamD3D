@@ -36,14 +36,13 @@ HRESULT CE_Wind::Initialize(void * pArg)
 
 	/* Set Option */
 	m_eEFfectDesc.bActive = true;
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(CUtile::Get_RandomFloat(-100.f, 100.f), CUtile::Get_RandomFloat(1.5f, 3.f),
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(CUtile::Get_RandomFloat(-100.f, 100.f), CUtile::Get_RandomFloat(2.f, 5.f),
 		CUtile::Get_RandomFloat(-100.f, 100.f), 1.f));
 	m_eEFfectDesc.fFrame[0] = 20.f;
 	m_eEFfectDesc.iPassCnt = 6;
 	m_eEFfectDesc.vInitPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_eEFfectDesc.vPixedDir = m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
-	m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(-90.f));
-	m_pTransformCom->Set_Scaled(_float3(2.f, 1.f, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(3.f, 1.f, 1.f));
 	/* Set Option */
 	return S_OK;
 }
@@ -59,7 +58,7 @@ void CE_Wind::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	vPos += m_eEFfectDesc.vPixedDir * m_pTransformCom->Get_TransformDesc().fSpeedPerSec * fTimeDelta;
+	vPos += XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec * fTimeDelta;
 
 	if (vPos.x > 100.f)
 		vPos = m_eEFfectDesc.vInitPos;
@@ -87,12 +86,13 @@ HRESULT CE_Wind::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	_int iModelType = rand() % 1;
+	_int iModelType = rand() % 2;
 	switch (iModelType)
 	{
 	case 0 :
 		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Wind"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
+		m_pTransformCom->Rotation(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XMConvertToRadians(-90.f));
 		break;
 
 	case 1:

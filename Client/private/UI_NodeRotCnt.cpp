@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeRotCnt.h"
 #include "GameInstance.h"
+#include "UI_Event_Fade.h"
 
 CUI_NodeRotCnt::CUI_NodeRotCnt(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -18,6 +19,8 @@ CUI_NodeRotCnt::CUI_NodeRotCnt(const CUI_NodeRotCnt & rhs)
 
 void CUI_NodeRotCnt::Set_Info(_int iRotMax)
 {
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
+
 	m_iRotMax = iRotMax;
 
 	Safe_Delete_Array(m_szInfo);
@@ -48,6 +51,8 @@ HRESULT CUI_NodeRotCnt::Initialize(void * pArg)
 	}
 
 	m_bActive = true;
+
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
 	return S_OK;
 }
 
@@ -95,7 +100,7 @@ HRESULT CUI_NodeRotCnt::Render()
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szInfo,
 				vNewPos /* position */,
 				0.f, _float2(1.f, 1.f)/* size */,
-				XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+				XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -149,9 +154,9 @@ HRESULT CUI_NodeRotCnt::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	_float fAlpha = 1.f;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
-		return E_FAIL;
+	//_float fAlpha = 1.f;
+	//if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
+	//	return E_FAIL;
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;

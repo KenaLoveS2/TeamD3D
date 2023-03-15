@@ -54,10 +54,16 @@ private:
 	_float						m_fDistance = 10.f;
 	_bool						m_bReachToAim = false;
 
-	_float4					m_vFirePosition;
-	_float4					m_vFireCamLook;
-	_float4					m_vFireCamPos;
+	_float4						m_vFirePosition;
+	_float4						m_vFireCamLook;
+	_float4						m_vFireCamPos;
 	_bool						m_bHit = false;
+
+private:
+	_float		m_fWaveHeight = 1.f;
+	_float		m_fSpeed = 10.f;
+	_float		m_fWaveFrequency = 5.f;
+	_float		m_fUVSpeed = 8.f;
 
 private:
 	HRESULT					SetUp_Components();
