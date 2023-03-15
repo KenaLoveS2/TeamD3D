@@ -2017,16 +2017,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* NPC */
 	///* Prototype_Component_Model_Beni */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
-	///* Prototype_Component_Model_Saiya */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_Saiya */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 	// 작업 시작 안한것들은 주석처리.
 
