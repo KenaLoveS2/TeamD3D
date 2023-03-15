@@ -420,6 +420,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 #pragma endregion Model Component
 
+#pragma region Effect_Object
 	/* For.Prototype_GameObject_KenaPulse */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulse"),
 		CE_KenaPulse::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulse.json"))))
@@ -468,7 +469,42 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;	
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Wind */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wind"),
+		CE_Wind::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EffectFlower */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EffectFlower"),
+		CE_P_Flower::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Flower.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaDust */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDust"),
+		CE_KenaDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaDust.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaHeavyAttackInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto"),
+		CE_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_0.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_KenaHeavyAttackInto_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto_P"),
+		CE_P_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_0.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd"),
+		CE_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_1.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd_P"),
+		CE_P_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_1.json"))))
+		return E_FAIL;
+
+#pragma endregion Effect_Object
 
 #pragma endregion EFFECT
 	/* For.Prototype_Component_Model_EnemyWisp */
@@ -484,6 +520,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_EnemyWispTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
 		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_EnemyWispBackground */
@@ -2396,12 +2437,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_GameObject_RotTrail */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
-		CE_RotTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
 	/* For.Prototype_GameObject_KenaPulseCloud */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaPulseCloud"),
 		CE_KenaPulseCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaPulseCloude.json"))))
@@ -2471,6 +2506,28 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_KenaDust */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaDust"),
 		CE_KenaDust::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_KenaDust.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaHeavyAttackInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto"),
+		CE_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_0.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+	/* For.Prototype_GameObject_KenaHeavyAttackInto_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto_P"),
+		CE_P_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_0.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd"),
+		CE_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_1.json"))))
+		return E_FAIL;
+	m_fCur += 1.f;
+	/* For.Prototype_GameObject_KenaHeavyAttackEnd_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd_P"),
+		CE_P_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_1.json"))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
