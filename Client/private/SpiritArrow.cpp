@@ -4,6 +4,7 @@
 #include "Utile.h"
 #include "Kena.h"
 #include "Kena_Staff.h"
+#include "Kena_State.h"
 #include "Camera_Player.h"
 #include "Bone.h"
 
@@ -258,21 +259,21 @@ HRESULT CSpiritArrow::SetUp_ShadowShaderResources()
 CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 {
 	ARROWSTATE	eState = m_ePreState;
-	const string&		strKenaState = m_pKena->Get_AnimationState();
+	const _uint		iKenaState = m_pKena->Get_AnimationStateIndex();
 
 	if (m_bActive == false)
 		return eState;
 
 	if (m_eCurState == CSpiritArrow::ARROWSTATE_END)
 	{
-		if (strKenaState == "BOW_CHARGE" || strKenaState == "BOW_RECHARGE")
+		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_ADD || iKenaState == (_uint)CKena_State::BOW_RECHARGE_ADD)
 			eState = CSpiritArrow::ARROW_CHARGE;
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
 	{
-		if (strKenaState == "BOW_CHARGE_FULL" || strKenaState == "BOW_CHARGE_LOOP")
+		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_FULL_ADD || iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD)
 			eState = CSpiritArrow::ARROW_READY;
-		else if (strKenaState == "BOW_RELEASE")
+		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
 			m_fScale = m_fMaxScale;
@@ -284,7 +285,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
 	{
-		if (strKenaState == "BOW_RELEASE")
+		if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
 			m_fScale = m_fMaxScale;

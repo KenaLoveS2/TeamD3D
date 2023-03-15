@@ -525,7 +525,7 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
 			continue;
 
-		if (m_Channels[i]->Get_BoneLocked() == true /*|| !strcmp(m_Channels[i]->Get_Name(), "staff_root_jnt")*/)
+		if (m_Channels[i]->Get_BoneLocked() == true)
 		{
 			//m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 			continue;

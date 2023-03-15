@@ -19,6 +19,7 @@
 
 #include "UI_RotIcon.h"
 #include "RotForMonster.h"
+#include "E_KenaDust.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -52,6 +53,11 @@ _double CKena::Get_AnimationPlayTime()
 const string & CKena::Get_AnimationState() const
 {
 	return m_pAnimation->Get_CurrentAnimName();
+}
+
+const _uint CKena::Get_AnimationStateIndex() const
+{
+	return m_pAnimation->Get_CurrentAnimIndex();
 }
 
 HRESULT CKena::Initialize_Prototype()
@@ -816,6 +822,7 @@ HRESULT CKena::Ready_Arrows()
 HRESULT CKena::Ready_Effects()
 {
 	CEffect_Base*	pEffectBase = nullptr;
+	_tchar*			pCloneTag = nullptr;
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* Pulse */
@@ -838,6 +845,17 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaJump", pEffectBase);
+
+	/* FootStep Dust */
+	string		strMapTag = "";
+	for (_uint i = 0; i < 6; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"Effect_Kena_FootStep", i);
+		strMapTag = "KenaFootStepDust_" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDust", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -926,6 +944,7 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 HRESULT CKena::SetUp_State()
 {
 	m_pModelCom->Set_RootBone("kena_RIG");
+	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
 
 	return S_OK;
@@ -1076,6 +1095,28 @@ void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_bAttack = false;
+}
+
+void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffAttack);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (dynamic_cast<CE_KenaDust*>(Pair.second))
+		{
+			if (Pair.second->Get_Active() == false)
+			{
+				Pair.second->Set_Active(true);
+				break;
+			}
+		}
+	}
 }
 
 void CKena::TurnOnCharge(_bool bIsInit, _float fTimeDelta)

@@ -974,6 +974,26 @@ void CModel::Set_AllBonesUnlock()
 		pBone->Set_BoneLocked(false);
 }
 
+HRESULT CModel::Set_BoneIndex(const _tchar * pFilePath)
+{
+	Json	jBoneInfo;
+
+	ifstream	file(pFilePath);
+	file >> jBoneInfo;
+	file.close();
+
+	CBone*	pBone = nullptr;
+	string	strBoneName = "";
+	_uint	i = 0;
+
+	for (string jBoneName : jBoneInfo)
+	{
+		pBone = Get_BonePtr(jBoneName.c_str());
+		NULL_CHECK_RETURN(pBone, E_FAIL);
+		pBone->Set_BoneIndex(i++);
+	}
+}
+
 void CModel::ResetAnimIdx_PlayTime(_uint iAnimIndex)
 {
 	m_Animations[iAnimIndex]->Reset_Animation();
@@ -1052,13 +1072,6 @@ void CModel::Update_BonesMatrix(CModel * pModel)
 		if (pOriginBone != nullptr)
 		{
 			pBone->Set_CombindMatrix(pOriginBone->Get_CombindMatrix());
-		}
-
-		if (!strcmp(pBoneName, "staff_root_jnt"))
-		{
-			pBoneName = "lf_hand_socket_jnt";
-			pOriginBone = pModel->Get_BonePtr(pBoneName);
-			pOriginBone->Set_CombindMatrix(pBone->Get_CombindMatrix());
 		}
 	}
 }

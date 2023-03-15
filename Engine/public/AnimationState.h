@@ -37,6 +37,9 @@ struct ENGINE_DLL CAnimState : public CBase
 	list<pair<string, CBone::LOCKTO>>	m_listLockedJoint;
 	map<_float, const string>			m_mapEvent;
 
+	//_bool			m_bHasLookAnim = false;
+	//vector<CAdditiveAnimation*>		m_vecLookAnim;
+
 	virtual void	Free() override {
 		for (auto pAdditiveAnim : m_vecAdditiveAnim)
 			Safe_Release(pAdditiveAnim);

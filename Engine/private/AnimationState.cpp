@@ -218,6 +218,7 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 void CAnimationState::Tick(_float fTimeDelta)
 {
 	/* TODO : Additive Ratio Controller */
+
 }
 
 HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLerpDuration)
@@ -584,13 +585,13 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 	m_pModel->Compute_CombindTransformationMatrix();
 
-	if (XMMatrixIsIdentity(matTransform) == false)
-	{
-		pJoint = m_pModel->Get_BonePtr("kena_spine_low_jnt");
-		pJoint->Set_TransformMatrix(matTransform);
-		pJoint->Compute_CombindTransformationMatrix();
-		m_pModel->Compute_CombindTransformationMatrix("kena_hip_jnt");
-	}
+// 	if (XMMatrixIsIdentity(matTransform) == false)
+// 	{
+// 		pJoint = m_pModel->Get_BonePtr("kena_spine_low_jnt");
+// 		pJoint->Set_TransformMatrix(matTransform);
+// 		pJoint->Compute_CombindTransformationMatrix();
+// 		m_pModel->Compute_CombindTransformationMatrix("kena_hip_jnt");
+// 	}
 
 	
  	for (auto pModel : m_vecNonSyncPart)

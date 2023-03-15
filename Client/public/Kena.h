@@ -35,6 +35,7 @@ public:
 	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
+	const _uint				Get_AnimationStateIndex() const;
 
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
@@ -141,10 +142,9 @@ private:	/* Animation Event Func */
 	void					Test(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnAttack(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffAttack(_bool bIsInit, _float fTimeDelta);
-
+	void					TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
-
 	void					TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
 
 public:
