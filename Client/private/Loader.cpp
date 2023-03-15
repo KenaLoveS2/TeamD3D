@@ -108,6 +108,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Camera_Player.h"
+#include "CameraForRot.h"
 
 /*Test Objects*/
 #include "LodObject.h"
@@ -267,6 +268,12 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* Test Model */
 	/*if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body_forTest.mdat"), PivotMatrix))))
@@ -291,6 +298,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Player_Camera */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
 		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
@@ -460,7 +472,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;	
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
+		CRotForMonster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 #pragma endregion EFFECT
 	/* For.Prototype_Component_Model_EnemyWisp */
@@ -625,6 +641,12 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCamera_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion  KENA
 
 #pragma region EFFECT
@@ -2097,6 +2119,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_Player_Camera */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
 		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

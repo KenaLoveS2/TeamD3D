@@ -15,6 +15,7 @@
 #include "Imgui_UIEditor.h"
 #include "ImGui_PhysX.h"
 #include "ImGui_Monster.h"
+#include "ImGui_Rot.h"
 
 #include "UI_ClientManager.h"
 #include "UI.h"
@@ -43,6 +44,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_Rot::Create(m_pDevice, m_pContext));
 	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -277,7 +279,22 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Camera_Player", L"Camera_Player", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
-	
+
+	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForRot", L"CameraForRot", &CameraDesc));
+	NULL_CHECK_RETURN(pCamera, E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"ROT_CAM", pCamera), E_FAIL);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -301,8 +318,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test.json");
+	return S_OK;
 
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test.json");
 	return S_OK;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
@@ -380,17 +398,15 @@ HRESULT CLevel_TestPlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	_uint iCreateRotCount = 1;
-	_tchar szCloneRotTag[32] = { 0, };
-	for (_uint i = 0; i < iCreateRotCount; i++)
-	{
-		swprintf_s(szCloneRotTag, L"Rot_%d", i);
-		if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_StringAuto(szCloneRotTag), nullptr, &pGameObject)))
-			return E_FAIL;
-	}
+	//_uint iCreateRotCount = 1;
+	//_tchar szCloneRotTag[32] = { 0, };
+	//for (_uint i = 0; i < iCreateRotCount; i++)
+	//{
+	//	swprintf_s(szCloneRotTag, L"Rot_%d", i);
+	//	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), CUtile::Create_StringAuto(szCloneRotTag), nullptr, &pGameObject)))
+	//		return E_FAIL;
+	//}
 		
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;
-	
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master"))))
 		return E_FAIL;
 
