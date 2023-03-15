@@ -60,10 +60,10 @@ private:
 	_bool						m_bHit = false;
 
 private:
-	_float		m_fWaveHeight = 0.1f;
-	_float		m_fSpeed = 0.5f;
-	_float		m_fWaveFrequency = 0.2f;
-	_float		m_fUVSpeed = 0.2f;
+	_float		m_fWaveHeight = 1.f;
+	_float		m_fSpeed = 10.f;
+	_float		m_fWaveFrequency = 5.f;
+	_float		m_fUVSpeed = 8.f;
 
 private:
 	HRESULT					SetUp_Components();

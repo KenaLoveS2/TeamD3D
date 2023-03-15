@@ -158,7 +158,7 @@ HRESULT CSpiritArrow::Render()
 	{
 		if (i == 0)  // 메인 앞콕
 		{
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 5);
 		}
 		else if (i == 1) // 손잡이
 		{
