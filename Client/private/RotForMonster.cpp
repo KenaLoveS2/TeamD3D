@@ -84,8 +84,8 @@ void CRotForMonster::Tick(_float fTimeDelta)
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
 
-	//if (!m_bBind)
-	//	return;
+	if (!m_bBind)
+		return;
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -99,8 +99,8 @@ void CRotForMonster::Tick(_float fTimeDelta)
 
 void CRotForMonster::Late_Tick(_float fTimeDelta)
 {
-	//if (!m_bBind)
-	//	return;
+	if (!m_bBind)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 

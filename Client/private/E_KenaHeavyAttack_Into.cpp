@@ -39,6 +39,7 @@ HRESULT CE_KenaHeavyAttack_Into::Initialize(void * pArg)
 
 	/* Set Option */
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+	m_eEFfectDesc.vScale = XMVectorSet(2.f, 2.f, 1.f, 1.f);
 	Set_Child();
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Parent(this);

@@ -210,8 +210,8 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 	Out.vDiffuse = vDiffuse * outglow * 4.f;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
 
-	if(true==g_bPulseRecive)
-		Out.vDiffuse.b *=10.f;
+	if (true == g_bPulseRecive)
+		Out.vDiffuse.b *= 10.f;
 
 	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
 
@@ -274,9 +274,18 @@ PS_OUT PS_SPRITARROW(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV) * 2.f;
+	float  time = frac(g_Time * 3.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, -time));
 
-	Out.vDiffuse = vDiffuse;
+	float4 outglowcolor = float4(4.0f, 18.f, 36.f, 255.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(5.f, 2.5f, g_vColor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	Out.vDiffuse = vDiffuse + outglow;
+	Out.vDiffuse.a = Out.vDiffuse.r;
 	return Out;
 }
 
@@ -293,6 +302,42 @@ PS_OUT PS_WIND(PS_IN In)
 		vDiffuse.a *= (1.f - fTIme);
 
 	Out.vDiffuse = vDiffuse;
+	return Out;
+}
+
+//PS_SPRITARROW_GRAB
+PS_OUT PS_SPRITARROW_GRAB(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.4f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 1.f), float2(time, time));
+
+	float4 outglowcolor = float4(2.0f, 6.f, 10.f, 0.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(8, 3.5, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	
+	Out.vDiffuse = vDiffuse * outglow;
+	Out.vDiffuse.a = outglowcolor.r * 0.05f;
+	return Out;
+}
+
+//PS_SPRITARROW_SECONDMESH
+PS_OUT PS_SPRITARROW_SECONDMESH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.7f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.f, 2.f), float2(time, time));
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	if (vDiffuse.a == 0.0f)
+		discard;
+	float4 vMask = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+
+	float4 outglowcolor = float4(2.0f, 6.f, 10.f, 0.f) / 255.f;
+	Out.vDiffuse = vDiffuse * outglowcolor;
 	return Out;
 }
 
@@ -388,4 +433,31 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_WIND();
 	}
+
+	pass Effect_SpritArrowGrab // 7
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SPRITARROW_GRAB();
+	}
+
+	pass Effect_SpritArrowSecondMesh // 7
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SPRITARROW_SECONDMESH();
+	}
+
 }

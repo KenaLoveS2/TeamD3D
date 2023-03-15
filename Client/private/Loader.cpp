@@ -2432,7 +2432,13 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
 		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_EFFECT, "Spirit_Arrow", false, false, false)))
+		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
+		CSpiritArrow::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 #pragma  endregion	PLAYER
 
 #pragma region EFFECT_COMPONENT

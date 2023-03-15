@@ -46,58 +46,16 @@ HRESULT CE_RotTrail::Initialize(void * pArg)
 	m_eEFfectDesc.fFrame[0] = 83.f;
 	m_eEFfectDesc.bActive = false;
 
-	static _int iIdx = 0;
-	m_iIndex = iIdx;
-	iIdx++;
-
 	return S_OK;
 }
 
 void CE_RotTrail::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.bActive = true;
-
 	if (m_eEFfectDesc.bActive == false)
 		m_pVITrailBufferCom->Get_InstanceInfo()->clear();
 
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-
-	if(m_iIndex == 1)
-	{
-		ImGui::Begin("RotTrail");
-
-		ImGui::Checkbox("IsTrail", &m_eEFfectDesc.IsTrail);
-		ImGui::Checkbox("bAlpha", &m_eEFfectDesc.bAlpha);
-		ImGui::InputFloat("fWidth", &m_eEFfectDesc.fWidth);
-		ImGui::InputFloat("fLife", &m_eEFfectDesc.fLife);
-		ImGui::InputFloat("fAlpha", &m_eEFfectDesc.fAlpha);
-		ImGui::InputFloat("fSegmentSize", &m_eEFfectDesc.fSegmentSize, 0.f, 0.f, "%.6f");
-
-		if (ImGui::Button("DotConfirm"))
-			m_pShaderCom->ReCompile();
-
-		static bool alpha_preview = true;
-		static bool alpha_half_preview = false;
-		static bool drag_and_drop = true;
-		static bool options_menu = true;
-		static bool hdr = false;
-
-		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-		static bool   ref_color = false;
-		static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-		static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		vSelectColor = m_eEFfectDesc.vColor;
-
-		ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-		m_eEFfectDesc.vColor = vSelectColor;
-
-		ImGui::End();
-	
-	}
 }
 
 void CE_RotTrail::Late_Tick(_float fTimeDelta)

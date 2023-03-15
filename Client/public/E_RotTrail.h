@@ -20,7 +20,6 @@ public:
 
 private:
 	HRESULT SetUp_ShaderResources();
-	_int m_iIndex = 0;
 
 public:
 	static  CE_RotTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

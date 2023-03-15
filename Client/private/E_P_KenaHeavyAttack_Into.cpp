@@ -41,12 +41,6 @@ HRESULT CE_P_KenaHeavyAttack_Into::Initialize(void * pArg)
 void CE_P_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	ImGui::Begin("HeavyAttack Into");
-	if (ImGui::Button("Recompile"))
-		m_pShaderCom->ReCompile();
-	ImGui::End();
-
 }
 
 void CE_P_KenaHeavyAttack_Into::Late_Tick(_float fTimeDelta)
