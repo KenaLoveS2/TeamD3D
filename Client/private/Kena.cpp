@@ -1192,7 +1192,8 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		CGameObject* pGameObject = nullptr;
 
-		if (iColliderIndex == COL_MONSTER_WEAPON)
+		_bool bRealAttack = false;
+		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
 			// 맞은거
 			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
@@ -1218,27 +1219,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 		}
 
-		if (iColliderIndex == COL_PLAYER_WEAPON)
-		{
-			// 때린거 
-			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
-			//	return -1;
-
-			for (auto& Effect : m_mapEffect)
-			{
-				if (Effect.first == "KenaHit")
-				{
-					Effect.second->Set_Active(true);
-					Effect.second->Set_Position(vCollisionPos);
-				}
-			}
-
-			pGameObject->Set_Position(vCollisionPos);
-
-			// m_bCommonHit = true;
-			// m_bHeavyHit = true;
-		}
-
+		int temp = 0;
 	}
 	
 	return 0;
