@@ -94,6 +94,12 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	{
+		MSG_BOX("Layer_NPC");
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
 		MSG_BOX("Layer_ControlRoom");
@@ -295,6 +301,21 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"ROT_CAM", pCamera), E_FAIL);
 
+	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"CameraForNpc", &CameraDesc));
+	NULL_CHECK_RETURN(pCamera, E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -459,6 +480,14 @@ HRESULT CLevel_TestPlay::Ready_Layer_UI(const _tchar * pLayerTag)
 
 	RELEASE_INSTANCE(CGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_NPC(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Beni"), L"Beni");
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

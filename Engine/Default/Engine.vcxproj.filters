@@ -809,6 +809,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01.Utility\13. HDR</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Client\Bin\ShaderFiles\Shader_FXAA.hlsl">
+      <Filter>01.Utility\13. HDR</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\public\Json\ReadMe.txt">
