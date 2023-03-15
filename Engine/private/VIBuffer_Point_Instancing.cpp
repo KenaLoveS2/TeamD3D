@@ -131,6 +131,9 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), 0.f)) * m_ePointDesc->fCreateRange;
 
 				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) + m_ePointDesc[i].vExplosionDir);
+
+				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight, XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), m_ePointDesc[i].vExplosionDir)));
+				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vUp, XMVector3Normalize(XMVector3Cross(m_ePointDesc[i].vExplosionDir, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight))));
 			}
 			else
 			{

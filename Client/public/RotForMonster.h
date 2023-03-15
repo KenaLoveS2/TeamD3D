@@ -48,7 +48,8 @@ private:
 	HRESULT				SetUp_ShaderResources();
 	HRESULT				SetUp_ShadowShaderResources();
 	HRESULT				SetUp_FSM();
-	_bool					AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
+	HRESULT				Set_RotTrail();
+	_bool				AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 
 private:
 	CRenderer*			 m_pRendererCom = nullptr;
@@ -60,7 +61,8 @@ private:
 	_bool						  m_bWakeUp = false;
 	_bool						  m_bCreateStart = false;
 	_bool						  m_bBind = false;
-	class CMonster*		  m_pTarget = nullptr;
+	class CMonster*				  m_pTarget = nullptr;
+	class CE_RotTrail*			  m_pRotTrail = nullptr;
 	DESC						  m_Desc;
 
 public:
