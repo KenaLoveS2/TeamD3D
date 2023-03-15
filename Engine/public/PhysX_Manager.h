@@ -6,14 +6,14 @@ class ENGINE_DLL CPhysX_Manager : public CBase
 {
 	DECLARE_SINGLETON(CPhysX_Manager)
 
-public:	
+public:
 	typedef struct tagPhysxActorBoxDesc
-	{	
+	{
 		ACTOR_TYPE eType;
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;		
+		_bool isGravity;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -52,7 +52,6 @@ public:
 			bCCD = false;
 			bKinematic = false;
 		}
-		
 	} PX_SPHERE_DESC;
 
 	typedef struct tagPhysxActorCapsuleDesc
@@ -80,7 +79,6 @@ public:
 		}
 
 	} PX_CAPSULE_DESC;
-		
 private:
 	PxDefaultAllocator m_PxDefaultAllocatorCallback;
 	PxDefaultErrorCallback m_PxDefaultErrorCallback;
@@ -189,6 +187,7 @@ public:
 	void Delete_Actor(PxActor* pActor);
 	void Delete_Actor(class CGameObject* pObject);
 	void Reset();
-
+	
+	void Delete_DynamicActor(PxRigidActor* pActor);
 };
 END

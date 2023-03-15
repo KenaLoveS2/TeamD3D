@@ -24,27 +24,29 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	if (pArg == nullptr)
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	}
-	else
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
+
+	if(pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-
 	return S_OK;
 }
 
 HRESULT CWoodKnight::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
@@ -177,14 +179,17 @@ HRESULT CWoodKnight::Late_Initialize(void * pArg)
 
 		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_PUNCH].c_str(), pivotMatrix);
 	}
-	
-	m_pTransformCom->Set_Position(_float4(19.f, 0.3f, 14.f, 1.f));
+
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
 
 void CWoodKnight::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
@@ -199,9 +204,11 @@ void CWoodKnight::Tick(_float fTimeDelta)
 
 void CWoodKnight::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -397,19 +404,39 @@ void CWoodKnight::Push_EventFunctions()
 HRESULT CWoodKnight::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("ALERT")
-		.AddState("ALERT")
-		.Tick([this](_float fTimeDelta)
+		.InitState("NONE")
+		.AddState("NONE")
+		.OnExit([this]()
 	{
-		if (!m_bSpawn)
-			m_pModelCom->ResetAnimIdx_PlayTime(ALERT);
-
-		m_pModelCom->Set_AnimIndex(ALERT);
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(3.f);
+	})
+		
+		.AddState("READY_SPAWN")
+		.OnExit([this]()
+	{
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to ALERT", "ALERT")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+		
+		.AddState("ALERT")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(ALERT);
+		m_pModelCom->Set_AnimIndex(ALERT);			
 	})
 		.AddTransition("ALERT to CHARGEATTACK", "CHARGEATTACK")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ALERT) && m_bSpawn;
+		return AnimFinishChecker(ALERT);
 	})
 
 		.AddState("IDLE")
@@ -944,18 +971,13 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
+
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-
-	})
-		.OnExit([this]()
-	{
-
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.Build();
 
@@ -995,6 +1017,10 @@ HRESULT CWoodKnight::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

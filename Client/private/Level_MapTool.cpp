@@ -6,11 +6,18 @@
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
-#include "Imgui_ShaderEditor.h"
 #include "Imgui_TerrainEditor.h"
-#include "ImGui_PhysX.h"
+#include "Imgui_ShaderEditor.h"
+#include "Imgui_Effect.h"
+#include "Layer.h"
+#include "GameObject.h"
 #include "Tool_Settings.h"
 #include "Tool_Animation.h"
+#include "Imgui_UIEditor.h"
+#include "ImGui_PhysX.h"
+
+#include "UI_ClientManager.h"
+#include "UI.h"
 
 CLevel_MapTool::CLevel_MapTool(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -25,39 +32,34 @@ HRESULT CLevel_MapTool::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+	CGameInstance* p_game_instance = CGameInstance::GetInstance();
 	p_game_instance->Clear_ImguiObjects();
-	
-	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
-	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
-
-#ifdef FOR_MAP_GIMMICK
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
+	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-#endif
-
-	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
+	
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-	RELEASE_INSTANCE(CGameInstance)
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-			return E_FAIL;
-
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
+	{
+		MSG_BOX("Layer_ControlRoom");
+		return E_FAIL;
+	}
 
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
 		return E_FAIL;
@@ -98,6 +100,7 @@ HRESULT CLevel_MapTool::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -111,7 +114,6 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
@@ -125,8 +127,16 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	
 #ifdef FOR_MAP_GIMMICK
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL,"Test_InstGimmick.json");
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_InstGimmick.json");
+	CImgui_MapEditor::Load_MapObjects(LEVEL_MAPTOOL, "Test_Emmisve_Test.json");
+*/
+	
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");*/
+
 #endif
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -151,7 +161,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CCamera *pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), nullptr, &CameraDesc);
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_1"), pCamera, true))) return E_FAIL;
-
+	
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(30.f, 7.f, 30.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
@@ -225,8 +235,19 @@ HRESULT CLevel_MapTool::Ready_Layer_Effect(const _tchar * pLayerTag)
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-
 }
+
+HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pGameInstance->Clone_GameObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 
 CLevel_MapTool * CLevel_MapTool::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
@@ -243,6 +264,5 @@ CLevel_MapTool * CLevel_MapTool::Create(ID3D11Device * pDevice, ID3D11DeviceCont
 void CLevel_MapTool::Free()
 {
 	__super::Free();
-	
 }
 

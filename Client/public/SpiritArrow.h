@@ -15,6 +15,11 @@ private:
 	virtual ~CSpiritArrow() = default;
 
 public:
+	const ARROWSTATE&	Get_CurrentState() const { return m_eCurState; }
+	const _bool&				IsActive() const { return m_bActive; }
+	virtual void				Set_Active(_bool bActive) override { m_bActive = bActive; }
+
+public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
@@ -26,6 +31,9 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 	virtual void				Push_EventFunctions() override;
+
+public:
+	inline void					Reset();
 
 private:
 	class CKena*				m_pKena = nullptr;
@@ -58,7 +66,6 @@ private:
 	ARROWSTATE			Check_State();
 	void						Update_State(_float fTimeDelta);
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
-	inline void					Reset();
 
 public:
 	static CSpiritArrow*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

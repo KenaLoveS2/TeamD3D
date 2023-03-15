@@ -39,8 +39,7 @@ HRESULT CSpiritArrow::Initialize(void * pArg)
 	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
 	NULL_CHECK_RETURN(m_pKena, E_FAIL);
 
-	m_pStaff = dynamic_cast<CKena_Staff*>(m_pKena->Get_KenaPart(L"Kena_Staff"));
-	NULL_CHECK_RETURN(m_pStaff, E_FAIL);
+	m_pStaff = dynamic_cast<CKena_Staff*>(m_pKena->Get_KenaPart(L"Kena_Staff"));	NULL_CHECK_RETURN(m_pStaff, E_FAIL);
 	 
 	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Find_Camera(L"PLAYER_CAM"));
 	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
@@ -90,8 +89,8 @@ void CSpiritArrow::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
-		m_bActive = true;
+	if (m_bActive == false)
+		return;
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
@@ -133,10 +132,16 @@ void CSpiritArrow::Tick(_float fTimeDelta)
 
 void CSpiritArrow::Late_Tick(_float fTimeDelta)
 {
+	if (m_bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+
+	//if (m_pRendererCom != nullptr)
+	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CSpiritArrow::Render()
@@ -258,6 +263,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
 			m_fScale = m_fMaxScale;
+			m_bReachToAim = false;
 			m_vFirePosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			m_vFireCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float4());
 			m_vFireCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -313,7 +319,7 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 
 		m_fScale += fTimeDelta;
 		m_fScalePosRate -= fTimeDelta * 0.162f;
-		m_fDistance = m_fScale * 5.f;
+		m_fDistance = m_fScale * 10.f;
 
 		break;
 		}
@@ -338,7 +344,7 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 		}
 	case CSpiritArrow::ARROW_HIT:
 		{
-		
+		Reset();
 		break;
 		}
 	}
@@ -346,9 +352,12 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 
 _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
+	if (m_eCurState < CSpiritArrow::ARROW_FIRE)
+		return 0;
+
 	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
 	{
-		Reset();
+		m_bHit = true;
 
 		_vector	vPos = m_pKena->Get_WorldMatrix().r[3];
 		_float	fDistance = XMVectorGetX(XMVector3Length(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vPos));
@@ -362,6 +371,7 @@ void CSpiritArrow::Reset()
 {
 	m_bActive = false;
 	m_bHit = false;
+	m_bReachToAim = false;
 	m_fScale = 1.f;
 	m_fScalePosRate = 0.35f;
 	m_eCurState = CSpiritArrow::ARROWSTATE_END;
