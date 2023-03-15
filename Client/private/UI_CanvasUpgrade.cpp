@@ -292,6 +292,21 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 
 	}
 
+	/* SkillVideo */
+	{
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+
+		string strCloneTag = "Node_SkillVideo";
+		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
+		tDesc.fileName = wstrCloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillVideo", wstrCloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCloneTag);
+		pGameInstance->Add_String(wstrCloneTag);
+	}
+
 	/* SkillName */
 	{
 		CUI* pUI = nullptr;

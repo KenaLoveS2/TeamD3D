@@ -385,6 +385,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\RotLvUp">
       <UniqueIdentifier>{8b3e7483-de55-4808-b454-6409b0d65a13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\NPC">
+      <UniqueIdentifier>{142f5f5c-f7f1-4bd9-b700-e1ebaa9db762}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -914,6 +917,14 @@
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
+    <ClInclude Include="..\public\E_KenaHeavyAttack_end.h" />
+    <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h" />
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h" />
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
+    <ClInclude Include="..\public\E_RotTrail.h" />
+    <ClInclude Include="..\public\UI_NodeSkillVideo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1422,6 +1433,14 @@
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
+    <ClCompile Include="..\private\E_KenaHeavyAttack_end.cpp" />
+    <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp" />
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp" />
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
+    <ClCompile Include="..\private\E_RotTrail.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

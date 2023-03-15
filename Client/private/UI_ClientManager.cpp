@@ -39,6 +39,7 @@
 #include "UI_NodeSkillCond.h"
 #include "UI_NodeRotLevel.h"
 #include "UI_NodeRotGuage.h"
+#include "UI_NodeSkillVideo.h"
 
 /* CanvasInventoryHeader */
 #include "UI_CanvasInvHeader.h"
@@ -702,6 +703,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotGuage");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SkillVideo"), CUI_NodeSkillVideo::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SkillVideo");
 
 	/********************************************/
 	/*				For. Bottom					*/
