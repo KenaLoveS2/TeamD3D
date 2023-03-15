@@ -200,6 +200,7 @@
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\private\CameraForNpc.cpp" />
+    <ClCompile Include="..\private\Saiya.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
@@ -384,6 +385,7 @@
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\public\CameraForNpc.h" />
+    <ClInclude Include="..\public\Saiya.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

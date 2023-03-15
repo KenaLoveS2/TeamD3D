@@ -18,6 +18,7 @@
 /* NPCs */
 #include "Rot.h"
 #include "Beni.h"
+#include "Saiya.h"
 #include "CameraForNpc.h"
 
 /* Enemies*/
@@ -2048,7 +2049,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	/* Prototype_Component_Model_Saiya */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.model"), PivotMatrix))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2721,6 +2722,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 #pragma  region NPC
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),
 		CBeni::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Saiya"),
+		CSaiya::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

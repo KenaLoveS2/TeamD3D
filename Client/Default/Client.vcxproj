@@ -266,6 +266,7 @@
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
@@ -447,6 +448,7 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
