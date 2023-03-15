@@ -122,6 +122,13 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 	m_fTime = 0.5f;
 	m_fTimeAcc = 0.f;
 
+	m_vecNode[UI_ARROW1]->Set_Active(true);
+	m_vecNode[UI_ARROW2]->Set_Active(true);
+	m_vecNode[UI_ARROW3]->Set_Active(true);
+	m_vecNode[UI_ARROW4]->Set_Active(true);
+
+
+
 	return S_OK;
 }
 

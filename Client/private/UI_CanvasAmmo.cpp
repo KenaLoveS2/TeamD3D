@@ -14,6 +14,7 @@
 /* Bind Object */
 #include "Kena.h"
 #include "Kena_State.h"
+#include "Kena_Status.h"
 
 CUI_CanvasAmmo::CUI_CanvasAmmo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -91,6 +92,10 @@ HRESULT CUI_CanvasAmmo::Initialize(void * pArg)
 	m_iNumArrows = 4;
 	m_iNumArrowNow = m_iNumArrows;
 
+	/* temp */
+	m_bActive = true;
+	m_vecNode[UI_ARROWGUAGE]->Set_Active(true);
+
 	/* Bomb */
 	m_iNumBombs		= 1;
 	m_iNumBombNow	= m_iNumBombs;
@@ -158,8 +163,13 @@ HRESULT CUI_CanvasAmmo::Bind()
 
 	if (pKena == nullptr)
 		return E_FAIL;
-	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
+
+	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasAmmo::Function);
+	//pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
+	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasAmmo::Function);
+
+
+	//pKena->m_PlayerAmmoDelegator.bind(this, &CUI_CanvasAmmo::NewFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -298,6 +308,49 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientMan
 		LevelUp(eType, (_int)fValue);
 		break;
 	}
+}
+
+void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue)
+{
+	CUI_CanvasAim* pCanvas = static_cast<CUI_CanvasAim*>(CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM));
+
+	switch (eType)
+	{
+	case CUI_ClientManager::AMMO_ARROW:
+		m_iNumArrowNow = (_uint)fValue;
+		pCanvas->Set_Arrow(m_iNumArrowNow, 0);
+		break;
+	case CUI_ClientManager::AMMO_ARROWCOOL:
+		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::AMMO_ARROWEFFECT:
+		static_cast<CUI_NodeEffect*>(m_vecNode[UI_ARROWEFFECT])->Start_Effect(m_vecNode[UI_ARROWGUAGE], 0.f, 35.f);
+		break;
+
+	case CUI_ClientManager::AMMO_ARROWRECHARGE:
+		m_iNumArrowNow = (_uint)fValue;
+		pCanvas->Set_Arrow(m_iNumArrowNow, 1);
+		break;
+	}
+}
+
+void CUI_CanvasAmmo::NewFunction(CUI_ClientManager::UI_PRESENT eType, _float fVal1, _float fVal2, _float fVal3, _float fVal4)
+{
+	switch (eType)
+	{
+	case CUI_ClientManager::AMMO_ARROW:
+		/* curArrowCnt, maxArrowCnt, curArrowCoolTime, initArrowCoolTime */
+		m_iNumArrowNow = (_uint)fVal1;
+		
+		static_cast<CUI_NodeAmmoArrowGuage*>(m_vecNode[UI_ARROWGUAGE])->Set_Guage(fVal3 / fVal4);
+
+		break;
+	}
+
+
+
+
+
 }
 
 void CUI_CanvasAmmo::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)

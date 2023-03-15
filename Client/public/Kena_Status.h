@@ -48,6 +48,7 @@ private:
 	_int				m_iCurArrowCount = 4;
 	_float				m_fInitArrowCoolTime = 3.f;
 	_float				m_fCurArrowCoolTime = 0.f;
+	_float				m_fArrowGuage = 1.f;
 
 	_int				m_iMaxBombCount = 0;
 	_int				m_iCurBombCount = 0;
@@ -122,7 +123,8 @@ public:
 	inline void Set_CurPIPCoolTime(_float fValue) { m_fCurPIPCoolTime = fValue; }
 
 	inline void Set_MaxArrowCount(_int iValue) { m_iMaxArrowCount = iValue; }
-	inline void Set_CurArrowCount(_int iValue) { m_iCurArrowCount = iValue; }
+	void Set_CurArrowCount(_int iValue);
+	
 	inline void Set_InitArrowCoolTime(_float fValue) { m_fInitArrowCoolTime = fValue; }
 	inline void Set_CurArrowCoolTime(_float fValue) { m_fCurArrowCoolTime = fValue; }
 
