@@ -100,38 +100,38 @@ void CSpiritArrow::Tick(_float fTimeDelta)
 	
 	m_pTransformCom->Tick(fTimeDelta);
 
-	//ImGui::Begin("Arrow");
+	ImGui::Begin("Arrow");
 
-	//ImGui::InputFloat("Frame", (_float*)&m_eEFfectDesc.fFrame);
-	//ImGui::InputFloat("Mask", (_float*)&m_eEFfectDesc.fMaskFrame);
-	//ImGui::Separator();
-	//ImGui::InputFloat("m_fWaveHeight", (_float*)&m_fWaveHeight);
-	//ImGui::InputFloat("m_fSpeed", (_float*)&m_fSpeed);
-	//ImGui::InputFloat("m_fWaveFrequency", (_float*)&m_fWaveFrequency);
-	//ImGui::InputFloat("m_fUVSpeed", (_float*)&m_fUVSpeed);
+	ImGui::InputFloat("Frame", (_float*)&m_eEFfectDesc.fFrame);
+	ImGui::InputFloat("Mask", (_float*)&m_eEFfectDesc.fMaskFrame);
+	ImGui::Separator();
+	ImGui::InputFloat("m_fWaveHeight", (_float*)&m_fWaveHeight);
+	ImGui::InputFloat("m_fSpeed", (_float*)&m_fSpeed);
+	ImGui::InputFloat("m_fWaveFrequency", (_float*)&m_fWaveFrequency);
+	ImGui::InputFloat("m_fUVSpeed", (_float*)&m_fUVSpeed);
 
-	//if (ImGui::Button("DotConfirm"))
-	//	m_pShaderCom->ReCompile();
+	if (ImGui::Button("DotConfirm"))
+		m_pShaderCom->ReCompile();
 
-	//static bool alpha_preview = true;
-	//static bool alpha_half_preview = false;
-	//static bool drag_and_drop = true;
-	//static bool options_menu = true;
-	//static bool hdr = false;
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
 
-	//ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-	//static bool   ref_color = false;
-	//static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vSelectColor = m_eEFfectDesc.vColor;
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
 
-	//ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	//ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	//m_eEFfectDesc.vColor = vSelectColor;
+	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
 
-	//ImGui::End();
+	ImGui::End();
 
 }
 
@@ -158,7 +158,7 @@ HRESULT CSpiritArrow::Render()
 	{
 		if (i == 0)  // 메인 앞콕
 		{
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 5);
 		}
 		else if (i == 1) // 손잡이
 		{
