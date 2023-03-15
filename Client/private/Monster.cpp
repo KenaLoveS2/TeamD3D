@@ -350,8 +350,9 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget)
 	{
-		if (iColliderIndex == COL_PLAYER) // COL_PLAYER_WEAPON
+		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW) // COL_PLAYER_WEAPON
 		{
+			WeakleyHit();
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 		}

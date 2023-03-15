@@ -298,6 +298,10 @@ void CKena::Tick(_float fTimeDelta)
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	/* Delegator Arrow */
+	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
+	/* ~Delegator */
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
