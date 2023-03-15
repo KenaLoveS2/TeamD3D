@@ -14,6 +14,7 @@
 #include "Tool_Animation.h"
 #include "Imgui_UIEditor.h"
 #include "ImGui_PhysX.h"
+#include "ImGui_Monster.h"
 
 #include "UI_ClientManager.h"
 #include "UI.h"
@@ -32,7 +33,7 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		p_game_instance->Clear_ImguiObjects();
+	p_game_instance->Clear_ImguiObjects();
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
@@ -41,6 +42,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImGui_Monster::Create(m_pDevice, m_pContext));
 	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
@@ -203,7 +205,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");
 	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");*/
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
@@ -299,6 +301,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test.json");
+
+	return S_OK;
+
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CGameObject* pGameObject = nullptr;
@@ -363,8 +369,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
 		return E_FAIL;*/
 
-
 	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 

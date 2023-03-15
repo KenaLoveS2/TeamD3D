@@ -20,12 +20,14 @@ private:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg = nullptr);
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 
 private:
 	CModel*									m_pModelCom = nullptr; 
@@ -38,6 +40,13 @@ private:
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
+
+public:
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+
+
 
 private:
 	HRESULT SetUp_Components();

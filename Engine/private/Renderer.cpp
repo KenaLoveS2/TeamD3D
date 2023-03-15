@@ -22,16 +22,35 @@ CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	Safe_AddRef(m_pLevel_Manager);
 }
 
+void CRenderer::Imgui_Render()
+{
+	ImGui::Checkbox("SHADOW", &m_bDynamicShadow);
+	ImGui::Checkbox("SSAO", &m_bSSAO);
+}
+
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
 {
 	if (nullptr == pGameObject || 
 		eRenderGroup >= RENDER_END)
 		return E_FAIL;
 
-	m_RenderObjects[eRenderGroup].push_back(pGameObject);
-
-	Safe_AddRef(pGameObject);
-
+	if (!m_bDynamicShadow && eRenderGroup == RENDER_SHADOW)
+	{
+		if(!m_RenderObjects[eRenderGroup].empty())
+		{
+			for (auto& pGameObject : m_RenderObjects[RENDER_SHADOW])
+			{
+				Safe_Release(pGameObject);
+			}
+			m_RenderObjects[RENDER_SHADOW].clear();
+		}
+	}
+	else
+	{
+		m_RenderObjects[eRenderGroup].push_back(pGameObject);
+		Safe_AddRef(pGameObject);
+	}
+		
 	return S_OK;
 }
 
@@ -97,10 +116,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
-	/* For.ModelViewer */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_ModelViewer"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_FLOAT, &_float4(0.f, 0.0f, 0.0f, 0.f))))
-		return E_FAIL;
-
 	// SSAO
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
@@ -113,10 +128,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Depth"))))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_MtrlAmbient"))))
-		return E_FAIL;
-
-	// Model_Preview ·»´õ¸µ¿ë
-	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_ModelViewer"), TEXT("Target_ModelViewer"))))
 		return E_FAIL;
 
 	/* For.MRT_LightAcc */ /* ºû ¿¬»êÀÇ °á°ú¸¦ ÀúÀåÇÒ ·»´õÅ¸°Ùµé.  */
@@ -182,9 +193,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
-		return E_FAIL;
-	/* For.ModelViewer */
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_ModelViewer"),1300.f, fSizeY * 0.5f, fSizeX*3, fSizeY*3)))
 		return E_FAIL;
 
 #endif
@@ -304,16 +312,25 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_bStaticShadow = false;
 	}
 
-	if (FAILED(Render_Shadow()))
-		return E_FAIL;
+	if(m_bDynamicShadow)
+	{
+		if (FAILED(Render_Shadow()))
+			return E_FAIL;
+	}
+
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
-		return E_FAIL;
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
-		return E_FAIL;
+
+	if(m_bSSAO)
+	{
+		if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+			return E_FAIL;
+		if (FAILED(Render_SSAO()))
+			return E_FAIL;
+		if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_SSAO"))))
+			return E_FAIL;
+	}
+
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
@@ -333,6 +350,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
+		if (FAILED(Render_PostProcess()))
+			return E_FAIL;
 	}
 	else
 	{
@@ -344,27 +363,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
-	}	
-	if (FAILED(Render_PostProcess()))
-		return E_FAIL;
+	}
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (FAILED(Render_UILast()))
 		return E_FAIL;
 
 #ifdef _DEBUG
-	// Model Viewer
-	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
-		return E_FAIL;
-	
-	if (FAILED(Render_Viewer()))
-		return E_FAIL;
-
-	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_ModelViewer"))))
-		return E_FAIL;
-
-	// ~ Model Viewer
-
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
 
@@ -381,7 +386,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_StaticLightDepth"));
-		m_pTarget_Manager->Render_Debug(TEXT("MRT_ModelViewer"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
 	}
 #endif
@@ -606,14 +610,20 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
 		return E_FAIL;
+
 	/* For. Shadow */
+	if (FAILED(m_pShader->Set_RawValue("g_bShadow", &m_bDynamicShadow, sizeof(bool))))
+		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_ShadowDepth")))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_StaticShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_StaticShadowDepth")))))
 		return E_FAIL;
+
 	/* For.SSAO*/
+	if (FAILED(m_pShader->Set_RawValue("g_bSSAO", &m_bSSAO, sizeof(bool))))
+		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SSAOTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_SSAO")))))
 		return E_FAIL;
 
@@ -730,7 +740,6 @@ HRESULT CRenderer::Render_PostProcess()
 
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
-
 	return S_OK;
 }
 
@@ -781,9 +790,7 @@ HRESULT CRenderer::Render_Viewer()
 
 	m_RenderObjects[RENDER_VIEWER].clear();
 
-
 	return S_OK;
-
 }
 
 #ifdef _DEBUG

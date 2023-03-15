@@ -35,12 +35,10 @@ public:
 	HRESULT					Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
 	HRESULT					Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
 	HRESULT					Add_ShaderValueObject(_uint iLevelIndex, class CGameObject* pGameObject);
-
 	HRESULT					Late_Initialize(_uint iLevelIndex);
-	void Tick(_float fTimeDelta);
-	void Late_Tick(_float fTimeDelta);
 
-	void		SwitchOnOff_Shadow(_bool bSwitch);
+	void		Tick(_float fTimeDelta);
+	void	    Late_Tick(_float fTimeDelta);
 
 	/* For. Stop Gameplay And Activate Specific Layer */
 	void		Set_SingleLayer(_uint iCurLevel, const _tchar* pLayerTag);
@@ -62,7 +60,6 @@ private:	/* Change Shader Value Objects, For Shader Tool */
 	map<const _tchar*, class CGameObject*>*	m_mapShaderValueModel = nullptr;
 
 private:
-	_bool									m_bShadow = true;
 	_uint m_iNumCopyPrototypes = 0;
 	vector<PROTOTYPES> m_CopyPrototypes;
 	list<_tchar*> m_CopyTagList;
@@ -90,13 +87,11 @@ public: /*For.Imgui*/
 public:
 	void	RoomIndex_Object_Clear(_int iCurLevel, const _tchar* LayerTag , _int iRoomIndex);
 
-
 private:
 	void Imgui_Add_For_EnviroMent_Component();
 	
 private:
 	list<class CGameObject*> Mulit_ObjectList;		// For. Component add. Delete many Objects 
-
 
 public:	
 	vector<PROTOTYPES>& Get_CopyPrototypes() { return m_CopyPrototypes; }

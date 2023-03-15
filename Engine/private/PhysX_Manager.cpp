@@ -433,6 +433,8 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 			m_DynamicColliders.emplace(pTag, pBox);
 		}
 		
+		pBox->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		
 		m_pScene->addActor(*pBox);
 		pShape->release();
 		pMaterial->release();

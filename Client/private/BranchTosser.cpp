@@ -24,22 +24,21 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	if (pArg == nullptr)
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	}
-	else
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
+
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-
 	return S_OK;
 }
 
@@ -128,7 +127,7 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(7.f, 0.f, 7.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	return S_OK;
 }

@@ -62,24 +62,25 @@ public:
 	void						Call_RotIcon(CGameObject* pTarget);
 
 private:
-	CRenderer*						m_pRendererCom = nullptr;
-	CShader*							m_pShaderCom = nullptr;
-	CModel*							m_pModelCom = nullptr;
-	CStateMachine*				m_pStateMachine = nullptr;
-	CAnimationState*				m_pAnimation = nullptr;
-	class CKena_State*			m_pKenaState = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
+	CStateMachine*			m_pStateMachine = nullptr;
+	CAnimationState*		m_pAnimation = nullptr;
+	class CKena_State*		m_pKenaState = nullptr;
 	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain*					m_pTerrain = nullptr;
-	class CRope_RotRock*		m_pRopeRotRock = nullptr;
-	class CRot*						m_pFirstRot = nullptr;
-	class CRotForMonster*    m_pRotForMonster[8] = { nullptr, };
+	class CTerrain*			m_pTerrain = nullptr;
+	class CRope_RotRock*	m_pRopeRotRock = nullptr;
+	class CRot*				m_pFirstRot = nullptr;
+	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 
 private:
-	vector<class CKena_Parts*>	m_vecPart;
-
-	map<const string, class CEffect_Base*>   m_mapEffect;
+	vector<class CKena_Parts*>				m_vecPart;
+	vector<class CSpiritArrow*>				m_vecArrow;
+	class CSpiritArrow*							m_pCurArrow = nullptr;
+	map<const string, class CEffect_Base*>	m_mapEffect;
 
 private:
 	_bool						m_bAttack = false;
@@ -106,9 +107,9 @@ private:
 
 	/* Shader */
 	_float					m_fSSSAmount = 0.01f;
-	_float4				m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4				m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4				m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float					m_fLashWidth = 10.f;
 	_float					m_fLashDensity = 10.f;
 	_float					m_fLashIntensity = 10.f;
@@ -123,6 +124,7 @@ private:
 
 private:
 	HRESULT					Ready_Parts();
+	HRESULT					Ready_Arrows();
 	HRESULT					Ready_Effects();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();

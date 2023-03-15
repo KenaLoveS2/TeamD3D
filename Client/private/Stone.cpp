@@ -35,6 +35,18 @@ HRESULT CStone::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CStone::Late_Initialize(void * pArg)
+{
+	//if (m_pModelCom->Get_IStancingModel() == false)
+	//	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	//else
+	//	m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT
+	//	, _float3(0.5f, 0.5f, 0.5f)); //(0~1)
+
+	//m_pRendererCom->Set_PhysXRender(true);
+	return S_OK;
+}
+
 void CStone::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -273,6 +285,26 @@ void CStone::ImGui_ShaderValueProperty()
 	m_pTransformCom->Imgui_RenderProperty();
 }
 
+void CStone::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
+
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
+
+	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
+	m_pTransformCom->Set_PxPivot(vPxPivot);
+}
+
 HRESULT CStone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
@@ -296,6 +328,28 @@ HRESULT CStone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTa
 
 	return S_OK;
 
+}
+
+_int CStone::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
+
+	return 0;
+}
+
+_int CStone::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
+	return 0;
+}
+
+_int CStone::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iColliderIndex == (_int)COL_PULSE)
+		_bool b = false;
+	return 0;
 }
 
 HRESULT CStone::SetUp_Components()
@@ -343,7 +397,7 @@ HRESULT CStone::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -353,7 +407,7 @@ HRESULT CStone::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	
 
 	return S_OK;
 
@@ -367,14 +421,14 @@ HRESULT CStone::SetUp_ShadowShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	
 
 	return S_OK;
 }

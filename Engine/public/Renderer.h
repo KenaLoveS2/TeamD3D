@@ -30,6 +30,7 @@ public:
 
 	HRESULT ReCompile();
 	void			ShootStaticShadow() { m_bStaticShadow = true; };
+	void			Imgui_Render();
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
@@ -67,7 +68,8 @@ private:
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
 
-	
+	_bool										m_bDynamicShadow = false;
+	_bool										m_bSSAO = false;
 
 private:
 	HRESULT Render_StaticShadow();

@@ -8,7 +8,6 @@
 #include <fstream>
 
 #include "EnviromentObj.h"
-#include "ModelViewerObject.h"
 #include "Terrain.h"
 
 #include "Imgui_Manager.h"
@@ -51,7 +50,6 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_Save_Load_Json();
 
 		Imgui_SelectObject_InstancingControl();
-		Imgui_Control_ViewerCamTransform();
 		imgui_ObjectList_Clear();
 
 		imgui_Gimmic_Class_Viewr();
@@ -268,40 +266,6 @@ void CImgui_MapEditor::Imgui_SelectOption()
 	}
 
 #pragma endregion ~생성시 사용되는 모델 이름
-
-#pragma region		선택된 오브젝트들 보여주기
-
-	char szSelctedObject_Name[256], szSelctedModel_Name[256];
-	CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
-	CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
-
-	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
-	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
-	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
-
-	if(m_bModelChange ==true)
-	{
-		/* 모델 프로토 타입이 널이 아닐때 바꾸기*/
-		if (m_wstrModelName != L"")
-		{
-			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-			if (false == m_bOnceSearch)
-			{
-				m_pViewerObject = static_cast<CModelViewerObject*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_BackGround"), TEXT("VIEWER_Objcet")));
-				m_bOnceSearch = true;
-			}
-
-			if (m_pViewerObject != nullptr)
-				m_pViewerObject->Change_Model(pGameInstance->Get_CurLevelIndex(), m_wstrModelName.c_str());
-
-			RELEASE_INSTANCE(CGameInstance);
-			m_bModelChange = false;
-		}
-	}
-
-
-#pragma endregion ~선택된 오브젝트들 보여주기
 }
 
 void CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront(CGameInstance *pGameInstace, CGameObject* pGameObject)
@@ -501,39 +465,6 @@ void CImgui_MapEditor::Imgui_SelectObject_InstancingControl()
 	}
 }
 
-void CImgui_MapEditor::Imgui_Control_ViewerCamTransform()
-{
-	ImGui::Separator();
-
-	if (m_pViewerObject != nullptr)
-	{
-		static float fYPos_Num = 0.1f;
-		static float fXAngle_Num = 0.1f;
-		static float fZPos_Num = -5.f;
-
-		_float fViewerCamYPos = m_pViewerObject->Get_ViewerCamYPos();
-		_float fViewerCamXAngle = m_pViewerObject->Get_ViewerCamXAngle();
-
-
-		ImGui::Text("ViewerCam ZPos, %f", &fZPos_Num);
-		ImGui::Text("ViewerCam YPos, %f", &fViewerCamYPos);
-		ImGui::Text("ViewerCam XAngle, %f", fViewerCamXAngle);
-
-
-		ImGui::InputFloat("ZPosNum", &fZPos_Num); ImGui::SameLine();
-		if (ImGui::Button("zPos Chagne"))
-			m_pViewerObject->Set_ViewerCamZPos(fZPos_Num);
-		ImGui::InputFloat("YPos_Increase&Reduce_Num", &fYPos_Num);
-		ImGui::InputFloat("xAngle_Increase&Reduce_Num", &fXAngle_Num);
-		// Is Picking?
-		m_pViewerObject->Set_ViewerCamMoveRatio(fYPos_Num, fXAngle_Num);
-	
-	
-	}
-	
-
-}
-
 void CImgui_MapEditor::Imgui_TexturePathNaming()
 {
 	ImGui::InputInt(strTexturePathNum[m_iTexturePathNum].c_str(), &m_iTexturePathNum); 
@@ -674,7 +605,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	ifstream      file(strLoadDirectory.c_str());
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -753,7 +684,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		
+		pGameInstance->Add_ShaderValueObject(g_LEVEL, pLoadObject); // 추가
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -763,7 +694,6 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		vecInstnaceMatrixVec.clear();
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -781,7 +711,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -789,33 +719,19 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 
 void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 {
-	if (ImGui::Button("Create_Crystal_Pulse"))
-	{
 
-		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-		{
-			if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-				continue;
-		
-			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
-				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
-		}
-	}
-
-	//if (ImGui::Button("Stop_Crystal_Pulse"))
+	//if (ImGui::Button("Create_Crystal_Pulse"))
 	//{
 
 	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
 	//	{
-	//		if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+	//		if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
 	//			continue;
-
-	//		static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(false);
+	//	
+	//		if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
+	//			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
 	//	}
-
-
 	//}
-
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
@@ -852,7 +768,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEnviromentObj::tagEnviromnetObjectDesc EnviromentDesc;
 	CGameObject*	pLoadObject = nullptr;
 
@@ -939,9 +855,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
-		//pLoadObject->Late_Initialize();
-		
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);		
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -950,7 +864,9 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		strFilePaths_arr.fill("");
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+
+
+
 }
 
 CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
@@ -1001,17 +917,17 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 			vPickingPos.x -= vBasePos.x;
 			vPickingPos.y -= vBasePos.y;
 			vPickingPos.z -= vBasePos.z;
-#ifdef	_DEBUG
 			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
-#endif
+
 		}
 	}
 	else
 	{
-#ifdef	_DEBUG
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
-#endif
 	}
+
+	
+	
 
 	ImGui::End();
 

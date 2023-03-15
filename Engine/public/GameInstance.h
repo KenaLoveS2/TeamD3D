@@ -83,7 +83,6 @@ public: /* For.Object_Manager */
 	HRESULT		Add_AnimObject(_uint iLevelIndex, class CGameObject* pGameObject);
 	HRESULT		Add_ShaderValueObject(_uint iLevelIndex, CGameObject * pGameObject);
 	HRESULT Add_ClonedGameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag, CGameObject* pGameObject);
-	void SwitchOnOff_Shadow(_bool bSwitch);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT	Late_Initialize(_uint iLevelIndex);
 

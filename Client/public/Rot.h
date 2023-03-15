@@ -20,8 +20,8 @@ private:
 	_uint m_iThisRotIndex = 0;
 
 	CRenderer* m_pRendererCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CModel* m_pModelCom = nullptr;
+	CShader*			     m_pShaderCom = nullptr;
+	CModel*				 m_pModelCom = nullptr;
 	CFSMComponent* m_pFSM = nullptr;
 	
 	class CKena *m_pKena = nullptr;
@@ -39,7 +39,7 @@ private:
 	_float m_fKenaToRotDistance = 2.f;
 	
 
-	PX_TRIGGER_DATA* m_pTriggerDAta = nullptr;
+	PX_TRIGGER_DATA* m_pTriggerData = nullptr;
 
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
@@ -58,14 +58,11 @@ public:
 	virtual void ImGui_AnimationProperty() override;
 	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
-	virtual HRESULT Call_EventFunction(const string& strFuncName) override;
-	virtual void Push_EventFunctions() override;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
-	void Test(_bool bIsInit, _float fTimeDelta);
 	HRESULT SetUp_State();
 
 public:
@@ -79,10 +76,6 @@ public:
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 public:
-
-	enum STATE {
-
-	};
 	enum ANIMATION {
 		ROT1_COLLECT, ROT1_COLLECTLOOP, ROT1_COLLECTRETURN,
 

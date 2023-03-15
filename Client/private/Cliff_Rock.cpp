@@ -237,7 +237,7 @@ HRESULT CCliff_Rock::SetUp_ShaderResources()
 
 HRESULT CCliff_Rock::SetUp_ShadowShaderResources()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 CCliff_Rock * CCliff_Rock::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -274,5 +274,5 @@ void CCliff_Rock::Free()
 
 	Safe_Release(m_pControlMoveCom);
 	Safe_Release(m_pInteractionCom);
-	//Safe_Release(m_pMasterDiffuseBlendTexCom);
+
 }

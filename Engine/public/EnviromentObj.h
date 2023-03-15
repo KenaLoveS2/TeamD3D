@@ -74,8 +74,8 @@ protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
 
 protected:
-	ENVIROMENT_DESC					m_EnviromentDesc;	
-	vector<const _tchar*>				m_CurComponenteTag;
+	ENVIROMENT_DESC							m_EnviromentDesc;	
+	vector<const _tchar*>					m_CurComponenteTag;
 
 	_bool										m_bRenderActive = false;
 	_uint											m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 

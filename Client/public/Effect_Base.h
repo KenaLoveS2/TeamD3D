@@ -129,7 +129,7 @@ public:
 	void						 Set_Matrix();
 	void						 Set_InitMatrix(_fmatrix WorldMatrix) { XMStoreFloat4x4(&m_InitWorldMatrix, WorldMatrix); }
 
-	void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
+	virtual void    Set_Active(_bool bActive) { m_eEFfectDesc.bActive = bActive; }
 	_bool   Get_Active() { return m_eEFfectDesc.bActive; }
 
 	void	ResetSprite(){
