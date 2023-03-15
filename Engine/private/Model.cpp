@@ -1589,6 +1589,11 @@ void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPick
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
+
+
+
+
+
 }
 
 void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
@@ -2382,7 +2387,7 @@ void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _fl
 }
 
 void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,
-	_float3 vSize)
+	_float3 vSize ,_float3 _vPos)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2392,13 +2397,16 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 	_float fLenY = fMaxY - fMinY;
 	_float fLenZ = fMaxZ - fMinZ;
 
+	_vector fLenFloat3 = XMVectorSet(fLenX, fLenY, fLenZ,0.f);
+
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 
 	_float4x4 MatPosTrans;
-	_float4 vPos,vRight,vUp,vLook;
+	_float4 vPos,vRight,vUp,vLook,vFloat4Len;
 	_float  fXSize, fYSize, fZSize;
 	size_t InstMatrixSize = m_pInstancingMatrix.size();
+
 	for (_uint i = 0; i < InstMatrixSize; ++i)
 	{
 
@@ -2411,14 +2419,20 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
 
 		fXSize =XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
-		fYSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vUp)));
-		fZSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vLook)));
+		fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
+		fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
+
+		vPos.x += _vPos.x;
+		vPos.y += _vPos.y;
+		vPos.z += _vPos.z;
+
 
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 		BoxDesc.eType = BOX_STATIC;
 		BoxDesc.pActortag = CUtile::Create_DummyString();
 		BoxDesc.vPos = CUtile::Float_4to3(vPos);
-		BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f)* vSize.x, fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+		BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f)* vSize.x,
+			fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
 		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDegree = 0.f;
 		BoxDesc.isGravity = false;
@@ -2427,9 +2441,52 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.fRestitution = 0.1f;
 		BoxDesc.eFilterType = FILTER_DEFULAT;
 
+
+		/*_vector scale, rotation, translation;
+		_matrix roTationMatrix;
+		XMMatrixDecompose(&scale, &rotation, &translation, XMLoadFloat4x4(&MatPosTrans));
+		_vector rotationQuaternion = XMQuaternionRotationMatrix(roTationMatrix);
+
+		XMFLOAT3 rotationAngles;
+		XMStoreFloat3(&rotationAngles, XMquaternionTo(rotationQuaternion));*/
+
+		
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
 		
+		/*if (i == 1)
+		{*/
+
+
+		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
+		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
+		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
+
+		_float4x4 matNew;
+		XMStoreFloat4x4(&matNew, XMMatrixIdentity());
+
+		vPos.x -= _vPos.x;
+		vPos.y -= _vPos.y;
+		vPos.z -= _vPos.z;
+
+
+		memcpy(&matNew.m[0], &vRight, sizeof(_float4));
+		memcpy(&matNew.m[1], &vUp, sizeof(_float4));
+		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
+		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
+
+			PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+			pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+			//pPhysX->Set_ActorRotation(pActor, 45.f, _float3(0.f, 1.f, 0.f));
+		//}
+		//if (i == 0)
+		//{
+		//	PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+		//	//pPhysX->Set_ActorMatrix(pActor, MatPosTrans);
+		//	pPhysX->Set_ActorRotation(pActor, 45.f, _float3(0.f, 1.f, 0.f));
+		////}
 	}
 
 }
+
+

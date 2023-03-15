@@ -65,7 +65,7 @@ public:
 	
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
-	virtual  void				Imgui_RenderComponentProperties()override;
+	virtual  void		Imgui_RenderComponentProperties()override;
 
 protected:
 	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);

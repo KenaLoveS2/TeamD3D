@@ -97,7 +97,7 @@ void CE_PulseObject::Tick(_float fTimeDelta)
 		m_eEFfectDesc.bActive = false;
 	}
 
-	if (m_fPulseResetTimer >= 3.f)
+	if (m_fPulseResetTimer >= 10.f)
 	{
 		m_bFinish = false;
 		m_fPulseResetTimer = 0.f;
@@ -163,7 +163,7 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 	if (vScale.x >= m_ePulseDesc.fPulseMaxSize)
 	{
 		m_eEFfectDesc.bActive = false;
-		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
+		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize );
 		
 		if(m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
@@ -175,7 +175,7 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 	{
 		if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, vScale.x *5.f);
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, vScale.x *3.5f);
 		}
 
 		m_pTransformCom->Set_Scaled(vScale);

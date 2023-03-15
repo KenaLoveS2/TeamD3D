@@ -5,7 +5,8 @@
 #include "Interaction_Com.h"
 #include "Effect_Base.h"
 #include "E_PulseObject.h"
-
+#include "Pulse_Plate_Anim.h"
+#include "ControlRoom.h"
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -65,8 +66,8 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
-
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
@@ -104,6 +105,13 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	}
 #endif
 
+	if (m_EnviromentDesc.iRoomIndex == 2 &&
+		!lstrcmp(L"2_Water_GimmickCrystal01", m_szCloneObjectTag))
+	{
+		m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
+		m_pControlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
+	}
 	
 	return S_OK;
 }
@@ -112,17 +120,6 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	
-	//if (m_VecCrystal_Effect.size() != 0)
-	//{
-	//	for (auto& pEffectObj : m_VecCrystal_Effect)
-	//	{
-	//		if (pEffectObj != nullptr)
-	//			pEffectObj->Set_Active(false);
-	//	}
-	//}
-
-#ifdef FOR_MAP_GIMMICK
 	if (m_VecCrystal_Effect.size() == 0)
 		return;
 
@@ -130,14 +127,22 @@ void CCrystal::Tick(_float fTimeDelta)
 	{
 		m_VecCrystal_Effect[1]->Set_Active(true);
 	}
-	
+
 
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		if (pEffectObj != nullptr)
 			pEffectObj->Tick(fTimeDelta);
 	}
-#endif
+
+	if (m_EnviromentDesc.iRoomIndex == 2 && 
+		true == m_bGimmickActive && 
+		 !lstrcmp(m_szCloneObjectTag,L"2_Water_GimmickCrystal01") && nullptr != m_pControlRoom)
+	{	
+		if(m_VecCrystal_Effect[1]->Get_Active() == true)//static_cast<CE_PulseObject*>(m_VecCrystal_Effect[1])->Get_Finish())
+			m_pControlRoom->Trigger_Active(m_EnviromentDesc.iRoomIndex, CEnviromentObj::Gimmick_TYPE_GO_UP, true);
+	}
+
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)

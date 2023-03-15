@@ -4,6 +4,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Kena.h"
+#include "ControlRoom.h"
 
 CPulse_Plate_Anim::CPulse_Plate_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -54,11 +55,15 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	_float3 vSize = _float3(2.5f, 0.7f, 2.5f);
 
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
-
+	// RoomIndex 2번은 현재 사이즈 포스가 맞음
+	// 1번만 조정하면됌
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	BoxDesc.pActortag = m_szCloneObjectTag;
 	BoxDesc.eType = BOX_STATIC;		// 원래는 박스 스태틱으로 만들어야함
 	BoxDesc.vPos = vPos;
+	if (m_EnviromentDesc.iRoomIndex == 1)
+		BoxDesc.vPos.y = -0.25f;
+
 	BoxDesc.vSize = _float3(2.74f, 0.25f, 2.45f);
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
@@ -79,30 +84,28 @@ HRESULT CPulse_Plate_Anim::Late_Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Trigger(
 		Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE_PLATE, vPos, 4.f));
 
+	m_pControlRoom =dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
+	m_pControlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
+
+
 	return S_OK;
 }
 
 void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 {
-	//ImGui_PhysXValueProperty();
 	__super::Tick(fTimeDelta);
 
-	if (m_bPlayerColl && CGameInstance::GetInstance()->Key_Up(DIK_E))
-	{
-		m_Gimmick_PulsePlateDelegate.broadcast(m_bPlayerColl);
-		m_pModelCom->Set_AnimIndex(2);
-	}
+	Pulse_Plate_AnimControl(fTimeDelta);
 
-	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())
-		 || (m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
-	{
-		m_pModelCom->Set_AnimIndex(1);
-	}
-	else if (false == m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 4 && m_pModelCom->Get_AnimationFinish()))
-	{
-		m_pModelCom->Set_AnimIndex(3);
-	}
-
+	//_float3 vPos;
+	//XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	//static _float fTemp[3] = { vPos.x, vPos.y, vPos.z };
+	//ImGui::InputFloat3("BoxColider Ctrl", fTemp);
+	//vPos.x = fTemp[0];
+	//vPos.y = fTemp[1];
+	//vPos.z = fTemp[2];
+	//CPhysX_Manager::GetInstance()->Set_ActorPosition(m_szCloneObjectTag, vPos);
 
 	m_pTransformCom->Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -192,21 +195,17 @@ HRESULT CPulse_Plate_Anim::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
-
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
-
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
-
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
-
 	return S_OK;
 }
 
@@ -232,16 +231,28 @@ HRESULT CPulse_Plate_Anim::SetUp_ShaderResources()
 	return S_OK;
 }
 
-_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 {
-	// To. DO 
-	// 1) Gimmci_Plat 충돌 체크확인
-	// 2) 펄스 했는지 확인후 브로드 캐스트 쏴주기
+	if (m_bPlayerColl && 
+		CGameInstance::GetInstance()->Key_Up(DIK_E))
+	{
+		m_pControlRoom->PulsePlate_Down_Active(m_EnviromentDesc.iRoomIndex,true);
+		m_pModelCom->Set_AnimIndex(2);
+	}
 
-	
+	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())
+		|| (m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(1);
+	}
+	else if (false == m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 4 && m_pModelCom->Get_AnimationFinish()))
+	{
+		m_pModelCom->Set_AnimIndex(3);
+	}
+}
 
-	
-
+_int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{	
 	return 0;
 }
 
@@ -250,6 +261,7 @@ _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint i
 	m_bPlayerColl = true;
 
 	m_pModelCom->Set_AnimIndex(0);	
+
 	return 0;
 }
 
@@ -257,6 +269,8 @@ _int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iT
 {
 	m_bPlayerColl = false;
 	m_pModelCom->Set_AnimIndex(4);
+	m_pControlRoom->PulsePlate_Down_Active(m_EnviromentDesc.iRoomIndex, false);
+	
 	return 0;
 }
 
