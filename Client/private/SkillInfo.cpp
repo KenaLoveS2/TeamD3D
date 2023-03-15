@@ -7,6 +7,7 @@
 #include <locale>
 #include "Utile.h"
 #include "Kena.h"
+#include "Kena_Status.h"
 
 CSkillInfo::CSkillInfo()
 	:m_pTextureProtoTag(nullptr)
@@ -42,26 +43,26 @@ CSkillInfo::CSkillInfo()
 	//return msg;
 //}
 
-CSkillInfo::CHECK CSkillInfo::Check(_uint iLevel)
+CSkillInfo::CHECK CSkillInfo::Check(_uint iLevel, CKena* pPlayer)
 {
-	/* Connect With Player. But Not Now.... */
 	_int iRotLevel, iKarma;
 
-	// stick Level2 : prev:1, rotlevel2, karma 150
-
 	/* Current Data */
-	iRotLevel = 1;
-	iKarma = 200;
+	if (pPlayer == nullptr)
+		return CHECK_END;
+
+	iRotLevel = pPlayer->Get_Status()->Get_RotLevel();
+	iKarma = pPlayer->Get_Status()->Get_Karma();
 
 	if (m_tDesc[iLevel].eState == STATE_UNLOCKED)
 		return CHECK_UNLOCKED_ALREADY;
 	
+	_int iPrevLevel = m_tDesc[iLevel].conditions[CONDITION_PREVSKILL];
+	if (iPrevLevel != -1 && m_tDesc[iPrevLevel].eState != STATE_UNLOCKED)
+		return CHECK_PREVSKILL;
+
 	if (iRotLevel < m_tDesc[iLevel].conditions[CONDITION_ROTLEVEL])
 		return CHECK_ROTLEVEL;
-	
-	_int iPrevLevel = m_tDesc[iLevel].conditions[CONDITION_PREVSKILL];
-	if (iPrevLevel!=-1 && m_tDesc[iPrevLevel].eState != STATE_UNLOCKED)
-		return CHECK_PREVSKILL;
 	
 	if (iKarma < m_tDesc[iLevel].conditions[CONDITION_KARMA])
 		return CHECK_KARMA;

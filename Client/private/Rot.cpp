@@ -87,7 +87,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_ROT));
 
-	// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
 
@@ -150,7 +150,7 @@ HRESULT CRot::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 		else		if (i == 2)
 		{
-			// ¸Ó¸®Ä«¶ô ¸ð¸£°ÚÀ½.
+			// ï¿½Ó¸ï¿½Ä«ï¿½ï¿½ ï¿½ð¸£°ï¿½ï¿½ï¿½.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 		}

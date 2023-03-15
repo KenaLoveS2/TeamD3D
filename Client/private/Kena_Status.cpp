@@ -37,18 +37,52 @@ void CKena_Status::Imgui_RenderProperty()
 
 void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 {
-	if (m_iCurArrowCount >= m_iMaxArrowCount)
-		m_fCurArrowCoolTime = 0.f;
-	else
+	CUI_ClientManager::UI_PRESENT eArrow = CUI_ClientManager::AMMO_ARROW;
+	CUI_ClientManager::UI_PRESENT eCool = CUI_ClientManager::AMMO_ARROWCOOL;
+	CUI_ClientManager::UI_PRESENT eArrowEffect = CUI_ClientManager::AMMO_ARROWEFFECT;
+	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_ARROWRECHARGE;
+
+	//_float fCount = (_float)m_iCurArrowCount;
+	_float fGuage;
+	//m_StatusDelegator.broadcast(eArrow, fCount);
+
+
+	if (m_iCurArrowCount == m_iMaxArrowCount) /* Full */
+	{
+		m_fCurArrowCoolTime = 0.0f;
+		fGuage = 1.0f;
+		m_StatusDelegator.broadcast(eCool, fGuage);
+	}
+	else /* Not Full */
 	{
 		m_fCurArrowCoolTime += fTimeDelta;
-		
 		if (m_fCurArrowCoolTime >= m_fInitArrowCoolTime)
 		{
-			m_iCurArrowCount++;
-			m_fCurArrowCoolTime -= m_fInitArrowCoolTime;
+			/* Fullfilll Effect Call */
+			m_StatusDelegator.broadcast(eArrowEffect, fGuage);
+
+			++m_iCurArrowCount;
+			if (m_iCurArrowCount < m_iMaxArrowCount)
+				m_fCurArrowCoolTime = 0.0f;
+			else
+				m_fCurArrowCoolTime = m_fInitArrowCoolTime;
+
+			/* ReCharge */
+			_float fIndex = (_float)m_iCurArrowCount - 1;
+			_float fCount = (_float)m_iCurArrowCount;
+			m_StatusDelegator.broadcast(eReCharge, fIndex);
+			m_StatusDelegator.broadcast(eArrow, fCount);
 		}
+
+		fGuage = m_fCurArrowCoolTime / m_fInitArrowCoolTime;
+		m_StatusDelegator.broadcast(eCool, fGuage);
+
 	}
+
+
+
+
+
 }
 
 CKena_Status * CKena_Status::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -95,7 +129,8 @@ HRESULT CKena_Status::Save()
 	jKenaStatus["04. m_iRotCount"] = m_iRotCount;
 	jKenaStatus["05. m_iCrystal"] = m_iCrystal;
 	jKenaStatus["06. m_iMaxPIPCount"] = m_iMaxPIPCount;
-	jKenaStatus["07. m_iCurPIPCount"] = m_iCurPIPCount;
+	//jKenaStatus["07. m_iCurPIPCount"] = m_iCurPIPCount;
+	jKenaStatus["07. m_fCurPIPGuage"] = m_fCurPIPGuage;
 	jKenaStatus["08. m_fInitPIPCoolTime"] = m_fInitPIPCoolTime;
 	jKenaStatus["09. m_fCurPIPCoolTime"] = m_fCurPIPCoolTime;
 	jKenaStatus["10. m_iMaxArrowCount"] = m_iMaxArrowCount;
@@ -131,7 +166,8 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["04. m_iRotCount"].get_to<_int>(m_iRotCount);
 	jKenaStatus["05. m_iCrystal"].get_to<_int>(m_iCrystal);
 	jKenaStatus["06. m_iMaxPIPCount"].get_to<_int>(m_iMaxPIPCount);
-	jKenaStatus["07. m_iCurPIPCount"].get_to<_int>(m_iCurPIPCount);
+	//jKenaStatus["07. m_iCurPIPCount"].get_to<_int>(m_iCurPIPCount);
+	jKenaStatus["07. m_fCurPIPGuage"].get_to<_float>(m_fCurPIPGuage);
 	jKenaStatus["08. m_fInitPIPCoolTime"].get_to<_float>(m_fInitPIPCoolTime);
 	jKenaStatus["09. m_fCurPIPCoolTime"].get_to<_float>(m_fCurPIPCoolTime);
 	jKenaStatus["10. m_iMaxArrowCount"].get_to<_int>(m_iMaxArrowCount);
@@ -143,7 +179,80 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
 	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
 
+	m_iPipLevel = 1;
+	m_eRotState = RS_GOOD;
+	m_fArrowGuage = 1.f;
+
 	m_strJsonFilePath = strJsonFilePath;
 
 	return S_OK;
+}
+
+_int CKena_Status::Get_RotMax()
+{
+	/* Get MaxRot related to rotLevel*/
+	switch (m_iRotLevel)
+	{
+	case 0:
+		return 5;
+	case 1:
+		return 15;
+	case 2:
+		return 35;
+	case 3:
+		return 50;
+	}
+
+	return 0;
+}
+
+_int CKena_Status::Get_MaxPIPCount()
+{
+	switch (m_iPipLevel)
+	{
+	case 1:
+		m_iMaxPIPCount = 1;
+		break;
+	case 2:
+		m_iMaxPIPCount = 2;
+		break;
+	case 3:
+		m_iMaxPIPCount = 3;
+		break;
+	}
+
+	return m_iMaxPIPCount;
+}
+
+void CKena_Status::Set_RotCount(_int iValue)
+{
+	m_iRotCount = iValue;
+
+	CUI_ClientManager::UI_PRESENT eMax = CUI_ClientManager::TOP_ROTMAX;
+	CUI_ClientManager::UI_PRESENT eNow = CUI_ClientManager::TOP_ROTCUR;
+	CUI_ClientManager::UI_PRESENT eGet = CUI_ClientManager::TOP_ROTGET;
+
+	_float fRotMax = (_float)Get_RotMax();
+	_float fRotNow = (_float)m_iRotCount;
+	_float fGuage = fRotNow / fRotMax;
+
+	m_StatusDelegator.broadcast(eNow, fRotNow);
+	m_StatusDelegator.broadcast(eMax, fRotMax);
+	m_StatusDelegator.broadcast(eGet, fGuage);
+
+
+	/* think later */
+	if (Get_RotMax() == m_iRotCount)
+		m_iRotLevel++;
+}
+
+void CKena_Status::Set_CurArrowCount(_int iValue)
+{
+	/* Should be used only when arrow shoot */
+	m_iCurArrowCount = iValue;
+
+	CUI_ClientManager::UI_PRESENT eArrow = CUI_ClientManager::AMMO_ARROW;
+	_float fCount = (_float)m_iCurArrowCount;
+	m_StatusDelegator.broadcast(eArrow, fCount);
+
 }

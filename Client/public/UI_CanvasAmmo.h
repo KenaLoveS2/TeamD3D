@@ -57,6 +57,8 @@ private:
 
 private: /* Bind Functions */
 	void	Function(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
+	void	Function(CUI_ClientManager::UI_PRESENT eType, _float fValue);
+	void	NewFunction(CUI_ClientManager::UI_PRESENT eType, _float fVal1, _float fVal2, _float fVal3, _float fVal4);
 
 private:
 	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fValue);
