@@ -705,7 +705,8 @@ PS_OUT PS_ROT(PS_TRAILIN In)
 	vRotrailTexture.a = vRotrailTexture.r * fLife;
 
 	float4 finalcolor = vRotrailTexture;
-	finalcolor.rgb = finalcolor.rgb + g_vColor.rgb * 2.f;
+	float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+	finalcolor.rgb = finalcolor.rgb + vColor.rgb * 2.f;
 
 	Out.vColor = finalcolor;
 	return Out;
