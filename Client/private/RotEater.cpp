@@ -325,7 +325,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return DistanceTrigger(m_fSpawnRange);
 	})
 		
 
@@ -336,6 +336,7 @@ HRESULT CRotEater::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to AWAKE", "AWAKE")
@@ -649,6 +650,8 @@ HRESULT CRotEater::SetUp_State()
 		}
 
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -660,8 +663,6 @@ HRESULT CRotEater::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})		
 		.Build();
 

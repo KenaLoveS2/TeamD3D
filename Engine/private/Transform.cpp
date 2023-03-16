@@ -550,14 +550,15 @@ void CTransform::LookAt_NoUpDown(_fvector vTargetPos)
 void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit)
 {
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
-	_vector		vDir = vTargetPos - vPosition;
-	
+	_vector		vDir = XMVectorSetY(vTargetPos - vPosition, 0.f);
+	// _vector		vDir = vTargetPos - vPosition;
+
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
 	LookAt_NoUpDown(vTargetPos);
 
 	if(fDistance > fLimit)
-	{
+	{		
 		_vector vDist = XMVector3Normalize(vDir) * m_TransformDesc.fSpeedPerSec * fTimeDelta;
 		vPosition += vDist;
 		
