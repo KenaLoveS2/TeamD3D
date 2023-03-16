@@ -154,7 +154,9 @@ HRESULT CE_PulseObject::SetUp_ShaderResources()
 
 void CE_PulseObject::Type_Tick(_float TimeDelta)
 {
-	
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	_float3 vScale = m_pTransformCom->Get_Scaled();
 
 	vScale *= m_ePulseDesc.fIncreseRatio;
@@ -163,7 +165,7 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 	if (vScale.x >= m_ePulseDesc.fPulseMaxSize)
 	{
 		m_eEFfectDesc.bActive = false;
-		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize);
+		m_pTransformCom->Set_Scaled(m_ePulseDesc.vResetSize );
 		
 		if(m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
@@ -175,7 +177,7 @@ void CE_PulseObject::Type_Tick(_float TimeDelta)
 	{
 		if (m_ePulseDesc.eObjType == PULSE_OBJ_DELIVER)
 		{
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, vScale.x *5.f);
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerData->pTriggerStatic, vScale.x *3.5f);
 		}
 
 		m_pTransformCom->Set_Scaled(vScale);
