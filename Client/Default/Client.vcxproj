@@ -176,12 +176,14 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />
+    <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
     <ClInclude Include="..\public\BranchTosser_Weapon.h" />
     <ClInclude Include="..\public\Bridge.h" />
+    <ClInclude Include="..\public\CameraForNpc.h" />
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
@@ -226,6 +228,8 @@
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
+    <ClInclude Include="..\public\E_SpiritArrowHit.h" />
+    <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -262,7 +266,9 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
@@ -355,12 +361,14 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
+    <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
     <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
+    <ClCompile Include="..\private\CameraForNpc.cpp" />
     <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
@@ -404,6 +412,8 @@
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
+    <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
+    <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
@@ -440,7 +450,9 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
@@ -544,9 +556,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FXAA.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />

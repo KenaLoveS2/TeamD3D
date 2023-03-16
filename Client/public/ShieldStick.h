@@ -25,6 +25,7 @@ private:
 		STRAFE_R,
 		TAUNT,
 		UNARMED_BIND,
+		UNARMED_IDLE,
 		UNARMED_ROCKTHROW,
 		UNARMED_RUN,
 		UNARMED_TAKEDAMAGEBACK,
@@ -76,8 +77,7 @@ private:
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
-
-	_bool m_isWeapon = true;
+		
 	class CGameObject* m_pWeapon = nullptr;
 
 public:

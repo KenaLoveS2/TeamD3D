@@ -19,7 +19,11 @@ public:
 	virtual HRESULT Render() override;
 
 public:
+	void	Imgui_RenderProperty();
+
+public:
 	void	Set_Child();
+	_float  m_fScale = 1.0f;
 
 public:
 	static  CE_KenaHeavyAttack_end* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

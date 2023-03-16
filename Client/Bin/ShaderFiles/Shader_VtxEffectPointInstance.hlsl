@@ -612,16 +612,16 @@ PS_OUT PS_DOT(PS_IN In)
 	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	Diffuse.a = Diffuse.r;
 
-	//if (Diffuse.a < 0.1f)
-	//	discard;
+	float4 finalcolor = Diffuse;
+	if (finalcolor.a < 0.7f)
+		discard;
+	else
+		finalcolor.rgb = finalcolor.rgb * 2.f;
 
-	//if (Out.vColor.a < 0.8f)
-	//	Out.vColor.rgb = (float3)1.f;
-
-	//if (g_fLife > 0.3f)s
-	//	Out.vColor = Out.vColor.r * frac(g_fLife * 0.5f);
-	
-	Out.vColor = Out.vColor * g_vColor;
+	float fTIme = min(g_fLife, 1.f);
+	if (In.vTexUV.y < fTIme)
+		finalcolor.a *= (1.f - fTIme);
+	Out.vColor = finalcolor;
 	return Out;
 }
 
@@ -692,6 +692,7 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 		finalcolor.rgb = finalcolor.rgb + TrailColor * 2.f;
 
 	Out.vColor = finalcolor;
+
 	return Out;
 }
 
