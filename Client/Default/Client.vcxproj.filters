@@ -947,6 +947,9 @@
     <ClInclude Include="..\public\E_SpiritArrowPosition.h">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSkillVideo.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1478,6 +1481,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_SpritArrowHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

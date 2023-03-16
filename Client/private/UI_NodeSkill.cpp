@@ -201,9 +201,7 @@ HRESULT CUI_NodeSkill::Load_Data(wstring fileName)
 
 	jLoad["MaskTextureIndex"].get_to<_int>(m_TextureListIndices[TEXTURE_MASK]);
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	vector<wstring>* pTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
-	RELEASE_INSTANCE(CGameInstance);
+	vector<wstring>* pTags = CGameInstance::GetInstance()->Get_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG);
 
 	if (-1 != m_TextureListIndices[TEXTURE_MASK])
 	{
@@ -259,7 +257,6 @@ HRESULT CUI_NodeSkill::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -284,8 +281,6 @@ HRESULT CUI_NodeSkill::SetUp_ShaderResources()
 	}
 	if (FAILED(m_pShaderCom->Set_RawValue("g_iCheck", &m_iCheck, sizeof(_int))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

@@ -83,6 +83,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 		if (FAILED(Bind()))
 		{
 			//	MSG_BOX("Bind Failed");
+
 			return;
 		}
 	}
@@ -178,20 +179,8 @@ void CUI_CanvasUpgrade::Set_Caller(CGameObject * pObj)
 
 HRESULT CUI_CanvasUpgrade::Bind()
 {
-	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-	//	L"Layer_Player", L"Kena"));
-	//if (pKena == nullptr)
-	//{
-	//	RELEASE_INSTANCE(CGameInstance);
-	//	return E_FAIL;
-	//}
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasUpgrade::BindFunction);
-
-	//RELEASE_INSTANCE(CGameInstance);
-
-	//m_bBindFinished = true;
+	m_bBindFinished = true;
 	return S_OK;
 }
 
@@ -244,30 +233,36 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 
 
 	/* SelectedRing */
-	string strRing = "Node_SelectRing";
-	CUI::UIDESC tDescRing;
-	_tchar* tagRing = CUtile::StringToWideChar(strRing);
-	tDescRing.fileName = tagRing;
-	CUI_NodeEffect* pEffectUI
-		= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
-	if (FAILED(Add_Node(pEffectUI)))
-		return E_FAIL;
-	m_vecNodeCloneTag.push_back(strRing);
-	pGameInstance->Add_String(tagRing);
-	m_vecEffects.push_back(pEffectUI);
+	{
+		string strRing = "Node_SelectRing";
+		CUI::UIDESC tDescRing;
+		_tchar* tagRing = CUtile::StringToWideChar(strRing);
+		tDescRing.fileName = tagRing;
+		CUI_NodeEffect* pEffectUI
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagRing, &tDescRing));
+		if (FAILED(Add_Node(pEffectUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strRing);
+		pGameInstance->Add_String(tagRing);
+		m_vecEffects.push_back(pEffectUI);
+	}
+
 
 	/* SelectedCircle */
-	string strCircle = "Node_SelectCircle";
-	CUI::UIDESC tDescCircle;
-	_tchar* tagCircle = CUtile::StringToWideChar(strCircle);
-	tDescCircle.fileName = tagCircle;
-	CUI_NodeEffect* pCircle
-		= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagCircle, &tDescCircle));
-	if (FAILED(Add_Node(pCircle)))
-		return E_FAIL;
-	m_vecNodeCloneTag.push_back(strCircle);
-	pGameInstance->Add_String(tagCircle);
-	m_vecEffects.push_back(pCircle);
+	{
+		string strCircle = "Node_SelectCircle";
+		CUI::UIDESC tDescCircle;
+		_tchar* tagCircle = CUtile::StringToWideChar(strCircle);
+		tDescCircle.fileName = tagCircle;
+		CUI_NodeEffect* pCircle
+			= static_cast<CUI_NodeEffect*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Effect", tagCircle, &tDescCircle));
+		if (FAILED(Add_Node(pCircle)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strCircle);
+		pGameInstance->Add_String(tagCircle);
+		m_vecEffects.push_back(pCircle);
+	}
+
 
 	/* Lock */
 	for (_uint i = 0; i < 20; ++i)
@@ -535,19 +530,6 @@ void CUI_CanvasUpgrade::Spread()
 
 
 
-}
-
-void CUI_CanvasUpgrade::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
-{
-	
-}
-
-void CUI_CanvasUpgrade::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
-{
-}
-
-void CUI_CanvasUpgrade::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
-{
 }
 
 CUI_CanvasUpgrade * CUI_CanvasUpgrade::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

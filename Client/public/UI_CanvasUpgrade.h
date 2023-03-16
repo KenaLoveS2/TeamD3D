@@ -57,12 +57,6 @@ private:
 	void		Picking();
 	void		Spread();
 
-private: /* Bind Functions */
-	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
-private:
-	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fValue);
-	void	LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel);
-
 private:
 	CUI_NodeSkill*				m_pSelected; /* LastSelectedOne*/
 	vector<CUI_NodeEffect*>		m_vecEffects;
