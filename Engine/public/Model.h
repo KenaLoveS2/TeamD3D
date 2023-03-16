@@ -160,7 +160,10 @@ public:
 	void Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex);
 
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
-	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize);
+	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f));
+
+	
+
 };
 
 END

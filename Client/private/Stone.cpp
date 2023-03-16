@@ -37,13 +37,13 @@ HRESULT CStone::Initialize(void * pArg)
 
 HRESULT CStone::Late_Initialize(void * pArg)
 {
-	//if (m_pModelCom->Get_IStancingModel() == false)
-	//	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
-	//else
-	//	m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT
-	//	, _float3(0.5f, 0.5f, 0.5f)); //(0~1)
-
-	//m_pRendererCom->Set_PhysXRender(true);
+	_float3 vPos, vSize;
+	vSize = _float3(1.f, 1.f, 1.f);
+	vPos = _float3(0.0f, 0.5f, 0.0f);
+	if (m_pModelCom->Get_IStancingModel() == true)
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	else
+		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 	return S_OK;
 }
 

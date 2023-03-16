@@ -35,6 +35,21 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CCliff_Rock::Late_Initialize(void * pArg)
+{
+	_float3 vPos, vSize;
+	vSize = _float3(0.5f, 0.8f, 0.5f);
+
+	vPos = _float3(0.0f, 0.f, 0.0f);
+	if (m_pModelCom->Get_IStancingModel() == true)
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	else
+		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+
+
+	return S_OK;
+}
+
 void CCliff_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -112,16 +127,15 @@ HRESULT CCliff_Rock::Render()
 	}
 	else
 	{
-		// 쉐이더 안한건 안그릴꺼야
-		//for (_uint i = 0; i < iNumMeshes; ++i)
-		//{
-		//	/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		//	//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		//	m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		//	//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
-		//	m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
-		//}
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+			//m_pMasterDiffuseBlendTexCom->Bind_ShaderResource(m_pShaderCom, "g_MasterBlendDiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+			//m_pE_R_AoTexCom->Bind_ShaderResource(m_pShaderCom, "g_ERAOTexture");
+			m_pModelCom->Render(m_pShaderCom, i,nullptr , m_iShaderOption);
+		}
 	}
 
 	return S_OK;

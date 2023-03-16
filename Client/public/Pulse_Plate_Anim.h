@@ -1,7 +1,7 @@
 #pragma once
 #include "Client_Defines.h"
 #include "EnviromentObj.h"
-#include "Delegator.h"
+
 
 
 BEGIN(Engine)
@@ -12,6 +12,7 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CControlRoom;
 class CPulse_Plate_Anim final : public CEnviromentObj
 {
 private:
@@ -26,6 +27,10 @@ private:
 	CPulse_Plate_Anim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPulse_Plate_Anim(const CPulse_Plate_Anim& rhs);
 	virtual ~CPulse_Plate_Anim() = default;
+
+public:
+	const _bool Get_PlayerColl()const { return m_bPlayerColl; }
+
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
@@ -37,16 +42,15 @@ public:
 public:
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
-private: /*Com*/
+private: 
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CModel*				m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
-
-private:		/* Target*/
-	class CKena *m_pKena = nullptr;
+	class		CKena *m_pKena = nullptr;
 	CTransform* m_pKenaTransform = nullptr;
+	CControlRoom*					m_pControlRoom = nullptr;
 
 private:
 	_bool							m_bPlayerColl = false;
@@ -54,12 +58,14 @@ private:
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 
-public:
-	Delegator<_bool>		m_Gimmick_PulsePlateDelegate;
+
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	void	Pulse_Plate_AnimControl(_float fTimeDelta);
 
 public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
