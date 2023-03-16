@@ -412,9 +412,6 @@ void CSpiritArrow::Reset()
 	m_ePreState = CSpiritArrow::ARROWSTATE_END;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, -3.f, 0.f, 1.f));
-
-	for (auto pEffect : m_vecChild)
-		pEffect->Set_Active(false);
 }
 
 void CSpiritArrow::Set_Child()

@@ -93,6 +93,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bBow;
 		break;
 
+	case STATE_INJECTBOW:
+		return m_bInjectBow;
+		break;
+
+	case STATE_PULSE:
+		return m_bPulse;
+		break;
+
 	case STATE_JUMP:
 		return m_bJump;
 		break;
@@ -331,6 +339,7 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_pAnimation->Get_Preview() == false)
 	{
 		m_pKenaState->Tick(fTimeDelta);
+
 		if(!m_bStateLock)
 			m_pStateMachine->Tick(fTimeDelta);
 	}
@@ -354,7 +363,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Tick(fTimeDelta);
-
+	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
 
