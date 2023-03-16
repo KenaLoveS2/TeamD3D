@@ -561,27 +561,31 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma  endregion ANIM_OBJ
 	
 
-
+	_bool bRealObject = true;
 #ifdef FOR_MAPTOOL
 
 #else
+
 #pragma region Test_Gimmick_OBJ
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
-		assert(!"RuinPlatform");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
-		assert(!"PowerCrystal");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
-		assert(!"RuinsKit_BridgeLarge");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true, true)))
-		assert(!"RuinsKit_BridgeShort");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, true, true)))
-		assert(!"RuinKit_LedgeStone");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
-		assert(!"Cliff_Ledge");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
-		assert(!"ShrineOfDeath_MainRock");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-		assert(!"ShrineOfLife");
+	if (bRealObject == false)
+	{
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+			assert(!"RuinPlatform");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
+			assert(!"PowerCrystal");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
+			assert(!"RuinsKit_BridgeLarge");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true, true)))
+			assert(!"RuinsKit_BridgeShort");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_LedgeStone", true, true, true)))
+			assert(!"RuinKit_LedgeStone");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
+			assert(!"Cliff_Ledge");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+			assert(!"ShrineOfDeath_MainRock");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
+			assert(!"ShrineOfLife");
+	}
 #pragma endregion
 #endif FOR_MAPTOOL
 
@@ -779,7 +783,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #ifdef FOR_MAPTOOL
 
 #pragma region Born_GroundCover
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilLarge",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
 		return E_FAIL;
@@ -1121,12 +1125,12 @@ HRESULT CLoader::Loading_ForMapTool()
 #endif
 
 
-	_bool bRealObject = false;
+
 	if (true == bRealObject)
 	{
 #pragma  region Start_Forest_Room
 #pragma region Born_GroundCover
-		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilLarge",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
 			return E_FAIL;
@@ -1893,7 +1897,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 
 #pragma region Born_GroundCover
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_BasilLarge",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
 		return E_FAIL;

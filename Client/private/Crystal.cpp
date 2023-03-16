@@ -55,7 +55,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_GROUND;
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
@@ -66,6 +66,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
+	
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	
@@ -76,7 +77,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0번  :PULSE_OBJ_RECIVE
-	PulseObj_Desc.fIncreseRatio = 1.15f;
+	PulseObj_Desc.fIncreseRatio = 1.3f;
 	PulseObj_Desc.fPulseMaxSize = 2.f;
 	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
 	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
@@ -89,7 +90,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1번  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.03f;
+	PulseObj_Desc.fIncreseRatio = 1.07f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
@@ -102,6 +103,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		pEffectObj->Late_Initialize();
+		pEffectObj->Set_Active(false);
 	}
 #endif
 
@@ -222,10 +224,18 @@ _int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 _int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	// 콜라이더 인덱스 우리가 Client에서  정의 한  인덱스
+	if (pTarget == m_VecCrystal_Effect[1] || iColliderIndex != (_int)TRIGGER_PULSE)
+		return 0;
 
-	if (iColliderIndex == (_int)TRIGGER_PULSE)
-		m_VecCrystal_Effect[0]->Set_Active(true);
+	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal01"))
+	{
+		if(true == m_bGimmickActive)
+			m_VecCrystal_Effect[0]->Set_Active(true);
+
+		return 0;
+	}
+	m_VecCrystal_Effect[0]->Set_Active(true);
+
 	return 0;
 }
 

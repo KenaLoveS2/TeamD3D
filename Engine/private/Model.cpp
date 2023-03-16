@@ -2324,7 +2324,8 @@ void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pM
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex)
+void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, 
+	_uint iColliderIndex)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2334,27 +2335,52 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	_float fLenY = fMaxY - fMinY;
 	_float fLenZ = fMaxZ - fMinZ;
 
+
+	_float4 vPos, vRight, vUp, vLook;
+	_float  fXSize, fYSize, fZSize;
+	size_t InstMatrixSize = m_pInstancingMatrix.size();
+	_float4x4 fWorldMatrix	=		pConnectTransform->Get_WorldMatrixFloat4x4();
+
+	memcpy(&vRight, &fWorldMatrix.m[0], sizeof(_float4));
+	memcpy(&vUp, &fWorldMatrix.m[1], sizeof(_float4));
+	memcpy(&vLook, &fWorldMatrix.m[2], sizeof(_float4));
+	memcpy(&vPos, &fWorldMatrix.m[3], sizeof(_float4));
+
+	fXSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+	fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
+	fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
+
+
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;	
 	BoxDesc.eType = BOX_STATIC;
 	BoxDesc.pActortag = pActorName;
-	BoxDesc.vPos = _float3(0.f, 0.f, 0.f);
-	BoxDesc.vSize = _float3(fLenX * 0.5f * 0.5f, fLenY * 0.5f, fLenZ * 0.5f * 0.5f);
+	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f*0.5f),
+		fLenY*(fYSize*0.5f*0.5f) , fLenZ*(fZSize*0.5f *0.5f) );
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
-	BoxDesc.isGravity = true;
+	BoxDesc.isGravity = false;
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fDynamicFriction = 0.5f;  
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.eFilterType = FILTER_DEFULAT;
 
-	//// Dynamic Parameter
-	//_float3 vVelocity;
-	//_float fDensity, fAngularDamping, fMass, fLinearDamping;
-	//_bool bCCD;
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
 
-	CPhysX_Manager::GetInstance()->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
-	pConnectTransform->Connect_PxActor_Static(pActorName, _float3(0.f, BoxDesc.vSize.y, 0.f));
-	pConnectTransform->Set_WorldMatrix(pConnectTransform->Get_WorldMatrix());
+	_float4x4 matNew;
+	XMStoreFloat4x4(&matNew, XMMatrixIdentity());
+	memcpy(&matNew.m[0], &vRight, sizeof(_float4));
+	memcpy(&matNew.m[1], &vUp, sizeof(_float4));
+	memcpy(&matNew.m[2], &vLook, sizeof(_float4));
+	memcpy(&matNew.m[3], &vPos, sizeof(_float4));
+
+	PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+	pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+
+
+
+
 }
 
 void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
@@ -2441,22 +2467,10 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.fRestitution = 0.1f;
 		BoxDesc.eFilterType = FILTER_DEFULAT;
 
-
-		/*_vector scale, rotation, translation;
-		_matrix roTationMatrix;
-		XMMatrixDecompose(&scale, &rotation, &translation, XMLoadFloat4x4(&MatPosTrans));
-		_vector rotationQuaternion = XMQuaternionRotationMatrix(roTationMatrix);
-
-		XMFLOAT3 rotationAngles;
-		XMStoreFloat3(&rotationAngles, XMquaternionTo(rotationQuaternion));*/
-
 		
 		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
 		
-		/*if (i == 1)
-		{*/
-
 
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));

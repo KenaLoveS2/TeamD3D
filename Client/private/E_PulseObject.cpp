@@ -97,7 +97,7 @@ void CE_PulseObject::Tick(_float fTimeDelta)
 		m_eEFfectDesc.bActive = false;
 	}
 
-	if (m_fPulseResetTimer >= 10.f)
+	if (m_fPulseResetTimer >= 3.f)
 	{
 		m_bFinish = false;
 		m_fPulseResetTimer = 0.f;
@@ -154,7 +154,9 @@ HRESULT CE_PulseObject::SetUp_ShaderResources()
 
 void CE_PulseObject::Type_Tick(_float TimeDelta)
 {
-	
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	_float3 vScale = m_pTransformCom->Get_Scaled();
 
 	vScale *= m_ePulseDesc.fIncreseRatio;

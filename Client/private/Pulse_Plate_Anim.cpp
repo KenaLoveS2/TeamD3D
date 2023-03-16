@@ -98,15 +98,6 @@ void CPulse_Plate_Anim::Tick(_float fTimeDelta)
 
 	Pulse_Plate_AnimControl(fTimeDelta);
 
-	//_float3 vPos;
-	//XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	//static _float fTemp[3] = { vPos.x, vPos.y, vPos.z };
-	//ImGui::InputFloat3("BoxColider Ctrl", fTemp);
-	//vPos.x = fTemp[0];
-	//vPos.y = fTemp[1];
-	//vPos.z = fTemp[2];
-	//CPhysX_Manager::GetInstance()->Set_ActorPosition(m_szCloneObjectTag, vPos);
-
 	m_pTransformCom->Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
 }

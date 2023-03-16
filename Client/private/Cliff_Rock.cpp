@@ -35,6 +35,21 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CCliff_Rock::Late_Initialize(void * pArg)
+{
+	_float3 vPos, vSize;
+	vSize = _float3(0.5f, 0.8f, 0.5f);
+
+	vPos = _float3(0.0f, 0.f, 0.0f);
+	if (m_pModelCom->Get_IStancingModel() == true)
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	else
+		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+
+
+	return S_OK;
+}
+
 void CCliff_Rock::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
