@@ -323,6 +323,7 @@
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
     <ClInclude Include="..\public\UI_NodeButton.h" />
+    <ClInclude Include="..\public\UI_NodeChat.h" />
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeConfWindow.h" />
@@ -508,6 +509,7 @@
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeButton.cpp" />
+    <ClCompile Include="..\private\UI_NodeChat.cpp" />
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />

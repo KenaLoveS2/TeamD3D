@@ -57,6 +57,7 @@
 /* Bottom */
 #include "UI_CanvasBottom.h"
 #include "UI_NodeLetterBox.h"
+#include "UI_NodeChat.h"
 
 /* Top */
 #include "UI_CanvasTop.h"
@@ -718,6 +719,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_LetterBox");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Chat"), CUI_NodeChat::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Chat");
 
 
 	/********************************************/
@@ -918,6 +922,12 @@ void CUI_ClientManager::Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canva
 	//m_pConfirmWindow->Set_Active(true);
 	m_pConfirmWindow->Set_Message(msg, pCaller);
 
+}
+
+void CUI_ClientManager::Switch_FrontUI(_bool bActive)
+{
+	m_vecCanvas[CANVAS_HUD]->Set_Active(bActive);
+	m_vecCanvas[CANVAS_AMMO]->Set_Active(bActive);
 }
 
 void CUI_ClientManager::Free()
