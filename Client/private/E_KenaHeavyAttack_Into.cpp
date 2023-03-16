@@ -35,24 +35,46 @@ HRESULT CE_KenaHeavyAttack_Into::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = true;
 
 	/* Set Option */
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_eEFfectDesc.vScale = XMVectorSet(2.f, 2.f, 1.f, 1.f);
+	m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
 	Set_Child();
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Parent(this);
 	/* ~Set Option */
+
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
 void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
+	_vector fCurScale = m_eEFfectDesc.vScale;
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
+
+	if (m_eEFfectDesc.bActive == true)
+	{
+		m_fTimeDelta += fTimeDelta;
+		m_fScale += 0.3f;
+		m_eEFfectDesc.vScale = fCurScale * m_fScale;
+		if (m_fTimeDelta > 0.5f)
+		{
+			m_eEFfectDesc.fWidthFrame = 0.0;
+			m_eEFfectDesc.fHeightFrame = 0.0;
+			m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
+
+			m_eEFfectDesc.bActive = false;
+			m_fScale = 0.0f;
+			m_fTimeDelta = 0.0f;
+		}
+	}
 }
 
 void CE_KenaHeavyAttack_Into::Late_Tick(_float fTimeDelta)
@@ -65,10 +87,19 @@ void CE_KenaHeavyAttack_Into::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaHeavyAttack_Into::Render()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_KenaHeavyAttack_Into::Imgui_RenderProperty()
+{
+	if (ImGui::Button("active"))
+		m_eEFfectDesc.bActive = true;
 }
 
 void CE_KenaHeavyAttack_Into::Set_Child()

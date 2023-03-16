@@ -50,6 +50,7 @@ HRESULT CSpiritArrow::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = true;
 	m_eEFfectDesc.iPassCnt = 5; // Effect_SpritArrow
 	m_eEFfectDesc.fFrame[0] = 128.f;
+
 	return S_OK;
 }
 
@@ -82,6 +83,11 @@ HRESULT CSpiritArrow::Late_Initialize(void * pArg)
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 	m_pRendererCom->Set_PhysXRender(true);
 
+	Set_Child();
+
+	for (auto& pChild : m_vecChild)
+		pChild->Late_Initialize();
+
 	return S_OK;
 }
 
@@ -99,40 +105,6 @@ void CSpiritArrow::Tick(_float fTimeDelta)
 	m_pTransformCom->FindActorData(m_szCloneObjectTag)->PivotMatrix = matPivot;
 	
 	m_pTransformCom->Tick(fTimeDelta);
-
-	//ImGui::Begin("Arrow");
-
-	//ImGui::InputFloat("Frame", (_float*)&m_eEFfectDesc.fFrame);
-	//ImGui::InputFloat("Mask", (_float*)&m_eEFfectDesc.fMaskFrame);
-	//ImGui::Separator();
-	//ImGui::InputFloat("m_fWaveHeight", (_float*)&m_fWaveHeight);
-	//ImGui::InputFloat("m_fSpeed", (_float*)&m_fSpeed);
-	//ImGui::InputFloat("m_fWaveFrequency", (_float*)&m_fWaveFrequency);
-	//ImGui::InputFloat("m_fUVSpeed", (_float*)&m_fUVSpeed);
-
-	//if (ImGui::Button("DotConfirm"))
-	//	m_pShaderCom->ReCompile();
-
-	//static bool alpha_preview = true;
-	//static bool alpha_half_preview = false;
-	//static bool drag_and_drop = true;
-	//static bool options_menu = true;
-	//static bool hdr = false;
-
-	//ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	//static bool   ref_color = false;
-	//static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vSelectColor = m_eEFfectDesc.vColor;
-
-	//ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	//ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	//m_eEFfectDesc.vColor = vSelectColor;
-
-	//ImGui::End();
-
 }
 
 void CSpiritArrow::Late_Tick(_float fTimeDelta)
@@ -324,6 +296,8 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	{
 	case CSpiritArrow::ARROW_CHARGE:
 		{
+		m_vecChild[EFFECT_POSITION]->Set_Active(true);
+		
 		matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
 
@@ -358,6 +332,8 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	case CSpiritArrow::ARROW_HIT:
 		{
 		Reset();
+		m_vecChild[EFFECT_POSITION]->Set_Active(false);
+		m_vecChild[EFFECT_HIT]->Set_Active(true);
 		break;
 		}
 	}
@@ -377,6 +353,15 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		int a = 0;
 	}
 
+	/* Collision Test */
+	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_MONSTER)
+	{
+		m_bHit = true;
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+	}
+
 	return 0;
 }
 
@@ -391,6 +376,37 @@ void CSpiritArrow::Reset()
 	m_ePreState = CSpiritArrow::ARROWSTATE_END;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, -3.f, 0.f, 1.f));
+}
+
+void CSpiritArrow::Set_Child()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	wstring strArrowPosCloneTag = L"";
+	strArrowPosCloneTag = m_szCloneObjectTag;
+	strArrowPosCloneTag += L"_Pos";
+
+	_tchar* pPosCloneTag = CUtile::Create_StringAuto(strArrowPosCloneTag.c_str());
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowPosition", pPosCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	wstring strArrowHitCloneTag = L"";
+	strArrowHitCloneTag = m_szCloneObjectTag;
+	strArrowHitCloneTag += L"_Hit";
+
+	_tchar* pHitCloneTag = CUtile::Create_StringAuto(strArrowHitCloneTag.c_str());
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowHit", pHitCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 CSpiritArrow * CSpiritArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

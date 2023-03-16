@@ -142,13 +142,6 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	if(m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	ImGui::Begin("CSticks01");
-	if (ImGui::Button("Dying"))
-		m_bDying = !m_bDying;
-	if (ImGui::Button("Rebuild"))
-		m_pShaderCom->ReCompile();
-	ImGui::End();
-
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);

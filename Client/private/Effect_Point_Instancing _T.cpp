@@ -213,11 +213,6 @@ void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
 	}
 
-	if (m_eEFfectDesc.IsBillboard == true)
-		BillBoardSetting(m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
 		m_fTimeDelta += fTimeDelta;
@@ -256,7 +251,6 @@ void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
 	}
 
-	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 	if (m_vecTrailEffect.size() != 0)
 	{
 		_matrix WorldMatrix = XMMatrixIdentity();
@@ -268,6 +262,8 @@ void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 			(*iter)->Set_WorldMatrix(WorldMatrix* m_pTransformCom->Get_WorldMatrix());
 		}
 	}
+
+	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 }
 
 void CEffect_Point_Instancing_T::Late_Tick(_float fTimeDelta)
@@ -276,6 +272,11 @@ void CEffect_Point_Instancing_T::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	if (m_eEFfectDesc.IsBillboard == true)
+		BillBoardSetting(m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (m_vecTrailEffect.size() != 0)
 	{

@@ -93,7 +93,6 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_ROT));
 
-	// ���� �ڿ� ������ vPivotPos�� �־��ָ�ȴ�.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
@@ -162,7 +161,6 @@ HRESULT CRot::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 		else		if (i == 2)
 		{
-			// �Ӹ�ī�� �𸣰���.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 		}

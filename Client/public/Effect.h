@@ -45,6 +45,9 @@ protected:
 	_float m_fShaderBindTime = 0.0f;
 	_float m_fDurationTime = 0.0f;
 
+protected:
+	_bool  m_bPlay = false;
+
 public:
 	virtual void         Free() override;
 };
