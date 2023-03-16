@@ -97,18 +97,13 @@ HRESULT CUI_NodeSkillName::Render()
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 45.f - m_fFontPos, g_iWinSizeY*0.5f - vPos.y -20.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
 	if (nullptr != m_szName)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szName,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), m_szName,
 			vNewPos /* position */,
 			0.f, _float2(0.9f, 0.9f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
-
 
 	return S_OK;
 }
@@ -136,7 +131,6 @@ HRESULT CUI_NodeSkillName::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -155,8 +149,6 @@ HRESULT CUI_NodeSkillName::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

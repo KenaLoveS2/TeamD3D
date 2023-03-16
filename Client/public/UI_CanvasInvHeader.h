@@ -29,7 +29,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
+	//void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena* pPlayer);
 
 private:

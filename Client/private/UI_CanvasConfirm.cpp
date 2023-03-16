@@ -113,31 +113,17 @@ HRESULT CUI_CanvasConfirm::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
-
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 210.f, g_iWinSizeY*0.5f - vPos.y - 50.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if (nullptr != m_Message)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_Message,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), m_Message,
 			vNewPos /* position */,
 			0.f, _float2(0.9f, 0.9f)/* size */,
 			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
-
 
 	return S_OK;
 }
@@ -160,7 +146,10 @@ HRESULT CUI_CanvasConfirm::Ready_Nodes()
 		tDesc.fileName = wstrCloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Button", wstrCloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
+		{
+			RELEASE_INSTANCE(CGameInstance);
 			return E_FAIL;
+		}
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
 		static_cast<CUI_NodeButton*>(pUI)->Setting(L"확인", CUI_NodeButton::TYPE_CONFIRM);
@@ -175,7 +164,10 @@ HRESULT CUI_CanvasConfirm::Ready_Nodes()
 		tDesc.fileName = wstrCloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Button", wstrCloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
+		{
+			RELEASE_INSTANCE(CGameInstance);
 			return E_FAIL;
+		}
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
 		static_cast<CUI_NodeButton*>(pUI)->Setting(L"취소", CUI_NodeButton::TYPE_CONFIRM);
@@ -209,8 +201,6 @@ HRESULT CUI_CanvasConfirm::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -232,8 +222,6 @@ HRESULT CUI_CanvasConfirm::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

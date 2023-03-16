@@ -4,7 +4,7 @@
 #include "Level.h"
 
 BEGIN(Client)
-
+class CUI_NodeButton;
 class CLevel_Logo final : public CLevel
 {
 private:
@@ -27,6 +27,10 @@ private: /*For. Imgui*/
 private:
 	vector<string>	arrLevel;
 	_int					iLevelIndex = -1;
+
+private:
+	vector<CUI_NodeButton*>		m_vecButtons;
+
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
