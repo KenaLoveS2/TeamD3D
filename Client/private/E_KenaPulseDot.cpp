@@ -44,16 +44,16 @@ void CE_KenaPulseDot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_fLife > 0.4f)
+	if (m_eEFfectDesc.bActive == true)
+		m_fLife += fTimeDelta * 0.8f;
+	else
 		m_fLife = 0.0f;
-
 }
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)

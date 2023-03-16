@@ -89,11 +89,6 @@ void CEffect_T::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (m_eEFfectDesc.IsBillboard == true)
-		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
 		m_fTimeDelta += fTimeDelta;
@@ -154,13 +149,17 @@ void CEffect_T::Tick(_float fTimeDelta)
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	__super::Compute_CamDistance();
 
-	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
-		Set_Matrix();
+	if (m_eEFfectDesc.IsBillboard == true)
+		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
+	else
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	if (m_pParent != nullptr)
+		Set_Matrix();
 }
 
 HRESULT CEffect_T::Render()
