@@ -41,7 +41,10 @@ public:
 	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
+	const _bool&				Is_TrailON() const { return m_bTrailON; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
+
+	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 
 
 public:
@@ -86,44 +89,44 @@ private:
 	map<const string, class CEffect_Base*>	m_mapEffect;
 
 private:
+	/* State variables*/
 	_bool						m_bAttack = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
-	_float4						m_vDamagedDir;
-	DAMAGED_FROM		m_eDamagedDir;
+	_float4					m_vDamagedDir;
+	DAMAGED_FROM			m_eDamagedDir;
 
-	_bool					m_bChargeLight = false;
-	_bool					m_bSprint = false;
+	_bool						m_bSprint = false;
 
-	_bool					m_bAim = false;
-	_bool					m_bBow = false;
+	_bool						m_bAim = false;
+	_bool						m_bBow = false;
 
-	_float					m_fInertia = 5.f;
-	_float					m_fVelocity = 0.f;
+	_float						m_fInertia = 5.f;
+	_float						m_fVelocity = 0.f;
 
-	_bool					m_bOnGround = true;
-	_bool					m_bJump = false;
-	_bool					m_bPulseJump = false;
-	_float					m_fGravity = 9.81f;
-	_float					m_fInitJumpSpeed;
-	_float					m_fCurJumpSpeed;
+	_bool						m_bOnGround = true;
+	_bool						m_bJump = false;
+	_bool						m_bPulseJump = false;
+	_float						m_fGravity = 9.81f;
+	_float						m_fInitJumpSpeed;
+	_float						m_fCurJumpSpeed;
+
+	_bool						m_bRotWispInteractable = false;
+
+	/* Effect Control */
+	_bool						m_bTrailON = false;
+	_bool						m_bChargeLight = false;
 
 	/* Shader */
-	_float					m_fSSSAmount = 0.01f;
+	_float						m_fSSSAmount = 0.01f;
 	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
 	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float					m_fLashWidth = 10.f;
-	_float					m_fLashDensity = 10.f;
-	_float					m_fLashIntensity = 10.f;
+	_float						m_fLashWidth = 10.f;
+	_float						m_fLashDensity = 10.f;
+	_float						m_fLashIntensity = 10.f;
 
-	/* PhysX */
-	vector<wstring>		m_vecColliderName;
-	vector<_float3>		m_vecPivot;
-	vector<_float3>		m_vecPivotScale;
-	vector<_float3>		m_vecPivotRot;
-
-	CUI_RotIcon*			m_pFocusRot;
+	CUI_RotIcon*				m_pFocusRot;
 
 private:
 	HRESULT					Ready_Parts();
@@ -134,22 +137,23 @@ private:
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
-	void					Update_Collider(_float fTimeDelta);
+	void						Update_Collider(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);
 	DAMAGED_FROM			Calc_DirToMonster(const _float3& vCollisionPos);
 
 private:	/* Animation Event Func */
-	void					Test(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnAttack(_bool bIsInit, _float fTimeDelta);
-	void					TurnOffAttack(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnCharge(_bool bIsInit, _float fTimeDelta);
-	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
+	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
