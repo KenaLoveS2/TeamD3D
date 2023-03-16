@@ -26,15 +26,15 @@ void CImGui_Monster::Imgui_FreeRender()
 
 	MonsterList();
 
-	ImGui::Checkbox("WriteFileOn", &m_bSaveWrite);
+	ImGui::Checkbox("MonsterWriteFileOn", &m_bSaveWrite);
 
 	if (m_bSaveWrite)
-		ImGui::InputText("Save_Name : ", &m_strFileName);
+		ImGui::InputText("MonsterSave_Name : ", &m_strFileName);
 
-	if (ImGui::Button("Confirm_Save"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Save Folder", "Select Save Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+	if (ImGui::Button("Confirm_MonsterSave"))
+		ImGuiFileDialog::Instance()->OpenDialog("Monster Save Folder", "Select Monster Save Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Save Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Monster Save Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
 		{
@@ -46,10 +46,10 @@ void CImGui_Monster::Imgui_FreeRender()
 			ImGuiFileDialog::Instance()->Close();
 	}
 
-	if (ImGui::Button("Confirm_Load"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select Load Folder", "Select Load Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+	if (ImGui::Button("Confirm_MonsterLoad"))
+		ImGuiFileDialog::Instance()->OpenDialog("Monster Load Folder", "Select Monster Load Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	if (ImGuiFileDialog::Instance()->Display("Select Load Folder"))
+	if (ImGuiFileDialog::Instance()->Display("Monster Load Folder"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
 		{
@@ -158,9 +158,9 @@ void CImGui_Monster::MonsterList()
 	}
 }
 
-void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName)
+void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _bool isDynamic)
 {
-	//list<CGameObject*> gameobjectList;
+	list<CGameObject*> gameobjectList;
 
 	string      strLoadDirectory = "../Bin/Data/Monster/";
 	strLoadDirectory += JsonFileName;
@@ -185,6 +185,7 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName)
 	jLoadMonsterObjList["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
 	pGameInstance->Add_String(wszLayerTag);
+		
 
 	for (auto jLoadChild : jLoadMonsterObjList["1_Data"])
 	{
@@ -209,18 +210,19 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName)
 		pGameInstance->Add_String(wszCloneTag);
 
 		pGameInstance->Clone_AnimObject(g_LEVEL, wszLayerTag, wszProtoObjTag, wszCloneTag, &MonsterDesc, &pLoadObject);
-		//gameobjectList.push_back(pLoadObject);
+
+		if (isDynamic)
+			gameobjectList.push_back(pLoadObject);
 	}
 
-	//for (auto& iter : gameobjectList)
-		//iter->Late_Initialize();
-	//gameobjectList.clear();
+	if(isDynamic)
+	{
+		for (auto& iter : gameobjectList)
+			iter->Late_Initialize();
+	}
+	gameobjectList.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
-}
-
-void CImGui_Monster::Save_Load_Json()
-{
 }
 
 void CImGui_Monster::Save()

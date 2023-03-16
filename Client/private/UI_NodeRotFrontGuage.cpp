@@ -2,6 +2,7 @@
 #include "..\public\UI_NodeRotFrontGuage.h"
 #include "GameInstance.h"
 #include "UI_Event_Guage.h"
+#include "UI_Event_Fade.h"
 
 CUI_NodeRotFrontGuage::CUI_NodeRotFrontGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -17,12 +18,21 @@ CUI_NodeRotFrontGuage::CUI_NodeRotFrontGuage(const CUI_NodeRotFrontGuage & rhs)
 
 void CUI_NodeRotFrontGuage::Set_Guage(_float fGuage)
 {
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
 	m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
 }
 
 _float CUI_NodeRotFrontGuage::Get_CurrentGuage()
 {
 	return static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Get_GuageNow();
+}
+
+_float CUI_NodeRotFrontGuage::Get_CurrentGuagePosition()
+{
+	_float fGuage = Get_CurrentGuage();
+
+	return m_matLocal._41 - 0.5f*m_matLocal._11 /* Zero Point */
+		+ m_matLocal._11*fGuage;
 }
 
 HRESULT CUI_NodeRotFrontGuage::Initialize_Prototype()
@@ -54,7 +64,9 @@ HRESULT CUI_NodeRotFrontGuage::Initialize(void * pArg)
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;
 	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
+	static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Set_InitState(0.f);
 
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
 	return S_OK;
 }
 
@@ -67,13 +79,6 @@ void CUI_NodeRotFrontGuage::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-
-	if (CGameInstance::GetInstance()->Key_Down(DIK_K))
-	{
-		static _float fGuage = 0.f;
-		fGuage += 0.1f;
-		Set_Guage(fGuage);
-	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -114,7 +119,7 @@ HRESULT CUI_NodeRotFrontGuage::Render()
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szTitle,
 			vNewPos /* position */,
 			0.f, _float2(1.f, 1.f)/* size */,
-			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+			XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);

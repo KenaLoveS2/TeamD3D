@@ -3,13 +3,13 @@
     "ImagePath": "../Bin/Resources/Textures/UI/06. Inventory/upgrade/Output/Bow/Bow%d.png",
     "Level0":[
         {
-            "Name": "화살이름0",
-            "Desc": "화살설명0",
+            "Name": "활",
+            "Desc": "완전히 충전된 화살은 더욱 정밀하고 강력해집니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
-                    "RotLevel"  : 1,
-                    "Karma"     : 50
+                    "RotLevel"  : 2,
+                    "Karma"     : 100
                 }
             ],
             "State": 0
@@ -17,25 +17,11 @@
     ],
     "Level1":[
         {
-            "Name": "화살이름1",
-            "Desc": "화살설명1",
+            "Name": "집중",
+            "Desc": "활 시위를 당기는 도중 F를 누르면 잠시 시간이 느려집니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
-                    "RotLevel"  : 1,
-                    "Karma"     : 100
-                }
-            ],
-            "State": 0
-        }
-    ],
-    "Level2":[
-        {
-            "Name": "화살이름2",
-            "Desc": "화살설명2",
-            "Condition": [
-                {
-                    "PrevSkill" : 1,
                     "RotLevel"  : 2,
                     "Karma"     : 150
                 }
@@ -43,15 +29,29 @@
             "State": 0
         }
     ],
+    "Level2":[
+        {
+            "Name": "구속 확산 사격",
+            "Desc": "속박된 적을 쏠 때 화살이 주변으로 튑니다.",
+            "Condition": [
+                {
+                    "PrevSkill" : 1,
+                    "RotLevel"  : 2,
+                    "Karma"     : 200
+                }
+            ],
+            "State": 0
+        }
+    ],
     "Level3":[
         {
-            "Name": "화살이름3",
-            "Desc": "화살설명3",
+            "Name": "화살통 확장",
+            "Desc": "재충전없이 5개의 화살을 쏠 수 있습니다.",
             "Condition": [
                 {
                     "PrevSkill" : -1,
                     "RotLevel"  : 3,
-                    "Karma"     : 200
+                    "Karma"     : 250
                 }
             ],
             "State": 0
@@ -59,8 +59,8 @@
     ],
     "Level4":[
         {
-            "Name": "화살이름4",
-            "Desc": "화살설명4",
+            "Name": "화살통 확장 ++",
+            "Desc": "재충전없이 6개의 화살을 쏠 수 있습니다.",
             "Condition": [
                 {
                     "PrevSkill" : 3,

@@ -702,29 +702,6 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotGuage");
 
-	/********************************************/
-	/*				For. Effects				*/
-	/********************************************/
-	/* Effect (Sprite Animation) */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Effect"), CUI_NodeEffect::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
-
-	/********************************************/
-	/*				For. Confirm				*/
-	/********************************************/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Confirm"), CUI_CanvasConfirm::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Confirm");
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Button"), CUI_NodeButton::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Button");
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Window"), CUI_NodeConfWindow::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
-
 
 	/********************************************/
 	/*				For. Bottom					*/
@@ -765,6 +742,43 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_RotLvUpCard"), CUI_NodeLvUp::Create(pDevice, pContext))))
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/********************************************/
+	/*				For. Effects				*/
+	/********************************************/
+	/* Effect (Sprite Animation) */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Effect"), CUI_NodeEffect::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Effect");
+
+	/********************************************/
+	/*				For. Confirm				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_Confirm"), CUI_CanvasConfirm::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_Confirm");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Button"), CUI_NodeButton::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Button");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_Window"), CUI_NodeConfWindow::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
 
 
 

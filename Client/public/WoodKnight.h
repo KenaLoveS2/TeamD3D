@@ -124,7 +124,7 @@ private:
 	_float	m_fIdletoAttackTime = 0.f;
 
 	_int		m_iAttackType = ATTACKTYPE_END;
-	_bool	m_bRealAttack = false;
+	
 	_bool	m_bRangedAttack = false;
 	_bool	m_bChargeAttack = false;
 	_bool   m_bComboAttack_Lunge = false;

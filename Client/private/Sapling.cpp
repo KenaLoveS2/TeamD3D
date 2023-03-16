@@ -25,9 +25,11 @@ HRESULT CSapling::Initialize(void* pArg)
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
 	if (pArg != nullptr)
@@ -36,6 +38,8 @@ HRESULT CSapling::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 14.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -79,8 +83,8 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(22.f, 0.5f, 5.f, 1.f));
-	m_pEnemyWisp->Set_Position(_float4(22.f, 0.5f, 5.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
@@ -249,13 +253,15 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(10.f);
+		m_fSpawnRange = 10.f;
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
 
 		.AddState("READY_SPAWN")		
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to AWAKE", "WISPOUT")
@@ -376,10 +382,16 @@ HRESULT CSapling::SetUp_State()
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
 	{
+		m_bRealAttack = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
-	})	// 원래는 이거하고 사라져야함 ㅇㅇ 근데 일단 IDLE 상태로 돌아가게 하는것임
-		.AddTransition("CHARGEATTACK to IDLE", "DYING")
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
+		.AddTransition("CHARGEATTACK to IDLE", "DYING") // 폭발 처리가 있어야 할듯
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
@@ -395,6 +407,8 @@ HRESULT CSapling::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(WISPOUT);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -407,8 +421,6 @@ HRESULT CSapling::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})	
 		.Build();
 

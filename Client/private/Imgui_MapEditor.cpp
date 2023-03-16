@@ -417,7 +417,6 @@ void CImgui_MapEditor::Imgui_ViewMeshOption(CGameObject* pSelecteObj)
 
 void CImgui_MapEditor::Imgui_Save_Load_Json()
 {
-
 	ImGui::Checkbox("Write File ", &m_bSaveWrite);
 
 	if (m_bSaveWrite)

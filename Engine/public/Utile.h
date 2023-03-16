@@ -55,6 +55,7 @@ public:
 
 
 	static _tchar* Create_DummyString();
+	static _tchar* Create_DummyString(const _tchar* pBaseText, _uint iCount);
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

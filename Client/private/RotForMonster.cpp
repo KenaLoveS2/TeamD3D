@@ -4,6 +4,7 @@
 #include "Rot.h"
 #include "Bone.h"
 #include "Monster.h"
+#include "E_RotTrail.h"
 
 CRotForMonster::CRotForMonster(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -40,6 +41,7 @@ HRESULT CRotForMonster::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_FSM(), E_FAIL);
+	FAILED_CHECK_RETURN(Set_RotTrail(), E_FAIL);
 
 	m_pModelCom->Set_AnimIndex(CRot::IDLE);
 	m_pModelCom->Set_AllAnimCommonType();
@@ -77,8 +79,6 @@ HRESULT CRotForMonster::Late_Initialize(void* pArg)
 
 void CRotForMonster::Tick(_float fTimeDelta)
 {
-	
-
 	__super::Tick(fTimeDelta);
 	
 	if (m_pFSM)
@@ -90,6 +90,11 @@ void CRotForMonster::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
+
+	/* Trail */
+	if (m_pRotTrail != nullptr)
+		m_pRotTrail->Tick(fTimeDelta);
+	/* Trail */
 }
 
 void CRotForMonster::Late_Tick(_float fTimeDelta)
@@ -98,6 +103,19 @@ void CRotForMonster::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	/* Trail */
+	if (m_pRotTrail != nullptr)
+	{
+		// rot_headTip_a_jnt
+		CBone*	pWispBonePtr = m_pModelCom->Get_BonePtr("rot_headTip_a_jnt");
+		_matrix SocketMatrix = pWispBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+		m_pRotTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+		m_pRotTrail->Late_Tick(fTimeDelta);
+	}
+	/* Trail */
 
 	if (m_pRendererCom != nullptr)
 	{
@@ -249,8 +267,9 @@ HRESULT CRotForMonster::SetUp_FSM()
 		.AddState("READY_BIND")
 		.OnStart([this]()
 	{
-		_vector vPivotPos = m_Desc.vPivotPos;
-		m_pTransformCom->Set_Position(m_pTarget->Get_Position() + vPivotPos);
+		_float4 vPos = _float4(m_pTarget->Get_Position()) + m_Desc.vPivotPos;
+		vPos.w = 1.f;
+		m_pTransformCom->Set_Position(vPos);
 		m_pTransformCom->LookAt_NoUpDown(m_pTarget->Get_Position());
 		_int iRand = rand() % 7;
 		switch(iRand)
@@ -301,6 +320,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 		if(m_pTarget != nullptr)
 		{
 			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
+
 			_matrix			SocketMatrix = 
 				pBone->Get_OffsetMatrix() * 
 				pBone->Get_CombindMatrix() * 
@@ -313,7 +333,6 @@ HRESULT CRotForMonster::SetUp_FSM()
 
 			_float4x4 pivotMatrix;
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
-
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
 			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
 		}
@@ -330,6 +349,26 @@ HRESULT CRotForMonster::SetUp_FSM()
 		return S_OK;
 	else
 		return E_FAIL;
+}
+
+HRESULT CRotForMonster::Set_RotTrail()
+{	
+	/* Set Trail */
+	CE_RotTrail* pRotTrail = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	wstring strMyCloneTag = this->Get_ObjectCloneName();
+	strMyCloneTag += L"_Trail";
+
+	pRotTrail = dynamic_cast<CE_RotTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotTrail", strMyCloneTag.c_str()));
+	NULL_CHECK_RETURN(pRotTrail, E_FAIL);
+	pRotTrail->Set_Parent(this);
+	m_pRotTrail = pRotTrail;
+
+	RELEASE_INSTANCE(CGameInstance);
+	/* Set Trail */
+
+	return S_OK;
 }
 
 _bool CRotForMonster::AnimFinishChecker(_uint eAnim, _double FinishRate)
@@ -371,4 +410,5 @@ void CRotForMonster::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pRotTrail);
 }

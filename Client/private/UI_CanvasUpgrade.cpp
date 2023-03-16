@@ -10,14 +10,15 @@
 #include "UI_NodeRotLevel.h"
 #include "UI_NodeRotGuage.h"
 
-/* Bind Object */
 #include "Kena.h"
+#include "Kena_Status.h"
 
 CUI_CanvasUpgrade::CUI_CanvasUpgrade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
 	, m_bPick(true)
+	, m_pPlayer(nullptr)
 {
 	for (auto skill : m_pSkills)
 		skill = nullptr;
@@ -28,6 +29,7 @@ CUI_CanvasUpgrade::CUI_CanvasUpgrade(const CUI_CanvasUpgrade & rhs)
 	, m_pSelected(nullptr)
 	, m_iPickedIndex(-1)
 	, m_bPick(true)
+	, m_pPlayer(nullptr)
 {
 	for (auto skill : m_pSkills)
 		skill = nullptr;
@@ -106,7 +108,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 		{
 			if(CSkillInfo::CHECK_UNLOCKED_AVAILABLE == 
 				m_pSkills[m_iPickedIndex / 5]
-				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level()))
+				->Check(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level(), m_pPlayer))
 			{
 				m_bPick = false;
 				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	
@@ -140,13 +142,38 @@ void CUI_CanvasUpgrade::Common_Function(_bool bResult)
 {
 	m_bPick = true;
 
-	if (bResult)
+	if (bResult) /* Confirm > Yes (Unlock the skill) */
 	{
+	/* 1. Count Karma */
+	_int iKarmaNeed =	m_pSkills[m_iPickedIndex / 5]->Get_SkillDesc(m_pSelected->Get_Level()).conditions[CSkillInfo::CONDITION_KARMA];
+	if (nullptr != m_pPlayer)
+	{
+		_int iKarmaNow = m_pPlayer->Get_Status()->Get_Karma();
+		m_pPlayer->Get_Status()->Set_Karma(iKarmaNow - iKarmaNeed);
+	}
+
+	/* 2. Change the States */
 	 m_pSkills[m_iPickedIndex / 5]
 	 	->UnLock(static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->Get_Level());
-	 
 	 static_cast<CUI_NodeSkill*>(m_vecNode[m_iPickedIndex])->State_Change(2);
+
+	 /* 3. Update the info */
+	 Spread();
 	}
+}
+
+void CUI_CanvasUpgrade::Set_Caller(CGameObject * pObj)
+{
+	m_pPlayer = static_cast<CKena*>(pObj);
+
+	/* Excute when Inventory is Opened -> Setting UnChangable info*/
+	CKena_Status* pStatus = m_pPlayer->Get_Status();
+
+	static_cast<CUI_NodeRotLevel*>(m_vecNode[UI_ROTLEVEL])
+		->Set_Info(pStatus->Get_RotLevel(),	pStatus->Get_RotMax(),	pStatus->Get_RotCount());
+
+	static_cast<CUI_NodeRotGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage((_float)pStatus->Get_RotCount() / (_float)pStatus->Get_RotMax());
+
 }
 
 HRESULT CUI_CanvasUpgrade::Bind()
@@ -503,13 +530,10 @@ void CUI_CanvasUpgrade::Spread()
 	static_cast<CUI_NodeSkillName*>(m_vecNode[UI_SKILLNAME])->Set_String(tDesc.wstrName);
 	static_cast<CUI_NodeSkillDesc*>(m_vecNode[UI_SKILLDESC])->Set_String(tDesc.wstrDesc);
 
-	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(m_pSelected->Get_Level());
+	CSkillInfo::CHECK eCheck = m_pSkills[m_iPickedIndex / 5]->Check(m_pSelected->Get_Level(), m_pPlayer);
 	static_cast<CUI_NodeSkillCond*>(m_vecNode[UI_SKILLCOND])->Set_Condition(tDesc, eCheck);
 
-	/* test */
-	static_cast<CUI_NodeRotLevel*>(m_vecNode[UI_ROTLEVEL])->Set_Info(4, 20, 13);
 
-	static_cast<CUI_NodeRotGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(0.5);
 
 }
 

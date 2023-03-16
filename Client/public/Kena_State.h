@@ -391,7 +391,7 @@ public:
 	static	CKena_State		NullFunc;
 
 public:
-	HRESULT					Initialize(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
+	HRESULT					Initialize(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	void						Tick(_double dTimeDelta);
 	void						Late_Tick(_double dTimeDelta);
 	void						ImGui_RenderProperty();
@@ -401,6 +401,7 @@ private:
 
 private:
 	class CKena*				m_pKena = nullptr;
+	class CKena_Status*		m_pStatus = nullptr;
 	CStateMachine*			m_pStateMachine = nullptr;
 	CModel*					m_pModel = nullptr;
 	CAnimationState*		m_pAnimationState = nullptr;
@@ -943,6 +944,7 @@ private:	/* Changer */
 	_bool	Damaged_Dir_Back();
 	_bool	Damaged_Dir_Left();
 	_bool	Damaged_Dir_Right();
+	_bool	Check_ArrowCount();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();
@@ -986,7 +988,7 @@ public:
 
 
 public:
-	static	CKena_State*	Create(class CKena* pKena, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
+	static	CKena_State*	Create(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
 	virtual void				Free() override;
 };
 

@@ -25,8 +25,10 @@ HRESULT CSticks01::Initialize(void* pArg)
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -36,6 +38,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 10.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -63,19 +67,17 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
-		PxCapsuleDesc.bCCD = true;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;	
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 	
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);		
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
@@ -139,13 +141,6 @@ void CSticks01::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 
 	if(m_pFSM) m_pFSM->Tick(fTimeDelta);
-
-	ImGui::Begin("CSticks01");
-	if (ImGui::Button("Dying"))
-		m_bDying = !m_bDying;
-	if (ImGui::Button("Rebuild"))
-		m_pShaderCom->ReCompile();
-	ImGui::End();
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -334,7 +329,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(7.f) || m_bSpawnByMage;
+		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMage;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
@@ -342,6 +337,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("READY_SPAWN")		
 		.OnExit([this]()
 	{		
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to INTOCHARGE", "INTOCHARGE")
@@ -590,6 +586,10 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -620,6 +620,10 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
 	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -652,6 +656,10 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("ATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -683,6 +691,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("ATTACK2 to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -714,6 +727,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("COMBOATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -745,6 +763,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("ROCKTHROW to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -886,6 +909,8 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(DEATH);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -897,9 +922,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		m_bDeath = true;		
 	})		
 		.Build();
 
@@ -1043,7 +1066,6 @@ void CSticks01::Set_AttackType()
 
 void CSticks01::Reset_Attack()
 {
-	m_bRealAttack = false;
 	m_bChargeAttack = false;
 	m_bJumpAttack = false;
 	m_bAttack1 = false;
@@ -1068,24 +1090,24 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK1:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK2:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_COMBOATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ROCKTHROW:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 4.f);
-		if (DistanceTrigger(4.f))
-		m_bRealAttack = true;
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
+			m_bRealAttack = true;
 	default:
 		break;
 	}

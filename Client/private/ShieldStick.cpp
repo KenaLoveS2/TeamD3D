@@ -27,7 +27,7 @@ HRESULT CShieldStick::Initialize(void* pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -35,9 +35,17 @@ HRESULT CShieldStick::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 12.f;
+		m_Desc.WorldMatrix._43 = 5.f;
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 
@@ -80,14 +88,14 @@ HRESULT CShieldStick::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));	
-	m_pEnemyWisp->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
 
 void CShieldStick::Tick(_float fTimeDelta)
-{
+{	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -96,7 +104,7 @@ void CShieldStick::Tick(_float fTimeDelta)
 
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	if(m_isWeapon)
+	if(m_bSpawn)
 		m_pWeapon->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
@@ -110,14 +118,12 @@ void CShieldStick::Late_Tick(_float fTimeDelta)
 
 	CMonster::Late_Tick(fTimeDelta);
 
-	if(m_isWeapon)
+	if(m_bSpawn)
 		m_pWeapon->Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom && m_bSpawn)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -226,12 +232,13 @@ HRESULT CShieldStick::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return DistanceTrigger(m_fSpawnRange);
 	})
 		
 		.AddState("READY_SPAWN")
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
@@ -243,28 +250,177 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
-		
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
 		.Tick([this](_float fTimeDelta)
-	{
-
+	{	
+		m_pModelCom->Set_AnimIndex(IDLE);
 	})
 		.OnExit([this]()
 	{
-		m_bSpawn = true;
+
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
+	})
+		.AddTransition("IDLE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("IDLE to JUMPBACK", "JUMPBACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(2.f);
+	})
+		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(3.5f);
+	})
+		.AddTransition("IDLE to CHASE", "CHASE")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(10.f);
+	})
+	
+		
+		.AddState("CHASE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(UNARMED_WALK);
+		m_pModelCom->Set_AnimIndex(WALK);
+	})	
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 0.5f);
+		m_pModelCom->Set_AnimIndex(WALK);
+
+		if(AnimFinishChecker(WALK))
+			m_pModelCom->ResetAnimIdx_PlayTime(WALK);
+	})		
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("CHASE to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
+	})
+		.AddTransition("CHASE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(2.5f);
+	})
+	
+
+		.AddState("CHARGE_ATTACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
+		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
+		m_bRealAttack = true;
+	})		
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("CHARGE_ATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit;
+	})
+		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+	
+
+		.AddState("JUMPBACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
+		m_pModelCom->Set_AnimIndex(JUMPBACK);		
+	})	
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("JUMPBACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
 		
 
+		.AddState("TAKEDAMAGE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
+		m_pModelCom->Set_AnimIndex(INTOCHARGE);
+	})
+		.OnExit([this]()
+	{	
+		m_bStronglyHit = false;		
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+			
+
+		.AddState("BIND")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
+		m_pModelCom->Set_AnimIndex(BIND);		
+	})		
+		.OnExit([this]()
+	{
+		m_bBind = false;		
+	})
+		.AddTransition("BIND to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BIND);
+	})
+		
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
+		m_pModelCom->ResetAnimIdx_PlayTime(HAEDSHOT);
+		m_pModelCom->Set_AnimIndex(HAEDSHOT);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -277,8 +433,6 @@ HRESULT CShieldStick::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})
 		.Build();
 
@@ -326,6 +480,9 @@ HRESULT CShieldStick::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

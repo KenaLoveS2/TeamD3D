@@ -20,7 +20,6 @@ public:
 	HRESULT			Work_Camera(const _tchar* pCameraTag);
 	class CCamera*	Find_Camera(const _tchar* pCameraTag);
 
-
 public:
 	_float* Get_CameraNear();
 	_float* Get_CameraFar();

@@ -30,6 +30,8 @@ matrix    g_KenaInfoMatrix[300];
 texture2D g_KenaFlowTexture;
 texture2D g_KenaTypeTexture;
 
+matrix    g_RotInfoMatrix[300];
+
 float   g_InfoSize;
 float	g_fWidth = 1.f;
 float	g_fLife;
@@ -51,6 +53,7 @@ struct VS_IN
 struct VS_OUT
 {
 	float3		vPosition : POSITION;
+	float3		vCenterPosition : TEXCOORD0;
 	float2		vPSize : PSIZE;
 };
 
@@ -79,6 +82,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	vector		vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
 
 	Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
+	Out.vCenterPosition = matrix_postion(g_WorldMatrix);
 	Out.vPSize = In.vPSize;
 
 	return Out;
@@ -108,6 +112,7 @@ VS_TRAILOUT VS_TRAILMAIN(VS_TRAILIN In)
 struct GS_IN
 {
 	float3		vPosition : POSITION;
+	float3		vCenterPosition : TEXCOORD0;
 	float2		vPSize : PSIZE;
 };
 
@@ -140,13 +145,15 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	GS_OUT		Out[4];
 
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3		vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * In[0].vPSize.x * 0.5f;
+	float3		vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
+	float3		vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
 	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
 
 	vPosition = In[0].vPosition + vRight + vUp;
+
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 
@@ -360,6 +367,102 @@ void GS_WISPTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 	}
 }
 
+[maxvertexcount(6)]
+void GS_ROTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
+{
+	GS_TRAILOUT		Out[4] =
+	{
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } },
+		{ { 0.0f, 0.0f, 0.0f,0.0f },{ 0.0f,0.0f },{ 0.f } }
+	};
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float		fCurWidth = g_fWidth * (In[0].fLife / g_fLife) * 0.5f;
+	float4x4    WorldMatrix = In[0].Matrix;
+	float3      vUp = matrix_up(WorldMatrix)* fCurWidth;
+	float3		vPosition = matrix_postion(WorldMatrix);
+
+	if (In[0].InstanceID == 0)
+	{
+		float3  vResultPos;
+		vResultPos = vPosition;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].vTexUV = float2(0.f, 0.f);
+		Out[0].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].vTexUV = float2(1.0f, 0.f);
+		Out[1].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition + vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].vTexUV = float2(1.0f, 1.f);
+		Out[2].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = vPosition - vUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].vTexUV = float2(0.f, 1.f);
+		Out[3].fLife = In[0].fLife / g_fLife;
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[1]);
+		Vertices.Append(Out[2]);
+		Vertices.RestartStrip();
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[2]);
+		Vertices.Append(Out[3]);
+		Vertices.RestartStrip();
+	}
+	else
+	{
+		matrix PreWorldMatrix = g_RotInfoMatrix[In[0].InstanceID - 1];
+		matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+		float3 vPreRight = matrix_right(PreWorldMatrix) * fCurWidth;
+		float3 vPrelook = matrix_look(PreWorldMatrix);
+		float3 vPreUp = matrix_up(PreWorldMatrix)* fCurWidth;
+
+		float3 vRight = matrix_right(WorldMatrix) * fCurWidth;
+		float3 vlook = matrix_look(WorldMatrix);
+
+		float3 vResultPos;
+		vResultPos = matrix_postion(PreWorldMatrix) + vPreUp;
+		Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[0].fLife = (g_RotInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+
+		vResultPos = matrix_postion(WorldMatrix) + vUp;
+		Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[1].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = matrix_postion(WorldMatrix) - vUp;
+		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[2].fLife = In[0].fLife / g_fLife;
+
+		vResultPos = matrix_postion(PreWorldMatrix) - vPreUp;
+		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
+		Out[3].fLife = (g_RotInfoMatrix[In[0].InstanceID - 1])[3][3] / g_fLife;
+
+		Out[0].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 0.f);
+		Out[1].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 0.f);
+		Out[2].vTexUV = float2(1.f - In[0].InstanceID / g_InfoSize, 1.f);
+		Out[3].vTexUV = float2(1.f - ((In[0].InstanceID - 1.f) / g_InfoSize), 1.f);
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[1]);
+		Vertices.Append(Out[2]);
+		Vertices.RestartStrip();
+
+		Vertices.Append(Out[0]);
+		Vertices.Append(Out[2]);
+		Vertices.Append(Out[3]);
+		Vertices.RestartStrip();
+	}
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -509,15 +612,45 @@ PS_OUT PS_DOT(PS_IN In)
 	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	Diffuse.a = Diffuse.r;
 
-	//if (Diffuse.a < 0.1f)
-	//	discard;
+	float4 finalcolor = Diffuse;
+	if (finalcolor.a < 0.7f)
+		discard;
+	else
+		finalcolor.rgb = finalcolor.rgb * 2.f;
 
-	//if (Out.vColor.a < 0.8f)
-	//	Out.vColor.rgb = (float3)1.f;
+	float fTIme = min(g_fLife, 1.f);
+	if (In.vTexUV.y < fTIme)
+		finalcolor.a *= (1.f - fTIme);
+	Out.vColor = finalcolor;
+	return Out;
+}
 
-	//if (g_fLife > 0.3f)s
-	//	Out.vColor = Out.vColor.r * frac(g_fLife * 0.5f);
-	
+// PS_HEAVYATTACK
+PS_OUT PS_HEAVYATTACK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	if (g_TextureRenderType == 1)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	}
+
+	/* Diffuse */
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	Out.vColor = Diffuse * g_vColor;
+	Out.vColor.rgb = Out.vColor.rgb * 2.5f;
+	Out.vColor.a = Out.vColor.r;
+
+	if (Out.vColor.a < 0.5f)
+		discard;
+
 	return Out;
 }
 
@@ -559,6 +692,22 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 		finalcolor.rgb = finalcolor.rgb + TrailColor * 2.f;
 
 	Out.vColor = finalcolor;
+
+	return Out;
+}
+
+PS_OUT PS_ROT(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+	float fLife = 2.0f;
+
+	vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vRotrailTexture.a = vRotrailTexture.r * fLife;
+
+	float4 finalcolor = vRotrailTexture;
+	finalcolor.rgb = finalcolor.rgb + g_vColor.rgb * 2.f;
+
+	Out.vColor = finalcolor;
 	return Out;
 }
 
@@ -573,7 +722,7 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 	float3 flowetcolor = float3(98.f, 98.f, 98.f) / 255.f;
 
 	if (flower.a < 0.5f)
-		flower.rgb = flower.rgb + g_vColor + float3(1.f, 0.0f, 0.0f);
+		flower.rgb = flower.rgb + g_vColor.rgb + float3(1.f, 0.0f, 0.0f);
 	else
 		flower.rgb = (float3)1.f;
 
@@ -610,8 +759,8 @@ technique11 DefaultTechnique
 	pass Effect_Black // 2
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_One, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_MAIN();
@@ -619,17 +768,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-	pass Effect_Mix // 3
+	pass Effect_HeavyAttack // 3
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_HDR, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = compile gs_5_0 GS_MAIN();
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 PS_HEAVYATTACK();
 	}
 
 	/* Trail Pass */
@@ -671,5 +820,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FLOWERPARTICLE();
+	}
+
+	//GS_ROTTRAIL
+	pass Trail_Rot // 7
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_ROTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_ROT();
 	}
 }

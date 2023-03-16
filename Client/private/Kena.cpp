@@ -5,6 +5,7 @@
 #include "Kena_State.h"
 #include "Kena_Parts.h"
 #include "Kena_Staff.h"
+#include "SpiritArrow.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 
@@ -79,7 +80,7 @@ HRESULT CKena::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
-	m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+	m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 
 	FAILED_CHECK_RETURN(Ready_Parts(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
@@ -95,7 +96,7 @@ HRESULT CKena::Initialize(void * pArg)
 	/* InitJumpSpeed = 2.f * Gravity * JumpHeight */
 	//m_fInitJumpSpeed = sqrtf(2.f * m_fGravity * 1.5f);
 	m_fInitJumpSpeed = 0.35f;
-	
+
 	m_iObjectProperty = OP_PLAYER;
 
 	return S_OK;
@@ -103,6 +104,8 @@ HRESULT CKena::Initialize(void * pArg)
 
 HRESULT CKena::Late_Initialize(void * pArg)
 {
+	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
+
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
@@ -114,7 +117,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vPos = vPos;
 	PxCapsuleDesc.fRadius = vPivotScale.x;
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-	PxCapsuleDesc.vVelocity = _float3(0.f,0.f,0.f);
+	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 	PxCapsuleDesc.fMass = 59.f;
@@ -127,7 +130,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 
-	// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	m_pRendererCom->Set_PhysXRender(true);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
@@ -157,16 +159,16 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.fMass = 20.f;
+	PxCapsuleDesc.fLinearDamping = 10.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
 	PxCapsuleDesc.fStaticFriction = 0.5f;
 	PxCapsuleDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
-	m_pTransformCom->Add_Collider(pTag, matIdentity);
+	// CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
+	// m_pTransformCom->Add_Collider(pTag, matIdentity);
 
 	/* Staff Collider */
 	CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
@@ -179,7 +181,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);
 
 	vPos = _float3(0.f, 0.f, 0.f);
-	vPivotScale = _float3(0.03f, 0.35f, 1.f);
+	// vPivotScale = _float3(0.03f, 0.35f, 1.f);
+	vPivotScale = _float3(0.1f, 0.5f, 1.f);
 	vPivotPos = _float3(0.f, 0.015f, -1.04f);
 
 	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.f, 0.015f, -1.04f);
@@ -210,11 +213,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
-	CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Player", L"Prototype_GameObject_SpiritArrow", L"SpiritArrow", nullptr, nullptr);
-
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 
-	_tchar szCloneRotTag[32] = { 0, };
+		_tchar szCloneRotTag[32] = { 0, };
 	for (_int i = 0; i < 8; i++)
 	{
 		CGameObject* p_game_object = nullptr;
@@ -246,6 +247,13 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	}
 
 	RELEASE_INSTANCE(CGameInstance)
+
+
+	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
+	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	_float fRotState = (_float)CKena_Status::RS_GOOD;
+	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
+
 	
 
 	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
@@ -265,7 +273,7 @@ void CKena::Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
-	
+
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -280,6 +288,8 @@ void CKena::Tick(_float fTimeDelta)
 		m_pKenaState->Tick(fTimeDelta);
 		m_pStateMachine->Tick(fTimeDelta);
 	}
+
+	m_pKenaStatus->Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
@@ -296,8 +306,26 @@ void CKena::Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	/* Delegator Arrow */
+	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
+	//CUI_ClientManager::UI_PRESENT eArrow = CUI_ClientManager::AMMO_ARROW;
+	//_float fCurArrowCount = (_float)m_pKenaStatus->Get_CurArrowCount();
+	//
+	//
+	//_float fMaxArrowCount = (_float)m_pKenaStatus->Get_MaxArrowCount();
+	//_float fCurArrowCoolTime = (_float)m_pKenaStatus->Get_CurArrowCoolTime();
+	//_float fInitArrowCoolTime = (_float)m_pKenaStatus->Get_InitArrowCoolTime();
+	//
+	//m_PlayerAmmoDelegator.broadcast(eArrow, fCurArrowCount, fMaxArrowCount, fCurArrowCoolTime, fInitArrowCoolTime);
+
+
+	/* ~Delegator */
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -310,48 +338,88 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_iAnimationIndex++;
 	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
 		m_iAnimationIndex--;
-	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);	
-	
-	/************** Delegator Test *************/
-	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
-	CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
-	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
-	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
-	CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
-	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-	CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
-	CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
-	CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
-	CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
-	CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
-	CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
+	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
 
-	//CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
+
+	/* UI Control */
+	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
+	{
+		CMonster* pMonster = m_pRotForMonster[0]->Get_Target();
+		if (nullptr != pMonster && false == pMonster->Get_Bind())
+		{
+			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
+			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			CKena_Status::ROTSTATE eRotState;
+			if (m_pKenaStatus->Get_CurPIPGuage() >= 1.0f)
+				eRotState = CKena_Status::RS_GOOD;
+			else
+				eRotState = CKena_Status::RS_HIDE;
+
+			m_pKenaStatus->Set_RotState(eRotState);
+			_float fState = (_float)eRotState;
+			m_PlayerDelegator.broadcast(eRot, funcDefault, fState);
+		}
+	}
+
+
+	/* ~UI Control */
+
+	/************** Delegator Test *************/
+	//CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+	//CUI_ClientManager::UI_PRESENT eType3 = CUI_ClientManager::HUD_SHIELD;
+	CUI_ClientManager::UI_PRESENT eType4 = CUI_ClientManager::HUD_ROT;
+	//CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	//CUI_ClientManager::UI_PRESENT eArrowGuage = CUI_ClientManager::AMMO_ARROW;
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+	//CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+	//CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	////CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
+	////CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
+	////CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
+	//CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::LETTERBOX_AIM;
+
+	////CUI_ClientManager::UI_PRESENT eUpgrade = CUI_ClientManager::INV_UPGRADE;
 
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
-	CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
-	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
-	CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
+	//CUI_ClientManager::UI_FUNCTION funcLevelup = CUI_ClientManager::FUNC_LEVELUP;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
-		static _float fTag = 0.0f;
-		if (fTag < 1.0f)
-			fTag = 1.0f;
-		else
-			fTag = 0.0f;
-		m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
-		//_float fTag = 0.f;
-		//_float fCurrency[3] = { 200.f, 13.f, 230.f };
-		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
-		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fCurrency[0]);
-		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fCurrency[1]);
-		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCurrency[2]);
 
-		//	m_PlayerDelegator.broadcast(eUpgrade, funcDefault, fTag);
+		/* Test Before Hit Monster */
+		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
 	}
+
+
+	//	//static _float fTag = 0.0f;
+	//	//if (fTag < 1.0f)
+	//	//	fTag = 1.0f;
+	//	//else
+	//	//	fTag = 0.0f;
+	//	//m_PlayerDelegator.broadcast(eLetterBox, funcDefault, fTag);
+
+	//	/* Inventory */
+	//	_float fTag = 0.f;
+	//	_float fKarma = (_float)m_pKenaStatus->Get_Karma();
+	//	_float fRots = (_float)m_pKenaStatus->Get_RotCount();
+	//	_float fCrystal = (_float)m_pKenaStatus->Get_Crystal();
+
+	//	CKena* pPlayer = this;
+	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+
+		//m_PlayerDelegator.broadcast(eInv, funcDefault, fTag);
+		//m_PlayerDelegator.broadcast(eKarma, funcDefault, fKarma);
+		//m_PlayerDelegator.broadcast(eNumRots, funcDefault, fRots);
+		//m_PlayerDelegator.broadcast(eCrystal, funcDefault, fCrystal);
+
+	//}
 
 	//static _float fNum = 3.f;
 	//_float fZero = 0.f;
@@ -374,10 +442,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//	m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
 
 
-	//	/* Rot icon chagne test */
-	//	static _float fIcon = 0;
-	//	fIcon = _float(_uint(fIcon + 1) % 4);
-	//	m_PlayerDelegator.broadcast(eType4, funcDefault, fIcon);
+
 
 	//	/* Bomb Guage test */
 	//	static _float fBomb = 0.f;
@@ -431,6 +496,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pPart : m_vecPart)
 		pPart->Late_Tick(fTimeDelta);
 
+	for (auto& pArrow : m_vecArrow)
+		pArrow->Late_Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 }
@@ -463,7 +531,7 @@ HRESULT CKena::Render()
 			// Eye Render
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
 		}
-		else if (i ==5 || i == 6)
+		else if (i == 5 || i == 6)
 		{
 			// HEAD
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
@@ -503,6 +571,12 @@ HRESULT CKena::RenderShadow()
 
 void CKena::Imgui_RenderProperty()
 {
+	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
+	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
+
+	_float2	ArrowCoolTime{ m_pKenaStatus->Get_CurArrowCoolTime(), m_pKenaStatus->Get_InitArrowCoolTime() };
+	ImGui::InputFloat2("Arrow CoolTime", (_float*)&ArrowCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
 	__super::Imgui_RenderProperty();
 }
 
@@ -525,7 +599,7 @@ void CKena::ImGui_AnimationProperty()
 		{
 			m_pStateMachine->Rebuild();
 			Safe_Release(m_pKenaState);
-			m_pKenaState = CKena_State::Create(this, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
+			m_pKenaState = CKena_State::Create(this, m_pKenaStatus, m_pStateMachine, m_pModelCom, m_pAnimation, m_pTransformCom, m_pCamera);
 		}
 		m_pStateMachine->Imgui_RenderProperty();
 		ImGui::Separator();
@@ -541,11 +615,11 @@ void CKena::ImGui_AnimationProperty()
 
 void CKena::ImGui_ShaderValueProperty()
 {
-	if(ImGui::Button("Recompile"))
+	if (ImGui::Button("Recompile"))
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
-		 system("../../Copy.bat");
+		system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();
@@ -623,6 +697,18 @@ void CKena::ImGui_PhysXValueProperty()
 	//vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	//m_pTransformCom->Set_PxPivot(vPxPivot);
 
+	//PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
+	// 	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
+	// 	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
+	// 	_float fLinearDamping = ((PxRigidDynamic*)pRigidActor)->getLinearDamping();
+	// 	ImGui::DragFloat("LinearDamping", &fLinearDamping, 0.01f, -100.f, 500.f);
+	// 	_float fAngularDamping = ((PxRigidDynamic*)pRigidActor)->getAngularDamping();
+	// 	ImGui::DragFloat("AngularDamping", &fAngularDamping, 0.01f, -100.f, 500.f);
+	// 	_float3 vVelocity = CUtile::ConvertPosition_PxToD3D(((PxRigidDynamic*)pRigidActor)->getLinearVelocity());
+	// 	float fVelocity[3] = { vVelocity.x, vVelocity.y, vVelocity.z };
+	// 	ImGui::DragFloat3("PxVelocity", fVelocity, 0.01f, 0.1f, 100.0f);
+	// 	vVelocity.x = fVelocity[0]; vVelocity.y = fVelocity[1]; vVelocity.z = fVelocity[2];
+	//CPhysX_Manager::GetInstance()->Set_Velocity(pRigidActor, _float3(0.f, m_fCurJumpSpeed, 0.f));
 	//list<CTransform::ActorData>*	pActorList = m_pTransformCom->Get_ActorList();
 	//_uint iActorCount = (_uint)pActorList->size();
 
@@ -709,6 +795,10 @@ void CKena::Push_EventFunctions()
 	TurnOnCharge(true, 0.f);
 	TurnOffCharge(true, 0.f);
 	TurnOnPulseJump(true, 0.f);
+
+	TurnOnHeavyAttack_Into(true, 0.f);
+	TurnOnHeavyAttack_End(true, 0.f);
+
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -723,13 +813,36 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 	if (m_pFocusRot == nullptr)
 		return;
 
+	/* This Action needs Pip */
+	if (0 == m_pKenaStatus->Get_CurPIPCount())
+	{
+		m_pFocusRot->Set_Pos(nullptr);
+		return;
+	}
+
 	if (pTarget != nullptr)
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 		if (pGameInstance->Key_Down(DIK_R))
+		{
+			/* UI Control */
+			m_pKenaStatus->Set_CurPIPGuage(m_pKenaStatus->Get_CurPIPGuage() - 1.f);
+			m_pKenaStatus->Set_RotState(CKena_Status::RS_ACTIVE);
+			CUI_ClientManager::UI_PRESENT ePip = CUI_ClientManager::HUD_PIP;
+			CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
+			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+			_float fZero = 0.f;
+			m_PlayerDelegator.broadcast(ePip, funcDefault, fZero);
+			_float fRot = 2;
+			m_PlayerDelegator.broadcast(eRot, funcDefault, fRot);
+			/* ~UI Control */
+
 			static_cast<CMonster*>(pTarget)->Bind(m_pRotForMonster, 8);
-			
+			//static_cast<CMonster*>(pTarget)->Setting_Rot();
+			m_pRotForMonster[0]->Set_Target(static_cast<CMonster*>(pTarget));
+		}
+
 		RELEASE_INSTANCE(CGameInstance);
 	}
 
@@ -774,6 +887,26 @@ HRESULT CKena::Ready_Parts()
 	return S_OK;
 }
 
+HRESULT CKena::Ready_Arrows()
+{
+	_uint		iArrowCount = m_pKenaStatus->Get_MaxArrowCount();
+	_tchar*	pTag = nullptr;
+	CSpiritArrow*	pArrow = nullptr;
+
+	for (_uint i = 0; i < iArrowCount; ++i)
+	{
+		pTag = CUtile::Create_DummyString(L"SpiritArrow", i);
+
+		pArrow = dynamic_cast<CSpiritArrow*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_SpiritArrow", pTag, nullptr));
+		pArrow->Late_Initialize(nullptr);
+		pArrow->Reset();
+		m_vecArrow.push_back(pArrow);
+	}
+
+
+	return S_OK;
+}
+
 HRESULT CKena::Ready_Effects()
 {
 	CEffect_Base*	pEffectBase = nullptr;
@@ -799,6 +932,16 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaJump", pEffectBase);
+
+	/* HeavyAttack_Into */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHeavyAttackInto", L"HeavyAttackInto"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("HeavyAttackInto", pEffectBase);
+
+	/* HeavyAttack_End */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHeavyAttackEnd", L"HeavyAttackEnd"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("HeavyAttackEnd", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -840,8 +983,8 @@ HRESULT CKena::SetUp_Components()
 	m_pModelCom->SetUp_Material(6, WJTextureType_SSS_MASK, TEXT("../Bin/Resources/Anim/Kena/PostProcess/kena_head_SSS_MASK.png"));
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_StateMachine", L"Com_StateMachine", (CComponent**)&m_pStateMachine, nullptr, this), E_FAIL);
-	
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);	
+
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_KenaStatus", L"Com_Status", (CComponent**)&m_pKenaStatus, nullptr, this), E_FAIL);
 	m_pKenaStatus->Load("../Bin/Data/Status/Kena_Status.json");
 
 	return S_OK;
@@ -1083,6 +1226,48 @@ void CKena::TurnOnPulseJump(_bool bIsInit, _float fTimeDelta)
 	/* JumpPos Update */
 }
 
+void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnHeavyAttack_Into);
+		return;
+	}
+	/* IntoAttack Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["HeavyAttackInto"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["HeavyAttackInto"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	/* IntoAttack Update */
+
+	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
+}
+
+void CKena::TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnHeavyAttack_End);
+		return;
+	}
+	/* EndAttack Update */
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matEndAttack = m_mapEffect["HeavyAttackEnd"]->Get_TransformCom()->Get_WorldMatrix();
+	matEndAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["HeavyAttackEnd"]->Get_TransformCom()->Set_WorldMatrix(matEndAttack);
+	/* EndAttack Update */
+
+	m_mapEffect["HeavyAttackEnd"]->Set_Active(true);
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -1117,6 +1302,10 @@ void CKena::Free()
 		Safe_Release(pPart);
 	m_vecPart.clear();
 
+	for (auto pArrow : m_vecArrow)
+		Safe_Release(pArrow);
+	m_vecArrow.clear();
+
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
 	m_mapEffect.clear();
@@ -1149,11 +1338,9 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		CGameObject* pGameObject = nullptr;
 
-		if (iColliderIndex == COL_MONSTER_WEAPON)
+		_bool bRealAttack = false;
+		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
-			// 맞은거
-			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
-			//	return -1;
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fGuage = m_pKenaStatus->Get_PercentHP();
@@ -1177,27 +1364,26 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// 때린거 
-			//if (FAILED(CGameInstance::GetInstance()->Clone_AnimObject(g_LEVEL, L"Layer_Effect", TEXT("Prototype_GameObject_KenaHit"), L"Hit", nullptr, &pGameObject)))
-			//	return -1;
-
-			for (auto& Effect : m_mapEffect)
-			{
-				if (Effect.first == "KenaHit")
+			/* Increase Pip Guage */
+			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+				for (auto& Effect : m_mapEffect)
 				{
-					Effect.second->Set_Active(true);
-					Effect.second->Set_Position(vCollisionPos);
+					if (Effect.first == "KenaHit")
+					{
+						Effect.second->Set_Active(true);
+						Effect.second->Set_Position(vCollisionPos);
+					}
 				}
-			}
-
+			
 			pGameObject->Set_Position(vCollisionPos);
 
 			// m_bCommonHit = true;
 			// m_bHeavyHit = true;
 		}
 
+		int temp = 0;
 	}
-	
+
 	return 0;
 }
 
@@ -1229,19 +1415,19 @@ void CKena::Test_Raycast()
 		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
 		{
 			m_pTerrain->Set_BrushPosition(vOut);
-			
+
 			if (GetKeyState('R') & 0x8000)
-			{	
+			{
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
 				{
 					m_pRopeRotRock->Set_MoveFlag(true);
 					m_pRopeRotRock->Set_MoveTargetPosition(vOut);
-				}			
-			}			
+				}
+			}
 		}
 	}
 	else
 	{
-		m_pTerrain->Set_BrushPosition(_float3(-1000.f, 0.f , 0.f));
+		m_pTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 	}
 }

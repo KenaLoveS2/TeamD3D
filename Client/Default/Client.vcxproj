@@ -176,12 +176,15 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Base_Ground.h" />
+    <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
     <ClInclude Include="..\public\BranchTosser_Weapon.h" />
     <ClInclude Include="..\public\Bridge.h" />
+    <ClInclude Include="..\public\CameraForNpc.h" />
+    <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
@@ -208,6 +211,8 @@
     <ClInclude Include="..\public\E_EnemyWispGround.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
     <ClInclude Include="..\public\E_KenaDust.h" />
+    <ClInclude Include="..\public\E_KenaHeavyAttack_end.h" />
+    <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -220,6 +225,11 @@
     <ClInclude Include="..\public\E_KenaTrail.h" />
     <ClInclude Include="..\public\E_PulseObject.h" />
     <ClInclude Include="..\public\E_P_EnemyWisp.h" />
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h" />
+    <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
+    <ClInclude Include="..\public\E_RotTrail.h" />
+    <ClInclude Include="..\public\E_SpiritArrowHit.h" />
+    <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -229,6 +239,7 @@
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
+    <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
     <ClInclude Include="..\Public\Interaction_Com.h" />
     <ClInclude Include="..\Public\Kena.h" />
@@ -255,7 +266,9 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
+    <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
@@ -275,7 +288,6 @@
     <ClInclude Include="..\public\Rot.h" />
     <ClInclude Include="..\public\RotEater.h" />
     <ClInclude Include="..\public\Rope_RotRock.h" />
-    <ClInclude Include="..\public\Rot_State.h" />
     <ClInclude Include="..\public\RuinKit.h" />
     <ClInclude Include="..\public\Sapling.h" />
     <ClInclude Include="..\public\ShieldStick.h" />
@@ -349,12 +361,15 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
+    <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
     <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
+    <ClCompile Include="..\private\CameraForNpc.cpp" />
+    <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
@@ -379,6 +394,8 @@
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
     <ClCompile Include="..\private\E_KenaDust.cpp" />
+    <ClCompile Include="..\private\E_KenaHeavyAttack_end.cpp" />
+    <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -392,6 +409,11 @@
     <ClCompile Include="..\private\E_PulseObject.cpp" />
     <ClCompile Include="..\private\E_EnemyWispGround.cpp" />
     <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp" />
+    <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
+    <ClCompile Include="..\private\E_RotTrail.cpp" />
+    <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
+    <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
@@ -401,9 +423,10 @@
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
+    <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
     <ClCompile Include="..\Private\Interaction_Com.cpp" />
-    <ClCompile Include="..\Private\Kena.cpp" />
+    <ClCompile Include="..\private\Kena.cpp" />
     <ClCompile Include="..\Private\Kena_MainOutfit.cpp" />
     <ClCompile Include="..\Private\Kena_Parts.cpp" />
     <ClCompile Include="..\private\Imgui_Effect.cpp" />
@@ -427,7 +450,9 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
+    <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
@@ -447,7 +472,6 @@
     <ClCompile Include="..\private\Rot.cpp" />
     <ClCompile Include="..\private\RotEater.cpp" />
     <ClCompile Include="..\private\Rope_RotRock.cpp" />
-    <ClCompile Include="..\private\Rot_State.cpp" />
     <ClCompile Include="..\private\RuinKit.cpp" />
     <ClCompile Include="..\private\Sapling.cpp" />
     <ClCompile Include="..\private\ShieldStick.cpp" />
@@ -534,6 +558,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />

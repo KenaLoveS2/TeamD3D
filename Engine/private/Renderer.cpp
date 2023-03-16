@@ -182,7 +182,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
-
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_HDR"), (fSizeX * 0.5f) + fSizeX, (fSizeY * 0.5f) + (fSizeY * 2.f), fSizeX, fSizeY)))
+		return E_FAIL;
+	
 	// For. Lighting
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), (fSizeX * 0.5f) + fSizeX * 2.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
@@ -364,6 +366,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
 	}
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (FAILED(Render_UILast()))

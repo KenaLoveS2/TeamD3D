@@ -350,19 +350,18 @@ PS_OUT PS_MAIN_NoDiffuseColorGuage(PS_IN In)
 	/* Discard pixel depends on original UV.x */
 	if (In.vTexUV.x > g_fAmount)
 	{
-		vColor = vDiffuse;
+		vColor.rgb = vDiffuse.rgb;
 	}
 	else
 	{
 		vColor.r = g_vColor.r * (In.vTexUV.x + g_vMinColor.r); // 0.1f
 		vColor.g = g_vColor.g * (In.vTexUV.x + g_vMinColor.g); // 0.3f
 		vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); // 0.5f
-		vColor.a = g_vColor.a;
 	}
 
 	//Out.vColor = vDiffuse * vColor;
 	Out.vColor.rgb = vColor.rgb;
-	Out.vColor.a = vDiffuse.a;
+	Out.vColor.a = vDiffuse.a * g_fAlpha;
 
 	return Out;
 
@@ -804,7 +803,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

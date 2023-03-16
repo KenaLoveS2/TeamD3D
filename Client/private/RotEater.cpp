@@ -25,9 +25,11 @@ HRESULT CRotEater::Initialize(void* pArg)
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
 	if (pArg != nullptr)
@@ -36,6 +38,8 @@ HRESULT CRotEater::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 16.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -321,7 +325,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f);
+		return DistanceTrigger(m_fSpawnRange);
 	})
 		
 
@@ -332,6 +336,7 @@ HRESULT CRotEater::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to AWAKE", "AWAKE")
@@ -442,6 +447,7 @@ HRESULT CRotEater::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_bRealAttack = false;
 		m_iAfterSwipeAttack++;
 
 		if (m_iAfterSwipeAttack > 1)
@@ -506,6 +512,10 @@ HRESULT CRotEater::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(JUMPATTACK);
 		m_pModelCom->Set_AnimIndex(JUMPATTACK);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -532,6 +542,10 @@ HRESULT CRotEater::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(ATTACK_LONGRANGE);
 		m_pModelCom->Set_AnimIndex(ATTACK_LONGRANGE);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
 	})
 		.AddTransition("LONGRANGEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -636,6 +650,8 @@ HRESULT CRotEater::SetUp_State()
 		}
 
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -647,8 +663,6 @@ HRESULT CRotEater::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})		
 		.Build();
 
@@ -792,7 +806,6 @@ void CRotEater::Set_AttackType()
 
 void CRotEater::Reset_Attack()
 {
-	m_bRealAttack = false;
 	m_bJumpAttack = false;
 	m_bSwipeAttack = false;
 	m_bLongRangeAttack = false;

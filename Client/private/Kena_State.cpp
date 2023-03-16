@@ -2,12 +2,14 @@
 #include <cstddef>
 #include "..\public\Kena_State.h"
 #include "GameInstance.h"
-#include "Kena.h"
-#include "Camera_Player.h"
 #include "Utile.h"
 #include "UI_ClientManager.h"
 #include "AnimationState.h"
 #include "Effect_Base.h"
+#include "Kena.h"
+#include "Kena_Status.h"
+#include "SpiritArrow.h"
+#include "Camera_Player.h"
 #include "E_KenaPulse.h"
 
 #define NULLFUNC	(_bool(CKena_State::*)())nullptr
@@ -15,11 +17,12 @@ CKena_State::CKena_State()
 {
 }
 
-HRESULT CKena_State::Initialize(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
+HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
 {
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	m_pKena = pKena;
+	m_pStatus = pStatus;
 	m_pStateMachine = pStateMachine;
 	m_pModel = pModel;
 	m_pAnimationState = pAnimation;
@@ -76,6 +79,34 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 {
 	m_ePreDir = m_eDir;
 
+	if (m_pKena->m_bBow == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurArrowCount() > 0)
+	{
+		for (auto pArrow : m_pKena->m_vecArrow)
+		{
+			if (pArrow->IsActive() == false)
+			{
+				m_pKena->m_pCurArrow = pArrow;
+				m_pKena->m_pCurArrow->Reset();
+				m_pKena->m_pCurArrow->Set_Active(true);
+				break;
+			}
+		}
+	}
+
+	if (m_pKena->m_bBow == false && m_pKena->m_pCurArrow != nullptr)
+	{
+		if (m_pKena->m_pCurArrow->Get_CurrentState() >= CSpiritArrow::ARROW_FIRE)
+		{
+			m_pStatus->Set_CurArrowCount(m_pStatus->Get_CurArrowCount() - 1);
+			m_pKena->m_pCurArrow = nullptr;
+		}
+		else
+		{
+			m_pKena->m_pCurArrow->Reset();
+			m_pKena->m_pCurArrow = nullptr;
+		}
+	}
+
 // 	m_pKena->m_bCommonHit = false;
 // 	m_pKena->m_bHeavyHit = false;
 }
@@ -84,11 +115,11 @@ void CKena_State::ImGui_RenderProperty()
 {
 }
 
-CKena_State * CKena_State::Create(CKena * pKena, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
+CKena_State * CKena_State::Create(CKena * pKena, CKena_Status * pStatus, CStateMachine * pStateMachine, CModel * pModel, CAnimationState * pAnimation, CTransform * pTransform, CCamera_Player * pCamera)
 {
 	CKena_State*	pInstance = new CKena_State;
 
-	if (FAILED(pInstance->Initialize(pKena, pStateMachine, pModel, pAnimation, pTransform, pCamera)))
+	if (FAILED(pInstance->Initialize(pKena, pStatus, pStateMachine, pModel, pAnimation, pTransform, pCamera)))
 	{
 		MSG_BOX("Failed to Create : CKena_State");
 		Safe_Release(pInstance);
@@ -169,7 +200,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
-		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::Animation_Finish)
@@ -182,7 +213,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
-		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 
@@ -225,7 +256,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -237,7 +268,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -249,7 +280,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -261,7 +292,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -273,7 +304,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -285,7 +316,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -297,7 +328,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -309,7 +340,7 @@ HRESULT CKena_State::SetUp_State_Aim()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"RUN", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::KeyInput_None)
 
@@ -325,7 +356,7 @@ HRESULT CKena_State::SetUp_State_Aim_Air()
 		.Init_Tick(this, &CKena_State::Tick_Aim_Air_Into)
 		.Init_End(this, &CKena_State::End_Aim_Air_Into)
 		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
 		.Init_Changer(L"AIM_AIR_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -335,7 +366,7 @@ HRESULT CKena_State::SetUp_State_Aim_Air()
 		.Init_End(this, &CKena_State::End_Aim_Air_Loop)
 		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"FALL", this, &CKena_State::Animation_Finish)
-		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_AIR_CHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
 
 		.Finish_Setting();
@@ -919,7 +950,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
-		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::Animation_Finish)
 
@@ -941,7 +972,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_FORWARD_LEFT")
@@ -951,7 +982,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_FORWARD_RIGHT")
@@ -961,7 +992,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_BACKWARD")
@@ -971,7 +1002,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_BACKWARD_LEFT")
@@ -981,7 +1012,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_BACKWARD_RIGHT")
@@ -991,7 +1022,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_LEFT")
@@ -1001,7 +1032,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RELEASE_RUN_RIGHT")
@@ -1011,7 +1042,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RELEASE", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"BOW_RECHARGE")
@@ -1125,7 +1156,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
-		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"AIM_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -1147,7 +1178,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_FORWARD_LEFT")
@@ -1157,7 +1188,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_FORWARD_RIGHT")
@@ -1167,7 +1198,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_BACKWARD")
@@ -1177,7 +1208,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_BACKWARD_LEFT")
@@ -1187,7 +1218,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_BACKWARD_RIGHT")
@@ -1197,7 +1228,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_LEFT")
@@ -1207,7 +1238,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 		
 		.Add_State(L"BOW_RETURN_RUN_RIGHT")
@@ -1217,7 +1248,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::KeyInput_None)
-		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"AIM_RUN", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
@@ -1257,7 +1288,7 @@ HRESULT CKena_State::SetUp_State_Bow_Air()
 		.Init_Tick(this, &CKena_State::Tick_Bow_Air_Release)
 		.Init_End(this, &CKena_State::End_Bow_Air_Release)
 		.Init_Changer(L"FALL", this, &CKena_State::KeyUp_LShift)
-		.Init_Changer(L"BOW_AIR_RECHARGE", this, &CKena_State::MouseInput_Left)
+		.Init_Changer(L"BOW_AIR_RECHARGE", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
 		.Init_Changer(L"BOW_AIR_RETURN", this, &CKena_State::Animation_Finish)
 		.Init_Changer(L"BOW_LAND", this, &CKena_State::OnGround)
 
@@ -2188,11 +2219,11 @@ void CKena_State::Start_Aim_Into(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 
-	/* Switch On Aim */
-	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
-	_float fTag = 1.f;
-	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+	/* Turn On Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 1.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
@@ -2207,11 +2238,13 @@ void CKena_State::Start_Aim_Return(_float fTimeDelta)
 	m_pAnimationState->State_Animation("AIM_RETURN");
 
 	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
 
-	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
-	_float fTag = 0.f;
-	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Run(_float fTimeDelta)
@@ -2422,6 +2455,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
@@ -2430,6 +2468,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
@@ -2438,6 +2481,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
@@ -2446,6 +2494,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
@@ -2454,6 +2507,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
@@ -2462,6 +2520,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
@@ -2470,6 +2533,11 @@ void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
@@ -2478,6 +2546,11 @@ void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
@@ -2646,6 +2719,11 @@ void CKena_State::Start_Bow_Release_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
@@ -2654,6 +2732,11 @@ void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
@@ -2662,6 +2745,11 @@ void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
@@ -2670,6 +2758,11 @@ void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
@@ -2678,6 +2771,11 @@ void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
@@ -2686,6 +2784,11 @@ void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
@@ -2694,6 +2797,11 @@ void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
@@ -2702,6 +2810,11 @@ void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge(_float fTimeDelta)
@@ -2723,6 +2836,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
@@ -2731,6 +2849,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
@@ -2739,6 +2862,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
@@ -2747,6 +2875,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
@@ -2755,6 +2888,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
@@ -2763,6 +2901,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
@@ -2771,6 +2914,11 @@ void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
@@ -2779,6 +2927,11 @@ void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Return(_float fTimeDelta)
@@ -3351,6 +3504,11 @@ void CKena_State::Tick_Aim_Loop(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 {
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
@@ -3972,6 +4130,12 @@ void CKena_State::End_Aim_Return(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;
+
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::End_Aim_Run_Forward(_float fTimeDelta)
@@ -4563,6 +4727,11 @@ _bool CKena_State::Damaged_Dir_Right()
 	return m_pKena->m_eDamagedDir == CKena::DAMAGED_RIGHT;
 }
 
+_bool CKena_State::Check_ArrowCount()
+{
+	return m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurArrowCount() > 0;
+}
+
 _bool CKena_State::KeyInput_None()
 {
 	_bool		bDetectInput = true;
@@ -4672,7 +4841,15 @@ _bool CKena_State::KeyInput_Space()
 _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
+	{
+		/* Turn Off Canvas Aim */
+		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		_float fTag = 1.f;
+		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
 		return true;
+	}
 	
 	return false;
 }
@@ -4784,8 +4961,15 @@ _bool CKena_State::KeyUp_E()
 _bool CKena_State::KeyUp_LShift()
 {
 	if (m_pGameInstance->Key_Up(DIK_LSHIFT))
+	{
+		/* Turn Off Canvas Aim */
+		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		_float fTag = 0.f;
+		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
 		return true;
-	
+	}
 	return false;
 }
 

@@ -109,7 +109,7 @@ private:
 	_float	m_fIdletoAttackTime = 0.f;
 
 	_int		m_iAttackType = ATTACKTYPE_END;
-	_bool	m_bRealAttack = false;
+	
 	_bool	m_bSwipeAttack = false;
 	_bool	m_bJumpAttack = false;
 	_bool	m_bLongRangeAttack = false;

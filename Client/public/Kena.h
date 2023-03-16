@@ -62,24 +62,25 @@ public:
 	void						Call_RotIcon(CGameObject* pTarget);
 
 private:
-	CRenderer*						m_pRendererCom = nullptr;
-	CShader*							m_pShaderCom = nullptr;
-	CModel*							m_pModelCom = nullptr;
-	CStateMachine*				m_pStateMachine = nullptr;
-	CAnimationState*				m_pAnimation = nullptr;
-	class CKena_State*			m_pKenaState = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CModel*					m_pModelCom = nullptr;
+	CStateMachine*			m_pStateMachine = nullptr;
+	CAnimationState*		m_pAnimation = nullptr;
+	class CKena_State*		m_pKenaState = nullptr;
 	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain*					m_pTerrain = nullptr;
-	class CRope_RotRock*		m_pRopeRotRock = nullptr;
-	class CRot*						m_pFirstRot = nullptr;
-	class CRotForMonster*    m_pRotForMonster[8] = { nullptr, };
+	class CTerrain*			m_pTerrain = nullptr;
+	class CRope_RotRock*	m_pRopeRotRock = nullptr;
+	class CRot*				m_pFirstRot = nullptr;
+	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 
 private:
-	vector<class CKena_Parts*>	m_vecPart;
-
-	map<const string, class CEffect_Base*>   m_mapEffect;
+	vector<class CKena_Parts*>				m_vecPart;
+	vector<class CSpiritArrow*>				m_vecArrow;
+	class CSpiritArrow*							m_pCurArrow = nullptr;
+	map<const string, class CEffect_Base*>	m_mapEffect;
 
 private:
 	_bool						m_bAttack = false;
@@ -123,13 +124,14 @@ private:
 
 private:
 	HRESULT					Ready_Parts();
+	HRESULT					Ready_Arrows();
 	HRESULT					Ready_Effects();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
-	void						Update_Collider(_float fTimeDelta);
+	void					Update_Collider(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);
@@ -144,9 +146,15 @@ private:	/* Animation Event Func */
 	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 
 	void					TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
+	void					TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
+	void					TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
+	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
+
+
 	_float m_fTest = 0.f;
 
 public:
@@ -154,7 +162,8 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
+
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
