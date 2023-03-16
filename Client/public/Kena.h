@@ -46,6 +46,8 @@ public:
 
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 
+	const _bool&				Is_StateLock() const{ return m_bStateLock; }
+	void					Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -162,6 +164,7 @@ public:
 
 
 	_float m_fTest = 0.f;
+	_bool	m_bStateLock;
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

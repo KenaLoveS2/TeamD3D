@@ -61,8 +61,8 @@ HRESULT CUI_NodeTitle::Late_Initialize(void * pArg)
 
 void CUI_NodeTitle::Tick(_float fTimeDelta)
 {
-	if (CGameInstance::GetInstance()->Key_Down(DIK_L))
-		Appear(wstring{ L"루수의 산" }, 1);
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_L))
+	//	Appear(wstring{ L"루수의 산" }, 1);
 
 	if (!m_bActive)
 		return;

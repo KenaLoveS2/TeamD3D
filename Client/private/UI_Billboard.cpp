@@ -83,9 +83,7 @@ void CUI_Billboard::Imgui_RenderProperty()
 
 	if (ImGui::BeginTabItem("UI_Setting"))
 	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		vector<string>* pPasses = pGameInstance->Get_UIString(CUI_Manager::STRKEY_RENDERPASS);
-		RELEASE_INSTANCE(CGameInstance);
+		vector<string>* pPasses = CGameInstance::GetInstance()->Get_UIString(CUI_Manager::STRKEY_RENDERPASS);
 
 		/* RenderPass */
 		static int selected_Pass;// = 0;

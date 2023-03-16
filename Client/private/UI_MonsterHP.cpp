@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Monster.h"
 #include "UI_Event_Guage.h"
+#include "UI_Event_Fade.h"
 
 CUI_MonsterHP::CUI_MonsterHP(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
@@ -17,6 +18,8 @@ CUI_MonsterHP::CUI_MonsterHP(const CUI_MonsterHP & rhs)
 void CUI_MonsterHP::Set_Guage(_float fGuage)
 {
 	static_cast<CUI_Event_Guage*>(m_vecEvents[0])->Call_Event(fGuage);
+	static_cast<CUI_Event_Fade*>(m_vecEvents[1])->FadeOut();
+
 }
 
 HRESULT CUI_MonsterHP::Initialize_Prototype()
@@ -52,6 +55,7 @@ HRESULT CUI_MonsterHP::Initialize(void * pArg)
 	UIDESC* tDesc = (UIDESC*)pArg;
 	m_vecEvents.push_back(CUI_Event_Guage::Create({ 1.f, 0.f, 0.f, 1.f }, { 1.f, 0.f, 0.f,1.f }));
 
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
 	return S_OK;
 }
 

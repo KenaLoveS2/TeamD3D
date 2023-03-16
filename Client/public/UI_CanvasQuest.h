@@ -35,6 +35,8 @@ private:
 	HRESULT					Ready_Quests();
 
 private: /* Bind Functions */
+	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr);
+
 	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
 private:
 	void	Default(CUI_ClientManager::UI_PRESENT eType, _float fData);
@@ -52,6 +54,7 @@ private:/* For Shader */
 	_float		m_fAlpha;
 	STATE		m_eState;
 
+	_float		m_fTmpAcc;
 private:
 	vector<CUI_NodeEffect*>	m_vecEffects;
 

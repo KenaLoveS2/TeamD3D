@@ -73,6 +73,8 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 	m_vecNode[UI_PIPBAR1]->Set_Active(true);
 	m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
 	
+	static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(0);
+
 	return S_OK;
 }
 
@@ -117,20 +119,14 @@ HRESULT CUI_CanvasHUD::Render()
 HRESULT CUI_CanvasHUD::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
-
-
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
 	RELEASE_INSTANCE(CGameInstance);
 
+	if (pKena == nullptr)
+		return E_FAIL;
+
+	pKena->Get_State()->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
+	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasHUD::Function);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -151,7 +147,7 @@ HRESULT CUI_CanvasHUD::Ready_Nodes()
 	(The cloneTag is stored after the clone process.)
 	*/
 	str = "Node_HPBar";
-	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(Áö¿ªº¯¼ö) */
+	tDesc.fileName.assign(str.begin(), str.end()); /* this file name doesn't exist eternally.(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½) */
 	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_HPBar", L"Node_HPBar", &tDesc));
 	if (FAILED(Add_Node(pUI)))
 		return E_FAIL;
@@ -266,8 +262,6 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -289,8 +283,6 @@ HRESULT CUI_CanvasHUD::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

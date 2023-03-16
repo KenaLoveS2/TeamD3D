@@ -2,14 +2,29 @@
 #include "..\public\Saiya.h"
 #include "GameInstance.h"
 #include "CameraForNpc.h"
+#include "Json/json.hpp"
+#include <fstream>
+#include <codecvt>
+#include <locale>
+#include "Kena.h"
+#include "UI_ClientManager.h"
+
+/* For. Delegator Default Value (meaningless) */
+_float		fDefaultVal = -1.f;
+_bool		bDefaultVal = false;
+wstring		wstrDefault = L"";
 
 CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
+	, m_iChatIndex(0)
+	, m_iLineIndex(0)
 {
 }
 
 CSaiya::CSaiya(const CNpc& rhs)
 	: CNpc(rhs)
+	, m_iChatIndex(0)
+	, m_iLineIndex(0)
 {
 }
 
@@ -71,7 +86,7 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(10.f, 0.f, 5.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(79.f, 0.f, 137.f, 1.f));
 
 	return S_OK;
 }
@@ -193,6 +208,8 @@ HRESULT CSaiya::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
+
+		/* Idle */
 		.AddState("IDLE")
 		.Tick([this](_float fTimeDelta)
 	{
@@ -204,6 +221,7 @@ HRESULT CSaiya::SetUp_State()
 		return DistanceTrigger(5.f) && !m_bMeetPlayer;
 	})
 	
+		/* Cheer */
 		.AddState("CHEER")
 		.OnStart([this]()
 	{
@@ -214,21 +232,85 @@ HRESULT CSaiya::SetUp_State()
 			m_bMeetPlayer = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
 		m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
+		CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+
+
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Set_StateLock(true);
 	})
 	
 		.OnExit([this]()
 	{
-		// ´©³ª°¡ ²ô°í½ÍÀ»¶§ ²ô¸é´ï~
-		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-			m_pMyCam->Set_Target(nullptr);
-		p_game_instance->Work_Camera(L"PLAYER_CAM");
-		RELEASE_INSTANCE(CGameInstance)
 	})
-		.AddTransition("CHEER to IDLE", "IDLE")
+		.AddTransition("CHEER to CHAT", "CHAT")
 			.Predicator([this]()
 		{
 			return  AnimFinishChecker(SAIYA_CHEER);
 		})
+
+		/* Chat */
+		.AddState("CHAT")
+		.OnStart([this]()
+		{
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = true;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][0]);
+			m_iLineIndex++;
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
+
+			if (CGameInstance::GetInstance()->Key_Down(DIK_E))
+			{
+				if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
+				{
+					m_iLineIndex++;
+					return;
+				}
+				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				_bool bVal = true;
+				m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
+				m_iLineIndex++;
+			}
+
+		})
+		.OnExit([this]()
+		{
+			CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+			m_pMyCam->Set_Target(nullptr);
+			p_game_instance->Work_Camera(L"PLAYER_CAM");
+			RELEASE_INSTANCE(CGameInstance)
+
+			/* Chat End */
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_bool bVal = false;
+			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+			if (pKena != nullptr)
+				pKena->Set_StateLock(false);
+
+
+			m_iLineIndex = 0;
+			m_iChatIndex++;
+
+			/* Quest Start */
+			CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
+			CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
+			_bool bStart = true;
+			m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
+			_float fQuestIdx = 0.f;
+			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
+
+		})
+		.AddTransition("CHAT to IDLE", "IDLE")
+			.Predicator([this]()
+			{
+				return IsChatEnd();
+			})
+
 
 			.Build();
 
@@ -277,15 +359,58 @@ HRESULT CSaiya::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-HRESULT CSaiya::SetUp_UI(_float fOffsetY)
+HRESULT CSaiya::SetUp_UI()
 {
-	return CNpc::SetUp_UI(fOffsetY);
+	Json jLoad;
+
+	string filePath = "../Bin/Data/Chat/Saiya.json";
+	ifstream file(filePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	using convert_type = codecvt_utf8<wchar_t>;
+	wstring_convert<convert_type> utf8_conv;
+
+	_int iNumChat[10];
+	_uint i = 0;
+	for (auto iNum : jLoad["NumChat"])
+	{
+		iNumChat[i] = iNum;
+
+		string strSub = "Chat" + to_string(i);
+		for (size_t j = 1; j <= iNumChat[i]; ++j)
+		{
+			for (auto jSub : jLoad[strSub])
+			{
+				string str = "line" + to_string(j);
+				string line;
+				jSub[str].get_to<string>(line);
+
+				wstring wstr = utf8_conv.from_bytes(line);
+				m_vecChat[i].push_back(wstr);
+			}
+		}
+
+		++i;
+	}
+
+	return S_OK;
 }
 
 void CSaiya::AdditiveAnim(_float fTimeDelta)
 {
 	m_pModelCom->Set_AdditiveAnimIndexForMonster(SAIYA_MOUTHFLAP);
 	m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Saiya.ao");
+}
+
+_bool CSaiya::IsChatEnd()
+{
+	if ((size_t)m_iLineIndex > m_vecChat[m_iChatIndex].size())
+		return true;
+	else
+		return false;
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -317,4 +442,7 @@ CGameObject* CSaiya::Clone(void* pArg)
 void CSaiya::Free()
 {
 	__super::Free();
+
+	for(_uint i=0;i<10;++i)
+		m_vecChat[i].clear();
 }

@@ -25,6 +25,9 @@ private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
 
+private:
+
+
 public:
 	static	CUI_MonsterHP*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr);

@@ -4,6 +4,7 @@
 #include "Bone.h"
 #include "Utile.h"
 #include "Sticks01.h"
+#include "RotForMonster.h"
 
 CMage::CMage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -30,7 +31,7 @@ HRESULT CMage::Initialize(void* pArg)
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(1.f), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(1.5f), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -689,6 +690,24 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(COMMAND);
 		m_pModelCom->Set_AnimIndex(COMMAND);
+
+		for (_uint i = 0; i < 8; ++i)
+		{
+			if (m_pRotForMonster[i])
+				m_pRotForMonster[i]->Bind(true, this);
+		}
+	})
+		.OnExit([this]()
+	{
+		// 맞는 애니메이션일때도 맞는가?
+		m_bBind = false;
+		Reset_Attack();
+		for (_uint i = 0; i < 8; ++i)
+		{
+			if (m_pRotForMonster[i])
+				m_pRotForMonster[i]->Bind(false, this);
+		}
+		ZeroMemory(&m_pRotForMonster, sizeof(m_pRotForMonster));
 	})
 		.AddTransition("BIND to ENTER", "ENTER")
 		.Predicator([this]()

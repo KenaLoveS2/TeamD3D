@@ -24,12 +24,14 @@
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
@@ -294,15 +296,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	RELEASE_INSTANCE(CGameInstance)
 
-
 	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
 	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	
-
-	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -332,7 +331,8 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_pAnimation->Get_Preview() == false)
 	{
 		m_pKenaState->Tick(fTimeDelta);
-		m_pStateMachine->Tick(fTimeDelta);
+		if(!m_bStateLock)
+			m_pStateMachine->Tick(fTimeDelta);
 	}
 
 	m_pKenaStatus->Tick(fTimeDelta);
@@ -430,16 +430,16 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		CKena* pPlayer = this;
 		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-
-		///* Test Before Hit Monster */
-		//_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-		//m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-		//_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		//m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-
-
 	}
 
+	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		/* Test Before Hit Monster */
+		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)

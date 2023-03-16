@@ -1,0 +1,47 @@
+{
+  "0_LayerTag": "Layer_Monster",
+  "1_Data": [
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 9.365721702575684, -0.8999999761581421, 60.69583511352539, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_Sticks01",
+      "4_CloneObjTag": "Monster_0"
+    },
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 14.324712753295898, -0.8999999761581421, 60.07109069824219, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_ShieldStick",
+      "4_CloneObjTag": "Monster_1"
+    },
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 24.223922729492188, -0.9010000824928284, 74.41858673095703, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_RotEater",
+      "4_CloneObjTag": "Monster_2"
+    },
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 44.01382064819336, -0.9499999284744263, 83.9172134399414, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_Sapling",
+      "4_CloneObjTag": "Monster_3"
+    },
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 29.928815841674805, -0.8499999642372131, 77.033203125, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_WoodKnight",
+      "4_CloneObjTag": "Monster_4"
+    },
+    {
+      "1_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 60.7487678527832, -0.24999994039535522, 100.41926574707031, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_Mage",
+      "4_CloneObjTag": "Monster_5"
+    },
+    {
+      "1_Transform State": [ 0.4495547115802765, -9.191809908770665e-07, -0.893252432346344, 0.0, 1.7128350009443238e-06, 1.0, -1.6699421223620448e-07, 0.0, 0.893252432346344, -1.4549209481629077e-06, 0.4495547115802765, 0.0, 79.99691772460938, -0.44999992847442627, 120.17755889892578, 1.0 ],
+      "2_Room Index": 0,
+      "3_ProtoObjTag": "Prototype_GameObject_RockGolem",
+      "4_CloneObjTag": "Monster_6"
+    }
+  ]
+}

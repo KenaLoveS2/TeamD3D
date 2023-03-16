@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Kena.h"
 #include "UI_NodeLetterBox.h"
+#include "UI_NodeChat.h"
+#include "Saiya.h"
 
 CUI_CanvasBottom::CUI_CanvasBottom(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -68,7 +70,6 @@ void CUI_CanvasBottom::Late_Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
-
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -81,18 +82,10 @@ HRESULT CUI_CanvasBottom::Render()
 
 HRESULT CUI_CanvasBottom::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
+	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
+	if (pSaiya == nullptr)
 		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
-
-	RELEASE_INSTANCE(CGameInstance);
+	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasBottom::BindFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -112,6 +105,19 @@ HRESULT CUI_CanvasBottom::Ready_Nodes()
 		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
 		tDesc.fileName = cloneTag;
 		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_LetterBox", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
+	{ /* Chat */
+		string strTag = "Node_Chat";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_Chat", cloneTag, &tDesc));
 		if (FAILED(Add_Node(pUI)))
 			return E_FAIL;
 		m_vecNodeCloneTag.push_back(strTag);
@@ -175,26 +181,39 @@ HRESULT CUI_CanvasBottom::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
+void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr)
 {
 	switch (eType)
 	{
-	case CUI_ClientManager::LETTERBOX_AIM:
-		if (1.f == fValue)
+	case CUI_ClientManager::BOT_LETTERBOX:
+		if (bValue)
 		{
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
 			static_cast<CUI_NodeLetterBox*>(m_vecNode[UI_LETTERBOX])->Appear();
 		}
 		else
 		{
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
-			CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(true);
 			static_cast<CUI_NodeLetterBox*>(m_vecNode[UI_LETTERBOX])->DisAppear();
 		}
 		break;
-		
+
+	case CUI_ClientManager::BOT_CHAT:
+		if (bValue)
+		{
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+			m_vecNode[UI_CHAT]->Set_Active(true);
+			static_cast<CUI_NodeChat*>(m_vecNode[UI_CHAT])->Set_String(wstr);
+		}
+		else
+		{
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(true);
+			m_vecNode[UI_CHAT]->Set_Active(false);
+		}
+		break;
 	}
+
+
 }
 
 CUI_CanvasBottom * CUI_CanvasBottom::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

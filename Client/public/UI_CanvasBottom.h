@@ -8,7 +8,7 @@ class CUI_CanvasBottom final : public CUI_Canvas
 {
 public:
 	/* should be same with the order of m_vecNode.push_back()*/
-	enum UI_ORDER { UI_LETTERBOX, UI_END };
+	enum UI_ORDER { UI_LETTERBOX, UI_CHAT, UI_END };
 private:
 	CUI_CanvasBottom(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_CanvasBottom(const CUI_CanvasBottom& rhs);
@@ -28,8 +28,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources()			override;
 
 private: /* Bind Functions */
-	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue);
-
+	void	BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr);
 
 public:
 	static	CUI_CanvasBottom*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
