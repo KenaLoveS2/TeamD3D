@@ -241,9 +241,6 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\99. Common">
       <UniqueIdentifier>{542b3b21-7aaa-4085-ac5b-5993e77b3959}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\04. Events\Transform">
-      <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\05. Real Object">
       <UniqueIdentifier>{825a6e20-9b71-412c-a8f6-2839602e32dc}</UniqueIdentifier>
     </Filter>
@@ -387,6 +384,9 @@
     </Filter>
     <Filter Include="02.GameObjects\NPC">
       <UniqueIdentifier>{142f5f5c-f7f1-4bd9-b700-e1ebaa9db762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\Transform">
+      <UniqueIdentifier>{73a38ac1-3a45-4af6-8dd5-689238156d48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

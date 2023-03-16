@@ -2,17 +2,17 @@
 #include "..\public\UI_NodeSkillVideo.h"
 #include "GameInstance.h"
 #include <windows.h>
-#include <d3d11.h>
-#include <mfapi.h>
-#include <mfidl.h>
-#include <mfreadwrite.h>
-#include <Mferror.h>
-#include <atlbase.h>
-
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "mf.lib")
-#pragma comment(lib, "mfplat.lib")
-#pragma comment(lib, "mfreadwrite.lib")
+//#include <d3d11.h>
+//#include <mfapi.h>
+//#include <mfidl.h>
+//#include <mfreadwrite.h>
+//#include <Mferror.h>
+//#include <atlbase.h>
+//
+//#pragma comment(lib, "d3d11.lib")
+//#pragma comment(lib, "mf.lib")
+//#pragma comment(lib, "mfplat.lib")
+//#pragma comment(lib, "mfreadwrite.lib")
 
 // MFPlay 찾아보기
 //https://learn.microsoft.com/ko-kr/windows/win32/medfound/mfplay-tutorial--video-playback
