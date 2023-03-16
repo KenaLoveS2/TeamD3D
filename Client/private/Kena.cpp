@@ -1468,6 +1468,16 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	return 0;
 }
 
+_int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
+_int CKena::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
 void CKena::Test_Raycast()
 {
 	//if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)

@@ -64,18 +64,18 @@ void CE_SpiritArrowPosition::Tick(_float fTimeDelta)
 		return;
 
  	__super::Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.bActive == true)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 0.5f)
-		{
-			m_eEFfectDesc.fWidthFrame = 0.0;
-			m_eEFfectDesc.fHeightFrame = 0.0;
-			m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
-		}
-	}
+	
+// 	if (m_eEFfectDesc.bActive == true)
+// 	{
+// 		m_fTimeDelta += fTimeDelta;
+// 		if (m_fTimeDelta > 0.5f)
+// 		{
+// 			m_eEFfectDesc.fWidthFrame = 0.0;
+// 			m_eEFfectDesc.fHeightFrame = 0.0;
+// 			m_eEFfectDesc.bActive = false;
+// 			m_fTimeDelta = 0.0f;
+// 		}
+// 	}
 }
 
 void CE_SpiritArrowPosition::Late_Tick(_float fTimeDelta)
