@@ -152,7 +152,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 		CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *0.5f );
+		if(vScale.x <= 8.f)
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f  );
 
 		if (m_fDissolveTime > 1.f)
 		{

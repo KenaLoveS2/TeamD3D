@@ -4,7 +4,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 
-#include "Pulse_Plate_Anim.h"
+#include "ControlRoom.h"
 
 /* 기믹 클래스는 1개씩입니다. */
 CGimmick_EnviObj::CGimmick_EnviObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -40,23 +40,21 @@ HRESULT CGimmick_EnviObj::Initialize(void * pArg)
 
 HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 {
+	m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+	assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,this,m_EnviromentDesc.eChapterType);
 
-	if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.eChapterType == CEnviromentObj::Gimmick_TYPE_GO_UP)
-	{
+	//_float3 vPos, vSize;
+	//vSize = _float3(0.8f, 0.81f, 0.8f);
+	//vPos = _float3(0.0f, 0.f, 0.0f);
 
-		CPulse_Plate_Anim* pPluse_Plate = dynamic_cast<CPulse_Plate_Anim*>(pGameInstance->Get_GameObjectPtr(g_LEVEL, L"Layer_Enviroment", L"1_PulsePlate_Anim"));
-		assert(pPluse_Plate != nullptr && "CGimmick_EnviObj::Late_Initialize_RoomIndex 1");
-		pPluse_Plate->m_Gimmick_PulsePlateDelegate.bind(this, &CGimmick_EnviObj::Set_Gimmick_Active);
+	//m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, 
+	//	vSize, vPos); //(0~1)
 
-	}
-	else if (m_EnviromentDesc.iRoomIndex == 1)
-	{
-
-	}
-
-	RELEASE_INSTANCE(CGameInstance);
+	//
+	//
+	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
@@ -65,11 +63,20 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_bColliderOn  ==false && true == Gimmik_Start(fTimeDelta))
+	if (m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
 	{
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, _float3(0.75f, 0.65f, 0.75f)); //(0~1)
+		_float3 vPos = _float3(0.f,0.f,0.f), vSize;
+		if (m_EnviromentDesc.iRoomIndex == 1)
+			vSize = _float3(0.75f, 0.65f, 0.75f);
+		else if (m_EnviromentDesc.iRoomIndex == 2)
+		{
+			vSize = _float3(0.8f, 0.81f, 0.8f);
+			vPos = _float3(0.0f, 0.f, 0.0f);
+		}
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
 		m_bColliderOn = true;
 	}
+
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -106,6 +113,8 @@ _bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 	if (m_bGimmick_Active == false)
 		return false;
 
+	if (m_EnviromentDesc.iRoomIndex == 2)
+		_bool b = false;
 	_bool bResult = false;
 
 	switch (m_EnviromentDesc.eChapterType)

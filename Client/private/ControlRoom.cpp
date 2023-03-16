@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\ControlRoom.h"
 #include "GameInstance.h"
+#include "Gimmick_EnviObj.h"
+#include "Crystal.h"
 
 CControlRoom::CControlRoom(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -10,6 +12,25 @@ CControlRoom::CControlRoom(ID3D11Device* pDevice, ID3D11DeviceContext* p_context
 CControlRoom::CControlRoom(const CControlRoom& rhs)
 	:CGameObject(rhs)
 {
+}
+
+void CControlRoom::Add_Gimmick_TrggerObj(const _tchar * pCloneTag, CGameObject * pTriggerObj)
+{
+	CGameObject* pObj = Get_Find_TriggerObj(pCloneTag);
+	if (pObj != nullptr)
+		return;
+
+	m_Gimmcik_Trigger_map.emplace(pCloneTag, pTriggerObj);
+}
+
+void CControlRoom::Add_GimmickObj(_int iRoomNumber, CGameObject* pGimmickObj, CEnviromentObj::CHAPTER GimmickType)
+{
+	CGameObject* pGimmick = Get_GimmickObj(iRoomNumber,pGimmickObj);
+	if (pGimmick != nullptr)
+		return;
+
+	m_GimmcikObj_List[iRoomNumber].push_back({ GimmickType, pGimmickObj });
+
 }
 
 HRESULT CControlRoom::Initialize_Prototype()
@@ -57,10 +78,59 @@ void CControlRoom::ImGui_PhysXValueProperty()
 {
 }
 
+void CControlRoom::PulsePlate_Down_Active(_int iRoomIndex,_bool bTriggerActive)
+{
+	if (iRoomIndex == 1)
+	{
+		Trigger_Active( iRoomIndex, CEnviromentObj::Gimmick_TYPE_GO_UP, bTriggerActive);
+	}
+	else if (iRoomIndex == 2)
+	{
+		CCrystal* pLastryCstal = static_cast<CCrystal*>(Get_Find_TriggerObj(L"2_Water_GimmickCrystal01"));
+		assert(nullptr != pLastryCstal && "CControlRoom::PulsePlate_Down_Active");
+		pLastryCstal->Set_GimmickActive(bTriggerActive);
+
+	}
+}
+
+void CControlRoom::Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger)
+{
+	for (auto& pGimmickObj : m_GimmcikObj_List[iRoomIndex])
+	{
+		static_cast<CGimmick_EnviObj*>(pGimmickObj.second)->Set_Gimmick_Active(iRoomIndex,IsTrigger);
+	}
+}
+
 HRESULT CControlRoom::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	return S_OK;
+}
+
+CGameObject * CControlRoom::Get_Find_TriggerObj(const _tchar * pCloneTag)
+{
+	auto iter = find_if(m_Gimmcik_Trigger_map.begin(), m_Gimmcik_Trigger_map.end(), CTag_Finder(pCloneTag));
+
+	if (iter != m_Gimmcik_Trigger_map.end())
+		return iter->second;
+
+	return nullptr;
+}
+
+CGameObject * CControlRoom::Get_GimmickObj(_int iRoomIndex ,CGameObject * pGameObj)
+{
+	auto Pair = find_if(m_GimmcikObj_List[iRoomIndex].begin(), m_GimmcikObj_List[iRoomIndex].end(), [&](auto pMyList)->bool
+	{
+		if (!lstrcmp(pGameObj->Get_ObjectCloneName(), pMyList.second->Get_ObjectCloneName()))
+			return true;
+		return false;
+	});
+
+	if (Pair != m_GimmcikObj_List[iRoomIndex].end())
+		return Pair->second;
+
+
+	return nullptr;
 }
 
 CControlRoom* CControlRoom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
