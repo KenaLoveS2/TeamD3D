@@ -113,8 +113,8 @@ private:
 
 	ID3D11ComputeShader* m_pDownScaleFirstPassCS = nullptr;
 	ID3D11ComputeShader* m_pDownScaleSecondPassCS = nullptr;
-	ID3D11VertexShader* m_pFullScreenQuadVS = nullptr;
-	ID3D11PixelShader* m_pFinalPassPS = nullptr;
+	ID3D11VertexShader*	   m_pFullScreenQuadVS = nullptr;
+	ID3D11PixelShader*		   m_pFinalPassPS = nullptr;
 
 	ID3D11SamplerState* m_pSampPoint = nullptr;
 	ID3D11SamplerState* m_pSampLinear = nullptr;

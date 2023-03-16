@@ -240,10 +240,10 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		//if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
-		//	return E_FAIL;
+		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
+			return E_FAIL;
 
-		//m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
+		m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
 	}
 
 	RELEASE_INSTANCE(CGameInstance)

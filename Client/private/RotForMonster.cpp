@@ -267,8 +267,9 @@ HRESULT CRotForMonster::SetUp_FSM()
 		.AddState("READY_BIND")
 		.OnStart([this]()
 	{
-		_vector vPivotPos = m_Desc.vPivotPos;
-		m_pTransformCom->Set_Position(m_pTarget->Get_Position() + vPivotPos);
+		_float4 vPos = _float4(m_pTarget->Get_Position()) + m_Desc.vPivotPos;
+		vPos.w = 1.f;
+		m_pTransformCom->Set_Position(vPos);
 		m_pTransformCom->LookAt_NoUpDown(m_pTarget->Get_Position());
 		_int iRand = rand() % 7;
 		switch(iRand)
@@ -319,6 +320,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 		if(m_pTarget != nullptr)
 		{
 			CBone* pBone = m_pTarget->Get_Model()->Get_BonePtr("BindJoint");
+
 			_matrix			SocketMatrix = 
 				pBone->Get_OffsetMatrix() * 
 				pBone->Get_CombindMatrix() * 
@@ -331,7 +333,6 @@ HRESULT CRotForMonster::SetUp_FSM()
 
 			_float4x4 pivotMatrix;
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
-
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
 			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
 		}
