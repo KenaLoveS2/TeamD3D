@@ -55,7 +55,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_GROUND;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
