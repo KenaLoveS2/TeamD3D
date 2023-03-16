@@ -42,7 +42,8 @@ public:
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
-
+	const _bool&				Is_StateLock() const{ return m_bStateLock; }
+	void					Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -158,6 +159,7 @@ public:
 
 
 	_float m_fTest = 0.f;
+	_bool	m_bStateLock;
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

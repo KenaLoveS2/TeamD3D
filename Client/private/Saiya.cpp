@@ -6,6 +6,8 @@
 #include <fstream>
 #include <codecvt>
 #include <locale>
+#include "Kena.h"
+#include "UI_ClientManager.h"
 
 /* For. Delegator Default Value (meaningless) */
 _float		fDefaultVal = -1.f;
@@ -230,6 +232,12 @@ HRESULT CSaiya::SetUp_State()
 			m_bMeetPlayer = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
 		m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
+		CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+
+
+		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
+		if (pKena != nullptr)
+			pKena->Set_StateLock(true);
 	})
 	
 		.OnExit([this]()
@@ -254,7 +262,7 @@ HRESULT CSaiya::SetUp_State()
 		{
 			m_pModelCom->Set_AnimIndex(SAIYA_IDLE);
 
-			if (CGameInstance::GetInstance()->Key_Down(DIK_L))
+			if (CGameInstance::GetInstance()->Key_Down(DIK_E))
 			{
 				if (m_iLineIndex == (int)m_vecChat[m_iChatIndex].size())
 				{
@@ -279,6 +287,11 @@ HRESULT CSaiya::SetUp_State()
 			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 			_bool bVal = false;
 			m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[0][0]);
+
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+			if (pKena != nullptr)
+				pKena->Set_StateLock(false);
+
 
 			m_iLineIndex = 0;
 			m_iChatIndex++;

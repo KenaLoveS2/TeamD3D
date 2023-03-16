@@ -24,12 +24,14 @@
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
@@ -329,7 +331,8 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_pAnimation->Get_Preview() == false)
 	{
 		m_pKenaState->Tick(fTimeDelta);
-		m_pStateMachine->Tick(fTimeDelta);
+		if(!m_bStateLock)
+			m_pStateMachine->Tick(fTimeDelta);
 	}
 
 	m_pKenaStatus->Tick(fTimeDelta);

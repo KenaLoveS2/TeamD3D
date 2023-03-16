@@ -108,10 +108,10 @@ void CUI_CanvasQuest::Tick(_float fTimeDelta)
 	}
 	else if (m_bClose)
 	{
+		static_cast<CUI_NodeQuest*>(m_vecNode[0])->Set_Alpha(m_fAlpha);
 		if (m_fTimeAcc > 0.5f)
 		{
 			m_fAlpha -= 0.5f * fTimeDelta;
-			m_vecNode[0]->Set_Active(false);
 		}
 		m_fTimeAcc += 0.2f * fTimeDelta;
 		if (m_fTimeAcc >= 1.f)

@@ -21,6 +21,14 @@ void CUI_Event_Fade::Call_Event(_bool bStart)
 	m_bInOut = true;
 }
 
+void CUI_Event_Fade::FadeOut()
+{
+	m_bStart = true;
+	m_fAlpha = 1.0f;
+	m_bInOut = false;
+	m_fTimeAcc = 0.0f;
+}
+
 HRESULT CUI_Event_Fade::Tick(_float fTimeDelta)
 {
 	return S_OK;
