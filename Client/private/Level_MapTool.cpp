@@ -185,7 +185,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.vEye = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
 	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(90.0f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
 	CameraDesc.fNear = 0.1f;
 	CameraDesc.fFar = 1000.f;

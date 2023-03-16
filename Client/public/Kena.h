@@ -23,6 +23,7 @@ class CKena final : public CGameObject
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
+	enum STATERETURN { STATE_ATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_JUMP, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -37,6 +38,7 @@ public:
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;
 
+	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }

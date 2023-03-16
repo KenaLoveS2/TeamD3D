@@ -60,6 +60,46 @@ const _uint CKena::Get_AnimationStateIndex() const
 	return m_pAnimation->Get_CurrentAnimIndex();
 }
 
+const _bool CKena::Get_State(STATERETURN eState) const
+{
+	if (eState == CKena::STATERETURN_END)
+		return false;
+
+	switch (eState)
+	{
+	case STATE_ATTACK:
+		return m_bAttack;
+		break;
+
+	case STATE_COMMONHIT:
+		return m_bCommonHit;
+		break;
+
+	case STATE_HEAVYHIT:
+		return m_bHeavyHit;
+		break;
+
+	case STATE_SPRINT:
+		return m_bSprint;
+		break;
+
+	case STATE_AIM:
+		return m_bAim;
+		break;
+
+	case STATE_BOW:
+		return m_bBow;
+		break;
+
+	case STATE_JUMP:
+		return m_bJump;
+		break;
+
+	default:
+		return false;
+	}
+}
+
 HRESULT CKena::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
