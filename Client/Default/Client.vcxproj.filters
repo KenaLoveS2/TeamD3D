@@ -199,6 +199,9 @@
     <Filter Include="02.GameObjects\Rot">
       <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Rot\State">
+      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
@@ -390,6 +393,21 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\SpiritArrow">
       <UniqueIdentifier>{2e49a24e-54c6-422c-a0e0-5de4dbefed6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox">
+      <UniqueIdentifier>{ee090611-8d64-4f6b-b1d9-ab3a51c2c805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\09. Bottom\Chat">
+      <UniqueIdentifier>{c0c92943-6111-4ae2-8ddb-0ded5a3efcb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\NPC">
+      <UniqueIdentifier>{e062ddaa-fa8e-4aff-8150-429ae0ce3755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\NPC\Beni">
+      <UniqueIdentifier>{82f47e45-388f-43ab-8bf2-078e5d855b4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\NPC\Saiya">
+      <UniqueIdentifier>{4d1d6e31-1aa8-4617-a2ce-8129fe35c5db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -887,9 +905,6 @@
     <ClInclude Include="..\public\UI_CanvasTop.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_NodeLetterBox.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeTitle.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
     </ClInclude>
@@ -932,12 +947,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
-    <ClInclude Include="..\public\Beni.h" />
-    <ClInclude Include="..\public\CameraForNpc.h" />
-    <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
-    <ClInclude Include="..\public\Npc.h" />
-    <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClInclude>
@@ -947,7 +957,27 @@
     <ClInclude Include="..\public\UI_NodeSkillVideo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RotWisp.h" />
+    <ClInclude Include="..\public\UI_NodeLetterBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeChat.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Beni.h">
+      <Filter>02.GameObjects\NPC\Beni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Npc.h">
+      <Filter>02.GameObjects\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Saiya.h">
+      <Filter>02.GameObjects\NPC\Saiya</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraForNpc.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraForRot.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1423,9 +1453,6 @@
     <ClCompile Include="..\private\UI_CanvasTop.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeTitle.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\MapTitle</Filter>
     </ClCompile>
@@ -1468,12 +1495,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
-    <ClCompile Include="..\private\Beni.cpp" />
-    <ClCompile Include="..\private\CameraForNpc.cpp" />
-    <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
-    <ClCompile Include="..\private\Npc.cpp" />
-    <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClCompile>
@@ -1483,7 +1505,27 @@
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RotWisp.cpp" />
+    <ClCompile Include="..\private\UI_NodeLetterBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\LetterBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeChat.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\09. Bottom\Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Beni.cpp">
+      <Filter>02.GameObjects\NPC\Beni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc.cpp">
+      <Filter>02.GameObjects\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Saiya.cpp">
+      <Filter>02.GameObjects\NPC\Saiya</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CameraForNpc.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CameraForRot.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1555,6 +1597,5 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
   </ItemGroup>
 </Project>

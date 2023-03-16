@@ -73,8 +73,6 @@ void CUI_Canvas::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_Canvas::Render()
 {
-	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
-		return S_OK;
 
 	if (FAILED(__super::Render()))
 		return E_FAIL;
