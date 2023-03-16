@@ -19,7 +19,6 @@ CTexture::CTexture(const CTexture & rhs)
 {
 	for (_uint i = 0; i < m_iNumTextures; ++i)
 		Safe_AddRef(m_pTextures[i]);
-	
 }
 
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures, _bool bddsLoad)

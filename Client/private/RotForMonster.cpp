@@ -314,6 +314,10 @@ HRESULT CRotForMonster::SetUp_FSM()
 	})
 
 		.AddState("BIND_MONSTER")
+		.OnStart([this]()
+	{
+		m_pRotTrail->Set_Active(true);
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(CRot::SQUISH_U);
@@ -337,6 +341,11 @@ HRESULT CRotForMonster::SetUp_FSM()
 			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
 		}
 	})
+		.OnExit([this]()
+	{
+		m_pRotTrail->Set_Active(false);
+	})
+
 		.AddTransition("BIND_MONSTER to IDLE", "IDLE")
 		.Predicator([this]()
 	{

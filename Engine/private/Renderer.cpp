@@ -11,6 +11,8 @@
 #include "GameInstance.h"
 #include "Level_Manager.h"
 
+#include "stb_image.h"
+
 CRenderer::CRenderer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 	, m_pTarget_Manager(CTarget_Manager::GetInstance())
@@ -26,6 +28,12 @@ void CRenderer::Imgui_Render()
 {
 	ImGui::Checkbox("SHADOW", &m_bDynamicShadow);
 	ImGui::Checkbox("SSAO", &m_bSSAO);
+	ImGui::Checkbox("DISTORT", &m_bDistort);
+	ImGui::Checkbox("FILMTONEMAPPING", &m_bFilmTonemapping);
+	if(ImGui::Button("ReCompile"))
+	{
+		ReCompile();
+	}
 }
 
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
@@ -113,7 +121,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	/* For.Target_LDR */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR1"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
 	// SSAO
@@ -198,7 +208,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 #endif
-	
+
+	CreateTexture(L"../Bin/Resources/PostProcess/Flare_white.png", m_pFlareTexture);
+
 	return S_OK;
 }
 
@@ -366,7 +378,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		if (FAILED(Render_AlphaBlend()))
 			return E_FAIL;
 	}
-	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (FAILED(Render_UILast()))
@@ -711,8 +722,10 @@ HRESULT CRenderer::Render_AlphaBlend()
 
 HRESULT CRenderer::Render_HDR()
 {
-	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR");
+	CRenderTarget* pLDR1 = m_pTarget_Manager->Get_Target(L"Target_LDR1");
+	CRenderTarget* pLDR2 = m_pTarget_Manager->Get_Target(L"Target_LDR2");
 	pLDR1->Clear();
+	pLDR2->Clear();
 
 	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
 	return S_OK;
@@ -727,12 +740,57 @@ HRESULT CRenderer::Render_PostProcess()
 	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	CRenderTarget* pLDRSour = m_pTarget_Manager->Get_Target(L"Target_LDR");
+	CRenderTarget* pLDRSour = m_pTarget_Manager->Get_Target(L"Target_LDR1");
+	CRenderTarget* pLDRDest = m_pTarget_Manager->Get_Target(L"Target_LDR2");
 	ID3D11RenderTargetView*	pBackBufferView = nullptr;
 	ID3D11DepthStencilView*		pDepthStencilView = nullptr;
 	m_pContext->OMGetRenderTargets(1, &pBackBufferView, &pDepthStencilView);
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
-	
+
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_DiffuseTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Diffuse")))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_NormalTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Normal")))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_ShadeTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shade")))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
+		return E_FAIL;
+
+	CRenderTarget* pLDRTmp = pLDRSour;
+
+	/* PostProcess */
+	ID3D11ShaderResourceView* pLDRSour_SRV = pLDRSour->Get_SRV();
+	ID3D11RenderTargetView* pLDRDest_RTV = pLDRDest->Get_RTV();
+
+	// Test
+	/***1***/
+	if(m_bDistort)
+	{
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_Distort();
+	}
+
+	/***2***/
+
+	if(m_bFilmTonemapping)
+	{
+		pLDRSour_SRV = pLDRSour->Get_SRV();
+		pLDRDest_RTV = pLDRDest->Get_RTV();
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRTmp = pLDRSour;
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_FilmTonemapping();
+	}
+
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);
@@ -743,6 +801,7 @@ HRESULT CRenderer::Render_PostProcess()
 
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
+
 	return S_OK;
 }
 
@@ -796,6 +855,32 @@ HRESULT CRenderer::Render_Viewer()
 	return S_OK;
 }
 
+HRESULT CRenderer::PostProcess_Distort()
+{
+	// 이 때 이 쉐이더에 들어갈 수 있게끔 파라미터 전해줄것.
+	// 변수를 공유하기 때문에 Begin -> Render 할 때 잘 전해줘야함
+
+	m_fDistortTime += TIMEDELTA;
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
+		return E_FAIL;
+
+	m_pShader_PostProcess->Begin(1);
+	m_pVIBuffer->Render();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::PostProcess_FilmTonemapping()
+{
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_FlareTexture", *m_pFlareTexture)))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LightDepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_ShadowDepth")))))
+		return E_FAIL;
+	m_pShader_PostProcess->Begin(2);
+	m_pVIBuffer->Render();
+	return S_OK;
+}
+
 #ifdef _DEBUG
 HRESULT CRenderer::Render_DebugObject()
 {
@@ -814,6 +899,72 @@ HRESULT CRenderer::Render_DebugObject()
 	return S_OK;	
 }
 #endif
+
+
+HRESULT CRenderer::CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**&  OUT pTexture)
+{
+	pTexture = new ID3D11ShaderResourceView*();
+
+	_tchar	szTexturePath[MAX_PATH] = TEXT("");
+	wsprintf(szTexturePath, pTextureFilePath);
+	_tchar			szExt[MAX_PATH] = TEXT("");
+	_wsplitpath_s(szTexturePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
+	HRESULT		hr = 0;
+
+	if (!lstrcmp(szExt, TEXT(".tga")))
+		return E_FAIL;
+	else if (!lstrcmp(szExt, TEXT(".dds")))
+		hr = DirectX::CreateDDSTextureFromFile(m_pDevice, szTexturePath, nullptr, pTexture);
+	else if (!lstrcmp(szExt, TEXT(".hdr")))
+	{
+			int width, height, channels;
+			char* pTexturePath = new char[MAX_PATH];
+			CUtile::WideCharToChar(szTexturePath, pTexturePath);
+			float* pData = stbi_loadf(pTexturePath, &width, &height, &channels, STBI_rgb_alpha);
+			if (pData != nullptr)
+			{
+				D3D11_TEXTURE2D_DESC texDesc = {};
+				texDesc.Width = width;
+				texDesc.Height = height;
+				texDesc.MipLevels = 1;
+				texDesc.ArraySize = 1;
+				texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				texDesc.SampleDesc.Count = 1;
+				texDesc.Usage = D3D11_USAGE_DEFAULT;
+				texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+				D3D11_SUBRESOURCE_DATA initData = {};
+				initData.pSysMem = pData;
+				initData.SysMemPitch = width * sizeof(float) * 4;
+
+				ID3D11Texture2D* pTexture2D = nullptr;
+				ID3D11ShaderResourceView* pSRV = nullptr;
+				hr = m_pDevice->CreateTexture2D(&texDesc, &initData, &pTexture2D);
+				if (SUCCEEDED(hr))
+				{
+					hr = m_pDevice->CreateShaderResourceView(pTexture2D, nullptr, &pSRV);
+					if (SUCCEEDED(hr))
+					{
+						*pTexture = pSRV;
+					}
+					pTexture2D->Release();
+				}
+
+				stbi_image_free(pData);
+				Safe_Delete_Array(pTexturePath);
+			}
+	}
+	else
+		hr = DirectX::CreateWICTextureFromFile(m_pDevice, szTexturePath, nullptr, pTexture);
+
+		if (FAILED(hr))
+		{
+			Safe_Release(*pTexture);
+			return E_FAIL;
+		}
+
+		return S_OK;
+}
 
 CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
@@ -854,6 +1005,8 @@ void CRenderer::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pShader_PostProcess);
 	Safe_Release(m_pShader_SSAO);
+
+	Safe_Release(*m_pFlareTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
