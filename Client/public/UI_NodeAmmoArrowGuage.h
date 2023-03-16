@@ -5,8 +5,8 @@
 BEGIN(Client)
 class CUI_NodeAmmoArrowGuage final : public CUI_Node
 {
-public:
-	enum EVENT_ID { EVENT_GUAGE, EVENT_END };
+//public:
+//	enum EVENT_ID { EVENT_GUAGE, EVENT_END };
 
 	CUI_NodeAmmoArrowGuage(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeAmmoArrowGuage(const CUI_NodeAmmoArrowGuage& rhs);
@@ -27,7 +27,8 @@ private:
 	virtual HRESULT		SetUp_ShaderResources() override;
 
 private:
-	_bool			m_bFullFilled;
+	//_bool			m_bFullFilled;
+	_float				m_fGuage;
 
 public:
 	static	CUI_NodeAmmoArrowGuage*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

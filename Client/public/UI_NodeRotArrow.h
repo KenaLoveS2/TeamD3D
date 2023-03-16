@@ -5,6 +5,8 @@
 BEGIN(Client)
 class CUI_NodeRotArrow final : public CUI_Node
 {
+public:
+	enum EVENT { EVENT_FADE, EVENT_END };
 private:
 	CUI_NodeRotArrow(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeRotArrow(const CUI_NodeRotArrow& rhs);
@@ -12,6 +14,7 @@ private:
 
 public:
 	void	Set_Info(_int iRots);
+	void	Set_Arrow(_float fX);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

@@ -3,6 +3,7 @@
 #include "Base.h"
 
 BEGIN(Client)
+class CKena;
 class CSkillInfo final : public CBase
 {
 
@@ -30,7 +31,7 @@ public:
 	_tchar*		Get_TextureProtoTag() { return m_pTextureProtoTag; }
 public:
 	void 		UnLock(_uint iLevel) { m_tDesc[iLevel].eState = STATE_UNLOCKED; }
-	CHECK		Check(_uint iLevel);
+	CHECK		Check(_uint iLevel, CKena* pPlayer = nullptr);
 private:
 	HRESULT		Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, wstring filePath);
 private:

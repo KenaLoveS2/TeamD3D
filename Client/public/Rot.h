@@ -13,6 +13,15 @@ END
 BEGIN(Client)
 class CRot final : public CGameObject
 {
+public:
+	typedef struct tagRotDesc
+	{
+		_float4x4 WorldMatrix;
+		_int			iRoomIndex;
+	}DESC;
+
+	DESC Get_Desc() { return m_Desc; }
+
 private:
 	static _uint m_iEveryRotCount;
 	static _uint m_iKenaFindRotCount;
@@ -29,16 +38,15 @@ private:
 
 	CTransform* m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
-
 	_float4 m_vWakeUpPosition;
 
 private:
 	_bool m_bWakeUp = false;	
-	
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
-	
+	DESC m_Desc;
 
+	class CCameraForRot*		m_pMyCam = nullptr;
 	PX_TRIGGER_DATA* m_pTriggerData = nullptr;
 
 private:

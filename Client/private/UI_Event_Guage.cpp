@@ -150,6 +150,12 @@ void CUI_Event_Guage::Call_Event(_float fData)
 
 }
 
+void CUI_Event_Guage::Set_InitState(_float fInitialGuage)
+{
+	m_fGuage = fInitialGuage;
+	m_fGuageNew = fInitialGuage;
+}
+
 HRESULT CUI_Event_Guage::Save_Data(Json* json)
 {
 	if (json == nullptr)

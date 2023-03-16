@@ -25,7 +25,9 @@ private:
 	HRESULT Ready_Layer_Rot(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_ControlRoom(const _tchar* pLayerTag);
+
 
 public:
 	_bool		m_bEnviromentInputShaderValue = false;
