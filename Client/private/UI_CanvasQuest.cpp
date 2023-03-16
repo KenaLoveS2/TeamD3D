@@ -5,6 +5,7 @@
 #include "UI_NodeQuest.h"
 #include "Kena.h"
 #include "UI_NodeEffect.h"
+#include "Saiya.h"
 
 CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -14,6 +15,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_bClose(false)
 	, m_fAlpha(0.f)
 	, m_eState(STATE_NORMAL)
+	, m_fTmpAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 		m_Quests[i] = nullptr;
@@ -27,6 +29,7 @@ CUI_CanvasQuest::CUI_CanvasQuest(const CUI_CanvasQuest & rhs)
 	, m_bClose(false)
 	, m_fAlpha(0.f)
 	, m_eState(STATE_NORMAL)
+	, m_fTmpAcc(0.f)
 {
 	for (_uint i = 0; i < QUEST_END; ++i)
 		m_Quests[i] = nullptr;
@@ -130,6 +133,18 @@ void CUI_CanvasQuest::Late_Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (m_eState == STATE_NORMAL)
+	{
+		m_fTmpAcc += fTimeDelta;
+		if (m_fTmpAcc > 3.f)
+		{
+			m_eState = STATE_CLOSE;
+			m_fTimeAcc = 0.f;
+			m_bClose = true;
+			m_fAlpha = 1.f;
+		}
+	}
+
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -142,21 +157,20 @@ HRESULT CUI_CanvasQuest::Render()
 
 HRESULT CUI_CanvasQuest::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),L"Layer_Player", L"Kena"));
+	//RELEASE_INSTANCE(CGameInstance);
 
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
-	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
-		return E_FAIL;
-	}
-	pKena->m_PlayerDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
+	//if (pKena == nullptr)
+	//	return E_FAIL;
+	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
 	//m_Quests[0]->m_QuestDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
-
-	RELEASE_INSTANCE(CGameInstance);
+	CSaiya* pSaiya = dynamic_cast<CSaiya*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_NPC", L"Saiya"));
+	if (pSaiya == nullptr)
+		return E_FAIL;
+	pSaiya->m_SaiyaDelegator.bind(this, &CUI_CanvasQuest::BindFunction);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -272,8 +286,6 @@ HRESULT CUI_CanvasQuest::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -303,8 +315,6 @@ HRESULT CUI_CanvasQuest::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_State", &m_eState, sizeof(_uint))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -329,6 +339,36 @@ HRESULT CUI_CanvasQuest::Ready_Quests()
 	RELEASE_INSTANCE(CGameInstance);
 	/* ~test */
 	return S_OK;
+}
+
+void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool bValue, _float fValue, wstring wstr)
+{
+	switch (eType)
+	{
+	case CUI_ClientManager::QUEST_:
+		m_bOpen = false;
+		m_bClose = false;
+		if (bValue)
+		{
+			m_eState = STATE_OPEN;
+			m_bActive = true; /* If m_bActive is false, it won't be seen at all. */
+			m_fTimeAcc = 0.8f;
+			m_bOpen = true;
+			m_fAlpha = 0.5f;
+		}
+		else
+		{
+			m_eState = STATE_CLOSE;
+			m_fTimeAcc = 0.f;
+			m_bClose = true;
+			m_fAlpha = 1.f;
+		}
+		break;
+
+	case CUI_ClientManager::QUEST_LINE:
+		m_vecNode[(_int)fValue]->Set_Active(true);
+		break;
+	}
 }
 
 void CUI_CanvasQuest::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)

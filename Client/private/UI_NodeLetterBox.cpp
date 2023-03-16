@@ -138,7 +138,6 @@ HRESULT CUI_NodeLetterBox::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -158,7 +157,6 @@ HRESULT CUI_NodeLetterBox::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

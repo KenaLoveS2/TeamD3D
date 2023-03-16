@@ -64,7 +64,7 @@ protected:
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual HRESULT			SetUp_ShadowShaderResources() PURE;
-	virtual HRESULT			SetUp_UI(_float fOffsetY = 0.2f);
+	virtual HRESULT			SetUp_UI();
 
 public:
 	virtual CGameObject*	Clone(void* pArg = nullptr)PURE;

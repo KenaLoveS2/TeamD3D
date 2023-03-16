@@ -204,10 +204,10 @@ HRESULT CBeni::SetUp_State()
 		.AddState("CHEER")
 		.OnStart([this]()
 	{
-		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		m_pMyCam->Set_Target(this);
-		p_game_instance->Work_Camera(L"NPC_CAM");
-		RELEASE_INSTANCE(CGameInstance)
+		//CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		//m_pMyCam->Set_Target(this);
+		//p_game_instance->Work_Camera(L"NPC_CAM");
+		//RELEASE_INSTANCE(CGameInstance)
 		m_bMeetPlayer = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BENI_CHEER);
 		m_pModelCom->Set_AnimIndex(BENI_CHEER);
@@ -215,11 +215,11 @@ HRESULT CBeni::SetUp_State()
 
 		.OnExit([this]()
 	{
-			// ´©³ª°¡ ²ô°í½ÍÀ»¶§ ²ô¸é´ï~
-		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		m_pMyCam->Set_Target(nullptr);
-		p_game_instance->Work_Camera(L"PLAYER_CAM");
-		RELEASE_INSTANCE(CGameInstance)
+		//	// ´©³ª°¡ ²ô°í½ÍÀ»¶§ ²ô¸é´ï~
+		//CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		//m_pMyCam->Set_Target(nullptr);
+		//p_game_instance->Work_Camera(L"PLAYER_CAM");
+		//RELEASE_INSTANCE(CGameInstance)
 	})
 		.AddTransition("CHEER to IDLE", "IDLE")
 		.Predicator([this]()
@@ -271,9 +271,9 @@ HRESULT CBeni::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-HRESULT CBeni::SetUp_UI(_float fOffsetY)
+HRESULT CBeni::SetUp_UI()
 {
-	return CNpc::SetUp_UI(fOffsetY);
+	return CNpc::SetUp_UI();
 }
 
 void CBeni::AdditiveAnim(_float fTimeDelta)

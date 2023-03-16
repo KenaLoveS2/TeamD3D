@@ -104,6 +104,7 @@ void CUI_NodeHUDHP::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_NodeHUDHP::Render()
 {
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -133,8 +134,6 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -156,11 +155,7 @@ HRESULT CUI_NodeHUDHP::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
-
 }
 
 CUI_NodeHUDHP * CUI_NodeHUDHP::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
