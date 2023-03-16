@@ -29,7 +29,7 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(2.f), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -39,6 +39,8 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 20.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -415,13 +417,14 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return DistanceTrigger(m_fSpawnRange);
 	})
 		
 		.AddState("READY_SPAWN")
 		.OnExit([this]()
 	{
 		m_bSpawn = true;
+		m_pUIHPBar->Set_Active(true);
 	})
 		.AddTransition("READY_SPAWN to ALERT", "ALERT")
 		.Predicator([this]()
@@ -967,6 +970,8 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(DEATH);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -978,8 +983,6 @@ HRESULT CWoodKnight::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})
 		.Build();
 

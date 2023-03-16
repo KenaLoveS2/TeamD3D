@@ -125,26 +125,37 @@ void CEffect::Tick(_float fTimeDelta)
 		m_fTimeDelta += fTimeDelta;
 		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
 		{
-			if (m_eEFfectDesc.fTimeDelta < 1.f)
-				m_eEFfectDesc.fWidthFrame++;
-			else
-				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-			m_fTimeDelta = 0.0;
-
-			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			if(m_bPlay == false)
 			{
-				if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+				if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt) 
+				{
 					m_eEFfectDesc.fHeightFrame++;
-				else
-					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
-
-				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
-
-				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
-					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+					if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					{
+						m_eEFfectDesc.fHeightFrame--;
+						m_eEFfectDesc.fWidthFrame--;
+						m_bPlay = true;
+					}
+					else
+						m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+				}
 			}
-
+			else
+			{
+				m_eEFfectDesc.fWidthFrame--;
+				if (m_eEFfectDesc.fWidthFrame < m_fInitSpriteCnt.x)
+				{
+					m_eEFfectDesc.fHeightFrame--;
+					if (m_eEFfectDesc.fHeightFrame < m_fInitSpriteCnt.y)
+					{
+						m_eEFfectDesc.fHeightFrame++;
+						m_bPlay = false;
+					}
+					else
+						m_eEFfectDesc.fWidthFrame = (_float)(m_eEFfectDesc.iWidthCnt - 1);
+				}
+			}
 		}
 	}
 
@@ -245,7 +256,7 @@ HRESULT CEffect::Edit_Child(const _tchar * ProtoTag)
 
 void CEffect::Set_InitRotation()
 {
-	_matrix		RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(m_eEFfectDesc.fTimeDelta * 0.2f));
+	_matrix		RotationMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMConvertToRadians(m_eEFfectDesc.fTimeDelta * -2.f));
 
 	_float3		vScale = _float3(XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_InitWorldMatrix).r[0])),
 		XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_InitWorldMatrix).r[1])),
