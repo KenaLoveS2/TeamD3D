@@ -10,6 +10,13 @@ Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
 
+Texture2D<float4>		g_LightDepthTexture;
+Texture2D<float4>		g_FlareTexture;
+
+float g_Time;
+float2 distortionAmount = float2(0.01f, 0.01f);
+float2 ScreenSize = float2(1600.f, 900.f);
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;	
@@ -59,6 +66,72 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+float2 DistortUV(float2 uv, float time)
+{
+	float2 offset = distortionAmount * sin(time * uv.y * ScreenSize.x / 10.0);
+	return uv + offset;
+}
+
+float2 RadialDistorUV(float2 uv, float time)
+{
+	// Calculate the displacement vector from the center position and time
+	float2 displacementVector = uv - float2(0.5, 0.5f);
+	float distanceFromCenter = length(displacementVector);
+	float displacementAmount = sin(distanceFromCenter * 2.f + time) * 3.5f;
+	displacementVector *= displacementAmount;
+
+	// Calculate the new UV coordinates by adding the displacement vector
+	uv += displacementVector;
+
+	return uv;
+}
+
+float3 FilmicTonemapping(float3 color)
+{
+	// Filmic tonemapping curve parameters
+	const float A = 0.22f;
+	const float B = 0.30f;
+	const float C = 0.10f;
+	const float D = 0.20f;
+	const float E = 0.01f;
+	const float F = 0.30f;
+
+	color *= 2.f;
+
+	// Apply the filmic tonemapping curve
+	color = ((color*(A*color + C*B) + D*E) / (color*(A*color + B) + D*F)) - E / F;
+
+	return color;
+}
+
+PS_OUT PS_DISTORTION(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	//float2 distortedUV = DistortUV(In.vTexUV, g_Time);
+	float2 rdialDistortedUV = RadialDistorUV(In.vTexUV, g_Time);
+	float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, rdialDistortedUV);
+
+	Out.vColor = vDiffuse;
+
+	return Out;
+}
+
+PS_OUT PS_FILMICTONEMAPPING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float vMask = g_FlareTexture.Sample(LinearSampler, In.vTexUV).r;
+	float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4 vDiffuse2 = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+	vDiffuse2 *= vMask.r * 1.5f;
+	Out.vColor = vDiffuse + vDiffuse2;
+
+	return Out;
+}
+
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -72,5 +145,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
+	} //0
+
+	pass Distortion
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_DISTORTION();
+	} //1
+
+	pass FilmicTonemap
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FILMICTONEMAPPING();
+	} //2
 }

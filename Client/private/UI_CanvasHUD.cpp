@@ -72,7 +72,7 @@ HRESULT CUI_CanvasHUD::Initialize(void * pArg)
 
 	m_vecNode[UI_PIPBAR1]->Set_Active(true);
 	m_vecNode[UI_PIPGAUGE1]->Set_Active(true);
-	
+	static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(0);
 	return S_OK;
 }
 
