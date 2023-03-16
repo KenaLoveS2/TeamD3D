@@ -388,16 +388,16 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		CKena* pPlayer = this;
 		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-
-		///* Test Before Hit Monster */
-		//_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-		//m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-		//_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		//m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
-
-
 	}
 
+	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
+		/* Test Before Hit Monster */
+		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	}
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)

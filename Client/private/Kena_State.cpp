@@ -3558,7 +3558,8 @@ void CKena_State::Tick_Aim_Air_Into(_float fTimeDelta)
 	if (m_pKena->m_fCurJumpSpeed > 0.f)
 		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
 
-	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+	//m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 
 	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
 }
@@ -3570,7 +3571,8 @@ void CKena_State::Tick_Aim_Air_Loop(_float fTimeDelta)
 	if (m_pKena->m_fCurJumpSpeed > 0.f)
 		CPhysX_Manager::GetInstance()->Add_Force(m_pKena->m_szCloneObjectTag, _float3(0.f, 1.f, 0.f) * m_pKena->m_fCurJumpSpeed);
 
-	m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+	//m_pKena->m_fCurJumpSpeed -= fTimeDelta / fTimeRate;
+	m_pKena->m_fCurJumpSpeed -= fTimeDelta;
 
 	Move(fTimeDelta / fTimeRate, CTransform::DIR_LOOK);
 }
