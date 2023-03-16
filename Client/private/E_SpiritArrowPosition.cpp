@@ -10,7 +10,6 @@ CE_SpiritArrowPosition::CE_SpiritArrowPosition(ID3D11Device * pDevice, ID3D11Dev
 CE_SpiritArrowPosition::CE_SpiritArrowPosition(const CE_SpiritArrowPosition & rhs)
 	: CEffect(rhs)
 {
-	
 }
 
 HRESULT CE_SpiritArrowPosition::Initialize_Prototype(const _tchar* pFilePath)
