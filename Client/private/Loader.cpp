@@ -1748,6 +1748,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	/*
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PowerCrystal", true, false, true)))
 		assert(!"Issue");
 	m_fCur += 1.f;
@@ -1957,7 +1958,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/RotCarry_Piece", true, true)))// json NonUse
 		assert(!"Issue");
 	m_fCur += 1.f;
-
+	*/
 
 #pragma region Born_GroundCover
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);

@@ -137,17 +137,14 @@ HRESULT CUI_NodeButton::Render()
 
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + m_vOffset.x, g_iWinSizeY*0.5f - vPos.y + m_vOffset.y };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (nullptr != m_szName)
 	{
-		pGameInstance->Render_Font(m_szFont, m_szName,
+		CGameInstance::GetInstance()->Render_Font(m_szFont, m_szName,
 			vNewPos /* position */,
 			0.f, m_vFontSize/* size */,
 			XMLoadFloat4(&m_vColor)/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -219,7 +216,6 @@ HRESULT CUI_NodeButton::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -241,8 +237,6 @@ HRESULT CUI_NodeButton::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
