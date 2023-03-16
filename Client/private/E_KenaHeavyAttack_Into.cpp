@@ -35,7 +35,6 @@ HRESULT CE_KenaHeavyAttack_Into::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-
 	/* Set Option */
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
