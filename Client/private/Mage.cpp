@@ -30,7 +30,7 @@ HRESULT CMage::Initialize(void* pArg)
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(1.f), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -40,6 +40,8 @@ HRESULT CMage::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 18.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -76,8 +78,7 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);		
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
@@ -132,8 +133,8 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		m_pRendererCom->Set_PhysXRender(true);
 	}
 
-	m_pTransformCom->Set_Position(_float4(5.f, 0.3f, 5.f, 1.f));
-	m_pEnemyWisp->Set_Position(_float4(5.f, 0.3f, 5.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
@@ -336,13 +337,14 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
 
 		.AddState("READY_SPAWN")
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to SPAWN", "SPAWN")
@@ -699,6 +701,8 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(DEATH);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -711,8 +715,6 @@ HRESULT CMage::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})		
 		.Build();
 

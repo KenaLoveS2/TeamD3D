@@ -159,16 +159,16 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.fMass = 20.f;
+	PxCapsuleDesc.fLinearDamping = 10.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
 	PxCapsuleDesc.fStaticFriction = 0.5f;
 	PxCapsuleDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
-	m_pTransformCom->Add_Collider(pTag, matIdentity);
+	// CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
+	// m_pTransformCom->Add_Collider(pTag, matIdentity);
 
 	/* Staff Collider */
 	CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
@@ -181,7 +181,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);
 
 	vPos = _float3(0.f, 0.f, 0.f);
-	vPivotScale = _float3(0.03f, 0.35f, 1.f);
+	// vPivotScale = _float3(0.03f, 0.35f, 1.f);
+	vPivotScale = _float3(0.1f, 0.5f, 1.f);
 	vPivotPos = _float3(0.f, 0.015f, -1.04f);
 
 	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.f, 0.015f, -1.04f);

@@ -26,7 +26,7 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(5.f), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -36,6 +36,8 @@ HRESULT CRockGolem::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = -8.f;
+		m_Desc.WorldMatrix._43 = -8.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -107,7 +109,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-
+	
 	return S_OK;
 }
 
@@ -254,13 +256,17 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			m_pModelCom->Set_AnimIndex(SLEEPIDLE);
 		})
+		.OnExit([this]()
+		{
+			m_pUIHPBar->Set_Active(true);
+		})
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
 		{
-			m_bSpawn = DistanceTrigger(3.f);
+			m_bSpawn = DistanceTrigger(m_fSpawnRange);
 			return m_bSpawn;
 		})
-
+			
 			.AddState("INTOSLEEP")
 			.OnStart([this]()
 		{
@@ -448,6 +454,8 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			m_pModelCom->Set_AnimIndex(DEPTH);
 			m_bDying = true;
+			m_pUIHPBar->Set_Active(false);
+			m_pTransformCom->Clear_Actor();
 		})
 			.AddTransition("DYING to DEATH", "DEATH")
 			.Predicator([this]()
@@ -459,8 +467,6 @@ HRESULT CRockGolem::SetUp_State()
 			.OnStart([this]()
 		{
 			m_bDeath = true;
-			m_pUIHPBar->Set_Active(false);
-			m_pTransformCom->Clear_Actor();
 		})
 			
 			.Build();

@@ -25,7 +25,7 @@ public:
 
 		tagPhysxActorBoxDesc()
 		{
-			bCCD = false;
+			bCCD = true;
 			bKinematic = false;
 		}
 
@@ -49,7 +49,7 @@ public:
 
 		tagPhysxActorSphereDesc()
 		{
-			bCCD = false;
+			bCCD = true;
 			bKinematic = false;
 		}
 	} PX_SPHERE_DESC;
@@ -74,7 +74,7 @@ public:
 
 		tagPhysxActorCapsuleDesc()
 		{
-			bCCD = false;
+			bCCD = true;
 			bKinematic = false;
 		}
 
