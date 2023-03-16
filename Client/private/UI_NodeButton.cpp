@@ -9,6 +9,8 @@ CUI_NodeButton::CUI_NodeButton(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 	, m_eType(TYPE_END)
 	, m_fAlpha(1.f)
 	, m_vColor{ 1.f, 1.f, 1.f, 1.f }
+	, m_vOffset{ 0.0f, 0.0f }
+	, m_vFontSize{ 1.f, 1.f }
 {
 }
 
@@ -18,6 +20,8 @@ CUI_NodeButton::CUI_NodeButton(const CUI_NodeButton & rhs)
 	, m_eType(TYPE_END)
 	, m_fAlpha(1.f)
 	, m_vColor{ 1.f, 1.f, 1.f, 1.f }
+	, m_vOffset{ 0.0f, 0.0f }
+	, m_vFontSize{ 1.f, 1.f }
 {
 }
 
@@ -30,6 +34,14 @@ void CUI_NodeButton::Setting(wstring wstrName, TYPE eType)
 	{
 	case TYPE_CONFIRM:
 		m_fAlpha = 0.f;
+		m_vOffset = { -23.f, -18.f };
+		m_szFont = L"Font_Basic0";
+		m_vFontSize = { 0.8f, 0.8f };
+		break;
+	case TYPE_LOGO:
+		m_fAlpha = 0.f;
+		m_vOffset = { -110.f, -20.f };
+		m_szFont = L"Font_Basic0";
 		break;
 	}
 }
@@ -91,6 +103,10 @@ void CUI_NodeButton::Late_Tick(_float fTimeDelta)
 		_matrix matWorld = m_matLocal*matParentScale*matParentTrans;
 		m_pTransformCom->Set_WorldMatrix(matWorld);
 	}
+	else /* If It doesn't belong to canvas */
+	{
+		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_matLocal));
+	}
 
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
@@ -118,19 +134,17 @@ HRESULT CUI_NodeButton::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 23.f, g_iWinSizeY*0.5f - vPos.y - 18.f };
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + m_vOffset.x, g_iWinSizeY*0.5f - vPos.y + m_vOffset.y };
+
 
 	if (nullptr != m_szName)
 	{
-		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szName,
+		CGameInstance::GetInstance()->Render_Font(m_szFont, m_szName,
 			vNewPos /* position */,
-			0.f, _float2(0.8f, 0.8f)/* size */,
+			0.f, m_vFontSize/* size */,
 			XMLoadFloat4(&m_vColor)/* color */);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
@@ -140,16 +154,27 @@ _bool CUI_NodeButton::MouseOverEvent()
 	switch (m_eType)
 	{
 	case TYPE_CONFIRM:
+	{
 		m_fAlpha = 1.f;
 		m_vColor = { 0.f, 0.f,0.f,1.f };
 		if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
 			return true;
 		else
 			return false;
+	} break;
 
-		break;
+	case TYPE_LOGO:
+	{
+		m_fAlpha = 1.f;
+		m_vColor = { 1.f, 1.f,1.f,1.f };
+		if (CGameInstance::GetInstance()->Mouse_Down(DIM_LB))
+			return true;
+		else
+			return false;
+	} break;
+	
+	
 	}
-
 	return false;
 }
 
@@ -158,6 +183,10 @@ void CUI_NodeButton::BackToNormal()
 	switch (m_eType)
 	{
 	case TYPE_CONFIRM:
+		m_fAlpha = 0.f;
+		m_vColor = { 1.f, 1.f,1.f,1.f };
+		break;
+	case TYPE_LOGO:
 		m_fAlpha = 0.f;
 		m_vColor = { 1.f, 1.f,1.f,1.f };
 		break;
@@ -187,7 +216,6 @@ HRESULT CUI_NodeButton::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -209,8 +237,6 @@ HRESULT CUI_NodeButton::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
