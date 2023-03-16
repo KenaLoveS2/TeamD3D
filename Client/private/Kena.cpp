@@ -374,7 +374,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	//CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-	//CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
 	////CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	////CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	////CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
@@ -389,12 +389,16 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
 
-		/* Test Before Hit Monster */
-		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
-		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+		///* Test Before Hit Monster */
+		//_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
+		//m_pKenaStatus->Plus_CurPIPGuage(0.2f);
+		//_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
+		//m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+
+
 	}
 
 

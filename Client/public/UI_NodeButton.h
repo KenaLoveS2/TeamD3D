@@ -6,7 +6,7 @@ BEGIN(Client)
 class CUI_NodeButton final : public CUI_Node
 {
 public:
-	enum TYPE { TYPE_CONFIRM, TYPE_END };
+	enum TYPE { TYPE_CONFIRM, TYPE_LOGO, TYPE_END };
 private:
 	CUI_NodeButton(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);
 	CUI_NodeButton(const CUI_NodeButton& rhs);
@@ -14,6 +14,7 @@ private:
 
 public:
 	void	Setting(wstring wstrName, TYPE eType);
+	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
@@ -32,9 +33,14 @@ private:
 
 private:
 	_tchar*					m_szName;
+
+private: /* Details */
 	TYPE					m_eType;
 	_float					m_fAlpha;
 	_float4					m_vColor;
+	_float2					m_vOffset;
+	_tchar*					m_szFont;
+	_float2					m_vFontSize;
 
 public:
 	static	CUI_NodeButton*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -83,6 +83,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 		if (FAILED(Bind()))
 		{
 			//	MSG_BOX("Bind Failed");
+
 			return;
 		}
 	}
@@ -191,7 +192,7 @@ HRESULT CUI_CanvasUpgrade::Bind()
 
 	//RELEASE_INSTANCE(CGameInstance);
 
-	//m_bBindFinished = true;
+	m_bBindFinished = true;
 	return S_OK;
 }
 
@@ -293,19 +294,19 @@ HRESULT CUI_CanvasUpgrade::Ready_Nodes()
 	}
 
 	/* SkillVideo */
-	{
-		CUI* pUI = nullptr;
-		CUI::UIDESC tDesc;
+	//{
+	//	CUI* pUI = nullptr;
+	//	CUI::UIDESC tDesc;
 
-		string strCloneTag = "Node_SkillVideo";
-		_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTag);
-		tDesc.fileName = wstrCloneTag;
-		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillVideo", wstrCloneTag, &tDesc));
-		if (FAILED(Add_Node(pUI)))
-			return E_FAIL;
-		m_vecNodeCloneTag.push_back(strCloneTag);
-		pGameInstance->Add_String(wstrCloneTag);
-	}
+	//	string strCloneTag = "Node_SkillVideo";
+	//	_tchar* wstrCloneTag = CUtile::StringToWideChar(strCloneTagw);
+	//	tDesc.fileName = wstrCloneTag;
+	//	pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_SkillVideo", wstrCloneTag, &tDesc));
+	//	if (FAILED(Add_Node(pUI)))
+	//		return E_FAIL;
+	//	m_vecNodeCloneTag.push_back(strCloneTag);
+	//	pGameInstance->Add_String(wstrCloneTag);
+	//}
 
 	/* SkillName */
 	{

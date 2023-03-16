@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_NodeSkillVideo.h"
 #include "GameInstance.h"
-#include <windows.h>
+//#include <windows.h>
 //#include <d3d11.h>
 //#include <mfapi.h>
 //#include <mfidl.h>
@@ -49,11 +49,11 @@ HRESULT CUI_NodeSkillVideo::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Initialize_MF()))
-	{
-		MSG_BOX("Failed To Create Video Source");
-		return E_FAIL;
-	}
+	//if (FAILED(Initialize_MF()))
+	//{
+	//	MSG_BOX("Failed To Create Video Source");
+	//	return E_FAIL;
+	//}
 
 	m_bActive = true;
 	return S_OK;
