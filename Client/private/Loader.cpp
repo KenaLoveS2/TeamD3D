@@ -114,6 +114,8 @@
 #include "E_P_Flower.h"
 #include "E_P_KenaHeavyAttack_Into.h"
 #include "E_P_KenaHeavyAttack_end.h"
+#include "E_SpiritArrowHit.h"
+#include "E_SpiritArrowPosition.h"
 /* ~Effects */
 
 /* Components*/
@@ -2938,6 +2940,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto"),
 		CE_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_0.json"))))
 		return E_FAIL;
+
 	/* For.Prototype_GameObject_KenaHeavyAttackInto_P */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto_P"),
 		CE_P_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_0.json"))))
@@ -2947,9 +2950,20 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd"),
 		CE_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_1.json"))))
 		return E_FAIL;
+
 	/* For.Prototype_GameObject_KenaHeavyAttackEnd_P */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd_P"),
 		CE_P_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_1.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_SpiritArrowPosition */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrowPosition"),
+		CE_SpiritArrowPosition::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SpiritArrowPosition.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_SpiritArrowHit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrowHit"),
+		CE_SpiritArrowHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SpritArrowHit.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

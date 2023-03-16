@@ -130,7 +130,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
 
-	// ���� �ڿ� ������ vPivotPos�� �־��ָ�ȴ�.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	m_pRendererCom->Set_PhysXRender(true);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
@@ -697,7 +696,6 @@ void CKena::ImGui_PhysXValueProperty()
 	//vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
 	//m_pTransformCom->Set_PxPivot(vPxPivot);
 
-	// �̰� ��ǻ� px �Ŵ��� imgui_render�� �ֱ���
 	//PxRigidActor* pRigidActor =	CPhysX_Manager::GetInstance()->Find_DynamicActor(m_szCloneObjectTag);
 	// 	_float fMass = ((PxRigidDynamic*)pRigidActor)->getMass();
 	// 	ImGui::DragFloat("Mass", &fMass, 0.01f, -100.f, 500.f);
@@ -1342,7 +1340,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		_bool bRealAttack = false;
 		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
-			// 맞은거
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fGuage = m_pKenaStatus->Get_PercentHP();
@@ -1366,8 +1363,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)
 		{
-			// 때린거 
-
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
 				for (auto& Effect : m_mapEffect)

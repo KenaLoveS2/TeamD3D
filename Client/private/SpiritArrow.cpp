@@ -50,6 +50,7 @@ HRESULT CSpiritArrow::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = true;
 	m_eEFfectDesc.iPassCnt = 5; // Effect_SpritArrow
 	m_eEFfectDesc.fFrame[0] = 128.f;
+
 	return S_OK;
 }
 
@@ -81,6 +82,11 @@ HRESULT CSpiritArrow::Late_Initialize(void * pArg)
 	_smatrix	matPivot = XMMatrixTranslation(0.f, 0.f, m_fScale * m_fScalePosRate);
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 	m_pRendererCom->Set_PhysXRender(true);
+
+	Set_Child();
+
+	for (auto& pChild : m_vecChild)
+		pChild->Late_Initialize();
 
 	return S_OK;
 }
@@ -290,6 +296,8 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	{
 	case CSpiritArrow::ARROW_CHARGE:
 		{
+		m_vecChild[EFFECT_POSITION]->Set_Active(true);
+		
 		matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
 
@@ -324,6 +332,8 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	case CSpiritArrow::ARROW_HIT:
 		{
 		Reset();
+		m_vecChild[EFFECT_POSITION]->Set_Active(false);
+		m_vecChild[EFFECT_HIT]->Set_Active(true);
 		break;
 		}
 	}
@@ -343,6 +353,15 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		int a = 0;
 	}
 
+	/* Collision Test */
+	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_MONSTER)
+	{
+		m_bHit = true;
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+	}
+
 	return 0;
 }
 
@@ -357,6 +376,37 @@ void CSpiritArrow::Reset()
 	m_ePreState = CSpiritArrow::ARROWSTATE_END;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, -3.f, 0.f, 1.f));
+}
+
+void CSpiritArrow::Set_Child()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	wstring strArrowPosCloneTag = L"";
+	strArrowPosCloneTag = m_szCloneObjectTag;
+	strArrowPosCloneTag += L"_Pos";
+
+	_tchar* pPosCloneTag = CUtile::Create_StringAuto(strArrowPosCloneTag.c_str());
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowPosition", pPosCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	wstring strArrowHitCloneTag = L"";
+	strArrowHitCloneTag = m_szCloneObjectTag;
+	strArrowHitCloneTag += L"_Hit";
+
+	_tchar* pHitCloneTag = CUtile::Create_StringAuto(strArrowHitCloneTag.c_str());
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowHit", pHitCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 CSpiritArrow * CSpiritArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
