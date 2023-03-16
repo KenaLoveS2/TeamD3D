@@ -40,8 +40,6 @@ void CUI_CanvasAim::LevelUp(CUI_ClientManager::UI_PRESENT eType, _int iLevel)
 	case CUI_ClientManager::AMMO_ARROW:
 		if (1 == iLevel)
 		{
-			m_vecNode[UI_LINELEFT]->Set_Active(true);
-			m_vecNode[UI_LINERIGHT]->Set_Active(true);
 			m_vecNode[UI_ARROW1]->Set_Active(true);
 			m_vecNode[UI_ARROW2]->Set_Active(true);
 			m_vecNode[UI_ARROW3]->Set_Active(true);
@@ -123,6 +121,13 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 	m_bStart = false;
 	m_fTime = 0.5f;
 	m_fTimeAcc = 0.f;
+
+	m_vecNode[UI_ARROW1]->Set_Active(true);
+	m_vecNode[UI_ARROW2]->Set_Active(true);
+	m_vecNode[UI_ARROW3]->Set_Active(true);
+	m_vecNode[UI_ARROW4]->Set_Active(true);
+
+
 
 	return S_OK;
 }
@@ -360,6 +365,11 @@ void CUI_CanvasAim::Switch(CUI_ClientManager::UI_PRESENT eType, _float fData)
 	else /* Switch off */
 	{
 		m_bActive = false;
+		m_bStart = false;
+		m_fTimeAcc = 0.0f;
+		m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINELEFT])->Shrink(false);
+		static_cast<CUI_NodeAimLine*>(m_vecNode[UI_LINERIGHT])->Shrink(false);
 	}
 }
 

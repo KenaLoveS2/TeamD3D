@@ -35,9 +35,17 @@ HRESULT CShieldStick::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
-	// SetUp_Component(); Monster°¡ ºÒ·¯ÁÜ
-	//	Push_EventFunctions();
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 12.f;
+		m_Desc.WorldMatrix._43 = 5.f;
+	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 
@@ -80,8 +88,8 @@ HRESULT CShieldStick::Late_Initialize(void * pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));	
-	m_pEnemyWisp->Set_Position(_float4(12.f, 0.3f, 6.f, 1.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
@@ -226,7 +234,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(3.f);
+		return DistanceTrigger(m_fSpwanRange);
 	})
 		
 		.AddState("READY_SPAWN")
@@ -326,6 +334,9 @@ HRESULT CShieldStick::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

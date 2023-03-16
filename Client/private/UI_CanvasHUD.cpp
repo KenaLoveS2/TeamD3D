@@ -364,7 +364,8 @@ void CUI_CanvasHUD::Default(CUI_ClientManager::UI_PRESENT eType, _float fValue)
 			fVal = fValue - m_iNumPipsNow;
 			static_cast<CUI_NodeHUDPip*>(m_vecNode[m_Pips[iIndex]])->Set_Guage(fVal);
 
-
+			if(fVal >= 1.f)
+				static_cast<CUI_NodeHUDRot*>(m_vecNode[UI_ROT])->Change_RotIcon(0);
 		}
 	
 		break;

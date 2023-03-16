@@ -1,11 +1,16 @@
 #pragma once
 #include "Status.h"
 #include "Client_Defines.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Client)
 
 class CKena_Status final : public CStatus
 {
+public:
+	enum ROTSTATE { RS_GOOD, RS_HIDE, RS_ACTIVE, RS_LIFT, RS_END };
+
 private:
 	CKena_Status(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CKena_Status(const CKena_Status& rhs);
@@ -17,6 +22,10 @@ public:
 	virtual void		Tick(_float fTimeDelta) override;
 	virtual void		Imgui_RenderProperty() override;
 
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _float>	m_StatusDelegator;
+
+
 private:
 	_int				m_iMaxShield = 0;
 	_int				m_iShield = 0;
@@ -24,10 +33,14 @@ private:
 	_int				m_iKarma = 0;
 	_int				m_iRotLevel = 0;
 	_int				m_iRotCount = 0;
+	ROTSTATE			m_eRotState = RS_END;
+	_int				m_iRotMax = 0;
 	_int				m_iCrystal = 0;
 
+	_int				m_iPipLevel = 0;
 	_int				m_iMaxPIPCount = 0;
-	_int				m_iCurPIPCount = 0;
+	//_int				m_iCurPIPCount = 0;
+	_float				m_fCurPIPGuage = 0.f;
 	_float				m_fInitPIPCoolTime = 0.f;
 	_float				m_fCurPIPCoolTime = 0.f;
 
@@ -35,6 +48,7 @@ private:
 	_int				m_iCurArrowCount = 4;
 	_float				m_fInitArrowCoolTime = 3.f;
 	_float				m_fCurArrowCoolTime = 0.f;
+	_float				m_fArrowGuage = 1.f;
 
 	_int				m_iMaxBombCount = 0;
 	_int				m_iCurBombCount = 0;
@@ -66,10 +80,13 @@ public:
 	inline _int Get_Karma() { return m_iKarma; }
 	inline _int Get_RotLevel() { return m_iRotLevel; }
 	inline _int Get_RotCount() { return m_iRotCount; }
+	inline ROTSTATE Get_RotState() { return m_eRotState; }
+	_int	Get_RotMax();
 	inline _int Get_Crystal() { return m_iCrystal; }
-	
-	inline _int Get_MaxPIPCount() { return m_iMaxPIPCount; }
-	inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	_int Get_MaxPIPCount();// { return m_iMaxPIPCount; }
+	//inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	inline _int Get_CurPIPCount() { return (_int)m_fCurPIPGuage; }
+	inline _float Get_CurPIPGuage() { return m_fCurPIPGuage;  }
 	inline _float Get_InitPIPCoolTime() { return m_fInitPIPCoolTime; }
 	inline _float Get_CurPIPCoolTime() { return m_fCurPIPCoolTime; }
 
@@ -90,16 +107,24 @@ public:
 		   
 	inline void Set_Karma(_int iValue) { m_iKarma = iValue; }
 	inline void Set_RotLevel(_int iValue) { m_iRotLevel = iValue; }
-	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
+//	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
+	void Set_RotCount(_int iValue);
+	inline void Set_RotState(ROTSTATE iValue) { m_eRotState = iValue; }
 	inline void Set_Crystal(_int iValue) { m_iCrystal = iValue; }
 
+	inline void Upgrade_MaxPIPCount() { m_iMaxPIPCount++; }
 	inline void Set_MaxPIPCount(_int iValue) { m_iMaxPIPCount = iValue; }
-	inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
+	//inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
+	inline void Set_CurPIPGuage(_float fGuage) { m_fCurPIPGuage = fGuage; }
+	inline void Plus_CurPIPGuage(_float fGuage) {	
+		m_fCurPIPGuage = min(m_fCurPIPGuage+fGuage, m_iMaxPIPCount); 
+	}
 	inline void Set_InitPIPCoolTime(_float fValue) { m_fInitPIPCoolTime = fValue; }
 	inline void Set_CurPIPCoolTime(_float fValue) { m_fCurPIPCoolTime = fValue; }
 
 	inline void Set_MaxArrowCount(_int iValue) { m_iMaxArrowCount = iValue; }
-	inline void Set_CurArrowCount(_int iValue) { m_iCurArrowCount = iValue; }
+	void Set_CurArrowCount(_int iValue);
+	
 	inline void Set_InitArrowCoolTime(_float fValue) { m_fInitArrowCoolTime = fValue; }
 	inline void Set_CurArrowCoolTime(_float fValue) { m_fCurArrowCoolTime = fValue; }
 

@@ -25,8 +25,10 @@ HRESULT CSticks01::Initialize(void* pArg)
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -36,6 +38,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 10.f;
+		m_Desc.WorldMatrix._43 = 5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -327,7 +331,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(7.f) || m_bSpawnByMage;
+		return DistanceTrigger(m_fSpwanRange) || m_bSpawnByMage;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
@@ -583,6 +587,10 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -613,6 +621,10 @@ HRESULT CSticks01::SetUp_State()
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
 	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -645,6 +657,10 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("ATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -676,6 +692,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("ATTACK2 to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -707,6 +728,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("COMBOATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -738,6 +764,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
+
 		.AddTransition("ROCKTHROW to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -879,6 +910,8 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(DEATH);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -890,9 +923,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		m_bDeath = true;		
 	})		
 		.Build();
 
@@ -1036,7 +1067,6 @@ void CSticks01::Set_AttackType()
 
 void CSticks01::Reset_Attack()
 {
-	m_bRealAttack = false;
 	m_bChargeAttack = false;
 	m_bJumpAttack = false;
 	m_bAttack1 = false;
@@ -1078,7 +1108,7 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 	case AT_ROCKTHROW:
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 4.f);
 		if (DistanceTrigger(4.f))
-		m_bRealAttack = true;
+			m_bRealAttack = true;
 	default:
 		break;
 	}

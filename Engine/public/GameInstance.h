@@ -12,6 +12,8 @@
 #include "FSMComponent.h"
 #include "Animation.h"
 
+
+
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()
 
 BEGIN(Engine)
@@ -24,7 +26,7 @@ private:
 
 public:
 	static _uint Get_StaticLevelIndex()
-	{
+	{	
 		return m_iStaticLevelIndex;
 	}
 

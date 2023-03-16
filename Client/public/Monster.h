@@ -111,6 +111,7 @@ protected:
 	_float4								m_vKenaPos;
 
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
+	class CE_KenaHit* m_pKenaHit = nullptr;
 
 protected:
 	_bool	m_bWeaklyHit = false;
@@ -120,14 +121,16 @@ protected:
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
 
-	_float m_fDissolveTime = 0.0f;
+	_bool m_bRealAttack = false;
 
+	_float m_fDissolveTime = 0.0f;
+	_float m_fSpwanRange = 8.f;
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
-	virtual  HRESULT			SetUp_ShadowShaderResources() PURE;
+	virtual HRESULT			SetUp_ShadowShaderResources() PURE;
 	virtual HRESULT			SetUp_UI(_float fOffsetY = 0.2f);
 
 public:
@@ -137,6 +140,7 @@ public:
 
 	CMonster_Status* Get_MonsterStatusPtr() { return m_pMonsterStatusCom; }
 	HRESULT Bind_Dissolove(class CShader* pShader);
+	_bool IsRealAttack() { return m_bRealAttack; }
 };
 
 END

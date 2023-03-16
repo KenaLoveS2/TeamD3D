@@ -140,17 +140,10 @@ HRESULT CUI_NodeRotLevel::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
 		return E_FAIL;
 
-	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
-	{
-		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
-			return E_FAIL;
-	}
+	_float4 vColor = { 0.0f, 0.98f, 0.98f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
-	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
-	{
-		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
-			return E_FAIL;
-	}
 
 	_int XFrames = 9;
 	_int YFrames = 1;
@@ -165,9 +158,24 @@ HRESULT CUI_NodeRotLevel::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &YFrameNow, sizeof(_int))))
 		return E_FAIL;
 
-	_float4 vColor  = { 0.0f, 0.98f, 0.98f, 1.f };
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
-		return E_FAIL;
+	if (m_iLevel == 0)
+		return S_OK;
+
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+			return E_FAIL;
+	}
+
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

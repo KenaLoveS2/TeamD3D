@@ -8,22 +8,18 @@
 
 CUI_NodeAmmoArrowGuage::CUI_NodeAmmoArrowGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
-	, m_bFullFilled(false)
+	, m_fGuage(0.f)
 {
 }
 
 CUI_NodeAmmoArrowGuage::CUI_NodeAmmoArrowGuage(const CUI_NodeAmmoArrowGuage & rhs)
 	: CUI_Node(rhs)
-	, m_bFullFilled(false)
 {
 }
 
-void CUI_NodeAmmoArrowGuage::Set_Guage(_float fNextGuage)
+void CUI_NodeAmmoArrowGuage::Set_Guage(_float fGuage)
 {
-	/* Bomb guage doesn't go down step by step. */
-	/* full-filled -> and if use -> it goes zero */
-	/* after cool time end -> it goes back to Full */
-	m_vecEvents[EVENT_GUAGE]->Call_Event(fNextGuage);
+	m_fGuage = fGuage;
 }
 
 HRESULT CUI_NodeAmmoArrowGuage::Initialize_Prototype()
@@ -49,10 +45,10 @@ HRESULT CUI_NodeAmmoArrowGuage::Initialize(void * pArg)
 	}
 
 
-	/* Events */
-	/* 이미지가 변경되도록 하는 이벤트 */
-	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
+	///* Events */
+	///* 이미지가 변경되도록 하는 이벤트 */
+	//UIDESC* tDesc = (UIDESC*)pArg;
+	//m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
 
 	return S_OK;
 }
@@ -61,42 +57,48 @@ void CUI_NodeAmmoArrowGuage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	//if (m_fGuage == 1.f)
+	//{
+	//	CUI_ClientManager::GetInstance()
+	//		->Get_Effect(CUI_ClientManager::EFFECT_ARROWFULL)
+	//		->Start_Effect(this, 0.f, 35.f);
+	//}
 	/* When Fullfilled, Sparkling Effect Needed (once) */
-	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
-		&& !m_bFullFilled)
-	{
-		m_bFullFilled = true;
+	//if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
+	//	&& !m_bFullFilled)
+	//{
+	//	m_bFullFilled = true;
 
-		if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
-		{
-			static_cast<CUI_CanvasAmmo*>(m_pParent)->FillArrow();
+	//	if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
+	//	{
+	//		static_cast<CUI_CanvasAmmo*>(m_pParent)->FillArrow();
 
-			/* Connect With Canvas Aim's Arrow */
-			static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
-				CUI_CanvasAmmo::AIM_ARROW, 1);
+	//		/* Connect With Canvas Aim's Arrow */
+	//		static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
+	//			CUI_CanvasAmmo::AIM_ARROW, 1);
 
-			if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
-				m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
-		}
+	//		if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
+	//			m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
+	//	}
 
-		CUI_ClientManager::GetInstance()
-			->Get_Effect(CUI_ClientManager::EFFECT_ARROWFULL)
-			->Start_Effect(this, 0.f, 35.f);
+	//	CUI_ClientManager::GetInstance()
+	//		->Get_Effect(CUI_ClientManager::EFFECT_ARROWFULL)
+	//		->Start_Effect(this, 0.f, 35.f);
 
-	}
+	//}
 
-	/* Full To Zero process ended */
-	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
-	{
-		m_bFullFilled = false;
-	}
+	///* Full To Zero process ended */
+	//if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	//{
+	//	m_bFullFilled = false;
+	//}
 
-	if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero()
-		&& !(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
-	{
-		m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
+	//if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero()
+	//	&& !(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_ArrowFull()))
+	//{
+	//	m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
 
-	}
+	//}
 }
 
 void CUI_NodeAmmoArrowGuage::Late_Tick(_float fTimeDelta)
@@ -157,6 +159,15 @@ HRESULT CUI_NodeAmmoArrowGuage::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
+	_float4 vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	_float4 vMinColor = { 0.10f, 0.30f, 0.50f, 1.0f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vMinColor", &vMinColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &m_fGuage, sizeof(_float))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

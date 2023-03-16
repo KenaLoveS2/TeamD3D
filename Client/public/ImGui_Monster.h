@@ -20,10 +20,9 @@ public:
 	void MonsterList();
 
 public :
-	static void Load_MonsterObjects(_uint iLevel, string JsonFileName);
+	static void Load_MonsterObjects(_uint iLevel, string JsonFileName, _bool isDynamic = false);
 
 private:
-	void				Save_Load_Json();
 	void				Save();
 	HRESULT		Load();
 

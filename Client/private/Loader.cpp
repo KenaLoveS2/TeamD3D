@@ -17,6 +17,9 @@
 
 /* NPCs */
 #include "Rot.h"
+#include "Beni.h"
+#include "Saiya.h"
+#include "CameraForNpc.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -117,6 +120,7 @@
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Camera_Player.h"
+#include "CameraForRot.h"
 
 /*Test Objects*/
 #include "LodObject.h"
@@ -275,6 +279,12 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* Test Model */
 	/*if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body_forTest.mdat"), PivotMatrix))))
@@ -299,6 +309,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Player_Camera */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
 		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
@@ -469,6 +484,10 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_KenaStaffTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaStaffTrail"),
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
+		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Wind */
@@ -674,6 +693,12 @@ HRESULT CLoader::Loading_ForMapTool()
 		CCamera_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion  KENA
 
 #pragma region EFFECT
@@ -2016,17 +2041,17 @@ HRESULT CLoader::Loading_ForTestPlay()
 	m_fCur += 1.f;
 
 	/* NPC */
-	///* Prototype_Component_Model_Beni */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_Beni */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Beni",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Beni/Beni.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
-	///* Prototype_Component_Model_Saiya */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	/* Prototype_Component_Model_Saiya */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Saiya",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/NPC/Saiya/Saiya.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 	// 작업 시작 안한것들은 주석처리.
 
@@ -2146,6 +2171,18 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_Player_Camera */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
 		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
+		CCameraForRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_CameraForRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForNpc"),
+		CCameraForNpc::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2531,6 +2568,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 #pragma endregion Effect_Object
 
 #pragma  region	MONSTER
@@ -2676,7 +2719,18 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-#pragma  region	MONSTER
+#pragma  region NPC
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),
+		CBeni::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Saiya"),
+		CSaiya::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+#pragma  endregion
 
 	m_isFinished = true;
 
