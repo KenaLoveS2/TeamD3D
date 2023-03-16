@@ -111,7 +111,7 @@ public:
 	void LookAt(_fvector vTargetPos);
 	void LookAt_NoUpDown(_fvector vTargetPos);
 
-	void Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit = 0.1f);
+	void Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit = 0.1f, _bool bChaseY = false);
 	//void Jump(_float fTimeDelta);
 
 public:
