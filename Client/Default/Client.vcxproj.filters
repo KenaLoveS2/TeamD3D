@@ -199,9 +199,6 @@
     <Filter Include="02.GameObjects\Rot">
       <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Rot\State">
-      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
@@ -950,6 +947,7 @@
     <ClInclude Include="..\public\UI_NodeSkillVideo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RotWisp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1485,6 +1483,7 @@
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RotWisp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1556,5 +1555,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
   </ItemGroup>
 </Project>

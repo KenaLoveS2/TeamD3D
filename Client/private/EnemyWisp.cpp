@@ -172,8 +172,6 @@ HRESULT CEnemyWisp::SetUp_Components()
 HRESULT CEnemyWisp::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-
-
 	return S_OK;
 }
 

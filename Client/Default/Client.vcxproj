@@ -268,6 +268,7 @@
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
+    <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
@@ -453,6 +454,7 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
+    <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
@@ -562,6 +564,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />

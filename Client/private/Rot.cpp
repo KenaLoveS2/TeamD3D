@@ -4,6 +4,7 @@
 #include "FSMComponent.h"
 #include "Rope_RotRock.h"
 #include "CameraForRot.h"
+#include "RotWisp.h"
 
 #include "Kena.h"
 #include "Kena_Status.h"
@@ -108,6 +109,10 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
 
+
+
+	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp")));
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
 }
 
@@ -115,20 +120,24 @@ void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
-
-	if (m_bWakeUp)
+	if (m_pRotWisp->Get_Collect())
 	{
+		if (m_pFSM)
+			m_pFSM->Tick(fTimeDelta);
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 		m_pModelCom->Play_Animation(fTimeDelta);
 	}
+	else if (m_bWakeUp)
+	{
+		m_pRotWisp->Tick(fTimeDelta);
+	}
+
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	if (m_bWakeUp)
+	if(m_pRotWisp->Get_Collect())
 	{
 		__super::Late_Tick(fTimeDelta);
 		if (m_pRendererCom != nullptr)
@@ -136,6 +145,10 @@ void CRot::Late_Tick(_float fTimeDelta)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 		}
+	}
+	else if (m_bWakeUp)
+	{
+		m_pRotWisp->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -301,6 +314,7 @@ void CRot::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pRotWisp);
 }
 
 HRESULT CRot::SetUp_State()
@@ -432,7 +446,7 @@ _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int i
 
 _int CRot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (pTarget && iTriggerIndex == ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == COL_PLAYER)
+	if (pTarget && iTriggerIndex == ON_TRIGGER_PARAM_ACTOR && iColliderIndex == TRIGGER_PULSE)
 	{
 		m_bWakeUp = true;
 	}
