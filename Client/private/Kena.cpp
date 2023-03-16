@@ -248,15 +248,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	RELEASE_INSTANCE(CGameInstance)
 
-
 	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
 	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	
-
-	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
 
 	for (auto& pEffect : m_mapEffect)
 	{

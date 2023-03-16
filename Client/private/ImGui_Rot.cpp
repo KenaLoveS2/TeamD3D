@@ -120,7 +120,7 @@ void CImGui_Rot::Load_RotObjects(_uint iLevel, string JsonFileName, _bool isDyna
 {
 	list<CGameObject*> gameobjectList;
 
-	string      strLoadDirectory = "../Bin/Data/Monster/";
+	string      strLoadDirectory = "../Bin/Data/Rot/";
 	strLoadDirectory += JsonFileName;
 
 	ifstream      file(strLoadDirectory);

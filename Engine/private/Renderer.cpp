@@ -1007,6 +1007,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_SSAO);
 
 	Safe_Release(*m_pFlareTexture);
+	Safe_Delete(m_pFlareTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

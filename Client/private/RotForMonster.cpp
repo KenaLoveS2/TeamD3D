@@ -338,7 +338,7 @@ HRESULT CRotForMonster::SetUp_FSM()
 			_float4x4 pivotMatrix;
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
-			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
+			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
 		}
 	})
 		.OnExit([this]()
