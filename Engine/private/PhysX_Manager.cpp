@@ -337,6 +337,10 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
 
+	PxFilterData FilterData;
+	FilterData.word0 = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+	shape->setSimulationFilterData(FilterData);
+
 	pBody->attachShape(*shape);
 
 	if (pUserData)

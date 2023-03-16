@@ -20,7 +20,11 @@ CUI_RotIcon::CUI_RotIcon(const CUI_RotIcon & rhs)
 void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 {
 	if (pTarget == nullptr)
+	{
+		m_pTarget = nullptr;
+		m_bActive = false;
 		return;
+	}
 
 	m_pTarget = pTarget;
 	m_bActive = true;

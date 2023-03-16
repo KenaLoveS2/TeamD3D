@@ -72,35 +72,35 @@ void CUI_NodeAmmoBombGuage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	/* change to fullfilled texture (once) */
-	if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
-		&& !m_bFullFilled)
-	{
-		m_bFullFilled = true;
-		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
-		CUI_ClientManager::GetInstance()
-			->Get_Effect(CUI_ClientManager::EFFECT_BOMBFULL)
-			->Start_Effect(this, 0.f, 0.f);
+	///* change to fullfilled texture (once) */
+	//if (static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_FullFilled()
+	//	&& !m_bFullFilled)
+	//{
+	//	m_bFullFilled = true;
+	//	m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this);
+	//	CUI_ClientManager::GetInstance()
+	//		->Get_Effect(CUI_ClientManager::EFFECT_BOMBFULL)
+	//		->Start_Effect(this, 0.f, 0.f);
 
-		if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_BombFull()))
-		{
-			static_cast<CUI_CanvasAmmo*>(m_pParent)->FillBomb();
+	//	if (!(static_cast<CUI_CanvasAmmo*>(m_pParent)->Is_BombFull()))
+	//	{
+	//		static_cast<CUI_CanvasAmmo*>(m_pParent)->FillBomb();
 
-			/* Connect With Canvas Aim's Bomb */
-			static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
-				CUI_CanvasAmmo::AIM_BOMB, 1, this);
-		}
-	}
+	//		/* Connect With Canvas Aim's Bomb */
+	//		static_cast<CUI_CanvasAmmo*>(m_pParent)->ConnectToAimUI(
+	//			CUI_CanvasAmmo::AIM_BOMB, 1, this);
+	//	}
+	//}
 
-	if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
-	{
-		m_bFullFilled = false;
-	}
+	//if (m_bFullFilled &&static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	//{
+	//	m_bFullFilled = false;
+	//}
 
-	if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
-	{
-		m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
-	}
+	//if (!m_bFullFilled && static_cast<CUI_Event_Guage*>(m_vecEvents[EVENT_GUAGE])->Is_Zero())
+	//{
+	//	m_vecEvents[EVENT_GUAGE]->Call_Event(1.f);
+	//}
 
 }
 

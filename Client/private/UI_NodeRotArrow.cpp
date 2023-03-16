@@ -2,6 +2,7 @@
 #include "..\public\UI_NodeRotArrow.h"
 #include "GameInstance.h"
 #include "UI_Canvas.h"
+#include "UI_Event_Fade.h"
 
 CUI_NodeRotArrow::CUI_NodeRotArrow(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
@@ -19,10 +20,17 @@ CUI_NodeRotArrow::CUI_NodeRotArrow(const CUI_NodeRotArrow & rhs)
 
 void CUI_NodeRotArrow::Set_Info(_int iRots)
 {
+	m_vecEvents[EVENT_FADE]->Call_Event(true);
+
 	m_iRots = iRots;
 
 	Safe_Delete_Array(m_szInfo);
 	m_szInfo = CUtile::Create_String(to_wstring(m_iRots).c_str());
+}
+
+void CUI_NodeRotArrow::Set_Arrow(_float fX)
+{
+	m_matLocal._41 = fX;
 }
 
 HRESULT CUI_NodeRotArrow::Initialize_Prototype()
@@ -48,6 +56,8 @@ HRESULT CUI_NodeRotArrow::Initialize(void * pArg)
 	}
 
 	m_bActive = true;
+
+	m_vecEvents.push_back(CUI_Event_Fade::Create(0.05f, 4.f));
 	return S_OK;
 }
 
@@ -82,14 +92,14 @@ HRESULT CUI_NodeRotArrow::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
-		return E_FAIL;
-	}
+	//if (FAILED(SetUp_ShaderResources()))
+	//{
+	//	MSG_BOX("Failed To Setup ShaderResources : CUI_NodeSkillName");
+	//	return E_FAIL;
+	//}
 
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
+	//m_pShaderCom->Begin(m_iRenderPass);
+	//m_pVIBufferCom->Render();
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
@@ -104,7 +114,7 @@ HRESULT CUI_NodeRotArrow::Render()
 		pGameInstance->Render_Font(TEXT("Font_Basic0"), m_szInfo,
 			vNewPos /* position */,
 			0.f, _float2(1.f, 1.f)/* size */,
-			XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+			XMVectorSet(1.f, 1.f, 1.f, static_cast<CUI_Event_Fade*>(m_vecEvents[EVENT_FADE])->Get_Alpha())/* color */);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -158,9 +168,9 @@ HRESULT CUI_NodeRotArrow::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	_float fAlpha = 1.f;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
-		return E_FAIL;
+	//_float fAlpha = 1.f;
+	//if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &fAlpha, sizeof(_float))))
+	//	return E_FAIL;
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;

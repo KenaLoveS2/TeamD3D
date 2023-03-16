@@ -11,10 +11,14 @@ private:
 
 public:
 	virtual	void		Call_Event(_float fData)				override;
+
+	void				Set_InitState(_float fInitialGuage);
 	_bool				Is_FullFilled() { if (m_fGuage >= 0.99f) return true; else return false; }
 	_bool				Is_Zero();
 	_float				Get_GuageNow() { return m_fGuageNew; }
 	void				ReArrangeSettingOn() { m_bReArrangeSettingOn = true; }
+
+
 
 public:
 	virtual	HRESULT		Tick(_float fTimeDelta)					override;

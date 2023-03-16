@@ -85,10 +85,12 @@ VS_OUT VS_ARROW(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
+	float		fCosTime = g_WaveHeight * cos(g_Time * g_Speed + (In.vTexUV.x + In.vTexUV.y) * 0.5f * g_WaveFrequency);
+	In.vPosition.xy *= fCosTime;
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
-	Out.vTexUV = In.vTexUV;
+	Out.vTexUV = In.vTexUV + float2(g_Time * g_UVSpeed * -1.f, 0.f);
 	Out.vProjPos = Out.vPosition;
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
@@ -305,17 +307,18 @@ PS_OUT PS_SPRITARROW(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float  time = frac(g_Time * 4.5f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV * 3.f, float2(1.0f, 1.0f), float2(time, time));
-	
-	float4 outglowcolor = float4(0.0f, 167.f, 255.f, 255.f) / 255.f;
-	float4 outglow = float4(fresnel_glow(8.f, 3.5f, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.5f, time));
 
-	float4 vDiffuse = g_DTexture_0.Sample(PointSampler, OffsetUV);
-	if (vDiffuse.a < 0.1f)
+	float4 outglowcolor = float4(31.0f, 158.f, 191.f, 255.f) / 255.f;
+	float4 outglow = float4(fresnel_glow(2.f, 3.5f, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV * 3.f);
+	Out.vDiffuse.rgb = vDiffuse.rgb + outglow.rgb;
+	if (Out.vDiffuse.a < 0.2f)
+		Out.vDiffuse.rgb = Out.vDiffuse.rgb * (float3)1.f;
+	Out.vDiffuse.a = (outglowcolor.b * 5.f) * 0.2f;
+	if (Out.vDiffuse.a < 0.2f)
 		discard;
-
-	Out.vDiffuse = vDiffuse + outglow;
-	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.2f;
 	return Out;
 }
 
@@ -350,26 +353,6 @@ PS_OUT PS_SPRITARROW_GRAB(PS_IN In)
 	
 	Out.vDiffuse = vDiffuse * outglow;
 	Out.vDiffuse.a = outglowcolor.r * 0.05f;
-	return Out;
-}
-
-//PS_SPRITARROW_MAINMESH
-PS_OUT PS_SPRITARROW_MAINMESH(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
-
-	float  time = frac(g_Time * 4.5f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.5f, time));
-
-	float4 outglowcolor = float4(16.0f, 48.f, 85.f, 155.0f) / 255.f;
-	float4 outglow = float4(fresnel_glow(8.f, 2.5f, outglowcolor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
-
-	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
-	if (vDiffuse.a < 0.1f)
-		discard;
-
-	Out.vDiffuse = vDiffuse;
-	Out.vDiffuse.a = outglowcolor.r;
 	return Out;
 }
 
@@ -446,7 +429,7 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN();
+		VertexShader = compile vs_5_0 VS_ARROW();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
@@ -477,19 +460,6 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_SPRITARROW_GRAB();
-	}
-
-	pass Effect_SpritArrowMainMesh // 8
-	{
-		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_SPRITARROW_MAINMESH();
 	}
 
 }

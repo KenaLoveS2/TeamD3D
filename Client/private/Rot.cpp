@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "Rope_RotRock.h"
+#include "CameraForRot.h"
 
 #include "Kena.h"
 #include "Kena_Status.h"
@@ -36,23 +37,28 @@ HRESULT CRot::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
-	GaemObjectDesc.TransformDesc.fSpeedPerSec = 1.5f;
+	GaemObjectDesc.TransformDesc.fSpeedPerSec = CUtile::Get_RandomFloat(1.3f,2.f);
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
-	m_pTransformCom->Set_Translation(_float4(5.f, 0.f, 5.f, 1.f), _float4());
-
 	m_pModelCom->Set_AnimIndex(IDLE);
 	m_pModelCom->Set_AllAnimCommonType();
-
 	Push_EventFunctions();
 
 	m_iEveryRotCount++;
 	m_iObjectProperty = OP_ROT;
+
+	ZeroMemory(&m_Desc, sizeof(CRot::DESC));
+
+	if (pArg != nullptr)
+		memcpy(&m_Desc, pArg, sizeof(CRot::DESC));
+	else
+	{
+		m_Desc.iRoomIndex = 0;
+		m_Desc.WorldMatrix = _smatrix();
+	}
 
 	return S_OK;
 }
@@ -87,13 +93,16 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_ROT));
 
-	// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vPivotPosï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¸ï¿½È´ï¿½.
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.15f, 0.f));
-	m_pTransformCom->Set_Position(_float3(-50.f, 0.f, -50.f));
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
-	m_vWakeUpPosition = _float4(3.f, 0.f, 3.f, 1.f);
-
+	m_vWakeUpPosition = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
 	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
+	RELEASE_INSTANCE(CGameInstance)
 
 	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
 
@@ -109,22 +118,25 @@ void CRot::Tick(_float fTimeDelta)
 
 	if (m_pFSM)
 		m_pFSM->Tick(fTimeDelta);
-		
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
-	m_pModelCom->Play_Animation(fTimeDelta);
-
+	if (m_bWakeUp)
+	{
+		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+		m_pModelCom->Play_Animation(fTimeDelta);
+	}
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
-
-	if (m_pRendererCom != nullptr)
+	if (m_bWakeUp)
 	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		__super::Late_Tick(fTimeDelta);
+		if (m_pRendererCom != nullptr)
+		{
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		}
 	}
 }
 
@@ -150,7 +162,7 @@ HRESULT CRot::Render()
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 		else		if (i == 2)
 		{
-			// ¸Ó¸®Ä«¶ô ¸ð¸£°ÚÀ½.
+			// ï¿½Ó¸ï¿½Ä«ï¿½ï¿½ ï¿½ð¸£°ï¿½ï¿½ï¿½.
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
 		}
@@ -322,7 +334,11 @@ HRESULT CRot::SetUp_State()
 		
 		.AddState("WAKE_UP")
 		.OnStart([this]()
-	{	
+	{
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		m_pMyCam->Set_Target(this);
+		p_game_instance->Work_Camera(L"ROT_CAM");
+		RELEASE_INSTANCE(CGameInstance)
 		m_pModelCom->Set_AnimIndex(TELEPORT3);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -344,7 +360,6 @@ HRESULT CRot::SetUp_State()
 	{
 		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
 		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
-
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
 		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
@@ -355,7 +370,10 @@ HRESULT CRot::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-
+		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+		m_pMyCam->Set_Target(nullptr);
+		p_game_instance->Work_Camera(L"PLAYER_CAM");
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.AddTransition("COLLECT to IDLE ", "IDLE")
 		.Predicator([this]()

@@ -72,6 +72,9 @@ float4 FinalPassPS( VS_OUTPUT In ) : SV_TARGET
 	// Tone mapping
 	color = ToneMapping(color);
 
-	// Output the LDR value
-	return float4(color, 1.0);
+	//float Alpha = sqrt(dot(color, float3(0.299f, 0.587f, 0.114))); // compute luma
+	//float4 FinalColor = float4(color, Alpha);
+	//return FinalColor;
+
+	return float4(color,1.f);
 }

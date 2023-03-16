@@ -2219,11 +2219,11 @@ void CKena_State::Start_Aim_Into(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 
-	/* Switch On Aim */
-	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
-	_float fTag = 1.f;
-	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+	/* Turn On Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 1.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Loop(_float fTimeDelta)
@@ -2240,10 +2240,11 @@ void CKena_State::Start_Aim_Return(_float fTimeDelta)
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;
 
-	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
-	CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
-	_float fTag = 0.f;
-	m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Start_Aim_Run(_float fTimeDelta)
@@ -2454,6 +2455,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
@@ -2462,6 +2468,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
@@ -2470,6 +2481,11 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
@@ -2478,6 +2494,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
@@ -2486,6 +2507,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
@@ -2494,6 +2520,11 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
@@ -2502,6 +2533,11 @@ void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
@@ -2510,6 +2546,11 @@ void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Charge_Full(_float fTimeDelta)
@@ -2678,6 +2719,11 @@ void CKena_State::Start_Bow_Release_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
@@ -2686,6 +2732,11 @@ void CKena_State::Start_Bow_Release_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
@@ -2694,6 +2745,11 @@ void CKena_State::Start_Bow_Release_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
@@ -2702,6 +2758,11 @@ void CKena_State::Start_Bow_Release_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
@@ -2710,6 +2771,11 @@ void CKena_State::Start_Bow_Release_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
@@ -2718,6 +2784,11 @@ void CKena_State::Start_Bow_Release_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
@@ -2726,6 +2797,11 @@ void CKena_State::Start_Bow_Release_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
@@ -2734,6 +2810,11 @@ void CKena_State::Start_Bow_Release_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = false;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 0.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge(_float fTimeDelta)
@@ -2755,6 +2836,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
@@ -2763,6 +2849,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
@@ -2771,6 +2862,11 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
@@ -2779,6 +2875,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
@@ -2787,6 +2888,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
@@ -2795,6 +2901,11 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
@@ -2803,6 +2914,11 @@ void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
@@ -2811,6 +2927,11 @@ void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+
+	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
+	_float fTag = 1.0f;
+	m_PlayerDelegator.broadcast(eAim, eFunc, fTag);
 }
 
 void CKena_State::Start_Bow_Return(_float fTimeDelta)
@@ -3383,6 +3504,11 @@ void CKena_State::Tick_Aim_Loop(_float fTimeDelta)
 
 void CKena_State::Tick_Aim_Return(_float fTimeDelta)
 {
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::Tick_Aim_Run_Forward(_float fTimeDelta)
@@ -4004,6 +4130,12 @@ void CKena_State::End_Aim_Return(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;
+
+	/* Turn Off Canvas Aim */
+	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+	//_float fTag = 0.f;
+	//m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
 }
 
 void CKena_State::End_Aim_Run_Forward(_float fTimeDelta)
@@ -4709,7 +4841,15 @@ _bool CKena_State::KeyInput_Space()
 _bool CKena_State::KeyInput_LShift()
 {
 	if (m_pGameInstance->Key_Pressing(DIK_LSHIFT))
+	{
+		/* Turn Off Canvas Aim */
+		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		_float fTag = 1.f;
+		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
 		return true;
+	}
 	
 	return false;
 }
@@ -4821,8 +4961,15 @@ _bool CKena_State::KeyUp_E()
 _bool CKena_State::KeyUp_LShift()
 {
 	if (m_pGameInstance->Key_Up(DIK_LSHIFT))
+	{
+		/* Turn Off Canvas Aim */
+		CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
+		CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
+		_float fTag = 0.f;
+		m_PlayerDelegator.broadcast(eAim, funcSwitch, fTag);
+
 		return true;
-	
+	}
 	return false;
 }
 
