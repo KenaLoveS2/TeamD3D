@@ -23,6 +23,7 @@ class CKena final : public CGameObject
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
+	enum STATERETURN { STATE_ATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_JUMP, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,7 +36,9 @@ public:
 	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
 	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
+	const _uint				Get_AnimationStateIndex() const;
 
+	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
@@ -141,10 +144,9 @@ private:	/* Animation Event Func */
 	void					Test(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnAttack(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffAttack(_bool bIsInit, _float fTimeDelta);
-
+	void					TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffCharge(_bool bIsInit, _float fTimeDelta);
-
 	void					TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
 	void					TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta);
@@ -162,7 +164,9 @@ public:
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
 	virtual void			Free() override;
 
-	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	virtual _int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 	void Test_Raycast();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }

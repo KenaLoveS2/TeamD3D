@@ -314,6 +314,10 @@ HRESULT CRotForMonster::SetUp_FSM()
 	})
 
 		.AddState("BIND_MONSTER")
+		.OnStart([this]()
+	{
+		m_pRotTrail->Set_Active(true);
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(CRot::SQUISH_U);
@@ -334,9 +338,14 @@ HRESULT CRotForMonster::SetUp_FSM()
 			_float4x4 pivotMatrix;
 			XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
 			_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
-			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f));
+			m_pTransformCom->Chase(vPos, fTimeDelta, CUtile::Get_RandomFloat(0.1f, 1.f), true);
 		}
 	})
+		.OnExit([this]()
+	{
+		m_pRotTrail->Set_Active(false);
+	})
+
 		.AddTransition("BIND_MONSTER to IDLE", "IDLE")
 		.Predicator([this]()
 	{

@@ -61,12 +61,12 @@ private:
 	CFSMComponent* m_pFSM = nullptr;
 
 private:
-	_bool						  m_bWakeUp = false;
-	_bool						  m_bCreateStart = false;
-	_bool						  m_bBind = false;
+	_bool								 m_bWakeUp = false;
+	_bool								 m_bCreateStart = false;
+	_bool								 m_bBind = false;
 	class CMonster*				  m_pTarget = nullptr;
 	class CE_RotTrail*			  m_pRotTrail = nullptr;
-	DESC						  m_Desc;
+	DESC								  m_Desc;
 
 public:
 	static CRotForMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

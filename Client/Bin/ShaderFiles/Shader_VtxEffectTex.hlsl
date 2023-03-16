@@ -344,7 +344,7 @@ PS_OUT PS_MAIN_E_HEAVYATTACK(PS_IN In)
 
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	albedo.a = albedo.r;
+	albedo.a = albedo.r * 0.3f;
 
 	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;

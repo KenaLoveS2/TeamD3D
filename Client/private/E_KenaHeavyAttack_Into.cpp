@@ -62,9 +62,9 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		m_fScale += 0.3f;
+		m_fScale += 0.5f;
 		m_eEFfectDesc.vScale = fCurScale * m_fScale;
-		if (m_fTimeDelta > 0.5f)
+		if (m_fTimeDelta > 0.3f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
 			m_eEFfectDesc.fHeightFrame = 0.0;
