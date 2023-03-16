@@ -253,14 +253,15 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		m_fSpwanRange = 10.f;
-		return DistanceTrigger(m_fSpwanRange);
+		m_fSpawnRange = 10.f;
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
 
 		.AddState("READY_SPAWN")		
 		.OnExit([this]()
 	{
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to AWAKE", "WISPOUT")
@@ -406,6 +407,8 @@ HRESULT CSapling::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(WISPOUT);
 		m_bDying = true;
+		m_pUIHPBar->Set_Active(false);
+		m_pTransformCom->Clear_Actor();
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -418,8 +421,6 @@ HRESULT CSapling::SetUp_State()
 		.OnStart([this]()
 	{
 		m_bDeath = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
 	})	
 		.Build();
 

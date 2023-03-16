@@ -338,6 +338,8 @@ HRESULT CMonster::SetUp_UI(_float fOffsetY)
 	}
 	RELEASE_INSTANCE(CGameInstance);
 
+	m_pUIHPBar->Set_Active(false);
+
 	return S_OK;
 }
 
@@ -366,7 +368,9 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			WeakleyHit();
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
-						
+			
+			m_bStronglyHit = true;
+
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 		}

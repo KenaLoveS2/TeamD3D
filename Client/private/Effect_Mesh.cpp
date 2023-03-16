@@ -56,67 +56,71 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta = fTimeDelta;
 
-	if (m_eEFfectDesc.bStart == true)
-		m_fFreePosTimeDelta += fTimeDelta;
+#pragma region nouse
 
-	if (m_eEFfectDesc.IsMovingPosition == true)
-	{
-		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
-		if (m_eEFfectDesc.bStart == true &&
-			m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
-		{
-			_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
+	//if (m_eEFfectDesc.bStart == true)
+	//	m_fFreePosTimeDelta += fTimeDelta;
 
-			if (m_eEFfectDesc.fAngle != 0.0f)
-			{
-				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
-					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
-					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-				if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
-					vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
-			}
+	//if (m_eEFfectDesc.IsMovingPosition == true)
+	//{
+	//	m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
+	//	if (m_eEFfectDesc.bStart == true &&
+	//		m_eEFfectDesc.fMoveDurationTime > m_eEFfectDesc.fPlayBbackTime)
+	//	{
+	//		_float4 vLook = XMVector3Normalize(m_eEFfectDesc.vPixedDir) * m_eEFfectDesc.fCreateRange;
 
-			_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			if (m_eEFfectDesc.bSpread == true)
-				vPos += XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
-			else
-				vPos -= XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+	//		if (m_eEFfectDesc.fAngle != 0.0f)
+	//		{
+	//			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_X)
+	//				vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Y)
+	//				vLook = XMVector3TransformNormal(vLook, XMMatrixRotationZ(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//			if (m_eEFfectDesc.eRotation == CEffect_Base::tagEffectDesc::ROT_Z)
+	//				vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(m_eEFfectDesc.fAngle)));
+	//		}
 
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
-		}
-		else
-		{
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
-			m_eEFfectDesc.fPlayBbackTime = 0.0f;
-		}
-	}
+	//		_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	//		if (m_eEFfectDesc.bSpread == true)
+	//			vPos += XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
+	//		else
+	//			vPos -= XMVector3Normalize(vLook) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec *  fTimeDelta;
 
-	// FreeMoveing Tick
-	if (m_eEFfectDesc.bFreeMove == true)
-	{
-		static _int iCurIdx = 0;
+	//		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+	//	}
+	//	else
+	//	{
+	//		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_eEFfectDesc.vInitPos);
+	//		m_eEFfectDesc.fPlayBbackTime = 0.0f;
+	//	}
+	//}
 
-		if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
-			return;
+	//// FreeMoveing Tick
+	//if (m_eEFfectDesc.bFreeMove == true)
+	//{
+	//	static _int iCurIdx = 0;
 
-		if (!CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
-		{
-			auto& iter = m_vecFreePos.begin();
-			if (iCurIdx >= m_vecFreePos.size())
-				iCurIdx = 0;
+	//	if (m_vecFreePos.empty() || m_vecFreePos.size() == 0)
+	//		return;
 
-			for (_int i = 0; i < iCurIdx; ++i)
-				iter++;
+	//	if (!CGameInstance::GetInstance()->Mouse_Pressing(DIM_LB))
+	//	{
+	//		auto& iter = m_vecFreePos.begin();
+	//		if (iCurIdx >= m_vecFreePos.size())
+	//			iCurIdx = 0;
 
-			_bool bNextTime = Play_FreePos(*iter);
-			if (bNextTime)
-			{
-				m_bLerp = false;
-				iCurIdx++;
-			}
-		}
-	}
+	//		for (_int i = 0; i < iCurIdx; ++i)
+	//			iter++;
+
+	//		_bool bNextTime = Play_FreePos(*iter);
+	//		if (bNextTime)
+	//		{
+	//			m_bLerp = false;
+	//			iCurIdx++;
+	//		}
+	//	}
+	//}
+#pragma endregion nouse
+
 }
 
 void CEffect_Mesh::Late_Tick(_float fTimeDelta)

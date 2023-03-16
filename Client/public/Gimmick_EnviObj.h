@@ -18,7 +18,10 @@ private:
 	virtual ~CGimmick_EnviObj() = default;
 
 public:
-	void				Set_Gimmick_Active(_bool bGimmick_Active) { m_bGimmick_Active = bGimmick_Active; }
+	void				Set_Gimmick_Active(_int iRoomIndex,_bool bGimmick_Active) { 
+		if(m_EnviromentDesc.iRoomIndex == iRoomIndex)
+			m_bGimmick_Active = bGimmick_Active;
+		}
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -40,12 +43,12 @@ private:
 	CModel*							m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
-
+	class CControlRoom*					m_pControlRoom = nullptr;
 private:
 	_float4							m_vOriginPos;
 	_bool							m_bGimmick_Active = false;
 	_bool							m_bColliderOn = false;
-
+	
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

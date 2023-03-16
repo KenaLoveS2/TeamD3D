@@ -710,7 +710,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	if (pTerrainEditor == nullptr)
 		return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain1"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -719,18 +719,18 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
 {
 
-	//if (ImGui::Button("Create_Crystal_Pulse"))
-	//{
+	if (ImGui::Button("Create_Crystal_Pulse"))
+	{
 
-	//	for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-	//	{
-	//		if(dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-	//			continue;
-	//	
-	//		if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(),L"2_Water_GimmickCrystal02"))
-	//			static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
-	//	}
-	//}
+		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
+		{
+			if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
+				continue;
+
+			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(), L"2_Water_GimmickCrystal02"))
+				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
+		}
+	}
 }
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
@@ -926,6 +926,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	}
 
 	
+
 	
 
 	ImGui::End();
@@ -964,11 +965,9 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 
 	pModel->Set_InstancePos(vecMatrixVec);
 
-#ifdef FOR_MAP_GIMMICK
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{
 		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
-#endif
 }
 

@@ -228,6 +228,8 @@
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
+    <ClInclude Include="..\public\E_SpiritArrowHit.h" />
+    <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -411,6 +413,8 @@
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
+    <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
+    <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />

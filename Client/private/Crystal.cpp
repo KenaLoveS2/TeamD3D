@@ -5,7 +5,8 @@
 #include "Interaction_Com.h"
 #include "Effect_Base.h"
 #include "E_PulseObject.h"
-
+#include "Pulse_Plate_Anim.h"
+#include "ControlRoom.h"
 
 CCrystal::CCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -54,7 +55,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
-	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
 	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDensity = 0.2f;
 	BoxDesc.fMass = 150.f;
@@ -65,8 +66,9 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	BoxDesc.fStaticFriction = 0.5f;
 	BoxDesc.fRestitution = 0.1f;
 	BoxDesc.bKinematic = true;
-
+	
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
 	
 	CGameInstance*	pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectObj = nullptr;
@@ -75,7 +77,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0번  :PULSE_OBJ_RECIVE
-	PulseObj_Desc.fIncreseRatio = 1.15f;
+	PulseObj_Desc.fIncreseRatio = 1.3f;
 	PulseObj_Desc.fPulseMaxSize = 2.f;
 	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
 	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
@@ -88,7 +90,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1번  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.03f;
+	PulseObj_Desc.fIncreseRatio = 1.07f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;
@@ -101,9 +103,17 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		pEffectObj->Late_Initialize();
+		pEffectObj->Set_Active(false);
 	}
 #endif
 
+	if (m_EnviromentDesc.iRoomIndex == 2 &&
+		!lstrcmp(L"2_Water_GimmickCrystal01", m_szCloneObjectTag))
+	{
+		m_pControlRoom = dynamic_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		assert(m_pControlRoom != nullptr  && "CPulse_Plate_Anim::Late_Initialize(void * pArg)");
+		m_pControlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
+	}
 	
 	return S_OK;
 }
@@ -112,17 +122,6 @@ void CCrystal::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	
-	//if (m_VecCrystal_Effect.size() != 0)
-	//{
-	//	for (auto& pEffectObj : m_VecCrystal_Effect)
-	//	{
-	//		if (pEffectObj != nullptr)
-	//			pEffectObj->Set_Active(false);
-	//	}
-	//}
-
-#ifdef FOR_MAP_GIMMICK
 	if (m_VecCrystal_Effect.size() == 0)
 		return;
 
@@ -130,14 +129,22 @@ void CCrystal::Tick(_float fTimeDelta)
 	{
 		m_VecCrystal_Effect[1]->Set_Active(true);
 	}
-	
+
 
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		if (pEffectObj != nullptr)
 			pEffectObj->Tick(fTimeDelta);
 	}
-#endif
+
+	if (m_EnviromentDesc.iRoomIndex == 2 && 
+		true == m_bGimmickActive && 
+		 !lstrcmp(m_szCloneObjectTag,L"2_Water_GimmickCrystal01") && nullptr != m_pControlRoom)
+	{	
+		if(m_VecCrystal_Effect[1]->Get_Active() == true)//static_cast<CE_PulseObject*>(m_VecCrystal_Effect[1])->Get_Finish())
+			m_pControlRoom->Trigger_Active(m_EnviromentDesc.iRoomIndex, CEnviromentObj::Gimmick_TYPE_GO_UP, true);
+	}
+
 }
 
 void CCrystal::Late_Tick(_float fTimeDelta)
@@ -217,10 +224,18 @@ _int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 _int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	// 콜라이더 인덱스 우리가 Client에서  정의 한  인덱스
+	if (pTarget == m_VecCrystal_Effect[1] || iColliderIndex != (_int)TRIGGER_PULSE)
+		return 0;
 
-	if (iColliderIndex == (_int)TRIGGER_PULSE)
-		m_VecCrystal_Effect[0]->Set_Active(true);
+	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal01"))
+	{
+		if(true == m_bGimmickActive)
+			m_VecCrystal_Effect[0]->Set_Active(true);
+
+		return 0;
+	}
+	m_VecCrystal_Effect[0]->Set_Active(true);
+
 	return 0;
 }
 

@@ -194,7 +194,10 @@ PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector maskTex0 = g_MTexture_0.Sample(LinearSampler, In.vTexUV) * 5.f;
+	vector maskTex = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+	maskTex.a = maskTex.r;
+	if (maskTex.r >= 0.035f && maskTex.g >= 0.035f && maskTex.b >= 0.035f)
+		discard;
 
 	// Sprite
 	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
@@ -205,13 +208,10 @@ PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 
 	// DTexture
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-
 	albedo.a = albedo.r;
-	albedo.rgb = float3(111 / 255.f, 177 / 255.f, 200 / 255.f) * 2.f;
-
-	float  fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
-
-	Out.vColor = saturate( albedo * maskTex0);
+	
+	float4 finalcolor = lerp(albedo, maskTex, maskTex.r);
+	Out.vColor = finalcolor * float4(3.f, 208.f, 255.f, 84.f) / 255.f * 2.f;
 
 	return Out;
 }
@@ -299,6 +299,11 @@ PS_OUT PS_MAIN_E_DAMAGE(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.rgb = (albedo.rgb * g_vColor.rgb) * 2.f;
 	albedo.b = 10.f;
+
+	float fTIme = min(g_Time, 1.f);
+	if (In.vTexUV.y < fTIme)
+		albedo.a *= (1.f - fTIme);
+
 	Out.vColor = albedo;
 	return Out;
 }
@@ -341,8 +346,31 @@ PS_OUT PS_MAIN_E_HEAVYATTACK(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.a = albedo.r;
 
-	albedo.rgb = albedo.rgb + g_vColor;
+	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
+	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
+	albedo = albedo * g_vColor;
+	Out.vColor = albedo;
+	return Out;
+}
 
+//PS_MAIN_E_SPRITE
+PS_OUT PS_MAIN_E_SPRITE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	/* Sprite */
+
+	/* DiffuseTexture */
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	albedo.a = albedo.r;
+
+	albedo.rgb = albedo.rgb * g_vColor.rgb * 4.f;
 	Out.vColor = albedo;
 	return Out;
 }
@@ -464,5 +492,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_HEAVYATTACK();
+	}
+
+	pass Effect_Sprite // 9
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_SPRITE();
 	}
 }

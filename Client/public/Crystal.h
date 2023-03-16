@@ -27,19 +27,21 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
-
+	 
 public:
 	void			Create_Pulse(_bool bActive);
-
+	void			Set_GimmickActive(_bool bGimmickActive) { m_bGimmickActive = bGimmickActive; }
 
 private:	
 	CModel*							m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	
+	class CControlRoom*				m_pControlRoom = nullptr;
+
 private:
 	vector<class CEffect_Base*>			m_VecCrystal_Effect;
-
+	_bool								m_bGimmickActive = false;
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

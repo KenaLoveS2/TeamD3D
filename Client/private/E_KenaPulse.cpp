@@ -112,6 +112,7 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+#pragma region	 test
 	//ImGui::Begin("pulse");
 	//if (ImGui::Button("rebuild"))
 	//	m_pShaderCom->ReCompile();
@@ -135,7 +136,7 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	//m_eEFfectDesc.vColor = vSelectColor;
 
 	//ImGui::End();
-
+#pragma endregion test
 
 	if (m_bNoActive == true) // Pulse ³¡
 	{
@@ -150,9 +151,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		_float4 vPos;
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-
 		CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
-		CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *0.5f );
+		if(vScale.x <= 8.f)
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f  );
 
 		if (m_fDissolveTime > 1.f)
 		{
@@ -183,10 +184,10 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
-
-	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+	if (m_pParent != nullptr)
 		Set_Matrix();
+	
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_KenaPulse::Render()

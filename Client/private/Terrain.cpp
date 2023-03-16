@@ -61,12 +61,6 @@ HRESULT CTerrain::Initialize(void * pArg)
 
 HRESULT CTerrain::Late_Initialize(void * pArg)
 {	
-	/*
-	wstring wstrFilePath = TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_");
-	wstrFilePath += to_wstring(m_TerrainDesc.iHeightBmpNum);
-	wstrFilePath += TEXT(".bmp");
-	Change_HeightMap(wstrFilePath.c_str());
-	*/
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
@@ -169,8 +163,15 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	_tchar szTemp[4][64] = {
+		TEXT("Prototype_Component_VIBuffer_Terrain_0"),
+		TEXT("Prototype_Component_VIBuffer_Terrain_1"),
+		TEXT("Prototype_Component_VIBuffer_Terrain_2"),
+		TEXT("Prototype_Component_VIBuffer_Terrain_3"),
+	};
+
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(g_LEVEL, szTemp[m_TerrainDesc.iHeightBmpNum], TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
