@@ -580,11 +580,13 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
 
+	_vector			vScale;
 	_vector			vPosition;
 	_vector			vRotation;
 
 	if (PlayTime >= m_KeyFrames.back().Time)
 	{
+		vScale = XMLoadFloat3(&m_KeyFrames.back().vScale);
 		vRotation = XMLoadFloat4(&m_KeyFrames.back().vRotation);
 		vPosition = XMLoadFloat3(&m_KeyFrames.back().vPosition);
 		vPosition = XMVectorSetW(vPosition, 1.f);
@@ -597,37 +599,45 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 		_float				Ratio = _float((PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time));
 
+		_vector			vSourScale, vDestScale;
 		_vector			vSourRotation, vDestRotation;
 		_vector			vSourPosition, vDestPosition;
 
+		vSourScale = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex].vScale);
 		vSourRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex].vRotation);
 		vSourPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex].vPosition);
 
+		vDestScale = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vScale);
 		vDestRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vRotation);
 		vDestPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex+ 1].vPosition);
 
+		vScale = XMVectorLerp(vSourScale, vDestScale, Ratio);
 		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, Ratio);
 		vPosition = XMVectorLerp(vSourPosition, vDestPosition, Ratio);
 		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
 
+	//vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRatio);
+	//vRotation = XMQuaternionMultiply(vBaseRot, vRotation);
+
+	vScale = XMVectorLerp(vBaseScale, vBaseScale * vScale, fAdditiveRatio);
 	vRotation = XMQuaternionSlerp(vBaseRot, XMQuaternionMultiply(vBaseRot, vRotation), fAdditiveRatio);
 	vPosition = XMVectorLerp(vBasePos, vBasePos + vPosition, fAdditiveRatio);
 	vPosition = XMVectorSetW(vPosition, 1.f);
 
 	if (isRootBone == false)
 	{
-		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
-		{
-			matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
-		}
-		else if (m_pBone->Get_BoneRotateLocked() == true && m_pBone->Get_BonePositioinLocked() == false)
-		{
-			_vector	vSc, vRot, vTrans;
-			XMMatrixDecompose(&vSc, &vRot, &vTrans, matBonesTransfomation);
-
-			matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTrans);
-		}
+// 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
+// 		{
+// 			matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
+// 		}
+// 		else if (m_pBone->Get_BoneRotateLocked() == true && m_pBone->Get_BonePositioinLocked() == false)
+// 		{
+// 			_vector	vSc, vRot, vTrans;
+// 			XMMatrixDecompose(&vSc, &vRot, &vTrans, matBonesTransfomation);
+// 
+// 			matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTrans);
+// 		}
 
 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
 			matBonesTransfomation = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
