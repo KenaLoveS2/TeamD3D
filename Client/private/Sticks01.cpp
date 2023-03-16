@@ -67,19 +67,17 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
-		PxCapsuleDesc.bCCD = true;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;	
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 	
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);		
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
@@ -338,7 +336,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpwanRange) || m_bSpawnByMage;
+		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMage;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
@@ -346,6 +344,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("READY_SPAWN")		
 		.OnExit([this]()
 	{		
+		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
 		.AddTransition("READY_SPAWN to INTOCHARGE", "INTOCHARGE")
@@ -1098,23 +1097,23 @@ void CSticks01::Tick_Attack(_float fTimeDelta)
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK1:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ATTACK2:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_COMBOATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 		break;
 	case AT_ROCKTHROW:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 4.f);
-		if (DistanceTrigger(4.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 3.f);
+		if (DistanceTrigger(3.f))
 			m_bRealAttack = true;
 	default:
 		break;

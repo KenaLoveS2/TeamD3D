@@ -362,6 +362,13 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	if (Desc.eType == BOX_STATIC)
 	{	
 		PxTransform Transform(CUtile::ConvertPosition_D3DToPx(Desc.vPos));
+
+		/*
+		PxQuat Rotation = PxQuat(XMConvertToRadians(Desc.fDegree), CUtile::ConvertPosition_D3DToPx(Desc.vRotationAxis));
+		Transform.q = Rotation;
+		*/
+		// transform.q = Rotation;
+		
 		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
 		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, false);
@@ -823,7 +830,7 @@ void CPhysX_Manager::Set_ActorPosition(PxRigidActor* pActor, _float3 vPosition)
 void CPhysX_Manager::Set_ActorRotation(PxRigidActor* pActor, _float fDegree, _float3 vAxis)
 {
 	PxQuat Rotation = PxQuat(XMConvertToRadians(fDegree), CUtile::ConvertPosition_D3DToPx(vAxis));
-
+	
 	PxTransform transform = pActor->getGlobalPose();
 	transform.q = Rotation * transform.q;
 	// transform.q = Rotation;
