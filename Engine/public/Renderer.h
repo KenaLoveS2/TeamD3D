@@ -91,8 +91,8 @@ private:
 
 	HRESULT PostProcess_Distort();
 	_bool		m_bDistort = false;
-	HRESULT PostProcess_FilmTonemapping();
-	_bool		m_bFilmTonemapping = false;
+	HRESULT PostProcess_GrayScale();
+	_bool		m_bGrayScale = false;
 
 #ifdef _DEBUG
 private:
