@@ -486,6 +486,10 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/T_LockOn_Small.png")))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_FocusNPC"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/10. WorldUI/NPCCarrot2.png")))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
