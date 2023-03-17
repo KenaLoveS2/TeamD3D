@@ -17,10 +17,14 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void    Imgui_RenderProperty();
 
 private:
 	_float			m_fScaleTime = 0.0f;
 	_float			m_fAddValue = 0.0f;
+
+public:
+	void			Set_Child();
 
 public:
 	static  CE_KenaHit* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

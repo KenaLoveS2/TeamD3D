@@ -138,6 +138,9 @@ public:
 		m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 		m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
 	}
+	void SetSprite(_float2 InitSprit) {
+		m_fInitSpriteCnt = InitSprit;
+	}
 
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
@@ -151,27 +154,26 @@ public:
 	void    Set_TrailDesc();
 
 public:
-	virtual void			 Set_FreePos() {}
-	virtual _bool			 Play_FreePos(_float4& vPos) { return true; }
-	virtual vector<_float4>* Get_FreePos() { return nullptr; }
-	void Set_InitPos(vector<_float4> vecFreePos) { memcpy(&m_vecFreePos, &vecFreePos, sizeof(vecFreePos.size())); }
+	virtual void				 Set_FreePos() {}
+	virtual _bool				 Play_FreePos(_float4& vPos) { return true; }
+	virtual vector<_float4>*	 Get_FreePos() { return nullptr; }
+	void						 Set_InitPos(vector<_float4> vecFreePos) { memcpy(&m_vecFreePos, &vecFreePos, sizeof(vecFreePos.size())); }
 
 public:
-	void				 BillBoardSetting(_float3 vScale);
+	void						 BillBoardSetting(_float3 vScale);
 
 public:
-	virtual HRESULT      Initialize_Prototype(const _tchar* pFilePath = nullptr);
-	virtual HRESULT		 Initialize(void* pArg) override;
-	virtual void		 Tick(_float fTimeDelta) override;
-	virtual void		 Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT		 Render() override;
+	virtual HRESULT				 Initialize_Prototype(const _tchar* pFilePath = nullptr);
+	virtual HRESULT				 Initialize(void* pArg) override;
+	virtual void				 Tick(_float fTimeDelta) override;
+	virtual void				 Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT				 Render() override;
 
 public:
-	virtual HRESULT		 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
+	virtual HRESULT				 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
+	virtual HRESULT				 Edit_Child(const _tchar * ProtoTag) { return S_OK; }
 
-	virtual HRESULT	     Edit_Child(const _tchar * ProtoTag) { return S_OK; }
-
-	virtual HRESULT		 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
+	virtual HRESULT				 Set_Trail(class CEffect_Base* pEffect, const _tchar* pProtoTag) { return S_OK; }
 	virtual class CEffect_Trail* Get_Trail() { return nullptr; }
 	virtual void				 Delete_Trail(const _tchar* pProtoTag) {}
 
@@ -194,7 +196,7 @@ protected:
 
 protected:
 	/* Child */
-	_uint m_iHaveChildCnt = 0;
+	_uint						m_iHaveChildCnt = 0;
 	_float4x4					m_InitWorldMatrix;
 	vector<class CEffect_Base*> m_vecChild;
 
@@ -224,6 +226,7 @@ protected:
 	/* FreeMoving */
 
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
+
 public:
 	virtual void          Free() override;
 };
