@@ -36,6 +36,14 @@ HRESULT CStatue::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CStatue::Late_Initialize(void * pArg)
+{
+
+	//m_pRendererCom->Set_PhysXRender(true);
+
+	return S_OK;
+}
+
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -127,6 +135,11 @@ void CStatue::ImGui_ShaderValueProperty()
 	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
 	m_pModelCom->Imgui_MaterialPath();
 	m_pTransformCom->Imgui_RenderProperty();
+}
+
+void CStatue::ImGui_PhysXValueProperty()
+{
+	
 }
 
 HRESULT CStatue::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

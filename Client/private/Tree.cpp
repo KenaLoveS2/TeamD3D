@@ -268,6 +268,10 @@ void CTree::ImGui_ShaderValueProperty()
 	m_pTransformCom->Imgui_RenderProperty();
 }
 
+void CTree::ImGui_PhysXValueProperty()
+{
+}
+
 HRESULT CTree::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);

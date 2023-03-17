@@ -187,12 +187,6 @@ HRESULT CCrystal::Render()
 	return S_OK;
 }
 
-void CCrystal::Create_Pulse(_bool bActive)
-{
-	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal02"))
-		m_VecCrystal_Effect[0]->Set_Active(bActive);
-}
-
 HRESULT CCrystal::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
