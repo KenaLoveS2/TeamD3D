@@ -334,6 +334,7 @@ HRESULT CRotEater::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})

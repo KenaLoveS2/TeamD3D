@@ -84,7 +84,7 @@ private:
 	
 	_bool	m_bChargeAttack = false;
 	_bool	m_bSlamAttack = false;
-	_bool    m_bExplodeAttack = false;
+	_bool   m_bExplodeAttack = false;
 
 	_bool	m_bHit = false;
 
@@ -92,6 +92,8 @@ public:
 	static CRockGolem*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*			Clone(void* pArg = nullptr)  override;
 	virtual void							Free() override;
+
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 };
 
 END

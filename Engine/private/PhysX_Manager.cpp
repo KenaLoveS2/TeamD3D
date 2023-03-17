@@ -345,7 +345,7 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	pBody->attachShape(*shape);
 
 	if (pUserData)
-	{
+	{	
 		pUserData->eType = TRIANGLE_MESH_STATIC;
 		pBody->userData = pUserData;
 		m_UserDataes.push_back(pUserData);
@@ -1244,8 +1244,6 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName)
 
 
 	}
-
-
 }
 
 void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
