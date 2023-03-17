@@ -30,6 +30,7 @@ public:
 
 public:
 	virtual void			ImGui_AnimationProperty() override;
+	virtual void			Imgui_RenderProperty() override;
 
 private:
 	HRESULT					SetUp_Components();
@@ -49,6 +50,13 @@ private:
 	void					TurnOffBack(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffGround(_bool bIsInit, _float fTimeDelta);
 	void					TurnOffParticle(_bool bIsInit, _float fTimeDelta);
+
+public:
+	_bool	Get_Dissolve() { return m_bDissolve; }
+
+private:
+	_bool m_bDissolve = false;
+	_float m_fDissolveTimeDelta = 0.0f;
 
 public:
 	static CEnemyWisp*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

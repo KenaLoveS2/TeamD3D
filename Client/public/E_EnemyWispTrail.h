@@ -30,6 +30,10 @@ private:
 	_float2  m_fUV = { 1.f,1.f };
 	_float	 m_fTimeDelta = 0.0f;
 
+private:
+	_bool  m_bDissolve = false;
+	_float m_fDissolveTimeDelta = 0.0f;
+
 public:
 	static  CE_EnemyWispTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*  Clone(void* pArg = nullptr) override;
