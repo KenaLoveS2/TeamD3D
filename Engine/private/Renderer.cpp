@@ -790,8 +790,6 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_GrayScale();
 	}
 
-
-
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);

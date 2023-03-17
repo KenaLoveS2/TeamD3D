@@ -626,7 +626,7 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 2.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 
 	return Out;
