@@ -206,9 +206,22 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 						pAdditive->m_listLockedJoint.push_back(pair<string, CBone::LOCKTO>{strJoint, eLockto});
 					}
 				}
+
+				if (jAdditive.contains("99. Remove Tracks"))
+				{
+					for (_uint iIndex : jAdditive["99. Remove Tracks"])
+						pAdditive->m_listLockedBoneIndex.push_back(iIndex);
+				}
 				pAnimState->m_vecAdditiveAnim.push_back(pAdditive);
 			}
 		}
+
+		if (jAnimState.contains("99. Remove Tracks"))
+		{
+			for (_uint iIndex : jAnimState["99. Remove Tracks"])
+				pAnimState->m_listLockedBoneIndex.push_back(iIndex);
+		}
+
 		m_mapAnimState.emplace(pAnimState->m_strStateName, pAnimState);
 	}
 
@@ -218,6 +231,7 @@ HRESULT CAnimationState::Initialize_FromFile(const string & strFilePath)
 void CAnimationState::Tick(_float fTimeDelta)
 {
 	/* TODO : Additive Ratio Controller */
+
 }
 
 HRESULT CAnimationState::State_Animation(const string & strStateName, _float fLerpDuration)
@@ -342,7 +356,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 		pPreAnim = m_pPreAnim->m_pMainAnim;
 		pPreBlendAnim = m_pPreAnim->m_pBlendAnim;
-		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim);
+		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim, true);
 
 		if (pPreAnim == pMainAnim || pPreAnim == pBlendAnim)
 			pPreAnim->Reverse_Play(fTimeDelta);
@@ -374,7 +388,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
 
 					if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone, true);
 					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 					{
 						if (pAdditiveAnim->m_bPlayReverse == false)
@@ -395,14 +409,14 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 							}
 						}
 
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone, true);
 					}
 					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone, true);
 				}
 				else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
 				{
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
+					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, nullptr, true);
 				}
 			}
 		}
@@ -514,6 +528,17 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 				pJoint->Set_BoneLocked(Pair.second);
 			}
 		}
+
+		if (m_pCurAnim->m_listLockedBoneIndex.empty() == false)
+		{
+			for (_uint& iIndex : m_pCurAnim->m_listLockedBoneIndex)
+			{
+				pJoint = m_pModel->Get_BonePtr(iIndex);
+				assert(pJoint != nullptr);
+				pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
+			}
+		}
+
 		pMainAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pBlendAnim);
 
 		/* Additive */
@@ -537,6 +562,16 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 							matTransform = pJoint->Get_TransformMatrix();
 						//
 						pJoint->Set_BoneLocked(Pair.second);
+					}
+				}
+
+				if (pAdditiveAnim->m_listLockedBoneIndex.empty() == false)
+				{
+					for (_uint& iIndex : pAdditiveAnim->m_listLockedBoneIndex)
+					{
+						pJoint = m_pModel->Get_BonePtr(iIndex);
+						assert(pJoint != nullptr);
+						pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
 					}
 				}
 
@@ -584,13 +619,13 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 	m_pModel->Compute_CombindTransformationMatrix();
 
-	if (XMMatrixIsIdentity(matTransform) == false)
-	{
-		pJoint = m_pModel->Get_BonePtr("kena_spine_low_jnt");
-		pJoint->Set_TransformMatrix(matTransform);
-		pJoint->Compute_CombindTransformationMatrix();
-		m_pModel->Compute_CombindTransformationMatrix("kena_hip_jnt");
-	}
+// 	if (XMMatrixIsIdentity(matTransform) == false)
+// 	{
+// 		pJoint = m_pModel->Get_BonePtr("kena_spine_low_jnt");
+// 		pJoint->Set_TransformMatrix(matTransform);
+// 		pJoint->Compute_CombindTransformationMatrix();
+// 		m_pModel->Compute_CombindTransformationMatrix("kena_hip_jnt");
+// 	}
 
 	
  	for (auto pModel : m_vecNonSyncPart)

@@ -53,7 +53,6 @@ void CEffect_T::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fShaderBindTime += fTimeDelta;
 
-
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
 		m_fTimeDelta += fTimeDelta;
@@ -151,10 +150,13 @@ void CEffect_T::Tick(_float fTimeDelta)
 
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
+	__super::Late_Tick(fTimeDelta);
+	
 	if (m_eEFfectDesc.IsBillboard == true)
-		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
+		CUtile::Execute_BillBoard(m_pTransformCom, _float3{1.f, 1.f, 1.f});
 	else
 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 

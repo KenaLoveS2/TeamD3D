@@ -12,6 +12,7 @@ private:
 
 public:
 	void	Set_QuestString(wstring str);
+	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;

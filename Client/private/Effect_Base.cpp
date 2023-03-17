@@ -20,6 +20,7 @@ CEffect_Base::CEffect_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContex
 	: CGameObject(pDevice, pContext)
 {
 	ZeroMemory(&m_eEFfectDesc, sizeof(EFFECTDESC));
+
 	m_eEFfectDesc.vScale = { 1.0f, 1.0f, 1.0f, 1.0f };
 	XMStoreFloat4x4(&m_InitWorldMatrix, XMMatrixIdentity());
 }
@@ -30,10 +31,14 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
 	, m_iTotalMTextureComCnt(rhs.m_iTotalMTextureComCnt)
 	, m_fInitSpriteCnt(rhs.m_fInitSpriteCnt)
 {
-	m_vecChild.assign(rhs.m_vecChild.begin(), rhs.m_vecChild.end());
+
+	//m_vecChild.assign(rhs.m_vecChild.begin(), rhs.m_vecChild.end());
 
 	memcpy(&m_InitWorldMatrix, &rhs.m_InitWorldMatrix, sizeof(_float4x4));
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
+
+	for (auto pChild : rhs.m_vecChild)
+		m_vecChild.push_back(dynamic_cast<CEffect_Base*>(pChild->Clone()));
 }
 
 HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
@@ -332,6 +337,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 						memcpy(((_float*)&WorldMatrix) + (i++), &fElement, sizeof(_float));
 
 #pragma  endregion	EFFECTDESC
+
 					dynamic_cast<CEffect_Base*>(this)->Set_InitChild(eChildEffectDesc, iChildCnt, strPrototypeTag.c_str(), WorldMatrix);
 					jChildDesc.clear();
 				}

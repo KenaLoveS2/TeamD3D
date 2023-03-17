@@ -54,6 +54,7 @@ void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)
@@ -62,9 +63,6 @@ void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulseDot::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

@@ -71,6 +71,8 @@ private:
 	_bool										m_bDynamicShadow = false;
 	_bool										m_bSSAO = false;
 
+	_float										m_fDistortTime = 0.f;
+
 private:
 	HRESULT Render_StaticShadow();
 	HRESULT Render_Priority();
@@ -87,10 +89,19 @@ private:
 	HRESULT Render_UILast();
 	HRESULT Render_Viewer();		// Model Viewer
 
+	HRESULT PostProcess_Distort();
+	_bool		m_bDistort = false;
+	HRESULT PostProcess_FilmTonemapping();
+	_bool		m_bFilmTonemapping = false;
+
 #ifdef _DEBUG
 private:
 	HRESULT Render_DebugObject();
 #endif
+
+private:
+	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);
+	ID3D11ShaderResourceView** 	m_pFlareTexture = nullptr;
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

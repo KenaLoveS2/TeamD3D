@@ -39,14 +39,14 @@ HRESULT CUI_CanvasInvHeader::Initialize(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 	{
-		MSG_BOX("Failed To SetUp Components : CanvasUpgrade");
+		MSG_BOX("Failed To SetUp Components : CanvasInvHeader");
 		return E_FAIL;
 	}
 
 
 	if (FAILED(Ready_Nodes()))
 	{
-		MSG_BOX("Failed To Ready Nodes : CanvasUpgrade");
+		MSG_BOX("Failed To Ready Nodes : CanvasInvHeader");
 		return E_FAIL;
 	}
 
@@ -112,23 +112,14 @@ HRESULT CUI_CanvasInvHeader::Render()
 HRESULT CUI_CanvasInvHeader::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),	L"Layer_Player", L"Kena"));
+	RELEASE_INSTANCE(CGameInstance);
 
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
-	}
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
 
 	pKena->m_PlayerPtrDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
 
-
-
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -199,8 +190,6 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -223,36 +212,7 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
-}
-
-void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, _float fValue)
-{
-	switch (eType)
-	{
-	case CUI_ClientManager::INV_:
-		m_bActive = true;
-		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM)->Set_Active(false);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(false);
-		break;
-	case CUI_ClientManager::INV_KARMA:
-		static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma((_int)fValue);
-		break;
-	case CUI_ClientManager::INV_NUMROTS:
-		static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots((_int)fValue);
-		break;
-	case CUI_ClientManager::INV_CRYSTAL:
-		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal((_int)fValue);
-		break;
-	}
-
-
 }
 
 void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena * pPlayer)
@@ -300,6 +260,5 @@ CGameObject * CUI_CanvasInvHeader::Clone(void * pArg)
 
 void CUI_CanvasInvHeader::Free()
 {
-
 	__super::Free();
 }

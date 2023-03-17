@@ -348,7 +348,7 @@ void CAnimation::Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRati
 	}
 }
 
-void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim)
+void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim, _bool IsLerp)
 {
 	if (true == m_isFinished)
 	{
@@ -374,7 +374,8 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 			pBlendAnim->m_isFinished = true;
 	}
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	if (IsLerp == false)
+		Call_Event(fLastPlayTime, fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -385,6 +386,9 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 		{
 			if (true == m_isFinished && true == m_isLooping)
 				m_Channels[i]->Reset_KeyFrameIndex();
+
+			if (m_Channels[i]->Get_BoneLocked() == true)
+				continue;
 
  			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
  				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
@@ -499,7 +503,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 	}
 }
 
-void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, const string & strRootBone)
+void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, const string & strRootBone, _bool IsLerp)
 {
 	if (true == m_isFinished)
 	{
@@ -510,7 +514,8 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 	_float		fLastPlayTime = (_float)m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	if (IsLerp == false)
+		Call_Event(fLastPlayTime, fTimeDelta);
 
 	CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
 
@@ -525,7 +530,7 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
 			continue;
 
-		if (m_Channels[i]->Get_BoneLocked() == true /*|| !strcmp(m_Channels[i]->Get_Name(), "staff_root_jnt")*/)
+		if (m_Channels[i]->Get_BoneLocked() == true)
 		{
 			//m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
 			continue;

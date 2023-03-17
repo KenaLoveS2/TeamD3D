@@ -64,29 +64,16 @@ HRESULT CUI_NodeKarma::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHPBar");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
-
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 20.f, g_iWinSizeY*0.5f - vPos.y - 20.f};
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	_tchar* str = CUtile::StringToWideChar(to_string(m_iKarma));
-	pGameInstance->Render_Font(TEXT("Font_Basic0"), str,
+	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), str,
 		vNewPos /* position */,
 		0.f, _float2(0.9f, 0.9f)/* size */,
 		XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
 	Safe_Delete_Array(str);
-
-	RELEASE_INSTANCE(CGameInstance);
-
 
 	return S_OK;
 }
@@ -115,7 +102,6 @@ HRESULT CUI_NodeKarma::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -135,8 +121,6 @@ HRESULT CUI_NodeKarma::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

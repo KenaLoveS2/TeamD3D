@@ -344,7 +344,7 @@ PS_OUT PS_MAIN_E_HEAVYATTACK(PS_IN In)
 
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	albedo.a = albedo.r;
+	albedo.a = albedo.r * 0.3f;
 
 	float3 vColor = float3(15.f, 130.f, 190.f) / 255.f;
 	albedo.rgb = float3(1.f, 1.f, 1.f) * 3.f;
@@ -369,8 +369,11 @@ PS_OUT PS_MAIN_E_SPRITE(PS_IN In)
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.a = albedo.r;
+	albedo.a = albedo.g * 0.55;
 
-	albedo.rgb = albedo.rgb * g_vColor.rgb * 4.f;
+	float4 vColor = float4(99.f, 248.f, 255.f, 255.f) / 255.f;
+	albedo.rgb = vColor.rgb * 1.3f;
+
 	Out.vColor = albedo;
 	return Out;
 }
@@ -497,7 +500,7 @@ technique11 DefaultTechnique
 	pass Effect_Sprite // 9
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

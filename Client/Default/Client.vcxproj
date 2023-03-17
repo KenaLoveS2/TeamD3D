@@ -227,6 +227,8 @@
     <ClInclude Include="..\public\E_P_EnemyWisp.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
+    <ClInclude Include="..\public\E_P_KenaHit.h" />
+    <ClInclude Include="..\public\E_P_SpiritArrow.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
@@ -323,6 +325,7 @@
     <ClInclude Include="..\public\UI_NodeAmmoBombFrame.h" />
     <ClInclude Include="..\public\UI_NodeAmmoBombGuage.h" />
     <ClInclude Include="..\public\UI_NodeButton.h" />
+    <ClInclude Include="..\public\UI_NodeChat.h" />
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeConfWindow.h" />
@@ -347,6 +350,7 @@
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
     <ClInclude Include="..\public\UI_NodeSkillDesc.h" />
     <ClInclude Include="..\public\UI_NodeSkillName.h" />
+    <ClInclude Include="..\public\UI_NodeSkillVideo.h" />
     <ClInclude Include="..\public\UI_NodeTitle.h" />
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
@@ -411,6 +415,8 @@
     <ClCompile Include="..\private\E_P_EnemyWisp.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
+    <ClCompile Include="..\private\E_P_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
@@ -507,6 +513,7 @@
     <ClCompile Include="..\private\UI_NodeAmmoBombFrame.cpp" />
     <ClCompile Include="..\private\UI_NodeAmmoBombGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeButton.cpp" />
+    <ClCompile Include="..\private\UI_NodeChat.cpp" />
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
@@ -531,6 +538,7 @@
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillDesc.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillName.cpp" />
+    <ClCompile Include="..\private\UI_NodeSkillVideo.cpp" />
     <ClCompile Include="..\private\UI_NodeTitle.cpp" />
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />

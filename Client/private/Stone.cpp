@@ -42,7 +42,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 	vPos = _float3(0.0f, 0.5f, 0.0f);
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03" ||
-		m_EnviromentDesc.szModelTag ==  L"Prototype_Component_Model_RuinsKit_Rubble01")
+		m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble01")
 	{
 		return S_OK;
 	}
@@ -51,9 +51,6 @@ HRESULT CStone::Late_Initialize(void * pArg)
 		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
 	else
 		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
-
-
-	
 
 	return S_OK;
 }

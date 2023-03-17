@@ -19,16 +19,19 @@
 
 #include "UI_RotIcon.h"
 #include "RotForMonster.h"
+#include "E_KenaDust.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
+	, m_bStateLock(false)
 {
 }
 
@@ -52,6 +55,51 @@ _double CKena::Get_AnimationPlayTime()
 const string & CKena::Get_AnimationState() const
 {
 	return m_pAnimation->Get_CurrentAnimName();
+}
+
+const _uint CKena::Get_AnimationStateIndex() const
+{
+	return m_pAnimation->Get_CurrentAnimIndex();
+}
+
+const _bool CKena::Get_State(STATERETURN eState) const
+{
+	if (eState == CKena::STATERETURN_END)
+		return false;
+
+	switch (eState)
+	{
+	case STATE_ATTACK:
+		return m_bAttack;
+		break;
+
+	case STATE_COMMONHIT:
+		return m_bCommonHit;
+		break;
+
+	case STATE_HEAVYHIT:
+		return m_bHeavyHit;
+		break;
+
+	case STATE_SPRINT:
+		return m_bSprint;
+		break;
+
+	case STATE_AIM:
+		return m_bAim;
+		break;
+
+	case STATE_BOW:
+		return m_bBow;
+		break;
+
+	case STATE_JUMP:
+		return m_bJump;
+		break;
+
+	default:
+		return false;
+	}
 }
 
 HRESULT CKena::Initialize_Prototype()
@@ -248,15 +296,12 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	RELEASE_INSTANCE(CGameInstance)
 
-
 	CUI_ClientManager::UI_PRESENT eRot = CUI_ClientManager::HUD_ROT;
 	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 	_float fRotState = (_float)CKena_Status::RS_GOOD;
 	m_PlayerDelegator.broadcast(eRot, funcDefault, fRotState);
 
-	
-
-	m_pTransformCom->Set_Position(_float4(-3.f, 0.f, -3.f, 1.f));
+	m_pTransformCom->Set_Position(_float4(13.f, 0.f, 9.f, 1.f));
 
 	for (auto& pEffect : m_mapEffect)
 	{
@@ -286,7 +331,8 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_pAnimation->Get_Preview() == false)
 	{
 		m_pKenaState->Tick(fTimeDelta);
-		m_pStateMachine->Tick(fTimeDelta);
+		if(!m_bStateLock)
+			m_pStateMachine->Tick(fTimeDelta);
 	}
 
 	m_pKenaStatus->Tick(fTimeDelta);
@@ -334,13 +380,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	m_pKenaState->Late_Tick(fTimeDelta);
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_UP))
-		m_iAnimationIndex++;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_DOWN))
-		m_iAnimationIndex--;
-	CUtile::Saturate<_int>(m_iAnimationIndex, 0, 499);
-
-
 	/* UI Control */
 	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
 	{
@@ -374,7 +413,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	//CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
-	//CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
 	////CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	////CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	////CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
@@ -389,14 +428,18 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
 	{
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+	}
 
+	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
+	{
 		/* Test Before Hit Monster */
 		_float fGuage = m_pKenaStatus->Get_CurPIPGuage();
 		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
 		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
 		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
 	}
-
 
 	//	//static _float fTag = 0.0f;
 	//	//if (fTag < 1.0f)
@@ -789,16 +832,15 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
-	Test(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
+	TurnOnTrail(true, 0.f);
+	TurnOffTrail(true, 0.f);
 	TurnOnCharge(true, 0.f);
 	TurnOffCharge(true, 0.f);
 	TurnOnPulseJump(true, 0.f);
-
 	TurnOnHeavyAttack_Into(true, 0.f);
 	TurnOnHeavyAttack_End(true, 0.f);
-
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -910,6 +952,7 @@ HRESULT CKena::Ready_Arrows()
 HRESULT CKena::Ready_Effects()
 {
 	CEffect_Base*	pEffectBase = nullptr;
+	_tchar*			pCloneTag = nullptr;
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* Pulse */
@@ -923,16 +966,27 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaDamage", pEffectBase);
 
-	/* Hit */
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_mapEffect.emplace("KenaHit", pEffectBase);
+	///* Hit */
+	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
+	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	//m_mapEffect.emplace("KenaHit", pEffectBase);
 
 	/* PulseJump */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaJump", pEffectBase);
 
+	/* FootStep Dust */
+	string		strMapTag = "";
+	for (_uint i = 0; i < 6; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"Effect_Kena_FootStep", i);
+		strMapTag = "KenaFootStepDust_" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDust", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
+	
 	/* HeavyAttack_Into */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHeavyAttackInto", L"HeavyAttackInto"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
@@ -1030,6 +1084,7 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 HRESULT CKena::SetUp_State()
 {
 	m_pModelCom->Set_RootBone("kena_RIG");
+	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
 
 	return S_OK;
@@ -1148,16 +1203,6 @@ CKena::DAMAGED_FROM CKena::Calc_DirToMonster(const _float3 & vCollisionPos)
 	return eDir;
 }
 
-void CKena::Test(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::Test);
-		return;
-	}
-}
-
 void CKena::TurnOnAttack(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1180,6 +1225,52 @@ void CKena::TurnOffAttack(_bool bIsInit, _float fTimeDelta)
 	}
 
 	m_bAttack = false;
+}
+
+void CKena::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnTrail);
+		return;
+	}
+
+	m_bTrailON = true;
+}
+
+void CKena::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffTrail);
+		return;
+	}
+
+	m_bTrailON = false;
+}
+
+void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffAttack);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (dynamic_cast<CE_KenaDust*>(Pair.second))
+		{
+			if (Pair.second->Get_Active() == false)
+			{
+				Pair.second->Set_Active(true);
+				break;
+			}
+		}
+	}
 }
 
 void CKena::TurnOnCharge(_bool bIsInit, _float fTimeDelta)
@@ -1366,14 +1457,14 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		{
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-				for (auto& Effect : m_mapEffect)
-				{
-					if (Effect.first == "KenaHit")
-					{
-						Effect.second->Set_Active(true);
-						Effect.second->Set_Position(vCollisionPos);
-					}
-				}
+				//for (auto& Effect : m_mapEffect)
+				//{
+				//	if (Effect.first == "KenaHit")
+				//	{
+				//		Effect.second->Set_Active(true);
+				//		Effect.second->Set_Position(vCollisionPos);
+				//	}
+				//}
 			
 			pGameObject->Set_Position(vCollisionPos);
 
@@ -1384,6 +1475,16 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		int temp = 0;
 	}
 
+	return 0;
+}
+
+_int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return 0;
+}
+
+_int CKena::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
 	return 0;
 }
 
