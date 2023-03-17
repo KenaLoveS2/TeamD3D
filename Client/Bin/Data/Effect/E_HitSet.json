@@ -11,7 +11,7 @@
                         {
                             "Alpha": 0.0,
                             "Angle": 0.0,
-                            "Billboard": false,
+                            "Billboard": true,
                             "Blend Type": 0,
                             "Child CloneTag": "HitA_0",
                             "Child ProtoTag": "Prototype_GameObject_HitA",
@@ -103,7 +103,7 @@
                         {
                             "Alpha": 0.0,
                             "Angle": 0.0,
-                            "Billboard": false,
+                            "Billboard": true,
                             "Blend Type": 0,
                             "Child CloneTag": "HitB_1",
                             "Child ProtoTag": "Prototype_GameObject_HitB",

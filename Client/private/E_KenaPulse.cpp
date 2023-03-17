@@ -2,6 +2,8 @@
 #include "..\public\E_KenaPulse.h"
 #include "GameInstance.h"
 #include "Effect_Trail.h"
+#include "E_KenaPulseCloud.h"
+#include "E_KenaPulseDot.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -152,8 +154,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 		CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
+
 		if(vScale.x <= 8.f)
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f  );
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f);
 
 		if (m_fDissolveTime > 1.f)
 		{
@@ -164,8 +167,6 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			m_fDissolveTime = 0.0f;
 			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
 		}
-	
-	
 	}
 
 	if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
@@ -202,6 +203,21 @@ HRESULT CE_KenaPulse::Render()
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, 1);
 
 	return S_OK;
+}
+
+void CE_KenaPulse::Reset()
+{
+	dynamic_cast<CE_KenaPulseCloud*>(m_vecChild.front())->ResetSprite();
+	dynamic_cast<CE_KenaPulseDot*>(m_vecChild.back())->Set_ShapePosition();
+
+	m_bNoActive = false;
+	m_bDesolve = true;
+	m_fDissolveTime = 0.f;
+
+	memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
+	Set_InitMatrixScaled(Get_InitMatrixScaled());
+
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
 }
 
 HRESULT CE_KenaPulse::SetUp_ShaderResources()

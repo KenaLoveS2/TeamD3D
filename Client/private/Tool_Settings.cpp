@@ -2,6 +2,7 @@
 #include "..\public\Tool_Settings.h"
 #include "GameInstance.h"
 #include "Utile.h"
+#include "Camera.h"
 
 CTool_Settings::CTool_Settings(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CImguiObject(pDevice, pContext)
@@ -76,6 +77,9 @@ HRESULT CTool_Settings::Camera_Setting()
 			Safe_Delete_Array(pWorkCameraTag);
 		}
 	}
+
+	m_pGameInstance->Get_WorkCameraPtr()->Imgui_RenderProperty();
+	ImGui::Separator();
 
 	for (_uint i = 0; i < iCameraCount; ++i)
 		Safe_Delete_Array(ppCameraTag[i]);

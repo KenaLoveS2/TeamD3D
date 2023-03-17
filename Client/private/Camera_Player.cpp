@@ -13,6 +13,34 @@ CCamera_Player::CCamera_Player(const CCamera_Player & rhs)
 {
 }
 
+void CCamera_Player::Set_CamOffset(CAMOFFSET eOffset)
+{
+	if (eOffset == CCamera_Player::CAMOFFSET_END)
+		return;
+
+	if (m_pCurOffset == m_mapCamOffset[eOffset])
+		return;
+	
+	m_pPreOffset = m_pCurOffset;
+	m_pPreOffset->vLastPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_pCurOffset = m_mapCamOffset[eOffset];
+	m_fCurLerpTime = 0.f;
+
+	if (m_pCurOffset->bPlayerControl == true)
+	{
+		_matrix   matKena = m_pKenaTransform->Get_WorldMatrix();
+		_float3   vScale = m_pKenaTransform->Get_Scaled();
+		
+		_vector   vLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f)) * vScale.z;
+		_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+		_vector   vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+		
+		m_pKenaTransform->Set_State(CTransform::STATE_RIGHT, vRight);
+		m_pKenaTransform->Set_State(CTransform::STATE_UP, vUp);
+		m_pKenaTransform->Set_State(CTransform::STATE_LOOK, vLook);
+	}
+}
+
 HRESULT CCamera_Player::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -38,6 +66,16 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&CameraDesc), E_FAIL);
 
+	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
+	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset());
+	m_mapCamOffset.emplace(CAMOFFSET_PULSE			, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_HEAVYATTACK, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, false));
+
+	m_pCurOffset = m_mapCamOffset[CAMOFFSET_DEFAULT];
+	m_pPreOffset = m_pCurOffset;
+
 	return S_OK;
 }
 
@@ -48,10 +86,20 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
+
 	if (m_pKena->Get_State(CKena::STATE_AIM) == true)
-		m_bAim = true;
-	else
-		m_bAim = false;
+	{
+		if (m_pKena->Get_State(CKena::STATE_JUMP) == true)
+			Set_CamOffset(CCamera_Player::CAMOFFSET_AIR_AIM);
+		else
+			Set_CamOffset(CCamera_Player::CAMOFFSET_AIM);
+	}
+	if (m_pKena->Get_State(CKena::STATE_PULSE) == true)
+		Set_CamOffset(CCamera_Player::CAMOFFSET_PULSE);
+	if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == true)
+		Set_CamOffset(CCamera_Player::CAMOFFSET_HEAVYATTACK);
+	if (m_pKena->Get_State(CKena::STATERETURN_END) == true)
+		Set_CamOffset(CCamera_Player::CAMOFFSET_DEFAULT);
 	
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
@@ -65,8 +113,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	}
 
 	_vector   vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_vector   vKenaRight = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT));
-	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + m_fCurCamHeight);
+	_vector   vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
 
 	m_MouseMoveX = 0;
 	m_MouseMoveY = 0;
@@ -78,19 +125,45 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	if (isnan(m_fVerticalAngle))
 		m_fVerticalAngle = fBackupAngle;
 
-	if (m_bAim == false)
+	_float		fCamHeight = 0.f;
+	_float		fCamDistance = 0.f;
+	_float		fCamRightDist = 0.f;
+	_bool		bPlayerControl = m_pCurOffset->bPlayerControl;
+
+	if (m_fCurLerpTime < m_pCurOffset->fLerpDuration)
 	{
-		m_bInitPlayerLook = false;
+		_float		fRatio = m_fCurLerpTime / m_pCurOffset->fLerpDuration;
+		fCamHeight = CUtile::FloatLerp(m_pPreOffset->fCamHeight, m_pCurOffset->fCamHeight, fRatio);
+		fCamDistance = CUtile::FloatLerp(m_pPreOffset->fCamDistance, m_pCurOffset->fCamDistance, fRatio);
+		fCamRightDist = CUtile::FloatLerp(m_pPreOffset->fCamRightDist, m_pCurOffset->fCamRightDist, fRatio);
 
-		if (m_fDistanceFromTarget < m_fInitDistance)
-			m_fDistanceFromTarget += 0.13f;
-		else
-			m_fDistanceFromTarget = m_fInitDistance;
+		m_fCurLerpTime += fTimeDelta;
+	}
+	else
+	{
+		m_pPreOffset = m_pCurOffset;
 
-		if (m_fCurCamHeight < m_fInitCamHeight)
-			m_fCurCamHeight += 0.03f;
-		else
-			m_fCurCamHeight = m_fInitCamHeight;
+		fCamHeight = m_pCurOffset->fCamHeight;
+		fCamDistance = m_pCurOffset->fCamDistance;
+		fCamRightDist = m_pCurOffset->fCamRightDist;
+	}
+
+	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + fCamHeight);
+	_vector	vCamPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * fCamRightDist;
+
+	if (m_pCurOffset->bPlayerControl == false)
+	{
+// 		m_bInitPlayerLook = false;
+// 
+// 		if (m_fDistanceFromTarget < m_fInitDistance)
+// 			m_fDistanceFromTarget += 0.13f;
+// 		else
+// 			m_fDistanceFromTarget = m_fInitDistance;
+// 
+// 		if (m_fCurCamHeight < m_fInitCamHeight)
+// 			m_fCurCamHeight += 0.03f;
+// 		else
+// 			m_fCurCamHeight = m_fInitCamHeight;
 
 		if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
 		{
@@ -112,13 +185,13 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			}
 
 			if (m_MouseMoveX != 0)
-				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+				m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
 			else
 			{
 				if (m_LastMoveX < 0)
-					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
+					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX * -1.f);
 				else if (m_LastMoveX > 0)
-					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, fTimeDelta * m_fCurMouseSensitivityX);
+					m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, fTimeDelta * m_fCurMouseSensitivityX);
 			}
 		}
 		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
@@ -155,44 +228,44 @@ void CCamera_Player::Tick(_float fTimeDelta)
 					m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
 			}
 
-			m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+			m_pTransformCom->Orbit(vKenaPos, m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
 		}
 		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
+			m_pTransformCom->Orbit(vKenaPos, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 	}
 	else
 	{
-		if (m_fDistanceFromTarget > m_fAimDistance)
-			m_fDistanceFromTarget -= 0.13f;
-		else
-			m_fDistanceFromTarget = m_fAimDistance;
+// 		if (m_fDistanceFromTarget > m_fAimDistance)
+// 			m_fDistanceFromTarget -= 0.13f;
+// 		else
+// 			m_fDistanceFromTarget = m_fAimDistance;
+// 
+// 		if (m_fCurCamHeight > m_fAimCamHeight)
+// 			m_fCurCamHeight -= 0.03f;
+// 		else
+// 			m_fCurCamHeight = m_fAimCamHeight;
 
-		if (m_fCurCamHeight > m_fAimCamHeight)
-			m_fCurCamHeight -= 0.03f;
-		else
-			m_fCurCamHeight = m_fAimCamHeight;
-
-		if (m_bInitPlayerLook == false)
-		{
-			_matrix   matKena = m_pKenaTransform->Get_WorldMatrix();
-			_float3   vScale = m_pKenaTransform->Get_Scaled();
-
-			_vector   vLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f)) * vScale.z;
-			_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
-			_vector   vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
-
-			m_pKenaTransform->Set_State(CTransform::STATE_RIGHT, vRight);
-			m_pKenaTransform->Set_State(CTransform::STATE_UP, vUp);
-			m_pKenaTransform->Set_State(CTransform::STATE_LOOK, vLook);
-
-			m_bInitPlayerLook = true;
-
-			__super::Tick(fTimeDelta);
-
-			return;
-		}
-		_vector   vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * m_fDistanceFromTarget + XMVector3Normalize(vKenaRight) * 0.6f;
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vShoulderPos);
+// 		if (m_bInitPlayerLook == false)
+// 		{
+// 			_matrix   matKena = m_pKenaTransform->Get_WorldMatrix();
+// 			_float3   vScale = m_pKenaTransform->Get_Scaled();
+// 
+// 			_vector   vLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f)) * vScale.z;
+// 			_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+// 			_vector   vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+// 
+// 			m_pKenaTransform->Set_State(CTransform::STATE_RIGHT, vRight);
+// 			m_pKenaTransform->Set_State(CTransform::STATE_UP, vUp);
+// 			m_pKenaTransform->Set_State(CTransform::STATE_LOOK, vLook);
+// 
+// 			m_bInitPlayerLook = true;
+// 
+// 			__super::Tick(fTimeDelta);
+// 
+// 			return;
+// 		}
+//		_vector   vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * m_fDistanceFromTarget + XMVector3Normalize(vKenaRight) * 0.6f;
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 
 		_float3   vScale = m_pTransformCom->Get_Scaled();
 		_vector   vRight = XMVector3Normalize(XMVector3TransformNormal(vKenaRight, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
@@ -254,8 +327,9 @@ void CCamera_Player::Tick(_float fTimeDelta)
 				}
 			}
 			vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
-			vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * m_fDistanceFromTarget + XMVector3Normalize(vKenaRight) * 0.6f;
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vShoulderPos);
+			//vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * 0.6f;
+			vCamPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * fCamRightDist;
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 		}
 		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
 		{
@@ -292,18 +366,24 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			}
 
 			if (m_MouseMoveX == 0)
-				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * 0.6f, XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
 			else
 			{
 				vRight = XMVector3Normalize(XMVector3TransformNormal(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT), XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
-				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * 0.6f, XMVector3Normalize(vRight), m_fDistanceFromTarget, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(vRight), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
 			}
 		}
 		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * 0.6f, XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fDistanceFromTarget, 0.f);
+			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 	}
 
-	__super::Tick(fTimeDelta);
+	if (m_fTimeSleep > 0.f)
+	{
+		m_fTimeSleep -= fTimeDelta;
+		return;
+	}
+	else
+		__super::Tick(fTimeDelta);
 }
 
 void CCamera_Player::Late_Tick(_float fTimeDelta)
@@ -327,18 +407,140 @@ HRESULT CCamera_Player::Render()
 	return S_OK;
 }
 
+void CCamera_Player::Imgui_RenderProperty()
+{
+	CAMOFFSET	eOffset = CCamera_Player::CAMOFFSET_END;
+	const auto	iter = find_if(m_mapCamOffset.begin(), m_mapCamOffset.end(), [&](const pair<CAMOFFSET, CCamOffset*>& Pair) {
+		if (m_pCurOffset == Pair.second)
+		{
+			eOffset = Pair.first;
+			return true;
+		}
+
+		return false;
+	});
+
+	char	szOffset[16] = "";
+	switch (eOffset)
+	{
+	case CCamera_Player::CAMOFFSET_DEFAULT:
+		strcpy_s(szOffset, "DEFAULT");
+		break;
+
+	case CCamera_Player::CAMOFFSET_AIM:
+		strcpy_s(szOffset, "AIM");
+		break;
+
+	case CCamera_Player::CAMOFFSET_AIR_AIM:
+		strcpy_s(szOffset, "AIR_AIM");
+		break;
+
+	case CCamera_Player::CAMOFFSET_INJECTBOW:
+		strcpy_s(szOffset, "INJECT_BOW");
+		break;
+
+	case CCamera_Player::CAMOFFSET_PULSE:
+		strcpy_s(szOffset, "PULSE");
+		break;
+
+	case CCamera_Player::CAMOFFSET_HEAVYATTACK:
+		strcpy_s(szOffset, "HEAVY_ATTACK");
+		break;
+	}
+	
+	ImGui::BulletText("Current Offset : %s", szOffset);
+	ImGui::DragFloat("Cam Height", &m_pCurOffset->fCamHeight, 0.01f, 0.f);
+	ImGui::DragFloat("Cam Distance", &m_pCurOffset->fCamDistance, 0.01f, 0.f);
+	ImGui::DragFloat("Cam Right", &m_pCurOffset->fCamRightDist, 0.01f, 0.f);
+	ImGui::DragFloat("Lerp Duration", &m_pCurOffset->fLerpDuration, 0.01f, 0.f);
+	ImGui::Text("Player Control");
+	ImGui::SameLine();
+	if (ImGui::RadioButton("True", m_pCurOffset->bPlayerControl))
+		m_pCurOffset->bPlayerControl = true;
+	ImGui::SameLine();
+	if (ImGui::RadioButton("False", !m_pCurOffset->bPlayerControl))
+		m_pCurOffset->bPlayerControl = false;
+	ImGui::InputFloat4("Last Position", (_float*)&m_pCurOffset->vLastPos, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "HEAVY_ATTACK" };
+	static _int	iSelectOffset = -1;
+	ImGui::ListBox("Offset", &iSelectOffset, pOffsetTag, (_int)CAMOFFSET_END);
+
+	if (iSelectOffset != -1)
+	{
+		CAMOFFSET	eOffset = (CAMOFFSET)iSelectOffset;
+		ImGui::BulletText("Current Offset : %s", pOffsetTag[iSelectOffset]);
+		ImGui::DragFloat("Cam Height ", &m_mapCamOffset[eOffset]->fCamHeight, 0.01f, 0.f);
+		ImGui::DragFloat("Cam Distance ", &m_mapCamOffset[eOffset]->fCamDistance, 0.01f, 0.f);
+		ImGui::DragFloat("Cam Right ", &m_mapCamOffset[eOffset]->fCamRightDist, 0.01f, 0.f);
+		ImGui::DragFloat("Lerp Duration ", &m_mapCamOffset[eOffset]->fLerpDuration, 0.01f, 0.f);
+		ImGui::Text("Player Control");
+		ImGui::SameLine();
+		if (ImGui::RadioButton("True ", m_mapCamOffset[eOffset]->bPlayerControl))
+			m_pCurOffset->bPlayerControl = true;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("False ", !m_mapCamOffset[eOffset]->bPlayerControl))
+			m_pCurOffset->bPlayerControl = false;
+		ImGui::InputFloat4("Last Position ", (_float*)&m_mapCamOffset[eOffset]->vLastPos, "%.3f", ImGuiInputTextFlags_ReadOnly);
+	}
+}
+
 void CCamera_Player::Initialize_Position()
 {
 	_vector   vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
 	_vector   vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
 
-	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + 2.f);
+	vKenaPos = XMVectorSetY(vKenaPos, XMVectorGetY(vKenaPos) + m_pCurOffset->fCamHeight);
 
-	m_CameraDesc.vEye = vKenaPos + XMVector3Normalize(vKenaLook) * m_fDistanceFromTarget * -1.f;
+	m_CameraDesc.vEye = vKenaPos + XMVector3Normalize(vKenaLook) * m_pCurOffset->fCamDistance * -1.f;
 	m_CameraDesc.vAt = vKenaPos;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_CameraDesc.vEye);
 	m_pTransformCom->LookAt(m_CameraDesc.vAt);
+}
+
+void CCamera_Player::Camera_Shake()
+{
+}
+
+void CCamera_Player::Camera_Shake(_float4 vDir)
+{
+}
+
+void CCamera_Player::TimeSleep(_float fDuration)
+{
+	m_fTimeSleep = fDuration;
+}
+
+_float4 CCamera_Player::Calculation_CamPosition(CAMOFFSET eOffset, _fvector vTargetPos)
+{
+	_float4	vResultPos = vTargetPos;
+
+	switch (eOffset)
+	{
+	case CCamera_Player::CAMOFFSET_DEFAULT:
+		break;
+
+	case CCamera_Player::CAMOFFSET_AIM:
+		break;
+
+	case CCamera_Player::CAMOFFSET_AIR_AIM:
+		break;
+
+	case CCamera_Player::CAMOFFSET_INJECTBOW:
+		break;
+
+	case CCamera_Player::CAMOFFSET_PULSE:
+		break;
+
+	case CCamera_Player::CAMOFFSET_HEAVYATTACK:
+		break;
+
+	default:
+		break;
+	}
+
+	return vResultPos;
 }
 
 CCamera_Player * CCamera_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -369,5 +571,9 @@ CGameObject * CCamera_Player::Clone(void * pArg)
 
 void CCamera_Player::Free()
 {
+	for (auto& Pair : m_mapCamOffset)
+		Safe_Release(Pair.second);
+	m_mapCamOffset.clear();
+
 	__super::Free();
 }
