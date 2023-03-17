@@ -123,10 +123,21 @@ HRESULT CStatue::RenderShadow()
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RotGod_Statue_Crumbled")
 		return S_OK;
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (m_pModelCom->Get_IStancingModel())
 	{
-		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
 	}
 
 	return S_OK;
