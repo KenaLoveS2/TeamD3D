@@ -436,6 +436,7 @@ private:
 	HRESULT					SetUp_State_Heavy_Attack2();
 	HRESULT					SetUp_State_Heavy_Attack3();
 	HRESULT					SetUp_State_Heavy_Attack_Combo();
+	HRESULT					SetUp_State_Interact();
 	HRESULT					SetUp_State_Jump();
 	HRESULT					SetUp_State_Land();
 	HRESULT					SetUp_State_Pulse();
@@ -489,6 +490,7 @@ private:
 	void						Start_Attack_4_Into_Run(_float fTimeDelta);
 	void						Start_Attack_4_Return(_float fTimeDelta);
 	/* BOW */
+	void						Start_Bow_Run(_float fTimeDelta);
 	void						Start_Bow_Charge(_float fTimeDelta);
 	void						Start_Bow_Charge_Run_Forward(_float fTimeDelta);
 	void						Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta);
@@ -596,6 +598,9 @@ private:
 	void						Start_Heavy_Attack_Combo(_float fTimeDelta);
 	void						Start_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* INTERACT */
+	void						Start_Interact(_float fTimeDelta);
+	void						Start_Interact_Staff(_float fTimeDelta);
 	/* JUMP */
 	void						Start_Jump_Squat(_float fTimeDelta);
 	void						Start_Jump(_float fTimeDelta);
@@ -749,6 +754,9 @@ private:
 	void						Tick_Heavy_Attack_Combo(_float fTimeDelta);
 	void						Tick_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						Tick_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* INTERACT */
+	void						Tick_Interact(_float fTimeDelta);
+	void						Tick_Interact_Staff(_float fTimeDelta);
 	/* JUMP */
 	void						Tick_Jump_Squat(_float fTimeDelta);
 	void						Tick_Jump(_float fTimeDelta);
@@ -895,6 +903,9 @@ private:
 	void						End_Heavy_Attack_Combo(_float fTimeDelta);
 	void						End_Heavy_Attack_Combo_Return(_float fTimeDelta);
 	void						End_Heavy_Attack_Combo_Into_Run(_float fTimeDelta);
+	/* INTERACT */
+	void						End_Interact(_float fTimeDelta);
+	void						End_Interact_Staff(_float fTimeDelta);
 	/* JUMP */
 	void						End_Jump_Squat(_float fTimeDelta);
 	void						End_Jump(_float fTimeDelta);
@@ -945,6 +956,7 @@ private:	/* Changer */
 	_bool	Damaged_Dir_Left();
 	_bool	Damaged_Dir_Right();
 	_bool	Check_ArrowCount();
+	_bool	RotWisp_Interactable();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();

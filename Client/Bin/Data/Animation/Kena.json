@@ -2708,5 +2708,23 @@
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
         "6. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "INTERACT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Interact",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "INTERACT_STAFF",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Interact_Staff",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
     }
 ]

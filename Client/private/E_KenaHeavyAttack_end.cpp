@@ -51,7 +51,6 @@ void CE_KenaHeavyAttack_end::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-	_vector fCurScale = m_eEFfectDesc.vScale;
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
@@ -59,17 +58,17 @@ void CE_KenaHeavyAttack_end::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		m_fScale += 0.5f;
-		m_eEFfectDesc.vScale = fCurScale * m_fScale;
+		m_eEFfectDesc.vScale *= (1.0f + fTimeDelta);
+		for (auto pChild : m_vecChild)
+			pChild->Set_AddScale(fTimeDelta * 2.f);
 
 		if (m_fTimeDelta > 0.1f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
 			m_eEFfectDesc.fHeightFrame = 0.0;
-			fCurScale = m_eEFfectDesc.vScale = _float3(2.f,2.f, 1.f);
+			m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
 
 			m_eEFfectDesc.bActive = false;
-			m_fScale = 0.0f;
 			m_fTimeDelta = 0.0f;
 		}
 	}

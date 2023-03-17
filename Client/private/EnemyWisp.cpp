@@ -60,8 +60,12 @@ void CEnemyWisp::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	__super::Tick(fTimeDelta);
+	if (m_bDissolve == true)
+		m_fDissolveTimeDelta += fTimeDelta;
+	else
+		m_fDissolveTimeDelta = 0.0f;
 
+	__super::Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -115,8 +119,11 @@ _bool CEnemyWisp::IsActiveState()
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_pTransformCom->Set_Position(vPos);
 
+	if(m_pModelCom->Get_AnimationProgress() > 0.8f)
+		m_bDissolve = true;
+
 	if (m_pModelCom->Get_AnimIndex() == 3 && 
-		m_pModelCom->Get_AnimationProgress() > 0.8f)
+		m_pModelCom->Get_AnimationFinish() == true)
 	{
 		m_eEFfectDesc.bActive = false;
 
@@ -154,6 +161,12 @@ void CEnemyWisp::ImGui_AnimationProperty()
 	m_pModelCom->Imgui_RenderProperty();
 }
 
+void CEnemyWisp::Imgui_RenderProperty()
+{
+	if (ImGui::Button("Dissolve"))
+		m_bDissolve = !m_bDissolve;
+}
+
 HRESULT CEnemyWisp::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxEffectAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
@@ -173,6 +186,9 @@ HRESULT CEnemyWisp::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTimeDelta, sizeof(_float)), E_FAIL);
 
 	return S_OK;
 }

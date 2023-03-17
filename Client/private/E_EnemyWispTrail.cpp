@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_EnemyWispTrail.h"
 #include "GameInstance.h"
+#include "EnemyWisp.h"
 
 CE_EnemyWispTrail::CE_EnemyWispTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -64,6 +65,17 @@ void CE_EnemyWispTrail::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+
+	if (dynamic_cast<CEnemyWisp*>(m_pParent)->Get_Dissolve() == true)
+	{
+		m_bDissolve = true;
+		m_fDissolveTimeDelta += fTimeDelta;
+	}
+	else
+	{
+		m_bDissolve = false;
+		m_fDissolveTimeDelta = 0.0f;
+	}
 }
 
 void CE_EnemyWispTrail::Late_Tick(_float fTimeDelta)
@@ -109,6 +121,13 @@ HRESULT CE_EnemyWispTrail::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
 		return E_FAIL;
+
+	if(m_pParent != nullptr)
+	{
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTimeDelta, sizeof(_float)), E_FAIL);
+	}
 
 	return S_OK;
 }

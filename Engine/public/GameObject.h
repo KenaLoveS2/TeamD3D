@@ -25,10 +25,10 @@ public:
 	const _tchar*		Get_ObjectCloneName() { return m_szCloneObjectTag; }
 	const _tchar*		Get_ProtoObjectName() { return m_szProtoObjectTag; }
 
-	void					Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
-	void					Set_ProtoTag(const _tchar* pProtoObjectTag) { m_szProtoObjectTag = pProtoObjectTag; }
+	void				Set_CloneTag(const _tchar* pCloneObjectTag) { m_szCloneObjectTag = pCloneObjectTag; }
+	void				Set_ProtoTag(const _tchar* pProtoObjectTag) { m_szProtoObjectTag = pProtoObjectTag; }
 
-	void					Delete_Component(const _tchar* pComponentTag);
+	void				Delete_Component(const _tchar* pComponentTag);
 
 protected:
 	CGameObject(ID3D11Device*	pDevice, ID3D11DeviceContext* pContext);

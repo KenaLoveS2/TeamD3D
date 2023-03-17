@@ -32,6 +32,8 @@ float2  g_UV;
 // Dissolve
 bool  g_bDissolve;
 float g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
 // ~Dissolve
 
 struct VS_IN
@@ -123,32 +125,6 @@ PS_OUT PS_EFFECT_ENEMYWISP(PS_IN In)
 	texture2D		g_ShapeTexture; == MASK SHAPE
 	*/
 
-	/*
-	if (g_bDissolve)
-	{
-		float fDissolveAmount = g_fDissolveTime;
-
-		float4 Dissolve0 = g_DissolveTexture[0].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve1 = g_DissolveTexture[1].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve2 = g_DissolveTexture[2].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve3 = g_DissolveTexture[3].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
-		Dissolve = saturate(Dissolve);
-
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-
-		if (dissolve_value >= fDissolveAmount)
-			discard;
-
-		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
-		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(BackPulseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
-	}
-	*/
-
 	float4 vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
 	float4 vColor = g_ReamTexture.Sample(LinearSampler, In.vTexUV);
@@ -174,8 +150,29 @@ PS_OUT PS_EFFECT_ENEMYWISP(PS_IN In)
 	float4 vOutline = rimcolor * pow(1.f - rim, 2.f);
 
 	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
+	vfinalblendColor = vfinalblendColor * vOutline;
 
-	Out.vDiffuse = vfinalblendColor * vOutline;
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		// sample noise texture
+		float noiseSample = vShapeMask.r;
+
+		float  _ColorThreshold = 1.0f;
+		float4 _DissolveColor = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+		
+		// add edge colors
+		float thresh = fDissolveAmount * _ColorThreshold;
+		float useDissolve = noiseSample - thresh < 0;
+		vfinalblendColor = (1 - useDissolve)* vfinalblendColor + useDissolve * _DissolveColor;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
+
+	Out.vDiffuse = vfinalblendColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = (vector)1.f;

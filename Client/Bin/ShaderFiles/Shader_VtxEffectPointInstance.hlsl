@@ -42,6 +42,13 @@ float2  g_UV;
 float   g_Time;
 /* ~Trail */
 
+/* Dissolve */
+bool  g_bDissolve;
+float g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
+/* Dissolve */
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -54,6 +61,7 @@ struct VS_OUT
 {
 	float3		vPosition : POSITION;
 	float3		vCenterPosition : TEXCOORD0;
+	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
 };
 
@@ -83,6 +91,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
 	Out.vCenterPosition = matrix_postion(g_WorldMatrix);
+	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
 
 	return Out;
@@ -113,6 +122,7 @@ struct GS_IN
 {
 	float3		vPosition : POSITION;
 	float3		vCenterPosition : TEXCOORD0;
+	float3		vRightScale : TEXCOORD1;
 	float2		vPSize : PSIZE;
 };
 
@@ -147,7 +157,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
 	float3		vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
 	float3		vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 	float3		vPosition;
@@ -625,6 +635,26 @@ PS_OUT PS_DOT(PS_IN In)
 	return Out;
 }
 
+//PS_HIT
+PS_OUT PS_HIT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Diffuse */
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	float4 vColor = float4(204.f, 210.f, 131.f, 255.f) / 255.f;
+	Out.vColor = Diffuse * vColor;
+	Out.vColor.rgb = Out.vColor.rgb * 2.5f;
+	Out.vColor.a = Out.vColor.r;
+
+	if (Out.vColor.a < 0.3f)
+		discard;
+
+	return Out;
+}
+
 // PS_HEAVYATTACK
 PS_OUT PS_HEAVYATTACK(PS_IN In)
 {
@@ -691,6 +721,25 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 	else
 		finalcolor.rgb = finalcolor.rgb + TrailColor * 2.f;
 
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		// sample noise texture
+		float noiseSample = vWispTrailTexture.r;
+
+		float  _ColorThreshold = 1.0f;
+		float4 _DissolveColor = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		// add edge colors
+		float thresh = fDissolveAmount * _ColorThreshold;
+		float useDissolve = noiseSample - thresh < 0;
+		finalcolor = (1 - useDissolve)* finalcolor + useDissolve * _DissolveColor;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
+	}
 	Out.vColor = finalcolor;
 
 	return Out;
@@ -698,17 +747,18 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 
 PS_OUT PS_ROT(PS_TRAILIN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
-	float fLife = 2.0f;
+   PS_OUT         Out = (PS_OUT)0;
+   float fLife = 2.0f;
 
-	vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vRotrailTexture.a = vRotrailTexture.r * fLife;
+   vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+   vRotrailTexture.a = vRotrailTexture.r * fLife;
 
-	float4 finalcolor = vRotrailTexture;
-	finalcolor.rgb = finalcolor.rgb + g_vColor.rgb * 2.f;
+   float4 finalcolor = vRotrailTexture;
+   float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+   finalcolor.rgb = finalcolor.rgb + vColor.rgb * 2.f;
 
-	Out.vColor = finalcolor;
-	return Out;
+   Out.vColor = finalcolor;
+   return Out;
 }
 
 PS_OUT PS_FLOWERPARTICLE(PS_IN In)
@@ -835,4 +885,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_ROT();
 	}
+
+	pass Kena_Hit // 8
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_HIT();
+	}
+
 }
