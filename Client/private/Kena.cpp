@@ -64,13 +64,18 @@ const _uint CKena::Get_AnimationStateIndex() const
 
 const _bool CKena::Get_State(STATERETURN eState) const
 {
+	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return false;
+		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse;
 
 	switch (eState)
 	{
 	case STATE_ATTACK:
 		return m_bAttack;
+		break;
+
+	case STATE_HEAVYATTACK	:
+		return m_bHeavyAttack;
 		break;
 
 	case STATE_COMMONHIT:
@@ -1441,6 +1446,8 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		_bool bRealAttack = false;
 		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
+			m_pCamera->TimeSleep(0.4f);
+
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fGuage = m_pKenaStatus->Get_PercentHP();

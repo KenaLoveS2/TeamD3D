@@ -23,7 +23,7 @@ class CKena final : public CGameObject
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
-	enum STATERETURN { STATE_ATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_INJECTBOW, STATE_PULSE, STATE_JUMP, STATERETURN_END };
+	enum STATERETURN { STATE_ATTACK, STATE_HEAVYATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_INJECTBOW, STATE_PULSE, STATE_JUMP, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -93,6 +93,7 @@ private:
 private:
 	/* State variables*/
 	_bool						m_bAttack = false;
+	_bool						m_bHeavyAttack = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
 	_float4					m_vDamagedDir;
