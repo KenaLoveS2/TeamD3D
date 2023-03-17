@@ -357,7 +357,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget && m_bSpawn)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW || m_pKena->Get_State(CKena::STATE_ATTACK))
+		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
 		{
 			m_pUIHPBar->Set_Active(true);
 			WeakleyHit();
