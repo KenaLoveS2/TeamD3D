@@ -29,7 +29,6 @@ public:
 	virtual HRESULT		Render() override;
 	 
 public:
-	void			Create_Pulse(_bool bActive);
 	void			Set_GimmickActive(_bool bGimmickActive) { m_bGimmickActive = bGimmickActive; }
 
 private:	

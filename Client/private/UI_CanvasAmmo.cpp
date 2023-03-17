@@ -141,16 +141,12 @@ HRESULT CUI_CanvasAmmo::Render()
 
 	/* Arrow Count */
 	_float4 vPos;
-
 	wchar_t cnt[10];
 	_itow_s(m_iNumArrowNow, cnt, 10);
 
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	pGameInstance->Render_Font(TEXT("Font_Comic"), cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f - 20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
-	RELEASE_INSTANCE(CGameInstance);
-
-
+	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"),
+		cnt, _float2(vPos.x + g_iWinSizeX * 0.5f - 23.f, -vPos.y + g_iWinSizeY * 0.5f - 20.f), 0.f, _float2(1.2f, 1.2f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
 
 	return S_OK;
 }
@@ -269,8 +265,6 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -291,9 +285,6 @@ HRESULT CUI_CanvasAmmo::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

@@ -11,6 +11,7 @@ private:
 
 public:
 	virtual	void		Call_Event(_bool bStart)				override;
+	void				FadeOut();
 	_float				Get_Alpha() { return m_fAlpha; }
 	_bool				Is_Appear() {
 		if (m_bInOut && m_fSpeed > 0.0f)

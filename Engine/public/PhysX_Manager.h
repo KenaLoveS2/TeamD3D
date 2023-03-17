@@ -129,6 +129,10 @@ public:
 	void Render();
 
 	void	Imgui_Render();
+	void	Imgui_Render(const _tchar* pActorName);
+
+	PxVec3						Get_ScalingBox(PxRigidActor *pActor);
+		
 	PxRigidActor*				Find_StaticGameObject(_int iIndex);
 	PxRigidActor*				Find_DynamicGameObject(_int iIndex);
 	

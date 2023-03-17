@@ -34,6 +34,8 @@ float4			g_vColor;
 texture2D		g_DissolveTexture;
 bool			g_bDissolve;
 float			g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
 /* ~Dissolve */
 
 
@@ -125,18 +127,30 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			vDiffuse = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		vDiffuse = (1 - useDissolve1)* vDiffuse + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		vDiffuse = (1 - useDissolve2)* vDiffuse + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
 
 	Out.vDiffuse = vDiffuse;
@@ -168,18 +182,30 @@ PS_OUT PS_MAIN_AO_R_M(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
 
 	Out.vDiffuse = FinalColor;
@@ -212,18 +238,30 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
 
 	Out.vDiffuse = FinalColor;
@@ -260,17 +298,30 @@ PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f)  / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+		// add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
 
 	Out.vDiffuse = FinalColor;
@@ -306,19 +357,32 @@ PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
+
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -352,19 +416,32 @@ PS_OUT PS_MAIN_AO_R_M_EEM(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
+
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -400,19 +477,32 @@ PS_OUT PS_MAIN_SEPARATE_AO_R_M_E(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
+
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -444,19 +534,32 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
+
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
@@ -494,19 +597,32 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
+
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -539,18 +655,30 @@ PS_OUT PS_MAIN_ALPHA_AO_R_M(PS_IN In)
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
-		if (dissolve_value <= fDissolveAmount)
-			discard;
+		// sample noise texture
+		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			FinalColor = float4(float3(1.f, 0.f, 0.f) * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
+		float  _ColorThreshold1 = 1.0f;
+		float4 _DissolveColor1 = float4(194.f, 0.0f, 0.0f, 1.0f) / 255.f;  //red
+
+		float  _ColorThreshold2 = 0.4f;
+		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
+
+																		   // add edge colors0
+		float thresh1 = fDissolveAmount * _ColorThreshold1;
+		float useDissolve1 = noiseSample - thresh1 < 0;
+		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;
+
+		// add edge colors1
+		float thresh2 = fDissolveAmount * _ColorThreshold2;
+		float useDissolve2 = noiseSample - thresh2 < 0;
+		FinalColor = (1 - useDissolve2)* FinalColor + useDissolve2 * _DissolveColor2;
+
+		// determine deletion threshold
+		float threshold = fDissolveAmount *_DissolveSpeed * _FadeSpeed;
+		clip(noiseSample - threshold);
 	}
 
 	Out.vDiffuse = FinalColor;

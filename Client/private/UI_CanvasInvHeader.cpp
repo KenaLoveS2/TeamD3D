@@ -112,21 +112,14 @@ HRESULT CUI_CanvasInvHeader::Render()
 HRESULT CUI_CanvasInvHeader::Bind()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),	L"Layer_Player", L"Kena"));
+	RELEASE_INSTANCE(CGameInstance);
 
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(pGameInstance->Get_CurLevelIndex(),
-		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
-	}
-	//pKena->m_PlayerDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
 
 	pKena->m_PlayerPtrDelegator.bind(this, &CUI_CanvasInvHeader::BindFunction);
 
-
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	m_bBindFinished = true;
 	return S_OK;
@@ -197,8 +190,6 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	CUI::SetUp_ShaderResources();
 
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
@@ -220,8 +211,6 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }
