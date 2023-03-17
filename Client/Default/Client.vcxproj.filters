@@ -409,6 +409,12 @@
     <Filter Include="02.GameObjects\NPC\Saiya">
       <UniqueIdentifier>{4d1d6e31-1aa8-4617-a2ce-8129fe35c5db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Focus_NPC">
+      <UniqueIdentifier>{c45e1e56-efe9-4c6e-a45e-f8308298221d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\03. WorldUI\Focus_Monster">
+      <UniqueIdentifier>{8dca1f02-4c82-4f86-80ee-7a6117cda5b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -978,6 +984,15 @@
     <ClInclude Include="..\public\CameraForRot.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_KenaHit.h" />
+    <ClInclude Include="..\public\E_P_SpiritArrow.h" />
+    <ClInclude Include="..\public\FireBullet.h" />
+    <ClInclude Include="..\public\UI_FocusNPC.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_FocusMonster.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1525,6 +1540,15 @@
     </ClCompile>
     <ClCompile Include="..\private\CameraForRot.cpp">
       <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
+    <ClCompile Include="..\private\FireBullet.cpp" />
+    <ClCompile Include="..\private\UI_FocusNPC.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_FocusMonster.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
