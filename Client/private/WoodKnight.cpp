@@ -423,6 +423,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnExit([this]()
 	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_bSpawn = true;
 		m_pUIHPBar->Set_Active(true);
 	})
