@@ -26,8 +26,10 @@ public:
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
-	virtual void				ImGui_ShaderValueProperty() override;
 
+public:
+	virtual void				ImGui_ShaderValueProperty() override;
+	virtual void				ImGui_PhysXValueProperty() override;
 private:
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
