@@ -258,11 +258,13 @@ HRESULT CRockGolem::SetUp_State()
 		})
 		.OnExit([this]()
 		{
+			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 			m_pUIHPBar->Set_Active(true);
 		})
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
 		{
+			m_fSpawnRange = 10.f;
 			m_bSpawn = DistanceTrigger(m_fSpawnRange);
 			return m_bSpawn;
 		})
@@ -282,6 +284,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("IDLE")
 			.OnStart([this]()
 		{
+			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 			m_fIdletoAttackTime = 0.f;
 		})
 			.Tick([this](_float fTimeDelta)
@@ -378,8 +381,13 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("EXPLODEATTACK")
 			.OnStart([this]()
 		{
+			m_bExplodeAttack = true;
 			m_pModelCom->ResetAnimIdx_PlayTime(EXPLODE);
 			m_pModelCom->Set_AnimIndex(EXPLODE);
+		})
+			.OnExit([this]()
+		{
+			m_bExplodeAttack = false;			
 		})
 			.AddTransition("EXPLODEATTACK to IDLE", "IDLE")
 			.Predicator([this]()
@@ -437,16 +445,17 @@ HRESULT CRockGolem::SetUp_State()
 			m_pModelCom->ResetAnimIdx_PlayTime(WISPOUT);
 			m_pModelCom->Set_AnimIndex(WISPOUT);
 		})
-			.AddTransition("WISPOUT to INTOSLEEP ", "INTOSLEEP")
-			.Predicator([this]()
-		{
-			return AnimFinishChecker(WISPOUT);
-		})
 			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
 		})
+			.AddTransition("WISPOUT to INTOSLEEP ", "INTOSLEEP")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(WISPOUT);
+		})
+			
 
 
 			.AddState("DYING")
@@ -584,7 +593,6 @@ void CRockGolem::Reset_Attack()
 	m_bRealAttack = false;
 	m_bChargeAttack = false;
 	m_bSlamAttack = false;
-	m_bExplodeAttack = false;
 	m_iAttackType = ATTACKTYPE_END;
 }
 
@@ -598,8 +606,8 @@ void CRockGolem::Tick_Attack(_float fTimeDelta)
 			m_bRealAttack = true;
 		break;
 	case AT_CHARGEATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
-		if (DistanceTrigger(10.f))
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
+		if (DistanceTrigger(15.f))
 			m_bRealAttack = true;
 		break;
 	case AT_EXPLODE:
@@ -641,4 +649,24 @@ CGameObject* CRockGolem::Clone(void* pArg)
 void CRockGolem::Free()
 {
 	CMonster::Free();
+}
+
+_int CRockGolem::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget && m_bSpawn && m_bExplodeAttack)
+	{
+		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
+		{			
+			WeakleyHit();
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
+
+			m_bStronglyHit = true;
+
+			m_pKenaHit->Set_Active(true);
+			m_pKenaHit->Set_Position(vCollisionPos);
+		}
+	}
+
+	return 0;
 }
