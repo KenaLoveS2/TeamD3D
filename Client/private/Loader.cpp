@@ -2158,6 +2158,46 @@ HRESULT CLoader::Loading_ForTestPlay()
 		assert(!"Issue");
 	m_fCur += 1.f;
 
+#pragma region GroundCover
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Branches", true, true, true, true)))
+			assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Clovers", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Deadzone", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Grass", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Needles", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Roots", true, true, true, true)))
+		assert(!"Issue");
+#pragma endregion GroundCover
+
+
+#pragma region Foliage
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/BushDead", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Bushes", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Ferns", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Flowers", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Grass", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/LilyPad", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Moss", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Overhang", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Plants", true, true, true, true)))
+		assert(!"Issue");
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Roots", true, true, true, true)))
+		assert(!"Issue");
+#pragma endregion Foliage
+
+
 
 #pragma region Born_GroundCover
 	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);

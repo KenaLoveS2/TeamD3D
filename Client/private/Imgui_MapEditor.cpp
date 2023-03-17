@@ -952,6 +952,7 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec,CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
+	
 	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
 	
 	if (false == pModel->Get_IStancingModel())
