@@ -238,7 +238,10 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 
 	if (m_eCurState == CSpiritArrow::ARROWSTATE_END)
 	{
-		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_ADD || iKenaState == (_uint)CKena_State::BOW_RECHARGE_ADD)
+		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_RECHARGE_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_AIR_RECHARGE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_CHARGE;
 			m_vecChild[EFFECT_POSITION]->Set_Active(true);
@@ -246,9 +249,13 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
 	{
-		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_FULL_ADD || iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD)
+		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_FULL_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_LOOP_ADD)
 			eState = CSpiritArrow::ARROW_READY;
-		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD)
+
+		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_AIR_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
 			m_fScale = m_fMaxScale;
@@ -264,7 +271,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
 	{
-		if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD)
+		if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
+			iKenaState == (_uint)CKena_State::BOW_AIR_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
 			m_fScale = m_fMaxScale;
