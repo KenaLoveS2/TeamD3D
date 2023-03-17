@@ -108,9 +108,7 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
-
-
-
+	
 	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp")));
 	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
@@ -130,6 +128,7 @@ void CRot::Tick(_float fTimeDelta)
 	else if (m_bWakeUp)
 	{
 		m_pRotWisp->Tick(fTimeDelta);
+		m_pKena->Set_RotWispInteractable(true);
 	}
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -347,6 +346,7 @@ HRESULT CRot::SetUp_State()
 		.AddState("WAKE_UP")
 		.OnStart([this]()
 	{
+		m_pKena->Set_RotWispInteractable(false);
 		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		m_pMyCam->Set_Target(this);
 		p_game_instance->Work_Camera(L"ROT_CAM");
