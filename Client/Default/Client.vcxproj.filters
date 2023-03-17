@@ -950,6 +950,7 @@
     <ClInclude Include="..\public\UI_NodeSkillVideo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FireBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1485,6 +1486,7 @@
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\FireBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -345,7 +345,7 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	pBody->attachShape(*shape);
 
 	if (pUserData)
-	{
+	{	
 		pUserData->eType = TRIANGLE_MESH_STATIC;
 		pBody->userData = pUserData;
 		m_UserDataes.push_back(pUserData);
@@ -1132,4 +1132,26 @@ void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
 		}
 		else Pair++;
 	}
+}
+
+PxVec3 CPhysX_Manager::Get_ScalingBox(PxRigidActor *pActor)
+{
+	PxShape* shape;
+	pActor->getShapes(&shape, 1);
+
+	PxGeometryHolder newGeometry = shape->getGeometry();
+	newGeometry.getType();
+
+	PxVec3 Temp = newGeometry.box().halfExtents;
+
+	return Temp;
+}
+
+void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
+{
+	PxShape* shape;
+	pActor->getShapes(&shape, 1);
+
+	PxGeometryHolder newGeometry = shape->getGeometry();
+	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, bFlag);
 }

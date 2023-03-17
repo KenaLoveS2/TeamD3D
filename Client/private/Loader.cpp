@@ -93,6 +93,7 @@
 
 //Monster
 #include "EnemyWisp.h"
+#include "FireBullet.h"
 
 //Arrow
 #include "SpiritArrow.h"
@@ -2784,6 +2785,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"),
+		CFireBullet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 #pragma  region NPC
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),

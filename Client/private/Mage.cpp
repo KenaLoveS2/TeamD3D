@@ -5,6 +5,7 @@
 #include "Utile.h"
 #include "Sticks01.h"
 #include "RotForMonster.h"
+#include "FireBullet.h"
 
 CMage::CMage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -46,6 +47,9 @@ HRESULT CMage::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	Create_Sticks();
+
 	return S_OK;
 }
 
@@ -136,6 +140,12 @@ HRESULT CMage::Late_Initialize(void * pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
+	
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	m_pFireBullet = (CFireBullet*)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_FireBullet"), CUtile::Create_DummyString());
+	assert(m_pFireBullet != nullptr && "CMage::Initialize()");
+	m_pFireBullet->Late_Initialize(nullptr);
 
 	return S_OK;
 }
@@ -154,6 +164,8 @@ void CMage::Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
+
+	m_pFireBullet->Tick(fTimeDelta);
 }
 
 void CMage::Late_Tick(_float fTimeDelta)
@@ -164,11 +176,11 @@ void CMage::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bSpawn)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
+
+	m_pFireBullet->Late_Tick(fTimeDelta);
 }
 
 HRESULT CMage::Render()
@@ -345,6 +357,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnExit([this]()
 	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
@@ -414,7 +427,7 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("IDLE to RANGEDATTACK", "RANGEDATTACK")
 		.Predicator([this]()
 	{
-		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bRangedAttack;
+		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bRangedAttack && m_pFireBullet->IsActiveState() == false;
 	})
 		.AddTransition("IDLE to CLOSEATTACK", "CLOSEATTACK")
 		.Predicator([this]()
@@ -465,6 +478,7 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
+		m_pFireBullet->Execute_Create(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -901,50 +915,43 @@ void CMage::Tick_Attack(_float fTimeDelta)
 	}
 }
 
-void CMage::Summon()
+
+void CMage::Create_Sticks()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CGameObject* pGameObject = nullptr;
-
-	// 내 앞에
+	for (_uint i = 0; i < MAGE_STICK_COUNT; i++)
 	{
-		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
-			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_0"), nullptr,
-			&pGameObject);
-		pGameObject->Late_Initialize();
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.z += 3.f;	
+		pGameInstance->Clone_AnimObject(
+			g_LEVEL, 
+			TEXT("Layer_Monster"), 
+			TEXT("Prototype_GameObject_Sticks01"), 
+			CUtile::Create_DummyString(TEXT("Summon_Stick"), i), 
+			nullptr, 
+			(CGameObject**)&m_pSticks[i]);
 
-		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
-		m_SticksList.push_back(pGameObject);
+		m_pSticks[i]->Set_DeathFlag(true);
+		// m_pSticks[i]->Late_Initialize(nullptr);
 	}
-	// 내 옆으로
-	{
-		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
-			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_1"), nullptr,
-			&pGameObject);
-		pGameObject->Late_Initialize();
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.x += 3.f;
 
-		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
-		m_SticksList.push_back(pGameObject);
-	}
-	// 내 옆으로
-	{
-		pGameInstance->Clone_AnimObject(pGameInstance->Get_CurLevelIndex(), TEXT("Layer_Monster"),
-			TEXT("Prototype_GameObject_Sticks01"), TEXT("Summon_Stick_2"), nullptr,
-			&pGameObject);
-		pGameObject->Late_Initialize();
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.x -= 3.f;
-
-		static_cast<CSticks01*>(pGameObject)->Spawn_ByMage(vPos);
-		m_SticksList.push_back(pGameObject);
-	}
 
 	RELEASE_INSTANCE(CGameInstance)
+}
+
+void CMage::Summon()
+{
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vOffset[MAGE_STICK_COUNT] = {
+		_float4(0.f, 0.f, 3.f, 0.f),
+		_float4(3.f, 0.f, 0.f, 0.f),
+		_float4(-3.f, 0.f, 0.f, 0.f),
+	};
+
+	for (_uint i = 0; i < MAGE_STICK_COUNT; i++)
+	{
+		m_pSticks[i]->Spawn_ByMage(this, vPos + vOffset[i]);
+		m_SticksList.push_back(m_pSticks[i]);
+	}
 }
 
 CMage* CMage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -976,4 +983,17 @@ CGameObject* CMage::Clone(void* pArg)
 void CMage::Free()
 {
 	CMonster::Free();
+
+	Safe_Release(m_pFireBullet);
+}
+
+void CMage::Erase_StickList(CSticks01* pStick)
+{
+	for (auto iter = m_SticksList.begin(); iter != m_SticksList.end();)
+	{
+		if (*iter == pStick)
+			iter = m_SticksList.erase(iter);
+		else
+			iter++;
+	}
 }
