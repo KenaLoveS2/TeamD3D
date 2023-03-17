@@ -109,7 +109,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true);
+	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

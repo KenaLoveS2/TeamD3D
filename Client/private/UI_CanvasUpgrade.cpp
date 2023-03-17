@@ -113,6 +113,7 @@ void CUI_CanvasUpgrade::Tick(_float fTimeDelta)
 			{
 				m_bPick = false;
 				CUI_ClientManager::GetInstance()->Call_ConfirmWindow(L"이 업그레이드를 잠금 해제하시겠습니까?", true, this);	
+				CGameInstance::GetInstance()->Play_Sound(L"UI_ConfirmWindow.ogg", 1.f, false, SOUND_UI);
 			}
 		}
 	}
@@ -484,6 +485,8 @@ void CUI_CanvasUpgrade::Picking()
 			{
 				if (nullptr != m_pSelected) /* Previous One */
 					m_pSelected->BackToOriginal();
+
+				CGameInstance::GetInstance()->Play_Sound(L"UI_UpgradeMouseOn.ogg", 1.f, false, SOUND_UI);
 
 				m_pSelected = static_cast<CUI_NodeSkill*>(m_vecNode[i]);
 				m_iPickedIndex = i;

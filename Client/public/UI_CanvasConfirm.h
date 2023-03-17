@@ -38,6 +38,7 @@ private:
 	_bool		m_bConfirm;
 	_tchar*		m_Message;
 	CUI_Canvas* m_pCaller;
+	_int		m_iMouseOn;
 
 public:
 	static	CUI_CanvasConfirm*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

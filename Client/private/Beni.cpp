@@ -71,7 +71,8 @@ HRESULT CBeni::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(69.f,0.f,136.f,1.f));
+	m_pTransformCom->Set_Position(_float4(78.f,0.f,137.f,1.f));
+	m_pTransformCom->Rotation({ 0.f, 1.f, 0.f, 0.f }, XMConvertToRadians(180.f));
 
 	return S_OK;
 }

@@ -87,6 +87,7 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_Position(_float4(79.f, 0.f, 137.f, 1.f));
+	m_pTransformCom->Rotation({0.f, 1.f, 0.f, 0.f}, XMConvertToRadians(180.f));
 
 	return S_OK;
 }
