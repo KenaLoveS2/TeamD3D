@@ -8,6 +8,7 @@ CUI_CanvasConfirm::CUI_CanvasConfirm(ID3D11Device * pDevice, ID3D11DeviceContext
 	, m_bConfirm(false)
 	, m_Message(nullptr)
 	, m_pCaller(nullptr)
+	, m_iMouseOn(-1)
 {
 }
 
@@ -16,6 +17,7 @@ CUI_CanvasConfirm::CUI_CanvasConfirm(const CUI_CanvasConfirm & rhs)
 	, m_bConfirm(false)
 	, m_Message(nullptr)
 	, m_pCaller(nullptr)
+	, m_iMouseOn(-1)
 {
 }
 
@@ -27,6 +29,9 @@ void CUI_CanvasConfirm::Set_Message(wstring msg, CUI_Canvas* pCaller)
 	m_vecNode[UI_YES]->Set_Active(true);
 	m_vecNode[UI_NO]->Set_Active(true);
 	m_pCaller = pCaller;
+
+	/* For. MouseOverSound */
+	m_iMouseOn = -1;
 }
 
 HRESULT CUI_CanvasConfirm::Initialize_Prototype()
@@ -243,8 +248,18 @@ void CUI_CanvasConfirm::Picking()
 
 		if (PtInRect(&rc, pt))
 		{
+			/* MouseOverSound */
+			if (i != m_iMouseOn)
+			{
+				CGameInstance::GetInstance()->Play_Sound(L"UI_ConfirmButton.ogg", 1.f, false, SOUND_UI);
+				m_iMouseOn = i;
+			}
+
 			if (bClicked = static_cast<CUI_NodeButton*>(m_vecNode[i])->MouseOverEvent())
+			{
+				CGameInstance::GetInstance()->Play_Sound(L"UI_ConfirmButtonClicked.ogg", 1.f, false, SOUND_UI);
 				iChoice = i;
+			}
 		}
 		else
 			static_cast<CUI_NodeButton*>(m_vecNode[i])->BackToNormal();
@@ -257,7 +272,10 @@ void CUI_CanvasConfirm::Picking()
 		if (UI_YES == iChoice)
 		{
 			if (m_pCaller != nullptr)
+			{
+				CGameInstance::GetInstance()->Play_Sound(L"UI_UpgradeOpen.ogg", 1.f, false, SOUND_UI);
 				m_pCaller->Common_Function(true);
+			}
 		}
 		else
 		{

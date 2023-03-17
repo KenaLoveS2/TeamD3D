@@ -58,32 +58,11 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 }
 
 void CE_KenaHit::Tick(_float fTimeDelta)
-{
+{	
 	__super::Tick(fTimeDelta);
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
-
-	if (m_eEFfectDesc.bActive == true)
-	{
-		m_fScaleTime += fTimeDelta;
-		m_fAddValue += 0.3f;
-
-		if (m_fScaleTime > 0.6f)
-		{
-			m_eEFfectDesc.vScale *= m_fAddValue;
-			m_eEFfectDesc.bActive = false;
-		}
-	}
-	else
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->ResetSprite();
-
-		m_fAddValue = 0.0f;
-		m_fScaleTime = 0.0f;
-		m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
-	}
 }
 
 void CE_KenaHit::Late_Tick(_float fTimeDelta)
@@ -92,6 +71,39 @@ void CE_KenaHit::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_eEFfectDesc.bActive == true)
+	{
+		m_fScaleTime += fTimeDelta;
+		m_fAddValue += 0.3f;
+		m_eEFfectDesc.vScale *= m_fAddValue;
+
+		if (m_fScaleTime > 0.5f)
+		{
+			m_eEFfectDesc.bActive = false;
+			m_fAddValue = 0.0f;
+			m_fScaleTime = 0.0f;
+			m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
+
+			for (auto& pChild : m_vecChild)
+			{
+				pChild->Set_Active(m_eEFfectDesc.bActive);
+				pChild->ResetSprite();
+			}
+		}
+	}
+}
+
+void CE_KenaHit::Set_Child()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit_P", L"KenaHit_P"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CE_KenaHit::Render()
@@ -103,6 +115,12 @@ HRESULT CE_KenaHit::Render()
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
+}
+
+void CE_KenaHit::Imgui_RenderProperty()
+{
+	if (ImGui::Button("Active"))
+		m_eEFfectDesc.bActive = true;
 }
 
 CE_KenaHit * CE_KenaHit::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

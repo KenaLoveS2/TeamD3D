@@ -263,6 +263,10 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vFirePosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			m_vFireCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float4());
 			m_vFireCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+
+			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
+			for (auto pChild : *pChilds)
+				pChild->Set_Active(false);
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
@@ -276,6 +280,10 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vFirePosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			m_vFireCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float4());
 			m_vFireCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+
+			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
+			for (auto pChild : *pChilds)
+				pChild->Set_Active(false);
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_FIRE)
@@ -285,7 +293,6 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			eState = CSpiritArrow::ARROW_HIT;
 
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
-
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
 		}
 	}
@@ -392,7 +399,7 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	}
 
 	/* Collision Test */
-	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_MONSTER)
+	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT || iColliderIndex == COL_MONSTER)
 	{
 		m_bHit = true;
 		m_vecChild[EFFECT_HIT]->Set_Position(vCollisionPos);

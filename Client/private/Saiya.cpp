@@ -87,6 +87,7 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_Position(_float4(79.f, 0.f, 137.f, 1.f));
+	m_pTransformCom->Rotation({0.f, 1.f, 0.f, 0.f}, XMConvertToRadians(180.f));
 
 	return S_OK;
 }
@@ -303,6 +304,9 @@ HRESULT CSaiya::SetUp_State()
 			m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
 			_float fQuestIdx = 0.f;
 			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
+
+			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+
 
 		})
 		.AddTransition("CHAT to IDLE", "IDLE")

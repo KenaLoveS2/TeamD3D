@@ -3,7 +3,7 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/TreeRoot_Tile_01_DIFFUSE.dds",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/TreeRoot_Tile_01_DIFFUSE.png",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
@@ -26,7 +26,7 @@
   "2_Second": [
     {
     "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_IvyVines_D.dds",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_IvyVines_D.png",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_Plants_E.dds",
