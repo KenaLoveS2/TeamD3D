@@ -48,7 +48,7 @@ HRESULT CMage::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 
-	//Create_Sticks();
+	Create_Sticks();
 
 	return S_OK;
 }

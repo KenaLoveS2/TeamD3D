@@ -305,6 +305,9 @@ HRESULT CSaiya::SetUp_State()
 			_float fQuestIdx = 0.f;
 			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
 
+			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
+
+
 		})
 		.AddTransition("CHAT to IDLE", "IDLE")
 			.Predicator([this]()
