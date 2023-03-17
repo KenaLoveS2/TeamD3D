@@ -159,7 +159,7 @@ void CRotEater::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bSpawn)
 	{
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
