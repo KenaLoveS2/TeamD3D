@@ -971,10 +971,10 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaDamage", pEffectBase);
 
-	/* Hit */
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_mapEffect.emplace("KenaHit", pEffectBase);
+	///* Hit */
+	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
+	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	//m_mapEffect.emplace("KenaHit", pEffectBase);
 
 	/* PulseJump */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
@@ -1448,14 +1448,14 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		{
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-				for (auto& Effect : m_mapEffect)
-				{
-					if (Effect.first == "KenaHit")
-					{
-						Effect.second->Set_Active(true);
-						Effect.second->Set_Position(vCollisionPos);
-					}
-				}
+				//for (auto& Effect : m_mapEffect)
+				//{
+				//	if (Effect.first == "KenaHit")
+				//	{
+				//		Effect.second->Set_Active(true);
+				//		Effect.second->Set_Position(vCollisionPos);
+				//	}
+				//}
 			
 			pGameObject->Set_Position(vCollisionPos);
 

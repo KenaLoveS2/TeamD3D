@@ -9,35 +9,17 @@
                     "Child Count": 2,
                     "ChildDesc": [
                         {
-                            "WorldMatrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": false,
                             "Blend Type": 0,
-                            "Child CloneTag": "Center0_0",
-                            "Child ProtoTag": "Prototype_GameObject_Center0",
+                            "Child CloneTag": "HitA_0",
+                            "Child ProtoTag": "Prototype_GameObject_HitA",
                             "Color": [
-                                0.8418972492218018,
-                                0.6811569333076477,
-                                0.5058038830757141,
-                                1.0
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
@@ -47,7 +29,7 @@
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.5,
+                            "DurationTime": 0.4000000059604645,
                             "Effect Type": 0,
                             "FreeMove": false,
                             "Have Trail": false,
@@ -82,10 +64,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "SeparateHeight": 5,
                             "SeparateWidth": 5,
@@ -97,39 +79,39 @@
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 4.0,
-                            "WidthCnt": 5
-                        },
-                        {
+                            "Width Frame": 1.0,
+                            "WidthCnt": 5,
                             "WorldMatrix": [
-                                1.0,
+                                0.20000000298023224,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0,
-                                1.0,
+                                0.20000000298023224,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0,
-                                1.0,
+                                0.20000000298023224,
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0,
                                 1.0
-                            ],
+                            ]
+                        },
+                        {
                             "Alpha": 0.0,
                             "Angle": 0.0,
                             "Billboard": false,
                             "Blend Type": 0,
-                            "Child CloneTag": "Center1_1",
-                            "Child ProtoTag": "Prototype_GameObject_Center1",
+                            "Child CloneTag": "HitB_1",
+                            "Child ProtoTag": "Prototype_GameObject_HitB",
                             "Color": [
-                                0.8181818127632141,
-                                0.13905858993530273,
-                                0.13905858993530273,
-                                0.3490196168422699
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
@@ -139,7 +121,7 @@
                                 0.0,
                                 0.0
                             ],
-                            "DurationTime": 0.5,
+                            "DurationTime": 0.4000000059604645,
                             "Effect Type": 0,
                             "FreeMove": false,
                             "Have Trail": false,
@@ -174,10 +156,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.3490196168422699,
-                                0.3490196168422699,
-                                0.3490196168422699,
-                                0.3490196168422699
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "SeparateHeight": 5,
                             "SeparateWidth": 5,
@@ -189,21 +171,39 @@
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
-                            "Width Frame": 1.0,
-                            "WidthCnt": 5
+                            "Width Frame": 4.0,
+                            "WidthCnt": 5,
+                            "WorldMatrix": [
+                                0.20000000298023224,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.20000000298023224,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.20000000298023224,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
                         }
                     ],
                     "Desc": [
                         {
                             "Alpha": 0.0,
                             "Angle": 0.0,
-                            "Billboard": true,
+                            "Billboard": false,
                             "Blend Type": 0,
                             "Color": [
-                                0.3596838116645813,
-                                0.29352816939353943,
-                                0.0853004977107048,
-                                1.0
+                                1.0,
+                                0.5691699385643005,
+                                0.0,
+                                0.0
                             ],
                             "CreateRange": 0.0,
                             "DiffuseTexture Index": [
@@ -214,11 +214,11 @@
                                 0.0
                             ],
                             "DurationTime": 0.0,
-                            "Effect Type": 0,
+                            "Effect Type": 2,
                             "FreeMove": false,
                             "Have Trail": false,
                             "Height Frame": 0.0,
-                            "HeightCnt": 2,
+                            "HeightCnt": 0,
                             "Init Pos": [
                                 0.0,
                                 0.0,
@@ -248,43 +248,43 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
-                            "SeparateHeight": 2,
-                            "SeparateWidth": 2,
+                            "SeparateHeight": 0,
+                            "SeparateWidth": 0,
                             "Spread": false,
                             "Start": false,
                             "Texture Type": 0,
-                            "TextureRender Type": 1,
+                            "TextureRender Type": 0,
                             "Trigger": false,
                             "Use Child": false,
                             "Use Mask": false,
                             "Use Normal": false,
                             "Width Frame": 0.0,
-                            "WidthCnt": 2
+                            "WidthCnt": 0
                         }
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
                     "WorldMatrix": [
-                        0.1599999964237213,
+                        0.15,
                         0.0,
                         0.0,
                         0.0,
                         0.0,
-                        0.1599999964237213,
+                        0.15,
                         0.0,
                         0.0,
                         0.0,
                         0.0,
-                        0.1599999964237213,
+                        0.15,
                         0.0,
-                        -0.10349644720554352,
-                        -8.475542045971451e-08,
-                        -0.10978582501411438,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ]
                 }

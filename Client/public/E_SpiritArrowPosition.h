@@ -7,7 +7,7 @@ BEGIN(Client)
 class CE_SpiritArrowPosition final : public CEffect
 {
 public:
-	enum EFFECTS { EFFECT_SPRITEPOSITION, EFFECT_END };
+	enum EFFECTS { EFFECT_SPRITEPOSITION, EFFECT_PARTICLE, EFFECT_END };
 
 private:
 	CE_SpiritArrowPosition(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -23,7 +23,10 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	// void	Set_PositionChildActiveFalse();
+	void	Set_Child();
+
+private:
+	_bool	m_bChildActive = false;
 
 public:
 	static  CE_SpiritArrowPosition* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

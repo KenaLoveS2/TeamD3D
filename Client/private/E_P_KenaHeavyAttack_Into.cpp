@@ -56,9 +56,6 @@ void CE_P_KenaHeavyAttack_Into::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_P_KenaHeavyAttack_Into::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

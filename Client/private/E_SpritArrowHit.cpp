@@ -60,19 +60,20 @@ HRESULT CE_SpiritArrowHit::Late_Initialize(void * pArg)
 
 void CE_SpiritArrowHit::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
- 	__super::Tick(fTimeDelta);
-
-	if (m_eEFfectDesc.bActive == true)
+	else
 	{
 		m_fTimeDelta += fTimeDelta;
+		m_eEFfectDesc.vScale *= (2.0f + fTimeDelta * 2.f);
 		if (m_fTimeDelta > 0.5f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
 			m_eEFfectDesc.fHeightFrame = 0.0;
-			m_eEFfectDesc.bActive = false;
+			m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
+		    m_eEFfectDesc.bActive = false;
 			m_fTimeDelta = 0.0f;
 		}
 	}

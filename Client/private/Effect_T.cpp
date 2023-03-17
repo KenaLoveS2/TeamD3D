@@ -53,7 +53,6 @@ void CEffect_T::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fShaderBindTime += fTimeDelta;
 
-
 	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
 	{
 		m_fTimeDelta += fTimeDelta;
@@ -151,6 +150,9 @@ void CEffect_T::Tick(_float fTimeDelta)
 
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 	
 	if (m_eEFfectDesc.IsBillboard == true)

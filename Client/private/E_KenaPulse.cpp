@@ -192,9 +192,6 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulse::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

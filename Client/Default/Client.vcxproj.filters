@@ -950,6 +950,12 @@
     <ClInclude Include="..\public\UI_NodeSkillVideo.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_KenaHit.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_SpiritArrow.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1484,6 +1490,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeSkillVideo.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\SkillDescTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_KenaHit.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_SpiritArrow.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
