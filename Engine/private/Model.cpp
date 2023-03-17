@@ -2324,8 +2324,8 @@ void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pM
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, 
-	_uint iColliderIndex)
+void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex)
+
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2355,8 +2355,7 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 	BoxDesc.eType = BOX_STATIC;
 	BoxDesc.pActortag = pActorName;
 	BoxDesc.vPos = CUtile::Float_4to3(vPos);
-	BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f*0.5f),
-		fLenY*(fYSize*0.5f*0.5f) , fLenZ*(fZSize*0.5f *0.5f) );
+	BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f*0.5f),fLenY*(fYSize*0.5f*0.5f) , fLenZ*(fZSize*0.5f *0.5f) );
 	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 	BoxDesc.fDegree = 0.f;
 	BoxDesc.isGravity = false;
@@ -2377,10 +2376,6 @@ void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransfor
 
 	PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
 	pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
-
-
-
-
 }
 
 void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
@@ -2423,8 +2418,7 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 	_float fLenY = fMaxY - fMinY;
 	_float fLenZ = fMaxZ - fMinZ;
 
-	_vector fLenFloat3 = XMVectorSet(fLenX, fLenY, fLenZ,0.f);
-
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
 	ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 
@@ -2435,7 +2429,6 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 
 	for (_uint i = 0; i < InstMatrixSize; ++i)
 	{
-
 		MatPosTrans = *m_pInstancingMatrix[i];
 		XMStoreFloat4x4(&MatPosTrans, XMLoadFloat4x4(&MatPosTrans) * pConnectTransform->Get_WorldMatrix());
 
@@ -2448,17 +2441,13 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
 		fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
 
-		vPos.x += _vPos.x;
-		vPos.y += _vPos.y;
-		vPos.z += _vPos.z;
-
-
+		vPos.x += _vPos.x;  vPos.y += _vPos.y;  vPos.z += _vPos.z;
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+
 		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.pActortag = CUtile::Create_DummyString();
+		BoxDesc.pActortag = CUtile::Create_DummyString(pActorName,i);
 		BoxDesc.vPos = CUtile::Float_4to3(vPos);
-		BoxDesc.vSize = _float3(fLenX *(fXSize*0.5f)* vSize.x,
-			fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+		BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f+i*0.1f))* vSize.x,fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
 		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDegree = 0.f;
 		BoxDesc.isGravity = false;
@@ -2466,12 +2455,15 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.fDynamicFriction = 0.5f;
 		BoxDesc.fRestitution = 0.1f;
 		BoxDesc.eFilterType = FILTER_DEFULAT;
+		BoxDesc.bKinematic = true;
+		BoxDesc.vVelocity = _float3(0.f,0.f,0.f);
+		BoxDesc.fDensity = 1.f;
+		BoxDesc.fAngularDamping = 1.f;
+		BoxDesc.fMass = 1.f;
+		BoxDesc.fLinearDamping = 1.f;
 
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, iColliderIndex));
 		
-		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-		pPhysX->Create_Box(BoxDesc, Create_PxUserData(pConnectTransform->Get_Owner(), false, iColliderIndex));
-		
-
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
 		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
@@ -2483,23 +2475,24 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		vPos.y -= _vPos.y;
 		vPos.z -= _vPos.z;
 
-
 		memcpy(&matNew.m[0], &vRight, sizeof(_float4));
 		memcpy(&matNew.m[1], &vUp, sizeof(_float4));
 		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
 		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
-			PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-			pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
-			//pPhysX->Set_ActorRotation(pActor, 45.f, _float3(0.f, 1.f, 0.f));
-		//}
-		//if (i == 0)
-		//{
-		//	PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-		//	//pPhysX->Set_ActorMatrix(pActor, MatPosTrans);
-		//	pPhysX->Set_ActorRotation(pActor, 45.f, _float3(0.f, 1.f, 0.f));
-		////}
+		PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+		pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
 	}
+
+}
+
+void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	CPhysX_Manager::GetInstance()->Imgui_Render(pActorName);
+
 
 }
 

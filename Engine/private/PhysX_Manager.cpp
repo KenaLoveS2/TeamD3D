@@ -279,7 +279,7 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		if(pUserData->isGravity == true)
+		if(pUserData && pUserData->isGravity == true)
 		{
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
@@ -859,7 +859,7 @@ void CPhysX_Manager::Set_ActorScaling(const _tchar* pActorTag, _float3 vScale)
 void CPhysX_Manager::Set_ScalingBox(PxRigidActor* pActor, _float3 vScale)
 {
 	PxShape* shape;
-	pActor->getShapes(&shape, 1);
+	pActor->getShapes(&shape, sizeof(PxShape));
 
 	PxBoxGeometry newGeometry(PxVec3(vScale.x, vScale.y, vScale.z));
 	shape->setGeometry(newGeometry);
@@ -926,7 +926,7 @@ void CPhysX_Manager::Imgui_Render()
 			ImGui::Text(ppObjectTag[iStaticSelectObject]);
 			PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 
-			if (pUserData)
+			if (pUserData && pUserData->pOwner != nullptr)
 				pUserData->pOwner->ImGui_PhysXValueProperty();
 		}
 
@@ -1131,4 +1131,127 @@ void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
 		}
 		else Pair++;
 	}
+}
+
+PxVec3 CPhysX_Manager::Get_ScalingBox(PxRigidActor *pActor)
+{
+	PxShape* shape;
+	pActor->getShapes(&shape, 1);
+
+	PxGeometryHolder newGeometry = shape->getGeometry();
+	newGeometry.getType();
+
+	PxVec3 Temp = newGeometry.box().halfExtents;
+
+	return Temp;
+}
+
+void CPhysX_Manager::Imgui_Render(const _tchar * pActorName)
+{
+	if (pActorName == nullptr)
+		return;
+
+	wstring wstrActorParentName = pActorName;
+
+
+	static wstring wstrSelectedTag = L"";
+
+	if (ImGui::BeginListBox("##"))
+	{
+		string Actor_ParentName = CUtile::WstringToString(wstrActorParentName);
+
+		char szViewName[256];
+		const bool bColider_Selected = false;
+		for (auto& ProtoPair : m_StaticActors)
+		{
+			if (ProtoPair.second == nullptr)
+				continue;
+
+			wstring  Temp = ProtoPair.first;
+			string str = CUtile::WstringToString(Temp);
+
+			if (str.find(Actor_ParentName, 0) != std::string::npos)
+			{
+				CUtile::WideCharToChar(ProtoPair.first, szViewName);
+
+				if (ImGui::Selectable(szViewName, bColider_Selected))
+				{
+					wstrSelectedTag = ProtoPair.first;
+				}
+			}
+
+		}
+		ImGui::EndListBox();
+	}
+
+	for (auto& ProtoPair : m_StaticActors)
+	{
+		if (lstrcmp(ProtoPair.first, wstrSelectedTag.c_str()))
+			continue;
+
+		Set_Visualization(ProtoPair.second, true);
+	}
+
+
+	if (wstrSelectedTag != L"")
+	{
+		PxRigidActor*	pRigidActor = Find_StaticActor(wstrSelectedTag.c_str());
+
+		ImGui::BulletText("Current Static Object : ");
+		ImGui::SameLine();
+		string Temp = CUtile::WstringToString(wstrSelectedTag);
+		ImGui::Text(Temp.c_str());
+		PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
+
+		PxTransform transform = pRigidActor->getGlobalPose();
+		_float3 vPos = CUtile::ConvertPosition_PxToD3D(transform.p);
+		PxVec3 PxScale = Get_ScalingBox(pRigidActor);
+
+		_float3 vScale = _float3(PxScale.x, PxScale.y, PxScale.z);
+
+		float fPos[3] = { vPos.x,vPos.y,vPos.z };
+		float fScale[3] = { vScale.x, vScale.y, vScale.z };
+
+		ImGui::DragFloat3("Px_Pos", fPos, 0.01f, 0.1f, 100.0f);
+		ImGui::DragFloat3("Px_Scale", fScale, 0.01f, 0.1f, 100.0f);
+
+		vPos.x = fPos[0]; vPos.y = fPos[1]; vPos.z = fPos[2];
+		vScale.x = fScale[0];  vScale.y = fScale[1];  vScale.z = fScale[2];
+
+		{
+			//PxShape* shape;
+			//pRigidActor->getShapes(&shape, 1);
+			//PxBoxGeometry newGeometry(PxVec3(vScale.x, vScale.y, vScale.z));
+
+			//// 새로운 쉐이프를 생성
+			//PxShape* newShape = m_pPhysics->createShape(newGeometry, *m_pMaterial, true);
+
+			//newShape->setLocalPose(shape->getLocalPose());
+
+			//// 기존 쉐이프를 제거하고 새로운 쉐이프를 추가
+			//pRigidActor->detachShape(*shape);
+			//shape->release();
+			//pRigidActor->attachShape(*newShape);
+
+			//// 새로운 쉐이프는 생성할 때 증가된 reference count를 가지므로 release를 호출하여 감소시킴
+			//newShape->release();
+		}
+
+		//Set_ActorPosition(pRigidActor, vPos);
+		//Set_ScalingBox(pRigidActor, vScale);
+
+
+
+	}
+
+
+}
+
+void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
+{
+	PxShape* shape;
+	pActor->getShapes(&shape, 1);
+
+	PxGeometryHolder newGeometry = shape->getGeometry();
+	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, bFlag);
 }

@@ -37,7 +37,8 @@ private:
 	void														Imgui_TexturePathNaming();
 	void														Imgui_Instancing_control(CGameObject*	pSelectEnviObj);
 	void														imgui_ObjectList_Clear();
-	void														imgui_Gimmic_Class_Viewr();
+	void														Imgui_Instance_Edit_Collider();
+
 
 private:		/*Logic*/
 	void														Imgui_Save_Func();
@@ -46,7 +47,7 @@ private:		/*Logic*/
 	void														Imgui_Create_Option_Reset();
 
 	void														Imgui_Maptool_Terrain_Selecte();
-	void														Imgui_Crystal_Create_Pulse();
+	
 
 private: /*For_Tool*/
 	string														m_strChapter[MAX_CHATERNUM];

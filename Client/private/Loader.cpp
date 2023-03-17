@@ -631,14 +631,22 @@ HRESULT CLoader::Loading_ForMapTool()
 	
 
 	_bool bRealObject = true;
-#ifdef FOR_MAPTOOL
+#ifdef FOR_MAPTOOL   
 
 #else
-
 #pragma region Test_Gimmick_OBJ
 	if (bRealObject == false)
 	{
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Fallen", true, true, true)))
+			assert(!"Issue");
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+			return E_FAIL;
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
+			assert(!"ShrineOfLife"); 
+
+		/*if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
 			assert(!"RuinPlatform");
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
 			assert(!"PowerCrystal");
@@ -653,9 +661,10 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
 			assert(!"ShrineOfDeath_MainRock");
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-			assert(!"ShrineOfLife");
+			assert(!"ShrineOfLife");*/
 	}
 #pragma endregion
+
 #endif FOR_MAPTOOL
 
 #ifdef FOR_MAP_GIMMICK
@@ -905,6 +914,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		CE_SpiritArrowHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SpritArrowHit.json"))))
 		return E_FAIL;
 
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Spirit_Arrow", false, false, false)))
+		return E_FAIL;
 #pragma endregion Effect_Object
 
 #endif 
@@ -1254,10 +1265,52 @@ HRESULT CLoader::Loading_ForMapTool()
 #endif
 
 
-
 	if (true == bRealObject)
 	{
 #pragma  region Start_Forest_Room
+
+#pragma region GroundCover
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Branches", true, true, true,true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Clovers", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Deadzone", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Grass", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Needles", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Roots", true, true, true, true)))
+			assert(!"Issue");
+#pragma endregion GroundCover
+
+
+#pragma region Foliage
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/BushDead", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Bushes", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Ferns", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Flowers", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Grass", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/LilyPad", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Moss", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Overhang", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Plants", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Roots", true, true, true, true)))
+			assert(!"Issue");
+#pragma endregion Foliage
+
+
+
+
 #pragma region Born_GroundCover
 		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilLarge",
@@ -1309,7 +1362,12 @@ HRESULT CLoader::Loading_ForMapTool()
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
 			return E_FAIL;
 
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true)))
+			assert(!"Issue");
+
 #pragma  endregion Born_GroundCover
+
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "PowerCrystal", true, false, true)))
 			assert(!"Issue");
 		m_fCur += 1.f;
@@ -1520,6 +1578,9 @@ HRESULT CLoader::Loading_ForMapTool()
 			assert(!"Issue");
 		m_fCur += 1.f;
 
+
+
+
 #pragma endregion ~Start_Forest_Room
 	}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -1568,6 +1629,21 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading GameObjects..."));
 
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"),
+		CRope_RotRock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot"),
+		CLiftRot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
+		CLiftRot_Master::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
 
 
 	/* For.Prototype_GameObject_Cave_Rock */
@@ -1721,6 +1797,39 @@ HRESULT CLoader::Loading_ForMapTool()
 		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#pragma  region	MONSTER
+#ifdef FOR_MAP_GIMMICK
+	/* For.Prototype_Component_Model_EnemyWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_EnemyWisp",
+		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Enemy/EnemyWisp/EnemyWisp.model", PivotMatrix))))
+		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWisp"),
+		CEnemyWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* EnemyWisp Effects */
+	/* For.Prototype_GameObject_EnemyWispTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispTrail"),
+		CE_EnemyWispTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_RotTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotTrail"),
+		CE_RotTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_EnemyWispBackground */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispBackground"),
+		CE_EnemyWispBackground::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispBackGround.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_EnemyWispGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispGround"),
+		CE_EnemyWispGround::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnemyWispGround.json"))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_EnemyWispParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnemyWispParticle"),
+		CE_P_EnemyWisp::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_EnemyWispSpawn.json"))))
+		return E_FAIL;
+	/* ~EnemyWisp Effects */
+#endif
+#pragma  endregion	MONSTER
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -3182,7 +3291,7 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 	return S_OK;
 }
 
-HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial)
+HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial, _bool bPivotScale)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -3214,6 +3323,11 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	int iPrototyeLengh = lstrlen(pPrototype);
 
 	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	
+	if(bPivotScale)
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+
+
 
 	int iResult = 0;
 	while (iResult != -1)

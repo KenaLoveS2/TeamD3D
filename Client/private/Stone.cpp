@@ -40,10 +40,21 @@ HRESULT CStone::Late_Initialize(void * pArg)
 	_float3 vPos, vSize;
 	vSize = _float3(1.f, 1.f, 1.f);
 	vPos = _float3(0.0f, 0.5f, 0.0f);
+
+	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03" ||
+		m_EnviromentDesc.szModelTag ==  L"Prototype_Component_Model_RuinsKit_Rubble01")
+	{
+		return S_OK;
+	}
+
 	if (m_pModelCom->Get_IStancingModel() == true)
 		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
 	else
 		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+
+
+	
+
 	return S_OK;
 }
 
@@ -287,22 +298,11 @@ void CStone::ImGui_ShaderValueProperty()
 
 void CStone::ImGui_PhysXValueProperty()
 {
-	__super::ImGui_PhysXValueProperty();
+	
+	ImGui::Text("CStone::ImGui_PhysXValueProperty");
 
-	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 
-	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
-	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
-	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
-	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
-	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
 
-	_float3 vPxPivot = m_pTransformCom->Get_vPxPivot();
-
-	float fPos[3] = { vPxPivot.x, vPxPivot.y, vPxPivot.z };
-	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
-	vPxPivot.x = fPos[0]; vPxPivot.y = fPos[1]; vPxPivot.z = fPos[2];
-	m_pTransformCom->Set_PxPivot(vPxPivot);
 }
 
 HRESULT CStone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

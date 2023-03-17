@@ -52,8 +52,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		Imgui_SelectObject_InstancingControl();
 		imgui_ObjectList_Clear();
 
-		imgui_Gimmic_Class_Viewr();
-		Imgui_Crystal_Create_Pulse();
+		Imgui_Instance_Edit_Collider();
 	}
 
 	ImGui::End();
@@ -704,34 +703,19 @@ void CImgui_MapEditor::Imgui_Create_Option_Reset()/* √ ±‚»≠*/
 
 void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 {
-	const	char* pName = 			typeid(typename CImgui_TerrainEditor).name();
-	CImgui_TerrainEditor* pTerrainEditor = 	dynamic_cast<CImgui_TerrainEditor*>(CGameInstance::GetInstance()->Get_ImguiObject(pName));
+	//const	char* pName = 			typeid(typename CImgui_TerrainEditor).name();
+	//CImgui_TerrainEditor* pTerrainEditor = 	dynamic_cast<CImgui_TerrainEditor*>(CGameInstance::GetInstance()->Get_ImguiObject(pName));
 
-	if (pTerrainEditor == nullptr)
-		return;
+	//if (pTerrainEditor == nullptr)
+	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain1"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
 }
 
-void CImgui_MapEditor::Imgui_Crystal_Create_Pulse()
-{
 
-	if (ImGui::Button("Create_Crystal_Pulse"))
-	{
-
-		for (auto &pCrystal : *(CGameInstance::GetInstance()->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects()))
-		{
-			if (dynamic_cast<CCrystal*>(pCrystal.second) == nullptr)
-				continue;
-
-			if (!lstrcmp(pCrystal.second->Get_ObjectCloneName(), L"2_Water_GimmickCrystal02"))
-				static_cast<CCrystal*>(pCrystal.second)->Create_Pulse(true);
-		}
-	}
-}
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
 {
@@ -925,10 +909,6 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
 	}
 
-	
-
-	
-
 	ImGui::End();
 
 }
@@ -950,8 +930,23 @@ void CImgui_MapEditor::imgui_ObjectList_Clear()
 	}
 }
 
-void CImgui_MapEditor::imgui_Gimmic_Class_Viewr()
+
+void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 {
+	CGameObject* pGameObject = CGameInstance::GetInstance()->Get_SelectObjectPtr();
+
+
+	if (nullptr == pGameObject)
+		return;
+
+	CModel* pModel = static_cast<CModel*>(pGameObject->Find_Component(L"Com_Model"));
+
+	ImGui::Begin("Instance Obj Colider_Control");
+
+	pModel->Edit_InstModel_Collider(pGameObject->Get_ObjectCloneName());
+
+	ImGui::End();
+
 }
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec,CEnviromentObj::CHAPTER eChapterGimmcik)
