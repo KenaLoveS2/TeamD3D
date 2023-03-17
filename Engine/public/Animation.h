@@ -50,9 +50,9 @@ public:
 	void								Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
 
 	/* For CAnimationState */
-	void								Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
+	void								Update_Bones_ReturnMat(_float fTimeDelta, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr, _bool IsLerp = false);
 	void								Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", CAnimation* pBlendAnim = nullptr);
-	void								Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "");
+	void								Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix* matBonesTransformation, const string& strRootBone = "", _bool IsLerp = false);
 	void								Blend_BoneMatrices(_float fBlendRatio, _smatrix* matPreAnimBones, _smatrix* matCurAnimBones, const string& strRootBone = "");
 	void								Reverse_Play(_float fTimeDelta);
 	void								Reset_Animation();
@@ -77,7 +77,7 @@ private:
 
 private:
 	/* Map for Event Call. <PlayTime, FuncName> */
-	map<_float, const string>		m_mapEvent;
+	multimap<_float, const string>		m_mapEvent;
 
 private:
 	void	Call_Event(_float fLastPlayTime, _float fTimeDelta);

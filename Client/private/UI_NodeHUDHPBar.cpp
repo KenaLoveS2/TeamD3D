@@ -90,15 +90,6 @@ HRESULT CUI_NodeHUDHPBar::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
-	{
-		MSG_BOX("Failed To Setup ShaderResources : UI_HUDHPBar");
-		return E_FAIL;
-	}
-
-	m_pShaderCom->Begin(m_iRenderPass);
-	m_pVIBufferCom->Render();
-
 	return S_OK;
 }
 
@@ -135,7 +126,6 @@ HRESULT CUI_NodeHUDHPBar::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
@@ -154,8 +144,6 @@ HRESULT CUI_NodeHUDHPBar::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

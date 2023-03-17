@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Npc.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
 class CSaiya final : public CNpc
 {
@@ -96,19 +98,28 @@ public:
 	virtual void					ImGui_ShaderValueProperty() override;
 	virtual void					ImGui_PhysXValueProperty() override;
 
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;
+
+
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) override;
 	virtual	HRESULT			SetUp_State()override;
 	virtual	HRESULT			SetUp_Components()override;
 	virtual	HRESULT			SetUp_ShaderResources()override;
 	virtual HRESULT			SetUp_ShadowShaderResources()override;
-	virtual HRESULT			SetUp_UI(_float fOffsetY = 0.2f)override;
+	virtual HRESULT			SetUp_UI()override;
 
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta);
 
+	_bool							IsChatEnd();
+
 private:
 	_bool							m_bMeetPlayer = false;
+	vector<wstring>					m_vecChat[10];
+	_uint							m_iChatIndex;
+	_uint							m_iLineIndex;
 
 public:
 	static CSaiya*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -107,7 +107,7 @@ protected:
 	virtual	HRESULT			SetUp_Components()override;
 	virtual	HRESULT			SetUp_ShaderResources()override;
 	virtual HRESULT			SetUp_ShadowShaderResources()override;
-	virtual HRESULT			SetUp_UI(_float fOffsetY = 0.2f)override;
+	virtual HRESULT			SetUp_UI()override;
 
 private:
 	virtual void					AdditiveAnim(_float fTimeDelta);

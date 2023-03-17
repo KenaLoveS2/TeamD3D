@@ -145,7 +145,7 @@ HRESULT CNpc::SetUp_Components()
 	return S_OK;
 }
 
-HRESULT CNpc::SetUp_UI(_float fOffsetY)
+HRESULT CNpc::SetUp_UI()
 {
 	return S_OK;
 }

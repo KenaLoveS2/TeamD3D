@@ -71,7 +71,7 @@ void CKena_Staff::Tick(_float fTimeDelta)
  	else
  		m_fBowDurationTime = 0.5f;
  
- 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_Attack());
+ 	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_TrailON());
  	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
  
  	for (auto& pEffect : m_mapEffect)

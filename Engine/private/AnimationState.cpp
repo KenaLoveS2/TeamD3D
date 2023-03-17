@@ -356,7 +356,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 
 		pPreAnim = m_pPreAnim->m_pMainAnim;
 		pPreBlendAnim = m_pPreAnim->m_pBlendAnim;
-		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim);
+		pPreAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, pPreBlendAnim, true);
 
 		if (pPreAnim == pMainAnim || pPreAnim == pBlendAnim)
 			pPreAnim->Reverse_Play(fTimeDelta);
@@ -388,7 +388,7 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
 
 					if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_MAX)
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, 1.f, m_matBonesTransformation, m_strRootBone, true);
 					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_AUTO)
 					{
 						if (pAdditiveAnim->m_bPlayReverse == false)
@@ -409,14 +409,14 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 							}
 						}
 
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone, true);
 					}
 					else if (pAdditiveAnim->m_eControlRatio == CAdditiveAnimation::RATIOTYPE_CONTROL)
-						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone);
+						pAdditiveAnim->m_pAdditiveAnim->Update_Bones_Additive_ReturnMat(fTimeDelta, pAdditiveAnim->m_fAdditiveRatio, m_matBonesTransformation, m_strRootBone, true);
 				}
 				else if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::REPLACE)
 				{
-					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone);
+					pAdditiveAnim->m_pAdditiveAnim->Update_Bones_ReturnMat(fTimeDelta, m_matBonesTransformation, m_strRootBone, nullptr, true);
 				}
 			}
 		}

@@ -27,8 +27,7 @@ public:
 		INV_, INV_KARMA, INV_NUMROTS, INV_CRYSTAL,
 		INV_UPGRADE,
 		TOP_TITLE,TOP_ROTMAX, TOP_ROTCUR, TOP_ROTGET/* Calculate */,
-		LETTERBOX_AIM,
-
+		BOT_LETTERBOX,BOT_CHAT,
 		/*Must Be Last ... ! */
 		UI_CONFIRM,
 		UI_PRESENT_END
@@ -65,7 +64,7 @@ public:
 	void					Call_ConfirmWindow(wstring msg, _bool bActive, CUI_Canvas* pCaller = nullptr);
 
 public: /* OnOff Canvas Setting */
-
+	void					Switch_FrontUI(_bool bActive); 
 
 
 

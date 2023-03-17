@@ -747,18 +747,18 @@ PS_OUT PS_ENEMYWISP(PS_TRAILIN In)
 
 PS_OUT PS_ROT(PS_TRAILIN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
-	float fLife = 2.0f;
+   PS_OUT         Out = (PS_OUT)0;
+   float fLife = 2.0f;
 
-	vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vRotrailTexture.a = vRotrailTexture.r * fLife;
+   vector   vRotrailTexture = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+   vRotrailTexture.a = vRotrailTexture.r * fLife;
 
-	float4 finalcolor = vRotrailTexture;
-	float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
-	finalcolor.rgb = finalcolor.rgb + vColor.rgb * 2.f;
+   float4 finalcolor = vRotrailTexture;
+   float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+   finalcolor.rgb = finalcolor.rgb + vColor.rgb * 2.f;
 
-	Out.vColor = finalcolor;
-	return Out;
+   Out.vColor = finalcolor;
+   return Out;
 }
 
 PS_OUT PS_FLOWERPARTICLE(PS_IN In)
