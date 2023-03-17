@@ -119,10 +119,12 @@ _bool CEnemyWisp::IsActiveState()
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_pTransformCom->Set_Position(vPos);
 
+	if(m_pModelCom->Get_AnimationProgress() > 0.8f)
+		m_bDissolve = true;
+
 	if (m_pModelCom->Get_AnimIndex() == 3 && 
 		m_pModelCom->Get_AnimationFinish() == true)
 	{
-		m_bDissolve = true;
 		m_eEFfectDesc.bActive = false;
 
 		for (auto& pChild : m_vecChild)

@@ -464,6 +464,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HitSet.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_KenaHitParticle */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit_P"),
+		CE_P_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HIT.json"))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_KenaJump */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaJump"),
 		CE_KenaJump::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_JumpSet.json"))))
@@ -522,6 +527,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_SpiritArrowHit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrowHit"),
 		CE_SpiritArrowHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SpritArrowHit.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_SpiritArrow_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow_P"),
+		CE_P_SpiritArrow::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/plz.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object
