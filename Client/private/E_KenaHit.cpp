@@ -25,7 +25,7 @@ HRESULT CE_KenaHit::Initialize_Prototype(const _tchar * pFilePath)
 
 HRESULT CE_KenaHit::Initialize(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	CGameObject::GAMEOBJECTDESC      GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
@@ -39,15 +39,21 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
 	Set_ModelCom(m_eEFfectDesc.eMeshType);
 	/* ~Component */
 
 	m_eEFfectDesc.bActive = false;
+	Set_Child();
 	for (auto& pChild : m_vecChild)
+	{
 		pChild->Set_Parent(this);
+		CEffect_Base::EFFECTDESC effectdesc = pChild->Get_EffectDesc();
+		effectdesc.IsBillboard = true;
+		pChild->Set_EffectDesc(effectdesc);
+	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 	return  S_OK;
 }
 

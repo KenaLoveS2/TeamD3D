@@ -846,6 +846,7 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
+	TurnOnFootStep(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
 	TurnOnTrail(true, 0.f);
@@ -1446,8 +1447,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		_bool bRealAttack = false;
 		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
 		{
-			m_pCamera->TimeSleep(0.4f);
-
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
 			_float fGuage = m_pKenaStatus->Get_PercentHP();
