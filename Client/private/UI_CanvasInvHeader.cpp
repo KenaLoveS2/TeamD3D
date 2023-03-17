@@ -74,8 +74,6 @@ void CUI_CanvasInvHeader::Tick(_float fTimeDelta)
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(false);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(true);
 		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(true);
-		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(true);
-
 
 		return;
 	}
