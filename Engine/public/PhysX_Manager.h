@@ -194,7 +194,6 @@ public:
 	
 	void Delete_DynamicActor(PxRigidActor* pActor);
 
-	PxVec3 Get_ScalingBox(PxRigidActor *pActor);
 	void Set_Visualization(PxRigidActor *pActor, _bool bFlag);
 };
 END
