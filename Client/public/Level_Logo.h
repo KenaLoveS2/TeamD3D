@@ -30,6 +30,7 @@ private:
 
 private:
 	vector<CUI_NodeButton*>		m_vecButtons;
+	_int						m_iMouseOn;
 
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

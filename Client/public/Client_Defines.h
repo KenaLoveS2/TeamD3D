@@ -19,6 +19,8 @@ namespace Client
 {
 	enum LEVEL { LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_MAPTOOL, LEVEL_TESTPLAY, LEVEL_EFFECT, LEVEL_END };
 
+	enum SOUND { SOUND_BGM, SOUND_UI, SOUND_END };
+
 	static void Set_FrameLimit(bool bLimitFlag)
 	{
 		g_bFrameLimit = bLimitFlag;

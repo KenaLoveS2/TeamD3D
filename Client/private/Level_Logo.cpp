@@ -22,6 +22,8 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_For_LevelName()))
 		return E_FAIL;               
 
+	m_iMouseOn = -1;
+
 	return S_OK;
 }
 
@@ -43,8 +45,15 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 
 		if (PtInRect(&rc, pt))
 		{
+			if (i != m_iMouseOn)
+			{
+				CGameInstance::GetInstance()->Play_Sound(L"UI_MenuButton.ogg", 0.5f, false, SOUND_UI);
+				m_iMouseOn = i;
+			}
+
 			if (bClicked = static_cast<CUI_NodeButton*>(button)->MouseOverEvent())
 			{
+				CGameInstance::GetInstance()->Play_Sound(L"UI_ConfirmButtonClicked.ogg", 1.f, false, SOUND_UI);
 				iClicked = i;
 			}
 		}
