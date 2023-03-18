@@ -68,8 +68,8 @@ private:
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
 
-	_bool										m_bDynamicShadow = false;
-	_bool										m_bSSAO = false;
+	_bool										m_bDynamicShadow = true;
+	_bool										m_bSSAO = true;
 
 	_float										m_fDistortTime = 0.f;
 
@@ -91,8 +91,8 @@ private:
 
 	HRESULT PostProcess_Distort();
 	_bool		m_bDistort = false;
-	HRESULT PostProcess_FilmTonemapping();
-	_bool		m_bFilmTonemapping = false;
+	HRESULT PostProcess_GrayScale();
+	_bool		m_bGrayScale = false;
 
 #ifdef _DEBUG
 private:

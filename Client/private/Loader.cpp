@@ -20,6 +20,7 @@
 #include "Beni.h"
 #include "Saiya.h"
 #include "CameraForNpc.h"
+#include "RotWisp.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -194,6 +195,11 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
+{
+
+}
+
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -222,6 +228,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	Loading_ForWJ(LEVEL_GAMEPLAY);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Terrain */
@@ -2296,6 +2304,18 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	// 작업 시작 안한것들은 주석처리.
 
+	/* Prototype_Component_Model_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotWisp",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/RotWisp/RotWisp.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Texture_T_GR_Noise_Smooth_A */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Texture_T_GR_Noise_Smooth_A",
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/RotWisp/T_GR_Noise_Smooth_A.png")))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* Prototype_Component_Model_Mage */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
@@ -2436,6 +2456,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
 		CCliff_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
+		CRotWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 

@@ -31,7 +31,7 @@ HRESULT CStone::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
+	//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 
@@ -60,15 +60,21 @@ void CStone::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (m_bPulseTest)
 		m_fEmissivePulse += 0.05f;
-	else
+
+	if(!m_bPulseTest)
 	{
 		m_fEmissivePulse -= 0.05f;
 		if (m_fEmissivePulse <= 0.f)
+		{
 			m_fEmissivePulse = 0.f;
+			m_bPulseTest = !m_bPulseTest;
+		}
 	}
 
 	if (m_fEmissivePulse >= 2.f)
-		m_bPulseTest = false;
+	{
+		m_bPulseTest = !m_bPulseTest;
+	}
 }
 
 void CStone::Late_Tick(_float fTimeDelta)
@@ -270,10 +276,21 @@ HRESULT CStone::RenderShadow()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (m_pModelCom->Get_IStancingModel())
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
 	}
 		
 	return S_OK;

@@ -28,15 +28,15 @@ private:
 	static vector<CRot*> m_vecKenaConnectRot;
 	_uint m_iThisRotIndex = 0;
 
-	CRenderer* m_pRendererCom = nullptr;
-	CShader*			     m_pShaderCom = nullptr;
-	CModel*				 m_pModelCom = nullptr;
-	CFSMComponent* m_pFSM = nullptr;
-	
-	class CKena *m_pKena = nullptr;
-	class CKena_Status* m_pkenaState = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
+	CShader*						m_pShaderCom = nullptr;
+	CModel*						m_pModelCom = nullptr;
+	CFSMComponent*		m_pFSM = nullptr;
+	class CKena *				m_pKena = nullptr;
+	class CKena_Status*	m_pkenaState = nullptr;
 
-	CTransform* m_pKenaTransform = nullptr;
+	class CRotWisp*			m_pRotWisp = nullptr;
+	CTransform*					m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 	_float4 m_vWakeUpPosition;
 

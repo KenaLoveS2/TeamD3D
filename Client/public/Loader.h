@@ -43,6 +43,9 @@ public:
 	HRESULT Loading_ForTestPlay();
 	HRESULT Loading_ForTestEffect();
 
+	HRESULT Loading_ForWJ(_uint iLevelIndex);
+
+
 private:
 	ID3D11Device*					m_pDevice = nullptr;
 	ID3D11DeviceContext*		m_pContext = nullptr;
