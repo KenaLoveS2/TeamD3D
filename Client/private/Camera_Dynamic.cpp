@@ -62,6 +62,17 @@ void CCamera_Dynamic::Tick(_float fTimeDelta)
 	if (pGameInstance->Key_Pressing(DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
 #else
+	if (pGameInstance->Key_Pressing(DIK_W))
+		m_pTransformCom->Go_Straight(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_S))
+		m_pTransformCom->Go_Backward(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_A))
+		m_pTransformCom->Go_Left(fTimeDelta);
+
+	if (pGameInstance->Key_Pressing(DIK_D))
+		m_pTransformCom->Go_Right(fTimeDelta);
 	if (pGameInstance->Key_Pressing(DIK_UP))
 		m_pTransformCom->Go_Straight(fTimeDelta);
 

@@ -60,11 +60,15 @@ void CStone::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (m_bPulseTest)
 		m_fEmissivePulse += 0.05f;
-	else
+
+	if(!m_bPulseTest)
 	{
 		m_fEmissivePulse -= 0.05f;
 		if (m_fEmissivePulse <= 0.f)
+		{
 			m_fEmissivePulse = 0.f;
+			m_bPulseTest = !m_bPulseTest;
+		}
 	}
 
 	if (m_fEmissivePulse >= 2.f)

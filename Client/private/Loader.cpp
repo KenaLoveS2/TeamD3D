@@ -195,6 +195,11 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
+{
+
+}
+
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -223,6 +228,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	Loading_ForWJ(LEVEL_GAMEPLAY);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Terrain */
