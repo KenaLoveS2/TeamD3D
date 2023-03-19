@@ -158,7 +158,7 @@ void CMage::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	//if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -732,10 +732,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		Set_Dying(DEATH);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()

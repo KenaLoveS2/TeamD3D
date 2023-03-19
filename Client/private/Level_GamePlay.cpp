@@ -227,14 +227,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json");
-	return S_OK;
-		
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json"); return S_OK;
+	
+	/*
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 	CGameObject *pGameObject = nullptr;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
+	*/
 
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;*/
