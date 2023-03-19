@@ -114,7 +114,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 				for (_float vColor : jDesc["Color"])
 					memcpy(((_float*)&eLoadEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
 				i = 0;
-				for (_float vScale : jDesc["vScale"])
+				for (_float vScale : jDesc["Scale"])
 					memcpy(((_float*)&eLoadEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
 
 				jDesc["NormalTexture Index"].get_to<_float>(eLoadEffectDesc.fNormalFrame);
@@ -285,7 +285,7 @@ HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
 					for (_float vColor : jChildDesc["Color"])
 						memcpy(((_float*)&eChildEffectDesc.vColor) + (i++), &vColor, sizeof(_float));
 					i = 0;
-					for (_float vScale : jChildDesc["vScale"])
+					for (_float vScale : jChildDesc["Scale"])
 						memcpy(((_float*)&eChildEffectDesc.vScale) + (i++), &vScale, sizeof(_float));
 
 					jChildDesc["NormalTexture Index"].get_to<_float>(eChildEffectDesc.fNormalFrame);
@@ -450,15 +450,16 @@ void CEffect_Base::Set_Matrix()
 {
 	_matrix  matParent = m_pParent->Get_TransformCom()->Get_WorldMatrix();
 	_matrix  matScaleSet = XMMatrixIdentity();
+	_float4 vScale = m_eEFfectDesc.vScale;
 	_vector vRight, vUp, vLook;
 
 	memcpy(&vRight, &matParent.r[0], sizeof(_vector));
 	memcpy(&vUp, &matParent.r[1], sizeof(_vector));
 	memcpy(&vLook, &matParent.r[2], sizeof(_vector));
 
-	memcpy(&matScaleSet.r[0], &XMVector3Normalize(vRight), sizeof(_vector));
-	memcpy(&matScaleSet.r[1], &XMVector3Normalize(vUp), sizeof(_vector));
-	memcpy(&matScaleSet.r[2], &XMVector3Normalize(vLook), sizeof(_vector));
+	memcpy(&matScaleSet.r[0], &(XMVector3Normalize(vRight)* vScale.x), sizeof(_vector));
+	memcpy(&matScaleSet.r[1], &(XMVector3Normalize(vUp)* vScale.y), sizeof(_vector));
+	memcpy(&matScaleSet.r[2], &(XMVector3Normalize(vLook)* vScale.z), sizeof(_vector));
 	memcpy(&matScaleSet.r[3], &matParent.r[3], sizeof(_vector));
 
 	m_WorldWithParentMatrix = m_InitWorldMatrix * matScaleSet;

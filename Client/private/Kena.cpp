@@ -861,7 +861,6 @@ void CKena::Push_EventFunctions()
 	TurnOffCharge(true, 0.f);
 	TurnOnPulseJump(true, 0.f);
 	TurnOnHeavyAttack_Into(true, 0.f);
-	TurnOnHeavyAttack_End(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1005,11 +1004,6 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("KenaDamage", pEffectBase);
 
-	///* Hit */
-	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
-	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	//m_mapEffect.emplace("KenaHit", pEffectBase);
-
 	/* PulseJump */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaJump", L"PulseJump"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
@@ -1031,13 +1025,7 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("HeavyAttackInto", pEffectBase);
 
-	/* HeavyAttack_End */
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHeavyAttackEnd", L"HeavyAttackEnd"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_mapEffect.emplace("HeavyAttackEnd", pEffectBase);
-
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -1314,11 +1302,21 @@ void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
 		{
 			if (Pair.second->Get_Active() == false)
 			{
+				/* ToeDust Update */
+				CBone*	pToeBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
+				matWalk.r[3] = matWorldSocket.r[3];
+				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
+				/* ToeDust Update */
+
 				Pair.second->Set_Active(true);
 				break;
 			}
 		}
 	}
+
 }
 
 void CKena::TurnOnCharge(_bool bIsInit, _float fTimeDelta)
@@ -1384,27 +1382,6 @@ void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
 	/* IntoAttack Update */
 
 	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
-}
-
-void CKena::TurnOnHeavyAttack_End(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnHeavyAttack_End);
-		return;
-	}
-	/* EndAttack Update */
-	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
-
-	_matrix matEndAttack = m_mapEffect["HeavyAttackEnd"]->Get_TransformCom()->Get_WorldMatrix();
-	matEndAttack.r[3] = matWorldSocket.r[3];
-	m_mapEffect["HeavyAttackEnd"]->Get_TransformCom()->Set_WorldMatrix(matEndAttack);
-	/* EndAttack Update */
-
-	m_mapEffect["HeavyAttackEnd"]->Set_Active(true);
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

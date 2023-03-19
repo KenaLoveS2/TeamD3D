@@ -57,7 +57,7 @@ HRESULT CE_KenaJump::Initialize(void * pArg)
 		pChild->Set_InitMatrix(matrchildworld);
 	}
 
-	m_eEFfectDesc.vScale = _float4(0.4f, 0.4f, 1.f, 1.f);
+	// m_eEFfectDesc.vScale = _float4(0.4f, 0.4f, 1.f, 1.f);
 	m_fDurationTime = 0.35f;
 	return S_OK;
 }
@@ -67,9 +67,9 @@ void CE_KenaJump::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
- 	__super::Tick(fTimeDelta);
+    	__super::Tick(fTimeDelta);
 
-	for (auto& pChild : m_vecChild)
+ 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(true);
 
 	m_fTimeDelta += fTimeDelta;

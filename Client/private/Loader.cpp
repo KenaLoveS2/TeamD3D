@@ -90,7 +90,6 @@
 //Attack 
 #include "E_KenaDust.h"
 #include "E_KenaHeavyAttack_Into.h"
-#include "E_KenaHeavyAttack_end.h"
 
 //Monster
 #include "EnemyWisp.h"
@@ -115,11 +114,11 @@
 #include "E_Wind.h"
 #include "E_P_Flower.h"
 #include "E_P_KenaHeavyAttack_Into.h"
-#include "E_P_KenaHeavyAttack_end.h"
 #include "E_SpiritArrowHit.h"
 #include "E_SpiritArrowPosition.h"
 #include "E_P_KenaHit.h"
 #include "E_P_SpiritArrow.h"
+#include "E_SpiritArrowTrail.h"
 /* ~Effects */
 
 /* Components*/
@@ -224,25 +223,25 @@ HRESULT CLoader::Loading_ForGamePlay()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading WJ..."));
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
-	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading JH..."));
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
-	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HW..."));
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
-	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HO..."));
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
-	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading BJ..."));
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
 		
-	lstrcpy(m_szLoadingText, TEXT("Loading 기타..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ETC..."));
 	
 	///* For.Prototype_Component_VIBuffer_Rect_Instancing */
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
@@ -1215,12 +1214,17 @@ HRESULT CLoader::Loading_ForTestEffect()
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
-	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_EFFECT), E_FAIL);
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
-	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_EFFECT), E_FAIL);
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_GameObject_RotForMonster
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
@@ -1758,6 +1762,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_KenaTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_SpiritArrowTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrowTrail"),
+		CE_SpiritArrowTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Wind */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wind"),
 		CE_Wind::Create(m_pDevice, m_pContext))))
@@ -1781,16 +1790,6 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_KenaHeavyAttackInto_P */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackInto_P"),
 		CE_P_KenaHeavyAttack_Into::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_0.json"))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_KenaHeavyAttackEnd */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd"),
-		CE_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HeavyAttack_1.json"))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_KenaHeavyAttackEnd_P */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHeavyAttackEnd_P"),
-		CE_P_KenaHeavyAttack_end::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_HeavyAttack_1.json"))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_SpiritArrowPosition */

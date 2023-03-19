@@ -135,8 +135,8 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) + m_ePointDesc[i].vExplosionDir);
 
-				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight, XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), m_ePointDesc[i].vExplosionDir)));
-				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vUp, XMVector3Normalize(XMVector3Cross(m_ePointDesc[i].vExplosionDir, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight))));
+				//XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight, XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), m_ePointDesc[i].vExplosionDir)));
+				//XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vUp, XMVector3Normalize(XMVector3Cross(m_ePointDesc[i].vExplosionDir, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight))));
 			}
 			else
 			{
@@ -540,7 +540,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_float fTimeDelta)
 			if (m_ePointDesc->bSpread == true)
 			{
 				vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
-				fDistance = XMVectorGetX(XMVector3Length(vMovePos));
+				fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 
 				if (fDistance > m_ePointDesc[i].fRange)
 					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
