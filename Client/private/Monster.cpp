@@ -6,6 +6,7 @@
 
 #include "UI_MonsterHP.h"
 #include "Camera.h"
+#include "Camera_Player.h"
 
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -368,6 +369,8 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
+
+			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.2f);
 		}
 	}
 

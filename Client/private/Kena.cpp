@@ -1271,7 +1271,7 @@ void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOffAttack);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep);
 		return;
 	}
 
