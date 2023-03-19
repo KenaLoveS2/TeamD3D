@@ -326,7 +326,7 @@ HRESULT CMonster::SetUp_UI(_float fOffsetY)
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_MonsterHP"),
-		L"Clone_HPBar", &tDesc, (CGameObject**)&m_pUIHPBar)))
+		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
 	{
 		MSG_BOX("Failed To make UI");
 		return E_FAIL;

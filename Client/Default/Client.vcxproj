@@ -276,7 +276,9 @@
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
     <ClInclude Include="..\public\UI_Event_Fade.h" />
+    <ClInclude Include="..\public\UI_Event_LoopAct.h" />
     <ClInclude Include="..\public\UI_FocusMonster.h" />
+    <ClInclude Include="..\public\UI_FocusMonsterParts.h" />
     <ClInclude Include="..\public\UI_FocusNPC.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h" />
     <ClInclude Include="..\public\Monster_Status.h" />
@@ -467,7 +469,9 @@
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
     <ClCompile Include="..\private\UI_Event_Fade.cpp" />
+    <ClCompile Include="..\private\UI_Event_LoopAct.cpp" />
     <ClCompile Include="..\private\UI_FocusMonster.cpp" />
+    <ClCompile Include="..\private\UI_FocusMonsterParts.cpp" />
     <ClCompile Include="..\private\UI_FocusNPC.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp" />
     <ClCompile Include="..\private\Monster_Status.cpp" />

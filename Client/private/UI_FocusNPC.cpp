@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\public\UI_FocusNPC.h"
 #include "GameInstance.h"
+#include "Camera.h"
+#include "UI_Event_LoopAct.h"
 
 CUI_FocusNPC::CUI_FocusNPC(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
@@ -24,13 +26,13 @@ HRESULT CUI_FocusNPC::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
-		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+		MSG_BOX("Failed To Initialize : FocusNPC");
+		return E_FAIL;
 	}
 
 	/* It might be faster.... */
-	m_iRenderPass = 20;
-	m_pTransformCom->Set_Scaled(_float3(50.f, 50.f, 1.f));
+	m_iRenderPass = 23;
+	m_pTransformCom->Set_Scaled(_float3(25.f, 25.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	if (FAILED(SetUp_Components()))
@@ -39,7 +41,13 @@ HRESULT CUI_FocusNPC::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
+	/* Event */
+	m_vecEvents.push_back(CUI_Event_LoopAct::Create(
+		this, CUI_Event_LoopAct::TYPE_LOOP_VRT, 0.08f, 2.6f));
+
+	m_vecEvents[0]->Call_Event(true);
+
 	return S_OK;
 }
 
@@ -53,13 +61,28 @@ void CUI_FocusNPC::Tick(_float fTimeDelta)
 
 void CUI_FocusNPC::Late_Tick(_float fTimeDelta)
 {
+	/* calculate camera */
+	_float4 vCamLook = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_WorkCameraPtr()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vPos = m_tBBDesc.pOwner->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float fDistance = _float4::Distance(vCamPos, vPos);
+	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
+
+	if (10.f > fDistance) /*	&& (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))*/
+		m_bActive = true;
+	else
+		m_bActive = false;
+	
+
 	if (!m_bActive)
 		return;
+
+
 
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CUI_FocusNPC::Render()
@@ -73,7 +96,6 @@ HRESULT CUI_FocusNPC::Render()
 		return E_FAIL;
 	}
 
-	m_iRenderPass = 20;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -129,6 +151,9 @@ HRESULT CUI_FocusNPC::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
+	_float4 vColor = { 1.f, 2.f, 2.f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

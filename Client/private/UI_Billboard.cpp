@@ -56,10 +56,11 @@ void CUI_Billboard::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	CUtile::Execute_BillBoardOrtho(m_pTransformCom, m_vOriginalSettingScale, Get_CamDistance());
-
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
+
+	CUtile::Execute_BillBoardOrtho(m_pTransformCom, m_vOriginalSettingScale, Get_CamDistance());
+
 }
 
 HRESULT CUI_Billboard::Render()

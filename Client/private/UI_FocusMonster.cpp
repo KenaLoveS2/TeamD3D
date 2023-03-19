@@ -1,15 +1,20 @@
 #include "stdafx.h"
 #include "..\public\UI_FocusMonster.h"
 #include "GameInstance.h"
+#include "UI_FocusMonsterParts.h"
 
 CUI_FocusMonster::CUI_FocusMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
 {
+	for (_uint i = 0; i < PARTS_END; ++i)
+		m_pParts[i] = nullptr;
 }
 
 CUI_FocusMonster::CUI_FocusMonster(const CUI_FocusMonster & rhs)
 	:CUI_Billboard(rhs)
 {
+	for (_uint i = 0; i < PARTS_END; ++i)
+		m_pParts[i] = nullptr;
 }
 
 HRESULT CUI_FocusMonster::Initialize_Prototype()
@@ -48,6 +53,9 @@ void CUI_FocusMonster::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
+
+	for (_uint i = 0; i < PARTS_END; ++i)
+		m_pParts[i]->Tick(fTimeDelta);
 }
 
 void CUI_FocusMonster::Late_Tick(_float fTimeDelta)
@@ -57,8 +65,11 @@ void CUI_FocusMonster::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bActive)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	for (_uint i = 0; i < PARTS_END; ++i)
+		m_pParts[i]->Late_Tick(fTimeDelta);
+
+	//if (nullptr != m_pRendererCom && m_bActive)
+	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_FocusMonster::Render()
@@ -72,7 +83,6 @@ HRESULT CUI_FocusMonster::Render()
 		return E_FAIL;
 	}
 
-	m_iRenderPass = 20;
 	m_pShaderCom->Begin(m_iRenderPass);
 	m_pVIBufferCom->Render();
 
@@ -91,10 +101,6 @@ HRESULT CUI_FocusMonster::SetUp_Components()
 
 	/* VIBuffer_Rect */
 	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
-		return E_FAIL;
-
-	/* Diffuse Texture */
-	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SimpleBar"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
 		return E_FAIL;
 
 	return S_OK;
@@ -158,5 +164,7 @@ CGameObject * CUI_FocusMonster::Clone(void * pArg)
 
 void CUI_FocusMonster::Free()
 {
+	for (_uint i = 0; i < PARTS_END; ++i)
+		Safe_Release(m_pParts[i]);
 	__super::Free();
 }

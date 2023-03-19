@@ -408,7 +408,7 @@ HRESULT CSaiya::SetUp_UI()
 	CUI_Billboard::BBDESC	tDesc;
 	tDesc.fileName = L"UI_FocusNPC";
 	tDesc.pOwner = this;
-	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 1.f;
+	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y;
 
 	if (FAILED(CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL,
 		L"Layer_UI", TEXT("Prototype_GameObject_UI_FocusNPC"),

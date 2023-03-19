@@ -523,6 +523,7 @@ HRESULT CUI_ClientManager::Ready_InformationList()
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "MonsterBar");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "NoDiffuseColorGuage");
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "OnlyAlphaWithColorTexture");
+	pGameInstance->Add_UIString(CUI_Manager::STRKEY_RENDERPASS, "HDR");
 
 	
 

@@ -415,6 +415,9 @@
     <Filter Include="02.GameObjects\UI\03. WorldUI\Focus_Monster">
       <UniqueIdentifier>{8dca1f02-4c82-4f86-80ee-7a6117cda5b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\04. Events\LoopAct">
+      <UniqueIdentifier>{2ec1b19d-bca8-41d9-88cc-e1b8d26926d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -993,6 +996,12 @@
     <ClInclude Include="..\public\UI_FocusMonster.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_Event_LoopAct.h">
+      <Filter>02.GameObjects\UI\04. Events\LoopAct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_FocusMonsterParts.h">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1548,6 +1557,12 @@
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_FocusMonster.cpp">
+      <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Event_LoopAct.cpp">
+      <Filter>02.GameObjects\UI\04. Events\LoopAct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_FocusMonsterParts.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
   </ItemGroup>
