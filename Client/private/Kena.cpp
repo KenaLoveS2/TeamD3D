@@ -20,11 +20,14 @@
 #include "UI_RotIcon.h"
 #include "RotForMonster.h"
 #include "E_KenaDust.h"
+#include "UI_FocusMonster.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
+	, m_pFocusMonster(nullptr)
+	, m_pTargetMonster(nullptr)
 {
 }
 
@@ -32,6 +35,8 @@ CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
+	, m_pFocusMonster(nullptr)
+	, m_pTargetMonster(nullptr)
 {
 }
 
@@ -301,7 +306,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		else if (i == 7)
 			desc.vPivotPos = _float4(-2.f, 0.f, 0.f, 1.f);
 
-		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
+		if (FAILED(p_game_instance->Clone_AnimObject(g_LEVEL, TEXT("Layer_Rot"), TEXT("Prototype_GameObject_RotForMonster"), 
+			CUtile::Create_StringAuto(szCloneRotTag), &desc, &p_game_object)))
 			return E_FAIL;
 
 		m_pRotForMonster[i] = static_cast<CRotForMonster*>(p_game_object);
@@ -870,7 +876,13 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
-void CKena::Call_RotIcon(CGameObject * pTarget)
+//void CKena::Call_FocusIcon(CGameObject * pTarget)
+//{
+//	Call_FocusRotIcon(pTarget);
+//	Call_FocusMonsterIcon(pTarget);
+//}
+
+void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 {
 	if (m_pFocusRot == nullptr)
 		return;
@@ -909,6 +921,18 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 	}
 
 	m_pFocusRot->Set_Pos(pTarget);
+}
+
+void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
+{
+	if (m_pFocusMonster == nullptr)
+		return;
+	
+	m_pTargetMonster = static_cast<CMonster*>(pTarget);
+	m_pFocusMonster->Set_Pos(m_pTargetMonster);
+
+	if (m_pTargetMonster != pTarget)
+		m_pFocusMonster->Start_Animation();
 }
 
 HRESULT CKena::Ready_Parts()
@@ -1120,6 +1144,15 @@ HRESULT CKena::SetUp_UI()
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_UI_FocusMonster"),
+		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pFocusMonster)))
+	{
+		MSG_BOX("Failed To make UI : Kena");
+		return E_FAIL;
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 
 

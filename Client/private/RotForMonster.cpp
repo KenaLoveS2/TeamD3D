@@ -226,7 +226,7 @@ HRESULT CRotForMonster::SetUp_Components()
 }
 
 HRESULT CRotForMonster::SetUp_ShaderResources()
-{
+{ 
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);

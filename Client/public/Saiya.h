@@ -4,6 +4,8 @@
 #include "Delegator.h"
 #include "UI_ClientManager.h"
 
+BEGIN(Client)
+class CUI_FocusNPC;
 class CSaiya final : public CNpc
 {
 	enum ANIMATION
@@ -116,6 +118,7 @@ private:
 	_bool							IsChatEnd();
 
 private:
+	CUI_FocusNPC*					m_pFocus;
 	_bool							m_bMeetPlayer = false;
 	vector<wstring>					m_vecChat[10];
 	_uint							m_iChatIndex;
@@ -126,4 +129,4 @@ public:
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
 	virtual void						Free() override;
 };
-
+END
