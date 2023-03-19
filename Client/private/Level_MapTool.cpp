@@ -100,7 +100,7 @@ HRESULT CLevel_MapTool::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
+	LightDesc.szLightName = "DIRECTIONAL";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;

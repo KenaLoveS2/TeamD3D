@@ -29,7 +29,7 @@ public:
 public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
+	virtual void				ImGui_PhysXValueProperty() override;
 
 private:
 	CModel*									m_pModelCom = nullptr; 

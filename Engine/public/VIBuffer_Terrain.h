@@ -34,7 +34,7 @@ private:
 	FACEINDICES32*	m_pIndices = nullptr;
 	_int			m_iSelectHeightPixel = -1;
 private:
-	class CQuadTree*		m_pQuadTree = nullptr;
+	//class CQuadTree*		m_pQuadTree = nullptr;
 
 	PxVec3**			m_pPxTerrainVtx = nullptr;
 	PxIndicies*			m_pPxTerrainIdx_Divide = nullptr;
