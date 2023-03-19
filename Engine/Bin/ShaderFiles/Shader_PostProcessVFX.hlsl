@@ -12,6 +12,8 @@ Texture2D<float4>		g_SpecularTexture;
 
 Texture2D<float4>		g_LightDepthTexture;
 Texture2D<float4>		g_FlareTexture;
+Texture2D<float4>		g_EffectTexture;
+Texture2D<float4>		g_DistortionTexture;
 
 float g_Time;
 float2 distortionAmount = float2(0.01f, 0.01f);
@@ -111,15 +113,42 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+float2 Distortion(float2 uv, float time, Texture2D<float4> distortionTex)
+{
+	float2 displacementCoords = uv * 1.5f + time * 0.1f;
+	float4 displacementColor = distortionTex.Sample(LinearSampler, displacementCoords);
+	float2 displacementVector = (displacementColor.rg - 0.5f) * distortionAmount;
+
+	uv += displacementVector;
+
+	return  uv;
+}
+
 PS_OUT PS_DISTORTION(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	//float2 distortedUV = DistortUV(In.vTexUV, g_Time);
-	float2 rdialDistortedUV = RadialDistorUV(In.vTexUV, g_Time);
-	float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, rdialDistortedUV);
+	float4 vDiffuse = float4(0.f,0.f,0.f,0.f);
+	float4 vEffect = g_EffectTexture.Sample(PointSampler, In.vTexUV);
 
-	Out.vColor = vDiffuse;
+	float4 ef = g_EffectTexture.Sample(PointSampler, In.vTexUV);
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 0.f);
+
+	if (vEffect.a <= 0.1f)
+	{
+		float2 distort = Distortion(In.vTexUV, g_Time, g_DistortionTexture);
+		vDiffuse = g_LDRTexture.Sample(LinearSampler, distort);
+		vEffect = g_EffectTexture.Sample(PointSampler, distort);
+		FinalColor = vDiffuse;
+	}
+	else
+	{
+		vDiffuse = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+		FinalColor = vDiffuse;
+	}
+
+	Out.vColor = FinalColor;
 
 	return Out;
 }
@@ -154,7 +183,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
