@@ -333,8 +333,6 @@ HRESULT CMonster::SetUp_UI(_float fOffsetY)
 	}
 	RELEASE_INSTANCE(CGameInstance);
 
-	m_pUIHPBar->Set_Active(false);
-
 	return S_OK;
 }
 

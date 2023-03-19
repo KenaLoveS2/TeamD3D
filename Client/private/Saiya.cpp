@@ -18,6 +18,7 @@ CSaiya::CSaiya(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
 	, m_iChatIndex(0)
 	, m_iLineIndex(0)
+	, m_pFocus(nullptr)
 {
 }
 
@@ -25,6 +26,7 @@ CSaiya::CSaiya(const CNpc& rhs)
 	: CNpc(rhs)
 	, m_iChatIndex(0)
 	, m_iLineIndex(0)
+	, m_pFocus(nullptr)
 {
 }
 
@@ -365,6 +367,7 @@ HRESULT CSaiya::SetUp_ShadowShaderResources()
 
 HRESULT CSaiya::SetUp_UI()
 {
+	/* Chat Load */
 	Json jLoad;
 
 	string filePath = "../Bin/Data/Chat/Saiya.json";
@@ -399,6 +402,12 @@ HRESULT CSaiya::SetUp_UI()
 
 		++i;
 	}
+
+	/* Link Focus UI */
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+
+
 
 	return S_OK;
 }
