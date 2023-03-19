@@ -4,6 +4,7 @@
 #include "FSMComponent.h"
 #include "Rope_RotRock.h"
 #include "CameraForRot.h"
+#include "RotWisp.h"
 
 #include "Kena.h"
 #include "Kena_Status.h"
@@ -107,7 +108,9 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
-
+	
+	m_pRotWisp = static_cast<CRotWisp*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_RotWisp")));
+	m_pRotWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
 	return S_OK;
 }
 
@@ -115,20 +118,25 @@ void CRot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
-
-	if (m_bWakeUp)
+	if (m_pRotWisp->Get_Collect())
 	{
+		if (m_pFSM)
+			m_pFSM->Tick(fTimeDelta);
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 		m_pModelCom->Play_Animation(fTimeDelta);
 	}
+	else if (m_bWakeUp)
+	{
+		m_pRotWisp->Tick(fTimeDelta);
+		m_pKena->Set_RotWispInteractable(true);
+	}
+
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
-	if (m_bWakeUp)
+	if(m_pRotWisp->Get_Collect())
 	{
 		__super::Late_Tick(fTimeDelta);
 		if (m_pRendererCom != nullptr)
@@ -136,6 +144,10 @@ void CRot::Late_Tick(_float fTimeDelta)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 		}
+	}
+	else if (m_bWakeUp)
+	{
+		m_pRotWisp->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -157,9 +169,9 @@ HRESULT CRot::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
 		}
-		else	if (i == 1)
+		else if (i == 1)
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
-		else		if (i == 2)
+		else if (i == 2)
 		{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
@@ -301,6 +313,7 @@ void CRot::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pRotWisp);
 }
 
 HRESULT CRot::SetUp_State()
@@ -333,6 +346,7 @@ HRESULT CRot::SetUp_State()
 		.AddState("WAKE_UP")
 		.OnStart([this]()
 	{
+		m_pKena->Set_RotWispInteractable(false);
 		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 		m_pMyCam->Set_Target(this);
 		p_game_instance->Work_Camera(L"ROT_CAM");
@@ -397,7 +411,7 @@ HRESULT CRot::SetUp_State()
 
 		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})
-
+		
 		.AddState("FOLLOW_KENA")
 		.OnStart([this]()
 	{
@@ -405,7 +419,8 @@ HRESULT CRot::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->Chase(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta, 1.f);
+		m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
 	})
 		.OnExit([this]()
 	{
@@ -414,10 +429,26 @@ HRESULT CRot::SetUp_State()
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
-		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-		return m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
+		return m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})		
-		
+		.AddTransition("FOLLOW_KENA to TELEPORT_KENA ", "TELEPORT_KENA")
+		.Predicator([this]()
+	{
+		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fTeleportDistance);
+	})
+
+		.AddState("TELEPORT_KENA")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(TELEPORT7);
+		m_pTransformCom->Set_Position(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
+	})
+		.AddTransition("FOLLOW_KENA to IDLE ", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
 
 		.Build();
 
@@ -432,7 +463,7 @@ _int CRot::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int i
 
 _int CRot::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (pTarget && iTriggerIndex == ON_TRIGGER_PARAM_TRIGGER && iColliderIndex == COL_PLAYER)
+	if (pTarget && iTriggerIndex == ON_TRIGGER_PARAM_ACTOR && iColliderIndex == TRIGGER_PULSE)
 	{
 		m_bWakeUp = true;
 	}

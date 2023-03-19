@@ -135,6 +135,7 @@ public: /* For.PipeLine */
 		void Update_Timer(const _tchar* pTimerTag);
 		const _float	Get_TimeRate(const _tchar* pTimerTag);
 		void			Set_TimeRate(const _tchar* pTimerTag, _float Time);
+		void			Set_TimeSleep(const _tchar* pTimerTag, _float fTimeSleep);
 
 	public: /* For.Light_Manager */
 		const LIGHTDESC* Get_LightDesc(_uint iIndex);

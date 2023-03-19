@@ -1002,6 +1002,7 @@
     <ClInclude Include="..\public\UI_FocusMonsterParts.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RotWisp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1565,6 +1566,7 @@
     <ClCompile Include="..\private\UI_FocusMonsterParts.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RotWisp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1636,5 +1638,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
   </ItemGroup>
 </Project>

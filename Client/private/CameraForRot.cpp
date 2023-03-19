@@ -70,6 +70,7 @@ void CCameraForRot::Tick(_float TimeDelta)
 
 		/* For. At */
 		_float3 vDir = XMVector3Normalize(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		vDir.y += 0.4f;
 		_float3 vLerpLook = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vDir, TimeDelta);
 		_float4 vCalculatedLook = _float4(vLerpLook.x, vLerpLook.y, vLerpLook.z, 0.f);
 		m_pTransformCom->Set_Look(vCalculatedLook);

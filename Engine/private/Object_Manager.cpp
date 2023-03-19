@@ -88,7 +88,12 @@ HRESULT CObject_Manager::Clear(_uint iLevelIndex)
 HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr != Find_Prototype(pPrototypeTag))
+	{
+		_tchar szTemp[256] = L"";
+		swprintf_s(szTemp, L"%s__Prototype Object Add Fail", pPrototypeTag);
+		MessageBoxW(CGameInstance::GetInstance()->GetHWND(), szTemp, L"FAIL", MB_ICONERROR);
 		return E_FAIL;
+	}
 
 	m_Prototypes.emplace(pPrototypeTag, pPrototype);
 	

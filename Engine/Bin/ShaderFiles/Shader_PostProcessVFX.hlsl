@@ -17,6 +17,51 @@ float g_Time;
 float2 distortionAmount = float2(0.01f, 0.01f);
 float2 ScreenSize = float2(1600.f, 900.f);
 
+#define FXAA_QUALITY_SUBPIX  0.75f
+#define FXAA_QUALITY_EDGE_THRESHOLD 0.125f
+#define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0312f
+#define FXAA_QUALITY_EDGE_THRESHOLD_MAX 0.25f
+#define FXAA_SUBPIX_FLOOR  0.125f
+#define FXAA_QUALITY_CORNER_SHARPNESS 1.f
+
+float2 DistortUV(float2 uv, float time)
+{
+	float2 offset = distortionAmount * sin(time * uv.y * ScreenSize.x / 10.0);
+	return uv + offset;
+}
+
+float2 RadialDistorUV(float2 uv, float time)
+{
+	// Calculate the displacement vector from the center position and time
+	float2 displacementVector = uv - float2(0.5, 0.5f);
+	float distanceFromCenter = length(displacementVector);
+	float displacementAmount = sin(distanceFromCenter * 2.f + time) * 3.5f;
+	displacementVector *= displacementAmount;
+
+	// Calculate the new UV coordinates by adding the displacement vector
+	uv += displacementVector;
+
+	return uv;
+}
+
+float3 FilmicTonemapping(float3 color)
+{
+	// Filmic tonemapping curve parameters
+	const float A = 0.22f;
+	const float B = 0.30f;
+	const float C = 0.10f;
+	const float D = 0.20f;
+	const float E = 0.01f;
+	const float F = 0.30f;
+
+	color *= 2.f;
+
+	// Apply the filmic tonemapping curve
+	color = ((color*(A*color + C*B) + D*E) / (color*(A*color + B) + D*F)) - E / F;
+
+	return color;
+}
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;	
@@ -66,44 +111,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
-float2 DistortUV(float2 uv, float time)
-{
-	float2 offset = distortionAmount * sin(time * uv.y * ScreenSize.x / 10.0);
-	return uv + offset;
-}
-
-float2 RadialDistorUV(float2 uv, float time)
-{
-	// Calculate the displacement vector from the center position and time
-	float2 displacementVector = uv - float2(0.5, 0.5f);
-	float distanceFromCenter = length(displacementVector);
-	float displacementAmount = sin(distanceFromCenter * 2.f + time) * 3.5f;
-	displacementVector *= displacementAmount;
-
-	// Calculate the new UV coordinates by adding the displacement vector
-	uv += displacementVector;
-
-	return uv;
-}
-
-float3 FilmicTonemapping(float3 color)
-{
-	// Filmic tonemapping curve parameters
-	const float A = 0.22f;
-	const float B = 0.30f;
-	const float C = 0.10f;
-	const float D = 0.20f;
-	const float E = 0.01f;
-	const float F = 0.30f;
-
-	color *= 2.f;
-
-	// Apply the filmic tonemapping curve
-	color = ((color*(A*color + C*B) + D*E) / (color*(A*color + B) + D*F)) - E / F;
-
-	return color;
-}
-
 PS_OUT PS_DISTORTION(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -117,20 +124,16 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_FILMICTONEMAPPING(PS_IN In)
+PS_OUT PS_GRAYSCALE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float vMask = g_FlareTexture.Sample(LinearSampler, In.vTexUV).r;
-	float4 vDiffuse = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
-
-	float4 vDiffuse2 = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
-	vDiffuse2 *= vMask.r * 1.5f;
-	Out.vColor = vDiffuse + vDiffuse2;
+	float4 color = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+	float luminance = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));
+	Out.vColor = float4(luminance, luminance, luminance, color.a);
 
 	return Out;
 }
-
 
 technique11 DefaultTechnique
 {
@@ -160,7 +163,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISTORTION();
 	} //1
 
-	pass FilmicTonemap
+	pass GrayScale
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
@@ -170,6 +173,6 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_FILMICTONEMAPPING();
+		PixelShader = compile ps_5_0 PS_GRAYSCALE();
 	} //2
 }

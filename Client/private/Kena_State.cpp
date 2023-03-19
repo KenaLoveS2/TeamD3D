@@ -1547,6 +1547,7 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_End(this, &CKena_State::End_Pulse_Parry)
 
 		.Add_State(L"PULSE_WALK")
+		.Init_Start(this, &CKena_State::Start_Pulse_Walk)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
@@ -3105,7 +3106,7 @@ void CKena_State::Start_Bow_Air_Release(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_AIR_RELEASE");
 
 	m_pKena->m_bAim = true;
-	m_pKena->m_bBow = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Bow_Air_Return(_float fTimeDelta)
@@ -3113,7 +3114,7 @@ void CKena_State::Start_Bow_Air_Return(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_AIR_RETURN");
 
 	m_pKena->m_bAim = true;
-	m_pKena->m_bBow = true;
+	m_pKena->m_bBow = false;
 }
 
 void CKena_State::Start_Idle_Into_Lock_On(_float fTimeDelta)
@@ -3238,86 +3239,120 @@ void CKena_State::Start_Fall_Into_Run(_float fTimeDelta)
 void CKena_State::Start_Heavy_Attack_1_Charge(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_CHARGE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE_PERFECT");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RETURN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_1_Into_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_INTO_RUN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Charge(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_CHARGE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Release(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE_PERFECT");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RETURN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Into_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_INTO_RUN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_3_Charge(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_CHARGE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_3_Release(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE_PERFECT");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_3_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RETURN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_Combo(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_Combo_Return(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO_RETURN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Heavy_Attack_Combo_Into_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO_INTO_RUN");
+
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::Start_Interact(_float fTimeDelta)
@@ -3408,99 +3443,143 @@ void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("INTO_PULSE");
 	
-	for (auto& Effect : m_pKena->m_mapEffect)
-	{
-		if (Effect.first == "KenaPulse")
-			Effect.second->Set_Active(true);
-	}
+	m_pKena->m_bPulse = true;
+
+	CE_KenaPulse*	pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(true);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("INTO_PULSE_FROM_RUN");
+
+	m_pKena->m_bPulse = true;
+
+	CE_KenaPulse*	pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(true);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Pulse(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE");
 
-	for (auto& Effect : m_pKena->m_mapEffect)
-	{
-		if (Effect.first == "KenaPulse")
-			dynamic_cast<CE_KenaPulse*>(Effect.second)->Set_NoActive(true);
-	}
+	m_pKena->m_bPulse = false;
+
+	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
 void CKena_State::Start_Pulse_Loop(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_LOOP");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Into_Combat_End(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_INTO_COMBAT_END");
+
+	m_pKena->m_bPulse = false;
+
+	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
 void CKena_State::Start_Pulse_Into_Idle(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_INTO_IDLE");
+
+	m_pKena->m_bPulse = false;
+
+	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
 void CKena_State::Start_Pulse_Into_Run(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_INTO_RUN");
+
+	m_pKena->m_bPulse = false;
+
+	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
 void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_PARRY");
+
+	m_pKena->m_bPulse = false;
+}
+
+void CKena_State::Start_Pulse_Walk(_float fTimeDelta)
+{
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Forward(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_FORWARD");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Front_Left(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_FRONT_LEFT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Front_Right(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_FRONT_RIGHT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Backward(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_BACKWARD");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Back_Left(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_BACK_LEFT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Back_Right(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_BACK_RIGHT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Left(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_LEFT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Walk_Right(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_WALK_RIGHT");
+
+	m_pKena->m_bPulse = true;
 }
 
 void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("PULSE_SQUAT_SPRINT");
 
+	m_pKena->m_bPulse = false;
 	m_pKena->m_bSprint = true;
+
+	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
 void CKena_State::Start_Into_Sprint(_float fTimeDelta)
@@ -4563,17 +4642,20 @@ void CKena_State::End_Fall_Into_Run(_float fTimeDelta)
 
 void CKena_State::End_Heavy_Attack_1_Charge(_float fTimeDelta)
 {
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::End_Heavy_Attack_1_Release(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
 void CKena_State::End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
@@ -4587,17 +4669,20 @@ void CKena_State::End_Heavy_Attack_1_Into_Run(_float fTimeDelta)
 
 void CKena_State::End_Heavy_Attack_2_Charge(_float fTimeDelta)
 {
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::End_Heavy_Attack_2_Release(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
 void CKena_State::End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
@@ -4611,17 +4696,20 @@ void CKena_State::End_Heavy_Attack_2_Into_Run(_float fTimeDelta)
 
 void CKena_State::End_Heavy_Attack_3_Charge(_float fTimeDelta)
 {
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::End_Heavy_Attack_3_Release(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
 void CKena_State::End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
@@ -4632,6 +4720,7 @@ void CKena_State::End_Heavy_Attack_3_Return(_float fTimeDelta)
 void CKena_State::End_Heavy_Attack_Combo(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::End_Heavy_Attack_Combo_Return(_float fTimeDelta)
@@ -4701,10 +4790,12 @@ void CKena_State::End_Slide_Land(_float fTimeDelta)
 
 void CKena_State::End_Into_Pulse(_float fTimeDelta)
 {
+	m_pKena->m_bPulse = false;
 }
 
 void CKena_State::End_Into_Pulse_From_Run(_float fTimeDelta)
 {
+	m_pKena->m_bPulse = false;
 }
 
 void CKena_State::End_Pulse(_float fTimeDelta)
@@ -4713,6 +4804,7 @@ void CKena_State::End_Pulse(_float fTimeDelta)
 
 void CKena_State::End_Pulse_Loop(_float fTimeDelta)
 {
+	m_pKena->m_bPulse = false;
 }
 
 void CKena_State::End_Pulse_Into_Combat_End(_float fTimeDelta)
@@ -4733,6 +4825,7 @@ void CKena_State::End_Pulse_Parry(_float fTimeDelta)
 
 void CKena_State::End_Pulse_Walk(_float fTimeDelta)
 {
+	m_pKena->m_bPulse = false;
 }
 
 void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)

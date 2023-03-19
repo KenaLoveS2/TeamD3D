@@ -32,6 +32,14 @@ void CTimer_Manager::Set_TimeRate(const _tchar* pTimerTag, _float Time)
 	pTimer->Set_TimeRate(Time);
 }
 
+void CTimer_Manager::Set_TimeSleep(const _tchar * pTimerTag, _float fTimeSleep)
+{
+	CTimer*	pTimer = Find_Timer(pTimerTag);
+	assert(nullptr != pTimer && "CTimer_Manager::Set_TimeSleep");
+
+	pTimer->Set_TimeSleep(fTimeSleep);
+}
+
 HRESULT Engine::CTimer_Manager::Ready_Timer(const _tchar* pTimerTag)
 {
 	CTimer*	pTimer = Find_Timer(pTimerTag);

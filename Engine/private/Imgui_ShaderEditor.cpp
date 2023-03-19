@@ -31,6 +31,13 @@ void CImgui_ShaderEditor::Imgui_FreeRender()
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+	ImGui::Checkbox("PhysXRender", &m_bPhysXRender);
+
+	if(m_bPhysXRender)
+		m_pRendererCom->Set_PhysXRender(true);
+	else
+		m_pRendererCom->Set_PhysXRender(false);
+
 	if (ImGui::CollapsingHeader("HDR"))
 		CPostFX::GetInstance()->Imgui_Render();
 
