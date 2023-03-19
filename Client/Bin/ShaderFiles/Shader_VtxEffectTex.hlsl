@@ -323,9 +323,9 @@ PS_OUT PS_MAIN_E_JUMP(PS_IN In)
 
 	/* DiffuseTexture */
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	float3 vColor = g_vColor.rgb;
-	albedo.rgb = vColor * 1.2f;
-	Out.vColor = albedo;
+//	float3 vColor = g_vColor.rgb;
+//	albedo.rgb = vColor * 1.2f;
+	Out.vColor = albedo * g_vColor * 1.2f;
 	return Out;
 }
 
@@ -383,7 +383,7 @@ technique11 DefaultTechnique
 	pass Effect_Dafalut // 0
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -422,7 +422,7 @@ technique11 DefaultTechnique
 	pass Effect_ChargingCenterLight // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -448,7 +448,7 @@ technique11 DefaultTechnique
 	pass Effect_Hit // 5
 	{
 		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -474,7 +474,7 @@ technique11 DefaultTechnique
 	pass Effect_Jump // 7
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -500,7 +500,7 @@ technique11 DefaultTechnique
 	pass Effect_Sprite // 9
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

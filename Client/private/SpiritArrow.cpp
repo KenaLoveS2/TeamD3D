@@ -239,6 +239,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 
 	if (m_eCurState == CSpiritArrow::ARROWSTATE_END)
 	{
+		m_vecChild[EFFECT_TRAIL]->Set_Active(false);
+
 		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_RECHARGE_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_ADD ||
@@ -298,7 +300,6 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		if (m_bHit == true)
 		{
 			eState = CSpiritArrow::ARROW_HIT;
-
 			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
@@ -329,66 +330,74 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	{
 	case CSpiritArrow::ARROW_CHARGE:
 		{		
-		matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
+			matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
 
-		matSocket = pStaffHead->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
-		m_pTransformCom->LookAt(matSocket.r[3]);
+			matSocket = pStaffHead->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->LookAt(matSocket.r[3]);
 
-		m_fScale += fTimeDelta;
-		m_fScalePosRate -= fTimeDelta * 0.162f;
-		m_fDistance = m_fScale * 10.f;
+			m_fScale += fTimeDelta;
+			m_fScalePosRate -= fTimeDelta * 0.162f;
+			m_fDistance = m_fScale * 10.f;
 
-		CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
 
- 		_smatrix	matPivot = pActorData->PivotMatrix;
- 		_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
- 		vColliderPos.w = 1.f;
+ 			_smatrix	matPivot = pActorData->PivotMatrix;
+ 			_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
+ 			vColliderPos.w = 1.f;
 
-		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
-		break;
+			/* Effects */
+			m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
+
+			_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
+			matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
+
+			break;
 		}
 	case CSpiritArrow::ARROW_READY:
 		{
-		matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
+			matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
 
-		matSocket = pStaffHead->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
-		m_pTransformCom->LookAt(matSocket.r[3]);
+			matSocket = pStaffHead->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->LookAt(matSocket.r[3]);
 
-		CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
 
-		_smatrix	matPivot = pActorData->PivotMatrix;
-		_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
-		vColliderPos.w = 1.f;
+			_smatrix	matPivot = pActorData->PivotMatrix;
+			_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
+			vColliderPos.w = 1.f;
 
-		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
-		break;
+			/* Effects */
+			m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
+			break;
 		}
 	case CSpiritArrow::ARROW_FIRE:
 		{
-		_float4	vTargetPos = m_vFireCamPos + m_vFireCamLook * m_fDistance;
+			_float4	vTargetPos = m_vFireCamPos + m_vFireCamLook * m_fDistance;
 
-		m_pTransformCom->Arrow(vTargetPos, m_vFirePosition, XMConvertToRadians(160.f), fTimeDelta, m_bReachToAim);
-		m_pTransformCom->Go_Straight(fTimeDelta);
+			m_pTransformCom->Arrow(vTargetPos, m_vFirePosition, XMConvertToRadians(160.f), fTimeDelta, m_bReachToAim);
+			m_pTransformCom->Go_Straight(fTimeDelta);
 
-		CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
 
-		_smatrix	matPivot = pActorData->PivotMatrix;
-		_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
-		vColliderPos.w = 1.f;
+			_smatrix	matPivot = pActorData->PivotMatrix;
+			_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
+			vColliderPos.w = 1.f;
 
-		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
+			/* Effects */
+			m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
 
-		_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
-		matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
-		break;
+			_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
+			matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
+			break;
 		}
 	case CSpiritArrow::ARROW_HIT:
 		{
-		Reset();
-		break;
+			Reset();
+			break;
 		}
 	}
 }

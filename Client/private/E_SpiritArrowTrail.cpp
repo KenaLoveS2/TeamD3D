@@ -47,8 +47,8 @@ HRESULT CE_SpiritArrowTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 2.f; //5.f
-	m_eEFfectDesc.fLife = 1.f; //1.f
+	m_eEFfectDesc.fWidth = 0.5f; //5.f
+	m_eEFfectDesc.fLife = 1.5f; //1.f
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
@@ -64,6 +64,8 @@ HRESULT CE_SpiritArrowTrail::Initialize(void * pArg)
 
 void CE_SpiritArrowTrail::Tick(_float fTimeDelta)
 {
+	m_eEFfectDesc.fLife = 0.2f; //1.f
+
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
