@@ -30,6 +30,12 @@ _fvector CMonster::Get_Position()
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 }
 
+_fvector CMonster::Get_FocusPosition()
+{
+	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
+		+ XMVectorSet(0.f, m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
+}
+
 HRESULT CMonster::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -116,8 +122,14 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_float fDistance = _float4::Distance(vCamPos, vPos);
 	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
 
-	if (fDistance <= 10.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))) && !m_bBind)
-		Call_RotIcon();
+	if (fDistance <= 10.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+	{
+		if(!m_bBind)
+			Call_RotIcon();
+
+		Call_FocusIcon();
+	} 
+		
 }
 
 HRESULT CMonster::Render()
@@ -290,7 +302,15 @@ void CMonster::Call_RotIcon()
 	if (nullptr == m_pKena)
 		return;
 
-	m_pKena->Call_RotIcon(this);
+	m_pKena->Call_FocusRotIcon(this);
+}
+
+void CMonster::Call_FocusIcon()
+{
+	if (nullptr == m_pKena)
+		return;
+
+	m_pKena->Call_FocusMonsterIcon(this);
 }
 
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)

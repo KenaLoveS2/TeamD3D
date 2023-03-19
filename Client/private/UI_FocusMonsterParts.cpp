@@ -14,45 +14,187 @@ CUI_FocusMonsterParts::CUI_FocusMonsterParts(const CUI_FocusMonsterParts & rhs)
 
 HRESULT CUI_FocusMonsterParts::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 {
-	return E_NOTIMPL;
+	CUI::Initialize(pArg);
+
+	if (pArg != nullptr)
+		memcpy(&m_tPartsDesc, pArg, sizeof(PARTSDESC));
+		
+	/* It might be faster.... */
+	m_iRenderPass = 1;
+	m_pTransformCom->Set_Scaled(_float3(30.f, 30.f, 1.f));
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+
+	if (FAILED(SetUp_Components()))
+	{
+		MSG_BOX("Failed To SetUp Components");
+		return E_FAIL;
+	}
+
+	switch (m_tPartsDesc.iType)
+	{
+	case 0: /* left */
+		m_pTransformCom->Rotation({ 0.f, 0.f,1.f,0.f }, XMConvertToRadians(-45.f));
+		break;
+	case 1: /* right */
+		m_pTransformCom->Rotation({ 0.f, 0.f,1.f,0.f }, XMConvertToRadians(45.f));
+		break;
+	}
+
+	m_bActive = true;
+	return S_OK;
 }
 
 void CUI_FocusMonsterParts::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
+	if (m_pParent == nullptr)
+		return;
+
+	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	m_pTransformCom->Set_Position(vPos);
+
+	switch (m_tPartsDesc.iType)
+	{
+	case 0: /* left */
+		break;
+	case 1: /* right */
+		break;
+	case 2: /* center */
+		break;
+	}
+
+
+	__super::Tick(fTimeDelta);
 }
 
 void CUI_FocusMonsterParts::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
+	__super::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CUI_FocusMonsterParts::Render()
 {
-	return E_NOTIMPL;
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+	{
+		MSG_BOX("Failed To Setup ShaderResources : CUI_MonsterHP");
+		return E_FAIL;
+	}
+
+	m_pShaderCom->Begin(m_iRenderPass);
+	m_pVIBufferCom->Render();
+
+	return S_OK;
 }
 
 HRESULT CUI_FocusMonsterParts::SetUp_Components()
 {
-	return E_NOTIMPL;
+	/* Renderer */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
+		return E_FAIL;
+
+	/* Shader */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom))
+		return E_FAIL;
+
+	/* VIBuffer_Rect */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
+		return E_FAIL;
+
+	/* Diffuse Texture */
+	switch (m_tPartsDesc.iType)
+	{
+	case 0: /* Left */
+		if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LockOnSide"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+			return E_FAIL;
+		break;
+	case 1: /* right */
+		if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LockOnSide"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+			return E_FAIL;
+		break;
+	case 2: /* center */
+		if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LockOnCenter"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+			return E_FAIL;
+		break;
+
+	}
+
+
+	return S_OK;
 }
 
 HRESULT CUI_FocusMonsterParts::SetUp_ShaderResources()
 {
-	return E_NOTIMPL;
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CUI::SetUp_ShaderResources(); /* Events Resourece Setting */
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+			return E_FAIL;
+	}
+
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
 }
 
 CUI_FocusMonsterParts * CUI_FocusMonsterParts::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	return nullptr;
+	CUI_FocusMonsterParts*	pInstance = new CUI_FocusMonsterParts(pDevice, pContext);
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed To Create : CUI_FocusMonsterParts");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
 }
 
 CGameObject * CUI_FocusMonsterParts::Clone(void * pArg)
 {
-	return nullptr;
+	CUI_FocusMonsterParts*	pInstance = new CUI_FocusMonsterParts(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed To Clone : CUI_FocusMonsterParts");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
 }
 
 void CUI_FocusMonsterParts::Free()

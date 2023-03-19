@@ -2,9 +2,11 @@
 #include "..\public\UI_FocusMonster.h"
 #include "GameInstance.h"
 #include "UI_FocusMonsterParts.h"
+#include "Monster.h"
 
 CUI_FocusMonster::CUI_FocusMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
+	, m_pTarget(nullptr)
 {
 	for (_uint i = 0; i < PARTS_END; ++i)
 		m_pParts[i] = nullptr;
@@ -12,6 +14,7 @@ CUI_FocusMonster::CUI_FocusMonster(ID3D11Device * pDevice, ID3D11DeviceContext *
 
 CUI_FocusMonster::CUI_FocusMonster(const CUI_FocusMonster & rhs)
 	:CUI_Billboard(rhs)
+	, m_pTarget(nullptr)
 {
 	for (_uint i = 0; i < PARTS_END; ++i)
 		m_pParts[i] = nullptr;
@@ -44,6 +47,12 @@ HRESULT CUI_FocusMonster::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(SetUp_Parts()))
+	{
+		MSG_BOX("Failed To Setup Parts");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -55,7 +64,9 @@ void CUI_FocusMonster::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	for (_uint i = 0; i < PARTS_END; ++i)
+	{
 		m_pParts[i]->Tick(fTimeDelta);
+	}
 }
 
 void CUI_FocusMonster::Late_Tick(_float fTimeDelta)
@@ -87,6 +98,21 @@ HRESULT CUI_FocusMonster::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CUI_FocusMonster::Set_Pos(CGameObject * pTarget)
+{
+	if (pTarget == nullptr)
+	{
+		m_pTarget = nullptr;
+		m_bActive = false;
+		return;
+	}
+
+	m_pTarget = pTarget;
+	m_bActive = true;
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
+		static_cast<CMonster*>(pTarget)->Get_FocusPosition());
 }
 
 HRESULT CUI_FocusMonster::SetUp_Components()
@@ -136,6 +162,22 @@ HRESULT CUI_FocusMonster::SetUp_ShaderResources()
 
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CUI_FocusMonster::SetUp_Parts()
+{
+	CUI_FocusMonsterParts::PARTSDESC tDesc;
+
+	for (_uint i = 0; i < TYPE_END; ++i)
+	{
+		tDesc.iType = i;
+		m_pParts[i] = static_cast<CUI_FocusMonsterParts*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_FocusMonsterParts",
+			CUtile::Create_DummyString(), &tDesc));
+
+		m_pParts[i]->Set_Parent(this);
+	}
 
 	return S_OK;
 }

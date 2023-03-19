@@ -4,6 +4,14 @@
 BEGIN(Client)
 class CUI_FocusMonsterParts final : public CUI_Billboard
 {
+public:
+	typedef struct tagPartsDesc
+	{
+		_uint		iType;
+	}PARTSDESC;
+
+
+
 private:
 	CUI_FocusMonsterParts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_FocusMonsterParts(const CUI_FocusMonsterParts& rhs);
@@ -20,6 +28,9 @@ public:
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
+
+private:
+	PARTSDESC				m_tPartsDesc;
 
 public:
 	static	CUI_FocusMonsterParts*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

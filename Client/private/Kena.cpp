@@ -20,11 +20,13 @@
 #include "UI_RotIcon.h"
 #include "RotForMonster.h"
 #include "E_KenaDust.h"
+#include "UI_FocusMonster.h"
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
+	, m_pFocusMonster(nullptr)
 {
 }
 
@@ -32,6 +34,7 @@ CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
+	, m_pFocusMonster(nullptr)
 {
 }
 
@@ -850,7 +853,13 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
-void CKena::Call_RotIcon(CGameObject * pTarget)
+//void CKena::Call_FocusIcon(CGameObject * pTarget)
+//{
+//	Call_FocusRotIcon(pTarget);
+//	Call_FocusMonsterIcon(pTarget);
+//}
+
+void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 {
 	if (m_pFocusRot == nullptr)
 		return;
@@ -889,6 +898,14 @@ void CKena::Call_RotIcon(CGameObject * pTarget)
 	}
 
 	m_pFocusRot->Set_Pos(pTarget);
+}
+
+void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
+{
+	if (m_pFocusMonster == nullptr)
+		return;
+	
+	m_pFocusMonster->Set_Pos(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -1101,6 +1118,15 @@ HRESULT CKena::SetUp_UI()
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
+		TEXT("Prototype_GameObject_UI_FocusMonster"),
+		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pFocusMonster)))
+	{
+		MSG_BOX("Failed To make UI : Kena");
+		return E_FAIL;
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 
 

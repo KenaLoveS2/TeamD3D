@@ -11,8 +11,6 @@ private:
 	CUI_FocusMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_FocusMonster(const CUI_FocusMonster& rhs);
 	virtual ~CUI_FocusMonster() = default;
-
-
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -20,11 +18,16 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	void	Set_Pos(CGameObject* pTarget);
+
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
+	HRESULT					SetUp_Parts();
 
 private:
+	CGameObject*					m_pTarget;
 	CUI_FocusMonsterParts*			m_pParts[3];
 
 public:

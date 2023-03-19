@@ -62,6 +62,7 @@ public:
 	const _double&			Get_AnimationPlayTime();
 	_fvector						Get_Position();
 	DESC							Get_Desc() { return m_Desc; };
+	virtual _fvector				Get_FocusPosition();
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -95,6 +96,7 @@ public:
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	void								Call_RotIcon();
+	void								Call_FocusIcon();
 	virtual HRESULT			Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 
 	_bool							Get_Bind() { return m_bBind; }
