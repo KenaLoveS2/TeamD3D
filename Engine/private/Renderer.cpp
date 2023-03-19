@@ -126,6 +126,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
+	/* For.Target_Effect*/
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
 	// SSAO
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
@@ -149,6 +153,11 @@ HRESULT CRenderer::Initialize_Prototype()
 	// HDR 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
+
+	// Effect 텍스쳐 렌더링용
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_EFFECT"), TEXT("Target_Effect"))))
+		return E_FAIL;
+
 
 	/* For. SHADOW */
 	m_iShadowWidth = 8192;
@@ -207,10 +216,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Effect"), (fSizeX * 0.5f) + fSizeX * 4.f, fSizeY * 0.5f, fSizeX, fSizeY)))
+		return E_FAIL;
+
 #endif
-
-	CreateTexture(L"../Bin/Resources/PostProcess/Flare_white.png", m_pFlareTexture);
-
+	CreateTexture(L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_93.png", m_pFlareTexture);
+	CreateTexture(L"../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_2.png", m_pDistortionTexture);
 	return S_OK;
 }
 
@@ -364,6 +375,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(Render_HDR()))
 			return E_FAIL;
+		if (FAILED(Render_Effect()))
+			return E_FAIL;
 		if (FAILED(Render_PostProcess()))
 			return E_FAIL;
 	}
@@ -401,6 +414,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_StaticLightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_EFFECT"));
 	}
 #endif
 
@@ -798,8 +812,29 @@ HRESULT CRenderer::Render_PostProcess()
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV())))
 		return E_FAIL;
 
+	m_pLDRTexture = pLDRSour->Get_SRV();
+
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Effect()
+{
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_EFFECT"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_EFFECT])
+	{
+		pGameObject && pGameObject->Render();
+		Safe_Release(pGameObject);
+	}
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_EFFECT"))))
+		return E_FAIL;
+
+	m_RenderObjects[RENDER_EFFECT].clear();
 
 	return S_OK;
 }
@@ -861,6 +896,10 @@ HRESULT CRenderer::PostProcess_Distort()
 
 	m_fDistortTime += TIMEDELTA;
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_DistortionTexture", *m_pDistortionTexture)))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_EffectTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Effect")))))
 		return E_FAIL;
 
 	m_pShader_PostProcess->Begin(1);
@@ -1007,6 +1046,9 @@ void CRenderer::Free()
 
 	Safe_Release(*m_pFlareTexture);
 	Safe_Delete(m_pFlareTexture);
+
+	Safe_Release(*m_pDistortionTexture);
+	Safe_Delete(m_pDistortionTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
