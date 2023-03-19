@@ -188,7 +188,7 @@ HRESULT CUI_FocusMonster::SetUp_Parts()
 {
 	CUI_FocusMonsterParts::PARTSDESC tDesc;
 
-	for (_uint i = 0; i < TYPE_END; ++i)
+	for (_uint i = 0; i < PARTS_END; ++i)
 	{
 		tDesc.iType = i;
 		m_pParts[i] = static_cast<CUI_FocusMonsterParts*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_UI_FocusMonsterParts",
