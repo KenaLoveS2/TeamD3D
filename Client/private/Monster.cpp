@@ -376,7 +376,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget && m_bSpawn)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
+		if ((iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
 		{
 			m_pUIHPBar->Set_Active(true);
 			WeakleyHit();
@@ -389,6 +389,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKenaHit->Set_Position(vCollisionPos);
 
 			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.2f);
+			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 		}
 	}
 
