@@ -160,7 +160,8 @@ private:	/* Animation Event Func */
 	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);

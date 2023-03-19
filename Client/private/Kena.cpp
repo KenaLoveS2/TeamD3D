@@ -857,7 +857,8 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
-	TurnOnFootStep(true, 0.f);
+	TurnOnFootStep_Left(true, 0.f);
+	TurnOnFootStep_Right(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
 	TurnOnTrail(true, 0.f);
@@ -1303,12 +1304,12 @@ void CKena::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 	m_bTrailON = false;
 }
 
-void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
+void CKena::TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep_Left);
 		return;
 	}
 
@@ -1318,6 +1319,46 @@ void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
 		{
 			if (Pair.second->Get_Active() == false)
 			{
+				/* ToeDust Update */
+				CBone*   pToeBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
+				matWalk.r[3] = matWorldSocket.r[3];
+				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
+				/* ToeDust Update */
+
+				Pair.second->Set_Active(true);
+				break;
+			}
+		}
+	}
+}
+
+void CKena::TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep_Right);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (dynamic_cast<CE_KenaDust*>(Pair.second))
+		{
+			if (Pair.second->Get_Active() == false)
+			{
+				/* ToeDust Update */
+				CBone*   pToeBonePtr = m_pModelCom->Get_BonePtr("kena_rt_toe_jnt");
+				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
+				matWalk.r[3] = matWorldSocket.r[3];
+				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
+				/* ToeDust Update */
+
 				Pair.second->Set_Active(true);
 				break;
 			}
