@@ -38,7 +38,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));

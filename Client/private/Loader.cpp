@@ -225,7 +225,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 	Safe_AddRef(pGameInstance);
 
 	Loading_ForWJ(LEVEL_GAMEPLAY);
-	Loading_ForJH(LEVEL_GAMEPLAY);
+	
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	Loading_ForHW(LEVEL_GAMEPLAY);
 
@@ -248,6 +249,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_Component_VIBuffer_Rect_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
 		CVIBuffer_Rect_Instancing::Create(m_pDevice, m_pContext, 30))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Cube */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Model..."));
@@ -303,7 +309,8 @@ HRESULT CLoader::Loading_ForMapTool()
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	Loading_ForJH(LEVEL_MAPTOOL);
+	if (FAILED(Loading_ForJH((_uint)LEVEL_MAPTOOL)))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Terrain */
@@ -1518,6 +1525,9 @@ HRESULT CLoader::Loading_ForTestPlay()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	if (FAILED(Loading_ForJH((_uint)LEVEL_TESTPLAY)))
+		return E_FAIL;
+
 	if (FAILED(Loading_ForHW((_uint)LEVEL_TESTPLAY)))
 		return E_FAIL;
 
@@ -1525,16 +1535,20 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(Loading_ForHO((_uint)LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	FAILED_CHECK_RETURN(Loading_ForJH(LEVEL_TESTPLAY), E_FAIL);
-
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 5))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_Cube */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	m_fCur += 1.f;
 
 	_matrix PivotMatrix = XMMatrixIdentity();
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* NPC */
 	/* Prototype_Component_Model_Beni */
@@ -1686,27 +1700,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
-		CKena::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
-		CKena_Staff::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
-		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
-		CSpiritArrow::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"),
 		CMoth::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -1826,43 +1819,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 	if (FAILED(Loading_ForHO((_uint)LEVEL_EFFECT)))
 		return E_FAIL;
 
-#pragma  region	PLAYER
-	/* For.Prototype_Component_Model_Kena */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_Staff", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Staff/Kena_Staff.model", PivotMatrix))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Player_Camera */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Player"),
-		CCamera_Player::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
-		CKena::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_Staff"),
-		CKena_Staff::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena_MainOutfit"),
-		CKena_MainOutfit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_EFFECT, "Spirit_Arrow", false, false, false)))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow"),
-		CSpiritArrow::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-#pragma  endregion	PLAYER
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_EFFECT), E_FAIL);
 
 #pragma region ETC..
 	/* Prototype_Component_Model_RotEater */
