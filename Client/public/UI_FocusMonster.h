@@ -7,6 +7,7 @@ class CUI_FocusMonster final : public CUI_Billboard
 {
 public:
 	enum PARTS { PARTS_LEFT, PARTS_RIGHT, PARTS_CENTER, PARTS_END };
+
 private:
 	CUI_FocusMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_FocusMonster(const CUI_FocusMonster& rhs);
