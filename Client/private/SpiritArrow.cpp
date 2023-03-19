@@ -7,6 +7,7 @@
 #include "Kena_State.h"
 #include "Camera_Player.h"
 #include "Bone.h"
+#include "E_SpiritArrowTrail.h"
 
 CSpiritArrow::CSpiritArrow(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -245,6 +246,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		{
 			eState = CSpiritArrow::ARROW_CHARGE;
 			m_vecChild[EFFECT_POSITION]->Set_Active(true);
+			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
@@ -267,7 +269,10 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
 			for (auto pChild : *pChilds)
 				pChild->Set_Active(false);
+
+			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		}
+		dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
 	{
@@ -284,6 +289,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
 			for (auto pChild : *pChilds)
 				pChild->Set_Active(false);
+
+			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_FIRE)
@@ -292,6 +299,7 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 		{
 			eState = CSpiritArrow::ARROW_HIT;
 
+			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
 		}
@@ -338,7 +346,6 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
  		vColliderPos.w = 1.f;
 
 		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
-
 		break;
 		}
 	case CSpiritArrow::ARROW_READY:
@@ -356,7 +363,6 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 		vColliderPos.w = 1.f;
 
 		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
-
 		break;
 		}
 	case CSpiritArrow::ARROW_FIRE:
@@ -374,6 +380,9 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 
 		m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
 
+		_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
+		matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
 		break;
 		}
 	case CSpiritArrow::ARROW_HIT:
@@ -389,7 +398,7 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	if (m_eCurState < CSpiritArrow::ARROW_FIRE)
 		return 0;
 
-	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
+	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == (_int)COL_GROUND || iColliderIndex == (_int)COL_ENVIROMENT)
 	{
 		m_bHit = true;
 
@@ -399,7 +408,7 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	}
 
 	/* Collision Test */
-	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT || iColliderIndex == COL_MONSTER)
+	if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == (_int)COL_GROUND || iColliderIndex == (_int)COL_ENVIROMENT || iColliderIndex == (_int)COL_MONSTER)
 	{
 		m_bHit = true;
 		m_vecChild[EFFECT_HIT]->Set_Position(vCollisionPos);
@@ -422,6 +431,8 @@ void CSpiritArrow::Reset()
 
 	for (auto pEffect : m_vecChild)
 		pEffect->Set_Active(false);
+
+	dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 }
 
 void CSpiritArrow::Set_Child()
@@ -446,6 +457,17 @@ void CSpiritArrow::Set_Child()
 	_tchar* pHitCloneTag = CUtile::Create_StringAuto(strArrowHitCloneTag.c_str());
 
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowHit", pHitCloneTag));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	/* Trail */
+	wstring strArrowTrailCloneTag = L"";
+	strArrowTrailCloneTag = m_szCloneObjectTag;
+	strArrowTrailCloneTag += L"_Trail";
+
+	_tchar* pTrailCloneTag = CUtile::Create_StringAuto(strArrowTrailCloneTag.c_str());
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_SpiritArrowTrail", pTrailCloneTag));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 

@@ -232,6 +232,7 @@
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
+    <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
@@ -421,6 +422,7 @@
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
+    <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\private\FireBullet.cpp" />
