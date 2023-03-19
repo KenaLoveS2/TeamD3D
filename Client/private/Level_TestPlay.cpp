@@ -339,7 +339,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	return S_OK;
+	//return S_OK;
 
 	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json");
 	return S_OK;

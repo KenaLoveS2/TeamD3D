@@ -13,7 +13,7 @@ class CAnimationState;
 END
 
 BEGIN(Client)
-
+class CMonster;
 class CUI_RotIcon;
 class CUI_FocusMonster;
 class CKena final : public CGameObject
@@ -132,6 +132,9 @@ private:
 	_float						m_fLashWidth = 10.f;
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
+
+	/* Target Monster (For. UI and Auto Targeting */
+	CMonster*					m_pTargetMonster;
 
 	/* UI */
 	CUI_RotIcon*				m_pFocusRot;

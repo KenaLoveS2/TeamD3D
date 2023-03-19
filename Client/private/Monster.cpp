@@ -34,7 +34,7 @@ _fvector CMonster::Get_Position()
 _fvector CMonster::Get_FocusPosition()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
-		+ XMVectorSet(0.f, 5.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
+		+ XMVectorSet(0.f, 6.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
 }
 
 HRESULT CMonster::Initialize_Prototype()
@@ -128,7 +128,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 			Call_RotIcon();
 
-		Call_FocusIcon();
+		Call_MonsterFocusIcon();
 	} 
 		
 }
@@ -306,7 +306,7 @@ void CMonster::Call_RotIcon()
 	m_pKena->Call_FocusRotIcon(this);
 }
 
-void CMonster::Call_FocusIcon()
+void CMonster::Call_MonsterFocusIcon()
 {
 	if (nullptr == m_pKena)
 		return;

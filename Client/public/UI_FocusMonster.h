@@ -20,6 +20,7 @@ public:
 
 public:
 	void	Set_Pos(CGameObject* pTarget);
+	void	Start_Animation();
 
 private:
 	virtual HRESULT			SetUp_Components() override;
@@ -29,6 +30,7 @@ private:
 private:
 	CGameObject*					m_pTarget;
 	CUI_FocusMonsterParts*			m_pParts[3];
+	_bool							m_bStart;
 
 public:
 	static	CUI_FocusMonster*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

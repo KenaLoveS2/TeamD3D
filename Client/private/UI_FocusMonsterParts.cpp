@@ -3,12 +3,18 @@
 #include "GameInstance.h"
 
 CUI_FocusMonsterParts::CUI_FocusMonsterParts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CUI_Billboard(pDevice, pContext)
+	: CUI_Billboard(pDevice, pContext)
+	, m_bStart(false)
+	, m_bEnd(false)
+	, m_fSpeed(0.f)
 {
 }
 
 CUI_FocusMonsterParts::CUI_FocusMonsterParts(const CUI_FocusMonsterParts & rhs)
-	:CUI_Billboard(rhs)
+	: CUI_Billboard(rhs)
+	, m_bStart(false)
+	, m_bEnd(false)
+	, m_fSpeed(0.f)
 {
 }
 
@@ -47,7 +53,7 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 		break;
 	case 2: /* Center */
-		m_pTransformCom->Set_Scaled(_float3(21.f, 43.7f, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(16.8f, 35.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 		break;
 	}
@@ -65,16 +71,26 @@ void CUI_FocusMonsterParts::Tick(_float fTimeDelta)
 		return;
 
 	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-	m_pTransformCom->Set_Position(vPos);
+	_float4 vRight; 
 
 	switch (m_tPartsDesc.iType)
 	{
 	case 0: /* left */
+		vRight = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_RIGHT);
+		m_pTransformCom->Set_Position(vPos + -0.2f * vRight);
 		break;
 	case 1: /* right */
+		vRight = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_RIGHT);
+		m_pTransformCom->Set_Position(vPos + 0.2f * vRight);
 		break;
 	case 2: /* center */
+		m_pTransformCom->Set_Position(vPos);
 		break;
+	}
+
+	if (m_bStart)
+	{
+
 	}
 
 

@@ -17,7 +17,6 @@ private:
 	CUI_FocusMonsterParts(const CUI_FocusMonsterParts& rhs);
 	virtual ~CUI_FocusMonsterParts() = default;
 
-
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -25,12 +24,19 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta)	override;
 	virtual HRESULT			Render()						override;
 
+public:
+	void					Do_Animation() { if(!m_bStart) m_bStart = true; }
+	_bool					Is_AnimEnd() { return m_bEnd; }
+
 private:
 	virtual HRESULT			SetUp_Components() override;
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
 	PARTSDESC				m_tPartsDesc;
+	_bool					m_bEnd;
+	_bool					m_bStart;
+	_float					m_fSpeed;
 
 public:
 	static	CUI_FocusMonsterParts*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

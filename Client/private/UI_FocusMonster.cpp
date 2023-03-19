@@ -7,6 +7,7 @@
 CUI_FocusMonster::CUI_FocusMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Billboard(pDevice, pContext)
 	, m_pTarget(nullptr)
+	, m_bStart(false)
 {
 	for (_uint i = 0; i < PARTS_END; ++i)
 		m_pParts[i] = nullptr;
@@ -15,6 +16,7 @@ CUI_FocusMonster::CUI_FocusMonster(ID3D11Device * pDevice, ID3D11DeviceContext *
 CUI_FocusMonster::CUI_FocusMonster(const CUI_FocusMonster & rhs)
 	:CUI_Billboard(rhs)
 	, m_pTarget(nullptr)
+	, m_bStart(false)
 {
 	for (_uint i = 0; i < PARTS_END; ++i)
 		m_pParts[i] = nullptr;
@@ -62,6 +64,18 @@ void CUI_FocusMonster::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
+
+	if (m_bStart)
+	{
+		for (_uint i = 0; i < PARTS_END; ++i)
+		{
+			//if (!m_pParts[i]->IsEnd())
+			//{
+
+			//}
+		}
+	}
+
 
 	for (_uint i = 0; i < PARTS_END; ++i)
 	{
@@ -113,6 +127,10 @@ void CUI_FocusMonster::Set_Pos(CGameObject * pTarget)
 	m_bActive = true;
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
 		static_cast<CMonster*>(pTarget)->Get_FocusPosition());
+}
+
+void CUI_FocusMonster::Start_Animation()
+{
 }
 
 HRESULT CUI_FocusMonster::SetUp_Components()
