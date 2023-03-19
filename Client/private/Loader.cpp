@@ -2883,6 +2883,103 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	_matrix PivotMatrix = PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	/* Prototype_Component_Model_Mage */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_ShieldStick */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_ShieldStick_Weapon */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/Shield.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	///* Prototype_Component_Model_CorruptVillager */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_CorruptVillager",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/CorruptVillager/CorruptVillager.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
+
+	///* Prototype_Component_Model_Moth */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Moth",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
+
+	/* Prototype_Component_Model_RockGolem */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RockGolem",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_RotEater */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotEater",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_Sticks01 */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sticks01",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	///* Prototype_Component_Model_VillageGuard */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix))))
+	//	return E_FAIL;
+	//m_fCur += 1.f;
+
+	/* Prototype_Component_Model_WoodKnight */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_Sapling */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sapling",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sapling/Sapling.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_BranchTosser */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_Rope_Rock */
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rope_RotRock", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_BranchTosser_Projectile */
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser", true, false, false)))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_HeroRot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Model_Rot */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	return S_OK;
 }
 
