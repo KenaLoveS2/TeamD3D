@@ -2475,7 +2475,7 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.eType = BOX_STATIC;
 		BoxDesc.pActortag = CUtile::Create_DummyString(pActorName,i);
 		BoxDesc.vPos = CUtile::Float_4to3(vPos);
-		BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f+i*0.1f))* vSize.x,fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+		BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f))* vSize.x,fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
 		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDegree = 0.f;
 		BoxDesc.isGravity = false;
@@ -2519,7 +2519,7 @@ void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
 	if (m_bIsInstancing == false)
 		return;
 
-	CPhysX_Manager::GetInstance()->Imgui_Render(pActorName);
+	CPhysX_Manager::GetInstance()->Imgui_Render(pActorName, &m_VecInstancingColiderSize);
 
 
 }

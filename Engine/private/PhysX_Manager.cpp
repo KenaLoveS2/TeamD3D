@@ -372,8 +372,9 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		
 		PxRigidStatic* pBox = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
-		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, false);
-		
+		//PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, false);	
+		PxShape* pShape = m_pPhysics->createShape(PxBoxGeometry(Desc.vSize.x, Desc.vSize.y, Desc.vSize.z), *pMaterial, true);
+	
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
@@ -1147,7 +1148,7 @@ PxVec3 CPhysX_Manager::Get_ScalingBox(PxRigidActor *pActor)
 	return Temp;
 }
 
-void CPhysX_Manager::Imgui_Render(const _tchar * pActorName)
+void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* vec_ColiderSize)
 {
 	if (pActorName == nullptr)
 		return;
@@ -1197,52 +1198,24 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName)
 	if (wstrSelectedTag != L"")
 	{
 		PxRigidActor*	pRigidActor = Find_StaticActor(wstrSelectedTag.c_str());
-
+		
 		ImGui::BulletText("Current Static Object : ");
 		ImGui::SameLine();
 		string Temp = CUtile::WstringToString(wstrSelectedTag);
 		ImGui::Text(Temp.c_str());
 		PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 
-		PxTransform transform = pRigidActor->getGlobalPose();
-		_float3 vPos = CUtile::ConvertPosition_PxToD3D(transform.p);
 		PxVec3 PxScale = Get_ScalingBox(pRigidActor);
 
 		_float3 vScale = _float3(PxScale.x, PxScale.y, PxScale.z);
 
-		float fPos[3] = { vPos.x,vPos.y,vPos.z };
 		float fScale[3] = { vScale.x, vScale.y, vScale.z };
 
-		ImGui::DragFloat3("Px_Pos", fPos, 0.01f, 0.1f, 100.0f);
 		ImGui::DragFloat3("Px_Scale", fScale, 0.01f, 0.1f, 100.0f);
 
-		vPos.x = fPos[0]; vPos.y = fPos[1]; vPos.z = fPos[2];
 		vScale.x = fScale[0];  vScale.y = fScale[1];  vScale.z = fScale[2];
 
-		{
-			//PxShape* shape;
-			//pRigidActor->getShapes(&shape, 1);
-			//PxBoxGeometry newGeometry(PxVec3(vScale.x, vScale.y, vScale.z));
-
-			//// 새로운 쉐이프를 생성
-			//PxShape* newShape = m_pPhysics->createShape(newGeometry, *m_pMaterial, true);
-
-			//newShape->setLocalPose(shape->getLocalPose());
-
-			//// 기존 쉐이프를 제거하고 새로운 쉐이프를 추가
-			//pRigidActor->detachShape(*shape);
-			//shape->release();
-			//pRigidActor->attachShape(*newShape);
-
-			//// 새로운 쉐이프는 생성할 때 증가된 reference count를 가지므로 release를 호출하여 감소시킴
-			//newShape->release();
-		}
-
-		//Set_ActorPosition(pRigidActor, vPos);
-		//Set_ScalingBox(pRigidActor, vScale);
-
-
-
+		Set_ScalingBox(pRigidActor, vScale);
 	}
 }
 

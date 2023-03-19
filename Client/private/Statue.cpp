@@ -39,7 +39,7 @@ HRESULT CStatue::Initialize(void * pArg)
 HRESULT CStatue::Late_Initialize(void * pArg)
 {
 
-	//m_pRendererCom->Set_PhysXRender(true);
+	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }

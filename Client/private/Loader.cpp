@@ -1656,398 +1656,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 5))))
 		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
-		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Brush*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Normal"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Terrain_Two_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain2_Filter_%d.dds"), 3))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Terrain_HeightMaps"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 15))))
-		return E_FAIL;
-
-
-	/* For.Prototype_Component_Texture_GroundMark*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
-		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_VIBuffer_Terrain */ // TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain_0"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_0.bmp")))))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain_1"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_1.bmp")))))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain_2"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_2.bmp")))))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Terrain_3"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_3.bmp")))))
-		assert(!"Issue");
-	m_fCur += 1.f;
-
-#pragma  region 0~4 MapObj
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
-	//	assert(!"Issue");
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeShort", true, true, true)))
-	//	assert(!"Issue");
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_LedgeStone", true, true, true)))
-	//	return E_FAIL;
-	//if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
-	//	assert(!"Issue");
-
-
-	_matrix			PivotMatrix = XMMatrixIdentity();
-	/* For.Prototype_Component_Model_DeadZoneTree */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_DeadZoneTree",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_Model_PulsePlateAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_PulsePlateAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-	{
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PowerCrystal", true, false, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PluseStone_Big", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "PulseObjects/PulseStoneRock", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_LedgeStone", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Pillar", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Brick", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_ToriGate", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Arch", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinPlatform", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Rubble", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Big", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Rock", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/God_Rock", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Cap", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W2", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_W3", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Large", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Med", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Wall_Short", true, true, true)))
-		return E_FAIL;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Glitter", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Sheer", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Rubble", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinStaris", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue/Owl_WrapShrine", false, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Statue", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Tree", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_FloorTile", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinKit_Piece", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/RuinsWall", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "RuinKit/Ruinskit_Collum", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Cliff/Cliff_Ledge", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Small", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rock/Rock_Medium", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/Start_Gate", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/FirstTear_FallenTree", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/First_Room_Deco", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Forest_1/ShrineOfLife", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_1", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/StoneFloor_2", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Bridge", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Stone/Stone_Stairs", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Giant", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Fallen", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Dead", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/CeDarTree", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Bare", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Billboard", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Canopy", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/GodTree", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Branches/Tree_Branch", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Trees/Canopy", true, true, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Save_StoneTree", true, true)))// json NonUse
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneClumps", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneGroudCover", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneHeart", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/DeadzoneWall", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Gate", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/Trees", true, true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "DeadZone/BushDead_02", true, true)))
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/Rot_Rock", true, true)))// json NonUse
-		assert(!"Issue");
-	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rot/RotCarry_Piece", true, true)))// json NonUse
-		assert(!"Issue");
-	m_fCur += 1.f;
-
-#pragma region GroundCover
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Branches", true, true, true, true)))
-			assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Clovers", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Deadzone", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Grass", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Needles", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "GroundCover/Roots", true, true, true, true)))
-		assert(!"Issue");
-#pragma endregion GroundCover
-
-
-#pragma region Foliage
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/BushDead", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Bushes", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Ferns", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Flowers", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Grass", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/LilyPad", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Moss", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Overhang", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Plants", true, true, true, true)))
-		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Foliage/Roots", true, true, true, true)))
-		assert(!"Issue");
-#pragma endregion Foliage
-
-
-
-#pragma region Born_GroundCover
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_BasilLarge",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_BasilMedium",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilMedium.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_BasilSmall",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilSmall.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Bush_02",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Bush/SK_Bush_02.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Fern_01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_01.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Fern_02",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_02.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Fern_03",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_03.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Fern_04",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_04.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Flower_02",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_02.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Flower_03",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_03.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Flower_05",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_05.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Mushroom_01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_01.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Mushroom_02",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_02.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Pampas",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Pampas/SK_Pampas.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Plant_05",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plant_05.mdat"), PivotMatrix, nullptr, false, true))))
-		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_SK_Plants3",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
-		return E_FAIL;
-
-#pragma  endregion Born_GroundCover
-	}
-#pragma endregion ~ 0~4 MapObj
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Map_Base")))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	PivotMatrix = XMMatrixIdentity();
+	_matrix PivotMatrix = XMMatrixIdentity();
 
 	/* For.Prototype_Component_Model_Kena */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2226,195 +1838,8 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CLodObject"),
-		CLodObject::Create(m_pDevice, m_pContext))))
+	if(FAILED(Loading_ForHW(_uint(LEVEL_TESTPLAY))))
 		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Cave_Rock */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
-		CCliff_Rock::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_RotWisp */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
-		CRotWisp::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
-		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Tree */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
-		CTree::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Crystal */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
-		CCrystal::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_BowTarget */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
-		CBowTarget::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_PulseStone */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
-		CPulseStone::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_BaseGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BaseGround"),
-		CBase_Ground::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Wall */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wall"),
-		CWall::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Wall */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Root"),
-		CRoots::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Stair */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"),
-		CStair::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Wall */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pillar"),
-		CPillar::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Statue */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"),
-		CStatue::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Border */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Border"),
-		CBorder::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Slope */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Slope"),
-		CSlope::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Bridge */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Bridge"),
-		CBridge::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Path_Mesh */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Path_Mesh"),
-		CPath_Mesh::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_FloorTile */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
-		CFloorTile::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Pulse_PlateForm */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
-		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Gate */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Gate"),
-		CGate::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_RuinKit */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
-		CRuinKit::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-	/* For.Prototype_GameObject_Stone */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
-		CStone::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Flower */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
-		CFlower::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Grass */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
-		CGrass::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_DeadZoneObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
-		CDeadZoneObj::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_DeadZoneObj */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
-		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-	/*Anim*/
-	/* For.Prototype_GameObject_Door_Anim */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
-		CDoor_Anim::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_Door_Anim */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
-		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_GroundMark */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
-		CGroundMark::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_ControlRoom */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
-		CControlRoom::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Born_GroundCover"),
-		CBorn_GroundCover::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
 
 
 	/* For.Prototype_GameObject_Player */
@@ -2809,11 +2234,6 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	return S_OK;
-}
-
-HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
-{
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
@@ -3046,6 +2466,567 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 
 #pragma endregion Effect_Object
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
+{
+	CGameInstance *pGameInstance = CGameInstance::GetInstance();
+
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Brush*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Normal"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Filter"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Filter_%d.dds"), 3))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Terrain_Two_Filter"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain2_Filter_%d.dds"), 3))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Filter */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Terrain_HeightMaps"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Height/Terrain_Height_%d.bmp"), 15))))
+		return E_FAIL;
+	/* For.Prototype_Component_Texture_GroundMark*/
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_GroundMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_Component_VIBuffer_Cube */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Terrain_0"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_0.bmp")))))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Terrain_1"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_1.bmp")))))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Terrain_2"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_2.bmp")))))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Terrain_3"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_3.bmp")))))
+		assert(!"Issue");
+	m_fCur += 1.f;
+
+	_matrix			PivotMatrix = XMMatrixIdentity();
+	/* For.Prototype_Component_Model_DeadZoneTree */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_DeadZoneTree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_Component_Model_PulsePlateAnim*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_PulsePlateAnim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PowerCrystal", true, false, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PulseObjects/PluseStone_Big", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PulseObjects/PulsePlate_StoneBorder", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PulseObjects/PulsePlateEnclosure_02", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PulseObjects/PulseStoneRock", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_LedgeStone", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Pillar", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_Brick", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_BridgeLarge", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_ToriGate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Arch", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinPlatform", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Big", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Rock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/God_Rock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Cap", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_W2", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_W3", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Wall_Large", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Wall_Med", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Wall_Short", true, true, true)))
+		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Glitter", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Sheer", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Statue/Owl_WrapShrine", false, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Statue", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_Tree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Piece", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsWall", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/Ruinskit_Collum", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Ledge", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Small", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Medium", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/Start_Gate", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/FirstTear_FallenTree", true, false, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/First_Room_Deco", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/ShrineOfDeath_MainRock", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Forest_1/ShrineOfLife", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/StoneFloor_1", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/StoneFloor_2", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Bridge", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Giant", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Fallen", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Dead", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/CeDarTree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Bare", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Billboard", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Branches/Canopy", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Branches/GodTree", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Branches/Tree_Branch", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Canopy", true, true, true)))
+		return E_FAIL;
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Save_StoneTree", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/DeadZoneAndPurifiedTree", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/DeadzoneClumps", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/DeadzoneGroudCover", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/DeadzoneHeart", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/DeadzoneWall", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/Gate", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/Trees", true, true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/BushDead_02", true, true)))
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/Rot_Rock", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true)))// json NonUse
+		assert(!"Issue");
+	m_fCur += 1.f;
+
+#pragma region GroundCover
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Branches", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Clovers", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Deadzone", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Grass", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Needles", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "GroundCover/Roots", true, true, true, true)))
+			assert(!"Issue");
+#pragma endregion GroundCover
+
+#pragma region Foliage
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/BushDead", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Bushes", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Ferns", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Flowers", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Grass", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/LilyPad", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Moss", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Overhang", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Plants", true, true, true, true)))
+			assert(!"Issue");
+		if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Foliage/Roots", true, true, true, true)))
+			assert(!"Issue");
+#pragma endregion Foliage
+
+#pragma region Born_GroundCover
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_BasilLarge",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_BasilMedium",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilMedium.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_BasilSmall",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilSmall.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Bush_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Bush/SK_Bush_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Fern_01",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_01.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Fern_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Fern_03",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_03.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Fern_04",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_04.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Flower_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Flower_03",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_03.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Flower_05",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_05.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Mushroom_01",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_01.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Mushroom_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Pampas",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Pampas/SK_Pampas.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plant_05",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plant_05.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_SK_Plants3",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
+			return E_FAIL;
+#pragma  endregion Born_GroundCover
+
+#pragma  region HHW_OBJ
+	/* For.Prototype_GameObject_Cave_Rock */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
+		CCliff_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
+		CRotWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Tree */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"),
+		CTree::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Crystal */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crystal"),
+		CCrystal::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_BowTarget */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BowTarget"),
+		CBowTarget::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_PulseStone */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulseStone"),
+		CPulseStone::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_BaseGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BaseGround"),
+		CBase_Ground::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Wall */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wall"),
+		CWall::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Wall */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Root"),
+		CRoots::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Stair */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"),
+		CStair::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Wall */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pillar"),
+		CPillar::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Statue */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"),
+		CStatue::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Border */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Border"),
+		CBorder::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Slope */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Slope"),
+		CSlope::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Bridge */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Bridge"),
+		CBridge::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Path_Mesh */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Path_Mesh"),
+		CPath_Mesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_FloorTile */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FloorTile"),
+		CFloorTile::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Pulse_PlateForm */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pulse_PlateForm"),
+		CPulse_PlateForm::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Gate */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Gate"),
+		CGate::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_RuinKit */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RuinKit"),
+		CRuinKit::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+	/* For.Prototype_GameObject_Stone */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stone"),
+		CStone::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Flower */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Flower"),
+		CFlower::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Grass */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Grass"),
+		CGrass::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_DeadZoneObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DeadZoneObj"),
+		CDeadZoneObj::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_DeadZoneObj */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GimmickObj"),
+		CGimmick_EnviObj::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+	/*Anim*/
+	/* For.Prototype_GameObject_Door_Anim */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
+		CDoor_Anim::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_Door_Anim */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
+		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_GroundMark */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
+		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_ControlRoom */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ControlRoom"),
+		CControlRoom::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Born_GroundCover"),
+		CBorn_GroundCover::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+#pragma endregion HHW_OBJ
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
