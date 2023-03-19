@@ -377,12 +377,12 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 	}
 
-	if (m_fTimeSleep > 0.f)
-	{
-		m_fTimeSleep -= fTimeDelta;
-		return;
-	}
-	else
+// 	if (m_fTimeSleep > 0.f)
+// 	{
+// 		m_fTimeSleep -= fTimeDelta;
+// 		return;
+// 	}
+// 	else
 		__super::Tick(fTimeDelta);
 }
 
@@ -509,10 +509,12 @@ void CCamera_Player::Camera_Shake(_float4 vDir)
 
 void CCamera_Player::TimeSleep(_float fDuration)
 {
-	m_fTimeSleep = fDuration;
+	//m_fTimeSleep = fDuration;
+
+	CGameInstance::GetInstance()->Set_TimeSleep(L"Timer_60", fDuration);
 }
 
-_float4 CCamera_Player::Calculation_CamPosition(CAMOFFSET eOffset, _fvector vTargetPos)
+_float4 CCamera_Player::Calculate_CamPosition(CAMOFFSET eOffset, _fvector vTargetPos)
 {
 	_float4	vResultPos = vTargetPos;
 
