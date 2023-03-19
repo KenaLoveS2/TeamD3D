@@ -9,9 +9,9 @@ class CUI_Billboard abstract : public CUI
 public:
 	typedef struct tagBillBoardDesc
 	{
-		wstring		fileName;
-		CMonster*	pOwner;
-		_float4		vCorrect;
+		wstring			fileName;
+		CGameObject*	pOwner;
+		_float4			vCorrect;
 	}BBDESC;
 
 protected:
