@@ -1479,6 +1479,17 @@ HRESULT CLoader::Loading_ForTestPlay()
 	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_TESTPLAY), E_FAIL);
 
+	/* For.Prototype_Component_Texture_Sky */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Sky"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 5))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Sky */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	_matrix PivotMatrix = XMMatrixIdentity();
 	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_TESTPLAY), E_FAIL);
 
@@ -1490,7 +1501,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_TESTPLAY), E_FAIL);
-	
 
 	m_isFinished = true;
 	SetWindowText(g_hWnd, TEXT("Loading Complete!! Wait a moment"));
