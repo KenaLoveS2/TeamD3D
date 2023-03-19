@@ -222,23 +222,17 @@ HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	lstrcpy(m_szLoadingText, TEXT("Loading WJ..."));
+	
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
-	
-	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
-	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading JH..."));
+	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
-	
-	lstrcpy(m_szLoadingText, TEXT("Loading HW..."));
+
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
-	
-	lstrcpy(m_szLoadingText, TEXT("Loading HO..."));
+
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
-	
-	lstrcpy(m_szLoadingText, TEXT("Loading BJ..."));
+
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
 		
 	lstrcpy(m_szLoadingText, TEXT("Loading ETC..."));
@@ -993,7 +987,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
 		assert(!"Issue");
-
+	
 	lstrcpy(m_szLoadingText, TEXT("Loading Collider..."));
 	/* For.Prototype_Component_Collider_AABB*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Collider_AABB"),
@@ -1173,33 +1167,16 @@ HRESULT CLoader::Loading_ForTestPlay()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_TESTPLAY), E_FAIL);
-
-	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
+	
 	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_TESTPLAY), E_FAIL);
 
-	/* For.Prototype_Component_Texture_Sky */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 5))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Sky */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	_matrix PivotMatrix = XMMatrixIdentity();
-	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_TESTPLAY), E_FAIL);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
 	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_TESTPLAY), E_FAIL);
-
-	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+		
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_TESTPLAY), E_FAIL);
 
-	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_TESTPLAY), E_FAIL);
 
 	m_isFinished = true;
@@ -1211,14 +1188,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 HRESULT CLoader::Loading_ForTestEffect()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+		
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_EFFECT), E_FAIL);
-
-
-	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
+	
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_EFFECT), E_FAIL);
+
+	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
@@ -1380,14 +1355,16 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
+	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
+
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
-	_matrix	PivotMatrix = XMMatrixIdentity();
+	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
 
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* COMPONENTS */
 	/* Prototype_Component_Model_Kena */
@@ -1423,11 +1400,15 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
+	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
+
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
+	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -1581,12 +1562,12 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
+	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	_matrix			PivotMatrix = XMMatrixIdentity();
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-
-	lstrcpy(m_szLoadingText, TEXT("Loading Effects Component..."));
+	_matrix	 PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		
 #pragma region EFFECT_COMPONENT
 
 	/* For.Prototype_Component_Texture_Effect */
@@ -1807,6 +1788,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_P_SpiritArrow::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_SpritArrowSpot.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
+		CRotWisp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1815,6 +1801,8 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
+	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
+
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Terrain"),
@@ -2183,13 +2171,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CCliff_Rock::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
-
-	/* For.Prototype_GameObject_RotWisp */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
-		CRotWisp::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	
-
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
