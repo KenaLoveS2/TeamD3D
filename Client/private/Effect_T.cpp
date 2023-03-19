@@ -150,15 +150,13 @@ void CEffect_T::Tick(_float fTimeDelta)
 
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
+	//if (m_eEFfectDesc.bActive == false)
+	//	return;
 
 	__super::Late_Tick(fTimeDelta);
 	
-	if (m_eEFfectDesc.IsBillboard == true)
-		CUtile::Execute_BillBoard(m_pTransformCom, _float3{1.f, 1.f, 1.f});
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+  	if (m_eEFfectDesc.IsBillboard == true)
+		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);

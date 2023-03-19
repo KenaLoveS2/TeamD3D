@@ -1,21 +1,21 @@
 {
     "0.Save Level": 5,
-    "1.Save2Load Level": 5,
+    "1.Save2Load Level": 0,
     "2.Layer Tag": "Layer_Effect",
     "Object": [
         {
             "Object Data": [
                 {
                     "Child Count": 0,
-                    "CloneObject Component InstnaceData PSizeX": 0.10000000149011612,
+                    "CloneObject Component InstnaceData PSizeX": 0.20000000298023224,
                     "CloneObject Component InstnaceData PSizeY": 0.30000001192092896,
                     "CloneObject Component InstnaceData Position": [
-                        -0.07340370118618011,
-                        0.004857146646827459,
-                        -0.06773702800273895,
+                        -0.04555712640285492,
+                        0.32561925053596497,
+                        -0.20588061213493347,
                         1.0
                     ],
-                    "CloneObject Component InstnaceData Speed": 13.261198997497559,
+                    "CloneObject Component InstnaceData Speed":  1.5,
                     "CloneObject Component InstnaceData SpeedMinMax": 0.0,
                     "CloneObject Component InstnaceData SpeedMinMin": 0.0,
                     "CloneObject Component PointDesc CirclePos": [
@@ -29,38 +29,38 @@
                         0.0
                     ],
                     "CloneObject Component PointDesc CreateInstance": 50,
-                    "CloneObject Component PointDesc CreateRange": 0.10000000149011612,
+                    "CloneObject Component PointDesc CreateRange": 0.30000001192092896,
                     "CloneObject Component PointDesc Dir": [
-                        0.04404107853770256,
+                        0.30000001192092896,
                         0.0,
-                        -0.03828432410955429,
+                        0.0,
                         0.0
                     ],
                     "CloneObject Component PointDesc DurationTime": 0.0,
                     "CloneObject Component PointDesc ExplosionDir": [
-                        -0.07340370118618011,
-                        0.004857146646827459,
-                        -0.06773702800273895,
+                        -0.035230882465839386,
+                        0.25181248784065247,
+                        -0.15921449661254883,
                         0.0
                     ],
                     "CloneObject Component PointDesc InstanceIndex": 0,
                     "CloneObject Component PointDesc IsAlive": false,
                     "CloneObject Component PointDesc Max": [
-                        0.0,
-                        0.0,
-                        0.0
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "CloneObject Component PointDesc MaxTime": 0.0,
                     "CloneObject Component PointDesc Min": [
-                        0.0,
-                        0.0,
-                        0.0
+                        -1.0,
+                        -1.0,
+                        -1.0
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [
-                        -0.07340370118618011,
-                        0.004857146646827459,
-                        -0.06773702800273895,
+                        -0.035230882465839386,
+                        0.25181248784065247,
+                        -0.15921449661254883,
                         1.0
                     ],
                     "CloneObject Component PointDesc Range": 1.0,
@@ -71,7 +71,7 @@
                     "CloneObject Component PointDesc ShapeType": 4,
                     "CloneObject Component PointDesc Spread": true,
                     "CloneObject Component PointDesc bMoveY": false,
-                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_HeavyAttack_P",
+                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_HeavyAttackInto",
                     "Desc": [
                         {
                             "Alpha": 0.0,
@@ -79,14 +79,14 @@
                             "Billboard": false,
                             "Blend Type": 0,
                             "Color": [
-                                0.49694713950157166,
-                                0.703180193901062,
-                                0.6835042238235474,
+                                0.69,
+                                0.78,
+                                0.86,
                                 1.0
                             ],
-                            "CreateRange": 0.0,
+                            "CreateRange": 0.10000000149011612,
                             "DiffuseTexture Index": [
-                                126.0,
+                                28.0,
                                 0.0,
                                 0.0,
                                 0.0,
@@ -96,7 +96,7 @@
                             "Effect Type": 1,
                             "FreeMove": false,
                             "Have Trail": false,
-                            "Height Frame": 0.0,
+                            "Height Frame": 1.0,
                             "HeightCnt": 2,
                             "Init Pos": [
                                 0.0,
@@ -127,8 +127,8 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                1.0,
-                                1.0,
+                                2.0,
+                                2.0,
                                 1.0,
                                 1.0
                             ],
@@ -151,17 +151,17 @@
                     "Instance DataCnt": 50,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
+                        0.9999999403953552,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        -4.371138828673793e-08,
                         1.0,
                         0.0,
                         0.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0,
+                        -1.0,
+                        -4.371138828673793e-08,
                         0.0,
                         0.0,
                         0.0,

@@ -37,6 +37,7 @@ HRESULT CE_KenaDust::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
 	return S_OK;
 }
 

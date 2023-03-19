@@ -8,7 +8,7 @@ class CSpiritArrow final : public CEffect_Mesh
 {
 public:
 	enum ARROWSTATE { ARROW_CHARGE, ARROW_READY, ARROW_FIRE, ARROW_HIT, ARROWSTATE_END };
-	enum EFFECTS { EFFECT_POSITION, EFFECT_HIT, EFFECT_END };
+	enum EFFECTS { EFFECT_POSITION, EFFECT_HIT, EFFECT_TRAIL, EFFECT_END };
 
 private:
 	CSpiritArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
