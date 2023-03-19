@@ -40,7 +40,6 @@ public:
 	HRESULT Loading_ForTestPlay();
 	HRESULT Loading_ForTestEffect();
 
-	HRESULT Loading_Effects(LEVEL eLevel);
 	HRESULT Loading_ForWJ(_uint iLevelIndex);
 	HRESULT Loading_ForJH(_uint iLevelIndex);
 	HRESULT Loading_ForSY(_uint iLevelIndex);
