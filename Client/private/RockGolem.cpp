@@ -266,18 +266,20 @@ HRESULT CRockGolem::SetUp_State()
 			m_bSpawn = DistanceTrigger(m_fSpawnRange);
 			return m_bSpawn;
 		})
-			
-			.AddState("INTOSLEEP")
+			.AddState("WISPIN")
 			.OnStart([this]()
 		{
-			m_pModelCom->ResetAnimIdx_PlayTime(INTOSLEEP);
-			m_pModelCom->Set_AnimIndex(INTOSLEEP);
+			m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
+			m_pModelCom->Set_AnimIndex(WISPIN);
 		})
-			.AddTransition("INTOSLEEP to SLEEPIDLE" , "SLEEPIDLE")
+			.AddTransition("WISPIN to IDLE", "IDLE")
 			.Predicator([this]()
 		{
-			return AnimFinishChecker(INTOSLEEP);
+			return AnimFinishChecker(WISPIN);
 		})
+
+
+			
 
 			.AddState("IDLE")
 			.OnStart([this]()
@@ -290,16 +292,17 @@ HRESULT CRockGolem::SetUp_State()
 			m_fIdletoAttackTime += fTimeDelta;
 			m_pModelCom->Set_AnimIndex(IDLE);
 		})
-			.AddTransition("IDLE to WALK", "WALK")
-			.Predicator([this]()
-		{
-			return TimeTrigger(m_fIdletoAttackTime, 5.f);
-		})
 			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
 		})
+			.AddTransition("IDLE to WALK", "WALK")
+			.Predicator([this]()
+		{
+			return TimeTrigger(m_fIdletoAttackTime, 5.f);
+		})
+			
 
 			.AddState("WALK")
 			.OnStart([this]()
@@ -316,11 +319,11 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			Reset_Attack();
 		})
-			.AddTransition("WALK to WISPOUT", "WISPOUT")
+			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
 		{
-			return !DistanceTrigger(20.f);
-		})
+			return m_pMonsterStatusCom->IsDead();
+		})			
 			.AddTransition("WALK to CHARGEATTACK", "CHARGEATTACK")
 			.Predicator([this]()
 		{
@@ -336,10 +339,10 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return m_bRealAttack && m_bExplodeAttack; // 어디든 상관없을듯 
 		})
-			.AddTransition("To DYING", "DYING")
+			.AddTransition("WALK to WISPOUT", "WISPOUT")
 			.Predicator([this]()
 		{
-			return m_pMonsterStatusCom->IsDead();
+			return !DistanceTrigger(20.f);
 		})
 
 			.AddState("CHARGEATTACK")
@@ -420,23 +423,18 @@ HRESULT CRockGolem::SetUp_State()
 			return m_pMonsterStatusCom->IsDead();
 		})
 
-			.AddState("WISPIN")
+			.AddState("INTOSLEEP")
 			.OnStart([this]()
 		{
-			m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
-			m_pModelCom->Set_AnimIndex(WISPIN);
+			m_pModelCom->ResetAnimIdx_PlayTime(INTOSLEEP);
+			m_pModelCom->Set_AnimIndex(INTOSLEEP);
 		})
-			.AddTransition("WISPIN to IDLE", "IDLE")
+			.AddTransition("INTOSLEEP to SLEEPIDLE", "SLEEPIDLE")
 			.Predicator([this]()
 		{
-			return AnimFinishChecker(WISPIN);
+			return AnimFinishChecker(INTOSLEEP);
 		})
-			.AddTransition("To DYING", "DYING")
-			.Predicator([this]()
-		{
-			return m_pMonsterStatusCom->IsDead();
-		})
-
+			
 			.AddState("WISPOUT")
 			.OnStart([this]()
 		{

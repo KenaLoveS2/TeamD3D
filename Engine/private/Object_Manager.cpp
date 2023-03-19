@@ -91,7 +91,7 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	{
 		_tchar szTemp[256] = L"";
 		swprintf_s(szTemp, L"%s__Prototype Object Add Fail", pPrototypeTag);
-		MessageBoxW(CGameInstance::GetInstance()->GetHWND(), L"FAIL", szTemp, MB_ICONERROR);
+		MessageBoxW(CGameInstance::GetInstance()->GetHWND(), szTemp, L"FAIL", MB_ICONERROR);
 		return E_FAIL;
 	}
 
