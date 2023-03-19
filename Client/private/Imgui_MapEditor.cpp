@@ -534,7 +534,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 		
 		SaveDataDesc.iRoomIndex = SaveJson_Desc.iRoomIndex;
 		SaveDataDesc.eChapterType = SaveJson_Desc.eChapterType;
-		SaveDataDesc.iShaderPath = SaveJson_Desc.iShaderPath;
+		SaveDataDesc.iShaderPass = SaveJson_Desc.iShaderPass;
 
 		szProtoObjTag = CUtile::WstringToString(SaveDataDesc.szProtoObjTag);
 		szModelTag = CUtile::WstringToString(SaveDataDesc.szModelTag);
@@ -543,7 +543,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 
 		jChild["0_ProtoTag"] = szProtoObjTag;
 		jChild["1_ModelTag"] = szModelTag;
-		jChild["2_ShaderOption"] = (int)SaveDataDesc.iShaderPath;
+		jChild["2_ShaderOption"] = (int)SaveDataDesc.iShaderPass;
 		jChild["3_CloneTag"] = szCloneTag;
 		jChild["4_RoomIndex"] = (int)(SaveDataDesc.iRoomIndex);
 		jChild["5_ChapterType"] = (int)(SaveDataDesc.eChapterType);
@@ -718,7 +718,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.szModelTag = m_wstrModelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
-		EnviromentDesc.iShaderPath = iShaderPath;
+		EnviromentDesc.iShaderPass = iShaderPath;
 
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
@@ -819,7 +819,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	_tchar*			wszCloneTag = L"";
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
-	int				iShaderPath = 0;
+	int				iShaderPass = 0;
 	vector<string> StrComTagVec;
 	array<string, (_int)WJTextureType_UNKNOWN> strFilePaths_arr;
 	strFilePaths_arr.fill("");
@@ -832,7 +832,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	{
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
-		jLoadChild["2_ShaderOption"].get_to<int>(iShaderPath);
+		jLoadChild["2_ShaderOption"].get_to<int>(iShaderPass);
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
@@ -886,7 +886,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
-		EnviromentDesc.iShaderPath = iShaderPath;
+		EnviromentDesc.iShaderPass = iShaderPass;
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -906,7 +906,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
-		iLoadChapterType = 0;		pLoadObject = nullptr;		iShaderPath = 0;
+		iLoadChapterType = 0;		pLoadObject = nullptr;		iShaderPass = 0;
 		StrComTagVec.clear();
 		strFilePaths_arr.fill("");
 	}

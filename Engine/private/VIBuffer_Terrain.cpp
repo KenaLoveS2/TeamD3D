@@ -20,12 +20,11 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
 	, m_iNumVerticesX(rhs.m_iNumVerticesX)
 	, m_iNumVerticesZ(rhs.m_iNumVerticesZ)
 	, m_pIndices(rhs.m_pIndices)
-	, m_pQuadTree(rhs.m_pQuadTree)
+	//, m_pQuadTree(rhs.m_pQuadTree)
 
 
 {
-	Safe_AddRef(m_pQuadTree);
-
+	//Safe_AddRef(m_pQuadTree);
 }
 
 HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath)
@@ -215,10 +214,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
 
-	m_pQuadTree = CQuadTree::Create(m_iNumVerticesX * m_iNumVerticesZ - m_iNumVerticesX,
-		m_iNumVerticesX * m_iNumVerticesZ - 1, m_iNumVerticesX - 1, 0);
-
-	m_pQuadTree->Make_Neighbor();
+	//m_pQuadTree = CQuadTree::Create(m_iNumVerticesX * m_iNumVerticesZ - m_iNumVerticesX,
+	//	m_iNumVerticesX * m_iNumVerticesZ - 1, m_iNumVerticesX - 1, 0);
+	//
+	//m_pQuadTree->Make_Neighbor();
 
 	return S_OK;
 }
@@ -251,6 +250,8 @@ HRESULT CVIBuffer_Terrain::initialize_World(CTransform * pTransform)
 
 void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 {
+	return;
+
 	CFrustum*			pFrustum = GET_INSTANCE(CFrustum);
 
 	pFrustum->Transform_ToLocalSpace(WorldMatrix);
@@ -258,7 +259,7 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 	_uint			iNumFaces = 0;
 
 #ifdef USE_QUADTREE
-	m_pQuadTree->Culling(pFrustum, m_pVerticesPos, m_pIndices, &iNumFaces);
+	//m_pQuadTree->Culling(pFrustum, m_pVerticesPos, m_pIndices, &iNumFaces);
 
 #else
 	for (_uint i = 0; i < m_iNumVerticesZ - 1; ++i)
@@ -785,6 +786,6 @@ void CVIBuffer_Terrain::Free()
 		Safe_Delete_Array(m_pIndices);		
 	}
 
-	Safe_Release(m_pQuadTree);
+	//Safe_Release(m_pQuadTree);
 }
 
