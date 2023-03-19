@@ -33,7 +33,7 @@ _fvector CMonster::Get_Position()
 _fvector CMonster::Get_FocusPosition()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
-		+ XMVectorSet(0.f, m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
+		+ XMVectorSet(0.f, 5.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
 }
 
 HRESULT CMonster::Initialize_Prototype()
@@ -122,9 +122,9 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_float fDistance = _float4::Distance(vCamPos, vPos);
 	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
 
-	if (fDistance <= 10.f && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
+	if (fDistance <= 10.f)
 	{
-		if(!m_bBind)
+		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 			Call_RotIcon();
 
 		Call_FocusIcon();

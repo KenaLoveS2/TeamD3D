@@ -29,8 +29,6 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 		
 	/* It might be faster.... */
 	m_iRenderPass = 1;
-	m_pTransformCom->Set_Scaled(_float3(30.f, 30.f, 1.f));
-	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -41,10 +39,16 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 	switch (m_tPartsDesc.iType)
 	{
 	case 0: /* left */
-		m_pTransformCom->Rotation({ 0.f, 0.f,1.f,0.f }, XMConvertToRadians(-45.f));
+		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
+		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 		break;
 	case 1: /* right */
-		m_pTransformCom->Rotation({ 0.f, 0.f,1.f,0.f }, XMConvertToRadians(45.f));
+		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
+		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+		break;
+	case 2: /* Center */
+		m_pTransformCom->Set_Scaled(_float3(21.f, 43.7f, 1.f));
+		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 		break;
 	}
 
@@ -127,7 +131,7 @@ HRESULT CUI_FocusMonsterParts::SetUp_Components()
 			return E_FAIL;
 		break;
 	case 1: /* right */
-		if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LockOnSide"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
+		if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LockOnSide2"), m_TextureComTag[TEXTURE_DIFFUSE].c_str(), (CComponent**)&m_pTextureCom[TEXTURE_DIFFUSE]))
 			return E_FAIL;
 		break;
 	case 2: /* center */
