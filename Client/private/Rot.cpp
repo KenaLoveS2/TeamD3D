@@ -12,6 +12,7 @@
 _uint CRot::m_iEveryRotCount = 0;
 _uint CRot::m_iKenaFindRotCount = 0;
 vector<CRot*> CRot::m_vecKenaConnectRot;
+_float4 CRot::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CRot::CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -116,6 +117,8 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
+	m_fTeleportDistance = 5.f;
+
 	__super::Tick(fTimeDelta);
 
 	if (m_pRotWisp->Get_Collect())
@@ -333,7 +336,10 @@ HRESULT CRot::SetUp_State()
 		m_vecKenaConnectRot.push_back(this);
 
 		if (m_iThisRotIndex == FIRST_ROT)
+		{
 			m_pKena->Set_FirstRotPtr(this);
+			m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+		}	
 
 		m_pTransformCom->Set_Position(m_vWakeUpPosition);
 	})
@@ -371,9 +377,11 @@ HRESULT CRot::SetUp_State()
 		.OnStart([this]()
 	{
 		// PHOTOPOSE1, PHOTOPOSE2, PHOTOPOSE3, PHOTOPOSE4, PHOTOPOSE5, PHOTOPOSE6, PHOTOPOSE7, PHOTOPOSE8,
-		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
 		// COLLECT, COLLECT2, COLLECT3, COLLECT4, COLLECT5, COLLECT6, COLLECT7, COLLECT8,
+
+		// m_iCuteAnimIndex = rand() % (PHOTOPOSE8 - PHOTOPOSE1) + PHOTOPOSE1;
 		m_iCuteAnimIndex = rand() % (COLLECT8 - COLLECT) + COLLECT;
+		
 		m_pModelCom->Set_AnimIndex(m_iCuteAnimIndex);
 	})
 		.Tick([this](_float fTimeDelta)
@@ -407,9 +415,7 @@ HRESULT CRot::SetUp_State()
 		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
 		.Predicator([this]()
 	{
-		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-
-		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
+		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})
 		
 		.AddState("FOLLOW_KENA")
@@ -418,8 +424,7 @@ HRESULT CRot::SetUp_State()
 		m_pModelCom->Set_AnimIndex(WALK);		
 	})
 		.Tick([this](_float fTimeDelta)
-	{
-		m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+	{	
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
 	})
 		.OnExit([this]()
@@ -440,8 +445,14 @@ HRESULT CRot::SetUp_State()
 		.AddState("TELEPORT_KENA")
 		.OnStart([this]()
 	{
+		// 텔레포트 이펙트 필요 여기서 콜하면 된다
+		_float4 vKenaLook = m_pKenaTransform->Get_State(CTransform::STATE_LOOK);
+		_float4 vTeleportPos = m_vKenaPos - vKenaLook * 1.5f + _float4(CUtile::Get_RandomFloat(0.f, 1.f), 0.f, CUtile::Get_RandomFloat(0.f, 1.f), 0.f);
+
+		m_pTransformCom->LookAt(m_vKenaPos);		
+		m_pTransformCom->Set_Position(vTeleportPos);
+
 		m_pModelCom->Set_AnimIndex(TELEPORT7);
-		m_pTransformCom->Set_Position(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
 	})
 		.AddTransition("FOLLOW_KENA to IDLE ", "IDLE")
 		.Predicator([this]()

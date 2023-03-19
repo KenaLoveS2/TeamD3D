@@ -29,7 +29,7 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("SHADOW", &m_bDynamicShadow);
 	ImGui::Checkbox("SSAO", &m_bSSAO);
 	ImGui::Checkbox("DISTORT", &m_bDistort);
-	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
+	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);	
 	if(ImGui::Button("ReCompile"))
 	{
 		ReCompile();
