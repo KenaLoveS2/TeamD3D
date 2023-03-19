@@ -20,6 +20,7 @@
 #include "Beni.h"
 #include "Saiya.h"
 #include "CameraForNpc.h"
+#include "RotWisp.h"
 
 /* Enemies*/
 #include "Moth.h"
@@ -93,6 +94,7 @@
 
 //Monster
 #include "EnemyWisp.h"
+#include "FireBullet.h"
 
 //Arrow
 #include "SpiritArrow.h"
@@ -221,6 +223,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	Loading_ForWJ(LEVEL_GAMEPLAY);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Terrain */
@@ -2295,6 +2299,18 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	// 작업 시작 안한것들은 주석처리.
 
+	/* Prototype_Component_Model_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotWisp",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/RotWisp/RotWisp.mdat"), PivotMatrix))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* Prototype_Component_Texture_T_GR_Noise_Smooth_A */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Texture_T_GR_Noise_Smooth_A",
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/RotWisp/T_GR_Noise_Smooth_A.png")))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
 	/* Prototype_Component_Model_Mage */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
@@ -2435,6 +2451,12 @@ HRESULT CLoader::Loading_ForTestPlay()
 	/* For.Prototype_GameObject_Cave_Rock */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cliff_Rock"),
 		CCliff_Rock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	m_fCur += 1.f;
+
+	/* For.Prototype_GameObject_RotWisp */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotWisp"),
+		CRotWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
@@ -2612,7 +2634,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	// Effect
 #pragma region EFFECT_COMPONENT
-	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Effect"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
@@ -2643,7 +2664,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
@@ -2956,6 +2976,10 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CRotForMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"),
+		CFireBullet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 #pragma  region NPC
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),
@@ -3349,8 +3373,6 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
 				return E_FAIL;
 
-
-
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
@@ -3400,15 +3422,12 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	if(bPivotScale)
 		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 
-
-
 	int iResult = 0;
 	while (iResult != -1)
 	{
 		strcpy_s(szFullPath, FilePath);
 		strcpy_s(szJSonFullPath, FilePath);
 		strcat_s(szFullPath, FindData.name);
-
 
 		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
 		if (!strcmp(szExt, ".mdat"))
@@ -3441,13 +3460,42 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
-
 		iResult = _findnext(handle, &FindData);
 	}
 
 	_findclose(handle);
 	Safe_Release(pGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
+{
 	return S_OK;
 }
 

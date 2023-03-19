@@ -624,6 +624,7 @@ private:
 	void						Start_Pulse_Into_Idle(_float fTimeDelta);
 	void						Start_Pulse_Into_Run(_float fTimeDelta);
 	void						Start_Pulse_Parry(_float fTimeDelta);
+	void						Start_Pulse_Walk(_float fTimeDelta);
 	void						Start_Pulse_Walk_Forward(_float fTimeDelta);
 	void						Start_Pulse_Walk_Front_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Front_Right(_float fTimeDelta);

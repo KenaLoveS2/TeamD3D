@@ -64,13 +64,18 @@ const _uint CKena::Get_AnimationStateIndex() const
 
 const _bool CKena::Get_State(STATERETURN eState) const
 {
+	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return false;
+		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse;
 
 	switch (eState)
 	{
 	case STATE_ATTACK:
 		return m_bAttack;
+		break;
+
+	case STATE_HEAVYATTACK	:
+		return m_bHeavyAttack;
 		break;
 
 	case STATE_COMMONHIT:
@@ -91,6 +96,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	case STATE_BOW:
 		return m_bBow;
+		break;
+
+	case STATE_INJECTBOW:
+		return m_bInjectBow;
+		break;
+
+	case STATE_PULSE:
+		return m_bPulse;
 		break;
 
 	case STATE_JUMP:
@@ -318,7 +331,7 @@ void CKena::Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 #endif
-
+	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -331,6 +344,7 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_pAnimation->Get_Preview() == false)
 	{
 		m_pKenaState->Tick(fTimeDelta);
+
 		if(!m_bStateLock)
 			m_pStateMachine->Tick(fTimeDelta);
 	}
@@ -354,7 +368,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Tick(fTimeDelta);
-
+	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
 
@@ -832,6 +846,7 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
+	TurnOnFootStep(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
 	TurnOnTrail(true, 0.f);

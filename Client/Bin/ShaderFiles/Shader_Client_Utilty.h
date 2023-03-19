@@ -12,7 +12,8 @@ static const float PI = 3.14159265359;
 
 float3 fresnel_glow(float amount, float intensity, float3 color, float3 normal, float3 view)
 {
-	return pow((1.0f - dot(normalize(normal), normalize(view))), amount) * color * intensity;
+	float arg = abs(1.0f - dot(normalize(normal), normalize(view)));
+	return pow(arg, amount) * color * intensity;
 }
 
 

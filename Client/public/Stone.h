@@ -36,7 +36,7 @@ private:
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 
-	_bool										m_bPulseTest = false;
+	_bool										m_bPulseTest = true;
 	_float										m_fEmissivePulse = 0.f;
 	_float										m_fNegativeQuantity = 1.f;
 
