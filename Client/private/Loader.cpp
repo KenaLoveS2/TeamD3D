@@ -2634,7 +2634,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 
 	// Effect
 #pragma region EFFECT_COMPONENT
-	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Effect"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
@@ -2665,7 +2664,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	lstrcpy(m_szLoadingText, TEXT("Loading Obejct..."));
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
@@ -3375,8 +3373,6 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
 				return E_FAIL;
 
-
-
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
@@ -3433,7 +3429,6 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 		strcpy_s(szJSonFullPath, FilePath);
 		strcat_s(szFullPath, FindData.name);
 
-
 		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
 		if (!strcmp(szExt, ".mdat"))
 		{
@@ -3465,7 +3460,6 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
-
 		iResult = _findnext(handle, &FindData);
 	}
 
@@ -3477,25 +3471,31 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
+	return S_OK;
 }
 
