@@ -1130,9 +1130,9 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion ~Roots
 
 #pragma region Rot_Rock
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/Rot_Rock", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/Rot_Rock", true, true,true)))
 		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true,true)))
 		assert(!"Issue");
 #pragma endregion ~Rot_Rock
 
@@ -1142,7 +1142,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion ~RuinPlatform
 
 #pragma region Save_StoneTree
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Save_StoneTree", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Save_StoneTree", true, true,true)))
 		assert(!"Issue");
 #pragma endregion ~Save_StoneTree
 
@@ -1324,8 +1324,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Roots", true, true, true, true)))
 			assert(!"Issue");
 #pragma endregion Foliage
-
-
 
 
 #pragma region Born_GroundCover
@@ -1558,7 +1556,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Canopy", true, true, true)))
 			return E_FAIL;
 		m_fCur += 1.f;
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Save_StoneTree", true, true)))// json NonUse
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Save_StoneTree", true, true,true)))
 			assert(!"Issue");
 		m_fCur += 1.f;
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
@@ -1588,16 +1586,12 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "DeadZone/BushDead_02", true, true)))
 			assert(!"Issue");
 		m_fCur += 1.f;
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/Rot_Rock", true, true)))// json NonUse
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/Rot_Rock", true, true,true)))
 			assert(!"Issue");
 		m_fCur += 1.f;
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true)))// json NonUse
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rot/RotCarry_Piece", true, true,true)))
 			assert(!"Issue");
 		m_fCur += 1.f;
-
-
-
-
 #pragma endregion ~Start_Forest_Room
 	}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
@@ -3163,7 +3157,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Canopy", true, true, true)))
 		return E_FAIL;
 	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Save_StoneTree", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Save_StoneTree", true, true,true)))
 		assert(!"Issue");
 	m_fCur += 1.f;
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/Deadzondes_GoopWeb", true, true, true)))
@@ -3193,10 +3187,10 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "DeadZone/BushDead_02", true, true)))
 		assert(!"Issue");
 	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/Rot_Rock", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/Rot_Rock", true, true,true)))
 		assert(!"Issue");
 	m_fCur += 1.f;
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true)))// json NonUse
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rot/RotCarry_Piece", true, true,true)))
 		assert(!"Issue");
 	m_fCur += 1.f;
 
