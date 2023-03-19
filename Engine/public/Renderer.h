@@ -14,8 +14,9 @@ public:
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
 		RENDER_ALPHABLEND,
+		RENDER_EFFECT,
 		RENDER_UI,
-		RENDER_UILAST,
+		RENDER_UILAST,		
 		RENDER_VIEWER,
 		RENDER_END };
 
@@ -85,6 +86,7 @@ private:
 	HRESULT Render_AlphaBlend();
 	HRESULT Render_HDR();
 	HRESULT Render_PostProcess();
+	HRESULT Render_Effect();
 	HRESULT Render_UI();
 	HRESULT Render_UILast();
 	HRESULT Render_Viewer();		// Model Viewer
@@ -99,10 +101,16 @@ private:
 	HRESULT Render_DebugObject();
 #endif
 
+public:
+	ID3D11ShaderResourceView*		Get_LDRTexture() { return m_pLDRTexture; }
+
+private:
+	ID3D11ShaderResourceView*		m_pLDRTexture = nullptr;
+
 private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);
 	ID3D11ShaderResourceView** 	m_pFlareTexture = nullptr;
-
+	ID3D11ShaderResourceView** 	m_pDistortionTexture = nullptr;
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CRenderer* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
