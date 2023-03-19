@@ -46,7 +46,7 @@ void CUI_Billboard::Tick(_float fTimeDelta)
 
 	if (m_tBBDesc.pOwner != nullptr)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		(m_tBBDesc.pOwner->Get_Position() + XMLoadFloat4(&m_tBBDesc.vCorrect)));
+		(static_cast<CMonster*>(m_tBBDesc.pOwner)->Get_Position() + XMLoadFloat4(&m_tBBDesc.vCorrect)));
 
 	for (auto e : m_vecEvents)
 		e->Tick(fTimeDelta);
@@ -56,10 +56,11 @@ void CUI_Billboard::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	CUtile::Execute_BillBoardOrtho(m_pTransformCom, m_vOriginalSettingScale, Get_CamDistance());
-
 	for (auto e : m_vecEvents)
 		e->Late_Tick(fTimeDelta);
+
+	CUtile::Execute_BillBoardOrtho(m_pTransformCom, m_vOriginalSettingScale, Get_CamDistance());
+
 }
 
 HRESULT CUI_Billboard::Render()
