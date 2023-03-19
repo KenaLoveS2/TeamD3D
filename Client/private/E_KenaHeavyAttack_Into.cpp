@@ -37,7 +37,6 @@ HRESULT CE_KenaHeavyAttack_Into::Initialize(void * pArg)
 
 	/* Set Option */
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
 
 	Set_Child();
 
@@ -53,7 +52,7 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-	 
+
 	__super::Tick(fTimeDelta);
 
 	for (auto& pChild : m_vecChild)
@@ -62,12 +61,18 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
-		if (m_fTimeDelta > 0.3f)
+	//	m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
+		for (auto& pChild : m_vecChild)
+			pChild->Set_AddScale(fTimeDelta + 1.1f);
+
+		if (m_fTimeDelta > 0.2f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
 			m_eEFfectDesc.fHeightFrame = 0.0;
-			m_eEFfectDesc.vScale = _float3(2.f, 2.f, 1.f);
+	//		m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 1.f);
+
+			for (auto& pChild : m_vecChild)
+				pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
 
 			m_eEFfectDesc.bActive = false;
 			m_fTimeDelta = 0.0f;

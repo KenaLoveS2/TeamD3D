@@ -19,7 +19,7 @@ void CEffect_Trail::ResetInfo()
 	if (m_pVITrailBufferCom == nullptr)
 		return;
 
-	m_pVITrailBufferCom->ResetInfo();
+	m_pVITrailBufferCom->Get_InstanceInfo()->clear();
 }
 
 HRESULT CEffect_Trail::Initialize_Prototype()
@@ -55,13 +55,10 @@ HRESULT CEffect_Trail::Initialize(void * pArg)
 
 void CEffect_Trail::Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
 	__super::Tick(fTimeDelta);
 
 	// Set_TrailDesc();
-	m_pVITrailBufferCom->Tick(fTimeDelta);
+ 	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
 
 void CEffect_Trail::Late_Tick(_float fTimeDelta)
@@ -111,8 +108,8 @@ void CEffect_Trail::Late_Tick(_float fTimeDelta)
 			vDir = XMVector3Normalize(vCamPos - vSplinePos);
 
 			fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
-			//if (fRadian < 5.f)
-			//	continue;
+			if (fRadian < 5.f)
+				continue;
 
 			vUp = XMVector3Cross(vRight, vDir);
 			vLook = XMVector3Cross(vRight, vUp);
@@ -151,11 +148,6 @@ HRESULT CEffect_Trail::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-// 	/* For.Com_VIBuffer */
-// 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_Trail"), TEXT("Com_VIBuffer"),
-// 		(CComponent**)&m_pVITrailBufferCom)))
-// 		return E_FAIL;
 
 	/***********
 	*  TEXTURE *

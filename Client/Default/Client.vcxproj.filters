@@ -418,6 +418,9 @@
     <Filter Include="02.GameObjects\UI\04. Events\LoopAct">
       <UniqueIdentifier>{2ec1b19d-bca8-41d9-88cc-e1b8d26926d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Arrow">
+      <UniqueIdentifier>{e6831c80-cd5f-4b3f-9349-6cf5dd827b37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -939,16 +942,10 @@
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h" />
-    <ClInclude Include="..\public\E_KenaHeavyAttack_end.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_KenaHeavyAttack_end.h">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_RotTrail.h">
@@ -987,8 +984,6 @@
     <ClInclude Include="..\public\CameraForRot.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_KenaHit.h" />
-    <ClInclude Include="..\public\E_P_SpiritArrow.h" />
     <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\public\UI_FocusNPC.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
@@ -1003,6 +998,15 @@
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotWisp.h" />
+    <ClInclude Include="..\public\E_P_SpiritArrow.h">
+      <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_SpiritArrowTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_KenaHit.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1506,13 +1510,7 @@
     <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_KenaHeavyAttack_end.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_KenaHeavyAttack_end.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_RotTrail.cpp">
@@ -1551,8 +1549,6 @@
     <ClCompile Include="..\private\CameraForRot.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_KenaHit.cpp" />
-    <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
     <ClCompile Include="..\private\FireBullet.cpp" />
     <ClCompile Include="..\private\UI_FocusNPC.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
@@ -1567,6 +1563,15 @@
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotWisp.cpp" />
+    <ClCompile Include="..\private\E_P_SpiritArrow.cpp">
+      <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_SpiritArrowTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_KenaHit.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
