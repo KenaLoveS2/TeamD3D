@@ -26,12 +26,12 @@ const _double & CMonster::Get_AnimationPlayTime()
 	return m_pModelCom->Get_PlayTime();
 }
 
-_fvector CMonster::Get_Position()
+_vector CMonster::Get_Position()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 }
 
-_fvector CMonster::Get_FocusPosition()
+_vector CMonster::Get_FocusPosition()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
 		+ XMVectorSet(0.f, 6.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
@@ -376,7 +376,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget && m_bSpawn)
 	{
-		if ((iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
 		{
 			m_pUIHPBar->Set_Active(true);
 			WeakleyHit();
@@ -388,8 +388,16 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
-			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.2f);
-			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
+			{
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+			}
+			else
+			{
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.5f);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+			}
 		}
 	}
 

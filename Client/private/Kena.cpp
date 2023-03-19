@@ -369,6 +369,35 @@ void CKena::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
+	if (m_pTargetMonster && m_bAttack)
+	{
+		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vTargetPos = m_pTargetMonster->Get_Position();
+		_vector	vDir = vTargetPos - vPos;
+		_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
+
+		if (!m_bJump && !m_bSprint)
+		{
+			if (fDistance > 0.7f)
+			{
+				vTargetPos = vTargetPos + XMVector3Normalize(vDir) * 0.7f;
+				vDir = vTargetPos - vPos;
+
+				m_pTransformCom->Set_Speed(7.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_pTransformCom->Go_Direction(vDir, fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Set_Speed(5.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_bLocalMoveLock = true;
+			}
+		}
+	}
+	else
+		m_bLocalMoveLock = false;
+
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -872,6 +901,9 @@ void CKena::Push_EventFunctions()
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 {
+	if (m_bLocalMoveLock == true)
+		return;
+
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
