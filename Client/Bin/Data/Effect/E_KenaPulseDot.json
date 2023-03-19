@@ -129,10 +129,10 @@
                             "Range": 3.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.1
+                                0.05,
+                                0.05,
+                                0.05,
+                                0.05
                             ],
                             "SeparateHeight": 2,
                             "SeparateWidth": 2,
