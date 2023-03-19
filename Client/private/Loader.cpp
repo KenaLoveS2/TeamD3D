@@ -226,7 +226,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	Loading_ForWJ(LEVEL_GAMEPLAY);
 
-	if (FAILED(Loading_ForHW((_uint)LEVEL_GAMEPLAY)))
+	if (FAILED(Loading_ForHO((_uint)LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
@@ -236,12 +236,12 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Normal*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Normal"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Normal"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_GroundMark*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
 		return E_FAIL;
 
@@ -1030,7 +1030,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 #pragma endregion RuinKit
 
-#pragma region Interactive	��״� ������ �ν��Ͻ� ����
+#pragma region Interactive	
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/FirstTear_FallenTree", true, false, true)))
@@ -1648,8 +1648,11 @@ HRESULT CLoader::Loading_ForTestPlay()
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// Effect
 	if (FAILED(Loading_ForHW((_uint)LEVEL_TESTPLAY)))
+		return E_FAIL;
+
+	// Effect
+	if (FAILED(Loading_ForHO((_uint)LEVEL_TESTPLAY)))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Sky */
@@ -1979,7 +1982,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
-	if (FAILED(Loading_ForHW((_uint)LEVEL_EFFECT)))
+	if (FAILED(Loading_ForHO((_uint)LEVEL_EFFECT)))
 		return E_FAIL;
 
 #pragma  region	PLAYER
@@ -2019,6 +2022,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma  endregion	PLAYER
+
 #pragma region ETC..
 	/* Prototype_Component_Model_RotEater */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_RotEater",
@@ -2043,29 +2047,6 @@ HRESULT CLoader::Loading_ForTestEffect()
 	return S_OK;
 }
 
-
-CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, LEVEL eNextLevelID)
-{
-	CLoader*		pInstance = new CLoader(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize(eNextLevelID)))
-	{
-		MSG_BOX("Failed to Created : CLoader");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-void CLoader::Free()
-{
-	WaitForSingleObject(m_hThread, INFINITE);
-	CloseHandle(m_hThread);
-	DeleteObject(m_hThread);
-	DeleteCriticalSection(&m_Critical_Section);
-
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pContext);
-}
 
 HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 {
@@ -2462,7 +2443,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_SpiritArrow_P */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SpiritArrow_P"),
-		CE_P_SpiritArrow::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/plz.json"))))
+		CE_P_SpiritArrow::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_SpritArrowSpot.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object
@@ -3031,3 +3012,27 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
+
+CLoader * CLoader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, LEVEL eNextLevelID)
+{
+	CLoader*		pInstance = new CLoader(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize(eNextLevelID)))
+	{
+		MSG_BOX("Failed to Created : CLoader");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CLoader::Free()
+{
+	WaitForSingleObject(m_hThread, INFINITE);
+	CloseHandle(m_hThread);
+	DeleteObject(m_hThread);
+	DeleteCriticalSection(&m_Critical_Section);
+
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
+}
+
