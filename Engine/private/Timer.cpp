@@ -37,6 +37,13 @@ void CTimer::Update_Timer()
 
 	m_fTimeDelta = m_fTimeDelta * m_fTimeRate;
 
+	if (m_fTimeSleep > 0.f)
+	{
+		m_fTimeSleep -= m_fTimeDelta;
+
+		m_fTimeDelta = 0.f;
+	}
+
 	m_OldTime = m_CurrentTime;
 }
 
