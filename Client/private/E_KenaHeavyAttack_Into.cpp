@@ -53,7 +53,7 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
+	 
 	__super::Tick(fTimeDelta);
 
 	for (auto& pChild : m_vecChild)

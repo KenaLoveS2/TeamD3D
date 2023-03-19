@@ -1,21 +1,21 @@
 {
     "0.Save Level": 5,
-    "1.Save2Load Level": 0,
+    "1.Save2Load Level": 5,
     "2.Layer Tag": "Layer_Effect",
     "Object": [
         {
             "Object Data": [
                 {
                     "Child Count": 0,
-                    "CloneObject Component InstnaceData PSizeX": 0.05,
-                    "CloneObject Component InstnaceData PSizeY": 0.05,
+                    "CloneObject Component InstnaceData PSizeX": 0.20000000298023224,
+                    "CloneObject Component InstnaceData PSizeY": 0.20000000298023224,
                     "CloneObject Component InstnaceData Position": [
-                        0.18424014747142792,
+                        0.29776737093925476,
                         0.0,
                         0.0,
                         1.0
                     ],
-                    "CloneObject Component InstnaceData Speed": 0.02,
+                    "CloneObject Component InstnaceData Speed": 0.3,
                     "CloneObject Component InstnaceData SpeedMinMax": 0.0,
                     "CloneObject Component InstnaceData SpeedMinMin": 0.0,
                     "CloneObject Component PointDesc CirclePos": [
@@ -28,12 +28,12 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance":  20,
-                    "CloneObject Component PointDesc CreateRange":  1.0,
+                    "CloneObject Component PointDesc CreateInstance": 20,
+                    "CloneObject Component PointDesc CreateRange": 0.7,
                     "CloneObject Component PointDesc Dir": [
-                        3.0,
-                        -2.0952000617980957,
-                        -0.7278001308441162,
+                        0.7,
+                        0.0,
+                        0.0,
                         0.0
                     ],
                     "CloneObject Component PointDesc DurationTime": 0.0,
@@ -58,7 +58,7 @@
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [
-                        0.0,
+                        0.699999988079071,
                         0.0,
                         0.0,
                         1.0
@@ -71,7 +71,7 @@
                     "CloneObject Component PointDesc ShapeType": 2,
                     "CloneObject Component PointDesc Spread": false,
                     "CloneObject Component PointDesc bMoveY": false,
-                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_SpritArrowSpot",
+                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_SpiritArrowSpot",
                     "Desc": [
                         {
                             "Alpha": 0.0,
@@ -79,12 +79,12 @@
                             "Billboard": false,
                             "Blend Type": 0,
                             "Color": [
-                                0.40484619140625,
-                                0.758415699005127,
-                                0.78515625,
+                                0.465423583984375,
+                                0.7663066387176514,
+                                0.7890625,
                                 1.0
                             ],
-                            "CreateRange": 0.7,
+                            "CreateRange": 0.0,
                             "DiffuseTexture Index": [
                                 28.0,
                                 0.0,
@@ -117,14 +117,14 @@
                             "MovingPosition": false,
                             "NormalTexture Index": 0.0,
                             "Particle Type": 0,
-                            "PassCnt": 0,
+                            "PassCnt": 3,
                             "Pixed Dir": [
                                 0.0,
                                 0.0,
                                 0.0,
                                 0.0
                             ],
-                            "Range": 1.0,
+                            "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
                                 1.0,
@@ -134,7 +134,7 @@
                             ],
                             "SeparateHeight": 0,
                             "SeparateWidth": 0,
-                            "Spread": true,
+                            "Spread": false,
                             "Start": true,
                             "Texture Type": 0,
                             "TextureRender Type": 0,
@@ -156,12 +156,12 @@
                         0.0,
                         0.0,
                         0.0,
-                        -1.0,
+                        0.0,
                         -1.0,
                         0.0,
                         0.0,
                         1.0,
-                        -1.0,
+                        0.0,
                         0.0,
                         0.0,
                         0.0,
