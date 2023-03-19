@@ -42,8 +42,7 @@ public:
 	static PxMat44 ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix);
 	static _float4x4 ConvertMatrix_PxToD3D(PxMat44 PxMatrix);
 	
-	static  void 	MODELMATERIAL_Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
-		const char* jSonPath, vector<MODELMATERIAL>& Vec);
+	
 
 	static _float4 Calc_RayDirByMousePos(HWND hWnd, ID3D11DeviceContext *pContext, _float4 vRayPos);
 
@@ -56,6 +55,8 @@ public:
 
 	static _tchar* Create_DummyString();
 	static _tchar* Create_DummyString(const _tchar* pBaseText, _uint iCount);
+
+
 
 public:
 	template<typename T> static void Swap(T& Sour, T&Dest)

@@ -29,7 +29,7 @@ public:
 		_uint			iRoomIndex = 0;
 		CHAPTER			eChapterType = Gimmick_TYPE_END;
 		_int			iCurLevel = 0;				//이건 툴에서만 일단.
-		
+		_int			iShaderPath = 0;				
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
