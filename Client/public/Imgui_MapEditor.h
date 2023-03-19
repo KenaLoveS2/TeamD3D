@@ -26,7 +26,7 @@ public:
 public:
 	static				void									Load_MapObjects(_uint iLevel, string JsonFileName);
 	static				void									Load_ComTagToCreate(class CGameInstance *pGameInstace, class CGameObject* pGameObject, vector<string> vecStr);
-	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec, CEnviromentObj::CHAPTER eChapter);
+	static				void									Imgui_Instacing_PosLoad(CGameObject* pSelectEnvioObj, vector<_float4x4>	vecMatrixVec, vector<_float3> vecColiderSize,CEnviromentObj::CHAPTER eChapter);
 
 private:
 	void														Imgui_SelectOption();						// 컴포넌트 기능 선택
@@ -65,7 +65,8 @@ private: /*For_Tool*/
 
 	_int															m_iSelectMeshIndex = -1;
 
-
+	CGameObject*							m_pSelectedObj = nullptr;
+	CGameObject*							m_pOldSelectedObj = nullptr;
 private: /*Use.Terrain*/
 	class					CTerrain*							m_pSelectedTerrain = nullptr;
 	_bool														m_bUseTerrainPicking = false;

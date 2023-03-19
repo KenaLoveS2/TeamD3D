@@ -35,13 +35,14 @@ public:
 	void							Set_BoneLocked(const char* pBoneName, _bool bLock);
 	void							Set_AllBonesUnlock();
 	void							Set_RootBone(const string& strRootBone) { m_strRootBone = strRootBone; }
-	HRESULT						Set_BoneIndex(const _tchar* pFilePath);
+	HRESULT							Set_BoneIndex(const _tchar* pFilePath);
 
 	void							ResetAnimIdx_PlayTime(_uint iAnimIndex);
 	void							Set_AdditiveAnimIndexForMonster(_uint iAnimIndex);
 	void							Play_AdditiveAnimForMonster(_float fTimeDelta, _float fRatio, const string& strRootBone = "");
 
 	vector<MODELMATERIAL>*			Get_Material() { return &m_Materials; }
+	vector<_float3>*				Get_ColiderSize() { return	&m_VecInstancingColiderSize; }
 
 
 	CModel::TYPE			Get_Type()const { return m_eType; }
@@ -51,7 +52,7 @@ public:
 	/*for.Instancing*/
 	const	_bool			Get_IStancingModel() const { return m_bIsInstancing; }
 	vector<_float4x4*>*		Get_InstancePos() { return &m_pInstancingMatrix; }
-	void							Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
+	void					Set_InstancePos(vector<_float4x4> InstanceMatrixVec);
 	/*~for.Instancing*/
 	/*for.Lod*/
 	const	_bool 			Get_IsLodModel()const { return m_bIsLodModel; }
@@ -123,7 +124,7 @@ private:
 	vector<class CInstancing_Mesh*>		m_InstancingMeshes;
 	vector<_float4x4*>								m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
 	vector<_float3>									m_VecInstancingColiderSize;
-	_uint									  					m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
+	_uint									  		m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
 	/*For.Lod*/
 	_bool													m_bIsLodModel = false;
@@ -163,8 +164,10 @@ public:
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f));
 
+	/*Imgui*/
 	void Edit_InstModel_Collider(const _tchar* pActorName); // Only_Static
-
+	void InitPhysxData();
+	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
 };
 
 END

@@ -1053,7 +1053,6 @@ HRESULT CLoader::Loading_ForMapTool()
 			assert(!"Issue");
 #pragma endregion GroundCover
 
-
 #pragma region Foliage
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/BushDead", true, true, true, true)))
 			assert(!"Issue");
@@ -1076,7 +1075,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Foliage/Roots", true, true, true, true)))
 			assert(!"Issue");
 #pragma endregion Foliage
-
 
 #pragma region Born_GroundCover
 		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
