@@ -70,6 +70,9 @@ public:
 	//void						Call_FocusIcon(CGameObject* pTarget);
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
+	
+	void Dead_FocusRotIcon(CGameObject* pTarget);
+	void Dead_FocusMonsterIcon(CGameObject *pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;

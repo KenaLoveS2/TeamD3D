@@ -300,7 +300,7 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 
 void CMonster::Call_RotIcon()
 {
-	if (nullptr == m_pKena)
+	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
 		return;
 
 	m_pKena->Call_FocusRotIcon(this);
@@ -308,7 +308,7 @@ void CMonster::Call_RotIcon()
 
 void CMonster::Call_MonsterFocusIcon()
 {
-	if (nullptr == m_pKena)
+	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
 		return;
 
 	m_pKena->Call_FocusMonsterIcon(this);
@@ -410,4 +410,15 @@ HRESULT CMonster::Bind_Dissolove(CShader* pShader)
 	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(pShader, "g_DissolveTexture"))) return E_FAIL;
 	
 	return S_OK;
+}
+
+void CMonster::Set_Dying(_uint iDeathAnimIndex)
+{
+	m_pModelCom->ResetAnimIdx_PlayTime(iDeathAnimIndex);
+	m_pModelCom->Set_AnimIndex(iDeathAnimIndex);
+
+	m_pKena->Dead_FocusMonsterIcon(this);	
+	m_bDying = true;
+	m_pUIHPBar->Set_Active(false);
+	m_pTransformCom->Clear_Actor();
 }

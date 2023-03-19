@@ -7,12 +7,6 @@ BEGIN(Engine)
 class ENGINE_DLL CEnviromentObj : public CGameObject
 {
 public:
-	enum SHADER_PASS
-	{
-		ONLY_MRAO = 6,
-		PASS_END
-	};
-
 	enum COMPONENTS_OPTION {
 		COMPONENTS_CONTROL_MOVE, COMPONENTS_INTERACTION, COMPONENTS_END
 	};
@@ -29,16 +23,14 @@ public:
 		_uint			iRoomIndex = 0;
 		CHAPTER			eChapterType = Gimmick_TYPE_END;
 		_int			iCurLevel = 0;				//이건 툴에서만 일단.
-		_int			iShaderPath = 0;				
+		_int			iShaderPass = 0;
+
 		tagEnviromnetObjectDesc()
 		{
 			ObjectDesc.TransformDesc.fRotationPerSec = 0;
 			ObjectDesc.TransformDesc.fSpeedPerSec = 0;
-
 		}
-
 	} ENVIROMENT_DESC;		/*wstring 이  있는 애들은 zeromemory를 쓰지마라*/
-
 
 protected:
 	CEnviromentObj(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -62,7 +54,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual 	void ImGui_ShaderValueProperty();
-	
 	virtual void ImGui_PhysXValueProperty()override;
 
 

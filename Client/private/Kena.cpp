@@ -968,6 +968,23 @@ void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 		m_pFocusMonster->Start_Animation();
 }
 
+
+void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
+{
+	if (m_pFocusRot == nullptr || pTarget) return;
+
+	m_pFocusRot->Set_Pos(nullptr);
+}
+
+void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
+{	
+	if (m_pTargetMonster && m_pFocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
+	{
+		m_pTargetMonster = nullptr;
+		m_pFocusMonster->Set_Active(false);
+	}
+}
+
 HRESULT CKena::Ready_Parts()
 {
 	CKena_Parts*	pPart = nullptr;

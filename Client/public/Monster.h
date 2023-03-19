@@ -150,6 +150,7 @@ public:
 	_bool IsRealAttack() { return m_bRealAttack; }
 
 	void Set_DeathFlag(_bool bFlag) { m_bDeath = bFlag; }
+	void Set_Dying(_uint iDeathAnimIndex);
 };
 
 END

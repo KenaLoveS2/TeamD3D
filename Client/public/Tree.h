@@ -9,7 +9,6 @@ class CModel;
 class CTexture;
 END
 
-
 BEGIN(Client)
 class CTree final : public CEnviromentObj
 {
