@@ -245,9 +245,6 @@ void CImgui_MapEditor::Imgui_SelectOption()
 		}
 	}
 
-
-
-
 #pragma endregion ~생성시 사용되는 모델 이름
 
 #pragma region 생성시 사용되는 클론 이름짓기
@@ -265,6 +262,19 @@ void CImgui_MapEditor::Imgui_SelectOption()
 	}
 
 #pragma endregion ~생성시 사용되는 모델 이름
+
+
+#pragma endregion 생성 클래스, 모델, 클론이름 정보 
+	char szSelctedObject_Name[256], szSelctedModel_Name[256];
+	CUtile::WideCharToChar(m_wstrProtoName.c_str(), szSelctedObject_Name);
+	CUtile::WideCharToChar(m_wstrModelName.c_str(), szSelctedModel_Name);
+
+	ImGui::Text("Selected_ProtoObj_Tag : %s", szSelctedObject_Name);
+	ImGui::Text("Selected_Model_Tag : %s", szSelctedModel_Name);
+	ImGui::Text("Selected_Clone_Tag : %s", m_strCloneTag);
+
+#pragma region ~생성 클래스, 모델, 클론이름 정보 
+
 }
 
 void CImgui_MapEditor::Imgui_AddComponentOption_CreateCamFront(CGameInstance *pGameInstace, CGameObject* pGameObject)

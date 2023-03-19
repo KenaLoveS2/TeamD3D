@@ -1036,6 +1036,8 @@ void CSticks01::AdditiveAnim(_float fTimeDelta)
 			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_R);
 			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
 		}
+
+		m_bWeaklyHit = false;
 	}
 }
 

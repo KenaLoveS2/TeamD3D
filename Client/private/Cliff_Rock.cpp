@@ -151,10 +151,21 @@ HRESULT CCliff_Rock::RenderShadow()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (m_pModelCom->Get_IStancingModel())
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
 	}
 
 	return S_OK;

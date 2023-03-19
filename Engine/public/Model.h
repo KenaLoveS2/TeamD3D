@@ -122,7 +122,8 @@ private:
 	_bool													m_bIsInstancing = false;
 	vector<class CInstancing_Mesh*>		m_InstancingMeshes;
 	vector<_float4x4*>								m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
-	_uint														m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
+	vector<_float3>									m_VecInstancingColiderSize;
+	_uint									  					m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
 	
 	/*For.Lod*/
 	_bool													m_bIsLodModel = false;

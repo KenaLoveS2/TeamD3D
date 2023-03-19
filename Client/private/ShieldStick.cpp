@@ -154,7 +154,7 @@ HRESULT CShieldStick::RenderShadow()
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SHADOW);
 
 	return S_OK;
 }
@@ -492,7 +492,7 @@ HRESULT CShieldStick::SetUp_ShadowShaderResources()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;

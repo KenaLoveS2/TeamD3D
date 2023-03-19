@@ -129,7 +129,7 @@ public:
 	void Render();
 
 	void	Imgui_Render();
-	void	Imgui_Render(const _tchar* pActorName);
+	void	Imgui_Render(const _tchar* pActorName,vector<_float3>* vec_ColiderSize);
 
 	PxVec3						Get_ScalingBox(PxRigidActor *pActor);
 		
