@@ -195,11 +195,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
-{
-
-}
-
 HRESULT CLoader::Loading_ForLogo()
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -3431,8 +3426,6 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	if(bPivotScale)
 		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
 
-
-
 	int iResult = 0;
 	while (iResult != -1)
 	{
@@ -3480,5 +3473,29 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 	Safe_Release(pGameInstance);
 
 	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
+{
+}
+
+HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
+{
+}
+
+HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
+{
+}
+
+HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
+{
+}
+
+HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
+{
+}
+
+HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
+{
 }
 
