@@ -3,9 +3,6 @@
 #include "Client_Defines.h"
 #include "Base.h"
 
-/* 로딩레벨에서 처리해야할 자원들을 로드하낟. : 실제 할당하고자하는 레벨을 위한 준비. */
-
-
 BEGIN(Client)
 class CLoader final : public CBase
 {

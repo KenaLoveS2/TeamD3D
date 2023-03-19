@@ -37,11 +37,11 @@ HRESULT CLevel_EffectTest::Initialize()
  	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
  		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
+// 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+// 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Background"))))
-		return E_FAIL;
+// 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Background"))))
+// 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Late_Initialize(LEVEL_EFFECT)))
 		return E_FAIL;
