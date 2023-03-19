@@ -8,6 +8,7 @@
 #include "Tool_Animation.h"
 #include "Tool_Settings.h"
 #include "ImGui_PhysX.h"
+#include "ImGui_Monster.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -195,10 +196,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	// kbj test
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr)))
-	//	return E_FAIL;
-
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 

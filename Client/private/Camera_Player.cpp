@@ -383,6 +383,23 @@ void CCamera_Player::Tick(_float fTimeDelta)
 // 		return;
 // 	}
 // 	else
+
+	if (m_ShakeValueList.empty() == false)
+	{
+		_vector	vShakeDir = m_ShakeValueList.front();
+		
+		_vector	vEye = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vAt = vEye + XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+
+		_vector	vShakeEye = vEye - vShakeDir;
+		_vector	vShakeAt = vAt + vShakeDir;
+
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vShakeEye);
+		m_pTransformCom->LookAt(vShakeAt);
+
+		m_ShakeValueList.pop_front();
+	}
+
 		__super::Tick(fTimeDelta);
 }
 
@@ -499,12 +516,22 @@ void CCamera_Player::Initialize_Position()
 	m_pTransformCom->LookAt(m_CameraDesc.vAt);
 }
 
-void CCamera_Player::Camera_Shake()
+void CCamera_Player::Camera_Shake(_float fPower, _uint iCount)
 {
+	_vector	vRandom;
+	
+	for (_uint i = 0; i < iCount; ++i)
+	{
+		vRandom = XMVector3Normalize(CUtile::Get_RandomVector(_float3(-1.f, -1.f, 0.f), _float3(1.f, 1.f, 0.f))) * fPower;
+
+		m_ShakeValueList.push_back(vRandom);
+		m_ShakeValueList.push_back(vRandom * -1.f);
+	}
 }
 
-void CCamera_Player::Camera_Shake(_float4 vDir)
+void CCamera_Player::Camera_Shake(_float4 vDir, _float fPower, _float fDuration)
 {
+	m_ShakeValueList.push_back(XMVector3Normalize(vDir) * fPower);
 }
 
 void CCamera_Player::TimeSleep(_float fDuration)

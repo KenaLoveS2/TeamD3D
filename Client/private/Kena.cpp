@@ -276,7 +276,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 
-		_tchar szCloneRotTag[32] = { 0, };
+	_tchar szCloneRotTag[32] = { 0, };
 	for (_int i = 0; i < 8; i++)
 	{
 		CGameObject* p_game_object = nullptr;
@@ -371,6 +371,11 @@ void CKena::Tick(_float fTimeDelta)
 	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+		m_pCamera->Camera_Shake(0.003f, 10);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), 0.005f, 1.f);
 
 	/* Delegator Arrow */
 	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
@@ -959,7 +964,6 @@ HRESULT CKena::Ready_Arrows()
 		pArrow->Reset();
 		m_vecArrow.push_back(pArrow);
 	}
-
 
 	return S_OK;
 }
