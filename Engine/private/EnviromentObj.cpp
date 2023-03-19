@@ -131,6 +131,7 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		//m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		m_EnviromentDesc.iShaderPath = Desc->iShaderPath;
 	}
 	else
 	{

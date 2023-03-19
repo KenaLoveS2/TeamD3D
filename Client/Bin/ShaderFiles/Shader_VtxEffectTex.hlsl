@@ -190,10 +190,17 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+float2 Distort(float2 uv , float time)
+{
+	float2 displacementCoords =uv * 1.f + time * 1.f;
+	//float4 displacementColor = displacementMap.Sample(sampleType, displacementCoords);
+	float2 displacementVector = displacementCoords * 1.f;
+	return uv += displacementVector;
+}
+
 PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-
 	vector maskTex = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
 	maskTex.a = maskTex.r;
 	if (maskTex.r >= 0.035f && maskTex.g >= 0.035f && maskTex.b >= 0.035f)
