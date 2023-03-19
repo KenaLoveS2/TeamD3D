@@ -232,8 +232,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
-	/* For.Prototype_Component_Texture_Terrain */
-	
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
@@ -246,12 +244,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
-
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_VIBuffer_Rect_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
 		CVIBuffer_Rect_Instancing::Create(m_pDevice, m_pContext, 30))))
@@ -354,7 +346,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	CGameInstance*		pGameInstance =GET_INSTANCE(CGameInstance);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
-	///* For.Prototype_Component_Texture_Terrain */
+	/* For.Prototype_Component_Texture_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/ForestGround/Test_%d.png"), 7))))
 		return E_FAIL;
@@ -1812,10 +1804,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	if(FAILED(Loading_ForHW(_uint(LEVEL_TESTPLAY))))
-		return E_FAIL;
-
-
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
 		CKena::Create(m_pDevice, m_pContext))))
@@ -2453,12 +2441,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	/* For.Prototype_Component_Texture_GroundMark*/
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_GroundMark"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
 
