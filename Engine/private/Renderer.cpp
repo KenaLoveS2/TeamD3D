@@ -220,8 +220,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 #endif
-	CreateTexture(L"../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_2.png", m_pFlareTexture);
-
+	CreateTexture(L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_93.png", m_pFlareTexture);
+	CreateTexture(L"../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_2.png", m_pDistortionTexture);
 	return S_OK;
 }
 
@@ -897,7 +897,7 @@ HRESULT CRenderer::PostProcess_Distort()
 	m_fDistortTime += TIMEDELTA;
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
 		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_FlareTexture", *m_pFlareTexture)))
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_DistortionTexture", *m_pDistortionTexture)))
 		return E_FAIL;
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_EffectTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Effect")))))
 		return E_FAIL;
@@ -1046,6 +1046,9 @@ void CRenderer::Free()
 
 	Safe_Release(*m_pFlareTexture);
 	Safe_Delete(m_pFlareTexture);
+
+	Safe_Release(*m_pDistortionTexture);
+	Safe_Delete(m_pDistortionTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

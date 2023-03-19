@@ -110,7 +110,7 @@ private:
 private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);
 	ID3D11ShaderResourceView** 	m_pFlareTexture = nullptr;
-
+	ID3D11ShaderResourceView** 	m_pDistortionTexture = nullptr;
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CRenderer* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;

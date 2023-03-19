@@ -13,6 +13,7 @@ Texture2D<float4>		g_SpecularTexture;
 Texture2D<float4>		g_LightDepthTexture;
 Texture2D<float4>		g_FlareTexture;
 Texture2D<float4>		g_EffectTexture;
+Texture2D<float4>		g_DistortionTexture;
 
 float g_Time;
 float2 distortionAmount = float2(0.01f, 0.01f);
@@ -136,7 +137,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
 
 	if (vEffect.a <= 0.1f)
 	{
-		float2 distort = Distortion(In.vTexUV, g_Time, g_FlareTexture);
+		float2 distort = Distortion(In.vTexUV, g_Time, g_DistortionTexture);
 		vDiffuse = g_LDRTexture.Sample(LinearSampler, distort);
 		vEffect = g_EffectTexture.Sample(PointSampler, distort);
 		FinalColor = vDiffuse;
