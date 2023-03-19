@@ -53,7 +53,7 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
+	 
 	__super::Tick(fTimeDelta);
 
 	for (auto& pChild : m_vecChild)
@@ -62,7 +62,7 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		m_eEFfectDesc.vScale *= (1.4f + fTimeDelta * 2.f);
+		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
 		if (m_fTimeDelta > 0.3f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
