@@ -8,6 +8,7 @@
 #include <locale>
 #include "Kena.h"
 #include "UI_ClientManager.h"
+#include "UI_FocusNPC.h"
 
 /* For. Delegator Default Value (meaningless) */
 _float		fDefaultVal = -1.f;
@@ -404,10 +405,18 @@ HRESULT CSaiya::SetUp_UI()
 	}
 
 	/* Link Focus UI */
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CUI_Billboard::BBDESC	tDesc;
+	tDesc.fileName = L"UI_FocusNPC";
+	tDesc.pOwner = this;
+	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + 1.f;
 
-
-
+	if (FAILED(CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL,
+		L"Layer_UI", TEXT("Prototype_GameObject_UI_FocusNPC"),
+		L"Clone_FocusUI", &tDesc, (CGameObject**)&m_pFocus)))
+	{
+		MSG_BOX("Failed To Make Focus UI");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

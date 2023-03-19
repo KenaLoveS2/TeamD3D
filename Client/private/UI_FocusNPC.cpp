@@ -30,7 +30,7 @@ HRESULT CUI_FocusNPC::Initialize(void * pArg)
 
 	/* It might be faster.... */
 	m_iRenderPass = 20;
-	m_pTransformCom->Set_Scaled(_float3(80.f, 5.f, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(50.f, 50.f, 1.f));
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
 	if (FAILED(SetUp_Components()))
@@ -39,6 +39,7 @@ HRESULT CUI_FocusNPC::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
+	m_bActive = true;
 	return S_OK;
 }
 

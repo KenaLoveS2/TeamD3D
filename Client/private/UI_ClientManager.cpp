@@ -811,8 +811,8 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_RotFocuss"), CUI_RotIcon::Create(pDevice, pContext))))
 		return E_FAIL;
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_FocusMonster"), CUI_FocusMonster::Create(pDevice, pContext))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_FocusMonster"), CUI_FocusMonster::Create(pDevice, pContext))))
+	//	return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_FocusNPC"), CUI_FocusNPC::Create(pDevice, pContext))))
 		return E_FAIL;
 	RELEASE_INSTANCE(CGameInstance);

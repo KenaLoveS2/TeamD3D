@@ -319,14 +319,14 @@ HRESULT CMonster::SetUp_UI(_float fOffsetY)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CUI_MonsterHP::BBDESC tDesc;
+	CUI_Billboard::BBDESC tDesc;
 	tDesc.fileName = L"UI_Monster_Normal_HP";
 	tDesc.pOwner = this;
 	tDesc.vCorrect.y = m_pTransformCom->Get_vPxPivotScale().y + fOffsetY;
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_MonsterHP"),
-		CUtile::Create_DummyString(), &tDesc, (CGameObject**)&m_pUIHPBar)))
+		L"Clone_HPBar", &tDesc, (CGameObject**)&m_pUIHPBar)))
 	{
 		MSG_BOX("Failed To make UI");
 		return E_FAIL;

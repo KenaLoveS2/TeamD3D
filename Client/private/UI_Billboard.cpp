@@ -46,7 +46,7 @@ void CUI_Billboard::Tick(_float fTimeDelta)
 
 	if (m_tBBDesc.pOwner != nullptr)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		(m_tBBDesc.pOwner->Get_Position() + XMLoadFloat4(&m_tBBDesc.vCorrect)));
+		(static_cast<CMonster*>(m_tBBDesc.pOwner)->Get_Position() + XMLoadFloat4(&m_tBBDesc.vCorrect)));
 
 	for (auto e : m_vecEvents)
 		e->Tick(fTimeDelta);
