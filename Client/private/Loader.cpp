@@ -229,8 +229,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	Loading_ForHW(LEVEL_GAMEPLAY);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
-	/* For.Prototype_Component_Texture_Terrain */
-	
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
