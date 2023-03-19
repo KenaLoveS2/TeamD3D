@@ -2431,7 +2431,7 @@ void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _fl
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,	_float3 vSize ,_float3 _vPos)
+void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,	_float3 vSize ,_float3 _vPos,_bool bRotation)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2488,14 +2488,14 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.fRestitution = 0.1f;
 		BoxDesc.eFilterType = FILTER_DEFULAT;
 		BoxDesc.bKinematic = true;
-		BoxDesc.vVelocity = _float3(0.f,0.f,0.f);
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDensity = 1.f;
 		BoxDesc.fAngularDamping = 1.f;
 		BoxDesc.fMass = 1.f;
 		BoxDesc.fLinearDamping = 1.f;
 
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, iColliderIndex));
-		
+
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
 		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
@@ -2512,8 +2512,11 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
 		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
-		PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-		pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+		if (bRotation == false)
+		{
+			PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+			pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+		}
 	}
 
 }
