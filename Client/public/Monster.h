@@ -4,6 +4,11 @@
 #include "EnemyWisp.h"
 #include "UI_MonsterHP.h"
 
+#include "Kena.h"
+#include "E_KenaHit.h"
+#include "Kena_Status.h"
+
+
 BEGIN(Engine)
 class CRenderer;
 class CShader;
@@ -141,6 +146,8 @@ public:
 	CMonster_Status* Get_MonsterStatusPtr() { return m_pMonsterStatusCom; }
 	HRESULT Bind_Dissolove(class CShader* pShader);
 	_bool IsRealAttack() { return m_bRealAttack; }
+
+	void Set_DeathFlag(_bool bFlag) { m_bDeath = bFlag; }
 };
 
 END

@@ -36,6 +36,14 @@ HRESULT CStatue::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CStatue::Late_Initialize(void * pArg)
+{
+
+	//m_pRendererCom->Set_PhysXRender(true);
+
+	return S_OK;
+}
+
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -115,8 +123,22 @@ HRESULT CStatue::RenderShadow()
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RotGod_Statue_Crumbled")
 		return S_OK;
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+	if (m_pModelCom->Get_IStancingModel())
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
+	}
 
 	return S_OK;
 }
@@ -127,6 +149,11 @@ void CStatue::ImGui_ShaderValueProperty()
 	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
 	m_pModelCom->Imgui_MaterialPath();
 	m_pTransformCom->Imgui_RenderProperty();
+}
+
+void CStatue::ImGui_PhysXValueProperty()
+{
+	
 }
 
 HRESULT CStatue::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

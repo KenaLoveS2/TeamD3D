@@ -177,6 +177,11 @@ void CEnviromentObj::ImGui_ShaderValueProperty()
 	}
 }
 
+void CEnviromentObj::ImGui_PhysXValueProperty()
+{
+
+}
+
 HRESULT CEnviromentObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	m_CurComponenteTag.push_back(pComTag);

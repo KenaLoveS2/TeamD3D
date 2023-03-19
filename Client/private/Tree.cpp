@@ -251,10 +251,21 @@ HRESULT CTree::RenderShadow()
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
 		return S_OK;
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if(m_pModelCom->Get_IStancingModel())
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+		}
 	}
 
 	return S_OK;
@@ -266,6 +277,10 @@ void CTree::ImGui_ShaderValueProperty()
 	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
 	m_pModelCom->Imgui_MaterialPath();
 	m_pTransformCom->Imgui_RenderProperty();
+}
+
+void CTree::ImGui_PhysXValueProperty()
+{
 }
 
 HRESULT CTree::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)

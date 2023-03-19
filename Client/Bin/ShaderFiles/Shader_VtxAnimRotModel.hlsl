@@ -8,7 +8,7 @@ matrix g_ViewMatrix;
 matrix g_ProjMatrix;
 float	   g_fFar = 300.f;
 float4 g_vCamPosition;
-float  g_fHairTransparency = 0.3f;
+float  g_fHairTransparency = 2.f;
 /**************************************/
 
 
@@ -17,13 +17,6 @@ Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_AO_R_MTexture;
 
 Texture2D<float4>		g_AlphaTexture;
-
-float								g_fHairLength = 1.f;
-float								g_fHairThickness = 1.f;
-
-float								g_fLashDensity = 0.5f;
-float								g_fLashWidth = 0.5f;
-float								g_fLashIntensity = 0.5f;
 
 struct VS_IN
 {
@@ -158,12 +151,12 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
 	float4	vBaseColor = float4(0.018114f, 0.016204f, 0.020833f, 1.f);
-	float fAlpha = g_fHairTransparency * vAlphaDesc.r;
+	//float fAlpha = g_fHairTransparency * vAlphaDesc.r;
 
-	if (fAlpha < 0.1f)
-		discard;
+	//if (fAlpha < 0.1f)
+	//	discard;
 
-	vBaseColor *= fAlpha;
+	//vBaseColor *= fAlpha;
 
 	Out.vDiffuse = vBaseColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);

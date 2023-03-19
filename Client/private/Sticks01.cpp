@@ -2,6 +2,8 @@
 #include "..\public\Sticks01.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "Mage.h"
+#include "Kena.h"
 
 CSticks01::CSticks01(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -33,13 +35,15 @@ HRESULT CSticks01::Initialize(void* pArg)
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
 	if (pArg != nullptr)
-		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
+	{
+		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));		
+	}	
 	else
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 10.f;
-		m_Desc.WorldMatrix._43 = 5.f;
+		m_Desc.WorldMatrix._41 = -10.f;
+		m_Desc.WorldMatrix._43 = -10.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -61,7 +65,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-		PxCapsuleDesc.vPos = vPos;
+		PxCapsuleDesc.vPos = {0.f, 0.f, 0.f};
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
@@ -133,9 +137,9 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 }
 
 void CSticks01::Tick(_float fTimeDelta)
-{
+{	
 	if (m_bDeath) return;
-
+	
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
@@ -337,6 +341,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("READY_SPAWN")		
 		.OnExit([this]()
 	{		
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pUIHPBar->Set_Active(true);
 		m_bSpawn = true;
 	})
@@ -922,7 +927,14 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;		
+		m_bDeath = true;
+		
+		if (m_pMage && m_bSpawnByMage)
+		{
+			m_bSpawnByMage = false;
+			m_pMage->Erase_StickList(this);
+			m_pMage = nullptr;
+		}
 	})		
 		.Build();
 
@@ -1024,6 +1036,8 @@ void CSticks01::AdditiveAnim(_float fTimeDelta)
 			m_pModelCom->Set_AdditiveAnimIndexForMonster(TWITCH_R);
 			m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Sticks01.ao");
 		}
+
+		m_bWeaklyHit = false;
 	}
 }
 
@@ -1174,9 +1188,20 @@ void CSticks01::Free()
 	CMonster::Free();
 }
 
-void CSticks01::Spawn_ByMage(_float4 vPos)
+void CSticks01::Spawn_ByMage(CMage* pMage, _float4 vPos)
 {
+	m_bDeath = false;
+
 	m_pTransformCom->Set_Position(vPos);
 	m_pEnemyWisp->Set_Position(vPos);
+
 	m_bSpawnByMage = true;
+	Reset_Attack();
+
+	m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+	m_pMonsterStatusCom->Revive();
+	m_pMage = pMage;
 };
+
+

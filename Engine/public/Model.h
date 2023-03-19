@@ -77,8 +77,8 @@ public:
 
 public:
 	void						Play_Animation(_float fTimeDelta);
-	HRESULT				Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
-	HRESULT				Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
+	HRESULT						Bind_Material(class CShader* pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);	
+	HRESULT						Render(CShader* pShader, _uint iMeshIndex, const char* pBoneConstantName = nullptr, _uint iPassIndex = 0);
 	void						Imgui_MaterialPath();
 
 			
@@ -162,7 +162,7 @@ public:
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f));
 
-	
+	void Edit_InstModel_Collider(const _tchar* pActorName); // Only_Static
 
 };
 

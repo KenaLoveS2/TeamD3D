@@ -12,11 +12,10 @@ private:
 	virtual ~CE_KenaPulse() = default;
 
 public:
-	void	Set_NoActive(_bool bActive) { m_bNoActive = bActive; }
-	void    Set_InitMatrixScaled(_float3 vScale);
-	_float3    Get_InitMatrixScaled();
-
-	void	Set_Child();
+	_float3		Get_InitMatrixScaled();
+	void			Set_NoActive(_bool bActive) { m_bNoActive = bActive; }
+	void			Set_InitMatrixScaled(_float3 vScale);
+	void			Set_Child();
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -25,6 +24,7 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	void				Reset();
 
 private:
 	HRESULT SetUp_ShaderResources();

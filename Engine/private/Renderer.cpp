@@ -29,7 +29,7 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("SHADOW", &m_bDynamicShadow);
 	ImGui::Checkbox("SSAO", &m_bSSAO);
 	ImGui::Checkbox("DISTORT", &m_bDistort);
-	ImGui::Checkbox("FILMTONEMAPPING", &m_bFilmTonemapping);
+	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
 	if(ImGui::Button("ReCompile"))
 	{
 		ReCompile();
@@ -777,8 +777,7 @@ HRESULT CRenderer::Render_PostProcess()
 	}
 
 	/***2***/
-
-	if(m_bFilmTonemapping)
+	if(m_bGrayScale)
 	{
 		pLDRSour_SRV = pLDRSour->Get_SRV();
 		pLDRDest_RTV = pLDRDest->Get_RTV();
@@ -788,7 +787,7 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRTmp = pLDRSour;
 		pLDRSour = pLDRDest;
 		pLDRDest = pLDRTmp;
-		PostProcess_FilmTonemapping();
+		PostProcess_GrayScale();
 	}
 
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
@@ -870,7 +869,7 @@ HRESULT CRenderer::PostProcess_Distort()
 	return S_OK;
 }
 
-HRESULT CRenderer::PostProcess_FilmTonemapping()
+HRESULT CRenderer::PostProcess_GrayScale()
 {
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_FlareTexture", *m_pFlareTexture)))
 		return E_FAIL;

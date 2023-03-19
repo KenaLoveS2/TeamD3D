@@ -2,16 +2,11 @@
 #include "Monster.h"
 #include "GameInstance.h"
 #include "FSMComponent.h"
-
-#include "Kena.h"
-#include "Kena_Status.h"
-
 #include "RotForMonster.h"
 
 #include "UI_MonsterHP.h"
 #include "Camera.h"
 
-#include "E_KenaHit.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -67,7 +62,7 @@ HRESULT CMonster::Initialize(void* pArg)
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
 
 	/* Hit */
-	m_pKenaHit = dynamic_cast<CE_KenaHit*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", L"Hit"));
+	m_pKenaHit = dynamic_cast<CE_KenaHit*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pKenaHit, E_FAIL);
 
 	RELEASE_INSTANCE(CGameInstance)

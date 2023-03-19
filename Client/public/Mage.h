@@ -1,9 +1,9 @@
 #pragma once
-
 #include "Monster.h"
 
-BEGIN(Client)
+#define MAGE_STICK_COUNT			3
 
+BEGIN(Client)
 class CMage : public CMonster
 {
 private:
@@ -119,10 +119,18 @@ private:
 	vector<_float3> m_vecPivotRot;
 
 	list<CGameObject*> m_SticksList;
+
+	class CFireBullet* m_pFireBullet = nullptr;
+
+	class CSticks01* m_pSticks[MAGE_STICK_COUNT] = { nullptr, };
+
 public:
 	static CMage*							Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
 	virtual void								Free() override;
+
+	void Create_Sticks();
+	void Erase_StickList(CSticks01* pStick);
 };
 
 END

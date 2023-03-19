@@ -25,7 +25,7 @@ HRESULT CE_KenaHit::Initialize_Prototype(const _tchar * pFilePath)
 
 HRESULT CE_KenaHit::Initialize(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	CGameObject::GAMEOBJECTDESC      GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
