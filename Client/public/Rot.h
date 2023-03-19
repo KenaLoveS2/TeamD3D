@@ -44,6 +44,10 @@ private:
 	_bool m_bWakeUp = false;	
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
+	_float m_fTeleportDistance = 10.f;
+
+	_float4 m_vKenaPos;
+
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;

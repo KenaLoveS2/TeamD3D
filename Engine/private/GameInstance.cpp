@@ -627,6 +627,13 @@ void CGameInstance::Set_TimeRate(const _tchar * pTimerTag, _float Time)
 	return m_pTimer_Manager->Set_TimeRate(pTimerTag, Time);
 }
 
+void CGameInstance::Set_TimeSleep(const _tchar * pTimerTag, _float fTimeSleep)
+{
+	NULL_CHECK_RETURN(m_pTimer_Manager, );
+
+	return m_pTimer_Manager->Set_TimeSleep(pTimerTag, fTimeSleep);
+}
+
 const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)
 {
 	if (nullptr == m_pLight_Manager)

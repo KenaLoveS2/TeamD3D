@@ -169,9 +169,9 @@ HRESULT CRot::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",1);
 		}
-		else	if (i == 1)
+		else if (i == 1)
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
-		else		if (i == 2)
+		else if (i == 2)
 		{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_AlphaTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
@@ -411,7 +411,7 @@ HRESULT CRot::SetUp_State()
 
 		return !m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
 	})
-
+		
 		.AddState("FOLLOW_KENA")
 		.OnStart([this]()
 	{
@@ -419,7 +419,8 @@ HRESULT CRot::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->Chase(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION), fTimeDelta, 1.f);
+		m_vKenaPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
 	})
 		.OnExit([this]()
 	{
@@ -428,10 +429,26 @@ HRESULT CRot::SetUp_State()
 		.AddTransition("FOLLOW_KENA to IDLE", "IDLE")
 		.Predicator([this]()
 	{	
-		_float4 vPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-		return m_pTransformCom->IsClosed_XZ(vPos, m_fKenaToRotDistance);
+		return m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})		
-		
+		.AddTransition("FOLLOW_KENA to TELEPORT_KENA ", "TELEPORT_KENA")
+		.Predicator([this]()
+	{
+		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fTeleportDistance);
+	})
+
+		.AddState("TELEPORT_KENA")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(TELEPORT7);
+		m_pTransformCom->Set_Position(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
+	})
+		.AddTransition("FOLLOW_KENA to IDLE ", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
 
 		.Build();
 

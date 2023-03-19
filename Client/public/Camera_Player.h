@@ -85,7 +85,7 @@ private:
 	_float					m_fVerticalAngle = 0.f;
 
 private:
-	_float4				Calculation_CamPosition(CAMOFFSET eOffset, _fvector vTargetPos);
+	_float4				Calculate_CamPosition(CAMOFFSET eOffset, _fvector vTargetPos);
 
 public:
 	static CCamera_Player*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
