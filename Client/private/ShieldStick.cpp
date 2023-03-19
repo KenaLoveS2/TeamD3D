@@ -411,11 +411,7 @@ HRESULT CShieldStick::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(HAEDSHOT);
-		m_pModelCom->Set_AnimIndex(HAEDSHOT);
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		Set_Dying(HAEDSHOT);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()

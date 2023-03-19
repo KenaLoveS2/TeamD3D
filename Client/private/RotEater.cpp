@@ -637,20 +637,9 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		if (m_PlayerLookAt_Dir == FRONT)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(DEATH3);
-			m_pModelCom->Set_AnimIndex(DEATH3);
-		}
-		else if (m_PlayerLookAt_Dir == BACK)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-			m_pModelCom->Set_AnimIndex(DEATH);
-		}
-
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		_uint iAnimIndex = (m_PlayerLookAt_Dir == FRONT) ? DEATH3 : (m_PlayerLookAt_Dir == BACK) ? DEATH : DEATH;
+		
+		Set_Dying(iAnimIndex);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()

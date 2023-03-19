@@ -969,10 +969,7 @@ HRESULT CWoodKnight::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		Set_Dying(DEATH);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
