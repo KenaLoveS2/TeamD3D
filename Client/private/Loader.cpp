@@ -259,16 +259,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Kena/Kena_Body.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_RockGolem */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_RockGolem",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
+		m_fCur += 1.f;
 
 	/* Test Model */
 	/*if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, L"Prototype_Component_Model_Kena",
@@ -296,12 +287,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CCamera_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_CameraForRot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
-		CCameraForRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
 		CKena::Create(m_pDevice, m_pContext))))
@@ -322,14 +307,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
-		CRotForMonster::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RockGolem"),
-		CRockGolem::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
@@ -1617,6 +1594,9 @@ HRESULT CLoader::Loading_ForTestPlay()
 	// Effect
 	if (FAILED(Loading_ForHO((_uint)LEVEL_TESTPLAY)))
 		return E_FAIL;
+		
+	if (FAILED(Loading_ForBJ((_uint)LEVEL_TESTPLAY)))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_Sky"),
@@ -1672,101 +1652,7 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/RotWisp/T_GR_Noise_Smooth_A.png")))))
 		return E_FAIL;
 	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_Mage */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_ShieldStick */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_ShieldStick_Weapon */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/Shield.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	///* Prototype_Component_Model_CorruptVillager */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_CorruptVillager",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/CorruptVillager/CorruptVillager.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-
-	///* Prototype_Component_Model_Moth */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Moth",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-
-	/* Prototype_Component_Model_RockGolem */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RockGolem",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_RotEater */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotEater",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_Sticks01 */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sticks01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	///* Prototype_Component_Model_VillageGuard */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
-
-	/* Prototype_Component_Model_WoodKnight */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_Sapling */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sapling",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sapling/Sapling.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_BranchTosser */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_Rope_Rock */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rope_RotRock", true, false, true)))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_BranchTosser_Projectile */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser", true, false, false)))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_HeroRot */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
+	
 	/*map_Object Compoents */
 	/* For.Prototype_Component_ControlMove*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_ControlMove"),
@@ -1792,18 +1678,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		return E_FAIL;
 	m_fCur += 1.f;
 
-	/* For.Prototype_GameObject_CameraForRot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"),
-		CCameraForRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* For.Prototype_GameObject_CameraForRot */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForNpc"),
-		CCameraForNpc::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
 		CKena::Create(m_pDevice, m_pContext))))
@@ -1824,93 +1698,6 @@ HRESULT CLoader::Loading_ForTestPlay()
 		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"),
-		CMoth::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RockGolem"),
-		CRockGolem::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotEater"),
-		CRotEater::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"),
-		CSticks01::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_VillageGuard"),
-		CVillageGuard::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WoodKnight"),
-		CWoodKnight::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"),
-		CMage::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"),
-		CBranchTosser::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	// if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"), CBranchTosser_Weapon::Create(m_pDevice, m_pContext)))) return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"),
-		CShieldStick::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStickWeapon"),
-		CShieldStick_Weapon::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling"),
-		CSapling::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"),
-		CRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"),
-		CRope_RotRock::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot"),
-		CLiftRot::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"),
-		CLiftRot_Master::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
-		CRotForMonster::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	m_fCur += 1.f;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"),
-		CFireBullet::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 #pragma  region NPC
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beni"),
@@ -1981,22 +1768,6 @@ HRESULT CLoader::Loading_ForTestEffect()
 		CSpiritArrow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma  endregion	PLAYER
-
-#pragma region ETC..
-	/* Prototype_Component_Model_RotEater */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_RotEater",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_Rot */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"),
-		CRotForMonster::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-#pragma endregion ETC..
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -2172,99 +1943,220 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_matrix PivotMatrix = PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
-	/* Prototype_Component_Model_Mage */
+	// Prototype_Component_Model_Mage
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Mage",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Mage");
 		return E_FAIL;
-	m_fCur += 1.f;
-
-	/* Prototype_Component_Model_ShieldStick */
+	}
+	
+	// Prototype_Component_Model_ShieldStick
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/ShieldSticks.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_ShieldStick");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_ShieldStick_Weapon */
+	// Prototype_Component_Model_ShieldStick_Weapon
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_ShieldStick_Weapon",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/Shield.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/ShieldSticks/Shield.mdat"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_ShieldStick");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	///* Prototype_Component_Model_CorruptVillager */
+	//// Prototype_Component_Model_CorruptVillager
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_CorruptVillager",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/CorruptVillager/CorruptVillager.mdat"), PivotMatrix))))
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/CorruptVillager/CorruptVillager.mdat"), PivotMatrix)))) {
+	//	MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_CorruptVillager");
 	//	return E_FAIL;
-	//m_fCur += 1.f;
+	//}
 
-	///* Prototype_Component_Model_Moth */
+	//// Prototype_Component_Model_Moth
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Moth",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix))))
+	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Moth/Moth.mdat"), PivotMatrix)))) {
+	//	MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Moth");
 	//	return E_FAIL;
-	//m_fCur += 1.f;
+	//}
 
-	/* Prototype_Component_Model_RockGolem */
+	// Prototype_Component_Model_RockGolem
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RockGolem",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RockGolem/RockGolem.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_RockGolem");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_RotEater */
+	// Prototype_Component_Model_RotEater
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_RotEater",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/RotEater/RotEater.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_RotEater");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_Sticks01 */
+	// Prototype_Component_Model_Sticks01
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sticks01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Sticks01");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	///* Prototype_Component_Model_VillageGuard */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
-	//	CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix))))
-	//	return E_FAIL;
-	//m_fCur += 1.f;
+	// Prototype_Component_Model_VillageGuard
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_VillageGuard",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/VillageGuard.mdat"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_VillageGuard");
+		return E_FAIL;
+	}
 
-	/* Prototype_Component_Model_WoodKnight */
+	// Prototype_Component_Model_WoodKnight
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_WoodKnight",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/WoodKnight/WoodKnight.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_WoodKnight");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_Sapling */
+	// Prototype_Component_Model_Sapling
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Sapling",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sapling/Sapling.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sapling/Sapling.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Sapling");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_BranchTosser */
+	// Prototype_Component_Model_BranchTosser
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_BranchTosser",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_BranchTosser");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_Rope_Rock */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rope_RotRock", true, false, true)))
+	// Prototype_Component_Model_Rope_Rock
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Rope_RotRock", true, false, true))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Rope_Rock");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_BranchTosser_Projectile */
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser", true, false, false)))
+	// Prototype_Component_Model_BranchTosser_Projectile
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_TESTPLAY, "Enemy/BranchTosser", true, false, false))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_BranchTosser_Projectile");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_HeroRot */
+	// Prototype_Component_Model_HeroRot
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_HeroRot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_HeroRot");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
 
-	/* Prototype_Component_Model_Rot */
+	// Prototype_Component_Model_Rot
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_Component_Model_Rot");
 		return E_FAIL;
-	m_fCur += 1.f;
+	}
+
+
+
+
+
+	// Prototype_GameObject_CameraForRot
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForRot"), CCameraForRot::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_CameraForRot");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_CameraForNpc
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CameraForNpc"), CCameraForNpc::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_CameraForNpc");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_RotForMonster
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_RotForMonster");
+		return E_FAIL;
+	}	
+	// Prototype_GameObject_Moth
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Moth"), CMoth::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_Moth");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_RockGolem
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RockGolem"), CRockGolem::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_RockGolem");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_RotEater
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotEater"), CRotEater::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_RotEater");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"), CSticks01::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_Sticks01");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_VillageGuard
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_VillageGuard"), CVillageGuard::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_VillageGuard");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_WoodKnight
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WoodKnight"), CWoodKnight::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_WoodKnight");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_Mage
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"), CMage::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_Mage");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_BranchTosser
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"), CBranchTosser::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_BranchTosser");
+		return E_FAIL;
+	}
+	//// Prototype_GameObject_BranchTosserWeapon
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"), CBranchTosser_Weapon::Create(m_pDevice, m_pContext)))) {
+	//	MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_BranchTosserWeapon");
+	//	return E_FAIL;
+	//}
+	// Prototype_GameObject_ShieldStick
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"), CShieldStick::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_ShieldStick");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_ShieldStickWeapon
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStickWeapon"), CShieldStick_Weapon::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_ShieldStickWeapon");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_Sapling
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling"), CSapling::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_Sapling");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_Rot
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rot"), CRot::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_Rot");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_CRope_RotRock
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_CRope_RotRock");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_LiftRot
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot"), CLiftRot::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_LiftRot");
+		return E_FAIL;
+	}
+	// Prototype_GameObject_LiftRot_Master
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LiftRot_Master"), CLiftRot_Master::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_LiftRot_Master");
+		return E_FAIL;
+	}	
+	// Prototype_GameObject_FireBullet
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"), CFireBullet::Create(m_pDevice, m_pContext)))) {
+		MSG_BOX("FAIL!! CLoader::Loading_ForBJ -> Prototype_GameObject_FireBullet");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

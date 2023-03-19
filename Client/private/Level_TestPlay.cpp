@@ -210,7 +210,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
-	//return S_OK;
+	return S_OK;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
