@@ -118,6 +118,7 @@
 #include "E_SpiritArrowPosition.h"
 #include "E_P_KenaHit.h"
 #include "E_P_SpiritArrow.h"
+#include "E_SpiritArrowTrail.h"
 /* ~Effects */
 
 /* Components*/
@@ -135,7 +136,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_SpiritArrowTrail.h"
 
 
 
@@ -1214,12 +1214,17 @@ HRESULT CLoader::Loading_ForTestEffect()
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Çý¿ø..."));
-	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_EFFECT), E_FAIL);
 
 
 	lstrcpy(m_szLoadingText, TEXT("Loading ÀçÈ£..."));
-	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_EFFECT), E_FAIL);
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_GameObject_RotForMonster
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
