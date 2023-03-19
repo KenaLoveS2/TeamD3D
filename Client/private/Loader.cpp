@@ -226,26 +226,11 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	Loading_ForWJ(LEVEL_GAMEPLAY);
 
+	Loading_ForHW(LEVEL_GAMEPLAY);
+
 	lstrcpy(m_szLoadingText, TEXT("Loading Texture..."));
 	/* For.Prototype_Component_Texture_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Normal*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Texture_Normal"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Flter_Texture_%d.png"), 2))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_GroundMark*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TESTPLAY, TEXT("Prototype_Component_Texture_GroundMark"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/GroundMark/GroundMark%d.png"), 3))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
-		return E_FAIL;
+	
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
@@ -258,10 +243,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading VIBuffer..."));
-	/* For.Prototype_Component_VIBuffer_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Test_0.bmp")))))
-		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -325,10 +306,6 @@ HRESULT CLoader::Loading_ForGamePlay()
 		CCameraForRot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
-		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Kena"),
@@ -579,6 +556,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 		return E_FAIL;
 	/* ~EnemyWisp Effects */
 #pragma  endregion	MONSTER
+
+
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Complete!!"));
 
