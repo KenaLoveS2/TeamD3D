@@ -29,12 +29,11 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar * pPro
 
 	if (nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
 	{
-		_tchar szTemp[128] = L"";
-		swprintf_s(szTemp, L"%s__Prototype Add Fail", pPrototypeTag);
+		_tchar szTemp[256] = L"";
+		swprintf_s(szTemp, L"%s__Prototype Component Add Fail", pPrototypeTag);
 		MessageBoxW(CGameInstance::GetInstance()->GetHWND(), L"FAIL", szTemp, MB_ICONERROR);
 		return E_FAIL;
 	}
-		
 
 	m_pPrototypes[iLevelIndex].emplace(pPrototypeTag, pPrototype);
 

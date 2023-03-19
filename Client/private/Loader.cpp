@@ -3375,8 +3375,6 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix))))
 				return E_FAIL;
 
-
-
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
@@ -3433,7 +3431,6 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 		strcpy_s(szJSonFullPath, FilePath);
 		strcat_s(szFullPath, FindData.name);
 
-
 		_splitpath_s(szFullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
 		if (!strcmp(szExt, ".mdat"))
 		{
@@ -3465,7 +3462,6 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 			Safe_Delete_Array(pFileName);
 			pGameInstance->Add_String(iLevelIndex, pPrototypeTag);
 		}
-
 		iResult = _findnext(handle, &FindData);
 	}
 
