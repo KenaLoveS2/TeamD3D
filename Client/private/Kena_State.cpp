@@ -2413,6 +2413,8 @@ void CKena_State::Start_Air_Attack_Slam_Loop(_float fTimeDelta)
 void CKena_State::Start_Air_Attack_Slam_Finish(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("AIR_ATTACK_SLAM_FINISH");
+
+	m_pKena->m_bHeavyAttack = true;
 }
 
 void CKena_State::Start_Attack_1(_float fTimeDelta)
@@ -3339,6 +3341,7 @@ void CKena_State::Start_Heavy_Attack_Combo(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_COMBO");
 
 	m_pKena->m_bHeavyAttack = true;
+	m_pKena->m_bSprint = true;
 }
 
 void CKena_State::Start_Heavy_Attack_Combo_Return(_float fTimeDelta)
@@ -3632,7 +3635,7 @@ void CKena_State::Start_Sprint_Attack(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SPRINT_ATTACK");
 
-	m_pKena->m_bSprint = false;
+	m_pKena->m_bSprint = true;
 }
 
 void CKena_State::Tick_Idle(_float fTimeDelta)
@@ -4384,6 +4387,7 @@ void CKena_State::End_Air_Attack_Slam_Loop(_float fTimeDelta)
 void CKena_State::End_Air_Attack_Slam_Finish(_float fTimeDelta)
 {
 	m_pKena->m_bAttack= false;
+	m_pKena->m_bHeavyAttack = false;
 }
 
 void CKena_State::End_Attack_1(_float fTimeDelta)
@@ -4721,6 +4725,7 @@ void CKena_State::End_Heavy_Attack_Combo(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
+	m_pKena->m_bSprint = false;
 }
 
 void CKena_State::End_Heavy_Attack_Combo_Return(_float fTimeDelta)
@@ -5103,6 +5108,14 @@ _bool CKena_State::NoMouseInput_Right()
 _bool CKena_State::KeyDown_E()
 {
 	if (m_pGameInstance->Key_Down(DIK_E))
+		return true;
+
+	return false;
+}
+
+_bool CKena_State::KeyDown_F()
+{
+	if (m_pGameInstance->Key_Down(DIK_F))
 		return true;
 
 	return false;
