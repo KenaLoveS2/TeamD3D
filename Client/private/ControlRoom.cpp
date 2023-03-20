@@ -66,6 +66,11 @@ void CControlRoom::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
 
+	if (m_pPlayerTransformPtr ==nullptr)
+	{
+		return;
+	}
+
 	_float4 vPlayerPos;
 	XMStoreFloat4(&vPlayerPos, m_pPlayerTransformPtr->Get_State(CTransform::STATE_TRANSLATION));
 
