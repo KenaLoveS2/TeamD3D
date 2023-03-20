@@ -127,10 +127,9 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	{
 		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 			Call_RotIcon();
-
-		Call_MonsterFocusIcon();
 	} 
-		
+
+	Call_MonsterFocusIcon();		
 }
 
 HRESULT CMonster::Render()
@@ -308,10 +307,15 @@ void CMonster::Call_RotIcon()
 
 void CMonster::Call_MonsterFocusIcon()
 {
-	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
+	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
 		return;
 
-	m_pKena->Call_FocusMonsterIcon(this);
+	if (m_pTransformCom->Calc_Distance_XZ(CGameInstance::GetInstance()->Get_CamPosition()) > 10.f)
+		return;
+
+	CCamera*		pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
+	if (pCamera->Get_TransformCom()->Calc_InRange(XMConvertToRadians(120.f), m_pTransformCom) == true)
+		m_pKena->Smooth_Targeting(this);
 }
 
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)

@@ -24,18 +24,18 @@
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
-	, m_pFocusRot(nullptr)
+	, m_pUI_FocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
+	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
-	, m_pFocusRot(nullptr)
+	, m_pUI_FocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
+	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
 {
 }
@@ -410,7 +410,7 @@ void CKena::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 		m_pCamera->Camera_Shake(0.003f, 10);
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
-		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), 0.005f, 1.f);
+		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(2.f));
 
 	/* Delegator Arrow */
 	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
@@ -434,6 +434,15 @@ void CKena::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
+
+	if (m_pTargetMonster != nullptr)
+	{
+		if (m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
+			m_pTransformCom->Calc_InRange(XMConvertToRadians(240.f), m_pTargetMonster->Get_TransformCom()) == false)
+			m_pTargetMonster = nullptr;
+	}
+
+	Call_FocusMonsterIcon(m_pTargetMonster);
 
 	/* UI Control */
 	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
@@ -909,6 +918,17 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
+void CKena::Smooth_Targeting(CMonster * pMonster)
+{
+	if (m_pTargetMonster != nullptr)
+	{
+		if (m_pTransformCom->Calc_Distance_XZ(pMonster->Get_TransformCom()) < m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()))
+			m_pTargetMonster = pMonster;
+	}
+	else
+		m_pTargetMonster = pMonster;
+}
+
 //void CKena::Call_FocusIcon(CGameObject * pTarget)
 //{
 //	Call_FocusRotIcon(pTarget);
@@ -917,13 +937,13 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 
 void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 {
-	if (m_pFocusRot == nullptr)
+	if (m_pUI_FocusRot == nullptr)
 		return;
 
 	/* This Action needs Pip */
 	if (0 == m_pKenaStatus->Get_CurPIPCount())
 	{
-		m_pFocusRot->Set_Pos(nullptr);
+		m_pUI_FocusRot->Set_Pos(nullptr);
 		return;
 	}
 
@@ -953,35 +973,34 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		RELEASE_INSTANCE(CGameInstance);
 	}
 
-	m_pFocusRot->Set_Pos(pTarget);
+	m_pUI_FocusRot->Set_Pos(pTarget);
 }
 
 void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 {
-	if (m_pFocusMonster == nullptr)
+	if (m_pUI_FocusMonster == nullptr)
 		return;
-	
-	m_pTargetMonster = static_cast<CMonster*>(pTarget);
-	m_pFocusMonster->Set_Pos(m_pTargetMonster);
+
+	m_pUI_FocusMonster->Set_Pos(m_pTargetMonster);
 
 	if (m_pTargetMonster != pTarget)
-		m_pFocusMonster->Start_Animation();
+		m_pUI_FocusMonster->Start_Animation();
 }
 
 
 void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 {
-	if (m_pFocusRot == nullptr || pTarget) return;
+	if (m_pUI_FocusRot == nullptr || pTarget) return;
 
-	m_pFocusRot->Set_Pos(nullptr);
+	m_pUI_FocusRot->Set_Pos(nullptr);
 }
 
 void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
 {	
-	if (m_pTargetMonster && m_pFocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
+	if (m_pTargetMonster && m_pUI_FocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
 	{
 		m_pTargetMonster = nullptr;
-		m_pFocusMonster->Set_Active(false);
+		m_pUI_FocusMonster->Set_Active(false);
 	}
 }
 
@@ -1178,7 +1197,7 @@ HRESULT CKena::SetUp_UI()
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_RotFocuss"),
-		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pFocusRot)))
+		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pUI_FocusRot)))
 	{
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
@@ -1186,7 +1205,7 @@ HRESULT CKena::SetUp_UI()
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_FocusMonster"),
-		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pFocusMonster)))
+		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pUI_FocusMonster)))
 	{
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;

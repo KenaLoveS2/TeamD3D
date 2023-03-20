@@ -47,7 +47,7 @@ public:
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 
 	const _bool&				Is_StateLock() const{ return m_bStateLock; }
-	void					Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
+	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -67,6 +67,8 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	void						Smooth_Targeting(class CMonster* pMonster);
+
 	//void						Call_FocusIcon(CGameObject* pTarget);
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
@@ -140,8 +142,8 @@ private:
 	CMonster*					m_pTargetMonster;
 
 	/* UI */
-	CUI_RotIcon*				m_pFocusRot;
-	CUI_FocusMonster*			m_pFocusMonster;
+	CUI_RotIcon*				m_pUI_FocusRot;
+	CUI_FocusMonster*		m_pUI_FocusMonster;
 
 private:
 	HRESULT					Ready_Parts();
