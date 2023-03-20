@@ -21,6 +21,7 @@ public:
 
 public:
 	void	Set_Pos(CGameObject* pTarget);
+	void	Off_Focus(CGameObject* pTarget);
 	void	Start_Animation();
 
 private:

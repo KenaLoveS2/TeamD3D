@@ -1,82 +1,86 @@
 #include "stdafx.h"
 #include "..\public\Enviroment_Manager.h"
 #include "Utile.h"
+#include "GameInstance.h"
 
 IMPLEMENT_SINGLETON(CEnviroment_Manager)
 
+_bool CEnviroment_Manager::Is_RenderIndex(_uint iObjRoomIndex)
+{	
+	
+	if (m_iCurPlayer_RoomIndex == 0)
+		return iObjRoomIndex == m_iCurPlayer_RoomIndex || iObjRoomIndex == m_iCurPlayer_RoomIndex + 1;
+	else if (m_iCurPlayer_RoomIndex == 5)
+		return iObjRoomIndex == m_iCurPlayer_RoomIndex;
+
+	return	iObjRoomIndex == m_iCurPlayer_RoomIndex-1 ||  iObjRoomIndex == m_iCurPlayer_RoomIndex || iObjRoomIndex == m_iCurPlayer_RoomIndex + 1;
+
+}
+
+_bool CEnviroment_Manager::Is_Render_TerrainIndex(_uint iTerrainRoomIndex)
+{
+	if ( m_iCurPlayer_RoomIndex<=1)
+	{
+		return iTerrainRoomIndex == 0 || iTerrainRoomIndex == 2;
+	}
+
+
+	return iTerrainRoomIndex == m_iCurPlayer_RoomIndex || iTerrainRoomIndex == m_iCurPlayer_RoomIndex+1;
+}
+
 CEnviroment_Manager::CEnviroment_Manager()
 {
+	m_RoomCheck_Array.fill(false);
 }
 
 void CEnviroment_Manager::Free()
 {
-	for (auto &pRoom : m_vecAllRooms)
-		Safe_Delete(pRoom);
-	m_vecAllRooms.clear();
+	
 }
 
 void CEnviroment_Manager::Tick(_float fTimeDelta)
 {
-	if (m_pTargetTransform == nullptr) return;
+	// 플레이어 z 비교로 룸인덱스 계산
+#ifdef _DEBUG
+	if (m_pPlayer == nullptr)
+		return;
+#endif
+	_float4	fPos;
+	XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 
-	Clear();
-
-	for (auto &pRoom : m_vecAllRooms)		// 플레이어와의 거리 계산
+	if (m_RoomCheck_Array[1] ==false && fPos.z >= 78.576f)
 	{
-		pRoom->fTargetDistance = m_pTargetTransform->Calc_Distance_XZ(pRoom->vCenterPosition);
-		if (pRoom->fTargetDistance < m_fAddContainerRange)
-		{
-			m_RenderRoomList.push_back(pRoom);
-			if (pRoom->fTargetDistance < m_fRenderRange)
-			{
-				m_RenderRoomIndexList.push_back(pRoom->iIndex);
-			}
-		}			
+		m_iCurPlayer_RoomIndex = 1;
 	}
-
-	/*
-	for (auto&pRoom : m_RenderRooms)
-	{	
-		if(pRoom->fTargetDistance < m)
+	else if (m_RoomCheck_Array[2] == false && fPos.z >= 348.f)
+	{
+		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 0);
+		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 1);
+		m_iCurPlayer_RoomIndex = 2;
 	}
-	*/
+	else if (m_RoomCheck_Array[3] == false && fPos.z >= 602.f)
+	{
+		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 2);
+		m_iCurPlayer_RoomIndex = 3;
+	}
+	else if (m_RoomCheck_Array[4] == false && fPos.z >= 856.f)
+	{
+		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 3);
+		m_iCurPlayer_RoomIndex = 4;
+	}
+	else if (m_RoomCheck_Array[5] == false && fPos.z >= 1095.f)
+	{
+		CGameInstance::GetInstance()->RoomIndex_Object_Clear(CGameInstance::GetInstance()->Get_CurLevelIndex(), L"Layer_Enviroment", 4);
+		m_iCurPlayer_RoomIndex = 5;
+	}
+	
+	m_RoomCheck_Array[m_iCurPlayer_RoomIndex] = true;
 }
 
-HRESULT CEnviroment_Manager::Reserve_Manager(_uint iTickRoomCount)
+HRESULT CEnviroment_Manager::Reserve_Manager(_uint iStartRoomIndex)
 {
-	m_iTickRoomCount = iTickRoomCount;
+	m_iCurPlayer_RoomIndex = iStartRoomIndex;
 
 	return S_OK;
-}
-
-void CEnviroment_Manager::Clear()
-{
-	m_RenderRoomList.clear();
-	m_RenderRoomIndexList.clear();
-}
-
-void CEnviroment_Manager::Add_Room(ROOM_DESC& RoomDesc)
-{
-	auto iter = find_if(m_vecAllRooms.begin(), m_vecAllRooms.end(), [&](ROOM_DESC* pRoomDesc)->_bool
-	{
-		return pRoomDesc->iIndex == RoomDesc.iIndex;
-	});
-
-	assert(iter == m_vecAllRooms.end());
-
-	ROOM_DESC*p = new ROOM_DESC;
-	memcpy(p, &RoomDesc, sizeof(ROOM_DESC));
-
-	m_vecAllRooms.push_back(p);
-}
-
-_bool CEnviroment_Manager::Is_RenderIndex(_uint iIndex)
-{
-	for (auto& iter : m_RenderRoomIndexList)
-	{
-		if (iter == iIndex) return true;
-	}
-
-	return false;
 }
 

@@ -31,6 +31,15 @@ void CUI_RotIcon::Set_Pos(CGameObject* pTarget)
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 }
 
+void CUI_RotIcon::Off_Focus(CGameObject* pTarget)
+{
+	if (pTarget && m_pTarget == pTarget)
+	{
+		m_pTarget = nullptr;
+		m_bActive = false;		
+	}
+}
+
 HRESULT CUI_RotIcon::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

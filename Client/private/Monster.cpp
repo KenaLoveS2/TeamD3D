@@ -66,14 +66,15 @@ HRESULT CMonster::Initialize(void* pArg)
 	Push_EventFunctions();
 
 
-	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
 	/* Hit */
 	m_pKenaHit = dynamic_cast<CE_KenaHit*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pKenaHit, E_FAIL);
-
+		
+	m_bRotable = false;
+	
 	RELEASE_INSTANCE(CGameInstance)
-	m_bRotable = true;
 	return S_OK;
 }
 
@@ -88,23 +89,16 @@ void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-/* #ifdef _DEBUG
-	if (nullptr != m_pUIHPBar)
-		m_pUIHPBar->Imgui_RenderProperty();
-
-	static _float fGuage = 1.f;
-	if (CGameInstance::GetInstance()->Key_Down(DIK_I))
+	if (m_bSpawn == false) 
 	{
-		fGuage -= 0.1f;
-		m_pUIHPBar->Set_Guage(fGuage);
+		m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	}
-#endif */
-		
-	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;
-		
-	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;
-	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;		
 	
+	m_fKenaDistance = m_pTransformCom->Calc_Distance_XZ(m_vKenaPos);
+
+	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;
+	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;	
+	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;	
 	m_vKenaPos = m_pKena ? m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) : m_vKenaPos;
 }
 
@@ -112,23 +106,10 @@ void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
-			
-	/* calculate camera */
-	_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
-	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
-	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float fDistance = _float4::Distance(vCamPos, vPos);
-	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
-
-	if (fDistance <= 10.f)
-	{
-		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
-			Call_RotIcon();
-	} 
-
+	
+	Call_RotIcon();
 	Call_MonsterFocusIcon();		
 }
 
@@ -195,6 +176,8 @@ void CMonster::Calc_RootBoneDisplacement(_fvector vDisplacement)
 
 void CMonster::Bind(CRotForMonster * pGameObject[], _int iRotCnt)
 {
+	if (m_bRotable == false) return;
+	
 	m_bBind = true;
 	for (_int i = 0; i<iRotCnt; ++i)
 		m_pRotForMonster[i] = pGameObject[i];
@@ -218,6 +201,8 @@ _bool CMonster::AnimIntervalChecker(_uint eAnim, _double StartRate, _double Fini
 
 _bool CMonster::DistanceTrigger(_float distance)
 {
+	return (distance >= m_fKenaDistance);
+
 	_float3 vPlayerPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
@@ -244,10 +229,7 @@ _bool CMonster::IntervalDistanceTrigger(_float min, _float max)
 
 _bool CMonster::TimeTrigger(_float Time1, _float Time2)
 {
-	if (Time1 >= Time2)
-		return true;
-	else
-		return false;	
+	return Time1 >= Time2;	
 }
 
 _float CMonster::DistanceBetweenPlayer()
@@ -299,12 +281,25 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 
 void CMonster::Call_RotIcon()
 {
-	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
+	static const _float fRandian_Cos20 = cosf(XMConvertToRadians(20.f));
+
+	if (m_bRotable == false || nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
 		return;
+	
+	if (m_bBind == false)
+	{
+		_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float fDistance = _float4::Distance(vCamPos, vPos);
 
-	m_pKena->Call_FocusRotIcon(this);
+		if (fDistance <= 10.f)
+		{
+			if(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vPos - vCamPos), CGameInstance::GetInstance()->Get_CamLook_Float4())) > fRandian_Cos20)
+				m_pKena->Call_FocusRotIcon(this);
+		}
+	}	
 }
-
+	
 void CMonster::Call_MonsterFocusIcon()
 {
 	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
@@ -381,12 +376,13 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	if (pTarget && m_bSpawn)
 	{
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
-		{
-			m_pUIHPBar->Set_Active(true);
-			WeakleyHit();
+		{	
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			
+			m_pUIHPBar->Set_Active(true);
 			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
 			
+			m_bWeaklyHit = true;
 			m_bStronglyHit = true;
 
 			m_pKenaHit->Set_Active(true);
@@ -421,8 +417,37 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_pModelCom->ResetAnimIdx_PlayTime(iDeathAnimIndex);
 	m_pModelCom->Set_AnimIndex(iDeathAnimIndex);
 
-	m_pKena->Dead_FocusMonsterIcon(this);	
+	m_pKena->Dead_FocusRotIcon(this);
+	
 	m_bDying = true;
 	m_pUIHPBar->Set_Active(false);
 	m_pTransformCom->Clear_Actor();
+}
+
+void CMonster::Clear_Death()
+{
+	m_bDeath = true;
+	m_bSpawn = false;
+}
+
+void CMonster::Start_Bind(_uint iBindAnimIndex)
+{
+	m_pModelCom->ResetAnimIdx_PlayTime(iBindAnimIndex);
+	m_pModelCom->Set_AnimIndex(iBindAnimIndex);
+
+	for (_uint i = 0; i < 8; ++i)
+	{
+		m_pRotForMonster[i] ? m_pRotForMonster[i]->Bind(true, this) : 0;
+	}
+}
+
+void CMonster::End_Bind()
+{
+	m_bBind = false;
+	for (_uint i = 0; i < 8; ++i)
+	{
+		m_pRotForMonster[i] ? m_pRotForMonster[i]->Bind(false, this) : 0;
+	}
+
+	ZeroMemory(&m_pRotForMonster, sizeof(m_pRotForMonster));
 }

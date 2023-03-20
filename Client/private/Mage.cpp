@@ -4,7 +4,6 @@
 #include "Bone.h"
 #include "Utile.h"
 #include "Sticks01.h"
-#include "RotForMonster.h"
 #include "FireBullet.h"
 
 CMage::CMage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -49,6 +48,8 @@ HRESULT CMage::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 
 	Create_Sticks();
+
+	m_bRotable = true;
 
 	return S_OK;
 }

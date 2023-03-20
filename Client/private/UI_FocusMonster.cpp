@@ -59,7 +59,7 @@ HRESULT CUI_FocusMonster::Initialize(void * pArg)
 }
 
 void CUI_FocusMonster::Tick(_float fTimeDelta)
-{
+{	
 	if (!m_bActive)
 		return;
 
@@ -127,6 +127,15 @@ void CUI_FocusMonster::Set_Pos(CGameObject * pTarget)
 	m_bActive = true;
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
 		static_cast<CMonster*>(pTarget)->Get_FocusPosition());
+}
+
+void CUI_FocusMonster::Off_Focus(CGameObject* pTarget)
+{
+	if (pTarget && m_pTarget == pTarget)
+	{
+		m_pTarget = nullptr;
+		m_bActive = false;
+	}
 }
 
 void CUI_FocusMonster::Start_Animation()

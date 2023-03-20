@@ -75,7 +75,6 @@ public:
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
 	
 	void Dead_FocusRotIcon(CGameObject* pTarget);
-	void Dead_FocusMonsterIcon(CGameObject *pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
@@ -91,6 +90,7 @@ private:
 	class CRope_RotRock*	m_pRopeRotRock = nullptr;
 	class CRot*				m_pFirstRot = nullptr;
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
+	class CMonster* m_pTargetMonster = nullptr;
 
 private:
 	vector<class CKena_Parts*>				m_vecPart;
@@ -139,8 +139,7 @@ private:
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
 
-	/* Target Monster (For. UI and Auto Targeting */
-	CMonster*					m_pTargetMonster;
+	
 
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;

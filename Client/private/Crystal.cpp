@@ -130,7 +130,6 @@ void CCrystal::Tick(_float fTimeDelta)
 		m_VecCrystal_Effect[1]->Set_Active(true);
 	}
 
-
 	for (auto& pEffectObj : m_VecCrystal_Effect)
 	{
 		if (pEffectObj != nullptr)
@@ -141,7 +140,7 @@ void CCrystal::Tick(_float fTimeDelta)
 		true == m_bGimmickActive && 
 		 !lstrcmp(m_szCloneObjectTag,L"2_Water_GimmickCrystal01") && nullptr != m_pControlRoom)
 	{	
-		if(m_VecCrystal_Effect[1]->Get_Active() == true)//static_cast<CE_PulseObject*>(m_VecCrystal_Effect[1])->Get_Finish())
+		if(m_VecCrystal_Effect[1]->Get_Active() == true)
 			m_pControlRoom->Trigger_Active(m_EnviromentDesc.iRoomIndex, CEnviromentObj::Gimmick_TYPE_GO_UP, true);
 	}
 
@@ -162,7 +161,7 @@ void CCrystal::Late_Tick(_float fTimeDelta)
 	}
 #endif
 
-	if (m_pRendererCom)
+	if (m_pRendererCom && m_bRenderActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
@@ -414,6 +413,8 @@ CGameObject * CCrystal::Clone(void * pArg)
 
 void CCrystal::Free()
 {
+	
+
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
@@ -426,6 +427,8 @@ void CCrystal::Free()
 	for (auto &pEffect : m_VecCrystal_Effect)
 		Safe_Release(pEffect);
 	m_VecCrystal_Effect.clear();
+
+
 
 
 }
