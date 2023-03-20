@@ -48,8 +48,6 @@ public:
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-
-
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
