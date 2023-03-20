@@ -13,6 +13,7 @@ private:
 public:
 	_int	Get_Crystal() { return m_iCrystal; }
 	void	Set_Crystal(_int iCrystal) { m_iCrystal = iCrystal; }
+	void	Set_Font(wstring fontName, _float4 fontColor, _float2 fontSize, _float2 fontPos);
 public:
 	virtual HRESULT			Initialize_Prototype()			override;
 	virtual HRESULT			Initialize(void* pArg)			override;
@@ -25,7 +26,11 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
-	_int	m_iCrystal;
+	_int		m_iCrystal;
+	_tchar*		m_FontName;
+	_float4		m_vFontColor;
+	_float2		m_vFontSize;
+	_float2		m_vFontPos;
 
 public:
 	static	CUI_NodeCrystal*	Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

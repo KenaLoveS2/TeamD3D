@@ -67,6 +67,15 @@
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeLvUp.h"
 
+/* HatCart */
+#include "UI_CanvasHatCart.h"
+#include "UI_CanvasItemBar.h"
+#include "UI_NodeItemBox.h"
+#include "UI_NodeHat.h"
+#include "UI_NodeScrollLine.h"
+#include "UI_NodeScrollBar.h"
+
+
 /* World UI */
 #include "UI_MonsterHP.h"
 #include "UI_RotIcon.h"
@@ -466,12 +475,60 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_FlareShape");
 
 
+	/********************************************/
+	/*				For. HatCart				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG1"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_1_%d.png"),2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG1");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG2"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_2_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG2");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG3"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_3_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG3");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG4"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_4_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG4");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HatIconBox"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/HatIconBG_%d.png"), 2))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HatIconBox");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HatIcon"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/Hats/Hat_%d.png"), 16))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_HatIcon");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ScrollLine"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/T_SeparatorAlpha_01.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ScrollLine");
+
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ScrollBar"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/AbilityLine.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ScrollBar");
 
 
 
 
 
 
+
+
+
+
+
+	/* Not Include in the Texture List */
 	/********************************************/
 	/*				For. World_UI				*/
 	/********************************************/
@@ -773,14 +830,32 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 
 
 
+	/********************************************/
+	/*				For. HatCart				*/
+	/********************************************/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_HatCart"), CUI_CanvasHatCart::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_HatCart");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Canvas_ItemBar"), CUI_CanvasItemBar::Create(pDevice, pContext))))
+		return E_FAIL;
+	//Save_CanvasStrings(pGameInstance, L"Prototype_GameObject_UI_Canvas_ItemBar");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ItemBox"), CUI_NodeItemBox::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ItemBox");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ItemHat"), CUI_NodeHat::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ItemHat");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ScrollLine"), CUI_NodeScrollLine::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ScrollLine");
 
-
-
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_ScrollBar"), CUI_NodeScrollBar::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ScrollBar");
 
 
 

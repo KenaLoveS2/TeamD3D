@@ -233,8 +233,8 @@ HRESULT CLoader::Loading_ForGamePlay()
 	lstrcpy(m_szLoadingText, TEXT("Loading 재호..."));
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
-	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	//lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
+	//FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 	
 	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);

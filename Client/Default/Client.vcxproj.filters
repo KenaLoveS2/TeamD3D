@@ -418,6 +418,27 @@
     <Filter Include="02.GameObjects\UI\04. Events\LoopAct">
       <UniqueIdentifier>{2ec1b19d-bca8-41d9-88cc-e1b8d26926d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\HatCart">
+      <UniqueIdentifier>{56394a78-88dc-406e-be02-a27d431a955f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart">
+      <UniqueIdentifier>{6c637236-461b-4548-8770-2cc7b7b944d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item">
+      <UniqueIdentifier>{eb1bd412-1437-4807-b414-4a892d5ed23a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box">
+      <UniqueIdentifier>{b485375a-62eb-4cff-b21f-645fda35bcc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll">
+      <UniqueIdentifier>{7221d68f-5633-4537-9f61-a772c5ec703b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat">
+      <UniqueIdentifier>{94f79582-2010-4f58-835c-9d26aad39e9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround">
+      <UniqueIdentifier>{3013c08a-4191-4a0e-ba41-9c9a81be3554}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1003,6 +1024,30 @@
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RotWisp.h" />
+    <ClInclude Include="..\public\HatCart.h">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasHatCart.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeItemBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHat.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_NodeHatCartBG.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasItemBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1567,6 +1612,30 @@
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RotWisp.cpp" />
+    <ClCompile Include="..\private\HatCart.cpp">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasHatCart.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeItemBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHat.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeHatCartBG.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasItemBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

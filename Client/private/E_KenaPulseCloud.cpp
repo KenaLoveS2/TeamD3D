@@ -37,7 +37,7 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(1.0f, 1.0f);
 	m_eEFfectDesc.vScale = XMVectorSet(3.f, 3.f, 1.f, 1.f);
 	return S_OK;
