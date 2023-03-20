@@ -311,15 +311,8 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bRealObject == false)
 	{
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Trees/Fallen", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true,false,true)))
 			assert(!"Issue");
-
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/RotGod_Statue_crumbled", true, false, true)))
-			return E_FAIL;
-
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Forest_1/ShrineOfLife", true, true, true)))
-			assert(!"ShrineOfLife"); 
-
 	}
 #pragma endregion
 
@@ -455,7 +448,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Glitter", true, true, true)))
 		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true, false, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, true, true)))
 		assert(!"Issue");
@@ -538,7 +531,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion ~Rot_Rock
 
 #pragma region RuinPlatform
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true,false,true)))
 		assert(!"Issue");
 #pragma endregion ~RuinPlatform
 
@@ -807,7 +800,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, true, true)))
 			assert(!"Issue");
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinPlatform", true, true, true,false,true)))
 			assert(!"Issue");
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Rubble", true, true, true)))
@@ -878,7 +871,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/Ruinskit_Collum", true, true, true)))
 			assert(!"Issue");
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true, false, true)))
 			return E_FAIL;
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Small", true, true, true)))
@@ -1270,7 +1263,8 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 	return S_OK;
 }
 
-HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, _bool bIsJsonMatarial, _bool bPivotScale)
+HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, 
+	_bool bIsJsonMatarial, _bool bPivotScale, _bool bUseTriangleMeshActor)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -1338,7 +1332,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 			lstrcat(pPrototypeTag, pFileName);
 
 			if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, pPrototypeTag,
-				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix, nullptr, bIsLod, bIsInstancing, szJSonFullPath))))
+				CModel::Create(m_pDevice, m_pContext, WideFilePath, PivotMatrix, nullptr, bIsLod, bIsInstancing, szJSonFullPath, bUseTriangleMeshActor))))
 				return E_FAIL;
 
 			Safe_Delete_Array(pFileName);
@@ -1897,7 +1891,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Arch", true, true, true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinPlatform", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinPlatform", true, true, true,false,true)))
 		assert(!"Issue");
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Rubble", true, true, true)))
@@ -1968,7 +1962,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/Ruinskit_Collum", true, true, true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Ledge", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Ledge", true, true, true, false, true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/Rock_Small", true, true, true)))

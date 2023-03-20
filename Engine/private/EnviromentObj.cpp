@@ -167,6 +167,11 @@ HRESULT CEnviromentObj::Render()
 	return S_OK;
 }
 
+void CEnviromentObj::Imgui_RenderProperty()
+{
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
+}
+
 void CEnviromentObj::ImGui_ShaderValueProperty()
 {
 	if(ImGui::Button("Recompile"))

@@ -49,7 +49,7 @@ public:
 
 	HRESULT LoadNonAnimModel(_uint iLevelIndex);
 	HRESULT LoadNonAnimFolderModel(_uint iLevelIndex , string strFolderName,_bool bIsLod=false,_bool bIsInstancing =false
-	, _bool bIsJsonMatarial=false,_bool bPivotScale=false);
+	, _bool bIsJsonMatarial=false,_bool bPivotScale=false , _bool bUseTriangleMeshActor = false);
 
 };
 

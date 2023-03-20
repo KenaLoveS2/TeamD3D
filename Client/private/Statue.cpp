@@ -31,7 +31,7 @@ HRESULT CStatue::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
+	//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 
 	return S_OK;
 }
@@ -39,14 +39,14 @@ HRESULT CStatue::Initialize(void * pArg)
 HRESULT CStatue::Late_Initialize(void * pArg)
 {
 
-	//_float3 vPos, vSize;
-	//vSize = _float3(0.25f, 1.f, 0.25f);
-	//vPos = _float3(0.0f, 0.f, 0.0f);
+	_float3 vPos, vSize;
+	vSize = _float3(0.25f, 1.f, 0.25f);
+	vPos = _float3(0.0f, 0.f, 0.0f);
 
-	//if (m_pModelCom->Get_IStancingModel() == true)
-	//	m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
-	//else
-	//	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	if (m_pModelCom->Get_IStancingModel() == true)
+		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	else
+		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 
 	m_pRendererCom->Set_PhysXRender(true);
 
@@ -63,9 +63,7 @@ void CStatue::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
-	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
 }
 
 HRESULT CStatue::Render()
@@ -80,26 +78,29 @@ HRESULT CStatue::Render()
 
 	if (m_pModelCom->Get_IStancingModel())
 	{
-		if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_JizoStatue"
-			|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FoxStatue")
+		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+
+			if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
 			{
-				/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
 			}
-		}
-		else
-		{
-			for (_uint i = 0; i < iNumMeshes; ++i)
+			else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
 			{
-				/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+			}
+			else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+			}
+			else
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
 			}
 		}
 	}
@@ -113,6 +114,15 @@ HRESULT CStatue::Render()
 					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
 					m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+				}
+			}
+			else
+			{
+				for (_uint i = 0; i < iNumMeshes; ++i)
+				{
+					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+					m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+					m_pModelCom->Render(m_pShaderCom, i, nullptr, 4);
 				}
 			}
 	}
