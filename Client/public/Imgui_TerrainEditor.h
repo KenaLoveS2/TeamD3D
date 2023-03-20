@@ -45,8 +45,6 @@ private:
 	void		Imgui_FilterPixel_Load();
 	void		Imgui_FilterControl();
 	
-
-
 	void		Draw_FilterTexture();
 	void		UnDraw_FilterTexture();
 

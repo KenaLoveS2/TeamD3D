@@ -65,8 +65,9 @@ void CLayer::Delete_AllObjLayer(_int iRoomIndex)
 
 		if (iRoomIndex == static_cast<CEnviromentObj*>(Iter->second)->Get_RoomIndex())
 		{
+			Iter->second->Get_TransformCom()->Clear_Actor();
 			Safe_Release(Iter->second);
-
+			Iter->second = nullptr;
 			Iter = m_GameObjects.erase(Iter);
 		}
 		else

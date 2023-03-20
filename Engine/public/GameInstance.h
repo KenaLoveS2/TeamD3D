@@ -207,9 +207,9 @@ public: /* For.PipeLine */
 		HRESULT		Call_Function(CBase* pObj, const _tchar* pFuncName, _float fTimeDelta);
 
 	public: // for m_pEnviroment_Manager
-		void			Enviroment_Clear();
-		void			Add_Room(CEnviroment_Manager::ROOM_DESC& RoomDesc);
-
+		void	Set_PlayerPtr(class CGameObject* pPlayer);
+		_bool	Is_RenderIndex(_uint iObjRoomIndex);
+		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;

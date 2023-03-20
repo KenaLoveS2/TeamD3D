@@ -38,6 +38,7 @@ HRESULT CTerrain::Initialize(void * pArg)
 		m_TerrainDesc.iFillterTwo_TextureNum = Desc->iFillterTwo_TextureNum;
 		m_TerrainDesc.iFillterThree_TextureNum = Desc->iFillterThree_TextureNum;
 		m_TerrainDesc.iHeightBmpNum = Desc->iHeightBmpNum;
+		m_TerrainDesc.iRoomIndex = Desc->iRoomIndex;
 	}
 
 	else
@@ -90,10 +91,8 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//m_pVIBufferCom->Culling(m_pTransformCom->Get_WorldMatrix());
+	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	
-	m_pRendererCom && 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-
 	return;
 	m_pGroundMark->Late_Tick(fTimeDelta);
 }
