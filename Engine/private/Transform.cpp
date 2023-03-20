@@ -789,8 +789,7 @@ void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivot
 {
 	m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
-
-	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+		
 	m_bIsStaticPxActor = true;
 
 	m_vPxPivot = vPivotDist;
@@ -800,8 +799,7 @@ void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivo
 {
 	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
-
-	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+	
 	m_bIsStaticPxActor = false;
 
 	m_vPxPivot = vPivotDist;

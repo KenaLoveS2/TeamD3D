@@ -50,6 +50,8 @@ HRESULT CMage::Initialize(void* pArg)
 
 	Create_Sticks();
 
+	m_bRotable = true;
+
 	return S_OK;
 }
 

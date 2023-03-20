@@ -120,6 +120,8 @@ protected:
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 	class CE_KenaHit* m_pKenaHit = nullptr;
 
+	_uint m_iNumMeshes = 0;
+
 protected:
 	_bool	m_bWeaklyHit = false;
 	_bool	m_bStronglyHit = false;
@@ -132,6 +134,8 @@ protected:
 
 	_float m_fDissolveTime = 0.0f;
 	_float m_fSpawnRange = 8.f;
+
+
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
