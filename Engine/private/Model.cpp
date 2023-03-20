@@ -35,7 +35,9 @@ CModel::CModel(const CModel & rhs)
 	/*for Instancing*/
 	, m_bIsInstancing(rhs.m_bIsInstancing)
 	, m_bIsLodModel(rhs.m_bIsLodModel)
+	, m_bUseTriangleMeshActor(rhs.m_bUseTriangleMeshActor)
 {
+
 	for (auto& Material : m_Materials)
 	{
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
@@ -121,6 +123,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 
 	m_bIsInstancing = bIsInstancing;			/* 현재 모델이 인스턴싱인가?*/
 	m_bIsLodModel = bIsLod;
+	m_bUseTriangleMeshActor = bUseTriangleMeshActor;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	m_wstrModelFilePath = pModelFilePath;
@@ -218,7 +221,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			// for. Instaincing
 			if (m_bIsInstancing == true)
 			{
-				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
+				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
 				assert(nullptr != pMesh && "CModel::Initialize_Prototype _Instancing");
 				m_InstancingMeshes.push_back(pMesh);
 			}
@@ -2519,6 +2522,19 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		}
 	}
 
+}
+
+void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
+{
+	if (m_InstancingMeshes.size() == 0 || m_bIsInstancing ==false)
+	{	
+		return;
+	}
+
+	for (auto &iter : m_InstancingMeshes)
+	{
+		iter->Create_PxTriangle_InstMeshActor(pParentTransform,m_pInstancingMatrix);
+	}
 }
 
 void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
