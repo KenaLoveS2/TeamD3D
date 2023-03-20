@@ -46,11 +46,6 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if(ImGui::Button("Recompile"))
-	{
-		m_pShaderCom->ReCompile();
-	}
 }
 
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)

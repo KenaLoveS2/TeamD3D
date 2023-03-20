@@ -864,8 +864,6 @@
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
-    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
     <ClInclude Include="..\public\E_KenaJump.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClInclude>
@@ -900,7 +898,6 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\DynamicLightCamera.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
@@ -951,7 +948,6 @@
     <ClInclude Include="..\public\E_RotTrail.h">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
@@ -1006,6 +1002,18 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Born_GroundCover.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1429,8 +1437,6 @@
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
     <ClCompile Include="..\private\E_KenaJump.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClCompile>
@@ -1465,7 +1471,6 @@
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\private\DynamicLightCamera.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
@@ -1516,7 +1521,6 @@
     <ClCompile Include="..\private\E_RotTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
@@ -1571,6 +1575,18 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Born_GroundCover.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

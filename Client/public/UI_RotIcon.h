@@ -19,6 +19,7 @@ private:
 
 public:
 	void	Set_Pos(CGameObject* pTarget);
+	void	Off_Focus(CGameObject* pTarget);
 
 public:
 	virtual HRESULT			Initialize_Prototype()			override;

@@ -33,8 +33,8 @@ private:
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
-	_double					Get_AnimationPlayTime();
+	class CKena_Status*	Get_Status() { return m_pKenaStatus; }
+	_double						Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;
 	vector<_float4>*			Get_WeaponPositions() { return &m_vecWeaposPos; }
@@ -52,13 +52,14 @@ public:
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual HRESULT		RenderReflect() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
@@ -76,7 +77,6 @@ public:
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
 	
 	void Dead_FocusRotIcon(CGameObject* pTarget);
-	void Dead_FocusMonsterIcon(CGameObject *pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
@@ -92,6 +92,7 @@ private:
 	class CRope_RotRock*	m_pRopeRotRock = nullptr;
 	class CRot*				m_pFirstRot = nullptr;
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
+	class CMonster* m_pTargetMonster = nullptr;
 
 private:
 	vector<class CKena_Parts*>				m_vecPart;
@@ -161,6 +162,7 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					SetUp_ReflectShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
 	void						Update_Collider(_float fTimeDelta);

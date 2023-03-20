@@ -45,16 +45,7 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 
 	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,this,m_EnviromentDesc.eChapterType);
 
-	//_float3 vPos, vSize;
-	//vSize = _float3(0.8f, 0.81f, 0.8f);
-	//vPos = _float3(0.0f, 0.f, 0.0f);
 
-	//m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, 
-	//	vSize, vPos); //(0~1)
-
-	//
-	//
-	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
@@ -66,14 +57,16 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 	if (m_bColliderOn == false && true == Gimmik_Start(fTimeDelta))
 	{
 		_float3 vPos = _float3(0.f,0.f,0.f), vSize;
-		if (m_EnviromentDesc.iRoomIndex == 1)
-			vSize = _float3(0.75f, 0.65f, 0.75f);
-		else if (m_EnviromentDesc.iRoomIndex == 2)
+		
+		if (m_EnviromentDesc.iRoomIndex == 2)
 		{
 			vSize = _float3(0.8f, 0.81f, 0.8f);
 			vPos = _float3(0.0f, 0.f, 0.0f);
 		}
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+		
+		if (m_pModelCom->Get_UseTriangleMeshActor())
+			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+
 		m_bColliderOn = true;
 	}
 
@@ -83,7 +76,7 @@ void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom)
+	if (m_pRendererCom && m_bRenderActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

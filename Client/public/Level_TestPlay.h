@@ -27,6 +27,7 @@ private:
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_ControlRoom(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Water(const _tchar* pLayerTag);
 
 
 public:

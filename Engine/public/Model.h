@@ -69,7 +69,7 @@ public:
 	void						Update_BonesMatrix(CModel* pModel);
 	void						Set_AllAnimCommonType();
 	void						Print_Animation_Names(const string& strFilePath);
-
+	
 public:	
 	HRESULT 					Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix PivotMatrix, 
 		const _tchar* pAdditionalFilePath, _bool bIsLod, _bool bIsInstancing , const char* JsonMatrial, _bool bUseTriangleMeshActor);
@@ -128,6 +128,7 @@ private:
 	
 	/*For.Lod*/
 	_bool													m_bIsLodModel = false;
+	_bool													m_bUseTriangleMeshActor = false;
 	class	CTransform*									m_pInstanceTransform = nullptr;
 
 private:
@@ -147,6 +148,8 @@ public:
 
 	HRESULT SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const _tchar *pTexturePath);
 
+	const	_bool	Get_UseTriangleMeshActor() const { return m_bUseTriangleMeshActor; }
+
 	/*For.Mesh_Instancing*/
 public:
 	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
@@ -163,6 +166,8 @@ public:
 
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f), _bool bRotation=false);
+
+	void Create_Px_InstTriangle(class CTransform* pParentTransform);
 
 	/*Imgui*/
 	void Edit_InstModel_Collider(const _tchar* pActorName); // Only_Static

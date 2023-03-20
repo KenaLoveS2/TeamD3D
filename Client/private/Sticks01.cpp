@@ -47,7 +47,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-	
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+
 	return S_OK;
 }
 
@@ -178,9 +179,7 @@ HRESULT CSticks01::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -194,15 +193,10 @@ HRESULT CSticks01::Render()
 
 HRESULT CSticks01::RenderShadow()
 {
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SHADOW);
 
 	return S_OK;
@@ -998,6 +992,7 @@ HRESULT CSticks01::SetUp_ShadowShaderResources()
 void CSticks01::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
+
 	CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);

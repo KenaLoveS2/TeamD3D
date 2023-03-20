@@ -324,7 +324,8 @@ void CPhysX_Manager::Clear()
 }
 
 
-PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction,
+	_float fRestitution,_float3 vScale )
 {
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
@@ -337,8 +338,23 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	PxMaterial *pMaterial = m_pPhysics->createMaterial(fStaticFriction, fDynamicFriction, fRestitution);
 
-	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
+	PxShape* shape = nullptr;
+
+	if (vScale.x != 0)
+	{
+		shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh,PxMeshScale(PxVec3(vScale.x,vScale.y,vScale.z))),
+			*pMaterial, true);
+		
+	}
+	else
+	{
+		shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
+	}
+	assert(shape != nullptr && "CPhysX_Manager::Create_TriangleMeshActor_Static");
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+
+	
+	
 
 	PxFilterData FilterData;
 	FilterData.word0 = PX_FILTER_TYPE::FITLER_ENVIROMNT;
@@ -1130,6 +1146,7 @@ void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
 		if (Pair->second == pActor)
 		{
 			m_pScene->removeActor(*(*Pair).second);
+			Pair->second = nullptr;
 			Pair = m_DynamicActors.erase(Pair);
 			break;
 		}
