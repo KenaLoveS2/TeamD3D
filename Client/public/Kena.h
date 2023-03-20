@@ -33,10 +33,10 @@ private:
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
-	_double					Get_AnimationPlayTime();
+	class CKena_Status*	Get_Status() { return m_pKenaStatus; }
+	_double						Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
-	const _uint				Get_AnimationStateIndex() const;
+	const _uint					Get_AnimationStateIndex() const;
 
 	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
@@ -50,13 +50,14 @@ public:
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual HRESULT		RenderReflect() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
@@ -151,6 +152,7 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					SetUp_ReflectShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
 	void						Update_Collider(_float fTimeDelta);
