@@ -656,18 +656,6 @@ void CGameInstance::Imgui_LightManagerRender()
 }
 
 
-void CGameInstance::Enviroment_Clear()
-{
-	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Enviroment_Clear");
-	m_pEnviroment_Manager->Clear();
-}
-
-void CGameInstance::Add_Room(CEnviroment_Manager::ROOM_DESC & RoomDesc)
-{
-	assert(m_pEnviroment_Manager != nullptr && "CGameInstance::Add_Room");
-	m_pEnviroment_Manager->Add_Room(RoomDesc);
-}
-
 void CGameInstance::Clear()
 {
 	if (m_pLight_Manager == nullptr) return;
@@ -908,6 +896,25 @@ HRESULT CGameInstance::Call_Function(CBase * pObj, const _tchar * pFuncName, _fl
 	NULL_CHECK_RETURN(m_pFunction_Manager, E_FAIL);
 
 	return m_pFunction_Manager->Call_Function(pObj, pFuncName, fTimeDelta);
+}
+
+void CGameInstance::Set_PlayerPtr(CGameObject * pPlayer)
+{
+	assert(nullptr !=m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	m_pEnviroment_Manager->Set_PlayerPtr(pPlayer);
+
+}
+
+_bool CGameInstance::Is_RenderIndex(_uint iObjRoomIndex)
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	return m_pEnviroment_Manager->Is_RenderIndex(iObjRoomIndex);
+}
+
+_bool CGameInstance::Is_Render_TerrainIndex(_uint iTerrainRoomIndex)
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	return m_pEnviroment_Manager->Is_Render_TerrainIndex(iTerrainRoomIndex);
 }
 
 void CGameInstance::Release_Engine()

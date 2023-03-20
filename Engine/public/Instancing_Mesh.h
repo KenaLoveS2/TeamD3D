@@ -32,8 +32,9 @@ public:
 	void			Add_InstanceModel(vector<_float4x4*>VecInstancingMatrix);
 	void			InstBuffer_Update(vector<_float4x4*>VecInstancingMatrix);
 	void			InstBufferSize_Update(_int iSize);
+	void			Set_PxTriangle(vector<_float4x4*>VecInstancingMatrix);
 public:
-	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _uint iNumInstance);
+	virtual HRESULT Initialize_Prototype(HANDLE hFile, class CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
@@ -41,10 +42,10 @@ public:
 
 public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
-
 	void	InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
-
 	void	InstaincingMesh_yPosControl(_float yPos);
+
+	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix);
 
 public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
@@ -78,11 +79,11 @@ private:
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 private:
 	HRESULT	Set_up_Instancing();
-
+	
 
 public:
 	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
-		HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _uint iNumInstance =1 );
+		HANDLE hFile, class CModel* pModel, _bool bIsLod = false, _bool bUseTriangleMeshActor = false, _uint iNumInstance =1 );
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free();
 	

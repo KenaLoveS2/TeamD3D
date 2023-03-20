@@ -4,7 +4,6 @@
 #include "Bone.h"
 #include "Utile.h"
 #include "Sticks01.h"
-#include "RotForMonster.h"
 #include "FireBullet.h"
 
 CMage::CMage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -49,6 +48,8 @@ HRESULT CMage::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 
 	Create_Sticks();
+
+	m_bRotable = true;
 
 	return S_OK;
 }
@@ -732,10 +733,7 @@ HRESULT CMage::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		Set_Dying(DEATH);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()

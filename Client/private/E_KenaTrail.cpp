@@ -64,11 +64,6 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 
 void CE_KenaTrail::Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-	{
-		m_pVITrailBufferCom->ResetInfo();
-		return;
-	}
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 }
@@ -76,7 +71,10 @@ void CE_KenaTrail::Tick(_float fTimeDelta)
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
+	{
+		ResetInfo();
 		return;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 }

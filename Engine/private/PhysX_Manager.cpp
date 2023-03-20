@@ -322,7 +322,8 @@ void CPhysX_Manager::Clear()
 }
 
 
-PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction, _float fRestitution)
+PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction, _float fDynamicFriction,
+	_float fRestitution,_float3 vScale )
 {
 	PxDefaultMemoryOutputStream WriteBuffer;
 	m_pCooking->cookTriangleMesh(Desc, WriteBuffer);
@@ -335,8 +336,23 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 
 	PxMaterial *pMaterial = m_pPhysics->createMaterial(fStaticFriction, fDynamicFriction, fRestitution);
 
-	PxShape* shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
+	PxShape* shape = nullptr;
+
+	if (vScale.x != 0)
+	{
+		shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh,PxMeshScale(PxVec3(vScale.x,vScale.y,vScale.z))),
+			*pMaterial, true);
+		
+	}
+	else
+	{
+		shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh), *pMaterial, true);
+	}
+	assert(shape != nullptr && "CPhysX_Manager::Create_TriangleMeshActor_Static");
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+
+	
+	
 
 	PxFilterData FilterData;
 	FilterData.word0 = PX_FILTER_TYPE::FITLER_ENVIROMNT;
@@ -1128,6 +1144,7 @@ void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
 		if (Pair->second == pActor)
 		{
 			m_pScene->removeActor(*(*Pair).second);
+			Pair->second = nullptr;
 			Pair = m_DynamicActors.erase(Pair);
 			break;
 		}
@@ -1154,16 +1171,14 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 		return;
 
 	wstring wstrActorParentName = pActorName;
-
-
-	static wstring wstrSelectedTag = L"";
-
+	
 	if (ImGui::BeginListBox("##"))
 	{
 		string Actor_ParentName = CUtile::WstringToString(wstrActorParentName);
 
 		char szViewName[256];
 		const bool bColider_Selected = false;
+		_int iIncreaseIndex = 0;
 		for (auto& ProtoPair : m_StaticActors)
 		{
 			if (ProtoPair.second == nullptr)
@@ -1179,6 +1194,12 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 				if (ImGui::Selectable(szViewName, bColider_Selected))
 				{
 					wstrSelectedTag = ProtoPair.first;
+					
+					_int size = Actor_ParentName.size() + 1;
+					string NewTemp = szViewName;
+					string Sour = "";
+					Sour = NewTemp.substr(size);
+					iSelectColider_Index = atoi(Sour.c_str());
 				}
 			}
 
@@ -1186,29 +1207,16 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 		ImGui::EndListBox();
 	}
 
-	for (auto& ProtoPair : m_StaticActors)
-	{
-		if (lstrcmp(ProtoPair.first, wstrSelectedTag.c_str()))
-			continue;
-
-		Set_Visualization(ProtoPair.second, true);
-	}
-
-
 	if (wstrSelectedTag != L"")
 	{
 		PxRigidActor*	pRigidActor = Find_StaticActor(wstrSelectedTag.c_str());
-		
-		ImGui::BulletText("Current Static Object : ");
+
+		ImGui::BulletText("Current Static Actor : ");
 		ImGui::SameLine();
 		string Temp = CUtile::WstringToString(wstrSelectedTag);
 		ImGui::Text(Temp.c_str());
-		PX_USER_DATA* pUserData = (PX_USER_DATA*)pRigidActor->userData;
 
-		PxVec3 PxScale = Get_ScalingBox(pRigidActor);
-
-		_float3 vScale = _float3(PxScale.x, PxScale.y, PxScale.z);
-
+		_float3 vScale = (*vec_ColiderSize)[iSelectColider_Index];
 		float fScale[3] = { vScale.x, vScale.y, vScale.z };
 
 		ImGui::DragFloat3("Px_Scale", fScale, 0.01f, 0.1f, 100.0f);
@@ -1216,6 +1224,7 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 		vScale.x = fScale[0];  vScale.y = fScale[1];  vScale.z = fScale[2];
 
 		Set_ScalingBox(pRigidActor, vScale);
+		(*vec_ColiderSize)[iSelectColider_Index] = vScale;
 	}
 }
 

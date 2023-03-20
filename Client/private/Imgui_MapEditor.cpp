@@ -531,9 +531,10 @@ void CImgui_MapEditor::Imgui_Save_Func()
 
 		SaveDataDesc.szProtoObjTag = SaveJson_Desc.szProtoObjTag;
 		SaveDataDesc.szModelTag = SaveJson_Desc.szModelTag;
-	//	SaveDataDesc.szTextureTag = SaveJson_Desc.szTextureTag;
+		
 		SaveDataDesc.iRoomIndex = SaveJson_Desc.iRoomIndex;
 		SaveDataDesc.eChapterType = SaveJson_Desc.eChapterType;
+		SaveDataDesc.iShaderPass = SaveJson_Desc.iShaderPass;
 
 		szProtoObjTag = CUtile::WstringToString(SaveDataDesc.szProtoObjTag);
 		szModelTag = CUtile::WstringToString(SaveDataDesc.szModelTag);
@@ -542,7 +543,7 @@ void CImgui_MapEditor::Imgui_Save_Func()
 
 		jChild["0_ProtoTag"] = szProtoObjTag;
 		jChild["1_ModelTag"] = szModelTag;
-		//jChild["2_TextureTag"] = szTextureTag;
+		jChild["2_ShaderOption"] = (int)SaveDataDesc.iShaderPass;
 		jChild["3_CloneTag"] = szCloneTag;
 		jChild["4_RoomIndex"] = (int)(SaveDataDesc.iRoomIndex);
 		jChild["5_ChapterType"] = (int)(SaveDataDesc.eChapterType);
@@ -583,8 +584,29 @@ void CImgui_MapEditor::Imgui_Save_Func()
 					jChild["25_Instancing_Transform_matrix"].push_back(fElement);
 				}
 			}
+			
+			vector<_float3>* SaveInstColiderSize = pModel->Get_ColiderSize();
+			
+			if(SaveInstColiderSize->size() >0)
+			{ 
+				for (size_t i = 0; i < InstancingPosSize; ++i)
+				{
+					_float3 fColiderSize = (*SaveInstColiderSize)[i];
+					for (int j = 0; j < 3; ++j)
+					{
+						fElement = 0.f;
+						memcpy(&fElement, (float*)&fColiderSize + j, sizeof(float));
+						jChild["10_Instancing_ColiderSize"].push_back(fElement);
+					}
+				}
+			}
+
 		}
 	
+
+
+
+
 
 		jEnviromentObjList["1_Data"].push_back(jChild);
 		szProtoObjTag = "";
@@ -631,7 +653,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
 	vector<string> StrComponentVec;
-
+	int				 iShaderPath = 0;
 
 	jLoadEnviromentObjList["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -642,7 +664,7 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
-		//jLoadChild["2_TextureTag"].get_to<string>(szTextureTag);
+		jLoadChild["2_ShaderOption"].get_to<int>(iShaderPath);
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
@@ -670,7 +692,22 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 				MatrixNumber = 0;
 			}
 		}
+		
+		vector<_float3> SaveInstColiderSize;
+		MatrixNumber = 0;
+		_float3 fColiderSize;
+		for (float fElement : jLoadChild["10_Instancing_ColiderSize"])
+		{
+			fElement = 0.f;
+			memcpy(((float*)&fColiderSize) + (MatrixNumber++), &fElement, sizeof(float));
 			
+			if (MatrixNumber >= 3)
+			{
+				SaveInstColiderSize.push_back(fColiderSize);
+				MatrixNumber = 0;
+			}
+		}
+
 		m_wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		m_wstrModelName.assign(szModelTag.begin(), szModelTag.end());
 		m_wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
@@ -681,7 +718,8 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		EnviromentDesc.szModelTag = m_wstrModelName;
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
-		
+		EnviromentDesc.iShaderPass = iShaderPath;
+
 		if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->Get_CurLevelIndex(),
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -691,14 +729,14 @@ HRESULT CImgui_MapEditor::Imgui_Load_Func()
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComponentVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize,EnviromentDesc.eChapterType);
 		pGameInstance->Add_ShaderValueObject(g_LEVEL, pLoadObject); // Ãß°¡
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
-		iLoadChapterType = 0;		pLoadObject = nullptr;
+		iLoadChapterType = 0;		pLoadObject = nullptr;		iShaderPath = 0;
 		StrComponentVec.clear();
-	
+		SaveInstColiderSize.clear();
 		vecInstnaceMatrixVec.clear();
 	}
 
@@ -781,6 +819,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	_tchar*			wszCloneTag = L"";
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
+	int				iShaderPass = 0;
 	vector<string> StrComTagVec;
 	array<string, (_int)WJTextureType_UNKNOWN> strFilePaths_arr;
 	strFilePaths_arr.fill("");
@@ -793,6 +832,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 	{
 		jLoadChild["0_ProtoTag"].get_to<string>(szProtoObjTag);
 		jLoadChild["1_ModelTag"].get_to<string>(szModelTag);
+		jLoadChild["2_ShaderOption"].get_to<int>(iShaderPass);
 		jLoadChild["3_CloneTag"].get_to<string>(szCloneTag);
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
@@ -821,6 +861,20 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 			}
 		}
 
+		vector<_float3> SaveInstColiderSize;
+		MatrixNumber = 0;
+		_float3 fColiderSize;
+		for (float fElement : jLoadChild["10_Instancing_ColiderSize"])
+		{
+			memcpy(((float*)&fColiderSize) + (MatrixNumber++), &fElement, sizeof(float));
+
+			if (MatrixNumber >= 3)
+			{
+				SaveInstColiderSize.push_back(fColiderSize);
+				MatrixNumber = 0;
+			}
+		}
+
 		wstrProtoName.assign(szProtoObjTag.begin(), szProtoObjTag.end());
 		wstrModelName.assign(szModelTag.begin(), szModelTag.end());
 		wstrTexturelName.assign(szTextureTag.begin(), szTextureTag.end());
@@ -832,7 +886,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		EnviromentDesc.iRoomIndex = iLoadRoomIndex;
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
-
+		EnviromentDesc.iShaderPass = iShaderPass;
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -848,11 +902,11 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 		
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, EnviromentDesc.eChapterType);		
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize,EnviromentDesc.eChapterType);
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
-		iLoadChapterType = 0;		pLoadObject = nullptr;
+		iLoadChapterType = 0;		pLoadObject = nullptr;		iShaderPass = 0;
 		StrComTagVec.clear();
 		strFilePaths_arr.fill("");
 	}
@@ -943,23 +997,28 @@ void CImgui_MapEditor::imgui_ObjectList_Clear()
 
 void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 {
-	CGameObject* pGameObject = CGameInstance::GetInstance()->Get_SelectObjectPtr();
+	m_pSelectedObj = CGameInstance::GetInstance()->Get_SelectObjectPtr();
 
-
-	if (nullptr == pGameObject)
+	if (nullptr == m_pSelectedObj)
 		return;
 
-	CModel* pModel = static_cast<CModel*>(pGameObject->Find_Component(L"Com_Model"));
+	CModel* pModel = static_cast<CModel*>(m_pSelectedObj->Find_Component(L"Com_Model"));
+	if (m_pSelectedObj != m_pOldSelectedObj)
+	{
+		m_pOldSelectedObj = m_pSelectedObj;
+		pModel->InitPhysxData();
+	}
+	
 
 	ImGui::Begin("Instance Obj Colider_Control");
 
-	pModel->Edit_InstModel_Collider(pGameObject->Get_ObjectCloneName());
+	pModel->Edit_InstModel_Collider(m_pSelectedObj->Get_ObjectCloneName());
 
 	ImGui::End();
 
 }
 
-void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec,CEnviromentObj::CHAPTER eChapterGimmcik)
+void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec, vector<_float3> vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
 {
 	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
 	
@@ -968,8 +1027,10 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 	if (false == pModel->Get_IStancingModel())
 		return;
 
-
 	pModel->Set_InstancePos(vecMatrixVec);
+	
+	if(vecMatrixVec.size() > 0)
+		pModel->SetUp_InstModelColider(vecColiderSize);
 
 	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
 	{

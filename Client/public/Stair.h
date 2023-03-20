@@ -20,10 +20,11 @@ private:
 public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
-	virtual HRESULT Late_Initialize(void * pArg) override;
+	virtual HRESULT		Late_Initialize(void * pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
 
 private:
 	CModel*				m_pModelCom = nullptr;
@@ -36,6 +37,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 	bool		m_bBool = false;
 	_float3 m_vPos;

@@ -23,7 +23,7 @@ HRESULT CRotEater::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -52,35 +52,24 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 	
 	// 몸통
-	{
-		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(1.f, 0.001f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 1.f, 0.f);
+	{	
+		CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+		PxBoxDesc.eType = BOX_DYNAMIC;
+		PxBoxDesc.pActortag = m_szCloneObjectTag;
+		PxBoxDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxBoxDesc.vSize = _float3(0.6f, 0.5f, 1.2f);
+		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxBoxDesc.fDensity = 1.f;
+		PxBoxDesc.fAngularDamping = 0.5f;
+		PxBoxDesc.fMass = 30.f;
+		PxBoxDesc.fLinearDamping = 10.f;
+		PxBoxDesc.fDynamicFriction = 0.5f;
+		PxBoxDesc.fStaticFriction = 0.5f;
+		PxBoxDesc.fRestitution = 0.1f;
+		PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
-		// Capsule X == radius , Y == halfHeight
-		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
-		PxCapsuleDesc.fRadius = vPivotScale.x;
-		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 30.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
-		PxCapsuleDesc.fDynamicFriction = 0.5f;
-		PxCapsuleDesc.fStaticFriction = 0.5f;
-		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
-
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
-
-		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
-		m_pTransformCom->Set_PxPivotScale(vPivotScale);
-		m_pTransformCom->Set_PxPivot(vPivotPos);
+		CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, true, COL_MONSTER));
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 0.5f, 0.f));
 	}
 
 	// 무기
@@ -89,7 +78,7 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		m_vecColliderName.push_back(WeaponPivot);
 		_float3 vWeaponPivot = _float3(0.35f, -1.f, 0.f);
 		m_vecPivot.push_back(vWeaponPivot);
-		_float3 vWeaponScalePivot = _float3(0.2f, 0.1f, 0.1f);
+		_float3 vWeaponScalePivot = _float3(0.3f, 0.1f, 0.1f);
 
 		m_vecPivotScale.push_back(vWeaponScalePivot);
 
@@ -385,7 +374,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddTransition("IDLE to RUN", "RUN")		
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdletoAttackTime, 3.f);
+		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -637,20 +626,9 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		if (m_PlayerLookAt_Dir == FRONT)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(DEATH3);
-			m_pModelCom->Set_AnimIndex(DEATH3);
-		}
-		else if (m_PlayerLookAt_Dir == BACK)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
-			m_pModelCom->Set_AnimIndex(DEATH);
-		}
-
-		m_bDying = true;
-		m_pUIHPBar->Set_Active(false);
-		m_pTransformCom->Clear_Actor();
+		_uint iAnimIndex = (m_PlayerLookAt_Dir == FRONT) ? DEATH3 : (m_PlayerLookAt_Dir == BACK) ? DEATH : DEATH;
+		
+		Set_Dying(iAnimIndex);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()

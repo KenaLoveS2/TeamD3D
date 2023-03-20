@@ -26,6 +26,7 @@ private:
 	static _uint m_iEveryRotCount;
 	static _uint m_iKenaFindRotCount;
 	static vector<CRot*> m_vecKenaConnectRot;
+	static _float4 m_vKenaPos;
 	_uint m_iThisRotIndex = 0;
 
 	CRenderer*					m_pRendererCom = nullptr;
@@ -44,9 +45,9 @@ private:
 	_bool m_bWakeUp = false;	
 	_uint m_iCuteAnimIndex = 0;
 	_float m_fKenaToRotDistance = 2.f;
-	_float m_fTeleportDistance = 10.f;
+	_float m_fTeleportDistance = 6.f;
 
-	_float4 m_vKenaPos;
+	
 
 	DESC m_Desc;
 
@@ -86,6 +87,8 @@ public:
 	
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
+
+	void Set_KenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
 
 public:
 	enum ANIMATION {

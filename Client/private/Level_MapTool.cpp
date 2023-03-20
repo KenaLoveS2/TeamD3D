@@ -33,19 +33,15 @@ HRESULT CLevel_MapTool::Initialize()
 		return E_FAIL;
 
 	CGameInstance* p_game_instance = CGameInstance::GetInstance();
+#ifdef _DEBUG
 	p_game_instance->Clear_ImguiObjects();
-	
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext), true);
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
-
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
-
-	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));	
-	
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
-
+#endif
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
@@ -103,7 +99,7 @@ HRESULT CLevel_MapTool::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
+	LightDesc.szLightName = "DIRECTIONAL";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -118,11 +114,10 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-
-	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -131,15 +126,17 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "BoxColider_Tool.json");
+	
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+#ifdef FOR_MAP_GIMMICK
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-
-#ifdef FOR_MAP_GIMMICK
-	
-	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");*/
 #else 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
@@ -218,8 +215,8 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_MAPTOOL, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_MAPTOOL, pGameObject)))
-		return E_FAIL;
+	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
+
 #endif
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -255,6 +252,7 @@ HRESULT CLevel_MapTool::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
 
 	return S_OK;
 }
+
 
 
 CLevel_MapTool * CLevel_MapTool::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

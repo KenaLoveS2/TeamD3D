@@ -35,7 +35,9 @@ CModel::CModel(const CModel & rhs)
 	/*for Instancing*/
 	, m_bIsInstancing(rhs.m_bIsInstancing)
 	, m_bIsLodModel(rhs.m_bIsLodModel)
+	, m_bUseTriangleMeshActor(rhs.m_bUseTriangleMeshActor)
 {
+
 	for (auto& Material : m_Materials)
 	{
 		for (_uint i = 0; i < (_uint)WJ_TEXTURE_TYPE_MAX; ++i)
@@ -121,6 +123,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 
 	m_bIsInstancing = bIsInstancing;			/* 현재 모델이 인스턴싱인가?*/
 	m_bIsLodModel = bIsLod;
+	m_bUseTriangleMeshActor = bUseTriangleMeshActor;
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
 	m_wstrModelFilePath = pModelFilePath;
@@ -218,7 +221,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 			// for. Instaincing
 			if (m_bIsInstancing == true)
 			{
-				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod);
+				CInstancing_Mesh *pMesh = CInstancing_Mesh::Create(m_pDevice, m_pContext, hFile, this, bIsLod, bUseTriangleMeshActor);
 				assert(nullptr != pMesh && "CModel::Initialize_Prototype _Instancing");
 				m_InstancingMeshes.push_back(pMesh);
 			}
@@ -297,6 +300,7 @@ void CModel::Imgui_RenderProperty()
 
 	if (ImGui::CollapsingHeader("Meshes"))
 	{
+		Imgui_MaterialPath();
 		_uint	iMaterialIndex = 0;
 		for (size_t i = 0; i < m_iNumMeshes; ++i)
 		{
@@ -320,19 +324,24 @@ void CModel::Imgui_RenderProperty()
 
 	if (ImGui::CollapsingHeader("Materials"))
 	{
-		for (size_t i = 0; i < m_iNumMaterials; ++i)
+		_uint	iMaterialIndex = 0;
+		for (size_t i = 0; i < m_iNumMeshes; ++i)
 		{
+			if (m_bIsInstancing == true)			/*For.Instacing*/
+				iMaterialIndex = m_InstancingMeshes[i]->Get_MaterialIndex();
+			else												/*For.Origin*/
+				iMaterialIndex = m_Meshes[i]->Get_MaterialIndex();
 			ImGui::Text("Material %d", i);
+			ImGui::Separator();
 
-			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; ++j)
+			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 			{
-				if (m_Materials[i].pTexture[j] != nullptr)
+				if (m_Materials[iMaterialIndex].pTexture[j] != nullptr)
 				{
-					ImGui::Image(m_Materials[i].pTexture[j]->Get_Texture(), ImVec2(50.f, 50.f));
 					ImGui::SameLine();
+					ImGui::Image(m_Materials[iMaterialIndex].pTexture[j]->Get_Texture(), ImVec2(50.f, 50.f));
 				}
 			}
-			ImGui::NewLine();
 		}
 	}
 
@@ -1518,7 +1527,6 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	return S_OK;
 }
 
-
 void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos,_fmatrix TerrainMatrix,_bool bPickingTerrain)
 {
 	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
@@ -1631,9 +1639,7 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 		for (auto& pInstMesh : m_InstancingMeshes)
 			pInstMesh->InstaincingMesh_yPosControl(yPos);
 	}
-
 }
-
 
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
@@ -2353,7 +2359,6 @@ void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pM
 }
 
 void CModel::Create_PxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex)
-
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2435,8 +2440,7 @@ void CModel::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _fl
 	*pMaxZ = Zmax;
 }
 
-void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,
-	_float3 vSize ,_float3 _vPos)
+void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConnectTransform, _uint iColliderIndex,	_float3 vSize ,_float3 _vPos,_bool bRotation)
 {
 	_float fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
 
@@ -2454,6 +2458,8 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 	_float4 vPos,vRight,vUp,vLook,vFloat4Len;
 	_float  fXSize, fYSize, fZSize;
 	size_t InstMatrixSize = m_pInstancingMatrix.size();
+	size_t InstColiderSizeVec = m_VecInstancingColiderSize.size();
+
 
 	for (_uint i = 0; i < InstMatrixSize; ++i)
 	{
@@ -2465,7 +2471,7 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		memcpy(&vLook, &MatPosTrans.m[2], sizeof(_float4));
 		memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
 
-		fXSize =XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+		fXSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
 		fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
 		fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
 
@@ -2473,9 +2479,16 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 
 		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.pActortag = CUtile::Create_DummyString(pActorName,i);
+		BoxDesc.pActortag = CUtile::Create_DummyString(pActorName, i);
 		BoxDesc.vPos = CUtile::Float_4to3(vPos);
-		BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f))* vSize.x,fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+
+		if (InstColiderSizeVec != 0)
+			BoxDesc.vSize = m_VecInstancingColiderSize[i];
+		else
+		{
+			BoxDesc.vSize = _float3(fLenX *(fXSize*(0.5f))* vSize.x, fLenY*(fYSize*0.5f) * vSize.y, fLenZ*(fZSize*0.5f) * vSize.z);
+			m_VecInstancingColiderSize.push_back(BoxDesc.vSize);
+		}
 		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDegree = 0.f;
 		BoxDesc.isGravity = false;
@@ -2484,14 +2497,14 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		BoxDesc.fRestitution = 0.1f;
 		BoxDesc.eFilterType = FILTER_DEFULAT;
 		BoxDesc.bKinematic = true;
-		BoxDesc.vVelocity = _float3(0.f,0.f,0.f);
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		BoxDesc.fDensity = 1.f;
 		BoxDesc.fAngularDamping = 1.f;
 		BoxDesc.fMass = 1.f;
 		BoxDesc.fLinearDamping = 1.f;
 
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, iColliderIndex));
-		
+
 		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
 		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
 		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
@@ -2508,10 +2521,26 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
 		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
 
-		PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
-		pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+		if (bRotation == false)
+		{
+			PxRigidActor*	pActor = pPhysX->Find_StaticActor(BoxDesc.pActortag);
+			pPhysX->Set_ActorMatrix(pActor, matNew); // 크기정보를 빼고 넣는다.
+		}
 	}
 
+}
+
+void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
+{
+	if (m_InstancingMeshes.size() == 0 || m_bIsInstancing ==false)
+	{	
+		return;
+	}
+
+	for (auto &iter : m_InstancingMeshes)
+	{
+		iter->Create_PxTriangle_InstMeshActor(pParentTransform,m_pInstancingMatrix);
+	}
 }
 
 void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
@@ -2520,8 +2549,20 @@ void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
 		return;
 
 	CPhysX_Manager::GetInstance()->Imgui_Render(pActorName, &m_VecInstancingColiderSize);
+}
 
+void CModel::InitPhysxData()
+{
+	CPhysX_Manager::GetInstance()->Physx_Init();
 
+}
+
+void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
+{
+	for (auto vSize : vecColiderSize)
+	{
+		m_VecInstancingColiderSize.push_back(vSize);
+	}
 }
 
 

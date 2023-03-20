@@ -27,7 +27,8 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
-	 
+	virtual HRESULT		RenderShadow() override;
+
 public:
 	void			Set_GimmickActive(_bool bGimmickActive) { m_bGimmickActive = bGimmickActive; }
 
@@ -53,6 +54,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CCrystal*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

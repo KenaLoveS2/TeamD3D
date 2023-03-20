@@ -131,6 +131,7 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 		//m_EnviromentDesc.AI_textureFilePaths = Desc->AI_textureFilePaths;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = 90.f;
 		m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		m_EnviromentDesc.iShaderPass = Desc->iShaderPass;
 	}
 	else
 	{
@@ -164,6 +165,11 @@ HRESULT CEnviromentObj::Render()
 	__super::Render();
 
 	return S_OK;
+}
+
+void CEnviromentObj::Imgui_RenderProperty()
+{
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
 }
 
 void CEnviromentObj::ImGui_ShaderValueProperty()

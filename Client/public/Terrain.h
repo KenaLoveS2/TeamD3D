@@ -26,6 +26,7 @@ public:
 		_int			iFillterTwo_TextureNum = 0;
 		_int			iFillterThree_TextureNum = 0;
 		_int			iHeightBmpNum = 0;
+		_int			iRoomIndex = 0;
 		tag_TerrainDesc()
 		{
 			wstrDiffuseTag = L"";	wstrFilterTag = L""; wstrNormalTag = L"";

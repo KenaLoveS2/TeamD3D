@@ -29,7 +29,7 @@ public:
 public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
+	virtual void				ImGui_PhysXValueProperty() override;
 
 private:
 	CModel*									m_pModelCom = nullptr; 
@@ -47,8 +47,6 @@ public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
-
-
 
 private:
 	HRESULT SetUp_Components();

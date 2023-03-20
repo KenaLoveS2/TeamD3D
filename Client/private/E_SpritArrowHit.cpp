@@ -64,10 +64,11 @@ void CE_SpiritArrowHit::Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
-	else
+	else // true
 	{
 		m_fTimeDelta += fTimeDelta;
 		m_eEFfectDesc.vScale *= (2.0f + fTimeDelta * 2.f);
+
 		if (m_fTimeDelta > 0.5f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
@@ -82,7 +83,7 @@ void CE_SpiritArrowHit::Tick(_float fTimeDelta)
 void CE_SpiritArrowHit::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
-		return ;
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 }

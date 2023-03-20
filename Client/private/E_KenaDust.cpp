@@ -37,6 +37,7 @@ HRESULT CE_KenaDust::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
 	return S_OK;
 }
 
@@ -45,12 +46,12 @@ void CE_KenaDust::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
- 	__super::Tick(fTimeDelta);
+	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 0.5f)
+		if (m_fTimeDelta > 1.6f)
 		{
 			m_eEFfectDesc.fWidthFrame = 0.0;
 			m_eEFfectDesc.fHeightFrame = 0.0;

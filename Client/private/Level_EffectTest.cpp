@@ -37,6 +37,9 @@ HRESULT CLevel_EffectTest::Initialize()
  	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
  		return E_FAIL;
 
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
+
 // 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 // 		return E_FAIL;
 
@@ -85,7 +88,7 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
 	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
 	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
-	strcpy_s(LightDesc.szLightName, MAX_PATH, "DIRECTIONAL");
+	LightDesc.szLightName = "DIRECTIONAL";
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -159,6 +162,21 @@ HRESULT CLevel_EffectTest::Ready_Layer_Player(const _tchar * pLayerTag)
 	CGameObject* pGameObject = nullptr;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_EffectTest::Ready_Layer_Monster(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
