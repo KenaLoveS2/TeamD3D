@@ -43,7 +43,9 @@ void CEnviroment_Manager::Tick(_float fTimeDelta)
 	// 플레이어 z 비교로 룸인덱스 계산
 #ifdef _DEBUG
 	if (m_pPlayer == nullptr)
+	{
 		return;
+	}
 #endif
 	_float4	fPos;
 	XMStoreFloat4(&fPos, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
