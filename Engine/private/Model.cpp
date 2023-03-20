@@ -297,6 +297,7 @@ void CModel::Imgui_RenderProperty()
 
 	if (ImGui::CollapsingHeader("Meshes"))
 	{
+		Imgui_MaterialPath();
 		_uint	iMaterialIndex = 0;
 		for (size_t i = 0; i < m_iNumMeshes; ++i)
 		{
@@ -320,19 +321,24 @@ void CModel::Imgui_RenderProperty()
 
 	if (ImGui::CollapsingHeader("Materials"))
 	{
-		for (size_t i = 0; i < m_iNumMaterials; ++i)
+		_uint	iMaterialIndex = 0;
+		for (size_t i = 0; i < m_iNumMeshes; ++i)
 		{
+			if (m_bIsInstancing == true)			/*For.Instacing*/
+				iMaterialIndex = m_InstancingMeshes[i]->Get_MaterialIndex();
+			else												/*For.Origin*/
+				iMaterialIndex = m_Meshes[i]->Get_MaterialIndex();
 			ImGui::Text("Material %d", i);
+			ImGui::Separator();
 
-			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; ++j)
+			for (_uint j = 0; j < (_uint)WJ_TEXTURE_TYPE_MAX; j++)
 			{
-				if (m_Materials[i].pTexture[j] != nullptr)
+				if (m_Materials[iMaterialIndex].pTexture[j] != nullptr)
 				{
-					ImGui::Image(m_Materials[i].pTexture[j]->Get_Texture(), ImVec2(50.f, 50.f));
 					ImGui::SameLine();
+					ImGui::Image(m_Materials[iMaterialIndex].pTexture[j]->Get_Texture(), ImVec2(50.f, 50.f));
 				}
 			}
-			ImGui::NewLine();
 		}
 	}
 

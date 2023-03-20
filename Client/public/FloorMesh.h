@@ -24,6 +24,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
 
 private:
 	CModel*				m_pModelCom = nullptr;
@@ -36,6 +37,7 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static  CFloorMesh*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

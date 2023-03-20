@@ -64,6 +64,7 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	Out.vProjPos = mul(float4(In.vPosition, 1.f), Transform);
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
+
 	return Out;
 }
 
@@ -312,7 +313,7 @@ PS_OUT_TESS PS_MAIN_MRAO_E(PS_IN_TESS In)
 	FinalColor.a = vDiffuse.a;
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.3f, 0.f);
 	Out.vAmbient = vAORM;
 	return Out;
 }//3
@@ -338,7 +339,7 @@ PS_OUT_TESS PS_MAIN_HRAO_E(PS_IN_TESS In)
 	FinalColor.a = vDiffuse.a;
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.3f, 0.f);
 	Out.vAmbient = vAORM;
 	return Out;
 }//4
