@@ -44,6 +44,8 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_bRotable = true;
+
 	return S_OK;
 }
 

@@ -227,7 +227,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	// CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json"); return S_OK;
+	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json"); return S_OK;
 		
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 	CGameObject *pGameObject = nullptr;

@@ -41,8 +41,9 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();	
+	m_bRotable = true;
+	
 	return S_OK;
 }
 
