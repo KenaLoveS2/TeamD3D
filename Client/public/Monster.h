@@ -60,9 +60,9 @@ protected:
 
 public:
 	const _double&			Get_AnimationPlayTime();
-	_fvector						Get_Position();
+	_vector						Get_Position();
 	DESC							Get_Desc() { return m_Desc; };
-	virtual _fvector				Get_FocusPosition();
+	virtual _vector				Get_FocusPosition();
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;

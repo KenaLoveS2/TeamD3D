@@ -26,12 +26,12 @@ const _double & CMonster::Get_AnimationPlayTime()
 	return m_pModelCom->Get_PlayTime();
 }
 
-_fvector CMonster::Get_Position()
+_vector CMonster::Get_Position()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 }
 
-_fvector CMonster::Get_FocusPosition()
+_vector CMonster::Get_FocusPosition()
 {
 	return m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)
 		+ XMVectorSet(0.f, 6.f * m_pTransformCom->Get_vPxPivotScale().y, 0.f, 0.f);
@@ -123,15 +123,15 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_float fDistance = _float4::Distance(vCamPos, vPos);
 	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
 
-	/*
+	
 	if (fDistance <= 10.f)
 	{
 		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
 			Call_RotIcon();
-
-		Call_MonsterFocusIcon();
 	} 
-	*/
+
+	Call_MonsterFocusIcon();		
+
 }
 
 HRESULT CMonster::Render()
@@ -309,10 +309,15 @@ void CMonster::Call_RotIcon()
 	
 void CMonster::Call_MonsterFocusIcon()
 {
-	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
+	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
 		return;
 
-	m_pKena->Call_FocusMonsterIcon(this);
+	if (m_pTransformCom->Calc_Distance_XZ(CGameInstance::GetInstance()->Get_CamPosition()) > 10.f)
+		return;
+
+	CCamera*		pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
+	if (pCamera->Get_TransformCom()->Calc_InRange(XMConvertToRadians(120.f), m_pTransformCom) == true)
+		m_pKena->Smooth_Targeting(this);
 }
 
 HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
@@ -377,7 +382,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 {
 	if (pTarget && m_bSpawn)
 	{
-		if (iColliderIndex == COL_PLAYER_WEAPON || iColliderIndex == COL_PLAYER_ARROW)
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
 		{
 			m_pUIHPBar->Set_Active(true);
 			WeakleyHit();
@@ -389,7 +394,16 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
-			dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.2f);
+			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
+			{
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+			}
+			else
+			{
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.5f);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+			}
 		}
 	}
 

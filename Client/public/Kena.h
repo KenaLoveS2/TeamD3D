@@ -47,7 +47,7 @@ public:
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 
 	const _bool&				Is_StateLock() const{ return m_bStateLock; }
-	void					Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
+	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -67,6 +67,8 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	void						Smooth_Targeting(class CMonster* pMonster);
+
 	//void						Call_FocusIcon(CGameObject* pTarget);
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
@@ -99,6 +101,7 @@ private:
 	/* State variables*/
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
+	_bool						m_bLocalMoveLock = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
 	_float4					m_vDamagedDir;
@@ -112,7 +115,6 @@ private:
 	_bool						m_bPulse = false;
 
 	_float						m_fInertia = 5.f;
-	_float						m_fVelocity = 0.f;
 
 	_bool						m_bOnGround = true;
 	_bool						m_bJump = false;
@@ -139,8 +141,8 @@ private:
 	
 
 	/* UI */
-	CUI_RotIcon*				m_pFocusRot;
-	CUI_FocusMonster*			m_pFocusMonster;
+	CUI_RotIcon*				m_pUI_FocusRot;
+	CUI_FocusMonster*		m_pUI_FocusMonster;
 
 private:
 	HRESULT					Ready_Parts();
@@ -162,7 +164,8 @@ private:	/* Animation Event Func */
 	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);

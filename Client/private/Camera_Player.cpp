@@ -383,6 +383,43 @@ void CCamera_Player::Tick(_float fTimeDelta)
 // 		return;
 // 	}
 // 	else
+
+	if (m_RandomShakeList.empty() == false)
+	{
+		_vector	vShakeDir = m_RandomShakeList.front();
+		
+		_vector	vEye = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vAt = vEye + XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+
+		_vector	vShakeEye = vEye - vShakeDir;
+		_vector	vShakeAt = vAt + vShakeDir;
+
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vShakeEye);
+		m_pTransformCom->LookAt(vShakeAt);
+
+		m_RandomShakeList.pop_front();
+	}
+
+	if (m_DirShakeList.empty() == false)
+	{
+		_vector	vShakeAxis = m_DirShakeList.front();
+
+		_float		fAngle = XMVectorGetX(XMVector3Length(vShakeAxis));
+		vShakeAxis = XMVector3Normalize(vShakeAxis);
+
+
+		m_fShakeRatio += fTimeDelta;
+		CUtile::Saturate<_float>(m_fShakeRatio, 0.f, 1.f);
+		CUtile::FloatLerp(0.f, fAngle, m_fShakeRatio);
+		m_pTransformCom->RotationFromNow(vShakeAxis, fAngle);
+
+		if (m_fShakeRatio >= 1.f)
+		{
+			m_DirShakeList.pop_front();
+			m_fShakeRatio = 0.f;
+		}
+	}
+
 		__super::Tick(fTimeDelta);
 }
 
@@ -499,18 +536,30 @@ void CCamera_Player::Initialize_Position()
 	m_pTransformCom->LookAt(m_CameraDesc.vAt);
 }
 
-void CCamera_Player::Camera_Shake()
+void CCamera_Player::Camera_Shake(_float fPower, _uint iCount)
 {
+	_vector	vRandom;
+	
+	for (_uint i = 0; i < iCount; ++i)
+	{
+		vRandom = XMVector3Normalize(CUtile::Get_RandomVector(_float3(-1.f, -1.f, 0.f), _float3(1.f, 1.f, 0.f))) * fPower;
+
+		m_RandomShakeList.push_back(vRandom);
+		m_RandomShakeList.push_back(vRandom * -1.f);
+	}
 }
 
-void CCamera_Player::Camera_Shake(_float4 vDir)
+void CCamera_Player::Camera_Shake(_float4 vDir, _float fAngle, _bool bReturn)
 {
+	_vector	vAxis = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)), XMVector3Normalize(vDir)));
+	m_DirShakeList.push_back(vAxis * fAngle);
+
+	if (bReturn)
+		m_DirShakeList.push_back(vAxis * fAngle * -1.f);
 }
 
 void CCamera_Player::TimeSleep(_float fDuration)
 {
-	//m_fTimeSleep = fDuration;
-
 	CGameInstance::GetInstance()->Set_TimeSleep(L"Timer_60", fDuration);
 }
 
