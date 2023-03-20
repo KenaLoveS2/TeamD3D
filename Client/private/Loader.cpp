@@ -1226,6 +1226,23 @@ HRESULT CLoader::Loading_ForTestEffect()
 	// Prototype_GameObject_RotForMonster
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_Component_Model_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Sticks01",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_Mage
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Mage",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_GameObject_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"), CSticks01::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_Mage
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"), CMage::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_FireBullet
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"), CFireBullet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
 	m_isFinished = true;
@@ -1739,8 +1756,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_KenaHit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
-		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HitSet.json"))))
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Hit.json"))))
 		return E_FAIL;
+	// E_HitSet
 
 	/* For.Prototype_GameObject_KenaHitParticle */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit_P"),

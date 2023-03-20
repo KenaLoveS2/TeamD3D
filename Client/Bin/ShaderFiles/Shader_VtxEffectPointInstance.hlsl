@@ -612,11 +612,14 @@ PS_OUT PS_DOT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
-	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+	if (g_TextureRenderType == 1) // Sprite
+	{
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
 
-	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
-	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+	}
 
 	/* Diffuse */
 	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);

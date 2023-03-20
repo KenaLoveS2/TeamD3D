@@ -377,6 +377,8 @@ PS_OUT PS_MAIN_E_SPRITE(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	albedo.a = albedo.r;
 	albedo.a = albedo.g * 0.55;
+	if (albedo.a < 0.1f)
+		discard;
 
 	float4 vColor = float4(99.f, 248.f, 255.f, 255.f) / 255.f;
 	albedo.rgb = vColor.rgb * 1.3f;
@@ -429,7 +431,7 @@ technique11 DefaultTechnique
 	pass Effect_ChargingCenterLight // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -455,7 +457,7 @@ technique11 DefaultTechnique
 	pass Effect_Hit // 5
 	{
 		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
