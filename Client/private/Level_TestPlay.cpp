@@ -327,8 +327,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
 
 	RELEASE_INSTANCE(CGameInstance);
 
