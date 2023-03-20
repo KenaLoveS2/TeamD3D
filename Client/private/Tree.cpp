@@ -48,14 +48,12 @@ HRESULT CTree::Late_Initialize(void * pArg)
 		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
 	else
 		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
-
 	return S_OK;
 }
 
 void CTree::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CTree::Late_Tick(_float fTimeDelta)
@@ -76,148 +74,94 @@ HRESULT CTree::Render()
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_02"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_00"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_03")
+	if(m_pModelCom->Get_IStancingModel())
 	{
-		for                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       (_uint i = 0; i < iNumMeshes; ++i)
+		if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeStump_02")
 		{
-			if(i ==0)
+			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 5);
-			}
-			else	if(i == 1)
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
-			}
-		}
-	}
-	else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Brick04"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_02"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_01"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_02"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_03"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeSmall_04"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
-		}
-	}
-	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_03")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			if(i == 0)
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
-			}
-			else if (i == 1)
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+				if (i == 0)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				}
+				else	if (i == 1)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				}
 			}
 		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTreeStump_02")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
+		else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_03")
 		{
-			if (i == 0)
+			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 5);
+				if (i == 0)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+				}
+				else if (i == 1)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				}
 			}
-			else	if (i == 1)
+		}
+		else if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_00"	|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_02"	|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_03")
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-				m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
+				if (i == 0)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				}
+				else	if (i == 1)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				}
 			}
 		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CedarTree_Bare01"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_BigTreeLog")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
+		else
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 2);
-		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_TreeLog")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 5);
-		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTree"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Giant_GodTree02")
-	{
-		// 모르겠음
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
-		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
-	{
-		// 모르겠음
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
-		}
-	}
-	else	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RockRubble_02")
-	{
-		// 모르겠음
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
-		}
-	}
-	else if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_ForestTree_Canopy_05"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_LeafPile")
-	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, 6);
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+
+				if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_H_R_AO] != nullptr)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+				}
+				else	if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_COMP_E_R_AO] != nullptr)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_E_R_AO, "g_ERAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 5), E_FAIL);
+				}
+				else if ((*m_pModelCom->Get_Material())[i].pTexture[WJTextureType_AMBIENT_OCCLUSION] != nullptr)
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+				}
+				else
+				{
+					FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 1), E_FAIL);
+				}
+			}
 		}
 	}
 	else
@@ -225,9 +169,9 @@ HRESULT CTree::Render()
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderOption);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
 		}
 	}
 
@@ -265,6 +209,11 @@ HRESULT CTree::RenderShadow()
 	}
 
 	return S_OK;
+}
+
+void CTree::Imgui_RenderProperty()
+{
+	CEnviromentObj::Imgui_RenderProperty();
 }
 
 void CTree::ImGui_ShaderValueProperty()

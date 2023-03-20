@@ -4,12 +4,16 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
 float				g_fFar = 300.f;
+float				g_fStonePulseIntensity = 0.f;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_MRAOTexture;
+Texture2D<float4>		g_EmissiveTexture;
 
+Texture2D<float4>		g_HRAOTexture;
+Texture2D<float4>		g_MRAOTexture;
+Texture2D<float4>		g_ERAOTexture;
 
 struct VS_IN
 {
@@ -85,22 +89,18 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	VS_OUT_TESS		Out = (VS_OUT_TESS)0;
 
 	matrix		matWV, matWVP;
-
-
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
-	vector vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 
 	Out.vPosition = In.vPosition;
 	Out.vNormal = In.vNormal;
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
-	Out.vBinormal = normalize(cross(vNormal.xyz, Out.vTangent.xyz));
+	Out.vBinormal = normalize(cross(In.vNormal.xyz, Out.vTangent.xyz));
 
 	return Out;
 }
-
 
 struct PatchTess
 {
@@ -174,7 +174,6 @@ struct HullOut
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
-
 
 [domain("tri")]
 [partitioning("fractional_odd")]
@@ -301,12 +300,12 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
 
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
 	return Out;
 }
 
-PS_OUT_TESS PS_MAIN_TESS_COMP_MRAO(PS_IN_TESS In)
+PS_OUT_TESS PS_MAIN_TESS_MRAO(PS_IN_TESS In)
 {
 	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
 
@@ -326,10 +325,84 @@ PS_OUT_TESS PS_MAIN_TESS_COMP_MRAO(PS_IN_TESS In)
 	FinalColor.a = vDiffuse.a;
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAORM;
 	return Out;
 }
+
+PS_OUT_TESS PS_MAIN_H_R_AO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vHRAODesc = g_HRAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vHRAODesc.b, vHRAODesc.g, vHRAODesc.r, vHRAODesc.a);
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//2
+
+PS_OUT_TESS PS_MAIN_ERAO(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vERAODesc = g_ERAOTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vERAODesc.b, vERAODesc.g, vERAODesc.r, vERAODesc.a);
+
+	float4	FinalColor = vDiffuse;
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//5
+
+PS_OUT_TESS PS_MAIN_MRAO_E(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMRAODesc = g_MRAOTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = float4(vMRAODesc.b, vMRAODesc.g, vMRAODesc.r, vMRAODesc.a);
+
+	float4	FinalColor = vDiffuse + (vEmissiveDesc * g_fStonePulseIntensity);
+	FinalColor.a = vDiffuse.a;
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.3f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//3
 
 struct PS_IN
 {
@@ -492,6 +565,45 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_TESS_COMP_MRAO();
+		PixelShader = compile ps_5_0 PS_MAIN_TESS_MRAO();
+	}
+
+	pass OnlyHRAO//7
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
+	}
+
+	pass OnlyERAO//8
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_ERAO();
+	}
+
+	pass OnlyMRAO_E//9
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_MRAO_E();
 	}
 }
