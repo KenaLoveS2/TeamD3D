@@ -37,6 +37,8 @@ HRESULT CUI_CanvasItemBar::Initialize(void * pArg)
 	else
 	{
 		m_tItemDesc = *(ITEMDESC*)(pArg);
+
+		/* 여기 수정해서 아이템 바의 텍스처가 바뀌어야 함. */
 		Load_Data(m_tItemDesc.fileName);
 
 		_float3 vScale = m_pTransformCom->Get_Scaled();
