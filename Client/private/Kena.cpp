@@ -26,8 +26,7 @@ CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
-	, m_pTargetMonster(nullptr)
+	, m_pFocusMonster(nullptr)	
 {
 }
 
@@ -35,8 +34,7 @@ CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
 	, m_pFocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
-	, m_pTargetMonster(nullptr)
+	, m_pFocusMonster(nullptr)	
 {
 }
 
@@ -923,28 +921,23 @@ void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 	if (m_pFocusMonster == nullptr)
 		return;
 	
-	m_pTargetMonster = static_cast<CMonster*>(pTarget);
-	m_pFocusMonster->Set_Pos(m_pTargetMonster);
-
-	if (m_pTargetMonster != pTarget)
-		m_pFocusMonster->Start_Animation();
+	m_pFocusMonster->Set_Pos(pTarget);
+	m_pFocusMonster->Start_Animation();
 }
 
 
 void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 {
-	if (m_pFocusRot == nullptr || pTarget) return;
+	if (m_pFocusRot == nullptr) return;
 
-	m_pFocusRot->Set_Pos(nullptr);
+	m_pFocusRot->Off_Focus(pTarget);
 }
 
 void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
 {	
-	if (m_pTargetMonster && m_pFocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
-	{
-		m_pTargetMonster = nullptr;
-		m_pFocusMonster->Set_Active(false);
-	}
+	if (m_pFocusMonster == nullptr) return;
+
+	m_pFocusMonster->Off_Focus(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()

@@ -66,7 +66,7 @@ HRESULT CMonster::Initialize(void* pArg)
 	Push_EventFunctions();
 
 
-	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
 	/* Hit */
 	m_pKenaHit = dynamic_cast<CE_KenaHit*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", CUtile::Create_DummyString()));
@@ -123,6 +123,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	_float fDistance = _float4::Distance(vCamPos, vPos);
 	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
 
+	/*
 	if (fDistance <= 10.f)
 	{
 		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
@@ -130,7 +131,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 
 		Call_MonsterFocusIcon();
 	} 
-		
+	*/
 }
 
 HRESULT CMonster::Render()
@@ -305,7 +306,7 @@ void CMonster::Call_RotIcon()
 
 	m_pKena->Call_FocusRotIcon(this);
 }
-
+	
 void CMonster::Call_MonsterFocusIcon()
 {
 	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
@@ -408,7 +409,9 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_pModelCom->ResetAnimIdx_PlayTime(iDeathAnimIndex);
 	m_pModelCom->Set_AnimIndex(iDeathAnimIndex);
 
+	m_pKena->Dead_FocusRotIcon(this);
 	m_pKena->Dead_FocusMonsterIcon(this);	
+
 	m_bDying = true;
 	m_pUIHPBar->Set_Active(false);
 	m_pTransformCom->Clear_Actor();
