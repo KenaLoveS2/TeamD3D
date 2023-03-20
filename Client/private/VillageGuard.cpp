@@ -25,6 +25,8 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 7.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -34,21 +36,57 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = -5.f;
+		m_Desc.WorldMatrix._43 = -10.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
-
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();	
+	m_bRotable = true;
+	
 	return S_OK;
 }
 
 HRESULT CVillageGuard::Late_Initialize(void * pArg)
 {
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+	
+	{
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = { 0.f, 0.f, 0.f };
+		PxCapsuleDesc.fRadius = 0.5f;
+		PxCapsuleDesc.fHalfHeight = 1.f;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 1.f, 0.f));
+	}
+
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
+
 	return S_OK;
 }
 
 void CVillageGuard::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
+
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -57,13 +95,13 @@ void CVillageGuard::Tick(_float fTimeDelta)
 
 void CVillageGuard::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom && m_bSpawn)
 	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -71,12 +109,9 @@ void CVillageGuard::Late_Tick(_float fTimeDelta)
 HRESULT CVillageGuard::Render()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
-
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -100,15 +135,10 @@ HRESULT CVillageGuard::Render()
 
 HRESULT CVillageGuard::RenderShadow()
 {
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
@@ -158,11 +188,80 @@ void CVillageGuard::Push_EventFunctions()
 HRESULT CVillageGuard::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
-		.AddState("IDLE")
+		.InitState("SLEEP")
+		.AddState("SLEEP")
 		.Tick([this](_float fTimeDelta)
 	{
+		
+	})
+		.OnExit([this]()
+	{
+		m_pEnemyWisp->IsActiveState();
+	})
+		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fSpawnRange);		
+	})
+		
+		.AddState("READY_SPAWN")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(WISPIN);
+		m_pModelCom->Set_AnimIndex(WISPIN);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pUIHPBar->Set_Active(true);
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_pEnemyWisp->IsActiveState();
+	})
+
+		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 		m_pModelCom->Set_AnimIndex(IDLE);
+		
+	})
+		.OnExit([this]()
+	{
+		
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("IDLE to ATTACK", "ATTACK")
+		.Predicator([this]()
+	{
+		return false;
+	})
+
+
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		Set_Dying(DEATH);
+	})
+		.AddTransition("DYING to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
+
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_bDeath = true;
 	})
 		.Build();
 
@@ -187,6 +286,8 @@ HRESULT CVillageGuard::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_AO.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/VillageGuard/cv_staff_mask_uv_EMISSIVE2.png")), E_FAIL);
 
+	m_pModelCom->Set_RootBone("CorruptVillager");
+
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_VillageGuard.json");
 
@@ -208,26 +309,37 @@ HRESULT CVillageGuard::SetUp_ShaderResources()
 
 HRESULT CVillageGuard::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	if (nullptr == m_pShaderCom) return E_FAIL;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }
 
 void CVillageGuard::Update_Collider(_float fTimeDelta)
 {
+	m_pTransformCom->Tick(fTimeDelta);
+	
+	/*
+	CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+	SocketMatrix = XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
+		* SocketMatrix;
+	_float4x4 mat;
+	XMStoreFloat4x4(&mat, SocketMatrix);
+	m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
+	*/
 }
 
 CVillageGuard* CVillageGuard::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

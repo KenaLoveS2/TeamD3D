@@ -336,8 +336,8 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-#endif
-	
+#endif	
+
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -987,21 +987,11 @@ void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 		m_pUI_FocusMonster->Start_Animation();
 }
 
-
 void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 {
-	if (m_pUI_FocusRot == nullptr || pTarget) return;
+	if (m_pUI_FocusRot == nullptr || pTarget == nullptr) return;
 
-	m_pUI_FocusRot->Set_Pos(nullptr);
-}
-
-void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
-{	
-	if (m_pTargetMonster && m_pUI_FocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
-	{
-		m_pTargetMonster = nullptr;
-		m_pUI_FocusMonster->Set_Active(false);
-	}
+	m_pUI_FocusRot->Off_Focus(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()

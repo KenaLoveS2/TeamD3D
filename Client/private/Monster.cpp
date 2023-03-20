@@ -66,14 +66,15 @@ HRESULT CMonster::Initialize(void* pArg)
 	Push_EventFunctions();
 
 
-	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"),TEXT("Kena"));
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
 	/* Hit */
 	m_pKenaHit = dynamic_cast<CE_KenaHit*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHit", CUtile::Create_DummyString()));
 	NULL_CHECK_RETURN(m_pKenaHit, E_FAIL);
-
+		
+	m_bRotable = false;
+	
 	RELEASE_INSTANCE(CGameInstance)
-	m_bRotable = true;
 	return S_OK;
 }
 
@@ -115,20 +116,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
-			
-	/* calculate camera */
-	_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
-	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
-	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float fDistance = _float4::Distance(vCamPos, vPos);
-	_float4 vDir = XMVector3Normalize(vPos - vCamPos);
-
-	if (fDistance <= 10.f)
-	{
-		if(!m_bBind && (XMVectorGetX(XMVector3Dot(vDir, vCamLook)) > cosf(XMConvertToRadians(20.f))))
-			Call_RotIcon();
-	} 
-
+	
+	Call_RotIcon();
 	Call_MonsterFocusIcon();		
 }
 
@@ -299,12 +288,25 @@ void CMonster::AdditiveAnim(_float fTimeDelta)
 
 void CMonster::Call_RotIcon()
 {
-	if (nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
+	static const _float fRandian_Cos20 = cosf(XMConvertToRadians(20.f));
+
+	if (m_bRotable == false || nullptr == m_pKena || m_bSpawn == false || m_bDying || m_bDeath)
 		return;
+	
+	if (m_bBind == false)
+	{
+		_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float fDistance = _float4::Distance(vCamPos, vPos);
 
-	m_pKena->Call_FocusRotIcon(this);
+		if (fDistance <= 10.f)
+		{
+			if(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vPos - vCamPos), CGameInstance::GetInstance()->Get_CamLook_Float4())) > fRandian_Cos20)
+				m_pKena->Call_FocusRotIcon(this);
+		}
+	}	
 }
-
+	
 void CMonster::Call_MonsterFocusIcon()
 {
 	if (nullptr == m_pKena || !m_bSpawn || m_bDying || m_bDeath)
@@ -421,7 +423,8 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_pModelCom->ResetAnimIdx_PlayTime(iDeathAnimIndex);
 	m_pModelCom->Set_AnimIndex(iDeathAnimIndex);
 
-	m_pKena->Dead_FocusMonsterIcon(this);	
+	m_pKena->Dead_FocusRotIcon(this);
+	
 	m_bDying = true;
 	m_pUIHPBar->Set_Active(false);
 	m_pTransformCom->Clear_Actor();
