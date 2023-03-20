@@ -56,9 +56,11 @@ public:
 	void					Camera_Shake(_float4 vDir, _float fAngle, _bool bReturn = true);
 	void					TimeSleep(_float fDuration);
 
+	void					Update_ReflectWorld();
+	
 private:
 	class CKena*			m_pKena = nullptr;
-	CTransform*			m_pKenaTransform = nullptr;
+	CTransform*				m_pKenaTransform = nullptr;
 
 	map<CAMOFFSET, CCamOffset*>	m_mapCamOffset;
 	CCamOffset*			m_pCurOffset = nullptr;
