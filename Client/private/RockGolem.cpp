@@ -50,39 +50,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(1.8f, 0.1f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 1.95f, 0.f);
-
-		// Capsule X == radius , Y == halfHeight
-		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
-		PxCapsuleDesc.vPos = vPos;
-		PxCapsuleDesc.fRadius = vPivotScale.x;
-		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
-		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
-		PxCapsuleDesc.fDynamicFriction = 0.5f;
-		PxCapsuleDesc.fStaticFriction = 0.5f;
-		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
-
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
-
-		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
-		m_pTransformCom->Set_PxPivotScale(vPivotScale);
-		m_pTransformCom->Set_PxPivot(vPivotPos);
-	}
-
-	// 콜라이더
-	{
-		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(1.8f, 0.1f, 1.f);
+		_float3 vPivotScale = _float3(2.f, 0.08f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 1.95f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -102,14 +70,43 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER_WEAPON));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Add_Collider(m_szCloneObjectTag, g_IdentityFloat4x4);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);		
+		m_pTransformCom->Set_PxPivotScale(vPivotScale);
+		m_pTransformCom->Set_PxPivot(vPivotPos);
+	}
+
+	// 콜라이더
+	{
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = m_szCloneObjectTag;
+		PxSphereDesc.vPos = {0.f, 0.f, 0.f};
+		PxSphereDesc.fRadius = 0.8f;		
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 20.f;
+		PxSphereDesc.fLinearDamping = 10.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
+
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.		
+		_float4x4 PivotMatrix;
+		XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, 4.7f, 0.f));		
+		m_pTransformCom->Add_Collider(m_szCloneObjectTag, PivotMatrix);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
-	
+	m_pUIHPBar->Set_Active(false);
+
 	return S_OK;
 }
 
@@ -119,13 +116,12 @@ void CRockGolem::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	//if (m_pFSM)
-	//	m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
 	m_pModelCom->Play_Animation(fTimeDelta);
-	//AdditiveAnim(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
 }
 
 void CRockGolem::Late_Tick(_float fTimeDelta)
@@ -257,7 +253,6 @@ HRESULT CRockGolem::SetUp_State()
 		.OnExit([this]()
 		{
 			m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-			m_pUIHPBar->Set_Active(true);
 		})
 			.AddTransition("SLEEPIDLE to WISPIN", "WISPIN")
 			.Predicator([this]()
@@ -300,7 +295,7 @@ HRESULT CRockGolem::SetUp_State()
 			.AddTransition("IDLE to WALK", "WALK")
 			.Predicator([this]()
 		{
-			return TimeTrigger(m_fIdletoAttackTime, 5.f);
+			return TimeTrigger(m_fIdletoAttackTime, 0.5f);
 		})
 			
 
@@ -324,28 +319,29 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return m_pMonsterStatusCom->IsDead();
 		})			
-			.AddTransition("WALK to CHARGEATTACK", "CHARGEATTACK")
-			.Predicator([this]()
-		{
-			return m_bRealAttack && m_bChargeAttack;
-		})
-			.AddTransition("WALK to SLAMATTACK", "SLAMATTACK")
-			.Predicator([this]()
-		{
-			return m_bRealAttack && m_bSlamAttack; // 가까이 있을때 가까이 가서 공격함
-		})
 			.AddTransition("WALK to EXPLODEATTACK", "EXPLODEATTACK")
 			.Predicator([this]()
 		{
 			return m_bRealAttack && m_bExplodeAttack; // 어디든 상관없을듯 
 		})
-			.AddTransition("WALK to WISPOUT", "WISPOUT")
+			.AddTransition("WALK to SLAMATTACK", "SLAMATTACK")
+			.Predicator([this]()
+		{
+			return m_bRealAttack && m_bSlamAttack; // 가까이 있을때 가까이 가서 공격함
+		})			
+			/*.AddTransition("WALK to CHARGEATTACK", "CHARGEATTACK")
+			.Predicator([this]()
+		{
+			return m_bRealAttack && m_bChargeAttack;
+		})*/
+			
+			/*.AddTransition("WALK to WISPOUT", "WISPOUT")
 			.Predicator([this]()
 		{
 			return !DistanceTrigger(20.f);
-		})
+		})*/
 
-			.AddState("CHARGEATTACK")
+			/*.AddState("CHARGEATTACK")
 			.OnStart([this]()
 		{
 			m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
@@ -360,18 +356,32 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
-		})
+		})*/
 
 			.AddState("SLAMATTACK")
 			.OnStart([this]()
 		{
+			m_bRealAttack = true;
 			m_pModelCom->ResetAnimIdx_PlayTime(CHARGESLAM);
 			m_pModelCom->Set_AnimIndex(CHARGESLAM);
+		})
+			.OnExit([this]()
+		{
+			m_bRealAttack = false;
+			m_iAttackType++;
+			m_iSlamAttackCount = 0;
 		})
 			.AddTransition("SLAMATTACK to IDLE", "IDLE")
 			.Predicator([this]()
 		{
-			return AnimFinishChecker(CHARGESLAM);
+			if (AnimFinishChecker(CHARGESLAM))
+			{
+				m_iSlamAttackCount++;
+				m_pModelCom->ResetAnimIdx_PlayTime(CHARGESLAM);
+				m_pModelCom->Set_AnimIndex(CHARGESLAM);
+			}
+			
+			return m_iSlamAttackCount >= 2;
 		})
 			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
@@ -382,13 +392,19 @@ HRESULT CRockGolem::SetUp_State()
 			.AddState("EXPLODEATTACK")
 			.OnStart([this]()
 		{
+			m_pUIHPBar->Set_Active(true);
+			m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
+			m_bRealAttack = true;
 			m_bExplodeAttack = true;
 			m_pModelCom->ResetAnimIdx_PlayTime(EXPLODE);
 			m_pModelCom->Set_AnimIndex(EXPLODE);
 		})
 			.OnExit([this]()
 		{
+			m_pUIHPBar->Set_Active(false);
+			m_bRealAttack = false;
 			m_bExplodeAttack = false;			
+			m_iAttackType++;
 		})
 			.AddTransition("EXPLODEATTACK to IDLE", "IDLE")
 			.Predicator([this]()
@@ -434,7 +450,7 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(INTOSLEEP);
 		})
-			
+		/*	
 			.AddState("WISPOUT")
 			.OnStart([this]()
 		{
@@ -451,16 +467,13 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(WISPOUT);
 		})
-			
+			*/
 
 
 			.AddState("DYING")
 			.OnStart([this]()
-		{
-			m_pModelCom->Set_AnimIndex(DEPTH);
-			m_bDying = true;
-			m_pUIHPBar->Set_Active(false);
-			m_pTransformCom->Clear_Actor();
+		{	
+			Set_Dying(DEPTH);
 		})
 			.AddTransition("DYING to DEATH", "DEATH")
 			.Predicator([this]()
@@ -558,51 +571,50 @@ void CRockGolem::Set_AttackType()
 	m_bSlamAttack = false;
 	m_bExplodeAttack = false;
 
-	m_iAttackType = rand() % 3;
+	m_iAttackType %= ATTACKTYPE_END;
 
 	switch(m_iAttackType)
 	{
-	case AT_CHARGEATTACK:
-		m_bChargeAttack = true;
+	case AT_EXPLODE:
+		m_bExplodeAttack = true;
 		break;
 	case AT_CHARGESLAM:
 		m_bSlamAttack = true;
 		break;
-	case AT_EXPLODE:
-		m_bExplodeAttack = true;
-		break;
+	
+	/*case AT_CHARGEATTACK:
+		m_bChargeAttack = true;
+		break;*/
 	default:
 		break;
 	}
 }
 
 void CRockGolem::Reset_Attack()
-{
-	m_bRealAttack = false;
+{	
 	m_bChargeAttack = false;
 	m_bSlamAttack = false;
-	m_iAttackType = ATTACKTYPE_END;
 }
 
 void CRockGolem::Tick_Attack(_float fTimeDelta)
 {
 	switch (m_iAttackType)
 	{
-	case AT_CHARGESLAM:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 2.f);
-		if (DistanceTrigger(2.f))
-			m_bRealAttack = true;
-		break;
-	case AT_CHARGEATTACK:
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
-		if (DistanceTrigger(15.f))
-			m_bRealAttack = true;
-		break;
 	case AT_EXPLODE:
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 10.f);
 		if (DistanceTrigger(10.f))
 			m_bRealAttack = true;
 		break;
+	case AT_CHARGESLAM:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 5.f);
+		if (DistanceTrigger(3.f))
+			m_bRealAttack = true;
+		break;	
+	/*case AT_CHARGEATTACK:
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 15.f);
+		if (DistanceTrigger(15.f))
+			m_bRealAttack = true;
+		break;*/
 	default:
 		break;
 	}

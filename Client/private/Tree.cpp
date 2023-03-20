@@ -37,17 +37,17 @@ HRESULT CTree::Initialize(void * pArg)
 
 HRESULT CTree::Late_Initialize(void * pArg)
 {
-	_float3 vPos, vSize;
-	vSize = _float3(0.25f, 1.f, 0.25f);
-	vPos = _float3(0.0f, 0.f, 0.0f);
-	
-	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
-		return S_OK;
+	//_float3 vPos, vSize;
+	//vSize = _float3(0.25f, 1.f, 0.25f);
+	//vPos = _float3(0.0f, 0.f, 0.0f);
+	//
+	//if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
+	//	return S_OK;
 
-	if (m_pModelCom->Get_IStancingModel() == true)
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
-	else
-		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	//if (m_pModelCom->Get_IStancingModel() == true)
+	//	m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	//else
+	//	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 
 	return S_OK;
 }
@@ -80,7 +80,7 @@ HRESULT CTree::Render()
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_00"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_CadarTree_03")
 	{
-		for (_uint i = 0; i < iNumMeshes; ++i)
+		for                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       (_uint i = 0; i < iNumMeshes; ++i)
 		{
 			if(i ==0)
 			{

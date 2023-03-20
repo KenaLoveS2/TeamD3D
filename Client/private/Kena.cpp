@@ -187,7 +187,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
 	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 1.f;
+	PxCapsuleDesc.fLinearDamping = 10.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
@@ -390,8 +390,9 @@ void CKena::Tick(_float fTimeDelta)
 	//
 	//m_PlayerAmmoDelegator.broadcast(eArrow, fCurArrowCount, fMaxArrowCount, fCurArrowCoolTime, fInitArrowCoolTime);
 
-
 	/* ~Delegator */
+
+	m_pFirstRot ? m_pFirstRot->Set_KenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) : 0;
 }
 
 void CKena::Late_Tick(_float fTimeDelta)
@@ -927,6 +928,23 @@ void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 
 	if (m_pTargetMonster != pTarget)
 		m_pFocusMonster->Start_Animation();
+}
+
+
+void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
+{
+	if (m_pFocusRot == nullptr || pTarget) return;
+
+	m_pFocusRot->Set_Pos(nullptr);
+}
+
+void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
+{	
+	if (m_pTargetMonster && m_pFocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
+	{
+		m_pTargetMonster = nullptr;
+		m_pFocusMonster->Set_Active(false);
+	}
 }
 
 HRESULT CKena::Ready_Parts()

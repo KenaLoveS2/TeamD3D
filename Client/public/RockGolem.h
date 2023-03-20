@@ -35,9 +35,10 @@ private:
 
 	enum ATTACKTYPE
 	{
-		AT_CHARGEATTACK,
-		AT_CHARGESLAM,
 		AT_EXPLODE,
+		AT_CHARGESLAM,
+		
+		// AT_CHARGEATTACK,
 		ATTACKTYPE_END
 	};
 
@@ -80,13 +81,15 @@ private:
 private:
 	_float	m_fIdletoAttackTime = 0.f;
 
-	_int		m_iAttackType = ATTACKTYPE_END;
+	_int m_iAttackType = AT_EXPLODE;
 	
 	_bool	m_bChargeAttack = false;
 	_bool	m_bSlamAttack = false;
 	_bool   m_bExplodeAttack = false;
 
 	_bool	m_bHit = false;
+
+	_int m_iSlamAttackCount = 0;
 
 public:
 	static CRockGolem*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

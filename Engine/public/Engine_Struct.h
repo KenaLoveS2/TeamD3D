@@ -4,18 +4,13 @@ namespace Engine
 	typedef struct tagGraphicDesc
 	{
 		enum WINMODE { WINMODE_FULL, WINMODE_WIN, WINMODE_END };
-
 		WINMODE			eWindowMode;
 		unsigned int	iViewportSizeX;
 		unsigned int	iViewportSizeY;
 		HWND			hWnd;		
-
-		const char* pSoundFileTag;
 		unsigned int iNumManualSounds;
-
 		unsigned int iNumCopyPrototypes;
-
-
+		const char* pSoundFileTag;
 	}GRAPHIC_DESC;
 
 	typedef struct tagModelMaterial
@@ -25,21 +20,21 @@ namespace Engine
 
 	typedef struct tagLightDesc
 	{
+		bool						isEnable;
 		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_END };
 		TYPE					eType;
-		bool						isEnable;
 		XMFLOAT4			vDirection;
 		XMFLOAT4			vPosition;
 		float						fRange;		
 		XMFLOAT4			vDiffuse;
 		XMFLOAT4			vAmbient;
 		XMFLOAT4			vSpecular;
-		char						szLightName[MAX_PATH];
+		const	char*		szLightName;
 	} LIGHTDESC;	
 
 	typedef struct tagKeyframe
 	{
-		double		Time;
+		double			Time;
 		XMFLOAT3	vScale;
 		XMFLOAT4	vRotation;
 		XMFLOAT3	vPosition;
