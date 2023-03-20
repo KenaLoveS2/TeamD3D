@@ -1007,6 +1007,7 @@
     <ClInclude Include="..\public\E_P_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WaterPlane.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1572,6 +1573,7 @@
     <ClCompile Include="..\private\E_P_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\WaterPlane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1644,5 +1646,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

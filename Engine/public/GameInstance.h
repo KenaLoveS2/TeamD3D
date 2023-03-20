@@ -156,6 +156,7 @@ public: /* For.PipeLine */
 
 	public: /* For.Target_Manager */
 		ID3D11ShaderResourceView* Get_DepthTargetSRV();
+		ID3D11ShaderResourceView* Get_ReflectSRV();
 
 	public: /* For.Sound_Manager */
 		_int Play_Sound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);

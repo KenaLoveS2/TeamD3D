@@ -106,10 +106,16 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Water(TEXT("Layer_Water"))))
+	{
+		MSG_BOX("Layer_Water");
+		return E_FAIL;
+	}
+
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -467,6 +473,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_Water(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), L"WaterPlane");
 
 	RELEASE_INSTANCE(CGameInstance);
 
