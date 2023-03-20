@@ -41,8 +41,9 @@ private:
 	CRenderer*											  m_pRendererCom = nullptr; /*OnlyDebug*/
 	
 	list<pair<CEnviromentObj::CHAPTER,CGameObject*>> 			  m_GimmcikObj_List[5];		//±â¹ÍÀÌ ´Ã¾î³¯ ¼ö·Ï Ãß°¡
-	map< const _tchar * ,CGameObject*>					  m_Gimmcik_Trigger_map;
+	map< const _tchar * ,CGameObject*>							  m_Gimmcik_Trigger_map;
 
+	array<bool, 4>			m_MapLoadArray;		// ÀüÃ¼¸Ê -1(Ã³À½¸Ê)
 
 private:
 	list<_float4x4>		  m_RoomControlPos_List;

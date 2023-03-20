@@ -42,13 +42,16 @@ HRESULT CControlRoom::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+
+	m_MapLoadArray.fill(false);
+
 	return S_OK;
 }
 
 HRESULT CControlRoom::Late_Initialize(void* pArg)
 {
 	// 피직스 박스 생성
-	__super::Late_Initialize();
+	
 	return S_OK;
 }
 
@@ -89,7 +92,6 @@ void CControlRoom::PulsePlate_Down_Active(_int iRoomIndex,_bool bTriggerActive)
 		CCrystal* pLastryCstal = static_cast<CCrystal*>(Get_Find_TriggerObj(L"2_Water_GimmickCrystal01"));
 		assert(nullptr != pLastryCstal && "CControlRoom::PulsePlate_Down_Active");
 		pLastryCstal->Set_GimmickActive(bTriggerActive);
-
 	}
 }
 
