@@ -152,7 +152,7 @@ public:
 	void createDynamic(const PxTransform& t, const PxGeometry& geometry, const PxVec3& velocity);
 	void Clear();
 
-	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f);
+	PxRigidStatic * Create_TriangleMeshActor_Static(PxTriangleMeshDesc& Desc, PX_USER_DATA* pUserData, _float fStaticFriction = 0.5f, _float fDynamicFriction = 0.5f, _float fRestitution = 0.1f, _float3 vScale=_float3(0.f,0.f,0.f));
 	
 	void Create_Trigger(PX_TRIGGER_DATA* pTriggerData);
 	void Create_TriggerStatic(PX_TRIGGER_DATA* pTriggerData);
