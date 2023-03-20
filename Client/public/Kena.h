@@ -23,7 +23,7 @@ class CKena final : public CGameObject
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
-	enum STATERETURN { STATE_ATTACK, STATE_HEAVYATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_INJECTBOW, STATE_PULSE, STATE_JUMP, STATERETURN_END };
+	enum STATERETURN { STATE_ATTACK, STATE_HEAVYATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_INJECTBOW, STATE_PULSE, STATE_PARRY, STATE_JUMP, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -37,6 +37,7 @@ public:
 	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;
+	vector<_float4>*			Get_WeaponPositions() { return &m_vecWeaposPos; }
 
 	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
@@ -45,6 +46,7 @@ public:
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
+	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
 
 	const _bool&				Is_StateLock() const{ return m_bStateLock; }
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
@@ -96,11 +98,18 @@ private:
 	vector<class CSpiritArrow*>				m_vecArrow;
 	class CSpiritArrow*							m_pCurArrow = nullptr;
 	map<const string, class CEffect_Base*>	m_mapEffect;
+	vector<_float4>								m_vecWeaposPos;
 
 private:
 	/* State variables*/
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
+	_bool						m_bParry = false;
+	_bool						m_bParryLaunch = false;
+	_uint						m_iCurParryFrame = 12;
+	_uint						m_iParryFrameCount = 12;
+	CGameObject*			m_pAttackObject = nullptr;
+	_float						m_fHitStopTime = 0.f;
 	_bool						m_bLocalMoveLock = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
@@ -139,7 +148,7 @@ private:
 	_float						m_fLashIntensity = 10.f;
 
 	/* Target Monster (For. UI and Auto Targeting */
-	CMonster*					m_pTargetMonster;
+	CMonster*				m_pTargetMonster;
 
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;

@@ -59,6 +59,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Jump(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Land(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Spin_Attack(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Sprint(), E_FAIL);
 
 	return S_OK;
@@ -140,6 +141,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"TAKE_DAMAGE", this, &CKena_State::CommonHit)
 		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
@@ -1545,6 +1547,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Start(this, &CKena_State::Start_Pulse_Parry)
 		.Init_Tick(this, &CKena_State::Tick_Pulse_Parry)
 		.Init_End(this, &CKena_State::End_Pulse_Parry)
+		.Init_Changer(L"SPIN_ATTACK", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.35f)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"PULSE_WALK")
 		.Init_Start(this, &CKena_State::Start_Pulse_Walk)
@@ -1680,6 +1684,25 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Spin_Attack()
+{
+	m_pStateMachine->Add_State(L"SPIN_ATTACK")
+		.Init_Start(this, &CKena_State::Start_Spin_Attack)
+		.Init_Tick(this, &CKena_State::Tick_Spin_Attack)
+		.Init_End(this, &CKena_State::End_Spin_Attack)
+		.Init_Changer(L"SPIN_ATTACK_RETURN", this, &CKena_State::TruePass, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.55f)
+
+		.Add_State(L"SPIN_ATTACK_RETURN")
+		.Init_Start(this, &CKena_State::Start_Spin_Attack_Return)
+		.Init_Tick(this, &CKena_State::Tick_Spin_Attack_Return)
+		.Init_End(this, &CKena_State::End_Spin_Attack_Return)
+		.Init_Changer(L"LOCK_ON_IDLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -3512,6 +3535,15 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 	m_pAnimationState->State_Animation("PULSE_PARRY");
 
 	m_pKena->m_bPulse = false;
+
+	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_WorldMatrix().r[3]);
+
+	m_pKena->m_bParry = false;
+	m_pKena->m_bParryLaunch = true;
+	m_pKena->m_iCurParryFrame = m_pKena->m_iParryFrameCount;
+	m_pKena->m_pAttackObject = nullptr;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
 }
 
 void CKena_State::Start_Pulse_Walk(_float fTimeDelta)
@@ -3583,6 +3615,18 @@ void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
 	m_pKena->m_bSprint = true;
 
 	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
+}
+
+void CKena_State::Start_Spin_Attack(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("SPIN_ATTACK");
+
+	m_pKena->m_bHeavyAttack = true;
+}
+
+void CKena_State::Start_Spin_Attack_Return(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("SPIN_ATTACK_RETURN");
 }
 
 void CKena_State::Start_Into_Sprint(_float fTimeDelta)
@@ -4229,6 +4273,15 @@ void CKena_State::Tick_Pulse_Into_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Pulse_Parry(_float fTimeDelta)
 {
+	CAnimation*	pAnimation = m_pAnimationState->Get_CurrentAnim()->m_pMainAnim;
+
+	if (pAnimation->Get_AnimationProgress() < 0.065f)
+		pAnimation->Get_AnimationTickPerSecond() = 2.0;
+	else
+	{
+		pAnimation->Get_AnimationTickPerSecond() = 24.0;
+		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+	}
 }
 
 void CKena_State::Tick_Pulse_Walk(_float fTimeDelta)
@@ -4238,6 +4291,14 @@ void CKena_State::Tick_Pulse_Walk(_float fTimeDelta)
 void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Spin_Attack(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Spin_Attack_Return(_float fTimeDelta)
+{
 }
 
 void CKena_State::Tick_Into_Sprint(_float fTimeDelta)
@@ -4826,6 +4887,9 @@ void CKena_State::End_Pulse_Into_Run(_float fTimeDelta)
 
 void CKena_State::End_Pulse_Parry(_float fTimeDelta)
 {
+	m_pKena->m_bParryLaunch = false;
+	
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 }
 
 void CKena_State::End_Pulse_Walk(_float fTimeDelta)
@@ -4836,6 +4900,17 @@ void CKena_State::End_Pulse_Walk(_float fTimeDelta)
 void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	m_pKena->m_bSprint = false;
+}
+
+void CKena_State::End_Spin_Attack(_float fTimeDelta)
+{
+	m_pKena->m_bAttack = false;
+	m_pKena->m_bHeavyAttack = false;
+	m_pKena->m_bTrailON = false;
+}
+
+void CKena_State::End_Spin_Attack_Return(_float fTimeDelta)
+{
 }
 
 void CKena_State::End_Into_Sprint(_float fTimeDelta)
@@ -4869,6 +4944,11 @@ void CKena_State::End_Sprint_Turn_180(_float fTimeDelta)
 
 void CKena_State::End_Sprint_Attack(_float fTimeDelta)
 {
+}
+
+_bool CKena_State::TruePass()
+{
+	return true;
 }
 
 _bool CKena_State::OnGround()
@@ -4919,6 +4999,11 @@ _bool CKena_State::HeavyAttack2_Perfect()
 _bool CKena_State::HeavyAttack3_Perfect()
 {
 	return m_pAnimationState->Get_AnimationProgress() > 0.491f && m_pAnimationState->Get_AnimationProgress() < 0.64f;
+}
+
+_bool CKena_State::Parry()
+{
+	return m_pKena->m_bParry;
 }
 
 _bool CKena_State::Damaged_Dir_Front()

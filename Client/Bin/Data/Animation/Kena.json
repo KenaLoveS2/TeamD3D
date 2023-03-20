@@ -2397,7 +2397,7 @@
     {
         "0. State Name": "PULSE_PARRY",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_PulseParry",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -2723,6 +2723,24 @@
         "1. Looping": false,
         "2. Lerp Duration": 0.20000000298023224,
         "3. Main Animation": "A_Kena_Interact_Staff",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "SPIN_ATTACK",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_SpinAttack",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "SPIN_ATTACK_RETURN",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_SpinAttack_Return",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
         "6. Additive Animation": "N/A"
