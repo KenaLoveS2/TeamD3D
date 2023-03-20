@@ -42,19 +42,66 @@ HRESULT CControlRoom::Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+
+	m_MapShadowArray.fill(false);
+
 	return S_OK;
 }
 
 HRESULT CControlRoom::Late_Initialize(void* pArg)
 {
-	// 피직스 박스 생성
-	__super::Late_Initialize();
+
+	
+	CGameObject* pPlayerPtr = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+	if (pPlayerPtr == nullptr)
+		return S_OK;
+
+	m_pPlayerTransformPtr = pPlayerPtr->Get_TransformCom();
+
+
 	return S_OK;
 }
 
 void CControlRoom::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
+
+	if (m_pPlayerTransformPtr ==nullptr)
+	{
+		return;
+	}
+
+	_float4 vPlayerPos;
+	XMStoreFloat4(&vPlayerPos, m_pPlayerTransformPtr->Get_State(CTransform::STATE_TRANSLATION));
+
+
+	if (false == m_MapShadowArray[0] && vPlayerPos.z > 240.f)
+	{
+		//To.do 
+		// 2번째 터레인 쉐도우 온
+		m_MapShadowArray[0] = true;
+	}
+	else if (false == m_MapShadowArray[1] && vPlayerPos.z > 480.f)
+	{
+		//To.do 
+		// 3번째 터레인 쉐도우 온
+		m_MapShadowArray[1] = true;
+	}
+	else if (false == m_MapShadowArray[2] && vPlayerPos.z > 710.f)
+	{
+		//To.do 
+		// 4번째 터레인 쉐도우 온
+		m_MapShadowArray[2] = true;
+	}
+	else if (false == m_MapShadowArray[3] && vPlayerPos.z > 917.f)
+	{
+		//To.do 
+		// 5번째 터레인 쉐도우 온
+		m_MapShadowArray[3] = true;
+	}
+	else
+		return;
+
 }
 
 void CControlRoom::Late_Tick(_float fTimeDelta)
@@ -89,7 +136,6 @@ void CControlRoom::PulsePlate_Down_Active(_int iRoomIndex,_bool bTriggerActive)
 		CCrystal* pLastryCstal = static_cast<CCrystal*>(Get_Find_TriggerObj(L"2_Water_GimmickCrystal01"));
 		assert(nullptr != pLastryCstal && "CControlRoom::PulsePlate_Down_Active");
 		pLastryCstal->Set_GimmickActive(bTriggerActive);
-
 	}
 }
 

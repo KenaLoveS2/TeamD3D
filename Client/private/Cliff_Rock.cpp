@@ -63,7 +63,7 @@ void CCliff_Rock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom)
+	if (m_pRendererCom && m_bRenderActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

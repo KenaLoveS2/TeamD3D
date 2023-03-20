@@ -1144,6 +1144,7 @@ void CPhysX_Manager::Delete_DynamicActor(PxRigidActor* pActor)
 		if (Pair->second == pActor)
 		{
 			m_pScene->removeActor(*(*Pair).second);
+			Pair->second = nullptr;
 			Pair = m_DynamicActors.erase(Pair);
 			break;
 		}

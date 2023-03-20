@@ -43,7 +43,8 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 	_tchar*		wszDiffuseTag = L"";
 	_tchar*		wszNormalTag = L"";
 	_tchar*		wszFillterTag = L"";
-	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0, iHeightBmpNum = 0;
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0
+		, iFillterThree_TextureNum = 0, iHeightBmpNum = 0, iRoomIndex =0 ;
 
 	jLoadTerrain["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -72,6 +73,7 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 		jLoadChild["7_FillterTwo_TextureNum"].get_to<int>(iFillterTwo_TextureNum);
 		jLoadChild["8_FillterThree_TextureNum"].get_to<int>(iFillterThree_TextureNum);
 		jLoadChild["9_Height_TextureNum"].get_to<int>(iHeightBmpNum);
+		jLoadChild["11_iRoomIndex"].get_to<int>(iRoomIndex);
 		CTerrain::tag_TerrainDesc terrainDesc;
 
 		terrainDesc.wstrDiffuseTag = wszDiffuseTag;
@@ -82,7 +84,8 @@ void CImgui_TerrainEditor::LoadFilterData(string jsonFileName)
 		terrainDesc.iFillterTwo_TextureNum = iFillterTwo_TextureNum;
 		terrainDesc.iFillterThree_TextureNum = iFillterThree_TextureNum;
 		terrainDesc.iHeightBmpNum = iHeightBmpNum;
-		
+		terrainDesc.iRoomIndex = iRoomIndex;
+	
 		float	fElement = 0.f;
 		int		k = 0;
 		for (float fElement : jLoadChild["10_Transform State"])
@@ -695,7 +698,9 @@ void CImgui_TerrainEditor::Save_Terrain()
 	wstring		wstrDiffuseTag = L"";
 	wstring		wstrFillterTag = L"";
 	wstring		wstrNormalTag = L"";
-	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0, iHeightBmpNum = 0;
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0,
+		iHeightBmpNum = 0, iRoomIndex = 0;
+	
 	CTerrain::TERRAIN_DESC* SaveDesc = nullptr;
 
 	jTerrainSave["0_LayerTag"] = szLayerTag;
@@ -715,6 +720,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		iFillterTwo_TextureNum = SaveDesc->iFillterTwo_TextureNum;
 		iFillterThree_TextureNum = SaveDesc->iFillterThree_TextureNum;
 		iHeightBmpNum = SaveDesc->iHeightBmpNum;
+		iRoomIndex = SaveDesc->iRoomIndex;
 		Json jChild;
 
 		wstrCloneTag =(pObject.second->Get_ObjectCloneName());
@@ -731,7 +737,7 @@ void CImgui_TerrainEditor::Save_Terrain()
 		jChild["7_FillterTwo_TextureNum"] = iFillterTwo_TextureNum;
 		jChild["8_FillterThree_TextureNum"] = iFillterThree_TextureNum;
 		jChild["9_Height_TextureNum"] = iHeightBmpNum;
-
+		jChild["11_iRoomIndex"] = iRoomIndex;
 		CTransform* pTransform = static_cast<CTransform*>(pObject.second->Find_Component(L"Com_Transform"));
 		assert(pTransform != nullptr && "CImgui_MapEditor::Imgui_Save_Func()");
 		XMStoreFloat4x4(&fWroldMatrix, pTransform->Get_WorldMatrix());
@@ -779,7 +785,8 @@ void CImgui_TerrainEditor::Load_Terrain()
 	_tchar*		wszDiffuseTag = L"";
 	_tchar*		wszNormalTag = L"";
 	_tchar*		wszFillterTag = L"";
-	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0, iHeightBmpNum = 0;
+	_int			iDiffuseNum = 0, iFillterOne_TextureNum = 0, iFillterTwo_TextureNum = 0, iFillterThree_TextureNum = 0,
+		iHeightBmpNum = 0, iRoomIndex = 0;
 
 	jLoadTerrain["0_LayerTag"].get_to<string>(szLayerTag);
 	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
@@ -808,6 +815,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 		jLoadChild["7_FillterTwo_TextureNum"].get_to<int>(iFillterTwo_TextureNum);
 		jLoadChild["8_FillterThree_TextureNum"].get_to<int>(iFillterThree_TextureNum);
 		jLoadChild["9_Height_TextureNum"].get_to<int>(iHeightBmpNum);
+		jLoadChild["11_iRoomIndex"].get_to<int>(iRoomIndex);
 		CTerrain::tag_TerrainDesc terrainDesc;
 
 		terrainDesc.wstrDiffuseTag = wszDiffuseTag;
@@ -818,6 +826,7 @@ void CImgui_TerrainEditor::Load_Terrain()
 		terrainDesc.iFillterTwo_TextureNum = iFillterTwo_TextureNum;
 		terrainDesc.iFillterThree_TextureNum = iFillterThree_TextureNum;
 		terrainDesc.iHeightBmpNum = iHeightBmpNum;
+		terrainDesc.iRoomIndex = iRoomIndex;
 
 		float	fElement = 0.f;
 		int		k = 0;
