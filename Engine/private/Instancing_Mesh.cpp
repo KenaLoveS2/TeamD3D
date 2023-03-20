@@ -18,7 +18,6 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
 	, m_pAnimVertices(rhs.m_pAnimVertices)
 	, m_pIndices(rhs.m_pIndices)
 	, m_bLodMesh(rhs.m_bLodMesh)
-
 	, m_iOriginNumPrimitive(rhs.m_iOriginNumPrimitive)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
@@ -208,21 +207,14 @@ void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 		memcpy(&pInstanceVertices[i].vUp, &VecInstancingMatrix[i]->m[1], sizeof(_float4));
 		memcpy(&pInstanceVertices[i].vLook, &VecInstancingMatrix[i]->m[2], sizeof(_float4));
 		memcpy(&pInstanceVertices[i].vPosition, &VecInstancingMatrix[i]->m[3], sizeof(_float4));
-		
-		//memcpy(&pInstanceVertices[i].vRight, &m[0], sizeof(_vector));
-		//pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);		// 버퍼 하나의 행렬을 만들어서 쉐이더에게 전달해줘야한다.
-		//pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
-		//pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		//pInstanceVertices[i].vPosition = _float4(2 * i, 0.f, 2 * i, 1.f);		// 나중에 인스터닝을 할때 이포지션을 움직일 수 있게 락 언락구조를 짜야한다.
 	}
-
 	Safe_Release(m_pInstanceBuffer);
 	m_pInstanceBuffer = nullptr;
-
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pInstanceVertices;
 
 	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
+
 
 	Safe_Delete_Array(pInstanceVertices);
 }
@@ -275,7 +267,13 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 }
 
-HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
+void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> VecInstancingMatrix)
+{
+
+}
+
+HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _bool bIsLod,
+	_bool bUseTriangleMeshActor, _uint iNumInstance)
 {
 	if (hFile == nullptr)
 		return S_OK;
@@ -319,7 +317,6 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 	m_iNumInstance = iNumInstance;
 	m_iIndexCountPerInstance = 3 * m_iNumPrimitive;
 	m_iNumVertexBuffers = 2;
-	m_iNumVertices = m_iNumVertices;
 	m_iNumPrimitive = m_iNumPrimitive * iNumInstance;
 	
 
@@ -400,11 +397,39 @@ HRESULT CInstancing_Mesh::Initialize_Prototype(HANDLE hFile, CModel * pModel, _b
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pInstanceVertices;
+	Safe_Delete_Array(pInstanceVertices);
 
 	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
 
-	Safe_Delete_Array(pInstanceVertices);
+	
 #pragma endregion
+	if (bUseTriangleMeshActor)
+	{
+		if (m_pPxVertices == nullptr)
+		{
+			m_pPxVertices = new PxVec3[m_iNumVertices];
+			ZeroMemory(m_pPxVertices, sizeof(PxVec3) * m_iNumVertices);
+
+			for (_uint i = 0; i < m_iNumVertices; i++)
+			{
+				_float3 vPos = m_pNonAnimVertices[i].vPosition;
+				m_pPxVertices[i] = CUtile::ConvertPosition_D3DToPx(vPos);
+			}
+		}
+
+		if (m_pPxIndicies == nullptr)
+		{
+			m_pPxIndicies = new PxIndicies[m_iOriginNumPrimitive];
+			ZeroMemory(m_pPxIndicies, sizeof(PxIndicies) * m_iOriginNumPrimitive);
+			for (_uint i = 0; i < m_iOriginNumPrimitive; i++)
+			{
+				m_pPxIndicies[i]._0 = m_pIndices[i]._0;
+				m_pPxIndicies[i]._1 = m_pIndices[i]._2;
+				m_pPxIndicies[i]._2 = m_pIndices[i]._1;
+			}
+		}
+		
+	}
 
 	return S_OK;
 }
@@ -559,6 +584,62 @@ void CInstancing_Mesh::InstaincingMesh_yPosControl(_float yPos)
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 }
 
+void CInstancing_Mesh::Create_PxTriangle_InstMeshActor(CTransform* pParentTransform ,vector<_float4x4*> VecInstancingMatrix)
+{
+	size_t InstSize = VecInstancingMatrix.size();
+	assert(InstSize > 0 && "CInstancing_Mesh::Create_PxTriangle_InstMeshActor");
+		
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	PxTriangleMeshDesc TriangleMeshDesc;
+	
+	_float4x4 MatPosTrans;
+	_float4 vPos, vRight, vUp, vLook, vFloat4Len;
+	_float  fXSize, fYSize, fZSize;
+	for (size_t i = 0; i < InstSize; ++i)
+	{
+		ZeroMemory(&TriangleMeshDesc, sizeof(TriangleMeshDesc));
+		TriangleMeshDesc.points.count = m_iNumVertices;
+		TriangleMeshDesc.points.stride = sizeof(PxVec3);
+		TriangleMeshDesc.points.data = m_pPxVertices;
+		TriangleMeshDesc.triangles.count = m_iOriginNumPrimitive;
+		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+		TriangleMeshDesc.triangles.data = m_pPxIndicies;
+		
+		MatPosTrans = *VecInstancingMatrix[i];
+		XMStoreFloat4x4(&MatPosTrans, XMLoadFloat4x4(&MatPosTrans) * pParentTransform->Get_WorldMatrix());
+
+		memcpy(&vRight, &MatPosTrans.m[0], sizeof(_float4));
+		memcpy(&vUp, &MatPosTrans.m[1], sizeof(_float4));
+		memcpy(&vLook, &MatPosTrans.m[2], sizeof(_float4));
+		memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
+
+		fXSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+		fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
+		fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
+
+		XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
+		XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
+		XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
+				
+		
+		_float4x4 matNew;
+		XMStoreFloat4x4(&matNew, XMMatrixIdentity());
+
+		memcpy(&matNew.m[0], &vRight, sizeof(_float4));
+		memcpy(&matNew.m[1], &vUp, sizeof(_float4));
+		memcpy(&matNew.m[2], &vLook, sizeof(_float4));
+		memcpy(&matNew.m[3], &vPos, sizeof(_float4));
+
+	
+		PxRigidStatic *pStaticRigid = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, nullptr
+			,0.5f,0.5f, 0.1f,_float3(fXSize,fYSize,fZSize));
+		
+	
+		pPhysX->Set_ActorMatrix(pStaticRigid, (matNew));		// 노말라이즈 매트릭스보내고
+	}	
+}
+
 HRESULT CInstancing_Mesh::SetUp_BonePtr(CModel * pModel)
 {
 	if (m_pBoneNames == nullptr)
@@ -694,18 +775,16 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel * pM
 	return S_OK;
 }
 
-
-
 HRESULT CInstancing_Mesh::Set_up_Instancing()
 {
 	return S_OK;
 }
 
 CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
-	HANDLE hFile, CModel * pModel, _bool bIsLod, _uint iNumInstance)
+	HANDLE hFile, CModel * pModel, _bool bIsLod, _bool bUseTriangleMeshActor,_uint iNumInstance)
 {
 	CInstancing_Mesh* pInstance = new CInstancing_Mesh(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, iNumInstance)))
+	if (FAILED(pInstance->Initialize_Prototype(hFile, pModel, bIsLod, bUseTriangleMeshActor,iNumInstance )))
 	{
 		MSG_BOX("Failed to Created : CInstancing_Mesh");
 		Safe_Release(pInstance);
