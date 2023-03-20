@@ -164,6 +164,8 @@ public:
 	_float Calc_Distance_XY(CTransform* pTransform);
 	_float Calc_Distance_YZ(CTransform* pTransform);
 
+	/* Look 방향으로 좌우로 Radian / 2 각도의 범위 안에 타겟이 있는지 없는지를 계산합니다. */
+	_bool  Calc_InRange(_float fRadian, CTransform* pTargetTransformCom);
 	_float	Calc_Pitch();
 
 	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));

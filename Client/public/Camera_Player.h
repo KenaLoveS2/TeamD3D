@@ -48,8 +48,12 @@ public:
 
 public:
 	void					Initialize_Position();
-	void					Camera_Shake();
-	void					Camera_Shake(_float4 vDir);
+
+	/* Random Shake */
+	void					Camera_Shake(_float fPower, _uint iCount);
+
+	/* Dir Shake */	/* Radian Angle */
+	void					Camera_Shake(_float4 vDir, _float fAngle, _bool bReturn = true);
 	void					TimeSleep(_float fDuration);
 
 private:
@@ -61,7 +65,10 @@ private:
 	CCamOffset*			m_pPreOffset = nullptr;
 	_float					m_fCurLerpTime = 0.f;
 
-	_float					m_fTimeSleep = 0.f;
+	_float					m_fShakeRatio = 0.f;
+	_bool					m_bShakeReturn = false;
+	list<_float4>			m_RandomShakeList;
+	list<_float4>			m_DirShakeList;
 
 	//_float					m_fInitCamHeight = 1.5f;
 	//_float					m_fAimCamHeight = 1.2f;
