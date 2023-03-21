@@ -120,16 +120,17 @@ private:
 	_uint										m_iAdditiveAnimIndexForMonster = 0;
 
 /*For.Mesh_Instancing*/
-	_bool													m_bIsInstancing = false;
-	vector<class CInstancing_Mesh*>		m_InstancingMeshes;
-	vector<_float4x4*>								m_pInstancingMatrix;				// Instancing 한 포지션들의 벡터			
-	vector<_float3>									m_VecInstancingColiderSize;
-	_uint									  		m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
+	_bool											m_bIsInstancing = false;
+	vector<class CInstancing_Mesh*>					m_InstancingMeshes;
+	vector<_float4x4*>								m_pInstancingMatrix;			
+	vector<_float3>									m_VecInstancingColiderSize;	
+
+/*For.Lod*/
+	_bool												m_bIsLodModel = false;
+
+/*For.TriangleMeshColl*/
+	_bool												m_bUseTriangleMeshActor = false;
 	
-	/*For.Lod*/
-	_bool													m_bIsLodModel = false;
-	_bool													m_bUseTriangleMeshActor = false;
-	class	CTransform*									m_pInstanceTransform = nullptr;
 
 private:
 	HRESULT			Load_MeshMaterial(const wstring& wstrModelFilePath);
@@ -150,11 +151,19 @@ public:
 
 	const	_bool	Get_UseTriangleMeshActor() const { return m_bUseTriangleMeshActor; }
 
-	/*For.Mesh_Instancing*/
-public:
-	void		 Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false);
-	void		 Imgui_MeshInstancingyPosControl(_float yPos);
+#ifdef _DEBUG	
+public:/*For.Mesh_Instancing*/
+	void		Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix, _bool bPickingTerrain = false, _int iGroundCoverNum=0, _float fBetween=0.f, _bool IsMultipleCheck=false,_float fRaduis=0.f);
+	void		Imgui_MeshInstancingyPosControl(_float yPos);
 
+	/*Imgui*/
+	void		Edit_InstModel_Collider(const _tchar* pActorName); // Only_Static
+	void		InitPhysxData();
+	
+private:
+		_uint									  		m_iSelectMeshInstace_Index = -1;		// -1이 아닐때 Instancing Pos 정하기
+		class	CTransform*								m_pInstanceTransform = nullptr;
+#endif
 	
 public:
 	void Create_PxTriangle(PX_USER_DATA *pUserData);
@@ -166,13 +175,9 @@ public:
 
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f), _bool bRotation=false);
-
 	void Create_Px_InstTriangle(class CTransform* pParentTransform);
-
-	/*Imgui*/
-	void Edit_InstModel_Collider(const _tchar* pActorName); // Only_Static
-	void InitPhysxData();
 	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
+	
 };
 
 END

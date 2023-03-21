@@ -79,7 +79,7 @@ private:
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 private:
 	HRESULT	Set_up_Instancing();
-	
+
 
 public:
 	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 

@@ -304,7 +304,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma  endregion ANIM_OBJ
 	
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 #ifdef FOR_MAPTOOL   
 
 #else
