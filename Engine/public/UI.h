@@ -28,9 +28,10 @@ protected:
 
 
 public: /* Get */
-	_fmatrix				Get_WorldMatrix()			{ return m_pTransformCom->Get_WorldMatrix(); }
-	_fmatrix				Get_InitMatrix()			{ return XMLoadFloat4x4(&m_matInit); }
-	_fmatrix				Get_LocalMatrix()			{ return XMLoadFloat4x4(&m_matLocal); }
+	_matrix					Get_WorldMatrix()			{ return m_pTransformCom->Get_WorldMatrix(); }
+	_matrix					Get_InitMatrix()			{ return XMLoadFloat4x4(&m_matInit); }
+	_float4x4				Get_InitMatrixFloat4x4()	{ return m_matInit; }
+	_matrix					Get_LocalMatrix()			{ return XMLoadFloat4x4(&m_matLocal); }
 	_float4x4				Get_LocalMatrixFloat4x4()	{ return m_matLocal; }
 	_float3					Get_WorldScale()			{ return m_pTransformCom->Get_Scaled(); }
 	_float3					Get_OriginalSettingScale()	{ return m_vOriginalSettingScale; }

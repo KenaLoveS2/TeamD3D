@@ -25,8 +25,16 @@ public:
 	virtual HRESULT			Render()						override;
 
 public:
-	void					Do_Animation() { if(!m_bStart) m_bStart = true; }
+	void					Do_Animation() {
+		if (!m_bStart)
+		{
+			m_bStart = true;
+			m_pTransformCom->Set_Scaled(m_vStartScale);
+		}
+	}
+	void					Set_StartFalse() { m_bStart = false; }
 	_bool					Is_AnimEnd() { return m_bEnd; }
+	void					Reset() { m_bStart = false;  m_bEnd = false; }
 
 private:
 	virtual HRESULT			SetUp_Components() override;
@@ -37,6 +45,7 @@ private:
 	_bool					m_bEnd;
 	_bool					m_bStart;
 	_float					m_fSpeed;
+	_float3					m_vStartScale;
 
 public:
 	static	CUI_FocusMonsterParts*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);

@@ -7,13 +7,29 @@
 CUI_NodeCrystal::CUI_NodeCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
 	, m_iCrystal(0)
+	, m_FontName(nullptr)
+	, m_vFontColor(_float4{1.f, 1.f, 1.f, 1.f})
+	, m_vFontSize(0.9f, 0.9f)
+	, m_vFontPos(20.f , -20.f)
 {
 }
 
 CUI_NodeCrystal::CUI_NodeCrystal(const CUI_NodeCrystal & rhs)
 	: CUI_Node(rhs)
 	, m_iCrystal(0)
+	, m_FontName(nullptr)
+	, m_vFontColor(_float4{ 1.f, 1.f, 1.f, 1.f })
+	, m_vFontSize(0.9f, 0.9f)
+	, m_vFontPos(20.f, -20.f)
 {
+}
+
+void CUI_NodeCrystal::Set_Font(wstring fontName, _float4 fontColor, _float2 fontSize, _float2 fontPos)
+{
+	m_FontName = CUtile::Create_StringAuto(fontName.c_str());
+	m_vFontColor = fontColor;
+	m_vFontSize = fontSize; 
+	m_vFontPos = fontPos;
 }
 
 HRESULT CUI_NodeCrystal::Initialize_Prototype()
@@ -39,6 +55,8 @@ HRESULT CUI_NodeCrystal::Initialize(void * pArg)
 	}
 
 	m_bActive = true;
+
+	m_FontName = L"Font_Basic0";
 	return S_OK;
 }
 
@@ -68,13 +86,13 @@ HRESULT CUI_NodeCrystal::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + 20.f, g_iWinSizeY*0.5f - vPos.y - 20.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + m_vFontPos.x, g_iWinSizeY*0.5f - vPos.y + m_vFontPos.y };
 
 	_tchar* str = 	CUtile::StringToWideChar(to_string(m_iCrystal));
-	CGameInstance::GetInstance()->Render_Font(TEXT("Font_Basic0"), str,
+	CGameInstance::GetInstance()->Render_Font(m_FontName, str,
 		vNewPos /* position */,
-		0.f, _float2(0.9f,0.9f)/* size */,
-		XMVectorSet(1.f, 1.f, 1.f, 1.f)/* color */);
+		0.f, m_vFontSize/* size */,
+		m_vFontColor/* color */);
 
 	Safe_Delete_Array(str);
 
