@@ -48,11 +48,11 @@ HRESULT CStatue::Late_Initialize(void * pArg)
 	else
 		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 
-	//m_pRendererCom->Set_PhysXRender(true);
+	m_pRendererCom->Set_PhysXRender(true);
 
 	return S_OK;
 }
-
+ 
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);

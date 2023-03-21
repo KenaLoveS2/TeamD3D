@@ -7,7 +7,7 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-//#define FOR_MAP_GIMMICK
+#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
@@ -66,7 +66,6 @@ extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
 
 extern unsigned int	g_LEVEL;
-
 
 static const _float4x4 g_IdentityFloat4x4 = {
 	1,0,0,0,

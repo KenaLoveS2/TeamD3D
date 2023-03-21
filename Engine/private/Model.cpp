@@ -1594,6 +1594,23 @@ _bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _
 	return false;
 }
 
+_bool CModel::Culling_InstancingMeshs(_float fCameraDistance,_fmatrix ParentMat)
+{
+	if (m_bIsInstancing == false)
+		return false;
+
+	_int  iCulling_Result = 0;
+
+	for (auto& pInstMesh : m_InstancingMeshes)
+	{
+		iCulling_Result = 	( iCulling_Result & pInstMesh->Culling_InstancingMesh(fCameraDistance,m_pInstancingMatrix ,ParentMat));
+		if (iCulling_Result & 0)
+			return true;
+	}
+
+	return false;
+}
+
 void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 {
 	ifstream      file(jSonPath);

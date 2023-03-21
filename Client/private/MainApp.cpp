@@ -16,6 +16,7 @@
 
 #include "Sky.h"
 
+
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -55,6 +56,8 @@ HRESULT CMainApp::Initialize()
 
 	srand((_uint)time(NULL));
 
+	
+
 	return S_OK;
 }
 
@@ -62,6 +65,9 @@ void CMainApp::Tick(_float fTimeDelta)
 {
 	if (nullptr == m_pGameInstance)
 		return;
+
+	//ImGui::InputFloat("Culling Distance ", &g_fInstanceCulling_Ditance);
+
 
 #ifdef _DEBUG
 	m_TimeAcc += fTimeDelta;

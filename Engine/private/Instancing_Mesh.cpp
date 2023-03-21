@@ -21,6 +21,7 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
 	, m_iOriginNumPrimitive(rhs.m_iOriginNumPrimitive)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
+	, m_iNumInstance_Origin(rhs.m_iNumInstance_Origin)
 	
 {
 
@@ -149,7 +150,7 @@ HRESULT CInstancing_Mesh::Load_Mesh(HANDLE & hFile, DWORD & dwByte)
 
 void CInstancing_Mesh::Add_InstanceModel(vector<_float4x4*>	VecInstancingMatrix)
 {
-	m_iNumInstance = (_uint)VecInstancingMatrix.size();
+	m_iNumInstance = m_iNumInstance_Origin =(_uint)VecInstancingMatrix.size();
 	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
 	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 
@@ -465,8 +466,9 @@ HRESULT CInstancing_Mesh::Tick(_float fTimeDelta)
 
 HRESULT CInstancing_Mesh::Render()
 {
-	if (nullptr == m_pContext)
+	if (nullptr == m_pContext )
 		return E_FAIL;
+
 
 	/* 정점버퍼들을 장치에 바인딩한다.(복수를 바인딩한다.)  */
 
@@ -494,7 +496,60 @@ HRESULT CInstancing_Mesh::Render()
 
 	m_pContext->DrawIndexedInstanced(m_iIndexCountPerInstance, m_iNumInstance, 0, 0, 0);			// 인스턴싱을 위한  DX_ 함수 제공 
 
+	m_iNumInstance = m_iNumInstance_Origin;
+
 	return S_OK;
+
+}
+
+_int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
+{
+	_float4 vCamPos	=	CGameInstance::GetInstance()->Get_CamPosition();
+
+	list<_float4x4> InstPos;
+	_float fCameDistance = 0.f;
+	_float4 vTransPos;
+	
+	for (auto OriginPos : InstanceMatrixVec)
+	{
+		
+		_matrix matTransWorld = XMLoadFloat4x4(OriginPos)* ParentMat;
+
+		memcpy(&vTransPos, &matTransWorld.r[3], sizeof(_float4));
+		
+		_vector	 vDir =	XMLoadFloat4(&(vCamPos - vTransPos));
+
+		fCameDistance  = XMVectorGetX(XMVector3Length(vDir));
+
+		if (fCameDistance < fCameraDistanceLimit)
+		{
+			InstPos.push_back(*OriginPos);
+		}
+	}
+
+	m_iNumInstance = (_int)InstPos.size();
+	
+	if (m_iNumInstance == 0)
+		return 0;
+	
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	_int iIndex = 0;
+	for (auto &Iter : InstPos)
+	{
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vLook, &Iter.m[2], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex++].vPosition, &Iter.m[3], sizeof(_float4));
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	InstPos.clear();
+
+	return 1;
 
 }
 

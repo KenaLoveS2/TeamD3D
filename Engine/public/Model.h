@@ -85,6 +85,9 @@ public:
 			
 	void						Instaincing_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
 	_bool						Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
+
+	_bool						Culling_InstancingMeshs(_float fCameraDistance, _fmatrix ParentMat);
+
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
 	
