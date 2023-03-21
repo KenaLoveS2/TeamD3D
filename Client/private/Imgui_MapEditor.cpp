@@ -935,7 +935,6 @@ void CImgui_MapEditor::Free()
 
 void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 {
-
 	if (pSelectEnviObj == nullptr)
 		return;
 	

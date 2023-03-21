@@ -1,6 +1,7 @@
 #include "Shader_Engine_Defines.h"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix			g_ReflectViewMatrix;
 
 Texture2D<float4>		g_LDRTexture;
 
@@ -9,7 +10,6 @@ Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_ShadeTexture;
 Texture2D<float4>		g_SpecularTexture;
-
 Texture2D<float4>		g_LightDepthTexture;
 Texture2D<float4>		g_FlareTexture;
 Texture2D<float4>		g_EffectTexture;
@@ -91,6 +91,21 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_REFLECT(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_WorldMatrix, g_ReflectViewMatrix);
+	matWVP = mul(matWV, g_ProjMatrix);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+	Out.vTexUV = In.vTexUV;
+
+	return Out;
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -135,7 +150,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
 
 	float4 FinalColor = float4(0.f, 0.f, 0.f, 0.f);
 
-	if (vEffect.a <= 0.1f)
+	if (vEffect.a <= 0.3f)
 	{
 		float2 distort = Distortion(In.vTexUV, g_Time, g_DistortionTexture);
 		vDiffuse = g_LDRTexture.Sample(LinearSampler, distort);
@@ -204,4 +219,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_GRAYSCALE();
 	} //2
+
+	pass Reflect
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_REFLECT();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	} //3
 }

@@ -31,10 +31,10 @@ public:
 	_float* Get_Far()  { return &m_CameraDesc.fFar; }
 	_float* Get_Fov() { return &m_CameraDesc.fFovy; }
 
-
 protected:
 	class CPipeLine*			m_pPipeLine = nullptr;
-	CAMERADESC				m_CameraDesc; 
+	CAMERADESC				m_CameraDesc;
+
 
 public:		
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

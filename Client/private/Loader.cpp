@@ -62,7 +62,6 @@
 #include "Flower.h"
 #include "DeadZoneObj.h"
 #include "Gimmick_EnviObj.h"
-
 #include "Born_GroundCover.h"
 #include "Pulse_Plate_Anim.h"
 #include "Door_Anim.h"
@@ -70,6 +69,7 @@
 #include "Rope_RotRock.h"
 #include "LiftRot.h"
 #include "LiftRot_Master.h"
+#include "WaterPlane.h"
 
 /* UI */
 #include "BackGround.h"
@@ -1400,6 +1400,17 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
 	lstrcpy(m_szLoadingText, TEXT("Loading ฟ๘มุ..."));
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+
+	// Prototype_GameObject_WaterPlane
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), 
+		CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
