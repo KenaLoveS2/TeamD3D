@@ -467,5 +467,5 @@ void CMonster::End_Bind()
 
 _bool CMonster::IsParried()
 {	
-	return m_fKenaDistance <= 2.f && m_pKena->Get_State(CKena::STATE_AIM);
+	return m_fKenaDistance <= 10.f && m_pKena->Get_State(CKena::STATE_PARRY);
 }
