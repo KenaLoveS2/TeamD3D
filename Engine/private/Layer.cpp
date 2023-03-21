@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "EnviromentObj.h"
 #include "PhysX_Manager.h"
+#include "Renderer.h"
 
 CLayer::CLayer()
 {
@@ -62,9 +63,11 @@ void CLayer::Delete_AllObjLayer(_int iRoomIndex)
 		{
 			++Iter;
 		}
-
 		if (iRoomIndex == static_cast<CEnviromentObj*>(Iter->second)->Get_RoomIndex())
 		{
+			if(static_cast<CEnviromentObj*>(Iter->second)->Get_RendererCom() != nullptr)
+				static_cast<CEnviromentObj*>(Iter->second)->Get_RendererCom()->EraseStaticShadowObject(Iter->second);
+
 			Iter->second->Get_TransformCom()->Clear_Actor();
 			Safe_Release(Iter->second);
 			Iter->second = nullptr;
@@ -72,10 +75,7 @@ void CLayer::Delete_AllObjLayer(_int iRoomIndex)
 		}
 		else
 			++Iter;
-
 	}
-
-
 }
 
 CComponent * CLayer::Get_ComponentPtr(const _tchar* pCloneObjectTag, const _tchar * pComponentTag)

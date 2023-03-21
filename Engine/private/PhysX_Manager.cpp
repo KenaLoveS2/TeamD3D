@@ -344,7 +344,6 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	{
 		shape = m_pPhysics->createShape(PxTriangleMeshGeometry(pMesh,PxMeshScale(PxVec3(vScale.x,vScale.y,vScale.z))),
 			*pMaterial, true);
-		
 	}
 	else
 	{
@@ -352,9 +351,6 @@ PxRigidStatic * CPhysX_Manager::Create_TriangleMeshActor_Static(PxTriangleMeshDe
 	}
 	assert(shape != nullptr && "CPhysX_Manager::Create_TriangleMeshActor_Static");
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
-
-	
-	
 
 	PxFilterData FilterData;
 	FilterData.word0 = PX_FILTER_TYPE::FITLER_ENVIROMNT;

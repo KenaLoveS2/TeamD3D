@@ -6,19 +6,26 @@ BEGIN(Engine)
 	class CCamera_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CCamera_Manager)
+
 private:
 	map<const _tchar*, class CCamera*> m_Cameras;
-
 	class CCamera* m_pWorkCamera = nullptr;
+
+	map<const _tchar*, class CCamera*> m_LightCameras;
+	class CCamera* m_pLightWorkCamera = nullptr;
 
 private:
 	CCamera_Manager();
 	virtual ~CCamera_Manager() = default;
 
 public:
-	HRESULT			Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
-	HRESULT			Work_Camera(const _tchar* pCameraTag);
-	class CCamera*	Find_Camera(const _tchar* pCameraTag);
+	HRESULT					Add_Camera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+	HRESULT					Work_Camera(const _tchar* pCameraTag);
+	class CCamera*		Find_Camera(const _tchar* pCameraTag);
+
+	HRESULT					Add_LightCamera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+	HRESULT					Work_LightCamera(const _tchar* pCameraTag);
+	class CCamera*		Find_LightCamera(const _tchar* pCameraTag);
 
 public:
 	_float* Get_CameraNear();
