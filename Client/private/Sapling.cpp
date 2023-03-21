@@ -294,23 +294,23 @@ HRESULT CSapling::SetUp_State()
 		m_fIdletoAttack += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(COMBATIDLE);
 	})
-		.AddTransition("IDLE to ALERTED", "ALERTED")
-		.Predicator([this]()
-	{
-		return TimeTrigger(m_fIdletoAttack, 3.f);
-	})
-		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE")
-		.Predicator([this]()
-	{
-		return m_bWeaklyHit || m_bStronglyHit;
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-
-		.AddState("TAKEDAMAGE")
+		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bWeaklyHit || m_bStronglyHit || IsParried();
+	})
+		.AddTransition("IDLE to ALERTED", "ALERTED")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdletoAttack, 3.f);
+	})
+		
+		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
@@ -321,33 +321,39 @@ HRESULT CSapling::SetUp_State()
 		m_bWeaklyHit = false;
 		m_bStronglyHit = false;
 	})
-		.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(TAKEDAMAGE);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-
+		.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(TAKEDAMAGE);
+	})
+		
 		.AddState("ALERTED")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(ALERTED);
 		m_pModelCom->Set_AnimIndex(ALERTED);
 	})
-		.AddTransition("ALERTED to BOMBCHARGEUP" , "BOMBCHARGEUP")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(ALERTED);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bWeaklyHit || m_bStronglyHit || IsParried();
+	})
+		.AddTransition("ALERTED to BOMBCHARGEUP" , "BOMBCHARGEUP")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ALERTED);
+	})
+		
 
 		.AddState("BOMBCHARGEUP")
 		.OnStart([this]()
@@ -356,15 +362,20 @@ HRESULT CSapling::SetUp_State()
 		m_pModelCom->Set_AnimIndex(BOMBCHARGEUP);
 		m_bBombUp = true;
 	})
-		.AddTransition("BOMBCHARGEUP to CHARGE", "CHARGE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BOMBCHARGEUP);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bWeaklyHit || m_bStronglyHit || IsParried();
+	})
+		.AddTransition("BOMBCHARGEUP to CHARGE", "CHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BOMBCHARGEUP);
 	})
 
 		.AddState("CHARGE")
@@ -373,15 +384,20 @@ HRESULT CSapling::SetUp_State()
 		m_pModelCom->Set_AnimIndex(CHARGE);
 		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
 	})
-		.AddTransition("CHARGE to CHARGEATTACK", "CHARGEATTACK")
-		.Predicator([this]()
-	{
-		return DistanceTrigger(5.f);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bWeaklyHit || m_bStronglyHit || IsParried();
+	})
+		.AddTransition("CHARGE to CHARGEATTACK", "CHARGEATTACK")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f);
 	})
 
 		.AddState("CHARGEATTACK")
@@ -400,16 +416,15 @@ HRESULT CSapling::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
-
-		.AddTransition("CHARGEATTACK to IDLE", "DYING") // 폭발 처리가 있어야 할듯
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(CHARGEATTACK);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bWeaklyHit || m_bStronglyHit || IsParried();
 	})
 
 		.AddState("DYING")

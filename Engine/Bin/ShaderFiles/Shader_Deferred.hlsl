@@ -5,6 +5,7 @@ matrix			g_ProjMatrixInv, g_ViewMatrixInv;
 matrix			g_LightViewMatrix, g_LightProjMatrix;
 matrix			g_DynamicLightViewMatrix;
 
+
 vector			g_vLightDir;
 vector			g_vLightPos;
 float				g_fLightRange;
@@ -403,12 +404,10 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 		vPosition = mul(vPosition, g_ViewMatrixInv);
 
 		vector vDynamicPos = mul(vPosition, g_DynamicLightViewMatrix);
+		vector  vDynamicUVPos = mul(vDynamicPos, g_LightProjMatrix);
 
 		vPosition = mul(vPosition, g_LightViewMatrix);
-
 		vector	vUVPos = mul(vPosition, g_LightProjMatrix);
-
-		vector  vDynamicUVPos = mul(vDynamicPos, g_LightProjMatrix);
 
 		float2	vNewUV, vDynamicUV;
 		vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;

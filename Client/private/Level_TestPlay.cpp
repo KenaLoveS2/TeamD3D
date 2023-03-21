@@ -52,11 +52,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 		
-	//if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
-	//{
-	//	MSG_BOX("Layer_Enviroment");
-	//	return E_FAIL;
-	//}
+	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	{
+		MSG_BOX("Layer_Enviroment");
+		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
@@ -233,6 +233,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	CCamera::CAMERADESC			CameraDesc;
+	
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
@@ -263,11 +264,81 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	if (pCamera == nullptr) return E_FAIL;
 	if (FAILED(pGameInstance->Add_Camera(TEXT("DEBUG_CAM_2"), pCamera))) return E_FAIL;
 
-	/* For.Shadow */
-	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), L"LightCamera")))
-		return E_FAIL;
+	/* For. DynamicShadow */
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, pLayerTag, TEXT("Prototype_GameObject_DynamicLightCamera"), L"DynamicLightCamera")))
 		return E_FAIL;
+
+	{
+		ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+		CameraDesc.vEye = _float4(-30.f, 120.f, -50.f, 1.f);
+		CameraDesc.vAt = _float4(60.f, 0.f, 60.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(75.0f);
+		CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+		pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LightCamera"), nullptr, &CameraDesc);
+		if (pCamera == nullptr) return E_FAIL;
+		if (FAILED(pGameInstance->Add_LightCamera(TEXT("LIGHT_CAM_0"), pCamera))) return E_FAIL;
+
+		ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+		CameraDesc.vEye = _float4(-10.f, 180.f, 250.f, 1.f);
+		CameraDesc.vAt = _float4(100.f, 0.f, 384.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(75.0f);
+		CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+		pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LightCamera"), nullptr, &CameraDesc);
+		if (pCamera == nullptr) return E_FAIL;
+		if (FAILED(pGameInstance->Add_LightCamera(TEXT("LIGHT_CAM_1"), pCamera))) return E_FAIL;
+
+		ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+		CameraDesc.vEye = _float4(30.f, 150.f, 430.f, 1.f);
+		CameraDesc.vAt = _float4(120.f, 0.f, 580.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(75.0f);
+		CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+		pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LightCamera"), nullptr, &CameraDesc);
+		if (pCamera == nullptr) return E_FAIL;
+		if (FAILED(pGameInstance->Add_LightCamera(TEXT("LIGHT_CAM_2"), pCamera))) return E_FAIL;
+
+		ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+		CameraDesc.vEye = _float4(-20.f, 150.f, 750.f, 1.f);
+		CameraDesc.vAt = _float4(106.f, -20.f, 864.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(75.0f);
+		CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+		pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LightCamera"), nullptr, &CameraDesc);
+		if (pCamera == nullptr) return E_FAIL;
+		if (FAILED(pGameInstance->Add_LightCamera(TEXT("LIGHT_CAM_3"), pCamera))) return E_FAIL;
+
+		ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+		CameraDesc.vEye = _float4(-20.f, 140.f, 890.f, 1.f);
+		CameraDesc.vAt = _float4(170.f, -80.f, 1153.8f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(75.0f);
+		CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+		pCamera = (CCamera *)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LightCamera"), nullptr, &CameraDesc);
+		if (pCamera == nullptr) return E_FAIL;
+		if (FAILED(pGameInstance->Add_LightCamera(TEXT("LIGHT_CAM_4"), pCamera))) return E_FAIL;
+	}
 
 	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
 	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
@@ -276,7 +347,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
