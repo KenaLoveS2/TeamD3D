@@ -6,7 +6,8 @@ BEGIN(Client)
 class CMoth : public CMonster
 {
 private:
-
+	CBone* m_pWeaponBone = nullptr;
+	_float m_fIdletoAttackTime = 0.f;
 
 private:
 	CMoth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

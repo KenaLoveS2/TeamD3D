@@ -41,8 +41,10 @@ HRESULT CRotEater::Initialize(void* pArg)
 		m_Desc.WorldMatrix._41 = 16.f;
 		m_Desc.WorldMatrix._43 = 5.f;
 	}
-
+		
 	m_pModelCom->Set_AllAnimCommonType();
+
+	m_bRotable = true;
 
 	return S_OK;
 }
@@ -367,26 +369,27 @@ HRESULT CRotEater::SetUp_State()
 		m_fIdletoAttackTime += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("IDLE to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("IDLE to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("IDLE to RUN", "RUN")		
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 1.f);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+		
 
 		.AddState("RUN")
 		.OnStart([this]()
@@ -402,15 +405,20 @@ HRESULT CRotEater::SetUp_State()
 	{
 		Reset_Attack();
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("RUN to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("RUN to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("RUN to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("RUN to SWIPEATTACK	", "SWIPEATTACK")
 		.Predicator([this]()
@@ -427,11 +435,7 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return m_bRealAttack && m_bLongRangeAttack;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+	
 
 		.AddState("SWIPEATTACK")
 		.OnStart([this]()
@@ -447,15 +451,20 @@ HRESULT CRotEater::SetUp_State()
 		if (m_iAfterSwipeAttack > 1)
 			m_iAfterSwipeAttack = 0;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("SWIPEATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("SWIPEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("SWIPEATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("SWIPEATTACK to JUMPBACK", "JUMPBACK")
 		.Predicator([this]()
@@ -467,11 +476,7 @@ HRESULT CRotEater::SetUp_State()
 	{
 		return AnimFinishChecker(SWIPE) && m_iAfterSwipeAttack == 1;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("JUMPBACK")
 		.OnStart([this]()
@@ -479,26 +484,27 @@ HRESULT CRotEater::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
 		m_pModelCom->Set_AnimIndex(JUMPBACK);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("JUMPBACK to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("JUMPBACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("JUMPBACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("JUMPBACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(JUMPBACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("JUMPATTACK")
 		.OnStart([this]()
@@ -510,26 +516,27 @@ HRESULT CRotEater::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("JUMPATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("JUMPATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("JUMPATTACK to SWIPEATTACK", "SWIPEATTACK")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(JUMPATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("LONGRANGEATTACK")
 		.OnStart([this]()
@@ -541,53 +548,51 @@ HRESULT CRotEater::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
 		.AddTransition("LONGRANGEATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("LONGRANGEATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("LONGRANGEATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("LONGRANGEATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ATTACK_LONGRANGE);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+
 
 		.AddState("BIND")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
-		m_pModelCom->Set_AnimIndex(BIND);
-		m_bStronglyHit = false;
-		// 묶인 상태에서 맞았을때는 ADDITIVE 실행 
+		Start_Bind(BIND);
 	})
 		.OnExit([this]()
-	{
-		// 맞는 애니메이션일때도 맞는가?
-		m_bBind = false;
+	{	
 		Reset_Attack();
+		End_Bind();
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("BIND to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(BIND);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+		
 
-		.AddState("TAKEDAMAGE")
+		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(STTAGER_FRONT);
@@ -610,12 +615,17 @@ HRESULT CRotEater::SetUp_State()
 		m_bStronglyHit = false;
 		Reset_Attack();
 	})
-		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("TAKEDAMAGE_OR_PARRIED to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+		.AddTransition("TAKEDAMAGE_OR_PARRIED to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(STTAGER_FRONT) ||
@@ -623,12 +633,7 @@ HRESULT CRotEater::SetUp_State()
 			AnimFinishChecker(STTAGER_BACK) ||
 			AnimFinishChecker(STTAGER_RIGHT);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
+		
 		.AddState("DYING")
 		.OnStart([this]()
 	{

@@ -22,7 +22,7 @@ HRESULT CMoth::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
@@ -36,20 +36,59 @@ HRESULT CMoth::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -7.f;
+		m_Desc.WorldMatrix._41 = -5.f;
+		m_Desc.WorldMatrix._42 = 0.f;
 		m_Desc.WorldMatrix._43 = 0.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	m_pWeaponBone = m_pModelCom->Get_BonePtr("Moth_RIG");
+
 	return S_OK;
 }
 
 HRESULT CMoth::Late_Initialize(void * pArg)
-{
+{	
 	{
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = TEXT("Moth_Collider_0");
+		PxSphereDesc.vPos = {0.f, 0.f, 0.f};
+		PxSphereDesc.fRadius = 0.3f;		
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 10.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+	}
+
+	{
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = TEXT("Moth_Collider_1");
+		PxSphereDesc.vPos = { 0.f, 0.f, 0.f };
+		PxSphereDesc.fRadius = 0.2f;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 10.f;
+		PxSphereDesc.fLinearDamping = 10.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
@@ -63,10 +102,11 @@ void CMoth::Tick(_float fTimeDelta)
 	if (m_bDeath) return;
 	__super::Tick(fTimeDelta);
 	
+	Update_Collider(fTimeDelta);
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
-
+	
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-
+	
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -94,9 +134,9 @@ HRESULT CMoth::Render()
 
 		if(i == 0)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_NormalTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_RoughnessTexture");
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SEPARATE_AO_R_M_E);
 		}
 		else
@@ -205,32 +245,64 @@ HRESULT CMoth::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		m_fIdletoAttackTime = 0.f;
 		m_pTransformCom->LookAt(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBATIDLE);
 		m_pModelCom->Set_AnimIndex(COMBATIDLE);
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		
-	})
-		.OnExit([this]()
+		m_fIdletoAttackTime += fTimeDelta;
+	})	
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
 	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("IDLE To BACK", "BACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdletoAttackTime, 1.f) && DistanceTrigger(2.2f);
+	})		
+		.AddTransition("IDLE To MELEE_ATTACK", "MELEE_ATTACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdletoAttackTime, 1.f) && DistanceTrigger(4.f);
+	})
+		.AddTransition("IDLE To CHASE", "CHASE")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdletoAttackTime, 1.f) && !DistanceTrigger(3.9f);
+	})
 		
+		.AddState("BACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Go_Backward(fTimeDelta);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE To CHASE", "CHASE")
+		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return !DistanceTrigger(5.f);
+		return IsParried();
 	})
-		.AddTransition("IDLE To MELEE_ATTACK", "MELEE_ATTACK")
+		.AddTransition("BACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(2.f);
+		return DistanceTrigger(3.f);
 	})
 
 		.AddState("CHASE")
@@ -241,17 +313,22 @@ HRESULT CMoth::SetUp_State()
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta, 1.f);
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("CHASE to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(1.5f);
+		return DistanceTrigger(3.f);
 	})
 
 		.AddState("MELEE_ATTACK")
@@ -263,20 +340,71 @@ HRESULT CMoth::SetUp_State()
 	})		
 		.OnExit([this]()
 	{	
-		m_bRealAttack = false;
-		m_pModelCom->Set_AnimIndex(COMBATIDLE);
+		m_pModelCom->Set_AnimIndex(MELEEATTACK_RETURN);
+		m_bRealAttack = false;		
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("MELEE_ATTACK to IDLE", "IDLE")
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("MELEE_ATTACK to MELEE_RETURN", "MELEE_RETURN")
 		.Predicator([this]()
 	{	
 		return AnimFinishChecker(MELEEATTACK);
 	})
 
+		.AddState("MELEE_RETURN")
+		.OnStart([this]()
+	{	
+		m_pModelCom->Set_AnimIndex(MELEEATTACK_RETURN);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("MELEE_RETURN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(MELEEATTACK_RETURN);
+	})
+		
+		.AddState("PARRIED")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(PARRY);
+		m_pModelCom->Set_AnimIndex(PARRY);
+	})
+		.OnExit([this]()
+	{	
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("PARRIED To IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PARRY);
+	})
 
 		.AddState("DYING")
 		.OnStart([this]()
@@ -304,6 +432,8 @@ HRESULT CMoth::SetUp_Components()
 	__super::SetUp_Components();
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Moth", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	m_pModelCom->Set_RootBone("Moth_RIG");
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_Moth.json");
@@ -345,7 +475,16 @@ HRESULT CMoth::SetUp_ShadowShaderResources()
 
 void CMoth::Update_Collider(_float fTimeDelta)
 {
+	m_pTransformCom->Tick(fTimeDelta);
 
+	_matrix SocketMatrix = m_pWeaponBone->Get_OffsetMatrix() * m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	
+	_float4x4 mat;
+	XMStoreFloat4x4(&mat, SocketMatrix);
+	m_pTransformCom->Update_AllCollider(mat);
 }
 
 CMoth* CMoth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
