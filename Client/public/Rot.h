@@ -90,7 +90,7 @@ public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void Set_KenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
+	static void Set_RotUseKenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
 
 public:
 	enum ANIMATION {

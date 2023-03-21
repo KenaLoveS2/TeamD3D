@@ -36,13 +36,16 @@ HRESULT CE_FireBulletExplosion::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
-	m_fDurationTime = 0.3f;
+	m_fDurationTime = 0.2f;
 
 	return S_OK;
 }
 
 void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+	
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
@@ -50,7 +53,7 @@ void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 	{
 		ResetSprite();
 		m_eEFfectDesc.bActive = false;
-		m_fTimeDelta = 0.0;
+		m_fTimeDelta = 0.f;
 	}
 }
 

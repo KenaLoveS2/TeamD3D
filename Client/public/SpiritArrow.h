@@ -1,6 +1,5 @@
 #pragma once
 #include "Effect_Mesh.h"
-#include "Client_Defines.h"
 
 BEGIN(Client)
 

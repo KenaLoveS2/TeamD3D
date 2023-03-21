@@ -14,6 +14,8 @@
 #include "Kena.h"
 #include "Kena_Staff.h"
 #include "Kena_MainOutfit.h"
+#include "SpiritArrow.h"
+#include "RotBomb.h"
 
 /* NPCs */
 #include "Rot.h"
@@ -95,9 +97,6 @@
 #include "EnemyWisp.h"
 #include "FireBullet.h"
 
-//Arrow
-#include "SpiritArrow.h"
-
 #include "E_EnemyWispTrail.h"
 #include "E_KenaDamage.h"
 #include "E_KenaHit.h"
@@ -147,7 +146,6 @@ unsigned int	g_LEVEL = 0;
 #include "E_FireBulletExplosion.h"
 #include "E_KenaParry.h"
 #include "E_KenaParryHand.h"
-
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1458,6 +1456,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_Kena_MainOutfit */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix)), E_FAIL);
 
+	/* Prototype_Component_Model_Rot_Bomb */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot_Bomb", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Rot Bomb/Rot_Bomb.mdat", PivotMatrix)), E_FAIL);
+
 	/* Prototype_Component_Model_Spirit_Arrow */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Spirit_Arrow", false, false, false), E_FAIL);
 
@@ -1470,6 +1471,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_Kena_MainOutfit */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena_MainOutfit", CKena_MainOutfit::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Rot_Bomb */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Rot_Bomb", CRotBomb::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_GameObject_Spirit_Arrow */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_SpiritArrow", CSpiritArrow::Create(m_pDevice, m_pContext)), E_FAIL);

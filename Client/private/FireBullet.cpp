@@ -2,7 +2,7 @@
 #include "..\public\FireBullet.h"
 #include "GameInstance.h"
 #include "Bone.h"
-#include "Effect_Trail.h"
+#include "Effect_Base.h"
 #include "Kena.h"
 
 CFireBullet::CFireBullet(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -93,14 +93,14 @@ void CFireBullet::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	//FireBullet_Proc(fTimeDelta);
+	FireBullet_Proc(fTimeDelta);
 
-	//m_pTransformCom->Tick(fTimeDelta);
+	m_pTransformCom->Tick(fTimeDelta);
 
 	 __super::Tick(fTimeDelta);
 
-	 m_vecChild[CHILD_COVER]->Tick(fTimeDelta);
-	 m_vecChild[CHILD_BACK]->Tick(fTimeDelta);
+	 for (auto& iter : m_vecChild)
+		 iter->Tick(fTimeDelta);
 }
 
 void CFireBullet::Late_Tick(_float fTimeDelta)
@@ -110,11 +110,10 @@ void CFireBullet::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
-	m_vecChild[CHILD_COVER]->Late_Tick(fTimeDelta);
-	m_vecChild[CHILD_BACK]->Late_Tick(fTimeDelta);
+	for (auto& iter : m_vecChild)
+		iter->Late_Tick(fTimeDelta);	
 }
 
 HRESULT CFireBullet::Render()
@@ -172,6 +171,8 @@ HRESULT CFireBullet::SetUp_ShaderResources()
 
 HRESULT CFireBullet::Set_ChildEffects()
 {	
+	m_vecChild.reserve(CHILD_END);
+	
 	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -224,6 +225,9 @@ CGameObject * CFireBullet::Clone(void * pArg)
 void CFireBullet::Free()
 {
 	__super::Free();
+
+	for (auto& iter : m_vecChild)
+		Safe_Release(iter);
 }
 
 void CFireBullet::FireBullet_Proc(_float fTimeDelta)
@@ -253,23 +257,35 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	{
 		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f);
 		
-		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 1.f))
+		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f))
 			m_bCollision = true;
 
 		if (m_bCollision)
-			m_eState = STATE_EXPLOSION;
+			m_eState = STATE_EXPLOSION_START;
 
+		break;
+	}
+	case STATE_EXPLOSION_START:
+	{
+		m_vecChild[CHILD_COVER]->Set_Active(false);
+		m_vecChild[CHILD_BACK]->Set_Active(false);
+		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
+
+		m_eState = STATE_EXPLOSION;
 		break;
 	}
 	case STATE_EXPLOSION:
 	{
-		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
-		m_eState = STATE_RESET;
+		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
+		if(bActive == false)
+			m_eState = STATE_RESET;
+
 		break;
 	}
 	case STATE_RESET:
 	{
 		m_eEFfectDesc.bActive = false;
+		m_bCollision = false;
 		m_eState = STATE_WAIT;
 		break;
 	}
