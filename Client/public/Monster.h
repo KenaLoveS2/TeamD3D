@@ -163,6 +163,8 @@ public:
 	void End_Bind();
 
 	static void Set_MonsterUseKenaPos(_float4 vKenaPos) { m_vKenaPos = vKenaPos ; }
+
+	_bool IsParried();
 };
 
 END

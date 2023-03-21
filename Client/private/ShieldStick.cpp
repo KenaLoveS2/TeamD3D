@@ -42,6 +42,7 @@ HRESULT CShieldStick::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_bRotable = true;
 
 	return S_OK;
 }
@@ -260,10 +261,10 @@ HRESULT CShieldStick::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("IDLE to TAKEDAMAGE", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("IDLE to BIND", "BIND")
 		.Predicator([this]()
@@ -307,10 +308,10 @@ HRESULT CShieldStick::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("CHASE to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("CHASE to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("CHASE to IDLE", "IDLE")
 		.Predicator([this]()
@@ -335,10 +336,10 @@ HRESULT CShieldStick::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("CHARGE_ATTACK to TAKEDAMAGE", "TAKEDAMAGE")
+		.AddTransition("CHARGE_ATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return m_bStronglyHit || IsParried();
 	})
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -358,6 +359,11 @@ HRESULT CShieldStick::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("JUMPBACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+		.Predicator([this]()
+	{
+		return m_bStronglyHit || IsParried();
+	})
 		.AddTransition("JUMPBACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -365,7 +371,7 @@ HRESULT CShieldStick::SetUp_State()
 	})
 		
 
-		.AddState("TAKEDAMAGE")
+		.AddState("TAKEDAMAGE_OR_PARRIED")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
@@ -380,12 +386,12 @@ HRESULT CShieldStick::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.AddTransition("TAKEDAMAGE_OR_PARRIED to BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
 	})
-		.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+		.AddTransition("TAKEDAMAGE_OR_PARRIED to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return m_pModelCom->Get_AnimationFinish();

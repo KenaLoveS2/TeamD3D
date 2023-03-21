@@ -37,8 +37,8 @@ HRESULT CVillageGuard::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -10.f;
-		m_Desc.WorldMatrix._43 = -10.f;
+		m_Desc.WorldMatrix._41 = -8.f;
+		m_Desc.WorldMatrix._43 = -0.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -269,17 +269,17 @@ HRESULT CVillageGuard::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
-		.OnExit([this]()
-	{
-		
-
-	})		
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to BIND", "BIND")
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -329,6 +329,21 @@ HRESULT CVillageGuard::SetUp_State()
 	{
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
 		.AddTransition("CHASE to IDLE", "IDLE")
 		.Predicator([this]()
 	{
@@ -349,10 +364,20 @@ HRESULT CVillageGuard::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to PARRIED", "PARRIED")
+		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("BLOCK_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -374,10 +399,15 @@ HRESULT CVillageGuard::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to PARRIED", "PARRIED")
+		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
 	})
 		.AddTransition("ROLL_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -400,15 +430,66 @@ HRESULT CVillageGuard::SetUp_State()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-		.AddTransition("IDLE to PARRIED", "PARRIED")
+		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return m_bStronglyHit;
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
 	})
 		.AddTransition("ROLL_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(WALLJUMP_ATTACK);
+	})
+		
+		.AddState("JUMP_BACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
+		m_pModelCom->Set_AnimIndex(JUMPBACK);
+	})
+		.OnExit([this]()
+	{
+		m_pModelCom->Set_AnimIndex(IDLE);
+	})		
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("JUMP_BACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(JUMPBACK);
+	})
+	
+		.AddState("BIND")
+		.OnStart([this]()
+	{
+		Start_Bind(BIND);
+	})
+		.OnExit([this]()
+	{	
+		End_Bind();
+	})
+		.AddTransition("BIND to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BIND);
 	})
 		
 		.AddState("PARRIED")
@@ -432,45 +513,6 @@ HRESULT CVillageGuard::SetUp_State()
 	{
 		return AnimFinishChecker(PARRIED);
 	})
-		
-
-		.AddState("JUMP_BACK")
-		.OnStart([this]()
-	{
-		m_pModelCom->ResetAnimIdx_PlayTime(JUMPBACK);
-		m_pModelCom->Set_AnimIndex(JUMPBACK);
-	})
-		.OnExit([this]()
-	{
-		m_pModelCom->Set_AnimIndex(IDLE);
-	})		
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("JUMP_BACK to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(JUMPBACK);
-	})
-	
-
-		.AddState("BIND")
-		.OnStart([this]()
-	{
-		Start_Bind(BIND);
-	})
-		.OnExit([this]()
-	{	
-		End_Bind();
-	})
-		.AddTransition("BIND to IDLE", "IDLE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BIND);
-	})
-
 
 		.AddState("DYING")
 		.OnStart([this]()
