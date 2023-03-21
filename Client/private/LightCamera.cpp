@@ -61,7 +61,7 @@ void CLightCamera::Tick(_float TimeDelta)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
 
-	Imgui_RenderProperty();
+	//Imgui_RenderProperty();
 }
 
 void CLightCamera::Late_Tick(_float TimeDelta)

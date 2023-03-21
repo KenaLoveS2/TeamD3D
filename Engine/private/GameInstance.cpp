@@ -547,6 +547,12 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();	
 }
 
+_float4 CGameInstance::Get_LightCamPosition()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_LightCamPosition();
+}
+
 _float4 CGameInstance::Get_CamRight_Float4()
 {
 	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);

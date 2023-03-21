@@ -65,9 +65,6 @@ void CControlRoom::Tick(_float fTimeDelta)
 {
 	CGameObject::Tick(fTimeDelta);
 
-	if (ImGui::Button("StaticShadow"))
-		m_pRendererCom->ShootStaticShadow();
-
 	if (m_pPlayerTransformPtr ==nullptr)
 		return;
 

@@ -1,10 +1,14 @@
 #include "Shader_Engine_Defines.h"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
+matrix			g_LightCamWorldMatrix,	g_CamViewMatrix, g_CamProjMatrix;
+float4			g_vLightCamPos;
+
 matrix			g_ReflectViewMatrix;
 
-Texture2D<float4>		g_LDRTexture;
 
+Texture2D<float4>		g_LDRTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_DepthTexture;
 Texture2D<float4>		g_DiffuseTexture;
@@ -14,6 +18,7 @@ Texture2D<float4>		g_LightDepthTexture;
 Texture2D<float4>		g_FlareTexture;
 Texture2D<float4>		g_EffectTexture;
 Texture2D<float4>		g_DistortionTexture;
+Texture2D<float4>		g_PrevFrameTexture;
 
 float g_Time;
 float2 distortionAmount = float2(0.01f, 0.01f);
@@ -176,6 +181,47 @@ PS_OUT PS_GRAYSCALE(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MOTIONBLUR(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 CurFrameColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+	float4 PrevFrameColor = g_PrevFrameTexture.Sample(LinearSampler, In.vTexUV);
+	float4 blurColor = lerp(CurFrameColor, PrevFrameColor, 0.5);
+
+	Out.vColor = blurColor;
+
+	return Out;
+}
+
+PS_OUT PS_FLARE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	matrix	 matVP;
+	matVP = mul(g_CamViewMatrix, g_CamProjMatrix);
+	float4	vLightPosToPixel = mul(g_vLightCamPos, matVP); // 이건 Sun의 투영 좌표
+
+	float2 direction = vLightPosToPixel.xy - float2(0.5, 0.5);
+	float distance = length(direction);
+	float angle = atan2(direction.y, direction.x);
+	float4 CurColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (distance < 2.f) 
+	{
+		float spriteSize = lerp(0.2, 1.0, distance / 2.f);
+		float spriteAngle = angle + lerp(0, 1.57, distance / 2.f);
+		float spriteOpacity = lerp(0.1, 1.0, distance / 2.f) * 2.f;
+		CurColor += spriteOpacity * g_FlareTexture.Sample(LinearSampler, In.vTexUV * spriteSize + float2(cos(spriteAngle), sin(spriteAngle)) * spriteSize * 0.5);
+	}
+	//float4 FlareColor = g_FlareTexture.Sample(LinearSampler, In.vTexUV);
+	//if (FlareColor.a <= 0.1f)
+	//	discard;
+
+	Out.vColor = CurColor;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -229,4 +275,30 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	} //3
+
+	pass MotionBlur
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+	} //4
+
+	pass Flare
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FLARE();
+	} //5
 }
