@@ -32,7 +32,6 @@ HRESULT CRuinKit::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-	//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
 	return S_OK;
 }
 

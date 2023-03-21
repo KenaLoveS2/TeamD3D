@@ -50,8 +50,6 @@ HRESULT CControlRoom::Initialize(void* pArg)
 
 HRESULT CControlRoom::Late_Initialize(void* pArg)
 {
-
-	
 	CGameObject* pPlayerPtr = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
 	if (pPlayerPtr == nullptr)
 		return S_OK;
@@ -73,7 +71,6 @@ void CControlRoom::Tick(_float fTimeDelta)
 
 	_float4 vPlayerPos;
 	XMStoreFloat4(&vPlayerPos, m_pPlayerTransformPtr->Get_State(CTransform::STATE_TRANSLATION));
-
 
 	if (false == m_MapShadowArray[0] && vPlayerPos.z > 240.f)
 	{
@@ -101,7 +98,6 @@ void CControlRoom::Tick(_float fTimeDelta)
 	}
 	else
 		return;
-
 }
 
 void CControlRoom::Late_Tick(_float fTimeDelta)

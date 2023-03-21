@@ -33,9 +33,8 @@ HRESULT CPillar::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
+	
 	return S_OK;
-
 }
 
 void CPillar::Tick(_float fTimeDelta)

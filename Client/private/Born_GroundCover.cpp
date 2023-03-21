@@ -33,7 +33,6 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 	m_bRenderActive = true;
 
 	m_pModelCom->Set_AnimIndex(0);
-	
 	return S_OK;
 }
 

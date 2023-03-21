@@ -31,7 +31,6 @@ HRESULT CDeadZoneObj::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
 	return S_OK;
 }
 
