@@ -226,116 +226,130 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
-
-		_float3   vScale = m_pTransformCom->Get_Scaled();
-		_vector   vRight = XMVector3Normalize(XMVector3TransformNormal(vKenaRight, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
-		_vector   vUp = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_UP)) * vScale.y;
-		_vector   vLook = XMVector3Normalize(XMVector3TransformNormal(vKenaLook, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.z;
-		_vector   vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-
-		m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vRight);
-		m_pTransformCom->Set_State(CTransform::STATE_UP, vUp);
-		m_pTransformCom->Set_State(CTransform::STATE_LOOK, vLook);
-
-		_float      fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vCamLook), XMVector3Normalize(XMVectorSetY(vCamLook, 0.f)))));
-		if (m_fVerticalAngle < XMConvertToRadians(90.f))
-			fAngle *= -1.f;
-		else if (fabs(m_fVerticalAngle - XMConvertToRadians(90.f)) < EPSILON)
-			fAngle = 0.f;
-
-		if (fAngle != 0.f && !isnan(fAngle))
+		if (m_pCurOffset != m_mapCamOffset[CCamera_Player::CAMOFFSET_PARRY])
 		{
-			m_pTransformCom->RotationFromNow(XMVector3Normalize(vRight), fAngle);
-			vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-		}
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 
-		if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
-		{
-			if (m_MouseMoveX != 0)
-			{
-				m_LastMoveX = m_MouseMoveX;
+			_float3   vScale = m_pTransformCom->Get_Scaled();
+			_vector   vRight = XMVector3Normalize(XMVector3TransformNormal(vKenaRight, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
+			_vector   vUp = XMVector3Normalize(m_pKenaTransform->Get_State(CTransform::STATE_UP)) * vScale.y;
+			_vector   vLook = XMVector3Normalize(XMVector3TransformNormal(vKenaLook, XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.z;
+			_vector   vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 
-				if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
-					m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
-				else
-					m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
-			}
-			else
+			m_pTransformCom->Set_State(CTransform::STATE_RIGHT, vRight);
+			m_pTransformCom->Set_State(CTransform::STATE_UP, vUp);
+			m_pTransformCom->Set_State(CTransform::STATE_LOOK, vLook);
+
+			_float      fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vCamLook), XMVector3Normalize(XMVectorSetY(vCamLook, 0.f)))));
+			if (m_fVerticalAngle < XMConvertToRadians(90.f))
+				fAngle *= -1.f;
+			else if (fabs(m_fVerticalAngle - XMConvertToRadians(90.f)) < EPSILON)
+				fAngle = 0.f;
+
+			if (fAngle != 0.f && !isnan(fAngle))
 			{
-				if (m_fCurMouseSensitivityX > 0.f)
-					m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
-				else
-					m_fCurMouseSensitivityX = 0.f;
+				m_pTransformCom->RotationFromNow(XMVector3Normalize(vRight), fAngle);
+				vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			}
 
-			if (m_MouseMoveX != 0)
+			if ((m_MouseMoveX = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_X)) || m_fCurMouseSensitivityX != 0.f)
 			{
-				m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
-				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
-			}
-			else
-			{
-				if (m_LastMoveX < 0)
+				if (m_MouseMoveX != 0)
 				{
-					m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * -1.f);
-					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * -1.f);
+					m_LastMoveX = m_MouseMoveX;
+
+					if (m_fCurMouseSensitivityX < m_fInitMouseSensitivity)
+						m_fCurMouseSensitivityX += fTimeDelta * 0.15f;
+					else
+						m_fCurMouseSensitivityX = m_fInitMouseSensitivity;
 				}
-				else if (m_LastMoveX > 0)
+				else
+				{
+					if (m_fCurMouseSensitivityX > 0.f)
+						m_fCurMouseSensitivityX -= fTimeDelta * 0.15f;
+					else
+						m_fCurMouseSensitivityX = 0.f;
+				}
+
+				if (m_MouseMoveX != 0)
 				{
 					m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
 					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
 				}
+				else
+				{
+					if (m_LastMoveX < 0)
+					{
+						m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * -1.f);
+						m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX * -1.f);
+					}
+					else if (m_LastMoveX > 0)
+					{
+						m_pKenaTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+						m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_MouseMoveX * m_fCurMouseSensitivityX);
+					}
+				}
+				vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
+				//vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * 0.6f;
+				vCamPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * fCamRightDist;
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 			}
-			vKenaRight = m_pKenaTransform->Get_State(CTransform::STATE_RIGHT);
-			//vShoulderPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * 0.6f;
-			vCamPos = vKenaPos - XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)) * fCamDistance + XMVector3Normalize(vKenaRight) * fCamRightDist;
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
+			if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
+			{
+				_bool   bPossible = true;
+
+				if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
+				{
+					bPossible = false;
+
+					if (m_fVerticalAngle < XMConvertToRadians(40.f))
+						m_fCurMouseSensitivityY = 0.f;
+				}
+				if (m_fVerticalAngle > XMConvertToRadians(80.f) && m_MouseMoveY > 0)
+				{
+					bPossible = false;
+
+					if (m_fVerticalAngle > XMConvertToRadians(120.f))
+						m_fCurMouseSensitivityY = 0.f;
+				}
+
+				if (bPossible == false)
+				{
+					if (m_fCurMouseSensitivityY > 0.f)
+						m_fCurMouseSensitivityY -= fTimeDelta * 0.05f;
+					else
+						m_fCurMouseSensitivityY = 0.f;
+				}
+				else
+				{
+					if (m_fCurMouseSensitivityY < m_fInitMouseSensitivity)
+						m_fCurMouseSensitivityY += fTimeDelta * 0.1f;
+					else
+						m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
+				}
+
+				if (m_MouseMoveX == 0)
+					m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+				else
+				{
+					vRight = XMVector3Normalize(XMVector3TransformNormal(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT), XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
+					m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(vRight), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
+				}
+			}
+			if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
+				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 		}
-		if (m_MouseMoveY = CGameInstance::GetInstance()->Get_DIMouseMove(DIMS_Y))
+		else
 		{
-			_bool   bPossible = true;
+			vCamPos = _float4::Lerp(m_pPreOffset->vLastPos, vCamPos, m_fCurLerpTime / m_pCurOffset->fLerpDuration);
+			_vector   vCamLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f));
+			_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vKenaLook, 0.f)), vCamLook)));
 
-			if (m_fVerticalAngle < XMConvertToRadians(70.f) && m_MouseMoveY < 0)
-			{
-				bPossible = false;
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fAngle * fTimeDelta);
 
-				if (m_fVerticalAngle < XMConvertToRadians(40.f))
-					m_fCurMouseSensitivityY = 0.f;
-			}
-			if (m_fVerticalAngle > XMConvertToRadians(80.f) && m_MouseMoveY > 0)
-			{
-				bPossible = false;
-
-				if (m_fVerticalAngle > XMConvertToRadians(120.f))
-					m_fCurMouseSensitivityY = 0.f;
-			}
-
-			if (bPossible == false)
-			{
-				if (m_fCurMouseSensitivityY > 0.f)
-					m_fCurMouseSensitivityY -= fTimeDelta * 0.05f;
-				else
-					m_fCurMouseSensitivityY = 0.f;
-			}
-			else
-			{
-				if (m_fCurMouseSensitivityY < m_fInitMouseSensitivity)
-					m_fCurMouseSensitivityY += fTimeDelta * 0.1f;
-				else
-					m_fCurMouseSensitivityY = m_fInitMouseSensitivity;
-			}
-
-			if (m_MouseMoveX == 0)
-				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT)), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
-			else
-			{
-				vRight = XMVector3Normalize(XMVector3TransformNormal(m_pKenaTransform->Get_State(CTransform::STATE_RIGHT), XMMatrixRotationY(XMConvertToRadians(-2.f)))) * vScale.x;
-				m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVector3Normalize(vRight), fCamDistance, fTimeDelta * m_MouseMoveY * m_fCurMouseSensitivityY);
-			}
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
+			m_pTransformCom->LookAt(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist);
 		}
-		if (m_MouseMoveX == 0 && m_MouseMoveY == 0)
-			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, 0.f);
 	}
 
 // 	if (m_fTimeSleep > 0.f)

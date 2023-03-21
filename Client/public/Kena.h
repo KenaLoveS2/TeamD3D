@@ -148,9 +148,6 @@ private:
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
 
-	/* Target Monster (For. UI and Auto Targeting */
-	CMonster*				m_pTargetMonster;
-
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
 	CUI_FocusMonster*		m_pUI_FocusMonster;
