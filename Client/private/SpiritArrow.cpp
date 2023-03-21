@@ -492,7 +492,7 @@ CSpiritArrow * CSpiritArrow::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Create : CKena");
+		MSG_BOX("Failed to Create : CSpiritArrow");
 		Safe_Release(pInstance);
 	}
 
@@ -505,7 +505,7 @@ CGameObject * CSpiritArrow::Clone(void * pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Clone : CKena");
+		MSG_BOX("Failed to Clone : CSpiritArrow");
 		Safe_Release(pInstance);
 	}
 

@@ -63,6 +63,7 @@ public:
 	_vector						Get_Position();
 	DESC							Get_Desc() { return m_Desc; };
 	virtual _vector				Get_FocusPosition();
+	const _bool&					Is_Dead() const { return m_bDeath; }
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -134,6 +135,7 @@ protected:
 
 	_bool m_bRealAttack = false;
 
+	_float	m_fHitStopTime = 0.f;
 	_float m_fDissolveTime = 0.0f;
 	_float m_fSpawnRange = 8.f;
 

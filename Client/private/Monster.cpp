@@ -391,13 +391,25 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				m_pKena->Add_HitStopTime(0.15f);
+				m_fHitStopTime += 0.15f;
 				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.5f);
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
+				m_pKena->Add_HitStopTime(0.25f);
+				m_fHitStopTime += 0.25f;
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				
+				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				if (vecWeaponPos->size() == 2)
+				{
+					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
+					vDir = XMVectorSetZ(vDir, 0.f);
+					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
+				}
 			}
 		}
 	}

@@ -61,7 +61,8 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -151,7 +152,14 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_fHitStopTime <= 0.f)
+		m_pModelCom->Play_Animation(fTimeDelta);
+	else
+	{
+		m_fHitStopTime -= fTimeDelta;
+		CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+	}
+
 	AdditiveAnim(fTimeDelta);
 }
 

@@ -440,6 +440,7 @@ private:
 	HRESULT					SetUp_State_Jump();
 	HRESULT					SetUp_State_Land();
 	HRESULT					SetUp_State_Pulse();
+	HRESULT					SetUp_State_Spin_Attack();
 	HRESULT					SetUp_State_Sprint();
 
 private:
@@ -634,6 +635,9 @@ private:
 	void						Start_Pulse_Walk_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Right(_float fTimeDelta);
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SPIN ATTACK */
+	void						Start_Spin_Attack(_float fTimeDelta);
+	void						Start_Spin_Attack_Return(_float fTimeDelta);
 	/* SRPINT */
 	void						Start_Into_Sprint(_float fTimeDelta);
 	void						Start_Sprint(_float fTimeDelta);
@@ -783,6 +787,9 @@ private:
 	void						Tick_Pulse_Parry(_float fTimeDelta);
 	void						Tick_Pulse_Walk(_float fTimeDelta);
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SPIN ATTACK */
+	void						Tick_Spin_Attack(_float fTimeDelta);
+	void						Tick_Spin_Attack_Return(_float fTimeDelta);
 	/* SRPINT */
 	void						Tick_Into_Sprint(_float fTimeDelta);
 	void						Tick_Sprint(_float fTimeDelta);
@@ -932,6 +939,9 @@ private:
 	void						End_Pulse_Parry(_float fTimeDelta);
 	void						End_Pulse_Walk(_float fTimeDelta);
 	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SPIN ATTACK */
+	void						End_Spin_Attack(_float fTimeDelta);
+	void						End_Spin_Attack_Return(_float fTimeDelta);
 	/* SRPINT */
 	void						End_Into_Sprint(_float fTimeDelta);
 	void						End_Sprint(_float fTimeDelta);
@@ -942,6 +952,7 @@ private:
 	void						End_Sprint_Attack(_float fTimeDelta);
 
 private:	/* Changer */
+	_bool	TruePass();
 	_bool	OnGround();
 	_bool	CommonHit();
 	_bool	HeavyHit();
@@ -952,6 +963,7 @@ private:	/* Changer */
 	_bool	HeavyAttack1_Perfect();
 	_bool	HeavyAttack2_Perfect();
 	_bool	HeavyAttack3_Perfect();
+	_bool	Parry();
 	_bool	Damaged_Dir_Front();
 	_bool	Damaged_Dir_Back();
 	_bool	Damaged_Dir_Left();
