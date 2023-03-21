@@ -427,7 +427,8 @@ void CKena::Tick(_float fTimeDelta)
 
 	/* ~Delegator */
 
-	m_pFirstRot ? m_pFirstRot->Set_KenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) : 0;
+	CRot::Set_RotUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	CMonster::Set_MonsterUseKenaPos(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 }
 
 void CKena::Late_Tick(_float fTimeDelta)

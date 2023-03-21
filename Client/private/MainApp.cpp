@@ -275,10 +275,10 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
-
+	
 	/* For.Prototype_GameObject_Sky */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
-		CSky::Create(m_pDevice, m_pContext)))) 
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"), 
+		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Camera_Dynamic */

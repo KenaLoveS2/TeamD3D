@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Camera_Player.h"
 
+_float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -96,10 +97,10 @@ void CMonster::Tick(_float fTimeDelta)
 	
 	m_fKenaDistance = m_pTransformCom->Calc_Distance_XZ(m_vKenaPos);
 
-	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;
-	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;	
+	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;
+
+	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;	
 	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;	
-	m_vKenaPos = m_pKena ? m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) : m_vKenaPos;
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -109,8 +110,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
 	
-	Call_RotIcon();
-	Call_MonsterFocusIcon();		
+	// Call_RotIcon();
+	// Call_MonsterFocusIcon();		
 }
 
 HRESULT CMonster::Render()
