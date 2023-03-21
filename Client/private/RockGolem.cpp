@@ -50,7 +50,7 @@ HRESULT CRockGolem::Late_Initialize(void * pArg)
 	// ¸öÅë
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(2.f, 0.08f, 1.f);
+		_float3 vPivotScale = _float3(2.f, 0.12f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 1.95f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -128,7 +128,7 @@ void CRockGolem::Late_Tick(_float fTimeDelta)
 {
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
+	if (m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -272,10 +272,7 @@ HRESULT CRockGolem::SetUp_State()
 		{
 			return AnimFinishChecker(WISPIN);
 		})
-
-
 			
-
 			.AddState("IDLE")
 			.OnStart([this]()
 		{
@@ -291,6 +288,11 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
+		})
+			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
+			.Predicator([this]()
+		{
+			return IsParried();
 		})
 			.AddTransition("IDLE to WALK", "WALK")
 			.Predicator([this]()
@@ -318,7 +320,12 @@ HRESULT CRockGolem::SetUp_State()
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
-		})			
+		})	
+			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
+			.Predicator([this]()
+		{
+			return IsParried();
+		})
 			.AddTransition("WALK to EXPLODEATTACK", "EXPLODEATTACK")
 			.Predicator([this]()
 		{
@@ -371,6 +378,16 @@ HRESULT CRockGolem::SetUp_State()
 			m_iAttackType++;
 			m_iSlamAttackCount = 0;
 		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})
+			.AddTransition("To PARRIED", "TAKEDAMAGE_OR_PARRIED")
+			.Predicator([this]()
+		{
+			return IsParried();
+		})
 			.AddTransition("SLAMATTACK to IDLE", "IDLE")
 			.Predicator([this]()
 		{
@@ -383,12 +400,7 @@ HRESULT CRockGolem::SetUp_State()
 			
 			return m_iSlamAttackCount >= 2;
 		})
-			.AddTransition("To DYING", "DYING")
-			.Predicator([this]()
-		{
-			return m_pMonsterStatusCom->IsDead();
-		})
-
+			
 			.AddState("EXPLODEATTACK")
 			.OnStart([this]()
 		{
@@ -406,37 +418,38 @@ HRESULT CRockGolem::SetUp_State()
 			m_bExplodeAttack = false;			
 			m_iAttackType++;
 		})
+			.AddTransition("To DYING", "DYING")
+			.Predicator([this]()
+		{
+			return m_pMonsterStatusCom->IsDead();
+		})	
+			.AddTransition("EXPLODEATTACK to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
+			.Predicator([this]()
+		{
+			return m_bHit || IsParried();
+		})
 			.AddTransition("EXPLODEATTACK to IDLE", "IDLE")
 			.Predicator([this]()
 		{
 			return AnimFinishChecker(EXPLODE);
 		})
-			.AddTransition("EXPLODEATTACK to TAKEDAMAGE" , "TAKEDAMAGE")
-			.Predicator([this]()
-		{
-			return m_bHit;
-		})
-			.AddTransition("To DYING", "DYING")
-			.Predicator([this]()
-		{
-			return m_pMonsterStatusCom->IsDead();
-		})
+			
 
-			.AddState("TAKEDAMAGE")
+			.AddState("TAKEDAMAGE_OR_PARRIED")
 			.OnStart([this]()
 		{
 			m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
 			m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
 		})
-			.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
-			.Predicator([this]()
-		{
-			return AnimFinishChecker(TAKEDAMAGE);
-		})
 			.AddTransition("To DYING", "DYING")
 			.Predicator([this]()
 		{
 			return m_pMonsterStatusCom->IsDead();
+		})			
+			.AddTransition("TAKEDAMAGE to IDLE", "IDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(TAKEDAMAGE);
 		})
 
 			.AddState("INTOSLEEP")

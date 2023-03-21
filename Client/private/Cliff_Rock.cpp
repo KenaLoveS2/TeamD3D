@@ -63,7 +63,9 @@ void CCliff_Rock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bRenderActive)
+	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+
+	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(250.f, WolrdMat))
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

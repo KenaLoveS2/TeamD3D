@@ -50,7 +50,7 @@ HRESULT CStatue::Late_Initialize(void * pArg)
 
 	return S_OK;
 }
-
+ 
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);

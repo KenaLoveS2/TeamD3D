@@ -33,6 +33,6 @@ public:
 	virtual void Free() override;
 	void Tick(_float fTimeDelta);
 	
-	HRESULT Reserve_Manager(_uint iStartRoomIndex =1);
+	HRESULT Reserve_Manager(_uint iStartRoomIndex =0);
 };
 END

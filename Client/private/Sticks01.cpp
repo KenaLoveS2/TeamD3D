@@ -371,6 +371,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		Reset_AF();
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("COMBATIDLE to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -381,13 +391,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bStronglyHit;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
-
 		.AddTransition("COMBATIDLE to CHARGE", "CHEER")
 		.Predicator([this]()
 	{
@@ -419,6 +422,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("CHEER to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -434,11 +447,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(CHEER);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
 
 		.AddState("STRAFELEFT")
 		.OnStart([this]()
@@ -451,6 +459,16 @@ HRESULT CSticks01::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Left(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("STRAFELEFT to BIND", "BIND")
 		.Predicator([this]()
@@ -467,12 +485,7 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime,3.f);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
+	
 		.AddState("STRAFERIGHT")
 		.OnStart([this]()
 	{
@@ -484,6 +497,16 @@ HRESULT CSticks01::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pTransformCom->Go_Right(fTimeDelta);
 		m_fIdletoAttackTime += fTimeDelta;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("STRAFERIGHT to BIND", "BIND")
 		.Predicator([this]()
@@ -501,12 +524,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return TimeTrigger(m_fIdletoAttackTime, 3.f);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		
 
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
@@ -514,17 +531,22 @@ HRESULT CSticks01::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE);
 	})
-		.AddTransition("INTOCHARGE to CHARGE", "CHARGE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(INTOCHARGE);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("INTOCHARGE to CHARGE", "CHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(INTOCHARGE);
+	})
+		
 		.AddState("CHARGE")
 		.OnStart([this]()
 	{
@@ -538,6 +560,16 @@ HRESULT CSticks01::SetUp_State()
 		.OnExit([this]()
 	{
 		Reset_Attack();
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("CHARGE to BIND", "BIND")
 		.Predicator([this]()
@@ -579,11 +611,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return m_bRealAttack && m_bThrowRock;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
 
 		.AddState("CHARGEATTACK")
 		.OnStart([this]()
@@ -598,6 +625,16 @@ HRESULT CSticks01::SetUp_State()
 		.OnExit([this]()
 	{
 		m_bRealAttack = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("CHARGEATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -614,11 +651,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(CHARGEATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
 
 		.AddState("JUMPATTACK")
 		.OnStart([this]()
@@ -633,6 +665,16 @@ HRESULT CSticks01::SetUp_State()
 		.OnExit([this]()
 	{
 		m_bRealAttack = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("JUMPATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -649,11 +691,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(JUMPATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
 
 		.AddState("ATTACK1")
 		.OnStart([this]()
@@ -668,6 +705,16 @@ HRESULT CSticks01::SetUp_State()
 		.OnExit([this]()
 	{
 		m_bRealAttack = false;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
 	})
 		.AddTransition("ATTACK to BIND", "BIND")
 		.Predicator([this]()
@@ -684,11 +731,6 @@ HRESULT CSticks01::SetUp_State()
 	{
 		return AnimFinishChecker(ATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
 
 		.AddState("ATTACK2")
 		.OnStart([this]()
@@ -704,7 +746,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
-
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("ATTACK2 to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -719,11 +770,6 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ATTACK2);
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("COMBOATTACK")
@@ -740,7 +786,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
-
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("COMBOATTACK to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -755,11 +810,6 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(COMBOATTACK);
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("ROCKTHROW")
@@ -776,7 +826,16 @@ HRESULT CSticks01::SetUp_State()
 	{
 		m_bRealAttack = false;
 	})
-
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
 		.AddTransition("ROCKTHROW to BIND", "BIND")
 		.Predicator([this]()
 	{
@@ -791,11 +850,6 @@ HRESULT CSticks01::SetUp_State()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ROCKTHROW);
-	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
 	})
 
 		.AddState("BIND")
@@ -834,16 +888,17 @@ HRESULT CSticks01::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
 		m_pModelCom->Set_AnimIndex(PARRIED);
 	})
-		.AddTransition("PARRIED to INTOCHARGE", "INTOCHARGE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(PARRIED);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("PARRIED to INTOCHARGE", "INTOCHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PARRIED);
+	})
+		
 
 		// 항상 폭탄이 날라오면 이렇게 뛰는가?
 		.AddState("RECEIVEBOMB")
