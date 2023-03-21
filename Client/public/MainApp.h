@@ -12,7 +12,7 @@ class CMainApp final : public CBase
 {
 private:
 	CGameInstance*			m_pGameInstance = nullptr;
-	CRenderer*					m_pRenderer = nullptr;
+	CRenderer*				m_pRenderer = nullptr;
 
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;

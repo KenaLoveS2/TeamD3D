@@ -639,7 +639,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;
+		Clear_Death();
 	})		
 		.Build();
 
