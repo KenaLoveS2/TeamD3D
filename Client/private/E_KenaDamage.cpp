@@ -34,7 +34,7 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.bActive = true;
 
 	for (auto& pChild : m_vecChild)
 	{
@@ -52,7 +52,7 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 			_vector	vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
 			_vector	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
 			_vector	vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
-
+			
 			matrchildworld.r[0] = XMVector4Transform(vRight, RotationMatrix);
 			matrchildworld.r[1] = XMVector4Transform(vUp, RotationMatrix);
 			matrchildworld.r[2] = XMVector4Transform(vLook, RotationMatrix);
@@ -66,9 +66,6 @@ HRESULT CE_KenaDamage::Initialize(void * pArg)
 void CE_KenaDamage::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//ImGui::Begin("Damage");
-	//ImGui::Checkbox("Avtice", &m_eEFfectDesc.bActive);
-	//ImGui::End();
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
@@ -109,6 +106,12 @@ HRESULT CE_KenaDamage::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_KenaDamage::Imgui_RenderProperty()
+{
+	if (ImGui::Button("Active"))
+		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
 }
 
 CE_KenaDamage * CE_KenaDamage::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

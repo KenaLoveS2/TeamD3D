@@ -49,6 +49,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	m_pWeaponBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+
 	return S_OK;
 }
 
@@ -59,7 +61,8 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -149,7 +152,14 @@ void CSticks01::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_fHitStopTime <= 0.f)
+		m_pModelCom->Play_Animation(fTimeDelta);
+	else
+	{
+		m_fHitStopTime -= fTimeDelta;
+		CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+	}
+
 	AdditiveAnim(fTimeDelta);
 }
 
@@ -174,12 +184,12 @@ HRESULT CSticks01::Render()
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_GlowTexture");
-			
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_G);
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_GlowTexture");
+
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_G);
 	}
 	return S_OK;
 }
@@ -918,7 +928,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;
+		Clear_Death();
 		
 		if (m_pMage && m_bSpawnByMage)
 		{
@@ -985,21 +995,17 @@ HRESULT CSticks01::SetUp_ShadowShaderResources()
 void CSticks01::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
-
-	CBone* pBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
-	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		
+	_matrix SocketMatrix = m_pWeaponBone->Get_OffsetMatrix() * m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
 	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
 	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-	SocketMatrix =	 XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
-							* SocketMatrix;
+	SocketMatrix = XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z) * SocketMatrix;
+	
 	_float4x4 mat;
 	XMStoreFloat4x4(&mat, SocketMatrix);
 	m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
-
-	// 맞았을때 약공격을 맞았으면 TWITCH~ Additive로
-
 }
 
 void CSticks01::AdditiveAnim(_float fTimeDelta)
@@ -1183,6 +1189,10 @@ void CSticks01::Free()
 void CSticks01::Spawn_ByMage(CMage* pMage, _float4 vPos)
 {
 	m_bDeath = false;
+
+	m_Desc.WorldMatrix._41 = vPos.x;
+	m_Desc.WorldMatrix._42 = vPos.y;
+	m_Desc.WorldMatrix._43 = vPos.z;
 
 	m_pTransformCom->Set_Position(vPos);
 	m_pEnemyWisp->Set_Position(vPos);

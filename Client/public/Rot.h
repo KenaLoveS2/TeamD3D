@@ -35,9 +35,10 @@ private:
 	CFSMComponent*		m_pFSM = nullptr;
 	class CKena *				m_pKena = nullptr;
 	class CKena_Status*	m_pkenaState = nullptr;
+	class CE_TeleportRot* m_pTeleportRot = nullptr;
 
 	class CRotWisp*			m_pRotWisp = nullptr;
-	CTransform*					m_pKenaTransform = nullptr;
+	CTransform*				m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 	_float4 m_vWakeUpPosition;
 
@@ -77,6 +78,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
 	HRESULT SetUp_State();
+	HRESULT SetUp_Effects();
 
 public:
 	static CRot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -88,7 +90,7 @@ public:
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void Set_KenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
+	static void Set_RotUseKenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
 
 public:
 	enum ANIMATION {

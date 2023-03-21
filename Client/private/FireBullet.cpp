@@ -2,7 +2,7 @@
 #include "..\public\FireBullet.h"
 #include "GameInstance.h"
 #include "Bone.h"
-#include "Effect_Trail.h"
+#include "Effect_Base.h"
 #include "Kena.h"
 
 CFireBullet::CFireBullet(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -46,13 +46,14 @@ HRESULT CFireBullet::Initialize(void * pArg)
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 
 	// Push_EventFunctions();
-	m_eEFfectDesc.bActive = false;
 	
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 	assert(m_pKena != nullptr && "CFireBullet::Initialize()");
 
+	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
@@ -96,7 +97,10 @@ void CFireBullet::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Tick(fTimeDelta);
 
-	__super::Tick(fTimeDelta);
+	 __super::Tick(fTimeDelta);
+
+	 for (auto& iter : m_vecChild)
+		 iter->Tick(fTimeDelta);
 }
 
 void CFireBullet::Late_Tick(_float fTimeDelta)
@@ -105,6 +109,11 @@ void CFireBullet::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+	for (auto& iter : m_vecChild)
+		iter->Late_Tick(fTimeDelta);	
 }
 
 HRESULT CFireBullet::Render()
@@ -115,13 +124,11 @@ HRESULT CFireBullet::Render()
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
-		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT, "g_LineTexture");
-		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_ShapeTexture");
-		// m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_SmoothTexture");
+		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
+		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 0);
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
 	}
 
 	return S_OK;
@@ -132,22 +139,14 @@ _bool CFireBullet::IsActiveState()
 	return m_eEFfectDesc.bActive;
 }
 
-void CFireBullet::Push_EventFunctions()
-{
-	TurnOnTrail(true, 0.f);
-	TurnOnBack(true, 0.f);
-	TurnOnGround(true, 0.f);
-	TurnOnParticle(true, 0.f);
-
-	TurnOffTrail(true, 0.f);
-	TurnOffBack(true, 0.f);
-	TurnOffGround(true, 0.f);
-	TurnOffParticle(true, 0.f);
-}
-
 void CFireBullet::ImGui_AnimationProperty()
 {
 	m_pModelCom->Imgui_RenderProperty();
+}
+
+void CFireBullet::Imgui_RenderProperty()
+{
+
 }
 
 HRESULT CFireBullet::SetUp_Components()
@@ -156,11 +155,9 @@ HRESULT CFireBullet::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Sphere", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
-	// FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/Noise_cloudsmed.png")), E_FAIL);
-	// FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Deadzone_REAM.png")), E_FAIL);
-	// FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Black_Linear.png")), E_FAIL);
-	// FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/E_Effect_0.png")), E_FAIL);
-	// FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_GR_Noise_Smooth_A.png")), E_FAIL);
+	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_Deadzone_REAM.png")), E_FAIL);
+	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Textures/Effect/MageBullet/t_fur_noise_02.png")), E_FAIL);
+	 FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/MageBullet/T_GR_Cloud_Noise_A.png")), E_FAIL);
 
 	return S_OK;
 }
@@ -174,28 +171,23 @@ HRESULT CFireBullet::SetUp_ShaderResources()
 
 HRESULT CFireBullet::Set_ChildEffects()
 {	
-	return S_OK; // 임시
-
+	m_vecChild.reserve(CHILD_END);
+	
 	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	// child trail 추가 // CHILD_TRAIL
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispTrail", L"EnemyWispTrail"));
+	/* cover */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_FireBulletCover", L"BulletCover"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);	
 	m_vecChild.push_back(pEffectBase);
 
-	// child backgorund 추가 // CHILD_BACK
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispBackground", L"EnemyWispBack"));
+	/* Back */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_FireBulletCloud", L"BulletBack"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_vecChild.push_back(pEffectBase);
 
-	// child backgorund 추가 // CHILD_GROUND
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispGround", L"EnemyWispGround"));
-	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	m_vecChild.push_back(pEffectBase);
-
-	// child particle 추가 // CHILD_PARTICLE 
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnemyWispParticle", L"EnemyWispParticle"));
+	/* Explosion */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_FireBulletExplosion", L"BulletExplosion"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_vecChild.push_back(pEffectBase);
 
@@ -204,110 +196,6 @@ HRESULT CFireBullet::Set_ChildEffects()
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
-}
-
-void CFireBullet::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOnTrail);
-		return;
-	}
-	m_vecChild[CHILD_TRAIL]->Set_Active(true);
-}
-
-void CFireBullet::TurnOnBack(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOnBack);
-		return;
-	}
-	m_vecChild[CHILD_BACK]->Set_Active(true);
-
-	if(m_pParent != nullptr)
-	{
-		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		m_vecChild[CHILD_BACK]->Set_Position(vPos);
-	}
-}
-
-void CFireBullet::TurnOnGround(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOnGround);
-		return;
-	}
-	m_vecChild[CHILD_GROUND]->Set_Active(true);
-	if (m_pParent != nullptr)
-	{
-		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		m_vecChild[CHILD_GROUND]->Set_Position(vPos);
-	}
-}
-
-void CFireBullet::TurnOnParticle(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOnParticle);
-		return;
-	}
-	m_vecChild[CHILD_PARTICLE]->Set_Active(true);
-	if (m_pParent != nullptr)
-	{
-		_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		m_vecChild[CHILD_PARTICLE]->Set_Position(vPos);
-	}
-}
-
-void CFireBullet::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOffTrail);
-		return;
-	}
-	m_vecChild[CHILD_TRAIL]->Set_Active(false);
-}
-
-void CFireBullet::TurnOffBack(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOffBack);
-		return;
-	}
-	m_vecChild[CHILD_BACK]->Set_Active(false);
-}
-
-void CFireBullet::TurnOffGround(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOffGround);
-		return;
-	}
-	m_vecChild[CHILD_GROUND]->Set_Active(false);
-}
-
-void CFireBullet::TurnOffParticle(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CFireBullet::TurnOffParticle);
-		return;
-	}
-	m_vecChild[CHILD_PARTICLE]->Set_Active(false);
 }
 
 CFireBullet * CFireBullet::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -337,6 +225,9 @@ CGameObject * CFireBullet::Clone(void * pArg)
 void CFireBullet::Free()
 {
 	__super::Free();
+
+	for (auto& iter : m_vecChild)
+		Safe_Release(iter);
 }
 
 void CFireBullet::FireBullet_Proc(_float fTimeDelta)
@@ -353,6 +244,11 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	case STATE_CREATE:
 	{
 		// 생성 시뮬레이션
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+		m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
+
 		m_eState = STATE_CHASE;
 
 		break;
@@ -361,23 +257,35 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	{
 		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f);
 		
-		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 1.f))
+		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f))
 			m_bCollision = true;
 
 		if (m_bCollision)
-			m_eState = STATE_EXPLOSION;
+			m_eState = STATE_EXPLOSION_START;
 
+		break;
+	}
+	case STATE_EXPLOSION_START:
+	{
+		m_vecChild[CHILD_COVER]->Set_Active(false);
+		m_vecChild[CHILD_BACK]->Set_Active(false);
+		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
+
+		m_eState = STATE_EXPLOSION;
 		break;
 	}
 	case STATE_EXPLOSION:
 	{
-		// 터지는 시물레이션
-		m_eState = STATE_RESET;
+		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
+		if(bActive == false)
+			m_eState = STATE_RESET;
+
 		break;
 	}
 	case STATE_RESET:
 	{
 		m_eEFfectDesc.bActive = false;
+		m_bCollision = false;
 		m_eState = STATE_WAIT;
 		break;
 	}

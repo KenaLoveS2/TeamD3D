@@ -135,7 +135,13 @@ void CRotEater::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_fHitStopTime <= 0.f)
+		m_pModelCom->Play_Animation(fTimeDelta);
+	else
+	{
+		m_fHitStopTime -= fTimeDelta;
+		CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+	}
 
 	AdditiveAnim(fTimeDelta);
 }
@@ -639,7 +645,7 @@ HRESULT CRotEater::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
-		m_bDeath = true;
+		Clear_Death();
 	})		
 		.Build();
 

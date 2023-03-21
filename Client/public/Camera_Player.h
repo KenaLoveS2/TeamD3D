@@ -26,7 +26,7 @@ class CCamera_Player final : public CCamera
 {
 public:
 	enum CAMOFFSET {
-		CAMOFFSET_DEFAULT, CAMOFFSET_AIM, CAMOFFSET_AIR_AIM, CAMOFFSET_INJECTBOW, CAMOFFSET_PULSE, CAMOFFSET_HEAVYATTACK, CAMOFFSET_END
+		CAMOFFSET_DEFAULT, CAMOFFSET_AIM, CAMOFFSET_AIR_AIM, CAMOFFSET_INJECTBOW, CAMOFFSET_PULSE, CAMOFFSET_PARRY, CAMOFFSET_HEAVYATTACK, CAMOFFSET_END
 	};
 
 private:
@@ -53,7 +53,7 @@ public:
 	void					Camera_Shake(_float fPower, _uint iCount);
 
 	/* Dir Shake */	/* Radian Angle */
-	void					Camera_Shake(_float4 vDir, _float fAngle, _bool bReturn = true);
+	void					Camera_Shake(_float4 vDir, _float fAngle);
 	void					TimeSleep(_float fDuration);
 
 	void					Update_ReflectWorld();
