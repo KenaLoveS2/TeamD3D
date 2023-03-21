@@ -466,6 +466,9 @@
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll">
       <UniqueIdentifier>{9e562e9e-37de-4ba8-93f5-2546f53a94ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Water">
+      <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -995,7 +998,6 @@
     <ClInclude Include="..\public\E_RotTrail.h">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
@@ -1085,7 +1087,6 @@
     <ClInclude Include="..\public\E_FireBulletExplosion.h">
       <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\RotBomb.h">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
     </ClInclude>
@@ -1118,6 +1119,12 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_NodeScrollLine.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WaterPlane.h">
+      <Filter>02.GameObjects\Envrioment\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Born_GroundCover.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1627,7 +1634,6 @@
     <ClCompile Include="..\private\E_RotTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
@@ -1717,7 +1723,6 @@
     <ClCompile Include="..\private\E_FireBulletExplosion.cpp">
       <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
     </ClCompile>
@@ -1750,6 +1755,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WaterPlane.cpp">
+      <Filter>02.GameObjects\Envrioment\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Born_GroundCover.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

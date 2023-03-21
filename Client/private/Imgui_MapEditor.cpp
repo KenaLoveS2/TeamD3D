@@ -34,13 +34,16 @@ CImgui_MapEditor::CImgui_MapEditor(ID3D11Device * pDevice, ID3D11DeviceContext *
 
 HRESULT CImgui_MapEditor::Initialize(void * pArg)
 {
+#ifdef _DEBUG
 	m_bComOptions.fill(false);
-
+#endif
 	return S_OK;
 }
 
+
 void CImgui_MapEditor::Imgui_FreeRender()
 {
+#ifdef _DEBUG
 	ImGui::Text("<MapTool>");
 	if (ImGui::CollapsingHeader("Selcte_Option"))
 	{
@@ -56,8 +59,10 @@ void CImgui_MapEditor::Imgui_FreeRender()
 	}
 
 	ImGui::End();
+#endif
 }
 
+#ifdef _DEBUG
 void CImgui_MapEditor::Imgui_SelectOption()
 {
 
@@ -763,7 +768,141 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 		return;
 }
 
+#endif
 
+CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
+{
+	CImgui_MapEditor*	pInstance = new CImgui_MapEditor(pDevice, pContext);
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed To Create : CImgui_MapEditor");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CImgui_MapEditor::Free()
+{
+	__super::Free();
+}
+
+#ifdef _DEBUG
+void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
+{
+	if (pSelectEnviObj == nullptr)
+		return;
+	
+	CModel* pModel =dynamic_cast<CModel*>(pSelectEnviObj->Find_Component(TEXT("Com_Model")));
+	if (nullptr == pModel || false == pModel->Get_IStancingModel())
+		return;
+
+	ImGui::Begin("Instance Obj PosControl");
+
+	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));	
+	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
+	
+	static _int			m_iNum_GroundCoverObj = 0;
+	static _float			m_fBetween = 0.f;
+	static _float			m_fRadius = 0.f;
+	static	_bool			bIstancingObj_RectAngle_Create = false;
+	ImGui::Checkbox("Multiple Obj Create", &bIstancingObj_RectAngle_Create);
+	ImGui::DragInt("iNum GroundCover", &m_iNum_GroundCoverObj, 1, 1, 200);
+	ImGui::DragFloat("Between", &m_fBetween, 0.1f, 0.1f, 10.f);
+	ImGui::DragFloat("Radius", &m_fRadius, 0.5f, 1.f, 10.f);
+	
+	_float4 vPickingPos;
+	_matrix TerrainMatrix;
+	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
+	{
+		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(vPickingPos))
+		{		
+			m_bUseTerrainPicking = false;
+			TerrainMatrix = m_pSelectedTerrain->Get_TransformCom()->Get_WorldMatrix();
+			_matrix 	TerrainMatrixInv = XMMatrixInverse(nullptr, TerrainMatrix);
+
+			_float4 vBasePos;
+			XMStoreFloat4(&vBasePos, pSelectObjTransform->Get_State(CTransform::STATE_TRANSLATION));
+			vPickingPos.x -= vBasePos.x;
+			vPickingPos.y -= vBasePos.y;
+			vPickingPos.z -= vBasePos.z;
+
+			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , 
+				vPickingPos, TerrainMatrix,true, m_iNum_GroundCoverObj, m_fBetween, bIstancingObj_RectAngle_Create, m_fRadius);
+		}
+
+	}
+	else
+	{
+		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos,
+			TerrainMatrix, false);
+	}
+
+	ImGui::End();
+
+}
+
+void CImgui_MapEditor::imgui_ObjectList_Clear()
+{
+	static int iDeleteRoomIndex = 0;
+
+	ImGui::InputInt("Delete RoomIndex", &iDeleteRoomIndex);
+
+
+	if (ImGui::Button("Object_List_Clear"))
+	{
+		CGameInstance *pGameInstance = GET_INSTANCE(CGameInstance);
+		// 나중에 룸인덱스 조정 만들어야됌
+		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment", iDeleteRoomIndex);
+		
+		RELEASE_INSTANCE(CGameInstance);
+	}
+}
+
+
+void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
+{
+	m_pSelectedObj = dynamic_cast<CEnviromentObj*>	(CGameInstance::GetInstance()->Get_SelectObjectPtr());
+
+	if (nullptr == m_pSelectedObj)
+		return;
+
+	CModel* pModel = static_cast<CModel*>(m_pSelectedObj->Find_Component(L"Com_Model"));
+	if (m_pSelectedObj != m_pOldSelectedObj)
+	{
+		m_pOldSelectedObj = m_pSelectedObj;
+		pModel->InitPhysxData();
+	}
+	
+
+	ImGui::Begin("Instance Obj Colider_Control");
+
+	pModel->Edit_InstModel_Collider(m_pSelectedObj->Get_ObjectCloneName());
+
+	ImGui::End();
+
+}
+#endif
+
+
+void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec, vector<_float3> vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
+{
+	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
+
+	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
+
+	if (false == pModel->Get_IStancingModel())
+		return;
+
+	pModel->Set_InstancePos(vecMatrixVec);
+
+	if (vecMatrixVec.size() > 0)
+		pModel->SetUp_InstModelColider(vecColiderSize);
+
+	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
+	{
+		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
+	}
+}
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
 {
@@ -791,11 +930,11 @@ void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameOb
 
 }
 
-void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
+void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 {
 	string      strLoadDirectory = "../Bin/Data/EnviromentObj_Json_Dir/";
 	strLoadDirectory += JsonFileName;
-	
+
 	ifstream      file(strLoadDirectory);
 	Json	jLoadEnviromentObjList;
 
@@ -894,15 +1033,15 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 			assert(!"CImgui_MapEditor::Imgui_CreateEnviromentObj");
 
 		assert(pLoadObject != nullptr && "pLoadObject Issue");
-		
+
 		if (dynamic_cast<CPulse_Plate_Anim*>(pLoadObject) != nullptr)
 		{
 			pGameInstance->Add_AnimObject(g_LEVEL, pLoadObject);
 		}
-		
+
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
-		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize,EnviromentDesc.eChapterType);
+		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize, EnviromentDesc.eChapterType);
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -915,125 +1054,3 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel,  string JsonFileName)
 
 
 }
-
-CImgui_MapEditor * CImgui_MapEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void * pArg)
-{
-	CImgui_MapEditor*	pInstance = new CImgui_MapEditor(pDevice, pContext);
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed To Create : CImgui_MapEditor");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-void CImgui_MapEditor::Free()
-{
-	__super::Free();
-	m_wstrProtoName.clear();
-}
-
-void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
-{
-	if (pSelectEnviObj == nullptr)
-		return;
-	
-	CModel* pModel =dynamic_cast<CModel*>(pSelectEnviObj->Find_Component(TEXT("Com_Model")));
-	if (nullptr == pModel || false == pModel->Get_IStancingModel())
-		return;
-
-	ImGui::Begin("Instance Obj PosControl");
-
-	CTransform* pSelectObjTransform = static_cast<CTransform*>(pSelectEnviObj->Find_Component(TEXT("Com_Transform")));	
-	ImGui::Checkbox("Picking Terrain", &m_bIstancingObjPicking);
-	_float4 vPickingPos;
-	_matrix TerrainMatrix;
-	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
-	{
-		m_bUseTerrainPicking = false;
-
-		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(vPickingPos))
-		{
-			TerrainMatrix = m_pSelectedTerrain->Get_TransformCom()->Get_WorldMatrix();
-			_matrix 	TerrainMatrixInv = XMMatrixInverse(nullptr, TerrainMatrix);
-
-			_float4 vBasePos;
-			XMStoreFloat4(&vBasePos, pSelectObjTransform->Get_State(CTransform::STATE_TRANSLATION));
-		
-			vPickingPos.x -= vBasePos.x;
-			vPickingPos.y -= vBasePos.y;
-			vPickingPos.z -= vBasePos.z;
-			pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix() , vPickingPos, TerrainMatrix,true);
-
-		}
-	}
-	else
-	{
-		pModel->Imgui_MeshInstancingPosControl(pSelectObjTransform->Get_WorldMatrix(), vPickingPos, TerrainMatrix, false);
-	}
-
-	ImGui::End();
-
-}
-
-void CImgui_MapEditor::imgui_ObjectList_Clear()
-{
-	static int iDeleteRoomIndex = 0;
-
-	ImGui::InputInt("Delete RoomIndex", &iDeleteRoomIndex);
-
-
-	if (ImGui::Button("Object_List_Clear"))
-	{
-		CGameInstance *pGameInstance = GET_INSTANCE(CGameInstance);
-		// 나중에 룸인덱스 조정 만들어야됌
-		pGameInstance->RoomIndex_Object_Clear(g_LEVEL,L"Layer_Enviroment", iDeleteRoomIndex);
-		
-		RELEASE_INSTANCE(CGameInstance);
-	}
-}
-
-
-void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
-{
-	m_pSelectedObj = CGameInstance::GetInstance()->Get_SelectObjectPtr();
-
-	if (nullptr == m_pSelectedObj)
-		return;
-
-	CModel* pModel = static_cast<CModel*>(m_pSelectedObj->Find_Component(L"Com_Model"));
-	if (m_pSelectedObj != m_pOldSelectedObj)
-	{
-		m_pOldSelectedObj = m_pSelectedObj;
-		pModel->InitPhysxData();
-	}
-	
-
-	ImGui::Begin("Instance Obj Colider_Control");
-
-	pModel->Edit_InstModel_Collider(m_pSelectedObj->Get_ObjectCloneName());
-
-	ImGui::End();
-
-}
-
-void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec, vector<_float3> vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
-{
-	CModel* pModel = dynamic_cast<CModel*>(pSelectEnvioObj->Find_Component(L"Com_Model"));
-	
-	assert(nullptr != pModel && "CImgui_MapEditor::Imgui_Instacing_PosLoad");
-	
-	if (false == pModel->Get_IStancingModel())
-		return;
-
-	pModel->Set_InstancePos(vecMatrixVec);
-	
-	if(vecMatrixVec.size() > 0)
-		pModel->SetUp_InstModelColider(vecColiderSize);
-
-	if (dynamic_cast<CGimmick_EnviObj*>(pSelectEnvioObj) != nullptr)
-	{
-		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
-	}
-}
-
