@@ -215,21 +215,25 @@ HRESULT CUI_CanvasInvHeader::SetUp_ShaderResources()
 
 void CUI_CanvasInvHeader::BindFunction(CUI_ClientManager::UI_PRESENT eType, CUI_ClientManager::UI_FUNCTION eFunc, CKena * pPlayer)
 {
-	m_bActive = true;
-	CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM)->Set_Active(false);
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(false);
+	if (eType == CUI_ClientManager::INV_)
+	{
+		m_bActive = true;
+		CGameInstance::GetInstance()->Set_SingleLayer(g_LEVEL, L"Layer_Canvas");
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Active(true);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_HUD)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AMMO)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_AIM)->Set_Active(false);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_QUEST)->Set_Active(false);
 
-	m_pPlayer = pPlayer;
+		m_pPlayer = pPlayer;
 
-	static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma(m_pPlayer->Get_Status()->Get_Karma());
-	static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots(m_pPlayer->Get_Status()->Get_RotCount());
-	static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
+		static_cast<CUI_NodeKarma*>(m_vecNode[UI_KARMA])->Set_Karma(m_pPlayer->Get_Status()->Get_Karma());
+		static_cast<CUI_NodeNumRots*>(m_vecNode[UI_NUMROTS])->Set_NumRots(m_pPlayer->Get_Status()->Get_RotCount());
+		static_cast<CUI_NodeCrystal*>(m_vecNode[UI_CRYSTAL])->Set_Crystal(m_pPlayer->Get_Status()->Get_Crystal());
 
-	CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Caller(m_pPlayer);
+		CUI_ClientManager::GetInstance()->Get_Canvas(CUI_ClientManager::CANVAS_UPGRADE)->Set_Caller(m_pPlayer);
+
+	}
 
 
 }

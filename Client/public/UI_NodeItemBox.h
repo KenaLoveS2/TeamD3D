@@ -25,6 +25,7 @@ private:
 	virtual HRESULT			SetUp_ShaderResources() override;
 
 private:
+	_uint					m_iCount;
 	_tchar*					m_szCount;
 	_float2					m_vFontPos;
 	_float					m_fFontSize;

@@ -6,6 +6,8 @@ BEGIN(Client)
 class CUI_CanvasItemBar final : public CUI_Canvas
 {
 public:
+	enum UI_ORDER { UI_BOX, UI_HAT, UI_PRICE, UI_END };
+public:
 	typedef struct tagItemDesc : public UIDESC
 	{
 		wstring		wstrName;
@@ -32,10 +34,14 @@ private:
 	virtual HRESULT			SetUp_Components()				override;
 	virtual HRESULT			SetUp_ShaderResources()			override;
 	virtual HRESULT			Save_Data()						override;
-	//virtual HRESULT			Load_Data(wstring fileName)		override;
+	virtual HRESULT			Load_Data(wstring fileName)		override;
 
 public: /* comment out when modify nodes .*/
 	virtual void			Imgui_RenderProperty()			override {};
+public:
+	void	Clicked();
+	void	BackToNormal();
+	void	Buy(_int iCount);
 
 private:
 	ITEMDESC				m_tItemDesc;
