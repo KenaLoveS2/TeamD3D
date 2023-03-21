@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\UI_FocusMonsterParts.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CUI_FocusMonsterParts::CUI_FocusMonsterParts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CUI_Billboard(pDevice, pContext)
@@ -34,7 +35,7 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 		memcpy(&m_tPartsDesc, pArg, sizeof(PARTSDESC));
 		
 	/* It might be faster.... */
-	m_iRenderPass = 1;
+	m_iRenderPass = 18;
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -47,14 +48,20 @@ HRESULT CUI_FocusMonsterParts::Initialize(void * pArg)
 	case 0: /* left */
 		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+	//	m_vStartScale.x = 2.f * m_vOriginalSettingScale.x;
+		m_vStartScale.y = 0.f * m_vOriginalSettingScale.y;
 		break;
 	case 1: /* right */
 		m_pTransformCom->Set_Scaled(_float3(28.f, 28.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+	//	m_vStartScale.x = 2.f * m_vOriginalSettingScale.x;
+		m_vStartScale.y = 0.f * m_vOriginalSettingScale.y;
 		break;
 	case 2: /* Center */
 		m_pTransformCom->Set_Scaled(_float3(16.8f, 35.f, 1.f));
 		m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+		m_vStartScale.x = 0.f * m_vOriginalSettingScale.x;
+	//	m_vStartScale.y = 2.f * m_vOriginalSettingScale.y;
 		break;
 	}
 
@@ -70,30 +77,6 @@ void CUI_FocusMonsterParts::Tick(_float fTimeDelta)
 	if (m_pParent == nullptr)
 		return;
 
-	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-	_float4 vRight; 
-
-	switch (m_tPartsDesc.iType)
-	{
-	case 0: /* left */
-		vRight = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_RIGHT);
-		m_pTransformCom->Set_Position(vPos + -0.2f * vRight);
-		break;
-	case 1: /* right */
-		vRight = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_RIGHT);
-		m_pTransformCom->Set_Position(vPos + 0.2f * vRight);
-		break;
-	case 2: /* center */
-		m_pTransformCom->Set_Position(vPos);
-		break;
-	}
-
-	if (m_bStart)
-	{
-
-	}
-
-
 	__super::Tick(fTimeDelta);
 }
 
@@ -103,6 +86,64 @@ void CUI_FocusMonsterParts::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vLook;
+	_float4 vRight;
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+
+	switch (m_tPartsDesc.iType)
+	{
+	case 0: /* left */
+		vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
+		m_pTransformCom->Set_Position(vPos + -0.1f * vRight);// +0.1f * vLook);
+
+		if (m_bStart)
+		{
+			vScale.y += 0.001f * fTimeDelta;
+			if (vScale.y >= m_vOriginalSettingScale.y)
+			{
+				m_bEnd = true;
+				vScale.y = m_vOriginalSettingScale.y;
+			}
+
+			m_pTransformCom->Set_Scaled(vScale);
+		}
+
+		break;
+	case 1: /* right */
+		vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
+		vLook = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+		m_pTransformCom->Set_Position(vPos + 0.1f * vRight);// +0.001f * vLook);
+
+		if (m_bStart)
+		{
+			vScale.y += 0.001f * fTimeDelta;
+			if (vScale.y >= m_vOriginalSettingScale.y)
+			{
+				m_bEnd = true;
+				vScale.y = m_vOriginalSettingScale.y;
+			}
+
+			m_pTransformCom->Set_Scaled(vScale);
+		}
+		break;
+	case 2: /* center */
+		m_pTransformCom->Set_Position(vPos);
+
+		if (m_bStart)
+		{
+			vScale.x += 0.001f * fTimeDelta;
+			if (vScale.x >= m_vOriginalSettingScale.x)
+			{
+				m_bEnd = true;
+				vScale.x = m_vOriginalSettingScale.x;
+			}
+
+			m_pTransformCom->Set_Scaled(vScale);
+		}
+		break;
+	}
 
 	if (nullptr != m_pRendererCom && m_bActive)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);

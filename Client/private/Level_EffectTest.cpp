@@ -40,11 +40,11 @@ HRESULT CLevel_EffectTest::Initialize()
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
-// 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-// 		return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Background"))))
+		return E_FAIL;
 
-// 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Background"))))
-// 		return E_FAIL;
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
 
 	if (FAILED(pGameInstance->Late_Initialize(LEVEL_EFFECT)))
 		return E_FAIL;
@@ -192,11 +192,8 @@ HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Wind"), L"Wind", nullptr, &pGameObject)))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_DistortionSphere"), L"Distortion", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -208,8 +205,11 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"hit", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"hit", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
+		return E_FAIL;
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
 	//	return E_FAIL;
@@ -220,11 +220,11 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
 	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EnemyWisp"), L"EnemyWisp", nullptr, &pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_FireBullet"), L"bullet", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_FireBulletCover"), L"bulletcover", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHeavyAttackInto"), L"HeavyAttackInto", nullptr, &pGameObject)))
 	//	return E_FAIL;

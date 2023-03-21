@@ -417,7 +417,6 @@ PS_OUT PS_MAIN_STAFF_BOWSTRING(PS_IN In)
 	mask_texture = mask_texture + MaskColor;
 
 	/* Mask */
-
 	Out.vDiffuse = mask_texture;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);

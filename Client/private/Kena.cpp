@@ -600,6 +600,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REFLECT, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -674,6 +675,56 @@ HRESULT CKena::RenderShadow()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+	return S_OK;
+}
+
+HRESULT CKena::RenderReflect()
+{
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+
+	FAILED_CHECK_RETURN(SetUp_ReflectShaderResources(), E_FAIL);
+
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		if (i == 1)
+		{
+			// Arm & Leg
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+		}
+		else if (i == 4)
+		{
+			// Eye Render
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		}
+		else if (i == 5 || i == 6)
+		{
+			// HEAD
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
+		}
+		else if (i == 0)
+		{
+			// Render Off
+			continue;
+		}
+		else
+		{
+			// Eye Lash
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
+		}
+	}
 
 	return S_OK;
 }
@@ -908,6 +959,7 @@ void CKena::Push_EventFunctions()
 	TurnOffCharge(true, 0.f);
 	TurnOnPulseJump(true, 0.f);
 	TurnOnHeavyAttack_Into(true, 0.f);
+	TurnOnInteractStaff(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1091,6 +1143,11 @@ HRESULT CKena::Ready_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("HeavyAttackInto", pEffectBase);
 
+	/* InteractStaff */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"InteractStaff"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("InteractStaff", pEffectBase);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -1160,12 +1217,20 @@ HRESULT CKena::SetUp_ShaderResources()
 HRESULT CKena::SetUp_ShadowShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CKena::SetUp_ReflectShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_REFLECTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 
@@ -1474,6 +1539,25 @@ void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
 	/* IntoAttack Update */
 
 	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
+}
+
+void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnInteractStaff);
+		return;
+	}
+
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["InteractStaff"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["InteractStaff"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["InteractStaff"]->Set_Active(true);
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

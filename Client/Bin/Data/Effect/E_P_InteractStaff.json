@@ -1,0 +1,175 @@
+{
+    "0.Save Level": 5,
+    "1.Save2Load Level": 0,
+    "2.Layer Tag": "Layer_Effect",
+    "Object": [
+        {
+            "Object Data": [
+                {
+                    "Child Count": 0,
+                    "CloneObject Component InstnaceData PSizeX": 0.05000000074505806,
+                    "CloneObject Component InstnaceData PSizeY": 0.05000000074505806,
+                    "CloneObject Component InstnaceData Position": [
+                        -0.03727073222398758,
+                        0.0,
+                        0.19174139201641083,
+                        1.0
+                    ],
+                    "CloneObject Component InstnaceData Speed": 0.20000000298023224,
+                    "CloneObject Component InstnaceData SpeedMinMax": 0.0,
+                    "CloneObject Component InstnaceData SpeedMinMin": 0.0,
+                    "CloneObject Component PointDesc CirclePos": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc ConeRange": [
+                        0.0,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc CreateInstance": 10,
+                    "CloneObject Component PointDesc CreateRange": 0.05000000074505806,
+                    "CloneObject Component PointDesc Dir": [
+                        -0.007079966366291046,
+                        0.0,
+                        0.03642328083515167,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc DurationTime": 0.0,
+                    "CloneObject Component PointDesc ExplosionDir": [
+                        -0.02788328006863594,
+                        0.026865998283028603,
+                        -0.03163449093699455,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc InstanceIndex": 0,
+                    "CloneObject Component PointDesc IsAlive": false,
+                    "CloneObject Component PointDesc Max": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc MaxTime": 0.0,
+                    "CloneObject Component PointDesc Min": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "CloneObject Component PointDesc MoveY": 0.0,
+                    "CloneObject Component PointDesc OriginPos": [
+                        -0.007079966366291046,
+                        0.0,
+                        0.03642328083515167,
+                        1.0
+                    ],
+                    "CloneObject Component PointDesc Range": 0.20000000298023224,
+                    "CloneObject Component PointDesc RangeOffset": 0.019999999552965164,
+                    "CloneObject Component PointDesc RangeY": 0.0,
+                    "CloneObject Component PointDesc RotXYZ": 0,
+                    "CloneObject Component PointDesc Rotation": false,
+                    "CloneObject Component PointDesc ShapeType": 2,
+                    "CloneObject Component PointDesc Spread": true,
+                    "CloneObject Component PointDesc bMoveY": false,
+                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_InteractStaff",
+                    "Desc": [
+                        {
+                            "Alpha": 0.0,
+                            "Angle": 0.0,
+                            "Billboard": false,
+                            "Blend Type": 0,
+                            "Color": [
+                                0.4131978750228882,
+                                0.6722542643547058,
+                                0.680701732635498,
+                                0.5843137502670288
+                            ],
+                            "CreateRange": 0.0,
+                            "DiffuseTexture Index": [
+                                88.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "DurationTime": 0.0,
+                            "Effect Type": 1,
+                            "FreeMove": false,
+                            "Have Trail": false,
+                            "Height Frame": 0.0,
+                            "HeightCnt": 0,
+                            "Init Pos": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "MaskTexture Index": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Mesh Type": 0,
+                            "MoveDir Type": 0,
+                            "MoveDurationTime": 0.0,
+                            "MovingPosition": false,
+                            "NormalTexture Index": 0.0,
+                            "Particle Type": 0,
+                            "PassCnt": 0,
+                            "Pixed Dir": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "Range": 0.0,
+                            "Rotation Type": 0,
+                            "Scale": [
+                                0.5843137502670288,
+                                0.5843137502670288,
+                                0.5843137502670288,
+                                0.5843137502670288
+                            ],
+                            "SeparateHeight": 0,
+                            "SeparateWidth": 0,
+                            "Spread": false,
+                            "Start": true,
+                            "Texture Type": 0,
+                            "TextureRender Type": 0,
+                            "Trigger": false,
+                            "Use Child": false,
+                            "Use Mask": false,
+                            "Use Normal": false,
+                            "Width Frame": 0.0,
+                            "WidthCnt": 0
+                        }
+                    ],
+                    "Have DTextureCnt": 1,
+                    "Have MTextureCnt": 1,
+                    "Instance DataCnt": 10,
+                    "Point Data": "PointDesc Data",
+                    "WorldMatrix": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        -1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

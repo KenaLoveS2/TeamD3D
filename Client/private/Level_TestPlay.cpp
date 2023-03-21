@@ -39,7 +39,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
@@ -52,11 +52,11 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 		
-	if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
-	{
-		MSG_BOX("Layer_Enviroment");
-		return E_FAIL;
-	}
+	//if (FAILED(Ready_Layer_Enviroment(TEXT("Layer_Enviroment"))))
+	//{
+	//	MSG_BOX("Layer_Enviroment");
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
@@ -106,10 +106,16 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Water(TEXT("Layer_Water"))))
+	{
+		MSG_BOX("Layer_Water");
+		return E_FAIL;
+	}
+
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -321,8 +327,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -331,8 +336,6 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	return S_OK;
-
 	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Test_Chap1.json");
 	return S_OK;
 
@@ -364,14 +367,14 @@ HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WoodKnight"), L"WoodKnight_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;*/
 
-	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sapling"), L"Sapling_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;*/
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Sapling"), L"Sapling_0", nullptr, &pGameObject))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;
 
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;*/
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject))) return E_FAIL;
+	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject))) return E_FAIL;
 
 	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject)))
 		return E_FAIL;
@@ -467,6 +470,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_Water(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), L"WaterPlane");
 
 	RELEASE_INSTANCE(CGameInstance);
 

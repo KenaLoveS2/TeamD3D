@@ -62,7 +62,6 @@
 #include "Flower.h"
 #include "DeadZoneObj.h"
 #include "Gimmick_EnviObj.h"
-
 #include "Born_GroundCover.h"
 #include "Pulse_Plate_Anim.h"
 #include "Door_Anim.h"
@@ -70,6 +69,7 @@
 #include "Rope_RotRock.h"
 #include "LiftRot.h"
 #include "LiftRot_Master.h"
+#include "WaterPlane.h"
 
 /* UI */
 #include "BackGround.h"
@@ -136,7 +136,15 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
+#include "E_D_Sphere.h"
+#include "E_InteractStaff.h"
+#include "E_P_InteractStaff.h"
+#include "E_TeleportRot.h"
+#include "E_Sapling.h"
+#include "E_P_Sapling.h"
+#include "E_FireBulletCover.h"
+#include "E_FireBulletCloud.h"
+#include "E_FireBulletExplosion.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -304,15 +312,65 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma  endregion ANIM_OBJ
 	
 
-	_bool bRealObject = true;
+	_bool bRealObject = false;
 #ifdef FOR_MAPTOOL   
 
 #else
 #pragma region Test_Gimmick_OBJ
 	if (bRealObject == false)
 	{
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Ledge", true, true, true,false,true)))
-			assert(!"Issue");
+#pragma region Born_GroundCover
+		PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilLarge",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilLarge.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilMedium",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilMedium.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_BasilSmall",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Basil/SK_BasilSmall.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Bush_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Bush/SK_Bush_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_01",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_01.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_03",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_03.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Fern_04",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Fern/SK_Fern_04.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_03",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_03.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Flower_05",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Flower/SK_Flower_05.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Mushroom_01",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_01.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Mushroom_02",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Mushroom/SK_Mushroom_02.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Pampas",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Pampas/SK_Pampas.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Plant_05",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plant_05.mdat"), PivotMatrix, nullptr, false, true))))
+			return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_SK_Plants3",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/SK_Plant/SK_Plants3.mdat"), PivotMatrix, nullptr, false, true, false))))
+			return E_FAIL;
+
+#pragma  endregion Born_GroundCover
 	}
 #pragma endregion
 
@@ -1194,6 +1252,23 @@ HRESULT CLoader::Loading_ForTestEffect()
 	// Prototype_GameObject_RotForMonster
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_Component_Model_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Sticks01",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_Mage
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Mage",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_GameObject_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"), CSticks01::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_Mage
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"), CMage::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_FireBullet
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"), CFireBullet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
 	m_isFinished = true;
@@ -1350,6 +1425,17 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
 	lstrcpy(m_szLoadingText, TEXT("Loading ฟ๘มุ..."));
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
+		return E_FAIL;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+
+	// Prototype_GameObject_WaterPlane
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), 
+		CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -1713,8 +1799,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_KenaHit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
-		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HitSet.json"))))
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Hit.json"))))
 		return E_FAIL;
+	// E_HitSet
 
 	/* For.Prototype_GameObject_KenaHitParticle */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit_P"),
@@ -1786,7 +1873,56 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CRotWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff"),
+		CE_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_IneractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff_P"),
+		CE_P_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_InteractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TeleportRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportRot"),
+		CE_TeleportRot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_TeleportRot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionSapling"),
+		CE_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling_P"),
+		CE_P_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCover */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCover"),
+		CE_FireBulletCover::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCloud"),
+		CE_FireBulletCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SaplingFire.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
+		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
+
+#pragma region Distortion
+	/* For.Prototype_GameObject_DistortionSphere */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DistortionSphere"),
+		CE_D_Sphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion Distortion
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

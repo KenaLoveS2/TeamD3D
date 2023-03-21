@@ -46,6 +46,8 @@ protected:
 	virtual	HRESULT			SetUp_ShaderResources() override;
 	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
+	HRESULT SetUp_Effects();
+
 private:
 	void	Update_Collider(_float fTimeDelta) override;
 	void	AdditiveAnim(_float fTimeDelta) override;
@@ -54,7 +56,8 @@ private:
 	_bool m_bBombUp = false;
 
 	_float m_fIdletoAttack = 0.f;
-		
+	class CE_Sapling*	m_pEffects = nullptr;
+
 public:
 	static CSapling*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
