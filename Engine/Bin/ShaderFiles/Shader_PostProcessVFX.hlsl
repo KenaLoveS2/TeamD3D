@@ -146,8 +146,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	float4 vDiffuse = float4(0.f,0.f,0.f,0.f);
 	float4 vEffect = g_EffectTexture.Sample(PointSampler, In.vTexUV);
 
-	float4 ef = g_EffectTexture.Sample(PointSampler, In.vTexUV);
-
 	float4 FinalColor = float4(0.f, 0.f, 0.f, 0.f);
 
 	if (vEffect.a <= 0.3f)
@@ -164,7 +162,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	}
 
 	Out.vColor = FinalColor;
-
 	return Out;
 }
 

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Camera_Player.h"
 
+_float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -96,10 +97,10 @@ void CMonster::Tick(_float fTimeDelta)
 	
 	m_fKenaDistance = m_pTransformCom->Calc_Distance_XZ(m_vKenaPos);
 
-	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;
-	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;	
+	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;
+
+	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;	
 	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;	
-	m_vKenaPos = m_pKena ? m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION) : m_vKenaPos;
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -390,13 +391,25 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				m_pKena->Add_HitStopTime(0.15f);
+				m_fHitStopTime += 0.15f;
 				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.5f);
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
+				m_pKena->Add_HitStopTime(0.25f);
+				m_fHitStopTime += 0.25f;
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				
+				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				if (vecWeaponPos->size() == 2)
+				{
+					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
+					vDir = XMVectorSetZ(vDir, 0.f);
+					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
+				}
 			}
 		}
 	}

@@ -240,7 +240,7 @@ HRESULT CRenderer::Initialize_Prototype()
 
 #endif
 	CreateTexture(L"../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_93.png", m_pFlareTexture);
-	CreateTexture(L"../Bin/Resources/Textures/Effect/PulseShield_Dissolve/E_Effect_2.png", m_pDistortionTexture);
+	CreateTexture(L"../Bin/Resources/Textures/Effect/smoothNormalSphere.png", m_pDistortionTexture);
 	return S_OK;
 }
 

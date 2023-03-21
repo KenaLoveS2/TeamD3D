@@ -73,7 +73,7 @@ private:
 	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
-	_bool										m_bDynamicShadow = true;
+	_bool										m_bDynamicShadow = false;
 	_bool										m_bSSAO = true;
 	_float										m_fDistortTime = 0.f;
 

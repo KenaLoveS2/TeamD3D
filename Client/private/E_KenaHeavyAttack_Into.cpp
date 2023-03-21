@@ -114,6 +114,10 @@ void CE_KenaHeavyAttack_Into::Set_Child()
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_DistortionSphere", L"KenaHeavyAttack_D"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
 	RELEASE_INSTANCE(CGameInstance);
 }
 

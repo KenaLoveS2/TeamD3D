@@ -14,6 +14,8 @@
 #include "Kena.h"
 #include "Kena_Staff.h"
 #include "Kena_MainOutfit.h"
+#include "SpiritArrow.h"
+#include "RotBomb.h"
 
 /* NPCs */
 #include "Rot.h"
@@ -95,9 +97,6 @@
 #include "EnemyWisp.h"
 #include "FireBullet.h"
 
-//Arrow
-#include "SpiritArrow.h"
-
 #include "E_EnemyWispTrail.h"
 #include "E_KenaDamage.h"
 #include "E_KenaHit.h"
@@ -136,8 +135,15 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
-
+#include "E_D_Sphere.h"
+#include "E_InteractStaff.h"
+#include "E_P_InteractStaff.h"
+#include "E_TeleportRot.h"
+#include "E_Sapling.h"
+#include "E_P_Sapling.h"
+#include "E_FireBulletCover.h"
+#include "E_FireBulletCloud.h"
+#include "E_FireBulletExplosion.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1244,6 +1250,23 @@ HRESULT CLoader::Loading_ForTestEffect()
 	// Prototype_GameObject_RotForMonster
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
+	// Prototype_Component_Model_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Sticks01",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_Mage
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Mage",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_GameObject_Sticks01
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"), CSticks01::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_Mage
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"), CMage::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_FireBullet
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"), CFireBullet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
 	m_isFinished = true;
@@ -1431,6 +1454,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	/* Prototype_Component_Model_Kena_MainOutfit */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix)), E_FAIL);
 
+	/* Prototype_Component_Model_Rot_Bomb */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot_Bomb", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Rot Bomb/Rot_Bomb.mdat", PivotMatrix)), E_FAIL);
+
 	/* Prototype_Component_Model_Spirit_Arrow */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Spirit_Arrow", false, false, false), E_FAIL);
 
@@ -1443,6 +1469,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_Kena_MainOutfit */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena_MainOutfit", CKena_MainOutfit::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Rot_Bomb */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Rot_Bomb", CRotBomb::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_GameObject_Spirit_Arrow */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_SpiritArrow", CSpiritArrow::Create(m_pDevice, m_pContext)), E_FAIL);
@@ -1774,8 +1803,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_GameObject_KenaHit */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit"),
-		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_HitSet.json"))))
+		CE_KenaHit::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/Hit.json"))))
 		return E_FAIL;
+	// E_HitSet
 
 	/* For.Prototype_GameObject_KenaHitParticle */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaHit_P"),
@@ -1847,7 +1877,56 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CRotWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff"),
+		CE_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_IneractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff_P"),
+		CE_P_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_InteractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TeleportRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportRot"),
+		CE_TeleportRot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_TeleportRot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionSapling"),
+		CE_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling_P"),
+		CE_P_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCover */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCover"),
+		CE_FireBulletCover::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCloud"),
+		CE_FireBulletCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SaplingFire.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
+		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
+
+#pragma region Distortion
+	/* For.Prototype_GameObject_DistortionSphere */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DistortionSphere"),
+		CE_D_Sphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion Distortion
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

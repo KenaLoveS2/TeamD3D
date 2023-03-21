@@ -6,8 +6,8 @@ BEGIN(Client)
 class CFireBullet final : public CEffect_Mesh
 {
 public:
-	enum CHILD { CHILD_TRAIL, CHILD_BACK, CHILD_GROUND, CHILD_PARTICLE, CHILD_END };
-	enum STATE { STATE_WAIT, STATE_CREATE, STATE_CHASE, STATE_EXPLOSION, STATE_RESET, STATE_END };
+	enum CHILD { CHILD_COVER, CHILD_BACK, CHILD_EXPLOSION, CHILD_END };
+	enum STATE { STATE_WAIT, STATE_CREATE, STATE_CHASE, STATE_EXPLOSION_START, STATE_EXPLOSION, STATE_RESET, STATE_END };
 	
 private:
 	class CKena* m_pKena = nullptr;
@@ -32,29 +32,14 @@ public:
 
 	_bool	IsActiveState();
 
-	/* Event Caller */
-public: 
-	virtual void			Push_EventFunctions() override;
-	
 public:
 	virtual void			ImGui_AnimationProperty() override;
+	virtual void			Imgui_RenderProperty() override;
 
 private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					Set_ChildEffects();
-
-	/* Animation Event Func */
-private:	
-	void					TurnOnTrail(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnBack(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnGround(_bool bIsInit, _float fTimeDelta);
-	void					TurnOnParticle(_bool bIsInit, _float fTimeDelta);
-
-	void					TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void					TurnOffBack(_bool bIsInit, _float fTimeDelta);
-	void					TurnOffGround(_bool bIsInit, _float fTimeDelta);
-	void					TurnOffParticle(_bool bIsInit, _float fTimeDelta);
 
 public:
 	static CFireBullet*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

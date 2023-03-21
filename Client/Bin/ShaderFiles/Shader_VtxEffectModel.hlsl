@@ -5,6 +5,8 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 /**********************************/
 
 texture2D		g_DepthTexture, g_NormalTexture;
+texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
+
 texture2D		g_DissolveTexture[4];
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
@@ -149,6 +151,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
 
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
 
 	return Out;
 }
@@ -356,6 +360,58 @@ PS_OUT PS_SPRITARROW_GRAB(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAGEBULLET(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	//T_Deadzone_REAM
+	float4 vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	//t_fur_noise_02
+	float4 vNoise = g_ReamTexture.Sample(LinearSampler, In.vTexUV);
+	// T_GR_Cloud_Noise_A
+	float4 vSmooth = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4 vblendColor = lerp(vSmooth, vColor, 0.4f);
+	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
+
+	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
+	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;;
+	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
+
+	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
+	Out.vDiffuse = vfinalblendColor;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+
+	return Out;
+}
+
+PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  fDissolveAmount = 0.5f;
+
+	float4 vDissolve = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	half   dissolve_value = vDissolve.r;
+
+	if (dissolve_value <= fDissolveAmount)
+		discard;
+
+	else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+	{
+		if (Out.vDiffuse.a != 0.0f)
+			Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+	}
+
+	float4 vColor = float4(255.f, 136.f, 98.f, 255.f) / 255.f;
+	Out.vDiffuse = vDissolve * vColor * 3.f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
@@ -462,4 +518,29 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_SPRITARROW_GRAB();
 	}
 
+	pass Effect_Mage // 8
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAGEBULLET();
+	}
+
+	pass Effect_MageCover // 8
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAGEBULLETCOVER();
+	}
 }
