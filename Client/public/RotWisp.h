@@ -69,6 +69,7 @@ private:
 
 public:
 	_bool							Get_Collect() { return m_bCollect; }
+	HRESULT		Set_Effects();
 
 private:
 	CShader*						m_pShaderCom = nullptr;
@@ -84,6 +85,9 @@ private:
 	_bool							m_bPulse = false;
 	_bool							m_bCollect = false;
 	
+private:
+	class CE_InteractStaff*			m_pEffect = nullptr;
+
 public:
 	static CRotWisp*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;

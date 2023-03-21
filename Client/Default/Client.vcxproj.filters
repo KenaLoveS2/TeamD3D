@@ -421,6 +421,24 @@
     <Filter Include="02.GameObjects\Effect\Object\Arrow">
       <UniqueIdentifier>{e6831c80-cd5f-4b3f-9349-6cf5dd827b37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Distortion">
+      <UniqueIdentifier>{d681f9d5-aa9b-41ee-a645-a3c0ef08db09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Staff">
+      <UniqueIdentifier>{f4f9b9b1-7869-430b-a1c8-124bb2956cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Effect\Mage">
+      <UniqueIdentifier>{a68cb856-5098-4f5a-8128-06175a02f4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Rot\TeleportRot">
+      <UniqueIdentifier>{f19ebd7c-41f4-4d2e-8356-6664e645d783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster">
+      <UniqueIdentifier>{e9a29500-8826-40c0-ba85-b088f44a6f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Sapling">
+      <UniqueIdentifier>{01f4f98a-100f-46f0-a7f4-479123f5841b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -887,7 +905,6 @@
     <ClInclude Include="..\public\UI_Event_Fade.h">
       <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
@@ -984,7 +1001,6 @@
     <ClInclude Include="..\public\CameraForRot.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\public\UI_FocusNPC.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
     </ClInclude>
@@ -997,7 +1013,6 @@
     <ClInclude Include="..\public\UI_FocusMonsterParts.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\E_P_SpiritArrow.h">
       <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
     </ClInclude>
@@ -1006,6 +1021,42 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_D_Sphere.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpiritArrow.h">
+      <Filter>02.GameObjects\Player\Weapon\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_InteractStaff.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FireBullet.h">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_InteractStaff.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_TeleportRot.h">
+      <Filter>02.GameObjects\Effect\Object\Rot\TeleportRot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotWisp.h">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Sapling.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Sapling.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_FireBulletCover.h">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_FireBulletCloud.h">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_FireBulletExplosion.h">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1452,7 +1503,6 @@
     <ClCompile Include="..\private\UI_Event_Fade.cpp">
       <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
@@ -1549,7 +1599,6 @@
     <ClCompile Include="..\private\CameraForRot.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FireBullet.cpp" />
     <ClCompile Include="..\private\UI_FocusNPC.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
     </ClCompile>
@@ -1562,7 +1611,6 @@
     <ClCompile Include="..\private\UI_FocusMonsterParts.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp">
       <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
     </ClCompile>
@@ -1571,6 +1619,42 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_D_Sphere.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpiritArrow.cpp">
+      <Filter>02.GameObjects\Player\Weapon\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_InteractStaff.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireBullet.cpp">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_InteractStaff.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_TeleportRot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Rot\TeleportRot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotWisp.cpp">
+      <Filter>02.GameObjects\Monster\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Sapling.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Sapling.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_FireBulletCover.cpp">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_FireBulletCloud.cpp">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_FireBulletExplosion.cpp">
+      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1641,8 +1725,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ HRESULT CE_KenaHit::Initialize(void * pArg)
 		CEffect_Base::EFFECTDESC effectdesc = pChild->Get_EffectDesc();
 		effectdesc.IsBillboard = true;
 		pChild->Set_EffectDesc(effectdesc);
+		pChild->SetSprite(_float2(1.f, 0.f));
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
@@ -72,9 +73,6 @@ void CE_KenaHit::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
-
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fScaleTime += fTimeDelta;
@@ -92,6 +90,10 @@ void CE_KenaHit::Late_Tick(_float fTimeDelta)
 			m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
 		}
 	}
+
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 void CE_KenaHit::Set_Child()

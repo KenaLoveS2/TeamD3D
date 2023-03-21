@@ -783,6 +783,18 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 	return Out;
 }
 
+//PS_SAPLING
+PS_OUT PS_SAPLING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	Out.vColor = Diffuse * g_vColor * 10.f;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -900,5 +912,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_HIT();
+	}
+	pass Sapling // 9
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SAPLING();
 	}
 }

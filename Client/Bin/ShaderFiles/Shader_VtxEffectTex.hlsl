@@ -387,6 +387,20 @@ PS_OUT PS_MAIN_E_SPRITE(PS_IN In)
 	return Out;
 }
 
+//PS_MAIN_E_ONETEXTURE
+PS_OUT PS_MAIN_E_ONETEXTURE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* DiffuseTexture */
+	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	albedo.a = albedo.r;
+
+	albedo.rgb = g_vColor.rgb * 2.f;
+	Out.vColor = albedo;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -517,5 +531,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_SPRITE();
+	}
+
+	pass Effect_OneTexture // 10
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_ONETEXTURE();
 	}
 }

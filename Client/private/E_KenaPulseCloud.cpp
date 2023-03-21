@@ -45,26 +45,68 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 
 void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	// __super::Tick(fTimeDelta);
+
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		if (m_eEFfectDesc.bActive == true)
+			Set_InitRotation();
+
+		m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_bPlay == false)
+			{
+				m_eEFfectDesc.fWidthFrame++;
+				if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+				{
+					m_eEFfectDesc.fHeightFrame++;
+					if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					{
+						m_eEFfectDesc.fHeightFrame--;
+						m_eEFfectDesc.fWidthFrame--;
+						m_bPlay = true;
+					}
+					else
+						m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+				}
+			}
+			else
+			{
+				m_eEFfectDesc.fWidthFrame--;
+				if (m_eEFfectDesc.fWidthFrame < m_fInitSpriteCnt.x)
+				{
+					m_eEFfectDesc.fHeightFrame--;
+					if (m_eEFfectDesc.fHeightFrame < m_fInitSpriteCnt.y)
+					{
+						m_eEFfectDesc.fHeightFrame++;
+						m_bPlay = false;
+					}
+					else
+						m_eEFfectDesc.fWidthFrame = (_float)(m_eEFfectDesc.iWidthCnt - 1);
+				}
+			}
+		}
+	}
 }
 
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)
 {
-	if (m_pParent != nullptr)
-		Set_Matrix();
-
 	//__super::Late_Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.IsBillboard == true)
 		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
-	else
-		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
+// 	else
+// 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 	}
+
+	if (m_pParent != nullptr)
+		Set_Matrix();
 }
 
 HRESULT CE_KenaPulseCloud::Render()
@@ -124,8 +166,6 @@ HRESULT CE_KenaPulseCloud::Render()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fShaderBindTime, sizeof(_float))))
 		return E_FAIL;
-
-	// MaxCnt == 10
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{

@@ -64,10 +64,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "SeparateHeight": 5,
                             "SeparateWidth": 5,
@@ -156,10 +156,10 @@
                             "Range": 0.0,
                             "Rotation Type": 0,
                             "Scale": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "SeparateHeight": 0,
                             "SeparateWidth": 0,

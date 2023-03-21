@@ -33,7 +33,6 @@ public:
 	static _float  Get_RandomFloat(_float fMinValue, _float fMaxValue);
 	static _float3 Get_RandomVector(const _float3& fMinValue, const _float3& fMaxValue);
 
-	static char*   SeparateText(char* pCharStr);
 	static _float  FloatLerp(_float fNum1, _float fNum2, _float fRatio);
 
 	static _float3 ConvertPosition_PxToD3D(PxVec3& vPxPosition);

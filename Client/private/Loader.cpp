@@ -136,7 +136,15 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
+#include "E_D_Sphere.h"
+#include "E_InteractStaff.h"
+#include "E_P_InteractStaff.h"
+#include "E_TeleportRot.h"
+#include "E_Sapling.h"
+#include "E_P_Sapling.h"
+#include "E_FireBulletCover.h"
+#include "E_FireBulletCloud.h"
+#include "E_FireBulletExplosion.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1811,7 +1819,56 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CRotWisp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff"),
+		CE_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_IneractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_InteractStaff */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InteractStaff_P"),
+		CE_P_InteractStaff::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_InteractStaff.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TeleportRot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportRot"),
+		CE_TeleportRot::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_TeleportRot.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionSapling"),
+		CE_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sapling_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sapling_P"),
+		CE_P_Sapling::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Sapling.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCover */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCover"),
+		CE_FireBulletCover::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletCloud"),
+		CE_FireBulletCloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_SaplingFire.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
+		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
+
+	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
+
+#pragma region Distortion
+	/* For.Prototype_GameObject_DistortionSphere */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DistortionSphere"),
+		CE_D_Sphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion Distortion
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

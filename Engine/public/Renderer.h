@@ -69,7 +69,7 @@ private:
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
 
-	_bool										m_bDynamicShadow = true;
+	_bool										m_bDynamicShadow = false;
 	_bool										m_bSSAO = true;
 
 	_float										m_fDistortTime = 0.f;
@@ -92,7 +92,7 @@ private:
 	HRESULT Render_Viewer();		// Model Viewer
 
 	HRESULT PostProcess_Distort();
-	_bool		m_bDistort = false;
+	_bool		m_bDistort = true;
 	HRESULT PostProcess_GrayScale();
 	_bool		m_bGrayScale = false;
 

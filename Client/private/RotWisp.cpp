@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\RotWisp.h"
 #include "GameInstance.h"
+#include "E_InteractStaff.h"
 
 CRotWisp::CRotWisp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CGameObject(pDevice, pContext)
@@ -26,6 +27,7 @@ HRESULT CRotWisp::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(Set_Effects(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 	return S_OK;
 }
@@ -40,6 +42,8 @@ void CRotWisp::Tick(_float fTimeDelta)
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (m_pEffect)m_pEffect->Tick(fTimeDelta);
 }
 
 void CRotWisp::Late_Tick(_float fTimeDelta)
@@ -47,6 +51,7 @@ void CRotWisp::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	if (m_pEffect)m_pEffect->Late_Tick(fTimeDelta);
 }
 
 HRESULT CRotWisp::Render()
@@ -131,6 +136,16 @@ HRESULT CRotWisp::SetUp_State()
 	})
 
 		.AddState("FLOATINGLOOP")
+		.OnStart([this]()
+	{
+		/* Effect */
+		m_pEffect->Set_Active(true);
+
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.y = vPos.y + 0.2f;
+		m_pEffect->Set_Position(vPos);
+		/* Effect */
+	})
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(ROTWISP_FLOATINGLOOP1);
@@ -161,6 +176,7 @@ HRESULT CRotWisp::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_pEffect->Set_Active(false);
 		m_bCollect = true;
 	})
 		.AddTransition("COLLECT to APPEAR", "APPEAR")
@@ -189,6 +205,22 @@ _bool CRotWisp::AnimIntervalChecker(_uint eAnim, _double StartRate, _double Fini
 	}
 
 	return false;
+}
+
+HRESULT CRotWisp::Set_Effects()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pEffect = dynamic_cast<CE_InteractStaff*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"FindEffect"));
+	NULL_CHECK_RETURN(m_pEffect, E_FAIL);
+	CEffect_Base::EFFECTDESC effect = m_pEffect->Get_EffectDesc();
+	effect.IsBillboard = true;
+	m_pEffect->Set_EffectDesc(effect);
+	m_pEffect->Set_Type(CE_InteractStaff::TYPE::TYPE_ROT);
+//	m_pEffect->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
 }
 
 CRotWisp* CRotWisp::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -225,4 +257,7 @@ void CRotWisp::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pWPOTextureCom);
 	Safe_Release(m_pDissolveAlphaTextureCom);
+
+		/* Effect */
+	Safe_Release(m_pEffect);
 }
