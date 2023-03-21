@@ -45,7 +45,7 @@ public:
 	_bool Get_RenderActive() { return m_bRenderActive; }
 
 	vector<const _tchar*>*	Get_CurObjectComponentTag() { return &m_CurComponenteTag; }
-
+	class CRenderer* Get_RendererCom() { return m_pRendererCom; }
 	
 public:
 	virtual HRESULT Initialize_Prototype();

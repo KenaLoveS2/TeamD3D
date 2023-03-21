@@ -41,6 +41,38 @@ CCamera* CCamera_Manager::Find_Camera(const _tchar * pCameraTag)
 	return Pair->second;
 }
 
+HRESULT CCamera_Manager::Add_LightCamera(const _tchar* pCameraTag, CCamera* pCamrea, _bool bWorkFlag)
+{
+	if (nullptr != Find_LightCamera(pCameraTag))
+		return E_FAIL;
+
+	m_LightCameras.emplace(pCameraTag, pCamrea);
+
+	bWorkFlag && (m_pLightWorkCamera = pCamrea);
+
+	return S_OK;
+}
+
+HRESULT CCamera_Manager::Work_LightCamera(const _tchar* pCameraTag)
+{
+	auto Pair = find_if(m_LightCameras.begin(), m_LightCameras.end(), CTag_Finder(pCameraTag));
+	if (Pair == m_LightCameras.end()) return E_FAIL;
+
+	m_pLightWorkCamera = Pair->second;
+
+	return S_OK;
+}
+
+CCamera* CCamera_Manager::Find_LightCamera(const _tchar* pCameraTag)
+{
+	auto Pair = find_if(m_LightCameras.begin(), m_LightCameras.end(), CTag_Finder(pCameraTag));
+
+	if (Pair == m_LightCameras.end())
+		return nullptr;
+
+	return Pair->second;
+}
+
 _float * CCamera_Manager::Get_CameraNear()
 {
 	if (m_pWorkCamera == nullptr)		return nullptr;
@@ -72,6 +104,7 @@ void CCamera_Manager::Tick(_float fTimeDelta)
 	if (m_pWorkCamera == nullptr) return;
 
 	m_pWorkCamera->Tick(fTimeDelta);
+	m_pLightWorkCamera->Tick(fTimeDelta);
 }
 
 void CCamera_Manager::Late_Tick(_float fTimeDelta)
@@ -79,6 +112,7 @@ void CCamera_Manager::Late_Tick(_float fTimeDelta)
 	if (m_pWorkCamera == nullptr) return;
 
 	m_pWorkCamera->Late_Tick(fTimeDelta);
+	m_pLightWorkCamera->Late_Tick(fTimeDelta);
 }
 
 HRESULT CCamera_Manager::Render()
@@ -91,11 +125,17 @@ HRESULT CCamera_Manager::Render()
 HRESULT CCamera_Manager::Clear()
 {
 	m_pWorkCamera = nullptr;
+	m_pLightWorkCamera = nullptr;
 
 	for (auto& Pair : m_Cameras)
 		Safe_Release(Pair.second);
 
 	m_Cameras.clear();
+
+	for (auto& Pair : m_LightCameras)
+		Safe_Release(Pair.second);
+
+	m_LightCameras.clear();
 
 	return S_OK;
 }

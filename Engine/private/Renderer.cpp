@@ -36,6 +36,17 @@ void CRenderer::Imgui_Render()
 	}
 }
 
+void CRenderer::EraseStaticShadowObject(CGameObject * pObject)
+{
+	for (auto& Iter = m_RenderObjects[RENDER_STATIC_SHADOW].begin(); Iter != m_RenderObjects[RENDER_STATIC_SHADOW].end();)
+	{
+		if (*Iter == pObject)
+			Iter = m_RenderObjects[RENDER_STATIC_SHADOW].erase(Iter);
+		else
+			++Iter;
+	}
+}
+
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
 {
 	if (nullptr == pGameObject || 
@@ -56,7 +67,9 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 	else
 	{
 		m_RenderObjects[eRenderGroup].push_back(pGameObject);
-		Safe_AddRef(pGameObject);
+
+		if(eRenderGroup != RENDER_STATIC_SHADOW)
+			Safe_AddRef(pGameObject);
 	}
 		
 	return S_OK;
@@ -591,11 +604,7 @@ HRESULT CRenderer::Render_StaticShadow()
 	{
 		if (nullptr != pGameObject)
 			pGameObject->RenderShadow();
-
-		Safe_Release(pGameObject);
 	}
-
-	m_RenderObjects[RENDER_STATIC_SHADOW].clear();
 
 	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_StaticLightDepth"))))
 		return E_FAIL;
@@ -765,11 +774,11 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_DynamicLightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -1119,7 +1128,10 @@ void CRenderer::Free()
 	for (_uint i = 0; i < RENDER_END; ++i)
 	{
 		for (auto& pGameObject : m_RenderObjects[i])
-			Safe_Release(pGameObject);
+		{
+			if(i != RENDER_STATIC_SHADOW)
+				Safe_Release(pGameObject);
+		}
 
 		m_RenderObjects[i].clear();
 	}

@@ -193,6 +193,11 @@ public: /* For.PipeLine */
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		class CCamera* Get_WorkCameraPtr();
+
+		HRESULT Add_LightCamera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+		HRESULT Work_LightCamera(const _tchar* pCameraTag);
+		class CCamera* Find_LightCamera(const _tchar* pCameraTag);
+
 		_float*		Get_CameraFar();
 		_float*		Get_CameraNear();
 		_float*		Get_CameraFov();

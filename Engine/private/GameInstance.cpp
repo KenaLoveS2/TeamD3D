@@ -868,6 +868,24 @@ CCamera * CGameInstance::Get_WorkCameraPtr()
 	return m_pCamera_Manager->Get_WorkCameraPtr();
 }
 
+HRESULT CGameInstance::Add_LightCamera(const _tchar* pCameraTag, CCamera* pCamrea, _bool bWorkFlag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Add_LightCamera(pCameraTag, pCamrea, bWorkFlag);
+}
+
+HRESULT CGameInstance::Work_LightCamera(const _tchar* pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Work_LightCamera(pCameraTag);
+}
+
+CCamera* CGameInstance::Find_LightCamera(const _tchar* pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Find_LightCamera(pCameraTag);
+}
+
 _float* CGameInstance::Get_CameraFar()
 {
 	if (m_pCamera_Manager == nullptr) return nullptr;
