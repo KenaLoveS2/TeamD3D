@@ -49,7 +49,7 @@ HRESULT CUI_CanvasHatCart::Initialize(void * pArg)
 	}
 
 	m_matInit = m_pTransformCom->Get_WorldMatrixFloat4x4();
-	m_bActive = true;
+	//m_bActive = true;
 
 	return S_OK;
 }
