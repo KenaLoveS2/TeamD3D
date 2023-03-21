@@ -116,7 +116,7 @@ protected:
 
 	CUI_MonsterHP*				m_pUIHPBar;
 	class CEnemyWisp*			m_pEnemyWisp = nullptr;
-	_float4								m_vKenaPos;
+	static _float4 m_vKenaPos;
 
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 	class CE_KenaHit* m_pKenaHit = nullptr;
@@ -163,6 +163,8 @@ public:
 
 	void Start_Bind(_uint iBindAnimIndex);
 	void End_Bind();
+
+	static void Set_MonsterUseKenaPos(_float4 vKenaPos) { m_vKenaPos = vKenaPos ; }
 };
 
 END
