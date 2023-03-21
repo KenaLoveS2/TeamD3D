@@ -94,7 +94,7 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 
 	Set_Child();
-
+	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
 	return S_OK;
 }
 
@@ -140,59 +140,83 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	//ImGui::End();
 #pragma endregion test
 
-	if (m_bNoActive == true) // Pulse ³¡
+	if(m_ePulseType == CE_KenaPulse::PULSE_DEFAULT)
 	{
+		if (m_bNoActive == true) // Pulse ³¡
+		{
+			for (auto& pChild : m_vecChild)
+				pChild->Set_Active(false);
+
+			m_fDissolveTime += fTimeDelta;
+			_float3 vScale = Get_InitMatrixScaled();
+			Set_InitMatrixScaled(vScale * 1.3f);
+
+			_float4 vPos;
+			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
+
+			if (vScale.x <= 8.f)
+				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f);
+
+			if (m_fDissolveTime > 1.f)
+			{
+				m_eEFfectDesc.bActive = false;
+				m_bNoActive = false;
+				m_bDesolve = true;
+				memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
+				m_fDissolveTime = 0.0f;
+				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+			}
+		}
+
+		if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
+		{
+			for (auto& pChild : m_vecChild)
+				pChild->Set_Active(true);
+
+			m_fDissolveTime += fTimeDelta;
+			if (m_fDissolveTime > 1.f)
+			{
+				m_bDesolve = false;
+				m_fDissolveTime = 0.0f;
+			}
+		}
+	}
+	else
+	{
+		m_fTimeDelta += fTimeDelta;
+
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		m_fDissolveTime += fTimeDelta;
-
-		_float3 vScale = Get_InitMatrixScaled();
-		Set_InitMatrixScaled(vScale * 1.3f);
-		
-		_float4 vPos;
-		XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-		CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
-
-		if(vScale.x <= 8.f)
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, vScale.x *3.5f);
-
-		if (m_fDissolveTime > 1.f)
+		m_pTransformCom->Set_Scaled(_float3(fTimeDelta + 1.1f));
+		if (m_fTimeDelta > 0.5f)
 		{
-			m_eEFfectDesc.bActive = false;
-			m_bNoActive = false;
-			m_bDesolve = true;
 			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
-			m_fDissolveTime = 0.0f;
-			CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+			m_eEFfectDesc.bActive = false;
+			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
+			m_fTimeDelta = 0.0f;
 		}
 	}
-
-	if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(true);
-
-		m_fDissolveTime += fTimeDelta;
-		if (m_fDissolveTime > 1.f)
-		{
-			m_bDesolve = false;
-			m_fDissolveTime = 0.0f;
-		}
-	}	
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	if (m_pParent != nullptr)
 		Set_Matrix();
 	
 	__super::Late_Tick(fTimeDelta);
 
-
 	if (nullptr != m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+
+		if(m_ePulseType == CE_KenaPulse::PULSE_PARRY)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
+	}
 }
 
 HRESULT CE_KenaPulse::Render()
@@ -204,7 +228,7 @@ HRESULT CE_KenaPulse::Render()
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, 1);
+		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
 }
@@ -241,6 +265,21 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	}
 
 	return S_OK;
+}
+
+void CE_KenaPulse::Imgui_RenderProperty()
+{
+	static _int iType = 0;
+	ImGui::RadioButton("Default", &iType, 0);
+	ImGui::RadioButton("Pulse", &iType, 1);
+
+	if (iType == 0)
+		m_ePulseType = CE_KenaPulse::PULSE_DEFAULT; 
+	else
+		m_ePulseType = CE_KenaPulse::PULSE_PARRY;
+
+	if (ImGui::Button("Active"))
+		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

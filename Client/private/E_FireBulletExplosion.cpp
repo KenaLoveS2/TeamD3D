@@ -59,13 +59,13 @@ void CE_FireBulletExplosion::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
+	if (m_pParent != nullptr)
+		Set_Matrix();
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	if (m_pParent != nullptr)
-		Set_Matrix();
 }
 
 HRESULT CE_FireBulletExplosion::Render()

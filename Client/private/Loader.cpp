@@ -145,6 +145,8 @@ unsigned int	g_LEVEL = 0;
 #include "E_FireBulletCover.h"
 #include "E_FireBulletCloud.h"
 #include "E_FireBulletExplosion.h"
+#include "E_KenaParry.h"
+#include "E_KenaParryHand.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1911,6 +1913,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_FireBulletExplosion */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
 		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaParry"),
+		CE_KenaParry::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/PulseParry/E_PulseParrySet.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaParryHand"),
+		CE_KenaParryHand::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/PulseParry/E_PulseParryHand.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

@@ -174,6 +174,10 @@ private:	/* Animation Event Func */
 	void						TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
 
+	void						TurnOnPulseParry(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
+
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;

@@ -439,6 +439,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Monster\Sapling">
       <UniqueIdentifier>{01f4f98a-100f-46f0-a7f4-479123f5841b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
+      <UniqueIdentifier>{b3bc724b-4c73-4731-84ec-4e4f9d880160}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1081,6 +1084,12 @@
     <ClInclude Include="..\public\UI_NodeScrollLine.h">
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_KenaParry.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaParryHand.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1701,6 +1710,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
       <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParry.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParryHand.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
