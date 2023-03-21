@@ -140,14 +140,14 @@ HRESULT CRotWisp::SetUp_State()
 	{
 		/* Effect */
 		m_pEffect->Set_Active(true);
-
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vPos.y = vPos.y + 0.2f;
-		m_pEffect->Set_Position(vPos);
 		/* Effect */
 	})
 		.Tick([this](_float fTimeDelta)
-	{
+	{	
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vPos.y = vPos.y + 0.2f;
+		m_pEffect->Set_Position(vPos);
+
 		m_pModelCom->Set_AnimIndex(ROTWISP_FLOATINGLOOP1);
 	})
 		.AddTransition("FLOATINGLOOP to INTERACT", "INTERACT")

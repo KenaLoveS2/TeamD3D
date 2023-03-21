@@ -55,7 +55,7 @@ void CE_Sapling::Tick(_float fTimeDelta)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
 
 	m_fTimeDelta += fTimeDelta;
-	m_eEFfectDesc.vScale *= 1.3f + fTimeDelta;
+	m_eEFfectDesc.vScale *= 1.8f + fTimeDelta;
 
 	if (m_fTimeDelta > 0.2f)
 	{

@@ -60,21 +60,28 @@ void CE_InteractStaff::Tick(_float fTimeDelta)
 			pChild->Set_Active(m_eEFfectDesc.bActive);
 
 		m_eEFfectDesc.vScale *= 1.1f + fTimeDelta;
+
+		if (m_fTimeDelta > m_fDurationTime)
+		{
+			ResetSprite();
+			m_eEFfectDesc.vScale = _float3(0.05f, 0.05f, 0.05f);
+			m_eEFfectDesc.bActive = false;
+			m_fTimeDelta = 0.0f;
+		}
 	}
 	else
 	{
 		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
 		m_fDurationTime = 0.5f;
+
+		if (m_fTimeDelta > m_fDurationTime)
+		{
+			ResetSprite();			
+			m_eEFfectDesc.vScale = _float3(0.05f, 0.05f, 0.05f);
+			m_fTimeDelta = 0.0f;
+		}
 	}
 
-	if (m_fTimeDelta > m_fDurationTime)
-	{
-		m_eEFfectDesc.fWidthFrame = 0.0;
-		m_eEFfectDesc.fHeightFrame = 0.0;
-		m_eEFfectDesc.vScale = _float3(0.05f, 0.05f, 0.05f);
-		m_eEFfectDesc.bActive = false;
-		m_fTimeDelta = 0.0f;
-	}
 }
 
 void CE_InteractStaff::Late_Tick(_float fTimeDelta)
