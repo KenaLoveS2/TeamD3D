@@ -39,10 +39,7 @@ private:
 
 	_int				m_iPipLevel = 0;
 	_int				m_iMaxPIPCount = 0;
-	//_int				m_iCurPIPCount = 0;
 	_float				m_fCurPIPGuage = 0.f;
-	_float				m_fInitPIPCoolTime = 0.f;
-	_float				m_fCurPIPCoolTime = 0.f;
 
 	_int				m_iMaxArrowCount = 4;
 	_int				m_iCurArrowCount = 4;
@@ -83,12 +80,9 @@ public:
 	inline ROTSTATE Get_RotState() { return m_eRotState; }
 	_int	Get_RotMax();
 	inline _int Get_Crystal() { return m_iCrystal; }
-	_int Get_MaxPIPCount();// { return m_iMaxPIPCount; }
-	//inline _int Get_CurPIPCount() { return m_iCurPIPCount; }
+	_int Get_MaxPIPCount();
 	inline _int Get_CurPIPCount() { return (_int)m_fCurPIPGuage; }
 	inline _float Get_CurPIPGuage() { return m_fCurPIPGuage;  }
-	inline _float Get_InitPIPCoolTime() { return m_fInitPIPCoolTime; }
-	inline _float Get_CurPIPCoolTime() { return m_fCurPIPCoolTime; }
 
 	inline _int Get_MaxArrowCount() { return m_iMaxArrowCount; }
 	inline _int Get_CurArrowCount() { return m_iCurArrowCount; }
@@ -107,20 +101,16 @@ public:
 		   
 	inline void Set_Karma(_int iValue) { m_iKarma = iValue; }
 	inline void Set_RotLevel(_int iValue) { m_iRotLevel = iValue; }
-//	inline void Set_RotCount(_int iValue) { m_iRotCount = iValue; }
 	void Set_RotCount(_int iValue);
 	inline void Set_RotState(ROTSTATE iValue) { m_eRotState = iValue; }
 	inline void Set_Crystal(_int iValue) { m_iCrystal = iValue; }
 
 	inline void Upgrade_MaxPIPCount() { m_iMaxPIPCount++; }
 	inline void Set_MaxPIPCount(_int iValue) { m_iMaxPIPCount = iValue; }
-	//inline void Set_CurPIPCount(_int iValue) { m_iCurPIPCount = iValue; }
 	inline void Set_CurPIPGuage(_float fGuage) { m_fCurPIPGuage = fGuage; }
 	inline void Plus_CurPIPGuage(_float fGuage) {	
 		m_fCurPIPGuage = min(m_fCurPIPGuage+fGuage, m_iMaxPIPCount); 
 	}
-	inline void Set_InitPIPCoolTime(_float fValue) { m_fInitPIPCoolTime = fValue; }
-	inline void Set_CurPIPCoolTime(_float fValue) { m_fCurPIPCoolTime = fValue; }
 
 	inline void Set_MaxArrowCount(_int iValue) { m_iMaxArrowCount = iValue; }
 	void Set_CurArrowCount(_int iValue);

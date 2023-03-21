@@ -107,6 +107,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bInjectBow;
 		break;
 
+	case STATE_BOMB:
+		return m_bBomb;
+		break;
+
+	case STATE_INJECTBOMB:
+		return m_bInjectBomb;
+		break;
+
 	case STATE_PULSE:
 		return m_bPulse;
 		break;
@@ -347,7 +355,8 @@ void CKena::Tick(_float fTimeDelta)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
 	{
-		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD)
 			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 	}
 
@@ -396,7 +405,8 @@ void CKena::Tick(_float fTimeDelta)
 	{
 		if (m_fHitStopTime <= 0.f)
 		{
-			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
