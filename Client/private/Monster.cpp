@@ -110,8 +110,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
 	
-	// Call_RotIcon();
-	// Call_MonsterFocusIcon();		
+	Call_RotIcon();
+	Call_MonsterFocusIcon();		
 }
 
 HRESULT CMonster::Render()

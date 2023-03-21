@@ -41,8 +41,8 @@ HRESULT CMage::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 18.f;
-		m_Desc.WorldMatrix._43 = 5.f;
+		m_Desc.WorldMatrix._41 = -10.f;
+		m_Desc.WorldMatrix._43 = -5.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();

@@ -1182,6 +1182,10 @@ void CSticks01::Spawn_ByMage(CMage* pMage, _float4 vPos)
 {
 	m_bDeath = false;
 
+	m_Desc.WorldMatrix._41 = vPos.x;
+	m_Desc.WorldMatrix._42 = vPos.y;
+	m_Desc.WorldMatrix._43 = vPos.z;
+
 	m_pTransformCom->Set_Position(vPos);
 	m_pEnemyWisp->Set_Position(vPos);
 

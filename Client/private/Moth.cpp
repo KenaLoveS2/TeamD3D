@@ -74,7 +74,7 @@ void CMoth::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
 	CMonster::Late_Tick(fTimeDelta);
-	m_bSpawn = true;
+	
 	if (m_pRendererCom && m_bSpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
