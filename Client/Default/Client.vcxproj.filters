@@ -1087,6 +1087,11 @@
     <ClInclude Include="..\public\RotBomb.h">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_KenaParry.h" />
+    <ClInclude Include="..\public\E_KenaParryHand.h" />
+    <ClInclude Include="..\public\E_RotBombExplosion.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1710,6 +1715,11 @@
     </ClCompile>
     <ClCompile Include="..\private\RotBomb.cpp">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParry.cpp" />
+    <ClCompile Include="..\private\E_KenaParryHand.cpp" />
+    <ClCompile Include="..\private\E_RotBombExplosion.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

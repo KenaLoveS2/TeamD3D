@@ -112,8 +112,6 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 #pragma region	 test
 	//ImGui::Begin("pulse");
 	//if (ImGui::Button("rebuild"))
@@ -139,9 +137,12 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 	//ImGui::End();
 #pragma endregion test
+	__super::Tick(fTimeDelta);
 
-	if(m_ePulseType == CE_KenaPulse::PULSE_DEFAULT)
+	switch (m_ePulseType)
 	{
+	case Client::CE_KenaPulse::PULSE_DEFAULT:
+
 		if (m_bNoActive == true) // Pulse ³¡
 		{
 			for (auto& pChild : m_vecChild)
@@ -181,22 +182,28 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 				m_fDissolveTime = 0.0f;
 			}
 		}
-	}
-	else
-	{
+
+		break;
+	case Client::CE_KenaPulse::PULSE_PARRY:
+
 		m_fTimeDelta += fTimeDelta;
+		m_eEFfectDesc.iPassCnt = 0;
 
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		m_pTransformCom->Set_Scaled(_float3(fTimeDelta + 1.1f));
+		m_pTransformCom->Set_Scaled(_float3(fTimeDelta + 1.5f));
 		if (m_fTimeDelta > 0.5f)
 		{
 			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 			m_eEFfectDesc.bActive = false;
+			m_eEFfectDesc.iPassCnt = 1;
+
 			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
 			m_fTimeDelta = 0.0f;
 		}
+
+		break;
 	}
 }
 
@@ -205,8 +212,11 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT)
+	{
+		if (m_pParent != nullptr)
+			Set_Matrix();
+	}
 	
 	__super::Late_Tick(fTimeDelta);
 

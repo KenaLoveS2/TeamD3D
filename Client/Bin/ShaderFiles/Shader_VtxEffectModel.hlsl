@@ -375,7 +375,7 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
 
 	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
-	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;;
+	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;
 	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
 
 	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
@@ -412,12 +412,59 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	return Out;
 }
 
+//PS_PULSECOVER
+PS_OUT PS_PULSECOVER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  fDissolveAmount = 0.8f;
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	half   dissolve_value = vDiffuse.r;
+
+	if (dissolve_value <= fDissolveAmount)
+		discard;
+
+	else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+	{
+		if (Out.vDiffuse.a != 0.0f)
+			Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+	}
+
+	float4 vColor = g_vColor;
+	Out.vDiffuse = vDiffuse * vColor * 3.f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+
+	return Out;
+}
+
+//PS_PULSEINNER
+PS_OUT PS_PULSEINNER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 1.3f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
+
+	float4 outglow = float4(fresnel_glow(6, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	vDiffuse.a = vDiffuse.r;
+
+	if (vDiffuse.a < 0.3f)
+		discard;
+	vDiffuse.rgb = vDiffuse.rgb + g_vColor.rgb;
+
+	Out.vDiffuse = vDiffuse + outglow;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -531,7 +578,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAGEBULLET();
 	}
 
-	pass Effect_MageCover // 8
+	pass Effect_MageCover // 9
 	{
 		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
@@ -543,4 +590,31 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAGEBULLETCOVER();
 	}
+
+	pass Effect_PulseCover // 10
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PULSECOVER();
+	}
+
+	pass Effect_PulseInner // 11
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PULSEINNER();
+	}
+
 }

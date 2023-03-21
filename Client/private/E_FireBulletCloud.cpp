@@ -47,12 +47,6 @@ HRESULT CE_FireBulletCloud::Initialize(void * pArg)
 void CE_FireBulletCloud::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (m_pParent != nullptr)
-	{
-		if (dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active() == true)
-			m_eEFfectDesc.bActive = true;
-	}
 }
 
 void CE_FireBulletCloud::Late_Tick(_float fTimeDelta)

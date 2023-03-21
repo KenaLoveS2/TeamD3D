@@ -128,6 +128,7 @@ void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
+
 HRESULT CEffect_Mesh::Render()
 {
 	if (FAILED(__super::Render()))

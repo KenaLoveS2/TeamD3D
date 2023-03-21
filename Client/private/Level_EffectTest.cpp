@@ -205,26 +205,12 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHit"), L"hit", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Rot_Bomb"), L"Bomb", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaDamage"), L"Damage", nullptr, &pGameObject)))
+	//Prototype_GameObject_RotBombExplosion
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"pulsecover", nullptr, &pGameObject)))
 		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaParry"), L"parry", nullptr, &pGameObject)))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaParryHand"), L"parryhand", nullptr, &pGameObject)))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaPulse"), L"pulse", nullptr, &pGameObject)))
-		return E_FAIL;
-
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_SpiritArrow_P"), L"particle", nullptr, &pGameObject)))
-	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
 	//	return E_FAIL;

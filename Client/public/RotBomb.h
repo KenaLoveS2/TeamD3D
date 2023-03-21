@@ -14,13 +14,14 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
-	virtual void				Imgui_RenderProperty() override;
-	virtual void				ImGui_ShaderValueProperty() override;
-	virtual void				ImGui_PhysXValueProperty() override;
+
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+	virtual void			ImGui_PhysXValueProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
 
 private:
 	class CKena*				m_pKena = nullptr;
@@ -29,12 +30,12 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
-	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int			Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
 public:
 	static CRotBomb*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr) override;
-	virtual void				Free() override;
+	virtual void			Free() override;
 };
 
 END
