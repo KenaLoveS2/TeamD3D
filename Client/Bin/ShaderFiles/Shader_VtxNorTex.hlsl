@@ -84,7 +84,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 	
 	vector		vSourDiffuse = g_BaseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
-	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vDestDiffuse0 = g_DiffuseTexture_0.Sample(LinearSampler, In.vTexUV * 70.f);
 
 	vector vDestDiffuse1 = g_DiffuseTexture_1.Sample(LinearSampler, In.vTexUV * 30.f);
 	vector vDestDiffuse2 = g_DiffuseTexture_2.Sample(LinearSampler, In.vTexUV * 30.f);

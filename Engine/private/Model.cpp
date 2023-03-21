@@ -284,12 +284,13 @@ HRESULT CModel::Initialize(void * pArg, CGameObject * pOwner)
 		CloseHandle(hFile);
 	}
 
+#ifdef _DEBUG
 	if (m_bIsInstancing == true)
 	{
 		m_pInstanceTransform = static_cast<CTransform*>(CGameInstance::GetInstance()->
 			Clone_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag));
 	}
-
+#endif
 
 	return S_OK;
 }
@@ -1504,7 +1505,9 @@ void CModel::Free()
 		}
 		m_pInstancingMatrix.clear();
 
+#ifdef _DEBUG
 		Safe_Release(m_pInstanceTransform);
+#endif
 	}
 
 	
@@ -1527,119 +1530,6 @@ HRESULT CModel::SetUp_Material(_uint iMaterialIndex, aiTextureType eType, const 
 	return S_OK;
 }
 
-void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos,_fmatrix TerrainMatrix,_bool bPickingTerrain)
-{
-	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
-	{
-		_int iIndex = 0;
-		for (auto& ProtoPair : m_pInstancingMatrix)
-		{
-			const bool bSelected = false;
-
-			char szViewName[512];
-
-			sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
-
-			if (ImGui::Selectable(szViewName, bSelected))
-			{
-				m_iSelectMeshInstace_Index = iIndex;
-			}
-
-			++iIndex;
-		}
-
-		ImGui::EndListBox();
-	}
-	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
-
-	if (bPickingTerrain == false)
-	{
-		if (ImGui::Button("Instancing Num Increase"))
-		{
-			_float4x4* Temp = new _float4x4;
-			XMStoreFloat4x4(Temp, XMMatrixIdentity());
-			m_pInstancingMatrix.push_back(Temp);
-
-			for (auto& pInstMesh : m_InstancingMeshes)
-				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
-		}
-	}
-	else
-	{
-		_float4x4* Temp = new _float4x4;
-		XMStoreFloat4x4(Temp, XMMatrixIdentity());
-	
-		memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
-
-		m_pInstancingMatrix.push_back(Temp);
-
-		for (auto& pInstMesh : m_InstancingMeshes)
-			pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
-	}
-
-	if (ImGui::Button("Instancing Num Delete"))
-	{
-		_int iDeleteIndex = 0;
-		for (auto iter = m_pInstancingMatrix.begin(); iter != m_pInstancingMatrix.end();)
-		{
-			if (iDeleteIndex == m_iSelectMeshInstace_Index)
-			{
-				Safe_Delete(*iter);
-				*iter = nullptr;
-				iter = m_pInstancingMatrix.erase(iter);
-				m_iSelectMeshInstace_Index = -1;
-				for (auto& pInstMesh : m_InstancingMeshes)
-					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
-				break;
-			}
-			else
-			{
-				++iter;
-				++iDeleteIndex;
-			}
-		}
-	}
-	
-	static _int iSize = 1;
-	ImGui::InputInt("Upsize ", &iSize);
-	if (ImGui::Button("All_Instancing_Size_Up"))
-	{
-		for (auto& pInstMesh : m_InstancingMeshes)
-			pInstMesh->InstBufferSize_Update(iSize);	
-	}
-	
-	
-	if (m_iSelectMeshInstace_Index == -1)
-		return;
-
-	/*수정 부분*/
-	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
-	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
-	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
-	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
-	m_pInstanceTransform->Imgui_RenderProperty();
-	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
-
-	ResultMatrix *= InvParentMulChild;
-	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
-
-	for (auto& pInstMesh : m_InstancingMeshes)
-		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
-
-
-
-
-
-}
-
-void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
-{
-	if (m_bIsInstancing == true)
-	{
-		for (auto& pInstMesh : m_InstancingMeshes)
-			pInstMesh->InstaincingMesh_yPosControl(yPos);
-	}
-}
 
 void CModel::Create_PxTriangle(PX_USER_DATA *pUserData)
 {
@@ -1700,6 +1590,23 @@ _bool CModel::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik, _
 
 	if (iGimmickFinishCheck == 0)
 		return true;
+
+	return false;
+}
+
+_bool CModel::Culling_InstancingMeshs(_float fCameraDistance,_fmatrix ParentMat)
+{
+	if (m_bIsInstancing == false)
+		return false;
+
+	_int  iCulling_Result = 0;
+
+	for (auto& pInstMesh : m_InstancingMeshes)
+	{
+		iCulling_Result = 	( iCulling_Result & pInstMesh->Culling_InstancingMesh(fCameraDistance,m_pInstancingMatrix ,ParentMat));
+		if (iCulling_Result & 0)
+			return true;
+	}
 
 	return false;
 }
@@ -2543,8 +2450,19 @@ void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
 	}
 }
 
+void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
+{
+	for (auto vSize : vecColiderSize)
+	{
+		m_VecInstancingColiderSize.push_back(vSize);
+	}
+}
+
+#ifdef _DEBUG
+
 void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
 {
+
 	if (m_bIsInstancing == false)
 		return;
 
@@ -2554,15 +2472,167 @@ void CModel::Edit_InstModel_Collider(const _tchar * pActorName)
 void CModel::InitPhysxData()
 {
 	CPhysX_Manager::GetInstance()->Physx_Init();
+}
+
+void CModel::Imgui_MeshInstancingPosControl(_fmatrix parentMatrix, _float4 vPickingPos, _fmatrix TerrainMatrix,
+	_bool bPickingTerrain, _int iGroundCoverNum ,_float fBetween,_bool IsMultipleCheck, _float fRaduis)
+{
+	if (ImGui::BeginListBox("##"))			// 내행렬 * 부모행렬(원본 위치)
+	{
+		_int iIndex = 0;
+		for (auto& ProtoPair : m_pInstancingMatrix)
+		{
+			const bool bSelected = false;
+
+			char szViewName[512];
+
+			sprintf_s(szViewName, sizeof(szViewName), " Instancing_ %d _ Index ", iIndex);
+
+			if (ImGui::Selectable(szViewName, bSelected))
+			{
+				m_iSelectMeshInstace_Index = iIndex;
+			}
+
+			++iIndex;
+		}
+
+		ImGui::EndListBox();
+	}
+	ImGui::Text("Cur Index : %d", m_iSelectMeshInstace_Index);
+	
+
+	if (bPickingTerrain == false)
+	{
+		if (ImGui::Button("Instancing Num Increase"))
+		{
+			_float4x4* Temp = new _float4x4;
+			XMStoreFloat4x4(Temp, XMMatrixIdentity());
+			m_pInstancingMatrix.push_back(Temp);
+
+			for (auto& pInstMesh : m_InstancingMeshes)
+				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+		}
+	}
+	else
+	{
+		if (IsMultipleCheck)
+		{
+			/*	_float fMaxX = vPickingPos.x + fRaduis *0.5f;
+				_float fMaxZ = vPickingPos.z + fRaduis *0.5f;
+				_float fxRatio = 0.f , fzRatio =0.f;*/
+
+			for (_int i = 0; i < iGroundCoverNum; ++i)
+			{
+				_float4x4* Temp = new _float4x4;
+				XMStoreFloat4x4(Temp, XMMatrixIdentity());
+			
+			
+				_float4 RenewalPos = vPickingPos;
+				
+#pragma region 사각형
+				/*
+				RenewalPos.x = vPickingPos.x - (fRaduis *0.5f);
+				RenewalPos.z = vPickingPos.z - (fRaduis *0.5f);
+
+				if (fMaxX <= RenewalPos.x + fxRatio)
+				{
+					fxRatio = 0.f;
+					fzRatio += fBetween; 
+				}
+
+				RenewalPos.x += fxRatio;
+				RenewalPos.z += fzRatio;
+				fxRatio += fBetween;*/
+#pragma  endregion 사각형
+
+				_float fRandX = CUtile::Get_RandomFloat(vPickingPos.x - fRaduis *0.5f, (vPickingPos.x + fRaduis * 0.5f));
+				_float fRandZ = CUtile::Get_RandomFloat(vPickingPos.z-fRaduis *0.5f, (vPickingPos.z + fRaduis * 0.5f));
+
+				RenewalPos.x = fRandX;
+				RenewalPos.z = fRandZ;
+
+				memcpy(&Temp->m[3], &RenewalPos, sizeof(_float4));
+				m_pInstancingMatrix.push_back(Temp);
+				for (auto& pInstMesh : m_InstancingMeshes)
+					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+			}
+
+		}
+		else
+		{
+			_float4x4* Temp = new _float4x4;
+			XMStoreFloat4x4(Temp, XMMatrixIdentity());
+
+			memcpy(&Temp->m[3], &vPickingPos, sizeof(_float4));
+
+			m_pInstancingMatrix.push_back(Temp);
+
+			for (auto& pInstMesh : m_InstancingMeshes)
+				pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+		}
+		
+	}
+
+	if (ImGui::Button("Instancing Num Delete"))
+	{
+		_int iDeleteIndex = 0;
+		for (auto iter = m_pInstancingMatrix.begin(); iter != m_pInstancingMatrix.end();)
+		{
+			if (iDeleteIndex == m_iSelectMeshInstace_Index)
+			{
+				Safe_Delete(*iter);
+				*iter = nullptr;
+				iter = m_pInstancingMatrix.erase(iter);
+				m_iSelectMeshInstace_Index = -1;
+				for (auto& pInstMesh : m_InstancingMeshes)
+					pInstMesh->Add_InstanceModel(m_pInstancingMatrix);
+				break;
+			}
+			else
+			{
+				++iter;
+				++iDeleteIndex;
+			}
+		}
+	}
+
+	static _int iSize = 1;
+	ImGui::InputInt("Upsize ", &iSize);
+	if (ImGui::Button("All_Instancing_Size_Up"))
+	{
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstBufferSize_Update(iSize);
+	}
+
+
+	if (m_iSelectMeshInstace_Index == -1)
+		return;
+
+	/*수정 부분*/
+	_matrix ParentMulChild, InvParentMulChild, ResultMatrix;
+	InvParentMulChild = XMMatrixInverse(nullptr, parentMatrix);
+	ParentMulChild = XMLoadFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index]) * parentMatrix;
+	m_pInstanceTransform->Set_WorldMatrix(ParentMulChild);
+	m_pInstanceTransform->Imgui_RenderProperty();
+	ResultMatrix = m_pInstanceTransform->Get_WorldMatrix();
+
+	ResultMatrix *= InvParentMulChild;
+	XMStoreFloat4x4(m_pInstancingMatrix[m_iSelectMeshInstace_Index], ResultMatrix);
+
+	for (auto& pInstMesh : m_InstancingMeshes)
+		pInstMesh->InstBuffer_Update(m_pInstancingMatrix);
 
 }
 
-void CModel::SetUp_InstModelColider(vector<_float3> vecColiderSize)
+void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 {
-	for (auto vSize : vecColiderSize)
+	if (m_bIsInstancing == true)
 	{
-		m_VecInstancingColiderSize.push_back(vSize);
+		for (auto& pInstMesh : m_InstancingMeshes)
+			pInstMesh->InstaincingMesh_yPosControl(yPos);
 	}
 }
 
 
+
+#endif

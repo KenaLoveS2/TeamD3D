@@ -74,7 +74,9 @@
 #include "UI_NodeHat.h"
 #include "UI_NodeScrollLine.h"
 #include "UI_NodeScrollBar.h"
-
+#include "UI_NodeCurrentCrystal.h"
+#include "UI_NodeHatCartBG.h"
+#include "UI_NodeSideBar.h"
 
 /* World UI */
 #include "UI_MonsterHP.h"
@@ -518,8 +520,20 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ScrollBar");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CartBottom"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/BarBottm.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CartBottom");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CartTop"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/BarTop.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CartTop");
 
+	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_CartBG"),
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/CartBG.png")))))
+		return E_FAIL;
+	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_CartBG");
 
 
 
@@ -857,7 +871,17 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_ScrollBar");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_CurrentCrystal"), CUI_NodeCurrentCrystal::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_CurrentCrystal");
 
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_HatCartBG"), CUI_NodeHatCartBG::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_HatCartBG");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_SideBar"), CUI_NodeSideBar::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_SideBar");
 
 
 	/********************************************/

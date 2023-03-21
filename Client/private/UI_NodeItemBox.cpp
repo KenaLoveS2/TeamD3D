@@ -6,6 +6,7 @@ CUI_NodeItemBox::CUI_NodeItemBox(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	: CUI_Node(pDevice, pContext)
 	, m_szCount(nullptr)
 	, m_vFontPos(0.f, 0.f)
+	, m_iCount(0)
 {
 }
 
@@ -13,11 +14,13 @@ CUI_NodeItemBox::CUI_NodeItemBox(const CUI_NodeItemBox & rhs)
 	: CUI_Node(rhs)
 	, m_szCount(nullptr)
 	, m_vFontPos(0.f, 0.f)
+	, m_iCount(0)
 {
 }
 
 void CUI_NodeItemBox::Set_String(_int iCount)
 {
+	m_iCount = iCount;
 	Safe_Delete_Array(m_szCount);
 	m_szCount = CUtile::Create_String(to_wstring(iCount).c_str());
 }
@@ -45,6 +48,7 @@ HRESULT CUI_NodeItemBox::Initialize(void * pArg)
 	}
 
 	m_bActive = true;
+	m_vFontPos = { 66.f, 0.f };
 	return S_OK;
 }
 
@@ -72,13 +76,13 @@ HRESULT CUI_NodeItemBox::Render()
 
 	/* temp */
 	//m_szCount = L"2";
-	//m_vFontPos = { 60.f, 0.f };
+	
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - 45.f + m_vFontPos.x, g_iWinSizeY*0.5f - vPos.y + m_vFontPos.y};
 
-	if (nullptr != m_szCount)
+	if (nullptr != m_szCount && m_iCount != 0)
 	{
 		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"), m_szCount,
 			vNewPos /* position */,

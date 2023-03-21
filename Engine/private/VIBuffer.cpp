@@ -122,7 +122,7 @@ HRESULT CVIBuffer::Create_PxTriangleMeshActor(PX_USER_DATA* pUserData)
 	TriangleMeshDesc.triangles.count = m_iNumPrimitive;
 	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	TriangleMeshDesc.triangles.data = m_pPxIndicies;
-	
+		
 	m_pPxActor = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, pUserData);
 
 	return S_OK;

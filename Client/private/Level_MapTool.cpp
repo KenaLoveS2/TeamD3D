@@ -39,8 +39,13 @@ HRESULT CLevel_MapTool::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_TerrainEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
+	
+#ifdef FOR_MAP_GIMMICK
+	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Settings::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
+#endif
+
 #endif
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -126,10 +131,12 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
-	
-	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Culling.json");
+
+
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	/*CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");*/

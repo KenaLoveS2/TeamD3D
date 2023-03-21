@@ -1,0 +1,175 @@
+#include "stdafx.h"
+#include "..\public\UI_NodeCurrentCrystal.h"
+#include "GameInstance.h"
+#include "Utile.h"
+
+CUI_NodeCurrentCrystal::CUI_NodeCurrentCrystal(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI_Node(pDevice, pContext)
+	, m_iCrystal(0)
+	, m_FontName(nullptr)
+	, m_vFontColor(_float4{ 1.f, 1.f, 1.f, 1.f })
+	, m_vFontSize(0.9f, 0.9f)
+	, m_vFontPos(20.f, -20.f)
+{
+}
+
+CUI_NodeCurrentCrystal::CUI_NodeCurrentCrystal(const CUI_NodeCurrentCrystal & rhs)
+	: CUI_Node(rhs)
+	, m_iCrystal(0)
+	, m_FontName(nullptr)
+	, m_vFontColor(_float4{ 1.f, 1.f, 1.f, 1.f })
+	, m_vFontSize(0.9f, 0.9f)
+	, m_vFontPos(20.f, -20.f)
+{
+}
+
+void CUI_NodeCurrentCrystal::Set_Font(wstring fontName, _float4 fontColor, _float2 fontSize, _float2 fontPos)
+{
+	m_FontName = CUtile::Create_StringAuto(fontName.c_str());
+	m_vFontColor = fontColor;
+	m_vFontSize = fontSize;
+	m_vFontPos = fontPos;
+}
+
+HRESULT CUI_NodeCurrentCrystal::Initialize_Prototype()
+{
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_NodeCurrentCrystal::Initialize(void * pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+	{
+		m_pTransformCom->Set_Scaled(_float3(100.f, 100.f, 1.f));
+		XMStoreFloat4x4(&m_matLocal, m_pTransformCom->Get_WorldMatrix());
+	}
+
+	if (FAILED(SetUp_Components()))
+	{
+		MSG_BOX("Failed To SetUp Components");
+		return E_FAIL;
+	}
+
+	m_bActive = true;
+
+	m_FontName = L"Font_Basic0";
+	return S_OK;
+}
+
+void CUI_NodeCurrentCrystal::Tick(_float fTimeDelta)
+{
+	if (!m_bActive)
+		return;
+
+	__super::Tick(fTimeDelta);
+}
+
+void CUI_NodeCurrentCrystal::Late_Tick(_float fTimeDelta)
+{
+	CUI::Late_Tick(fTimeDelta);
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_matLocal);
+
+	for (auto e : m_vecEvents)
+		e->Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom && m_bActive)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+}
+
+HRESULT CUI_NodeCurrentCrystal::Render()
+{
+	if (nullptr == m_pTextureCom[TEXTURE_DIFFUSE])
+		return E_FAIL;
+
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f + m_vFontPos.x, g_iWinSizeY*0.5f - vPos.y + m_vFontPos.y };
+
+	_tchar* str = CUtile::StringToWideChar(to_string(m_iCrystal));
+	CGameInstance::GetInstance()->Render_Font(m_FontName, str,
+		vNewPos /* position */,
+		0.f, m_vFontSize/* size */,
+		m_vFontColor/* color */);
+
+	Safe_Delete_Array(str);
+
+	return S_OK;
+}
+
+HRESULT CUI_NodeCurrentCrystal::SetUp_Components()
+{
+	/* Renderer */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom))
+		return E_FAIL;
+
+	/* Shader */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom))
+		return E_FAIL;
+
+	/* VIBuffer_Rect */
+	if (__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
+HRESULT CUI_NodeCurrentCrystal::SetUp_ShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_tDesc.ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_tDesc.ProjMatrix)))
+		return E_FAIL;
+
+	if (m_pTextureCom[TEXTURE_DIFFUSE] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
+	if (m_pTextureCom[TEXTURE_MASK] != nullptr)
+	{
+		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+CUI_NodeCurrentCrystal * CUI_NodeCurrentCrystal::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+{
+	CUI_NodeCurrentCrystal*	pInstance = new CUI_NodeCurrentCrystal(pDevice, pContext);
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed To Create : CUI_NodeCurrentCrystal");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject * CUI_NodeCurrentCrystal::Clone(void * pArg)
+{
+	CUI_NodeCurrentCrystal*	pInstance = new CUI_NodeCurrentCrystal(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed To Clone : CUI_NodeCurrentCrystal");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+void CUI_NodeCurrentCrystal::Free()
+{
+	__super::Free();
+}

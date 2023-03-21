@@ -31,8 +31,6 @@ HRESULT CStatue::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-	//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
-
 	return S_OK;
 }
 
@@ -52,7 +50,7 @@ HRESULT CStatue::Late_Initialize(void * pArg)
 
 	return S_OK;
 }
-
+ 
 void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -238,41 +236,25 @@ HRESULT CStatue::SetUp_Components()
 
 HRESULT CStatue::SetUp_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
 HRESULT CStatue::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

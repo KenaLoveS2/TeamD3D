@@ -442,6 +442,33 @@
     <Filter Include="02.GameObjects\Player\Weapon\Bomb">
       <UniqueIdentifier>{32d2fea1-7571-4cd2-a783-878bd548a6bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\HatCart">
+      <UniqueIdentifier>{4e644b90-106b-45c4-b420-465c39101c9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop">
+      <UniqueIdentifier>{e75ba96a-a3f2-4c08-9364-7de78a91840b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar">
+      <UniqueIdentifier>{96c4413f-4a60-4709-898b-c4d74c51a06c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Box">
+      <UniqueIdentifier>{25127513-1e41-467b-bb67-3a481fa9c299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Hat">
+      <UniqueIdentifier>{e6021e26-1bf6-4514-9a00-19ec662e0f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\CurrentCrystal">
+      <UniqueIdentifier>{71495604-4fcb-493e-a7f7-673a5e65044e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\BackGround">
+      <UniqueIdentifier>{e701b28b-3f86-4e2c-a17d-b039151c568e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll">
+      <UniqueIdentifier>{9e562e9e-37de-4ba8-93f5-2546f53a94ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Water">
+      <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -971,7 +998,6 @@
     <ClInclude Include="..\public\E_RotTrail.h">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
@@ -1061,31 +1087,44 @@
     <ClInclude Include="..\public\E_FireBulletExplosion.h">
       <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HatCart.h" />
-    <ClInclude Include="..\public\WaterPlane.h" />
-    <ClInclude Include="..\public\UI_CanvasHatCart.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_CanvasItemBar.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeHat.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_NodeHatCartBG.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeItemBox.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeScrollBar.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI_NodeScrollLine.h">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RotBomb.h">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HatCart.h">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasHatCart.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasItemBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeItemBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHat.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Hat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeCurrentCrystal.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\CurrentCrystal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHatCartBG.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeSideBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WaterPlane.h">
+      <Filter>02.GameObjects\Envrioment\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Born_GroundCover.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_KenaParry.h" />
     <ClInclude Include="..\public\E_KenaParryHand.h" />
@@ -1600,7 +1639,6 @@
     <ClCompile Include="..\private\E_RotTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
@@ -1690,31 +1728,44 @@
     <ClCompile Include="..\private\E_FireBulletExplosion.cpp">
       <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HatCart.cpp" />
-    <ClCompile Include="..\private\WaterPlane.cpp" />
-    <ClCompile Include="..\private\UI_CanvasHatCart.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_CanvasItemBar.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeHat.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_NodeHatCartBG.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeItemBox.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeScrollBar.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
-      <Filter>02.GameObjects\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RotBomb.cpp">
       <Filter>02.GameObjects\Player\Weapon\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HatCart.cpp">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasHatCart.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasItemBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeItemBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHat.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\ItemBar\Hat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeCurrentCrystal.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\CurrentCrystal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHatCartBG.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeSideBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. Shop\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WaterPlane.cpp">
+      <Filter>02.GameObjects\Envrioment\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Born_GroundCover.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_KenaParry.cpp" />
     <ClCompile Include="..\private\E_KenaParryHand.cpp" />

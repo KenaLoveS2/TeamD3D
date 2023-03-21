@@ -239,7 +239,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 	
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	// FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
@@ -314,7 +314,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma  endregion ANIM_OBJ
 	
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 #ifdef FOR_MAPTOOL   
 
 #else
@@ -691,7 +691,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Arch_Gate", true, true, true)))
 		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true, false, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Wall_Broken", true, true, true)))
 		assert(!"Issue");
@@ -916,7 +916,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_Tree", true, true, true)))
 			return E_FAIL;
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_FloorTile", true, true, true,false,true)))
 			return E_FAIL;
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Piece", true, true, true)))
@@ -2106,7 +2106,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_Tree", true, true, true)))
 		return E_FAIL;
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_FloorTile", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinsKit_FloorTile", true, true, true, false,true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Piece", true, true, true)))

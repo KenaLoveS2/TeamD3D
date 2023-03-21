@@ -29,10 +29,23 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("SHADOW", &m_bDynamicShadow);
 	ImGui::Checkbox("SSAO", &m_bSSAO);
 	ImGui::Checkbox("DISTORT", &m_bDistort);
-	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);	
+	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
+	ImGui::Checkbox("MOTIONBLUR", &m_bMotionBlur);
+	ImGui::Checkbox("FLARE", &m_bFlare);
 	if(ImGui::Button("ReCompile"))
 	{
 		ReCompile();
+	}
+}
+
+void CRenderer::EraseStaticShadowObject(CGameObject * pObject)
+{
+	for (auto& Iter = m_RenderObjects[RENDER_STATIC_SHADOW].begin(); Iter != m_RenderObjects[RENDER_STATIC_SHADOW].end();)
+	{
+		if (*Iter == pObject)
+			Iter = m_RenderObjects[RENDER_STATIC_SHADOW].erase(Iter);
+		else
+			++Iter;
 	}
 }
 
@@ -56,7 +69,9 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 	else
 	{
 		m_RenderObjects[eRenderGroup].push_back(pGameObject);
-		Safe_AddRef(pGameObject);
+
+		if(eRenderGroup != RENDER_STATIC_SHADOW)
+			Safe_AddRef(pGameObject);
 	}
 		
 	return S_OK;
@@ -126,6 +141,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_LDR2"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
 		return E_FAIL;
 
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_PrevFrame"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(0.5f, 0.5f, 0.5f, 1.f))))
+		return E_FAIL;
+
 	/* For.Target_Effect*/
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, &_float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -153,9 +171,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	// HDR 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
 		return E_FAIL;
-
 	// Effect 텍스쳐 렌더링용
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_EFFECT"), TEXT("Target_Effect"))))
+		return E_FAIL;
+
+	// PrevFrame 텍스쳐 렌더링용
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_PrevFrame"), TEXT("Target_PrevFrame"))))
 		return E_FAIL;
 
 	/* For. SHADOW */
@@ -218,11 +239,14 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_StaticShadowDepth"), (fSizeX * 0.5f) + fSizeX * 3.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
 		return E_FAIL;
 
+	// For. Water & Distortion
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Effect"), (fSizeX * 0.5f) + fSizeX * 4.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-
-	// For. Water
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Reflect"), (fSizeX * 0.5f) + fSizeX * 4.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+		return E_FAIL;
+
+	// For. PrevFrame
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_PrevFrame"), (fSizeX * 0.5f) + fSizeX * 5.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
 
 #endif
@@ -378,6 +402,11 @@ HRESULT CRenderer::ReCompile()
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
+	Increase_Time();
+
+	if (FAILED(Render_PrevFrame()))
+		return E_FAIL;
+
 	if(m_bStaticShadow)
 	{
 		if (FAILED(Render_StaticShadow()))
@@ -467,6 +496,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_EFFECT"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_REFLECT"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_PrevFrame"));
 	}
 #endif
 
@@ -566,6 +596,12 @@ HRESULT CRenderer::Render_Reflect()
 	return S_OK;
 }
 
+void CRenderer::Increase_Time()
+{
+	m_fDistortTime += TIMEDELTA;
+	m_fPrevCaptureTime += TIMEDELTA;
+}
+
 HRESULT CRenderer::Render_StaticShadow()
 {
 	if (nullptr == m_pTarget_Manager)
@@ -591,11 +627,7 @@ HRESULT CRenderer::Render_StaticShadow()
 	{
 		if (nullptr != pGameObject)
 			pGameObject->RenderShadow();
-
-		Safe_Release(pGameObject);
 	}
-
-	m_RenderObjects[RENDER_STATIC_SHADOW].clear();
 
 	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_StaticLightDepth"))))
 		return E_FAIL;
@@ -718,7 +750,6 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
@@ -765,11 +796,11 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_DynamicLightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -889,19 +920,46 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_GrayScale();
 	}
 
+	if(m_bMotionBlur)
+	{
+		pLDRSour_SRV = pLDRSour->Get_SRV();
+		pLDRDest_RTV = pLDRDest->Get_RTV();
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRTmp = pLDRSour;
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_MotionBlur();
+	}
+
+	//if (m_bFlare)
+	//{
+	//	pLDRSour_SRV = pLDRSour->Get_SRV();
+	//	pLDRDest_RTV = pLDRDest->Get_RTV();
+	//	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+	//		return E_FAIL;
+	//	m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+	//	pLDRTmp = pLDRSour;
+	//	pLDRSour = pLDRDest;
+	//	pLDRDest = pLDRTmp;
+	//	PostProcess_Flare();
+	//}
+
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
 	Safe_Release(pDepthStencilView);
 
 	// LDR to Backbuffer
-	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV())))
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour->Get_SRV()))) // 이것이 현재 프레임
 		return E_FAIL;
 
 	m_pLDRTexture = pLDRSour->Get_SRV();
 
+	// 이걸 그리고 난것을 나의 렌더타겟에 그린다.
 	m_pShader_PostProcess->Begin(0);
 	m_pVIBuffer->Render();
-
+	
 	return S_OK;
 }
 
@@ -974,12 +1032,36 @@ HRESULT CRenderer::Render_Viewer()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_PrevFrame()
+{
+	if (m_pLDRTexture != nullptr)
+	{
+			if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PrevFrame"))))
+				return E_FAIL;
+		
+			if (FAILED(m_pShader->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+			if (FAILED(m_pShader->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+				return E_FAIL;
+			if (FAILED(m_pShader->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+				return E_FAIL;
+			if (FAILED(m_pShader->Set_ShaderResourceView("g_Texture", m_pLDRTexture)))
+				return E_FAIL;
+	
+			m_pShader->Begin(0);
+			m_pVIBuffer->Render();
+
+			if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PrevFrame"))))
+				return E_FAIL;
+	}
+	return S_OK;
+}
+
 HRESULT CRenderer::PostProcess_Distort()
 {
 	// 이 때 이 쉐이더에 들어갈 수 있게끔 파라미터 전해줄것.
 	// 변수를 공유하기 때문에 Begin -> Render 할 때 잘 전해줘야함
 
-	m_fDistortTime += TIMEDELTA;
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_Time", &m_fDistortTime, sizeof(float))))
 		return E_FAIL;
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_DistortionTexture", *m_pDistortionTexture)))
@@ -995,11 +1077,32 @@ HRESULT CRenderer::PostProcess_Distort()
 
 HRESULT CRenderer::PostProcess_GrayScale()
 {
+	m_pShader_PostProcess->Begin(2);
+	m_pVIBuffer->Render();
+	return S_OK;
+}
+
+HRESULT CRenderer::PostProcess_MotionBlur()
+{
+	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_PrevFrameTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_PrevFrame")))))
+		return E_FAIL;
+	m_pShader_PostProcess->Begin(4);
+	m_pVIBuffer->Render();
+	return S_OK;
+}
+
+HRESULT CRenderer::PostProcess_Flare()
+{
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_FlareTexture", *m_pFlareTexture)))
 		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LightDepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_ShadowDepth")))))
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vLightCamPos", &CGameInstance::GetInstance()->Get_LightCamPosition(), sizeof(_float4))))
 		return E_FAIL;
-	m_pShader_PostProcess->Begin(2);
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamViewMatrix", &CPipeLine::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamProjMatrix", &CPipeLine::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	m_pShader_PostProcess->Begin(5);
 	m_pVIBuffer->Render();
 	return S_OK;
 }
@@ -1119,7 +1222,10 @@ void CRenderer::Free()
 	for (_uint i = 0; i < RENDER_END; ++i)
 	{
 		for (auto& pGameObject : m_RenderObjects[i])
-			Safe_Release(pGameObject);
+		{
+			if(i != RENDER_STATIC_SHADOW)
+				Safe_Release(pGameObject);
+		}
 
 		m_RenderObjects[i].clear();
 	}

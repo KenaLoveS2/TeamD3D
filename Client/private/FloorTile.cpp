@@ -40,10 +40,16 @@ HRESULT CFloorTile::Late_Initialize(void * pArg)
 	_float3 vPos, vSize;
 	vSize = _float3(0.5f, 0.25f, 0.5f);
 	vPos = _float3(0.0f, 0.f, 0.0f);
-	if (m_pModelCom->Get_IStancingModel() == true)
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	
+	if (m_pModelCom->Get_UseTriangleMeshActor())
+		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	else
-		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	{
+		if (m_pModelCom->Get_IStancingModel() == true)
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+		else
+			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	}
 
 	return S_OK;
 }
@@ -220,6 +226,7 @@ HRESULT CFloorTile::SetUp_ShadowShaderResources()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

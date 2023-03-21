@@ -401,7 +401,17 @@ HRESULT CMage::SetUp_State()
 	{
 		Reset_Attack();
 	})
-		.AddTransition("IDLE to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -441,12 +451,7 @@ HRESULT CMage::SetUp_State()
 	{
 		return	TimeTrigger(m_fIdletoAttackTime, 3.f) && m_bRealAttack && m_bCloseAttack;
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
+		
 		.AddState("SUMMON")
 		.OnStart([this]()
 	{
@@ -454,7 +459,7 @@ HRESULT CMage::SetUp_State()
 		m_pModelCom->Set_AnimIndex(SUMMON); // 3마리 생성
 		Summon();
 	})
-		.AddTransition("SUMMON to BIND", "BIND")
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -485,7 +490,17 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
-		.AddTransition("RANGEDATTACK to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -500,11 +515,7 @@ HRESULT CMage::SetUp_State()
 	{
 			return AnimFinishChecker(RANGEDATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+	
 
 		.AddState("CLOSEATTACK")
 		.OnStart([this]()
@@ -516,7 +527,17 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 	})
-		.AddTransition("CLOSEATTACK to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -531,11 +552,7 @@ HRESULT CMage::SetUp_State()
 	{
 		return AnimFinishChecker(CLOSEATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
+	
 
 		.AddState("DASH")
 		.OnStart([this]()
@@ -554,7 +571,17 @@ HRESULT CMage::SetUp_State()
 		if (m_PlayerLookAt_Dir == BACK)
 			m_pModelCom->Set_AnimIndex(DASH_F);
 	})
-		.AddTransition("DASH to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -572,40 +599,25 @@ HRESULT CMage::SetUp_State()
 			AnimFinishChecker(DASH_B) ||
 			AnimFinishChecker(DASH_F);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
-		// 어느 타이밍에 패링이 되는지?
+	
+		
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRY);
 		m_pModelCom->Set_AnimIndex(PARRY);
 	})
-		.AddTransition("PARRIED to BIND", "BIND")
+		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_bBind;
-	})
-		.AddTransition("PARRIED to TAKEDAMAGE", "TAKEDAMAGE")
-		.Predicator([this]()
-	{
-		return m_bStronglyHit;
-	})
+		return m_pMonsterStatusCom->IsDead();
+	})		
 		.AddTransition("PARRIED to ENTER", "ENTER")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(PARRY);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
+		
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("ENTER")
 		.OnStart([this]()
@@ -614,17 +626,17 @@ HRESULT CMage::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(EXIT);
 		m_pModelCom->Set_AnimIndex(EXIT);
 	})
-		.AddTransition("ENTER to EXIT", "EXIT")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(EXIT);
-	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-
+		.AddTransition("ENTER to EXIT", "EXIT")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(EXIT);
+	})
+		
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("EXIT")
 		.OnStart([this]()
@@ -637,7 +649,7 @@ HRESULT CMage::SetUp_State()
 		vPos.w = 1.f;
 		m_pTransformCom->Set_Position(vPos);
 	})
-		.AddTransition("EXIT to BIND", "BIND")
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -681,7 +693,7 @@ HRESULT CMage::SetUp_State()
 		m_bStronglyHit = false;
 		Reset_Attack();
 	})
-		.AddTransition("TAKEDAMAGE to BIND", "BIND")
+		.AddTransition("To BIND", "BIND")
 		.Predicator([this]()
 	{
 		return m_bBind;
@@ -689,10 +701,8 @@ HRESULT CMage::SetUp_State()
 		.AddTransition("TAKEDAMAGE to DASH", "DASH")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(STAGGER) ||
-			AnimFinishChecker(STAGGER_L) ||
-			AnimFinishChecker(STAGGER_B) ||
-			AnimFinishChecker(STAGGER_R);
+		return AnimFinishChecker(STAGGER) || AnimFinishChecker(STAGGER_L) ||
+				AnimFinishChecker(STAGGER_B) || AnimFinishChecker(STAGGER_R);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -703,26 +713,12 @@ HRESULT CMage::SetUp_State()
 		.AddState("BIND")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(COMMAND);
-		m_pModelCom->Set_AnimIndex(COMMAND);
-
-		for (_uint i = 0; i < 8; ++i)
-		{
-			if (m_pRotForMonster[i])
-				m_pRotForMonster[i]->Bind(true, this);
-		}
+		Start_Bind(COMMAND);
 	})
 		.OnExit([this]()
-	{
-		// 맞는 애니메이션일때도 맞는가?
-		m_bBind = false;
+	{	
 		Reset_Attack();
-		for (_uint i = 0; i < 8; ++i)
-		{
-			if (m_pRotForMonster[i])
-				m_pRotForMonster[i]->Bind(false, this);
-		}
-		ZeroMemory(&m_pRotForMonster, sizeof(m_pRotForMonster));
+		End_Bind();
 	})
 		.AddTransition("BIND to ENTER", "ENTER")
 		.Predicator([this]()
