@@ -335,9 +335,11 @@
     <ClInclude Include="..\public\UI_NodeButton.h" />
     <ClInclude Include="..\public\UI_NodeChat.h" />
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
+    <ClInclude Include="..\public\UI_NodeCurrentCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeConfWindow.h" />
     <ClInclude Include="..\public\UI_NodeHat.h" />
+    <ClInclude Include="..\public\UI_NodeHatCartBG.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -357,6 +359,7 @@
     <ClInclude Include="..\public\UI_NodeRotLevel.h" />
     <ClInclude Include="..\public\UI_NodeScrollBar.h" />
     <ClInclude Include="..\public\UI_NodeScrollLine.h" />
+    <ClInclude Include="..\public\UI_NodeSideBar.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
@@ -373,7 +376,6 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UI_NodeHatCartBG.h" />
     <ClInclude Include="UI_NodeRotSkill.h" />
   </ItemGroup>
   <ItemGroup>
@@ -537,9 +539,11 @@
     <ClCompile Include="..\private\UI_NodeButton.cpp" />
     <ClCompile Include="..\private\UI_NodeChat.cpp" />
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
+    <ClCompile Include="..\private\UI_NodeCurrentCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
     <ClCompile Include="..\private\UI_NodeHat.cpp" />
+    <ClCompile Include="..\private\UI_NodeHatCartBG.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
@@ -559,6 +563,7 @@
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
     <ClCompile Include="..\private\UI_NodeScrollBar.cpp" />
     <ClCompile Include="..\private\UI_NodeScrollLine.cpp" />
+    <ClCompile Include="..\private\UI_NodeSideBar.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
@@ -578,7 +583,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UI_NodeHatCartBG.cpp" />
     <ClCompile Include="UI_NodeRotSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
