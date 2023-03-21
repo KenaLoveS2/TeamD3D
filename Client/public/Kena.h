@@ -179,6 +179,7 @@ private:	/* Animation Event Func */
 	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
