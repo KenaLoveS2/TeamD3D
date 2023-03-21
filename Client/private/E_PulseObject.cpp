@@ -116,8 +116,11 @@ void CE_PulseObject::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pParent != nullptr && dynamic_cast<CEffect_Trail*>(this) == false)
+	if (m_pParent != nullptr)
 		Set_Matrix();
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CE_PulseObject::Render()

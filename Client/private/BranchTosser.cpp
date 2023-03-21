@@ -417,16 +417,8 @@ HRESULT CBranchTosser::SetUp_State()
 		.AddState("DEATH")
 		.OnStart([this]()
 	{		
-		m_bDeath = true;
-	})
-		.Tick([this](_float fTimeDelta)
-	{	
-		
+		Clear_Death();
 	})		
-		.OnExit([this]()
-	{		
-		
-	})
 		.Build();
 
 	return S_OK;

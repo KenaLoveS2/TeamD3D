@@ -52,7 +52,7 @@ void CE_KenaCharge::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fScale += 0.6f;
-		m_eEFfectDesc.vScale = fCurScale * m_fScale;
+		m_eEFfectDesc.vScale *= m_fScale;
 
 		if (XMVectorGetX(m_eEFfectDesc.vScale) > 3.f)
 			m_eEFfectDesc.bActive = false;

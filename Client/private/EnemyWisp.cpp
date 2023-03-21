@@ -85,6 +85,10 @@ void CEnemyWisp::Late_Tick(_float fTimeDelta)
 
 		m_vecChild[CHILD_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	}
+
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CEnemyWisp::Render()

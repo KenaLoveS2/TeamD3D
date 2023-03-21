@@ -69,12 +69,26 @@ void CUI_FocusMonster::Tick(_float fTimeDelta)
 	{
 		for (_uint i = 0; i < PARTS_END; ++i)
 		{
-			//if (!m_pParts[i]->IsEnd())
-			//{
+			if (!m_pParts[i]->Is_AnimEnd())
+			{
+				m_pParts[i]->Do_Animation();
+				break;
+			}
+			else
+				m_pParts[i]->Set_StartFalse();
+		}
 
-			//}
+
+		if (m_pParts[2]->Is_AnimEnd())
+		{
+			m_bStart = false;
+
+			for (_uint i = 0; i < PARTS_END; ++i)
+				m_pParts[i]->Reset();
 		}
 	}
+
+
 
 
 	for (_uint i = 0; i < PARTS_END; ++i)
@@ -140,6 +154,10 @@ void CUI_FocusMonster::Off_Focus(CGameObject* pTarget)
 
 void CUI_FocusMonster::Start_Animation()
 {
+	m_bStart = true;
+
+	for (_uint i = 0; i < PARTS_END; ++i)
+		m_pParts[i]->Reset();
 }
 
 HRESULT CUI_FocusMonster::SetUp_Components()

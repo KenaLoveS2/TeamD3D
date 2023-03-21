@@ -126,9 +126,6 @@ void CEffect_Mesh::Tick(_float fTimeDelta)
 void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CEffect_Mesh::Render()

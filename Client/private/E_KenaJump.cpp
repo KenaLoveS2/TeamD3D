@@ -92,9 +92,6 @@ void CE_KenaJump::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaJump::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

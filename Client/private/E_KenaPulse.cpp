@@ -189,6 +189,10 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 		Set_Matrix();
 	
 	__super::Late_Tick(fTimeDelta);
+
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CE_KenaPulse::Render()

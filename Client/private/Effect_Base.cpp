@@ -38,7 +38,11 @@ CEffect_Base::CEffect_Base(const CEffect_Base & rhs)
  	memcpy(&m_eEFfectDesc, &rhs.m_eEFfectDesc, sizeof(EFFECTDESC));
 
 	for (auto pChild : rhs.m_vecChild)
+	{
 		m_vecChild.push_back(dynamic_cast<CEffect_Base*>(pChild->Clone()));
+		m_vecChild.back()->Set_CloneTag(pChild->Get_ObjectCloneName());
+		m_vecChild.back()->Set_ProtoTag(pChild->Get_ProtoObjectName());
+	}
 }
 
 HRESULT CEffect_Base::Load_E_Desc(const _tchar * pFilePath)
