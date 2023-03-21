@@ -59,8 +59,7 @@ HRESULT CUI_FocusMonster::Initialize(void * pArg)
 }
 
 void CUI_FocusMonster::Tick(_float fTimeDelta)
-{
-	m_bActive = false;
+{	
 	if (!m_bActive)
 		return;
 
