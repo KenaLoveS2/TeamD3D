@@ -22,7 +22,7 @@ HRESULT CBranchTosser::Initialize_Prototype()
 
 HRESULT CBranchTosser::Initialize(void* pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	CGameObject::GAMEOBJECTDESC GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
