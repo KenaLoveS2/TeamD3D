@@ -71,7 +71,7 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse;
+		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
@@ -109,6 +109,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	case STATE_PULSE:
 		return m_bPulse;
+		break;
+
+	case STATE_PARRY:
+		return m_bParryLaunch;
 		break;
 
 	case STATE_JUMP:
@@ -233,8 +237,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fStaticFriction = 0.5f;
 	PxCapsuleDesc.fRestitution = 0.1f;
 
-	// CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
-	// m_pTransformCom->Add_Collider(pTag, matIdentity);
+	//CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_BUMP));
+	//m_pTransformCom->Add_Collider(pTag, matIdentity);
 
 	/* Staff Collider */
 	CKena_Staff*	pStaff = dynamic_cast<CKena_Staff*>(Get_KenaPart(L"Kena_Staff"));
@@ -342,11 +346,30 @@ void CKena::Tick(_float fTimeDelta)
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
-		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+	{
+		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+	}
+
+	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 
 	__super::Tick(fTimeDelta);
 
 	Test_Raycast();
+
+// 	if (m_bParry == true)
+// 	{
+// 		if (m_iCurParryFrame == m_iParryFrameCount)
+// 		{
+// 			m_bCommonHit = true;
+// 			//m_bHeavyHit = true;
+// 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
+// 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+// 
+// 			m_bParry = false;
+// 			m_pAttackObject = nullptr;
+// 		}
+// 	}
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -358,17 +381,51 @@ void CKena::Tick(_float fTimeDelta)
 
 	m_pKenaStatus->Tick(fTimeDelta);
 
-	Update_Collider(fTimeDelta);
-
 	m_bCommonHit = false;
 	m_bHeavyHit = false;
 
-	_float	fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	Update_Collider(fTimeDelta);
+
+	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
+	{
+		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+		fTimeDelta *= fTimeRate;
+	}
 
 	if (m_pModelCom->Get_Preview() == false)
-		m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
+	{
+		if (m_fHitStopTime <= 0.f)
+		{
+			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
+			else
+				m_pAnimation->Play_Animation(fTimeDelta);
+		}
+		else
+		{
+			m_fHitStopTime -= fTimeDelta / fTimeRate;
+			CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+		}
+	}
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (m_bAttack)
+	{
+		CBone*	pBone = m_pModelCom->Get_BonePtr("staff_skin9_jnt");
+		_matrix	matSocket = pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();
+
+		if (m_vecWeaposPos.size() < 2)
+			m_vecWeaposPos.push_back(matSocket.r[3]);
+		else
+		{
+			m_vecWeaposPos.front() = m_vecWeaposPos.back();
+			m_vecWeaposPos.pop_back();
+			m_vecWeaposPos.push_back(matSocket.r[3]);
+		}
+	}
+	else
+		m_vecWeaposPos.clear();
 
 	if (m_pTargetMonster && m_bAttack)
 	{
@@ -379,14 +436,14 @@ void CKena::Tick(_float fTimeDelta)
 
 		if (!m_bJump && !m_bSprint)
 		{
-			if (fDistance > 0.7f)
+			if (fDistance > 0.5f)
 			{
-				vTargetPos = vTargetPos + XMVector3Normalize(vDir) * 0.7f;
+				vTargetPos = vTargetPos + XMVector3Normalize(vDir) * 0.5f;
 				vDir = vTargetPos - vPos;
 
 				m_pTransformCom->Set_Speed(7.f);
 				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
-				m_pTransformCom->Go_Direction(vDir, fTimeDelta);
+				m_pTransformCom->Go_DirectionNoY(vDir, fTimeDelta);
 			}
 			else
 			{
@@ -411,7 +468,7 @@ void CKena::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
 		m_pCamera->Camera_Shake(0.003f, 10);
 	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
-		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(2.f));
+		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(10.f));
 
 	/* Delegator Arrow */
 	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
@@ -437,9 +494,16 @@ void CKena::Late_Tick(_float fTimeDelta)
 
 	m_pKenaState->Late_Tick(fTimeDelta);
 
+	if (m_iCurParryFrame < m_iParryFrameCount)
+	{
+		m_iCurParryFrame++;
+		m_bParry = true;
+	}
+
 	if (m_pTargetMonster != nullptr)
 	{
-		if (m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
+		if (m_pTargetMonster->Is_Dead() == true ||
+			m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
 			m_pTransformCom->Calc_InRange(XMConvertToRadians(240.f), m_pTargetMonster->Get_TransformCom()) == false)
 			m_pTargetMonster = nullptr;
 	}
@@ -480,6 +544,8 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_PRESENT eQuest = CUI_ClientManager::QUEST_;
 	//CUI_ClientManager::UI_PRESENT eQuestLine = CUI_ClientManager::QUEST_LINE;
 	CUI_ClientManager::UI_PRESENT eInv = CUI_ClientManager::INV_;
+	CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
+
 	////CUI_ClientManager::UI_PRESENT eKarma = CUI_ClientManager::INV_KARMA;
 	////CUI_ClientManager::UI_PRESENT eNumRots = CUI_ClientManager::INV_NUMROTS;
 	////CUI_ClientManager::UI_PRESENT eCrystal = CUI_ClientManager::INV_CRYSTAL;
@@ -505,6 +571,12 @@ void CKena::Late_Tick(_float fTimeDelta)
 		m_pKenaStatus->Plus_CurPIPGuage(0.2f);
 		_float fCurGuage = m_pKenaStatus->Get_CurPIPGuage();
 		m_PlayerDelegator.broadcast(ePip, funcDefault, fCurGuage);
+	}
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+	{
+		CKena* pPlayer = this;
+		m_PlayerPtrDelegator.broadcast(eCart, funcDefault, pPlayer);
 	}
 
 	//	//static _float fTag = 0.0f;
@@ -1647,11 +1719,9 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 				}
 			}
 
-			m_bCommonHit = true;
-			//m_bHeavyHit = true;
-			//m_eDamagedDir = Calc_DirToMonster(vCollisionPos);
-			m_eDamagedDir = Calc_DirToMonster(pTarget);
-			m_pKenaStatus->UnderAttack(((CMonster*)pTarget)->Get_MonsterStatusPtr());
+			m_bParry = true;
+			m_iCurParryFrame = 0;
+			m_pAttackObject = pTarget;
 		}
 
 		if (iColliderIndex == COL_PLAYER_WEAPON)

@@ -2,6 +2,7 @@
 #include "..\public\UI_CanvasItemBar.h"
 #include "GameInstance.h"
 #include "UI_NodeCrystal.h"
+#include "UI_NodeItemBox.h"
 
 CUI_CanvasItemBar::CUI_CanvasItemBar(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice, pContext)
@@ -91,6 +92,7 @@ void CUI_CanvasItemBar::Tick(_float fTimeDelta)
 	_float4 vPos = m_pParent->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	vPos.x += m_matInit._41;
 	vPos.y += m_matInit._42;
+	//vPos.z = 0.9f;
 	m_pTransformCom->Set_Position(vPos);
 
 
@@ -285,21 +287,87 @@ HRESULT CUI_CanvasItemBar::Save_Data()
 
 	return S_OK;
 }
-//
-//HRESULT CUI_CanvasItemBar::Load_Data(wstring fileName)
-//{
-//	return S_OK;
-//}
+HRESULT CUI_CanvasItemBar::Load_Data(wstring fileName)
+{
+	Json	jLoad;
 
-//HRESULT CUI_CanvasItemBar::Save_Data()
-//{
-//	return S_OK;
-//}
-//
-//HRESULT CUI_CanvasItemBar::Load_Data(wstring fileName)
-//{
-//	return S_OK;
-//}
+	wstring name = L"../Bin/Data/UI/";
+	name += fileName;
+	name += L"_Property.json";
+	string filePath;
+	filePath.assign(name.begin(), name.end());
+
+	ifstream file(filePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	jLoad["renderPass"].get_to<_uint>(m_iRenderPass);
+	m_iOriginalRenderPass = m_iRenderPass;
+
+
+	switch (m_tItemDesc.iTextureIndex % 4)
+	{
+	case 0:
+		if (FAILED(Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			L"Prototype_Component_Texture_ItemBG1", m_TextureComTag[TEXTURE_DIFFUSE].c_str(),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+		break;
+	case 1:
+		if (FAILED(Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			L"Prototype_Component_Texture_ItemBG2", m_TextureComTag[TEXTURE_DIFFUSE].c_str(),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+		break;
+	case 2:
+		if (FAILED(Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			L"Prototype_Component_Texture_ItemBG3", m_TextureComTag[TEXTURE_DIFFUSE].c_str(),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+		break;
+	case 3:
+		if (FAILED(Add_Component(CGameInstance::Get_StaticLevelIndex(),
+			L"Prototype_Component_Texture_ItemBG4", m_TextureComTag[TEXTURE_DIFFUSE].c_str(),
+			(CComponent**)&m_pTextureCom[0])))
+			return S_OK;
+		break;
+	}
+
+
+	int i = 0;
+	_float4x4	matWorld;
+	for (float fElement : jLoad["worldMatrix"])
+		memcpy(((float*)&matWorld) + (i++), &fElement, sizeof(float));
+	m_pTransformCom->Set_WorldMatrix_float4x4(matWorld);
+
+
+	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
+
+	return S_OK;
+}
+void CUI_CanvasItemBar::Clicked()
+{
+	m_iTextureIdx = 1;
+	m_vecNode[UI_BOX]->Set_TextureIndex(1);
+	_float3 vScale = m_vOriginalSettingScale;
+	vScale.x *= 1.05f;
+	vScale.y *= 1.05f;
+	m_pTransformCom->Set_Scaled(vScale);
+
+	
+}
+void CUI_CanvasItemBar::BackToNormal()
+{
+	m_iTextureIdx = 0;
+	m_vecNode[UI_BOX]->Set_TextureIndex(0);
+	m_pTransformCom->Set_Scaled(m_vOriginalSettingScale);
+}
+void CUI_CanvasItemBar::Buy(_int iCount)
+{
+	static_cast<CUI_NodeItemBox*>(m_vecNode[UI_BOX])->Set_String(iCount);
+}
 
 CUI_CanvasItemBar * CUI_CanvasItemBar::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

@@ -130,7 +130,13 @@ void CVillageGuard::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_fHitStopTime <= 0.f)
+		m_pModelCom->Play_Animation(fTimeDelta);
+	else
+	{
+		m_fHitStopTime -= fTimeDelta;
+		CUtile::Saturate<_float>(m_fHitStopTime, 0.f, 3.f);
+	}
 }
 
 void CVillageGuard::Late_Tick(_float fTimeDelta)
