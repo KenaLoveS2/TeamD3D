@@ -33,10 +33,10 @@ private:
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
-	_double					Get_AnimationPlayTime();
+	class CKena_Status*	Get_Status() { return m_pKenaStatus; }
+	_double						Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
-	const _uint				Get_AnimationStateIndex() const;
+	const _uint					Get_AnimationStateIndex() const;
 
 	const _bool				Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
@@ -47,16 +47,17 @@ public:
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 
 	const _bool&				Is_StateLock() const{ return m_bStateLock; }
-	void					Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
+	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual HRESULT			Late_Initialize(void* pArg) override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+	virtual HRESULT		Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual HRESULT		RenderReflect() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
@@ -67,12 +68,13 @@ public:
 	virtual void				Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
 public:
+	void						Smooth_Targeting(class CMonster* pMonster);
+
 	//void						Call_FocusIcon(CGameObject* pTarget);
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
 	
 	void Dead_FocusRotIcon(CGameObject* pTarget);
-	void Dead_FocusMonsterIcon(CGameObject *pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
@@ -88,6 +90,7 @@ private:
 	class CRope_RotRock*	m_pRopeRotRock = nullptr;
 	class CRot*				m_pFirstRot = nullptr;
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
+	class CMonster* m_pTargetMonster = nullptr;
 
 private:
 	vector<class CKena_Parts*>				m_vecPart;
@@ -99,6 +102,7 @@ private:
 	/* State variables*/
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
+	_bool						m_bLocalMoveLock = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
 	_float4					m_vDamagedDir;
@@ -112,7 +116,6 @@ private:
 	_bool						m_bPulse = false;
 
 	_float						m_fInertia = 5.f;
-	_float						m_fVelocity = 0.f;
 
 	_bool						m_bOnGround = true;
 	_bool						m_bJump = false;
@@ -136,12 +139,11 @@ private:
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
 
-	/* Target Monster (For. UI and Auto Targeting */
-	CMonster*					m_pTargetMonster;
+	
 
 	/* UI */
-	CUI_RotIcon*				m_pFocusRot;
-	CUI_FocusMonster*			m_pFocusMonster;
+	CUI_RotIcon*				m_pUI_FocusRot;
+	CUI_FocusMonster*		m_pUI_FocusMonster;
 
 private:
 	HRESULT					Ready_Parts();
@@ -150,6 +152,7 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
+	HRESULT					SetUp_ReflectShaderResources();
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
 	void						Update_Collider(_float fTimeDelta);
@@ -163,7 +166,8 @@ private:	/* Animation Event Func */
 	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
+	void						TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
 	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);

@@ -24,18 +24,18 @@
 
 CKena::CKena(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
-	, m_pFocusRot(nullptr)
+	, m_pUI_FocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
+	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
 {
 }
 
 CKena::CKena(const CKena & rhs)
 	: CGameObject(rhs)
-	, m_pFocusRot(nullptr)
+	, m_pUI_FocusRot(nullptr)
 	, m_bStateLock(false)
-	, m_pFocusMonster(nullptr)
+	, m_pUI_FocusMonster(nullptr)
 	, m_pTargetMonster(nullptr)
 {
 }
@@ -281,7 +281,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 
-		_tchar szCloneRotTag[32] = { 0, };
+	_tchar szCloneRotTag[32] = { 0, };
 	for (_int i = 0; i < 8; i++)
 	{
 		CGameObject* p_game_object = nullptr;
@@ -336,7 +336,8 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-#endif
+	// m_pKenaStatus->Set_Attack(30);
+#endif	
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
@@ -369,6 +370,35 @@ void CKena::Tick(_float fTimeDelta)
 	else
 		m_pModelCom->Play_Animation(fTimeDelta);
 
+	if (m_pTargetMonster && m_bAttack)
+	{
+		_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_vector	vTargetPos = m_pTargetMonster->Get_Position();
+		_vector	vDir = vTargetPos - vPos;
+		_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
+
+		if (!m_bJump && !m_bSprint)
+		{
+			if (fDistance > 0.7f)
+			{
+				vTargetPos = vTargetPos + XMVector3Normalize(vDir) * 0.7f;
+				vDir = vTargetPos - vPos;
+
+				m_pTransformCom->Set_Speed(7.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_pTransformCom->Go_Direction(vDir, fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Set_Speed(5.f);
+				m_pTransformCom->LookAt_NoUpDown(vTargetPos);
+				m_bLocalMoveLock = true;
+			}
+		}
+	}
+	else
+		m_bLocalMoveLock = false;
+
 	for (auto& pPart : m_vecPart)
 		pPart->Tick(fTimeDelta);
 
@@ -377,6 +407,11 @@ void CKena::Tick(_float fTimeDelta)
 	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
+
+	if (CGameInstance::GetInstance()->Key_Down(DIK_O))
+		m_pCamera->Camera_Shake(0.003f, 10);
+	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
+		m_pCamera->Camera_Shake(XMVectorSet(1.f, 1.f, 0.f, 0.f), XMConvertToRadians(2.f));
 
 	/* Delegator Arrow */
 	// CKena_Status::m_iCurArrowCount, m_iMaxArrowCount, m_fCurArrowCoolTime, m_fInitArrowCount
@@ -400,6 +435,15 @@ void CKena::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pKenaState->Late_Tick(fTimeDelta);
+
+	if (m_pTargetMonster != nullptr)
+	{
+		if (m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()) > 5.f ||
+			m_pTransformCom->Calc_InRange(XMConvertToRadians(240.f), m_pTargetMonster->Get_TransformCom()) == false)
+			m_pTargetMonster = nullptr;
+	}
+
+	Call_FocusMonsterIcon(m_pTargetMonster);
 
 	/* UI Control */
 	if (CKena_Status::RS_ACTIVE == m_pKenaStatus->Get_RotState())
@@ -555,6 +599,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REFLECT, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -629,6 +674,56 @@ HRESULT CKena::RenderShadow()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+
+	return S_OK;
+}
+
+HRESULT CKena::RenderReflect()
+{
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+
+	FAILED_CHECK_RETURN(SetUp_ReflectShaderResources(), E_FAIL);
+
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		if (i == 1)
+		{
+			// Arm & Leg
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+		}
+		else if (i == 4)
+		{
+			// Eye Render
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
+		}
+		else if (i == 5 || i == 6)
+		{
+			// HEAD
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
+			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
+		}
+		else if (i == 0)
+		{
+			// Render Off
+			continue;
+		}
+		else
+		{
+			// Eye Lash
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
+		}
+	}
 
 	return S_OK;
 }
@@ -853,7 +948,8 @@ HRESULT CKena::Call_EventFunction(const string & strFuncName)
 
 void CKena::Push_EventFunctions()
 {
-	TurnOnFootStep(true, 0.f);
+	TurnOnFootStep_Left(true, 0.f);
+	TurnOnFootStep_Right(true, 0.f);
 	TurnOnAttack(true, 0.f);
 	TurnOffAttack(true, 0.f);
 	TurnOnTrail(true, 0.f);
@@ -867,9 +963,23 @@ void CKena::Push_EventFunctions()
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 {
+	if (m_bLocalMoveLock == true)
+		return;
+
 	_vector	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	vPos = vPos + vDisplacement;
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
+}
+
+void CKena::Smooth_Targeting(CMonster * pMonster)
+{
+	if (m_pTargetMonster != nullptr)
+	{
+		if (m_pTransformCom->Calc_Distance_XZ(pMonster->Get_TransformCom()) < m_pTransformCom->Calc_Distance_XZ(m_pTargetMonster->Get_TransformCom()))
+			m_pTargetMonster = pMonster;
+	}
+	else
+		m_pTargetMonster = pMonster;
 }
 
 //void CKena::Call_FocusIcon(CGameObject * pTarget)
@@ -880,13 +990,13 @@ void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
 
 void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 {
-	if (m_pFocusRot == nullptr)
+	if (m_pUI_FocusRot == nullptr)
 		return;
 
 	/* This Action needs Pip */
 	if (0 == m_pKenaStatus->Get_CurPIPCount())
 	{
-		m_pFocusRot->Set_Pos(nullptr);
+		m_pUI_FocusRot->Set_Pos(nullptr);
 		return;
 	}
 
@@ -916,36 +1026,25 @@ void CKena::Call_FocusRotIcon(CGameObject * pTarget)
 		RELEASE_INSTANCE(CGameInstance);
 	}
 
-	m_pFocusRot->Set_Pos(pTarget);
+	m_pUI_FocusRot->Set_Pos(pTarget);
 }
 
 void CKena::Call_FocusMonsterIcon(CGameObject * pTarget)
 {
-	if (m_pFocusMonster == nullptr)
+	if (m_pUI_FocusMonster == nullptr)
 		return;
-	
-	m_pTargetMonster = static_cast<CMonster*>(pTarget);
-	m_pFocusMonster->Set_Pos(m_pTargetMonster);
+
+	m_pUI_FocusMonster->Set_Pos(m_pTargetMonster);
 
 	if (m_pTargetMonster != pTarget)
-		m_pFocusMonster->Start_Animation();
+		m_pUI_FocusMonster->Start_Animation();
 }
-
 
 void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 {
-	if (m_pFocusRot == nullptr || pTarget) return;
+	if (m_pUI_FocusRot == nullptr || pTarget == nullptr) return;
 
-	m_pFocusRot->Set_Pos(nullptr);
-}
-
-void CKena::Dead_FocusMonsterIcon(CGameObject *pTarget)
-{	
-	if (m_pTargetMonster && m_pFocusMonster && m_pTargetMonster == static_cast<CMonster*>(pTarget))
-	{
-		m_pTargetMonster = nullptr;
-		m_pFocusMonster->Set_Active(false);
-	}
+	m_pUI_FocusRot->Off_Focus(pTarget);
 }
 
 HRESULT CKena::Ready_Parts()
@@ -1001,7 +1100,6 @@ HRESULT CKena::Ready_Arrows()
 		pArrow->Reset();
 		m_vecArrow.push_back(pArrow);
 	}
-
 
 	return S_OK;
 }
@@ -1117,18 +1215,21 @@ HRESULT CKena::SetUp_ShaderResources()
 
 HRESULT CKena::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	return S_OK;
+}
 
-	RELEASE_INSTANCE(CGameInstance);
-
+HRESULT CKena::SetUp_ReflectShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_REFLECTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
 
@@ -1147,7 +1248,7 @@ HRESULT CKena::SetUp_UI()
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_RotFocuss"),
-		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pFocusRot)))
+		L"Clone_RotFocus", nullptr, (CGameObject**)&m_pUI_FocusRot)))
 	{
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
@@ -1155,7 +1256,7 @@ HRESULT CKena::SetUp_UI()
 
 	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_UI",
 		TEXT("Prototype_GameObject_UI_FocusMonster"),
-		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pFocusMonster)))
+		L"Clone_MonsterFocus", nullptr, (CGameObject**)&m_pUI_FocusMonster)))
 	{
 		MSG_BOX("Failed To make UI : Kena");
 		return E_FAIL;
@@ -1311,12 +1412,12 @@ void CKena::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 	m_bTrailON = false;
 }
 
-void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
+void CKena::TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep_Left);
 		return;
 	}
 
@@ -1327,7 +1428,38 @@ void CKena::TurnOnFootStep(_bool bIsInit, _float fTimeDelta)
 			if (Pair.second->Get_Active() == false)
 			{
 				/* ToeDust Update */
-				CBone*	pToeBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+				CBone*   pToeBonePtr = m_pModelCom->Get_BonePtr("kena_lf_toe_jnt");
+				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
+				matWalk.r[3] = matWorldSocket.r[3];
+				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
+				/* ToeDust Update */
+
+				Pair.second->Set_Active(true);
+				break;
+			}
+		}
+	}
+}
+
+void CKena::TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnFootStep_Right);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (dynamic_cast<CE_KenaDust*>(Pair.second))
+		{
+			if (Pair.second->Get_Active() == false)
+			{
+				/* ToeDust Update */
+				CBone*   pToeBonePtr = m_pModelCom->Get_BonePtr("kena_rt_toe_jnt");
 				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();

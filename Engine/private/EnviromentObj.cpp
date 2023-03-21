@@ -156,8 +156,12 @@ void CEnviromentObj::Tick(_float fTimeDelta)
 void CEnviromentObj::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
+#ifdef _DEBUG
+	m_bRenderActive = true;	 // Obj 모두 렌더 테스트용
+#else
 	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
+#endif
+	
 }
 
 HRESULT CEnviromentObj::Render()
@@ -165,6 +169,11 @@ HRESULT CEnviromentObj::Render()
 	__super::Render();
 
 	return S_OK;
+}
+
+void CEnviromentObj::Imgui_RenderProperty()
+{
+	ImGui::Text(CUtile::WstringToString(m_EnviromentDesc.szModelTag).c_str());
 }
 
 void CEnviromentObj::ImGui_ShaderValueProperty()

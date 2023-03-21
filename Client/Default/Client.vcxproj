@@ -249,6 +249,7 @@
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
+    <ClInclude Include="..\public\HatCart.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
@@ -283,6 +284,8 @@
     <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
+    <ClInclude Include="..\public\UI_CanvasHatCart.h" />
+    <ClInclude Include="..\public\UI_CanvasItemBar.h" />
     <ClInclude Include="..\public\UI_CanvasTop.h" />
     <ClInclude Include="..\public\UI_Event_Fade.h" />
     <ClInclude Include="..\public\UI_Event_LoopAct.h" />
@@ -343,6 +346,7 @@
     <ClInclude Include="..\public\UI_NodeCrystal.h" />
     <ClInclude Include="..\public\UI_NodeEffect.h" />
     <ClInclude Include="..\public\UI_NodeConfWindow.h" />
+    <ClInclude Include="..\public\UI_NodeHat.h" />
     <ClInclude Include="..\public\UI_NodeHUDHP.h" />
     <ClInclude Include="..\public\UI_NodeHUDHPBar.h" />
     <ClInclude Include="..\public\UI_NodeHUDPip.h" />
@@ -350,6 +354,7 @@
     <ClInclude Include="..\public\UI_NodeHUDRot.h" />
     <ClInclude Include="..\public\UI_NodeHUDShield.h" />
     <ClInclude Include="..\public\UI_NodeHUDShieldBar.h" />
+    <ClInclude Include="..\public\UI_NodeItemBox.h" />
     <ClInclude Include="..\public\UI_NodeKarma.h" />
     <ClInclude Include="..\public\UI_NodeLetterBox.h" />
     <ClInclude Include="..\public\UI_NodeLvUp.h" />
@@ -359,6 +364,8 @@
     <ClInclude Include="..\public\UI_NodeRotFrontGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotGuage.h" />
     <ClInclude Include="..\public\UI_NodeRotLevel.h" />
+    <ClInclude Include="..\public\UI_NodeScrollBar.h" />
+    <ClInclude Include="..\public\UI_NodeScrollLine.h" />
     <ClInclude Include="..\public\UI_NodeSkill.h" />
     <ClInclude Include="..\public\UI_NodeQuest.h" />
     <ClInclude Include="..\public\UI_NodeSkillCond.h" />
@@ -369,11 +376,13 @@
     <ClInclude Include="..\public\UI_RotIcon.h" />
     <ClInclude Include="..\public\VillageGuard.h" />
     <ClInclude Include="..\Public\Wall.h" />
+    <ClInclude Include="..\public\WaterPlane.h" />
     <ClInclude Include="..\public\WoodKnight.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_NodeHatCartBG.h" />
     <ClInclude Include="UI_NodeRotSkill.h" />
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +460,7 @@
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
+    <ClCompile Include="..\private\HatCart.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
@@ -485,6 +495,8 @@
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
+    <ClCompile Include="..\private\UI_CanvasHatCart.cpp" />
+    <ClCompile Include="..\private\UI_CanvasItemBar.cpp" />
     <ClCompile Include="..\private\UI_CanvasTop.cpp" />
     <ClCompile Include="..\private\UI_Event_Fade.cpp" />
     <ClCompile Include="..\private\UI_Event_LoopAct.cpp" />
@@ -545,6 +557,7 @@
     <ClCompile Include="..\private\UI_NodeCrystal.cpp" />
     <ClCompile Include="..\private\UI_NodeEffect.cpp" />
     <ClCompile Include="..\private\UI_NodeConfWindow.cpp" />
+    <ClCompile Include="..\private\UI_NodeHat.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHP.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDHPBar.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDPip.cpp" />
@@ -552,6 +565,7 @@
     <ClCompile Include="..\private\UI_NodeHUDRot.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShield.cpp" />
     <ClCompile Include="..\private\UI_NodeHUDShieldBar.cpp" />
+    <ClCompile Include="..\private\UI_NodeItemBox.cpp" />
     <ClCompile Include="..\private\UI_NodeKarma.cpp" />
     <ClCompile Include="..\private\UI_NodeLetterBox.cpp" />
     <ClCompile Include="..\private\UI_NodeLvUp.cpp" />
@@ -561,6 +575,8 @@
     <ClCompile Include="..\private\UI_NodeRotFrontGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotGuage.cpp" />
     <ClCompile Include="..\private\UI_NodeRotLevel.cpp" />
+    <ClCompile Include="..\private\UI_NodeScrollBar.cpp" />
+    <ClCompile Include="..\private\UI_NodeScrollLine.cpp" />
     <ClCompile Include="..\private\UI_NodeSkill.cpp" />
     <ClCompile Include="..\private\UI_NodeQuest.cpp" />
     <ClCompile Include="..\private\UI_NodeSkillCond.cpp" />
@@ -571,6 +587,7 @@
     <ClCompile Include="..\private\UI_RotIcon.cpp" />
     <ClCompile Include="..\private\VillageGuard.cpp" />
     <ClCompile Include="..\Private\Wall.cpp" />
+    <ClCompile Include="..\private\WaterPlane.cpp" />
     <ClCompile Include="..\private\WoodKnight.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -579,6 +596,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UI_NodeHatCartBG.cpp" />
     <ClCompile Include="UI_NodeRotSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +628,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

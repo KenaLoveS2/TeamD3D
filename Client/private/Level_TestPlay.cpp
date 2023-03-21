@@ -39,7 +39,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	p_game_instance->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext),true);
 	//p_game_instance->Add_ImguiObject(CImgui_MapEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
-	//p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
+	p_game_instance->Add_ImguiObject(CImgui_UIEditor::Create(m_pDevice, m_pContext));
 	p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 	//p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
@@ -106,10 +106,16 @@ HRESULT CLevel_TestPlay::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Water(TEXT("Layer_Water"))))
+	{
+		MSG_BOX("Layer_Water");
+		return E_FAIL;
+	}
+
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_TESTPLAY)))
 		return E_FAIL;
 
-	CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
+	//CGameInstance::GetInstance()->Play_Sound(L"Test_Bgm_0.wav", 1.f, true, SOUND_BGM);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -199,10 +205,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -214,16 +220,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
-
- 	//for(auto &pGameObject : *pGameInstance->Find_Layer(g_LEVEL, L"Layer_Enviroment")->Get_CloneObjects())
- 	//{
- 	//	if (FAILED(pGameInstance->Add_ShaderValueObject(g_LEVEL, pGameObject.second)))
- 	//		return E_FAIL;
- 	//}
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -327,8 +327,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_Kena"), L"Kena", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_TESTPLAY, pGameObject)))
-		return E_FAIL;
+	CGameInstance::GetInstance()->Set_PlayerPtr(pGameObject);
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -471,6 +470,17 @@ HRESULT CLevel_TestPlay::Ready_Layer_ControlRoom(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_ControlRoom"), L"ControlRoom");
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_TestPlay::Ready_Layer_Water(const _tchar * pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), L"WaterPlane");
 
 	RELEASE_INSTANCE(CGameInstance);
 

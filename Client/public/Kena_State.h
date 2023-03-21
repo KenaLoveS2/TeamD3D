@@ -979,6 +979,7 @@ private:	/* Changer */
 	_bool	NoMouseInput_Right();
 
 	_bool	KeyDown_E();
+	_bool	KeyDown_F();
 	_bool	KeyDown_Q();
 	_bool	KeyDown_R();
 	_bool	KeyDown_Space();

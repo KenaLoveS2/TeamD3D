@@ -760,6 +760,26 @@ _float CTransform::Calc_Distance_YZ(CTransform * pTransform)
 	return XMVectorGetX(XMVector3Length(vPos - vTarget));
 }
 
+_bool CTransform::Calc_InRange(_float fRadian, CTransform * pTargetTransformCom)
+{
+	if (pTargetTransformCom == nullptr)
+		return false;
+
+	_vector	vPos = Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vTargetPos = pTargetTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_vector	vDirToTarget = XMVectorSetY(vTargetPos - vPos, 0.f);
+	_vector	vLook = XMVectorSetY(Get_State(CTransform::STATE_LOOK), 0.f);
+
+	_float		fMinAngle = fRadian * 0.5f;
+	_float		fMaxAngle = XM_2PI - fRadian * 0.5f;
+	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirToTarget), XMVector3Normalize(vLook))));
+
+	if (fAngle < fMinAngle || fAngle > fMaxAngle)
+		return true;
+
+	return false;
+}
+
 _float CTransform::Calc_Pitch()
 {
 	return -asinf(XMVectorGetX(XMVector3Dot(Get_State(STATE_LOOK), XMVectorSet(0.f, 1.f, 0.f, 0.f))));
@@ -769,8 +789,7 @@ void CTransform::Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivot
 {
 	m_pPxActor = m_pPhysX_Manager->Find_StaticActor(pActorTag);
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
-
-	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+		
 	m_bIsStaticPxActor = true;
 
 	m_vPxPivot = vPivotDist;
@@ -780,8 +799,7 @@ void CTransform::Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivo
 {
 	m_pPxActor = m_pPhysX_Manager->Find_DynamicActor(pActorTag);	
 	assert(m_pPxActor != nullptr && "CTransform::Connect_PxActorDynamic");
-
-	PX_USER_DATA* pUserData = (PX_USER_DATA*)m_pPxActor->userData;
+	
 	m_bIsStaticPxActor = false;
 
 	m_vPxPivot = vPivotDist;

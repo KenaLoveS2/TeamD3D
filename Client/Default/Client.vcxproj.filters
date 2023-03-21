@@ -418,26 +418,29 @@
     <Filter Include="02.GameObjects\UI\04. Events\LoopAct">
       <UniqueIdentifier>{2ec1b19d-bca8-41d9-88cc-e1b8d26926d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\HatCart">
+      <UniqueIdentifier>{56394a78-88dc-406e-be02-a27d431a955f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart">
+      <UniqueIdentifier>{6c637236-461b-4548-8770-2cc7b7b944d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item">
+      <UniqueIdentifier>{eb1bd412-1437-4807-b414-4a892d5ed23a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box">
+      <UniqueIdentifier>{b485375a-62eb-4cff-b21f-645fda35bcc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll">
+      <UniqueIdentifier>{7221d68f-5633-4537-9f61-a772c5ec703b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat">
+      <UniqueIdentifier>{94f79582-2010-4f58-835c-9d26aad39e9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround">
+      <UniqueIdentifier>{3013c08a-4191-4a0e-ba41-9c9a81be3554}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Arrow">
       <UniqueIdentifier>{e6831c80-cd5f-4b3f-9349-6cf5dd827b37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Kena\Distortion">
-      <UniqueIdentifier>{d681f9d5-aa9b-41ee-a645-a3c0ef08db09}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Kena\Staff">
-      <UniqueIdentifier>{f4f9b9b1-7869-430b-a1c8-124bb2956cc9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Effect\Mage">
-      <UniqueIdentifier>{a68cb856-5098-4f5a-8128-06175a02f4de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Rot\TeleportRot">
-      <UniqueIdentifier>{f19ebd7c-41f4-4d2e-8356-6664e645d783}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Monster">
-      <UniqueIdentifier>{e9a29500-8826-40c0-ba85-b088f44a6f2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Monster\Sapling">
-      <UniqueIdentifier>{01f4f98a-100f-46f0-a7f4-479123f5841b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -882,8 +885,6 @@
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
-    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
     <ClInclude Include="..\public\E_KenaJump.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClInclude>
@@ -905,6 +906,7 @@
     <ClInclude Include="..\public\UI_Event_Fade.h">
       <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\E_EnemyWispTrail.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
@@ -917,7 +919,6 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\public\DynamicLightCamera.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
@@ -968,7 +969,6 @@
     <ClInclude Include="..\public\E_RotTrail.h">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
@@ -1001,6 +1001,7 @@
     <ClInclude Include="..\public\CameraForRot.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\public\UI_FocusNPC.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
     </ClInclude>
@@ -1013,6 +1014,31 @@
     <ClInclude Include="..\public\UI_FocusMonsterParts.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RotWisp.h" />
+    <ClInclude Include="..\public\HatCart.h">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasHatCart.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeScrollLine.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeItemBox.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeHat.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_NodeHatCartBG.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_CanvasItemBar.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\E_P_SpiritArrow.h">
       <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
     </ClInclude>
@@ -1022,41 +1048,17 @@
     <ClInclude Include="..\public\E_P_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_D_Sphere.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\Distortion</Filter>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SpiritArrow.h">
-      <Filter>02.GameObjects\Player\Weapon\Arrow</Filter>
+    <ClInclude Include="..\public\ControlRoom.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_InteractStaff.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    <ClInclude Include="..\Public\Born_GroundCover.h">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FireBullet.h">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_InteractStaff.h">
-      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_TeleportRot.h">
-      <Filter>02.GameObjects\Effect\Object\Rot\TeleportRot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RotWisp.h">
-      <Filter>02.GameObjects\Monster\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_Sapling.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_Sapling.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_FireBulletCover.h">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_FireBulletCloud.h">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_FireBulletExplosion.h">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1480,8 +1482,6 @@
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
     <ClCompile Include="..\private\E_KenaJump.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClCompile>
@@ -1503,6 +1503,7 @@
     <ClCompile Include="..\private\UI_Event_Fade.cpp">
       <Filter>02.GameObjects\UI\04. Events\Fade</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
@@ -1515,7 +1516,6 @@
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\private\DynamicLightCamera.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
@@ -1566,7 +1566,6 @@
     <ClCompile Include="..\private\E_RotTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
@@ -1599,6 +1598,7 @@
     <ClCompile Include="..\private\CameraForRot.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\FireBullet.cpp" />
     <ClCompile Include="..\private\UI_FocusNPC.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_NPC</Filter>
     </ClCompile>
@@ -1611,6 +1611,31 @@
     <ClCompile Include="..\private\UI_FocusMonsterParts.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Focus_Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RotWisp.cpp" />
+    <ClCompile Include="..\private\HatCart.cpp">
+      <Filter>02.GameObjects\HatCart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasHatCart.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeScrollLine.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeItemBox.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeHat.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item\Hat</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_NodeHatCartBG.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_CanvasItemBar.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\10. HatCart\Item</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp">
       <Filter>02.GameObjects\Effect\Object\Arrow</Filter>
     </ClCompile>
@@ -1620,41 +1645,17 @@
     <ClCompile Include="..\private\E_P_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_D_Sphere.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\Distortion</Filter>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\SpiritArrow.cpp">
-      <Filter>02.GameObjects\Player\Weapon\Arrow</Filter>
+    <ClCompile Include="..\private\ControlRoom.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_InteractStaff.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
+    <ClCompile Include="..\Private\Born_GroundCover.cpp">
+      <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FireBullet.cpp">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_InteractStaff.cpp">
-      <Filter>02.GameObjects\Effect\Object\Kena\Staff</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_TeleportRot.cpp">
-      <Filter>02.GameObjects\Effect\Object\Rot\TeleportRot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RotWisp.cpp">
-      <Filter>02.GameObjects\Monster\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_Sapling.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_Sapling.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Sapling</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_FireBulletCover.cpp">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_FireBulletCloud.cpp">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_FireBulletExplosion.cpp">
-      <Filter>02.GameObjects\Monster\Effect\Mage</Filter>
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1725,14 +1726,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
   </ItemGroup>
 </Project>

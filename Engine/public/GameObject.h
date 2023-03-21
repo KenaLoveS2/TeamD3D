@@ -48,6 +48,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
 	virtual HRESULT RenderShadow();
+	virtual HRESULT RenderReflect();
 
 	/* For Animation */
 	virtual void				Update_Child() {}

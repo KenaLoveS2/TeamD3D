@@ -231,7 +231,6 @@ HRESULT CUI_Canvas::Load_Data(wstring fileName)
 
 	m_vOriginalSettingScale = m_pTransformCom->Get_Scaled();
 
-
 	return S_OK;
 }
 

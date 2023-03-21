@@ -6,57 +6,11 @@ BEGIN(Client)
 class CVillageGuard : public CMonster
 {
 private:
-	enum ANIMATION
-	{
-		BACKWARDSUMMERSAULT,
-		BIND,
-		BLOCK_ATTACK, // 막고 때리기
-		BLOCK_EXIT,
-		BLOCK_HIT,
-		BLOCK_INTO,
-		BLOCK_LOOP,
-		BLOCK_STAGGER,
-		BLOCKROLL_R,
-		DASHATTACK,
-		DEATH,
-		HEAVYSTAGGER_B,
-		HEAVYSTAGGER_F,
-		IDLE,
-		IDLEADDITIVE, // ADDITIVE
-		JUMPATTACK,
-		JUMPBACK,
-		LOOKDOWN,
-		LOOKLEFT,
-		LOOKRIGHT,
-		LOOKUP,
-		PARRIED,
-		ROLL_F,
-		ROLL_L,
-		ROLL_R,
-		ROLLATTACK,
-		RUN,
-		SCATTERBOMB,
-		STAGGER_L,
-		STAGGER_R,
-		STRAFE_L,
-		STRAFE_R,
-		TAUNT1,
-		TAUNT2,
-		TURN_180,
-		TURN_L,
-		TURN_R,
-		TWITCH,
-		TWITCH_L,
-		TWITCH_R,
-		WALK,
-		WALKBACKWARDS,
-		WALLJUMP_ATTACK,
-		WALLJUMP_INTO_R,
-		WALLJUMP_INTO_L,
-		WALLJUMP_ATTACK_L,
-		WISPIN,
-		ANIMATION_END
-	};
+	_float3 m_vPivotTranslation = { 0.f, 0.f, 0.f };
+	_float3 m_vPivotRotation = { 0.f, 0.f, 0.f };
+
+	_float4x4 m_vPivotMatrix;
+	CBone* m_pWeaponBone = nullptr;
 
 private:
 	CVillageGuard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -90,6 +44,62 @@ public:
 	static CVillageGuard*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr)  override;
 	virtual void								Free() override;
+
+
+	virtual void					ImGui_PhysXValueProperty() override;
+	
+private:
+	enum ANIMATION
+	{
+		BACKWARDSUMMERSAULT,
+		BIND,
+		BLOCK_ATTACK, // 막고 때리기
+		BLOCK_EXIT,
+		BLOCK_HIT,
+		BLOCK_INTO,
+		BLOCK_LOOP,
+		BLOCK_STAGGER,
+		BLOCKROLL_R,
+		DASHATTACK, // attack 멀리있는 공격
+		DEATH,
+		HEAVYSTAGGER_B,
+		HEAVYSTAGGER_F,
+		IDLE,
+		IDLEADDITIVE, // ADDITIVE
+		JUMPATTACK, // attack 멀리있는 공격
+		JUMPBACK,
+		LOOKDOWN,
+		LOOKLEFT, 
+		LOOKRIGHT,
+		LOOKUP,
+		PARRIED,
+		ROLL_F,
+		ROLL_L,
+		ROLL_R,
+		ROLLATTACK,
+		RUN,
+		SCATTERBOMB,
+		STAGGER_L,
+		STAGGER_R,
+		STRAFE_L,
+		STRAFE_R,
+		TAUNT1,
+		TAUNT2,
+		TURN_180,
+		TURN_L,
+		TURN_R,
+		TWITCH,
+		TWITCH_L,
+		TWITCH_R,
+		WALK,
+		WALKBACKWARDS,
+		WALLJUMP_ATTACK,
+		WALLJUMP_INTO_R,
+		WALLJUMP_INTO_L,
+		WALLJUMP_ATTACK_L,
+		WISPIN,
+		ANIMATION_END
+	};
 };
 
 END

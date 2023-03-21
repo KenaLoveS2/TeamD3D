@@ -7,7 +7,7 @@
 #include "Kena.h"
 #include "E_KenaHit.h"
 #include "Kena_Status.h"
-
+#include "RotForMonster.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -60,9 +60,9 @@ protected:
 
 public:
 	const _double&			Get_AnimationPlayTime();
-	_fvector						Get_Position();
+	_vector						Get_Position();
 	DESC							Get_Desc() { return m_Desc; };
-	virtual _fvector				Get_FocusPosition();
+	virtual _vector				Get_FocusPosition();
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -120,6 +120,10 @@ protected:
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
 	class CE_KenaHit* m_pKenaHit = nullptr;
 
+	_uint m_iNumMeshes = 0;
+
+	_float m_fKenaDistance = 0.f;
+
 protected:
 	_bool	m_bWeaklyHit = false;
 	_bool	m_bStronglyHit = false;
@@ -132,6 +136,8 @@ protected:
 
 	_float m_fDissolveTime = 0.0f;
 	_float m_fSpawnRange = 8.f;
+
+
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
 	virtual	HRESULT			SetUp_State() PURE;
@@ -151,6 +157,10 @@ public:
 
 	void Set_DeathFlag(_bool bFlag) { m_bDeath = bFlag; }
 	void Set_Dying(_uint iDeathAnimIndex);
+	void Clear_Death();
+
+	void Start_Bind(_uint iBindAnimIndex);
+	void End_Bind();
 };
 
 END

@@ -53,7 +53,8 @@ public:
 	virtual void Tick(_float fTimeDelta);
 	virtual void Late_Tick(_float fTimeDelta);
 	virtual HRESULT Render();
-	virtual 	void ImGui_ShaderValueProperty();
+	virtual void Imgui_RenderProperty() override;
+	virtual void ImGui_ShaderValueProperty();
 	virtual void ImGui_PhysXValueProperty()override;
 
 
