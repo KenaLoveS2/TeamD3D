@@ -958,6 +958,7 @@ void CKena::Push_EventFunctions()
 	TurnOffCharge(true, 0.f);
 	TurnOnPulseJump(true, 0.f);
 	TurnOnHeavyAttack_Into(true, 0.f);
+	TurnOnInteractStaff(true, 0.f);
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1140,6 +1141,11 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaHeavyAttackInto", L"HeavyAttackInto"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("HeavyAttackInto", pEffectBase);
+
+	/* InteractStaff */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"InteractStaff"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("InteractStaff", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -1532,6 +1538,25 @@ void CKena::TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta)
 	/* IntoAttack Update */
 
 	m_mapEffect["HeavyAttackInto"]->Set_Active(true);
+}
+
+void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnInteractStaff);
+		return;
+	}
+
+	CBone*	pStaffBonePtr = m_pModelCom->Get_BonePtr("staff_skin2_jnt");
+	_matrix SocketMatrix = pStaffBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["InteractStaff"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["InteractStaff"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["InteractStaff"]->Set_Active(true);
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

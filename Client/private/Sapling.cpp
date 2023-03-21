@@ -2,6 +2,7 @@
 #include "..\public\Sapling.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "E_Sapling.h"
 
 CSapling::CSapling(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -29,7 +30,8 @@ HRESULT CSapling::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
-	
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
+
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
 	if (pArg != nullptr)
@@ -101,6 +103,8 @@ void CSapling::Tick(_float fTimeDelta)
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (m_pEffects) m_pEffects->Tick(fTimeDelta);
 }
 
 void CSapling::Late_Tick(_float fTimeDelta)
@@ -114,6 +118,8 @@ void CSapling::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
+	if (m_pEffects) m_pEffects->Late_Tick(fTimeDelta);
+
 }
 
 HRESULT CSapling::Render()
@@ -384,6 +390,11 @@ HRESULT CSapling::SetUp_State()
 		m_bRealAttack = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(CHARGEATTACK);
 		m_pModelCom->Set_AnimIndex(CHARGEATTACK);
+
+		/* Effect */
+		m_pEffects->Set_Active(true);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		m_pEffects->Set_Position(vPos);
 	})
 		.OnExit([this]()
 	{
@@ -405,6 +416,11 @@ HRESULT CSapling::SetUp_State()
 		.OnStart([this]()
 	{
 		Set_Dying(WISPOUT);
+
+		/* Effect */
+		m_pEffects->Set_Active(true);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		m_pEffects->Set_Position(vPos);
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
@@ -489,6 +505,20 @@ HRESULT CSapling::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+HRESULT CSapling::SetUp_Effects()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pEffects = dynamic_cast<CE_Sapling*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionSapling", L"Sapling_Effect"));
+	NULL_CHECK_RETURN(m_pEffects, E_FAIL);
+	m_pEffects->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 void CSapling::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
@@ -527,4 +557,6 @@ CGameObject* CSapling::Clone(void* pArg)
 void CSapling::Free()
 {
 	CMonster::Free();
+
+	Safe_Release(m_pEffects);
 }

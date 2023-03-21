@@ -5,6 +5,7 @@
 #include "Rope_RotRock.h"
 #include "CameraForRot.h"
 #include "RotWisp.h"
+#include "E_TeleportRot.h"
 
 #include "Kena.h"
 #include "Kena_Status.h"
@@ -43,6 +44,7 @@ HRESULT CRot::Initialize(void* pArg)
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
 	m_pModelCom->Set_AnimIndex(IDLE);
@@ -134,6 +136,9 @@ void CRot::Tick(_float fTimeDelta)
 		m_pKena->Set_RotWispInteractable(true);
 	}
 
+	if (m_pTeleportRot)
+		m_pTeleportRot->Tick(fTimeDelta);
+
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
@@ -152,6 +157,9 @@ void CRot::Late_Tick(_float fTimeDelta)
 	{
 		m_pRotWisp->Late_Tick(fTimeDelta);
 	}
+
+	if (m_pTeleportRot)
+		m_pTeleportRot->Late_Tick(fTimeDelta);
 }
 
 HRESULT CRot::Render()
@@ -317,6 +325,9 @@ void CRot::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pRotWisp);
+
+	/* Effect */
+	Safe_Release(m_pTeleportRot);
 }
 
 HRESULT CRot::SetUp_State()
@@ -452,6 +463,11 @@ HRESULT CRot::SetUp_State()
 		m_pTransformCom->LookAt(m_vKenaPos);		
 		m_pTransformCom->Set_Position(vTeleportPos);
 
+		/* Effect */
+		m_pTeleportRot->Set_Active(true);
+		m_pTeleportRot->Set_Position(vTeleportPos);
+		/* Effect */
+
 		m_pModelCom->Set_AnimIndex(TELEPORT7);
 	})
 		.AddTransition("FOLLOW_KENA to IDLE ", "IDLE")
@@ -464,6 +480,19 @@ HRESULT CRot::SetUp_State()
 		.Build();
 
 
+	return S_OK;
+}
+
+HRESULT CRot::SetUp_Effects()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	m_pTeleportRot = dynamic_cast<CE_TeleportRot*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_TeleportRot", L"TeleportRot"));
+	NULL_CHECK_RETURN(m_pTeleportRot, E_FAIL);
+//	m_pTeleportRot->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

@@ -162,35 +162,6 @@ _float3 CUtile::Get_RandomVector(const _float3 & fMinValue, const _float3 & fMax
 				   Get_RandomFloat(fMinValue.z, fMaxValue.z));
 }
 
-char * CUtile::SeparateText(char * pCharStr)
-{
-	char flag = 0;
-	char Temp[128] = "";
-
-	while (*pCharStr)
-	{
-		if (*pCharStr == '_')
-			flag++;
-		else if (flag == 2)
-		{
-			for (int i = 0; i < strlen(pCharStr) + 1; ++i)
-			{
-				if (pCharStr[i] == '_' || pCharStr[i] == '\0')
-				{
-					flag = 0;
-					return Temp;
-				}
-				Temp[i] = pCharStr[i];
-			}
-		}
-		else if (flag == 3 && *pCharStr == '_')
-			flag = 0;
-
-		pCharStr++;
-	}
-	return Temp;
-}
-
 _float CUtile::FloatLerp(_float fNum1, _float fNum2, _float fRatio)
 {
 	return fNum1 * (1.f - fRatio) + fNum2 * fRatio;
