@@ -90,7 +90,9 @@ void CPipeLine::Tick()
 {
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_VIEW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_VIEW])));
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_PROJ], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_PROJ])));
+	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_LIGHTVIEW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_LIGHTVIEW])));
 	memcpy(&m_vCamPosition, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[3][0], sizeof(_float4));
+	memcpy(&m_vLightCamPosition, &m_TransformMatrices_Inverse[D3DTS_LIGHTVIEW].m[3][0], sizeof(_float4));
 }
 
 void CPipeLine::Free()

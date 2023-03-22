@@ -39,6 +39,8 @@ public:
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
+	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
+
 
 public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
@@ -56,6 +58,8 @@ private:				/*For.OriginMeshData*/
 	CModel::TYPE						m_eType;
 	_uint								m_iMaterialIndex = 0;  /* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
 	_uint								m_iNumBones = 0; /* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
+	_uint								m_iNumInstance_Origin = 0;
+	
 	vector<class CBone*>				m_Bones;
 	string*								m_pBoneNames = nullptr;
 	VTXMODEL*							m_pNonAnimVertices = nullptr;
@@ -67,6 +71,11 @@ private:		/*for.Lod */
 
 private:		/*For.Instancing*/
 	vector<_float4>						m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
+	
+	
+	
+	
+	
 	_uint								m_iOriginNumPrimitive = 0;			// 기존 NumPrimitive Data
 	_uint								m_iIncreaseInstancingNumber = 0;
 	
@@ -79,7 +88,7 @@ private:
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 private:
 	HRESULT	Set_up_Instancing();
-	
+
 
 public:
 	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 
