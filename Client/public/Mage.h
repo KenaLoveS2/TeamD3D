@@ -99,6 +99,9 @@ private:
 
 	void Summon();
 
+private:	/* Animation Event Func */
+	void	TurnOnFireBullet(_bool bIsInit, _float fTimeDelta);
+
 private:
 	_float	m_fIdletoAttackTime = 0.f;
 

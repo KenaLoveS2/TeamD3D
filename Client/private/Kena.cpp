@@ -8,6 +8,7 @@
 #include "SpiritArrow.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
+#include "E_KenaPulse.h"
 
 #include "GroundMark.h"
 #include "Terrain.h"
@@ -1042,6 +1043,11 @@ void CKena::Push_EventFunctions()
 	TurnOnPulseJump(true, 0.f);
 	TurnOnHeavyAttack_Into(true, 0.f);
 	TurnOnInteractStaff(true, 0.f);
+
+	TurnOnPulseParry(true, 0.f);
+	TurnOnPulseParryHand(true, 0.f);
+	TurnOnPulseParryRange(true, 0.f);
+
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1196,8 +1202,15 @@ HRESULT CKena::Ready_Effects()
 	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaParry", L"KenaPulseParry"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaPulseParry", pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaParryHand", L"KenaPulseParryHand"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaPulseParryHand", pEffectBase);
 
 	/* Damage */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDamage", L"Damage"));
@@ -1229,6 +1242,9 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"InteractStaff"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("InteractStaff", pEffectBase);
+
+	for (auto& pEffects : m_mapEffect)
+		pEffects.second->Set_Parent(this);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -1640,6 +1656,63 @@ void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
 	matIntoAttack.r[3] = matWorldSocket.r[3];
 	m_mapEffect["InteractStaff"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
 	m_mapEffect["InteractStaff"]->Set_Active(true);
+}
+
+void CKena::TurnOnPulseParry(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParry);
+		return;
+	}
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("winterCape_mid4_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulseParry"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulseParry"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulseParry"]->Set_Active(true);
+}
+
+void CKena::TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParryHand);
+		return;
+	}
+
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("lf_hand_socket_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulseParryHand"]->Set_Active(true);
+}
+
+void CKena::TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParryRange);
+		return;
+	}
+	dynamic_cast<CE_KenaPulse*>(m_mapEffect["KenaPulse"])->Set_Type(CE_KenaPulse::PULSE_PARRY);
+
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("lf_hand_socket_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulse"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulse"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulse"]->Set_Active(true);
 }
 
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
