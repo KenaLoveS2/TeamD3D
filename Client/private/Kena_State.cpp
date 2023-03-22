@@ -3586,7 +3586,7 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 
 	m_pKena->m_bPulse = false;
 
-	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_WorldMatrix().r[3]);
+	//m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_WorldMatrix().r[3]);
 
 	m_pKena->m_bParry = false;
 	m_pKena->m_bParryLaunch = true;
@@ -5053,7 +5053,8 @@ _bool CKena_State::HeavyAttack3_Perfect()
 
 _bool CKena_State::Parry()
 {
-	return m_pKena->m_bParry;
+	//return m_pKena->m_bParry;
+	return true;
 }
 
 _bool CKena_State::Damaged_Dir_Front()
