@@ -469,6 +469,9 @@
     <Filter Include="02.GameObjects\Envrioment\Water">
       <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Boss_Warrior">
+      <UniqueIdentifier>{d881050d-c268-4c4d-888d-d1ff10ea224b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1126,6 +1129,12 @@
     <ClInclude Include="..\Public\Born_GroundCover.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossWarrior.h">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior_Hat.h">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1761,6 +1770,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Born_GroundCover.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -121,6 +121,7 @@ public: /* For.PipeLine */
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 		_float4 Get_CamPosition();
 		_float4 Get_LightCamPosition();
+		_float4 Get_LightCamLook();
 
 		_float4		Get_CamRight_Float4();
 		_float4		Get_CamUp_Float4();
