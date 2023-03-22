@@ -472,9 +472,6 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
       <UniqueIdentifier>{01b00c3d-3712-4541-a9cf-fbe68c9e89b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Effect\Object\Etc..">
-      <UniqueIdentifier>{d1c58b83-72ef-482b-87ca-87b9d51ef204}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1141,8 +1138,8 @@
     <ClInclude Include="..\public\E_KenaParryHand.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_Explosion.h">
-      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    <ClInclude Include="..\public\BranchTosser_Tree.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1789,8 +1786,8 @@
     <ClCompile Include="..\private\E_KenaParryHand.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_Explosion.cpp">
-      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

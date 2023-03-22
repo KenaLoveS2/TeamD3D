@@ -2,6 +2,7 @@
 #include "BranchTosser_Weapon.h"
 #include "Bone.h"
 #include "GameInstance.h"
+#include "BranchTosser.h"
 
 CBranchTosser_Weapon::CBranchTosser_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
@@ -26,7 +27,12 @@ HRESULT CBranchTosser_Weapon::Initialize(void* pArg)
 	if (nullptr != pArg)
 		memcpy(&m_WeaponDesc, pArg, sizeof(m_WeaponDesc));
 
-	if (FAILED(__super::Initialize(pArg)))
+	CGameObject::GAMEOBJECTDESC GameObjDesc;
+	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
+	GameObjDesc.TransformDesc.fSpeedPerSec = 3.f;
+	GameObjDesc.TransformDesc.fRotationPerSec = 0.f;
+
+	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
 
 	m_vPivotPos = _float4(0.16f, -0.01f, -1.3f, 0.f);
@@ -37,38 +43,88 @@ HRESULT CBranchTosser_Weapon::Initialize(void* pArg)
 
 HRESULT CBranchTosser_Weapon::Late_Initialize(void* pArg)
 {
+	/**/
+	// ¹«±â
+	{
+		/*
+		CBone* pBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
+		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix =
+			XMMatrixRotationX(vWeaponRotPivot.x)
+			* XMMatrixTranslation(vWeaponPivot.x, vWeaponPivot.y, vWeaponPivot.z)
+			* SocketMatrix;
+
+		_float4x4 pivotMatrix;
+		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);*/
+
+		_float3 vWeaponPivot = _float3(0.2f, -0.1f, -1.4f);
+		_float3 vWeaponScalePivot = _float3(0.07f, 0.5f, 0.1f);
+		_float3 vWeaponRotPivot = _float3(0.8f, 0.1f, 0.5f);
+
+
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = vWeaponScalePivot.x;
+		PxCapsuleDesc.fHalfHeight = vWeaponScalePivot.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, -1.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 1.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(m_pBranchTosser, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(PxCapsuleDesc.pActortag, g_IdentityFloat4x4);		
+	}
+
 	return S_OK;
 }
 
 void CBranchTosser_Weapon::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bGoStraight)
+	{
+		
+	}
+	else
+	{
+		_matrix SocketMatrix =
+			m_WeaponDesc.pSocket->Get_OffsetMatrix() *
+			m_WeaponDesc.pSocket->Get_CombindMatrix() *
+			XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
+
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		SocketMatrix = 
+			XMMatrixRotationX(m_vPivotRot.x) * XMMatrixRotationY(m_vPivotRot.y) * XMMatrixRotationZ(m_vPivotRot.z)
+			*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z)
+			* SocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
+
+		XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
+	}
+
+	m_pTransformCom->Update_AllCollider(m_SocketMatrix);
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBranchTosser_Weapon::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix			SocketMatrix =
-		m_WeaponDesc.pSocket->Get_OffsetMatrix() *
-		m_WeaponDesc.pSocket->Get_CombindMatrix() *
-		XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
-
-	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-	SocketMatrix =
-		XMMatrixRotationX(m_vPivotRot.x)
-		* XMMatrixRotationY(m_vPivotRot.y)
-		* XMMatrixRotationZ(m_vPivotRot.z)
-		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z)
-		* SocketMatrix
-		* m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
-
-	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
-
-	if (nullptr != m_pRendererCom)
+	if (m_pRendererCom)
 	{
 		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -87,9 +143,13 @@ HRESULT CBranchTosser_Weapon::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr,1);
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture")))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture")))
+			return E_FAIL;
+		
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderPass);
 	}
 
 	return S_OK;
@@ -162,6 +222,11 @@ HRESULT CBranchTosser_Weapon::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
+	/* For.Com_Dissolve_Texture */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Dissolve"), TEXT("Com_Dissolve_Texture"),
+		(CComponent**)&m_pDissolveTextureCom)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -206,6 +271,15 @@ HRESULT CBranchTosser_Weapon::SetUp_ShadowShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
 		return E_FAIL;
 
+	_bool bDissolve = m_iShaderPass == 5;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)), E_FAIL);
+	if (bDissolve)
+	{	
+		_float fDissolveTime = m_pBranchTosser->Get_DissolveTime();
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &fDissolveTime, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	}
+
 	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
@@ -238,4 +312,6 @@ CGameObject* CBranchTosser_Weapon::Clone(void* pArg)
 void CBranchTosser_Weapon::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pDissolveTextureCom);
 }

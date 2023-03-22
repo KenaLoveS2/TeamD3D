@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "..\public\BranchTosser.h"
 #include "GameInstance.h"
-#include "Bone.h"
 #include "BranchTosser_Weapon.h"
+#include "BranchTosser_Tree.h"
 
 CBranchTosser::CBranchTosser(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -27,18 +27,25 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
-
 	if (pArg != nullptr)
 		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
 	else
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = -8.f;
+		m_Desc.WorldMatrix._43 = -8.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+	m_pWeaponBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
+
 	return S_OK;
 }
 
@@ -68,80 +75,45 @@ HRESULT CBranchTosser::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
-
-		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pRendererCom->Set_PhysXRender(true);
-		m_pTransformCom->Set_PxPivotScale(vPivotScale);
-		m_pTransformCom->Set_PxPivot(vPivotPos);
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER));
+		_float4x4 Temp;
+		XMStoreFloat4x4(&Temp, XMMatrixTranslation(0.f, 0.5f, 0.f));
+		m_pTransformCom->Add_Collider(m_szCloneObjectTag, Temp);
 	}
+	
+	_float4 vPos = { m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f };
+	m_pTree->Set_Position(vPos);
+	m_pTree->Late_Initialize(nullptr);
 
-	// 무기
-	{
-		wstring WeaponPivot;
-		m_vecColliderName.push_back(WeaponPivot);
-		_float3 vWeaponPivot = _float3(0.2f, -0.1f, -1.4f);
-		m_vecPivot.push_back(vWeaponPivot);
-		_float3 vWeaponScalePivot = _float3(0.07f, 0.5f, 0.1f);
-		m_vecPivotScale.push_back(vWeaponScalePivot);
-		_float3 vWeaponRotPivot = _float3(0.8f, 0.1f, 0.5f);
-		m_vecPivotRot.push_back(vWeaponRotPivot);
+	m_Desc.WorldMatrix._41 += 0.2f;
+	m_Desc.WorldMatrix._42 += 3.2f;
+	m_Desc.WorldMatrix._43 += 0.2f;
 
-		m_vecColliderName[COLL_WEAPON] = m_szCloneObjectTag;
-		m_vecColliderName[COLL_WEAPON] += L"Weapon";
-
-		CBone* pBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
-		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-		SocketMatrix =
-			XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x)
-			* XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
-			* SocketMatrix;
-
-		_float4x4 pivotMatrix;
-		XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
-
-		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
-		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
-		PxCapsuleDesc.pActortag = m_vecColliderName[COLL_WEAPON].c_str();
-		PxCapsuleDesc.vPos = _float3(0.f, 5.f, 0.f);
-		PxCapsuleDesc.fRadius = m_vecPivotScale[COLL_WEAPON].x;
-		PxCapsuleDesc.fHalfHeight = m_vecPivotScale[COLL_WEAPON].y;
-		PxCapsuleDesc.vVelocity = _float3(0.f, -1.f, 0.f);
-		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 1.f;
-		PxCapsuleDesc.fDynamicFriction = 0.5f;
-		PxCapsuleDesc.fStaticFriction = 0.5f;
-		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
-
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
-
-		m_pTransformCom->Add_Collider(m_vecColliderName[COLL_WEAPON].c_str(), pivotMatrix);
-		m_pRendererCom->Set_PhysXRender(true);
-	}
+	m_pModelCom->Set_DurationRate(ATTACK, 0.6f);
+	m_pModelCom->Set_DurationRate(DEATH, 3.f);
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+	m_pEnemyWisp->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f));
 
 	return S_OK;
 }
 
 void CBranchTosser::Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 
-	m_pWeapon->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	m_pTransformCom->LookAt(m_vKenaPos);
+
+	for(_uint i=0; i<BRANCH_TOSSER_WEAPON_COUNT; i++)
+		m_pWeapon[i]->Tick(fTimeDelta);
+
+	m_pTree->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -150,15 +122,18 @@ void CBranchTosser::Tick(_float fTimeDelta)
 
 void CBranchTosser::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDeath) return;
+
 	CMonster::Late_Tick(fTimeDelta);
 
-	m_pWeapon->Late_Tick(fTimeDelta);
+	for (_uint i = 0; i<BRANCH_TOSSER_WEAPON_COUNT; i++)
+		m_pWeapon[i]->Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
-	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pTree->Late_Tick(fTimeDelta);
 
+	if (m_pRendererCom && m_bSpawn)
+	{	
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -169,9 +144,7 @@ HRESULT CBranchTosser::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -185,15 +158,10 @@ HRESULT CBranchTosser::Render()
 
 HRESULT CBranchTosser::RenderShadow()
 {
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
@@ -202,7 +170,7 @@ HRESULT CBranchTosser::RenderShadow()
 void CBranchTosser::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
-	m_pWeapon->Imgui_RenderProperty();
+	// m_pWeapon->Imgui_RenderProperty();
 }
 
 void CBranchTosser::ImGui_AnimationProperty()
@@ -311,46 +279,32 @@ HRESULT CBranchTosser::SetUp_State()
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("NONE")
 		.AddState("NONE")
-		.Tick([this](_float fTimeDelta)
+		.OnExit([this]()
 	{
+		m_pEnemyWisp->IsActiveState();
 	})
-		.AddTransition("NONE to DROP" , "DROP")
+		.AddTransition("NONE to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return true;
+		m_fSpawnRange = 7.f;
+		return DistanceTrigger(m_fSpawnRange);
 	})
 
-		.AddState("DROP")
-		.OnStart([this]()
-	{
-		m_iDropType = rand() % 3;
-		if (m_iDropType == DROP_1)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(L_DROP1);
-			m_pModelCom->Set_AnimIndex(L_DROP1);
-		}
-		else if (m_iDropType == DROP_2)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(L_DROP2);
-			m_pModelCom->Set_AnimIndex(L_DROP2);
-		}
-		else if (m_iDropType == DROP_3)
-		{
-			m_pModelCom->ResetAnimIdx_PlayTime(L_DROP3);
-			m_pModelCom->Set_AnimIndex(L_DROP3);
-		}
+		.AddState("READY_SPAWN")
+		.OnExit([this]()
+	{	
+		m_bSpawn = true;
+		m_pUIHPBar->Set_Active(true);
 	})
-		.AddTransition("DROP TO IDLE", "IDLE")
+		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(L_DROP1) ||
-			AnimFinishChecker(L_DROP2) ||
-			AnimFinishChecker(L_DROP3);
+		return m_pEnemyWisp->IsActiveState();
 	})
 
 		.AddState("IDLE")
 		.OnStart([this]()
-	{
+	{		
 		m_fIdleToAttack = 0.f;
 	})
 		.Tick([this](_float fTimeDelta)
@@ -358,66 +312,153 @@ HRESULT CBranchTosser::SetUp_State()
 		m_fIdleToAttack += fTimeDelta;
 		m_pModelCom->Set_AnimIndex(IDLE);
 	})
-		.AddTransition("IDLE to ATTACK", "ATTACK")
+		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_fIdleToAttack >= 3.f;
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("IDLE to ATTACK", "TAUNT")
+		.Predicator([this]()
+	{
+		return m_iAttackCount >= BRANCH_TOSSER_WEAPON_COUNT;
+	})
+		.AddTransition("IDLE to ATTACK", "ATTACK")
+		.Predicator([this]()
+	{	
+		return m_fIdleToAttack >= 1.5f && m_iAttackCount < BRANCH_TOSSER_WEAPON_COUNT;
+	})
+		
+
+		.AddState("ATTACK")
+		.OnStart([this]()
+	{	
+		m_pWeapon[m_iAttackCount]->Set_GoStraight(false);
+		m_bRealAttack = true;
+		m_pModelCom->ResetAnimIdx_PlayTime(ATTACK);
+		m_pModelCom->Set_AnimIndex(ATTACK);
+	})		
+		.OnExit([this]()
+	{
+		m_pWeapon[m_iAttackCount++]->Set_GoStraight(true);
+		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
-
-		.AddState("ATTACK")
-		.OnStart([this]()
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(ATTACK);
-		m_pModelCom->Set_AnimIndex(ATTACK);
+		return IsParried();
 	})
-		.AddTransition("ATTACK to FLEE", "FLEE")
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ATTACK);
 	})
-		.AddTransition("To DYING", "DYING")
-		.Predicator([this]()
-	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-
-		.AddState("FLEE")
+		
+		.AddState("TAUNT")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(FLEETONEW);
-		m_pModelCom->Set_AnimIndex(FLEETONEW);
-	})
-		.AddTransition("FLEE to DROP", "DROP")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(FLEETONEW);
+		m_iAttackCount = 0;		
+		m_pModelCom->ResetAnimIdx_PlayTime(TAUNT4);
+		m_pModelCom->Set_AnimIndex(TAUNT4);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("To BIND", "BIND")
+		.Predicator([this]()
+	{
+		return m_bBind;
+	})
+		.AddTransition("TAUNT to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(TAUNT4);
+	})
 
+		.AddState("PARRIED")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(TAKEDAMAGE);
+		m_pModelCom->Set_AnimIndex(TAKEDAMAGE);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("PARRIED to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(TAKEDAMAGE);
+	})
+
+
+		.AddState("BIND")
+		.OnStart([this]()
+	{
+		Start_Bind(BIND);
+	})
+		.OnExit([this]()
+	{	
+		End_Bind();
+	})
+		.AddTransition("BIND to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BIND);
+	})
+
+		
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		m_pModelCom->Set_AnimIndex(DEATH);
-		m_bDying = true;
+		Set_Dying(DEATH);		
+		
+		m_pTree->Set_ShaderPassIndex(5);
+		m_pTree->Clear();
+
+		for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
+		{
+			m_pWeapon[i]->Set_ShaderPassIndex(5);
+			m_pWeapon[i]->Clear();
+		}			
 	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_pModelCom->Get_AnimationFinish();
+		return AnimFinishChecker(DEATH);
 	})
 		.AddState("DEATH")
 		.OnStart([this]()
 	{		
 		Clear_Death();
+	
 	})		
 		.Build();
 
@@ -426,19 +467,14 @@ HRESULT CBranchTosser::SetUp_State()
 
 HRESULT CBranchTosser::SetUp_Components()
 {
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
-
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimMonsterModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	__super::SetUp_Components();
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_BranchTosser", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BranshTosser.json");
-
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, L"../Bin/Resources/Anim/Enemy/BranchTosser/bt_AO_R_M_1k.png");
 		m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, L"../Bin/Resources/Anim/Enemy/BranchTosser/bt_EMISSIVE_1k.png");
@@ -455,11 +491,20 @@ HRESULT CBranchTosser::SetUp_Components()
 	Safe_AddRef(WeaponDesc.pSocket);
 	Safe_AddRef(m_pTransformCom);
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-	m_pWeapon = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), L"BranchTosserWeapon",&WeaponDesc);
-	assert(m_pWeapon && "BranchTosser Weapon is nullptr");
-	RELEASE_INSTANCE(CGameInstance)
-			
+	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
+	{
+		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), 
+			CUtile::Create_DummyString(L"BranchTosserWeapon", i), &WeaponDesc);
+
+		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");
+		m_pWeapon[i]->Set_OwnerBranchTosser(this);
+		m_pWeapon[i]->Late_Initialize(nullptr);
+	}
+				
+	m_pTree = (CBranchTosser_Tree*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserTree"), L"BranchTosserTree");
+	assert(m_pTree && "BranchTosser Tree is nullptr");
+	m_pTree->Set_OwnerBranchTosser(this);
+
 	return S_OK;
 }
 
@@ -468,10 +513,11 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
 	m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
@@ -479,20 +525,10 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 
 HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	if (nullptr == m_pShaderCom) return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
 
 	return S_OK;
 }
@@ -500,23 +536,6 @@ HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 void CBranchTosser::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
-	{
-		CBone* pBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
-		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-		SocketMatrix = XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x)
-			* XMMatrixRotationY(m_vecPivotRot[COLL_WEAPON].y)
-			* XMMatrixRotationZ(m_vecPivotRot[COLL_WEAPON].z)
-			*XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
-			* SocketMatrix;
-
-		_float4x4 mat;
-		XMStoreFloat4x4(&mat, SocketMatrix);
-		m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
-	}
 }
 
 void CBranchTosser::AdditiveAnim(_float fTimeDelta)
@@ -557,5 +576,9 @@ CGameObject* CBranchTosser::Clone(void* pArg)
 void CBranchTosser::Free()
 {
 	CMonster::Free();
-	Safe_Release(m_pWeapon);
+
+	for (_uint i = 0; i < BRANCH_TOSSER_WEAPON_COUNT; i++)
+		Safe_Release(m_pWeapon[i]);
+	
+	Safe_Release(m_pTree);
 }
