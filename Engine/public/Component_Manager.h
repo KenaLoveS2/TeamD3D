@@ -15,6 +15,7 @@
 #include "VIBuffer_Rect_Instancing.h"
 #include "VIBuffer_Point_Instancing.h"
 #include "VIBuffer_Trail.h"
+#include "VIBuffer_Point_Instancing_S2.h"
 #include "StateMachine.h"
 #include "Status.h"
 

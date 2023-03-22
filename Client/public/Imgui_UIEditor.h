@@ -21,6 +21,7 @@ public:
 private:
 	HRESULT Ready_CloneCanvasList();
 	void	EventList();
+	void	Particle_Tool();
 
 private:
 	vector<CUI_Canvas*>				m_vecCanvas;

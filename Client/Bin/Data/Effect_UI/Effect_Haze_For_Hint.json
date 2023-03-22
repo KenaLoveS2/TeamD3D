@@ -1,0 +1,16 @@
+{
+    "__comment1" : "Effect_Object_Variable",
+    "1. TextureIndex"  : 0,
+    "2. RenderPass"    : 0,
+    "3. Color"         : [1.0, 1.0, 1.0, 1.0],
+
+    "__comment2" : "PointBuffer_Variable",
+    "4. Type"          : 0,
+    "5. NumInstance"   : 50,
+    "6. Term"          : 10.0,
+    "7. PSize"         : [ 0.1, 0.1],
+    "8. SpeedMin"      : [-0.1, 0.1, -0.1],
+    "9. SpeedMax"      : [0.1,0.5,0.1],
+    "10. minPos"       : [-3.0, 0.0, -3.0],
+    "11. maxPos"       : [3.0, 0.0, 3.0]
+}

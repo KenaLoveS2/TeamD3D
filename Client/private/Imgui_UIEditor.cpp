@@ -47,57 +47,62 @@ bool	Editor_Getter(void* data, int index, const char** output)
 }
 void CImgui_UIEditor::Imgui_FreeRender()
 {
-	//if (Begin("UI Editor"))
+	Text("<Canvas>");
+
+	/* Type */
+	if (CollapsingHeader("Type"))
 	{
-		Text("<Canvas>");
+		static int selected_canvasType = 0;
 
-		/* Type */
-		if (CollapsingHeader("Type"))
+		CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+		vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+		vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+		vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+
+		RELEASE_INSTANCE(CGameInstance);
+
+		_uint iNumItems = (_uint)pCanvasProtoTags->size();
+		if (ListBox(" : Type", &selected_canvasType, Editor_Getter, pCanvasNames, iNumItems, iNumItems))
 		{
-			static int selected_canvasType = 0;
-
-			CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
-			vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
-			vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
-			vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
-
-			RELEASE_INSTANCE(CGameInstance);
-
-			_uint iNumItems = (_uint)pCanvasProtoTags->size();
-			if (ListBox(" : Type", &selected_canvasType, Editor_Getter, pCanvasNames, iNumItems, iNumItems))
+			/* Create a Object of the selected type if it doesn't exist. */
+			if (m_vecCanvas[selected_canvasType] == nullptr)
 			{
-				/* Create a Object of the selected type if it doesn't exist. */
-				if (m_vecCanvas[selected_canvasType] == nullptr)
+				CUI::tagUIDesc tDesc;
+				tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
+				if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+					(*pCanvasProtoTags)[selected_canvasType].c_str(),
+					(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
+					MSG_BOX("Failed To Clone Canvas : UIEditor");
+
+				if (m_pCanvas != nullptr)
 				{
-					CUI::tagUIDesc tDesc;
-					tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
-					if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
-						(*pCanvasProtoTags)[selected_canvasType].c_str(),
-						(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
-						MSG_BOX("Failed To Clone Canvas : UIEditor");
-
-					if (m_pCanvas != nullptr)
-					{
-						m_vecCanvas[selected_canvasType] = m_pCanvas;
-						CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)selected_canvasType, m_pCanvas);
-					}
+					m_vecCanvas[selected_canvasType] = m_pCanvas;
+					CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)selected_canvasType, m_pCanvas);
 				}
-				else
-					m_pCanvas = m_vecCanvas[selected_canvasType];
 			}
+			else
+				m_pCanvas = m_vecCanvas[selected_canvasType];
 		}
-
-		if (m_pCanvas == nullptr)
-			goto Exit;
-
-		m_pCanvas->Imgui_RenderProperty();
-
-		/* For. Add Event To UIs */
-		EventList();
-
-	Exit:
-		End();
 	}
+
+	if (m_pCanvas == nullptr)
+		goto Exit;
+
+	m_pCanvas->Imgui_RenderProperty();
+
+	/* For. Add Event To UIs */
+	EventList();
+
+
+Exit:
+	Text("<3D UI(Effect)>");
+	if (CollapsingHeader("Effect_Particle Control"))
+	{
+		Particle_Tool();
+	}
+
+	End();
+
 }
 
 HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
@@ -155,6 +160,18 @@ void CImgui_UIEditor::EventList()
 
 	if (Button("DeleteEvent"))
 		m_pUI->Delete_Event();
+
+}
+
+void CImgui_UIEditor::Particle_Tool()
+{
+	/* test */
+	CGameObject* pEffect = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_3DUI", L"Clone_EffectParticleBase");
+
+	if (pEffect == nullptr)
+		return;
+
+	pEffect->Imgui_RenderProperty();
 
 }
 

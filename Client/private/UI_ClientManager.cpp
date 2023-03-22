@@ -497,7 +497,6 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG4"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_4_%d.png"), 2))))
-		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG4");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HatIconBox"),
