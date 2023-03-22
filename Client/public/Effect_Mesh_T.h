@@ -38,9 +38,16 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
+public:
+	void	Set_Dissolve(_bool bDissolve) { m_bDissolve = bDissolve; }
+	void	Set_DissolveTime(_float fTime) { m_fDissolveTime = fTime; }
+
 private:
 	_float           m_fTimeDelta = 0.0f;
 	_float           m_fDistotionTime = 0.0f;
+
+	_float			m_fDissolveTime = 0.0f;
+	_bool			m_bDissolve = false;
 
 public:
 	static  CEffect_Mesh_T* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

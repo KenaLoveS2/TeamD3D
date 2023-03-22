@@ -12,8 +12,9 @@ class CRotBomb final : public CEffect_Mesh
 public:
 	enum BOMBSTATE { BOMB_CHARGE, BOMB_READY, BOMB_RELEASE, BOMB_LAND, BOMB_BOOM, BOMBSTATE_END };
 	enum ANIMATION { CHARGE, CHARGE_LOOP, INJECT, LAND, LAND_LOOP, LAND_RUMBLE_ADD, REFPOSE, ANIMATION_END };
+	enum CHILD_TYPE { CHILD_COVER, CHILD_PARTICLE, CHILD_END };
 
-private:
+public:
 	CRotBomb(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CRotBomb(const CRotBomb& rhs);
 	virtual ~CRotBomb() = default;
