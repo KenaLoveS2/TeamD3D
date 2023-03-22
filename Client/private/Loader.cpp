@@ -33,6 +33,7 @@
 #include "WoodKnight.h"
 #include "BranchTosser.h"
 #include "BranchTosser_Weapon.h"
+#include "BranchTosser_Tree.h"
 #include "ShieldStick.h"
 #include "ShieldStick_Weapon.h"
 #include "Sapling.h"
@@ -120,6 +121,18 @@
 #include "E_P_KenaHit.h"
 #include "E_P_SpiritArrow.h"
 #include "E_SpiritArrowTrail.h"
+#include "E_D_Sphere.h"
+#include "E_InteractStaff.h"
+#include "E_P_InteractStaff.h"
+#include "E_TeleportRot.h"
+#include "E_Sapling.h"
+#include "E_P_Sapling.h"
+#include "E_FireBulletCover.h"
+#include "E_FireBulletCloud.h"
+#include "E_FireBulletExplosion.h"
+#include "E_KenaParry.h"
+#include "E_KenaParryHand.h"
+#include "E_RotBombExplosion.h"
 /* ~Effects */
 
 /* Components*/
@@ -137,15 +150,8 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_D_Sphere.h"
-#include "E_InteractStaff.h"
-#include "E_P_InteractStaff.h"
-#include "E_TeleportRot.h"
-#include "E_Sapling.h"
-#include "E_P_Sapling.h"
-#include "E_FireBulletCover.h"
-#include "E_FireBulletCloud.h"
-#include "E_FireBulletExplosion.h"
+#include "E_P_Explosion.h"
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1457,7 +1463,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix)), E_FAIL);
 
 	/* Prototype_Component_Model_Rot_Bomb */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot_Bomb", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Rot Bomb/Rot_Bomb.mdat", PivotMatrix)), E_FAIL);
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot_Bomb", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Rot Bomb/Rot_Bomb.model", PivotMatrix)), E_FAIL);
 
 	/* Prototype_Component_Model_Spirit_Arrow */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Spirit_Arrow", false, false, false), E_FAIL);
@@ -1565,9 +1571,15 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_Rope_Rock
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rope_RotRock", true, false, true))) return E_FAIL;
 
-	// Prototype_Component_Model_BranchTosser_Projectile
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Enemy/BranchTosser", true, false, false))) return E_FAIL;
+	// Prototype_Component_Model_BranchTosser_Projectile	
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser_Projectile",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_Component_Model_BranchTosser_Tree
+	_matrix TempMatrix = XMMatrixScaling(0.1f, 0.05f, 0.1f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser_Tree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), TempMatrix)))) return E_FAIL;
+	
 	// Prototype_Component_Model_HeroRot
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_HeroRot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix)))) return E_FAIL;
@@ -1614,8 +1626,11 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_BranchTosser
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"), CBranchTosser::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
-	// Prototype_GameObject_Mage
+	// Prototype_GameObject_BranchTosserWeapon
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"), CBranchTosser_Weapon::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	
+	// Prototype_GameObject_BranchTosserWeapon
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserTree"), CBranchTosser_Tree::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	// Prototype_GameObject_ShieldStick
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"), CShieldStick::Create(m_pDevice, m_pContext)))) return E_FAIL;
@@ -1931,6 +1946,26 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_FireBulletExplosion */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBulletExplosion"),
 		CE_FireBulletExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_FireBulletExplosion.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaParry"),
+		CE_KenaParry::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/PulseParry/E_PulseParrySet.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FireBulletExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_KenaParryHand"),
+		CE_KenaParryHand::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/PulseParry/E_PulseParryHand.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_RotBombExplosion */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotBombExplosion"),
+		CE_RotBombExplosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_RotBombExplosion.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Explosion_p */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Explosion_p"),
+		CE_P_Explosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Explosion.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

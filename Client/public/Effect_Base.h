@@ -137,6 +137,7 @@ public:
 	void	ResetSprite(){
 		m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 		m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+		m_bFinishSprite = false;
 	}
 	void SetSprite(_float2 InitSprit) {
 		m_fInitSpriteCnt = InitSprit;
@@ -145,8 +146,8 @@ public:
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
 	_int    Get_TotalMTextureCnt() { return m_iTotalMTextureComCnt; }
-	void    Set_TotalDTextureCnt(_int iTextureCnt) { m_iTotalDTextureComCnt =iTextureCnt; }
-	void    Set_TotalMTextureCnt(_int iTextureCnt) { m_iTotalMTextureComCnt =iTextureCnt; }
+	void    Set_TotalDTextureCnt(_int iTextureCnt) { m_iTotalDTextureComCnt = iTextureCnt; }
+	void    Set_TotalMTextureCnt(_int iTextureCnt) { m_iTotalMTextureComCnt = iTextureCnt; }
 
 public:
 	_bool   Get_HaveTrail() { return m_eEFfectDesc.IsTrail; }
@@ -225,6 +226,7 @@ protected:
 	_bool  m_bLerp = false;
 	/* FreeMoving */
 
+	_bool  m_bFinishSprite = false;
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
 
 public:

@@ -469,8 +469,8 @@
     <Filter Include="02.GameObjects\Envrioment\Water">
       <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Boss_Warrior">
-      <UniqueIdentifier>{d881050d-c268-4c4d-888d-d1ff10ea224b}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
+      <UniqueIdentifier>{01b00c3d-3712-4541-a9cf-fbe68c9e89b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1129,11 +1129,17 @@
     <ClInclude Include="..\Public\Born_GroundCover.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossWarrior.h">
-      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    <ClInclude Include="..\public\E_RotBombExplosion.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossWarrior_Hat.h">
-      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    <ClInclude Include="..\public\E_KenaParry.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaParryHand.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BranchTosser_Tree.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1771,11 +1777,17 @@
     <ClCompile Include="..\Private\Born_GroundCover.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossWarrior.cpp">
-      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    <ClCompile Include="..\private\E_RotBombExplosion.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
-      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    <ClCompile Include="..\private\E_KenaParry.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParryHand.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

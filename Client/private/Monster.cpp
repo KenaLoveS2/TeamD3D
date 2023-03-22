@@ -13,12 +13,15 @@ _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
 	, m_pUIHPBar(nullptr)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
+	
 }
 
 CMonster::CMonster(const CMonster & rhs)
 	: CGameObject(rhs)
 	, m_pUIHPBar(nullptr)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 
@@ -396,7 +399,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
 				m_pKena->Add_HitStopTime(0.15f);
 				m_fHitStopTime += 0.15f;
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+			//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
@@ -410,7 +413,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
+				//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians/(30.f));
 				}
 			}
 		}

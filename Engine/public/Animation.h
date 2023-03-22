@@ -88,6 +88,8 @@ public:
 	virtual void Free() override;
 	HRESULT SetUp_ChannelsBonePtr(CModel* pModel);
 	HRESULT Synchronization_ChannelsBonePtr(CModel* pModel, const string& strRootNodeName);
+
+	void Set_DurationRate(_float fRate);
 };
 
 END

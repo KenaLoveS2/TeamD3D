@@ -413,7 +413,6 @@ HRESULT CRot::SetUp_State()
 		return bCuteAnimFinish;
 	})
 		
-
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
@@ -426,6 +425,7 @@ HRESULT CRot::SetUp_State()
 		.AddTransition("IDLE to FOLLOW_KENA ", "FOLLOW_KENA")
 		.Predicator([this]()
 	{
+		m_pTeleportRot->Set_Active(false);
 		return !m_pTransformCom->IsClosed_XZ(m_vKenaPos, m_fKenaToRotDistance);
 	})
 		
