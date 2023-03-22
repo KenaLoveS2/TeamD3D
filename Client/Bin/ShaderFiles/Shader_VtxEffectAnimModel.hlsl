@@ -11,6 +11,12 @@ float4 g_WorldCamPosition;
 
 texture2D		g_DepthTexture, g_NormalTexture;
 
+/* RotBomb*/
+texture2D		g_AO_R_MTexture;
+texture2D		g_NoiseTexture;
+texture2D		g_CloudTexture;
+/* RotBomb*/
+
 /* EnemyWisp Texture */
 texture2D		g_DiffuseTexture;
 texture2D		g_ReamTexture;
@@ -180,6 +186,73 @@ PS_OUT PS_EFFECT_ENEMYWISP(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
+
+	//if (0.1f > vDiffuse.a)
+	//	discard;
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = vAO_R_MDesc;
+
+	return Out;
+}//1
+
+//PS_MAIN_ROTBOMBCOVER
+PS_OUT PS_MAIN_ROTBOMBCOVER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vCloud = g_CloudTexture.Sample(LinearSampler, In.vTexUV);
+
+	/* Base Color */
+	float4 fresnelColor = float4(26.0f, 41.f, 51.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(2.f, 3.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a) + fresnelColor;
+	
+	float4 vColor = float4(0.0f, 205.f, 255.f, 255.f) / 255.f;
+	float4 vBaseColor = lerp(vNoise, vCloud, 0.5f) * vColor;
+
+	Out.vDiffuse = vBaseColor * fresnel * 7.f;
+	Out.vDiffuse.a = 0.2f;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//2
+
+//PS_MAIN_ROTBOMBCENTER
+PS_OUT PS_MAIN_ROTBOMBCENTER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vNoise = g_NoiseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vCloud = g_CloudTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4 vColor = float4(15.f, 40.f, 79.f, 0.0f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(2.5, 3.5, vColor.rgb, In.vNormal.rgb, In.vViewDir), vColor.a);
+	float4 finalcolor = lerp(vNoise, vCloud, 0.5f);
+
+	Out.vDiffuse = finalcolor * fresnel * 2.f;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//3
+
 technique11 DefaultTechnique
 {
 	pass Effect_EnemyWisp // 0
@@ -194,4 +267,44 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_ENEMYWISP();
 	}
+
+	pass Effect_RotBomb // 1
+	{
+		SetRasterizerState(RS_CW);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E();
+	}
+
+	pass Effect_RotBombCover // 2
+	{
+		SetRasterizerState(RS_CW);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ROTBOMBCOVER();
+	}
+
+	pass Effect_RotBombCenter // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_ROTBOMBCENTER();
+	}
+
 }

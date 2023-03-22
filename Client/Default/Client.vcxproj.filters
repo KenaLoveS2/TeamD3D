@@ -469,6 +469,9 @@
     <Filter Include="02.GameObjects\Envrioment\Water">
       <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
+      <UniqueIdentifier>{01b00c3d-3712-4541-a9cf-fbe68c9e89b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1126,6 +1129,15 @@
     <ClInclude Include="..\Public\Born_GroundCover.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_RotBombExplosion.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaParry.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_KenaParryHand.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1761,6 +1773,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Born_GroundCover.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_RotBombExplosion.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParry.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_KenaParryHand.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

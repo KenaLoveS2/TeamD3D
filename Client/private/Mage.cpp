@@ -50,7 +50,6 @@ HRESULT CMage::Initialize(void* pArg)
 	Create_Sticks();
 
 	m_bRotable = true;
-
 	return S_OK;
 }
 
@@ -336,7 +335,9 @@ HRESULT CMage::Call_EventFunction(const string& strFuncName)
 
 void CMage::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	 CMonster::Push_EventFunctions();
+
+	TurnOnFireBullet(true, 0.0f);
 }
 
 HRESULT CMage::SetUp_State()
@@ -484,7 +485,6 @@ HRESULT CMage::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(RANGEDATTACK);
 		m_pModelCom->Set_AnimIndex(RANGEDATTACK);
-		m_pFireBullet->Execute_Create(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	})
 		.Tick([this](_float fTimeDelta)
 	{
@@ -938,6 +938,34 @@ void CMage::Summon()
 		m_pSticks[i]->Spawn_ByMage(this, vPos + vOffset[i]);
 		m_SticksList.push_back(m_pSticks[i]);
 	}
+}
+
+void CMage::TurnOnFireBullet(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMage::TurnOnFireBullet);
+		return;
+	}
+
+	/* Set Position */
+	CBone*	pMageHaneBonePtr = m_pModelCom->Get_BonePtr("char_lf_index_a_jnt");
+	_matrix SocketMatrix = pMageHaneBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+	/* Set Position */
+
+	_matrix matIntoAttack = m_pFireBullet->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_pFireBullet->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_pFireBullet->Get_TransformCom()->LookAt(m_pKena->Get_WorldMatrix().r[3]);
+	m_pFireBullet->Set_Active(true);
+	
+	vector<CEffect_Base*>* pvecChild = m_pFireBullet->Get_vecChild();
+	for (auto& pChild : *pvecChild)
+		pChild->Set_Active(true);
+
+	pvecChild->back()->Set_Active(false);
 }
 
 CMage* CMage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -44,7 +44,7 @@ HRESULT CEffect_Mesh_T::Initialize(void * pArg)
 		return E_FAIL;
 
 //	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-// 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
+ 	XMStoreFloat4x4(&m_InitWorldMatrix, m_pTransformCom->Get_WorldMatrix());
 	m_vPrePos = m_vCurPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	return S_OK;
 }
@@ -90,20 +90,6 @@ void CEffect_Mesh_T::Tick(_float fTimeDelta)
 		}
 	}
 
-	/* 빌보드가 필요한거 같긴함 */
-	//if (m_eEFfectDesc.IsBillboard == true)
-	//	BillBoardSetting(m_eEFfectDesc.vScale);
-	//else
-	//	m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
-	/* 빌보드가 필요한거 같긴함 */
-
-	// Child Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Tick(fTimeDelta);
-	}
-
 	// FreeMoveing Tick
 	if (m_eEFfectDesc.bFreeMove == true)
 	{
@@ -137,13 +123,6 @@ void CEffect_Mesh_T::Tick(_float fTimeDelta)
 void CEffect_Mesh_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	// Child Late_Tick
-	if (m_vecChild.size() != 0)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Late_Tick(fTimeDelta);
-	}
 
 	if (nullptr != m_pParent)
 		Set_Matrix();

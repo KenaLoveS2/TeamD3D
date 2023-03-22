@@ -141,7 +141,10 @@ void CEffect::Tick(_float fTimeDelta)
 				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
 
 				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+				{
 					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+					m_bFinishSprite = true;
+				}
 			}
 
 		}
@@ -157,8 +160,6 @@ void CEffect::Late_Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.IsBillboard == true)
 		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
-// 	else
-// 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
