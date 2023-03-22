@@ -472,6 +472,12 @@
     <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
       <UniqueIdentifier>{01b00c3d-3712-4541-a9cf-fbe68c9e89b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Etc..">
+      <UniqueIdentifier>{d1c58b83-72ef-482b-87ca-87b9d51ef204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\RotBomb">
+      <UniqueIdentifier>{74f04d71-1ea5-4d25-bd3c-fe5411daebfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1141,6 +1147,9 @@
     <ClInclude Include="..\public\BranchTosser_Tree.h">
       <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_BombTrail.h">
+      <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1788,6 +1797,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BranchTosser_Tree.cpp">
       <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_BombTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

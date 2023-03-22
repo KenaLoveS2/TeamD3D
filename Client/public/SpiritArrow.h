@@ -33,13 +33,11 @@ public:
 	virtual void				Push_EventFunctions() override;
 
 public:
-	inline void				Reset();
-
-public:
-	void					Set_Child();
+	void						Reset();
+	void						Set_Child();
 
 private:
-	class CKena*			m_pKena = nullptr;
+	class CKena*				m_pKena = nullptr;
 	class CKena_Staff*		m_pStaff = nullptr;
 	class CCamera_Player*	m_pCamera = nullptr;
 
@@ -57,9 +55,9 @@ private:
 	_float						m_fDistance = 10.f;
 	_bool						m_bReachToAim = false;
 
-	_float4						m_vFirePosition;
-	_float4						m_vFireCamLook;
-	_float4						m_vFireCamPos;
+	_float4					m_vFirePosition;
+	_float4					m_vFireCamLook;
+	_float4					m_vFireCamPos;
 	_bool						m_bHit = false;
 
 private:

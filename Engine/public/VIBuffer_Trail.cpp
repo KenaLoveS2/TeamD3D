@@ -208,6 +208,18 @@ HRESULT CVIBuffer_Trail::Bind_RawValue(CShader * pShaderCom, const char * pConst
 	return pShaderCom->Set_RawValue(pConstanctName, &fSize, sizeof(_float));
 }
 
+void CVIBuffer_Trail::Refresh_InstanceCount()
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	memcpy(SubResource.pData, m_vecInstanceInfo.data(), sizeof(VTXMATRIX) * m_vecInstanceInfo.size());
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	m_iNumInstance = (_uint)m_vecInstanceInfo.size();
+}
+
 CVIBuffer_Trail * CVIBuffer_Trail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iNumInstance)
 {
 	CVIBuffer_Trail*		pInstance = new CVIBuffer_Trail(pDevice, pContext);

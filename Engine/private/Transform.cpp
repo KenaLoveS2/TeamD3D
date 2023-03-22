@@ -478,7 +478,11 @@ void CTransform::Projectile_Motion(_float fMaxAngle, _float fTimeDelta)
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 {
 	_float4		vIsZero = XMVectorEqual(vAxis, XMVectorZero());
+	_float4		vIsNaN = XMVectorIsNaN(vIsZero);
 	if (vIsZero == _float4::Zero)
+		return;
+
+	if (XMVectorGetX(vIsNaN) && XMVectorGetY(vIsNaN) && XMVectorGetZ(vIsNaN))
 		return;
 
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_TransformDesc.fRotationPerSec * fTimeDelta);

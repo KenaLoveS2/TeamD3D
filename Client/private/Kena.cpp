@@ -6,6 +6,7 @@
 #include "Kena_Parts.h"
 #include "Kena_Staff.h"
 #include "SpiritArrow.h"
+#include "RotBomb.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
 #include "E_KenaPulse.h"
@@ -108,6 +109,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bInjectBow;
 		break;
 
+	case STATE_BOMB:
+		return m_bBomb;
+		break;
+
+	case STATE_INJECTBOMB:
+		return m_bInjectBomb;
+		break;
+
 	case STATE_PULSE:
 		return m_bPulse;
 		break;
@@ -176,6 +185,7 @@ HRESULT CKena::Initialize(void * pArg)
 HRESULT CKena::Late_Initialize(void * pArg)
 {
 	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Bombs(), E_FAIL);
 
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
@@ -333,7 +343,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 			pEffect.second->Late_Initialize();
 	}
 
-
 	return S_OK;
 }
 
@@ -348,7 +357,9 @@ void CKena::Tick(_float fTimeDelta)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
 	{
-		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 	}
 
@@ -389,6 +400,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
 	{
+		fTimeDelta /= fTimeRate;
 		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 		fTimeDelta *= fTimeRate;
 	}
@@ -397,7 +409,9 @@ void CKena::Tick(_float fTimeDelta)
 	{
 		if (m_fHitStopTime <= 0.f)
 		{
-			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
@@ -462,6 +476,9 @@ void CKena::Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Tick(fTimeDelta);
+
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Tick(fTimeDelta);
 	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -682,6 +699,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Late_Tick(fTimeDelta);
 
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Late_Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 }
@@ -810,6 +830,12 @@ void CKena::Imgui_RenderProperty()
 	_float2	ArrowCoolTime{ m_pKenaStatus->Get_CurArrowCoolTime(), m_pKenaStatus->Get_InitArrowCoolTime() };
 	ImGui::InputFloat2("Arrow CoolTime", (_float*)&ArrowCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
+	_int	BombCount[2] = { m_pKenaStatus->Get_CurBombCount(), m_pKenaStatus->Get_MaxBombCount() };
+	ImGui::InputInt2("Bomb Count", (_int*)&BombCount, ImGuiInputTextFlags_ReadOnly);
+
+	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
+	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
 	__super::Imgui_RenderProperty();
 }
 
@@ -914,6 +940,9 @@ void CKena::ImGui_ShaderValueProperty()
 void CKena::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
+
+	//m_vecBomb.front()->ImGui_PhysXValueProperty();
+	//m_vecBomb.back()->ImGui_PhysXValueProperty();
 
 	//_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 
@@ -1178,6 +1207,26 @@ HRESULT CKena::Ready_Arrows()
 		pArrow->Late_Initialize(nullptr);
 		pArrow->Reset();
 		m_vecArrow.push_back(pArrow);
+	}
+
+	return S_OK;
+}
+
+HRESULT CKena::Ready_Bombs()
+{
+	_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
+	_tchar*	pTag = nullptr;
+	CRotBomb*	pBomb = nullptr;
+
+	for (_uint i = 0; i < iBombCount; ++i)
+	{
+		pTag = CUtile::Create_DummyString(L"RotBomb", i);
+
+		pBomb = dynamic_cast<CRotBomb*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Rot_Bomb", pTag, nullptr));
+		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, pBomb);
+		pBomb->Late_Initialize(nullptr);
+		pBomb->Reset();
+		m_vecBomb.push_back(pBomb);
 	}
 
 	return S_OK;
@@ -1742,6 +1791,10 @@ void CKena::Free()
 	for (auto pArrow : m_vecArrow)
 		Safe_Release(pArrow);
 	m_vecArrow.clear();
+
+	for (auto pBomb : m_vecBomb)
+		Safe_Release(pBomb);
+	m_vecBomb.clear();
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);

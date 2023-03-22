@@ -527,8 +527,8 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		if (true == m_isFinished && true == m_isLooping)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
-			continue;
+		//if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
+		//	continue;
 
 		if (m_Channels[i]->Get_BoneLocked() == true)
 		{
