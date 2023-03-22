@@ -54,7 +54,6 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 void CEffect_Mesh::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fTimeDelta = fTimeDelta;
 
 #pragma region nouse
 
@@ -127,6 +126,7 @@ void CEffect_Mesh::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
+
 
 HRESULT CEffect_Mesh::Render()
 {
@@ -441,8 +441,8 @@ HRESULT CEffect_Mesh::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	m_fDistotionTime += m_fTimeDelta;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fDistotionTime, sizeof(_float))))
+	// m_fDistotionTime += m_fTimeDelta;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
 		return E_FAIL;
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
