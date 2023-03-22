@@ -9,6 +9,7 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 #include "SpiritArrow.h"
+#include "RotBomb.h"
 #include "Camera_Player.h"
 #include "E_KenaPulse.h"
 
@@ -84,6 +85,7 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 {
 	m_ePreDir = m_eDir;
 
+	/* Arrow */
 	if (m_pKena->m_bBow == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurArrowCount() > 0)
 	{
 		for (auto pArrow : m_pKena->m_vecArrow)
@@ -109,6 +111,35 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 		{
 			m_pKena->m_pCurArrow->Reset();
 			m_pKena->m_pCurArrow = nullptr;
+		}
+	}
+
+	/* Bomb */
+	if (m_pKena->m_bBomb == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurBombCount() > 0)
+	{
+		for (auto pBomb : m_pKena->m_vecBomb)
+		{
+			if (pBomb->Get_Active() == false)
+			{
+				m_pKena->m_pCurBomb = pBomb;
+				m_pKena->m_pCurBomb->Reset();
+				m_pKena->m_pCurBomb->Set_Active(true);
+				break;
+			}
+		}
+	}
+
+	if (m_pKena->m_bBomb == false && m_pKena->m_pCurBomb != nullptr)
+	{
+		if (m_pKena->m_pCurBomb->Get_CurrentState() >= CRotBomb::BOMB_RELEASE)
+		{
+			m_pStatus->Set_CurBombCount(m_pStatus->Get_CurBombCount() - 1);
+			m_pKena->m_pCurBomb = nullptr;
+		}
+		else
+		{
+			m_pKena->m_pCurBomb->Reset();
+			m_pKena->m_pCurBomb = nullptr;
 		}
 	}
 

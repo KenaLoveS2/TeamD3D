@@ -2,6 +2,7 @@
 #include "..\public\RotBomb.h"
 #include "GameInstance.h"
 #include "Utile.h"
+#include "AnimationState.h"
 #include "Kena.h"
 #include "Kena_State.h"
 #include "Bone.h"
@@ -42,6 +43,7 @@ HRESULT CRotBomb::Initialize(void * pArg)
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
@@ -51,51 +53,82 @@ HRESULT CRotBomb::Initialize(void * pArg)
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 	m_eEFfectDesc.bActive = false;
 
-	Set_Child();
-	for (auto& pchild : m_vecChild)
-		pchild->Set_Parent(this);
-
 	return S_OK;
 }
 
 HRESULT CRotBomb::Late_Initialize(void * pArg)
 {
+	_float3 vPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPivotScale = _float3(m_fScale * 0.25f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_WEAPON;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_ARROW));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
+	Set_Child();
+	for (auto& pChild : m_vecChild)
+	{
+		pChild->Set_Parent(this);
+		pChild->Late_Initialize(nullptr);
+	}
+
 	return S_OK;
 }
 
 void CRotBomb::Tick(_float fTimeDelta)
 {
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	if (fTimeRate != 1.f)
+		fTimeDelta /= fTimeRate;
+	
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
 
+	m_eCurState = Check_State();
+	Update_State(fTimeDelta);
+	
+	PxRigidActor*		pActor = m_pTransformCom->FindActorData(m_szCloneObjectTag)->pActor;
+	PxShape*			pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxSphereGeometry& Geometry = pShape->getGeometry().sphere();
+	Geometry.radius = m_fScale * 0.25f;
+	pShape->setGeometry(Geometry);
+
 	m_pTransformCom->Tick(fTimeDelta);
-	m_pModelCom->Play_Animation(fTimeDelta);
 
-	if (m_bBomb && m_eEFfectDesc.bActive == true)
-	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f)
-		{
-			/* if => Child Active True */
-			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			for (auto& pChild : m_vecChild)
-			{
-				pChild->Set_Active(true);
-				pChild->Set_Position(vPos);
-			}
-			dynamic_cast<CE_KenaPulse*>(m_vecChild.back())->Set_Type(CE_KenaPulse::PULSE_BOMBEXPLOSION);
-
-			m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
-		}
-	}
+	m_pAnimation->Play_Animation(fTimeDelta);
 }
 
 void CRotBomb::Late_Tick(_float fTimeDelta)
 {
-	//if (m_eEFfectDesc.bActive == false)
-	//	return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
+
+	if (m_ePreState != m_eCurState)
+		m_ePreState = m_eCurState;
 
 	if(m_pRendererCom != nullptr)
 	{
@@ -158,13 +191,13 @@ void CRotBomb::Imgui_RenderProperty()
 
 	if (ImGui::Button("Bomb"))
 	{
-		m_bBomb = true;
+		m_bBoom = true;
 		m_eEFfectDesc.bActive = true;
 	}
 
 	if (ImGui::Button("ChildActive false"))
 	{
-		m_bBomb = false;
+		m_bBoom = false;
 		m_eEFfectDesc.bActive = false;
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
@@ -178,11 +211,49 @@ void CRotBomb::ImGui_ShaderValueProperty()
 
 void CRotBomb::ImGui_PhysXValueProperty()
 {
+	__super::ImGui_PhysXValueProperty();
 }
 
 void CRotBomb::ImGui_AnimationProperty()
 {
-	m_pModelCom->Imgui_RenderProperty();
+	if (ImGui::Button("Reset"))
+		Reset();
+
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
+	ImGui::Text("Current State : %d", (_int)m_eCurState);
+
+	ImGui::BeginTabBar("RotBomb Animation & State");
+
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	if (ImGui::BeginTabItem("State"))
+	{
+		m_pAnimation->ImGui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+}
+
+void CRotBomb::Reset()
+{
+	m_eCurState = BOMBSTATE_END;
+	m_ePreState = BOMBSTATE_END;
+	m_fScale = m_fInitScale;
+	m_bHit = false;
+	m_pTarget = nullptr;
+	m_vHitPosition = _float4::One;
+	m_bBoom = false;
+	m_fBoomTimer = 0.f;
+	m_pAnimation->State_Animation("CHARGE");
+
+	m_eEFfectDesc.bActive = false;
+	m_fTimeDelta = 0.f;
 }
 
 void CRotBomb::Set_Child()
@@ -229,6 +300,15 @@ HRESULT CRotBomb::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CRotBomb::SetUp_State()
+{
+	m_pModelCom->Set_RootBone("bomb_rig");
+	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/RotBomb BoneInfo.json");
+	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "bomb_rig", "../Bin/Data/Animation/RotBomb.json");
+	
+	return S_OK;
+}
+
 HRESULT CRotBomb::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
@@ -241,8 +321,148 @@ HRESULT CRotBomb::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+CRotBomb::BOMBSTATE CRotBomb::Check_State()
+{
+	BOMBSTATE	eState = m_ePreState;
+	const _uint	iKenaState = m_pKena->Get_AnimationStateIndex();
+
+	if (m_eCurState == CRotBomb::BOMBSTATE_END)
+	{
+		if (iKenaState == (_uint)CKena_State::BOMB_INTO_ADD)
+		{
+			eState = CRotBomb::BOMB_CHARGE;
+			m_pAnimation->State_Animation("CHARGE");
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_CHARGE)
+	{
+		if (iKenaState == (_uint)CKena_State::BOMB_LOOP_ADD)
+		{
+			eState = CRotBomb::BOMB_READY;
+			m_pAnimation->State_Animation("CHARGE_LOOP");
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_READY)
+	{
+		if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
+		{
+			eState = CRotBomb::BOMB_RELEASE;
+			m_pAnimation->State_Animation("CHARGE_LOOP");
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_RELEASE)
+	{
+		if (m_bHit == true)
+		{
+			eState = CRotBomb::BOMB_LAND;
+			m_pAnimation->State_Animation("LAND");
+			m_fBoomTimer = 0.f;
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_LAND)
+	{
+		if (m_pAnimation->Get_AnimationFinish() == true && m_pAnimation->Get_CurrentAnimName() == "LAND")
+			m_pAnimation->State_Animation("LAND_LOOP");
+
+		if (m_fBoomTimer > 4.5f && m_pAnimation->Get_CurrentAnimName() == "LAND_LOOP")
+			m_pAnimation->State_Animation("LAND_RUMBLE");
+
+		if (m_bBoom == true)
+		{
+			eState = CRotBomb::BOMB_BOOM;
+			m_pAnimation->State_Animation("LAND_RUMBLE");
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_BOOM)
+	{
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		for (auto& pChild : m_vecChild)
+		{
+			pChild->Set_Active(true);
+			pChild->Set_Position(vPos);
+		}
+
+		Reset();
+	}
+
+	return eState;
+}
+
+void CRotBomb::Update_State(_float fTimeDelta)
+{
+	CModel*	pModel = dynamic_cast<CModel*>(m_pKena->Find_Component(L"Com_Model"));
+	CBone*	pHand = pModel->Get_BonePtr("rt_hand_socket_jnt");
+	_matrix	matSocket;
+
+	switch (m_eCurState)
+	{
+	case CRotBomb::BOMB_CHARGE:
+		{
+		matSocket = pHand->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+		_vector	vHandPos = matSocket.r[3];
+		vHandPos = XMVectorSetY(vHandPos, XMVectorGetY(vHandPos) + 0.2f);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHandPos);
+
+		m_fScale += fTimeDelta;
+		CUtile::Saturate<_float>(m_fScale, m_fInitScale, m_fMaxScale);
+
+		break;
+		}
+	case CRotBomb::BOMB_READY:
+		{
+		matSocket = pHand->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+		_vector	vHandPos = matSocket.r[3];
+		vHandPos = XMVectorSetY(vHandPos, XMVectorGetY(vHandPos) + 0.2f);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHandPos);
+
+		break;
+		}
+	case CRotBomb::BOMB_RELEASE:
+		{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+
+		break;
+		}
+	case CRotBomb::BOMB_LAND:
+		{
+		_matrix	matTargetWorld = m_pTarget->Get_WorldMatrix();
+		_vector	vHitWorldPos = XMVector3TransformCoord(m_vHitPosition, matTargetWorld);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHitWorldPos);
+
+		m_fBoomTimer += fTimeDelta;
+
+		if (m_pAnimation->Get_AnimationFinish() == true)
+			m_bBoom = true;
+
+		break;
+		}
+	case CRotBomb::BOMB_BOOM:
+		{
+		break;
+		}
+	}
+
+	m_pTransformCom->Set_Scaled(_float3(m_fScale, m_fScale, m_fScale));
+}
+
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
+	if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_MONSTER || iColliderIndex == (_int)COL_ELETE_MONSTER || iColliderIndex == (_int)COL_BOSS_MONSTER)
+	{
+		if (m_bHit == false)
+		{
+			if (pTarget == nullptr)
+			{
+				Reset();
+				return 0;
+			}
+
+			m_bHit = true;
+			m_pTarget = pTarget;
+			m_vHitPosition = XMVector3TransformCoord(XMVectorSetW(vCollisionPos, 1.f), pTarget->Get_TransformCom()->Get_WorldMatrix_Inverse());
+		}
+	}
+
 	return 0;
 }
 
@@ -275,4 +495,6 @@ CGameObject * CRotBomb::Clone(void * pArg)
 void CRotBomb::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pAnimation);
 }

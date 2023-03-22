@@ -54,6 +54,7 @@ private:
 
 private:
 	void				Update_ArrowCoolTime(_float fTimeDelta);
+	void				Update_BombCoolTime(_float fTimeDelta);
 
 public: /* skill test */
 	enum SKILL { SKILL_STICK, SKILL_SHIELD, SKILL_BOW, SKILL_BOBM, SKILL_END };

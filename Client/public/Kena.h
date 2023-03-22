@@ -98,6 +98,8 @@ private:
 	vector<class CKena_Parts*>				m_vecPart;
 	vector<class CSpiritArrow*>				m_vecArrow;
 	class CSpiritArrow*							m_pCurArrow = nullptr;
+	vector<class CRotBomb*>					m_vecBomb;
+	class CRotBomb*								m_pCurBomb = nullptr;
 	map<const string, class CEffect_Base*>	m_mapEffect;
 	vector<_float4>								m_vecWeaposPos;
 
@@ -157,6 +159,7 @@ private:
 private:
 	HRESULT					Ready_Parts();
 	HRESULT					Ready_Arrows();
+	HRESULT					Ready_Bombs();
 	HRESULT					Ready_Effects();
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();

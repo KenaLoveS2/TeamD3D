@@ -29,6 +29,7 @@ HRESULT CKena_Status::Initialize(void* pArg, CGameObject * pOwner)
 void CKena_Status::Tick(_float fTimeDelta)
 {
 	Update_ArrowCoolTime(fTimeDelta);
+	Update_BombCoolTime(fTimeDelta);
 }
 
 void CKena_Status::Imgui_RenderProperty()
@@ -73,16 +74,45 @@ void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 			m_StatusDelegator.broadcast(eReCharge, fIndex);
 			m_StatusDelegator.broadcast(eArrow, fCount);
 		}
-
 		fGuage = m_fCurArrowCoolTime / m_fInitArrowCoolTime;
 		m_StatusDelegator.broadcast(eCool, fGuage);
+	}
+}
+
+void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
+{
+	_float fGuage = 0.f;
+
+	if (m_iCurBombCount == m_iMaxBombCount) /* Full */
+	{
+		m_fCurBombCoolTime = 0.0f;
+		fGuage = 1.0f;
+		//m_StatusDelegator.broadcast(eCool, fGuage);
+	}
+	else /* Not Full */
+	{
+		m_fCurBombCoolTime += fTimeDelta;
+		if (m_fCurBombCoolTime >= m_fInitBombCoolTime)
+		{
+			/* Fullfilll Effect Call */
+			//m_StatusDelegator.broadcast(eBombEffect, fGuage);
+
+			++m_iCurBombCount;
+			if (m_iCurBombCount < m_iMaxBombCount)
+				m_fCurBombCoolTime = 0.0f;
+			else
+				m_fCurBombCoolTime = m_fInitBombCoolTime;
+
+			/* ReCharge */
+			_float fIndex = (_float)m_iCurBombCount - 1;
+			_float fCount = (_float)m_iCurBombCount;
+			//m_StatusDelegator.broadcast(eReCharge, fIndex);
+			//m_StatusDelegator.broadcast(eBomb, fCount);
+		}
+				fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
+		//m_StatusDelegator.broadcast(eCool, fGuage);
 
 	}
-
-
-
-
-
 }
 
 CKena_Status * CKena_Status::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
