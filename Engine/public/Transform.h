@@ -190,6 +190,7 @@ public:
 
 	void Set_Position(_fvector vPos);
 	void Clear_Actor();
+	void Update_AllCollider(_float4x4 PivotMatrix);
 };
 
 END

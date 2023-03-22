@@ -11,7 +11,7 @@
 #include "PhysX_Manager.h"
 #include "FSMComponent.h"
 #include "Animation.h"
-
+#include "Bone.h"
 
 
 #define TIMEDELTA CGameInstance::GetInstance()->GetTimeDelta()

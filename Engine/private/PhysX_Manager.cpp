@@ -1166,7 +1166,7 @@ PxVec3 CPhysX_Manager::Get_ScalingBox(PxRigidActor *pActor)
 
 	return Temp;
 }
-
+#ifdef _DEBUG
 void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* vec_ColiderSize)
 {
 	if (pActorName == nullptr)
@@ -1197,7 +1197,7 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 				{
 					wstrSelectedTag = ProtoPair.first;
 					
-					_int size = Actor_ParentName.size() + 1;
+					size_t size = Actor_ParentName.size() + 1;
 					string NewTemp = szViewName;
 					string Sour = "";
 					Sour = NewTemp.substr(size);
@@ -1228,6 +1228,7 @@ void CPhysX_Manager::Imgui_Render(const _tchar * pActorName, vector<_float3>* ve
 		(*vec_ColiderSize)[iSelectColider_Index] = vScale;
 	}
 }
+#endif
 
 void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
 {

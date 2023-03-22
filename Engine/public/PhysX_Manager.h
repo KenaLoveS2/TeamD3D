@@ -115,10 +115,6 @@ private:
 	BasicEffect*												m_pEffect = nullptr;
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
 	_float4														m_vColor;
-
-
-
-#endif // _DEBUG
 	wstring										wstrSelectedTag = L"";
 	_int										iSelectColider_Index = 0;
 public:
@@ -126,6 +122,10 @@ public:
 		wstrSelectedTag = L"";
 		iSelectColider_Index = 0;
 	}
+#endif // _DEBUG
+
+
+	
 
 #pragma endregion
 	
@@ -140,8 +140,9 @@ public:
 	void Render();
 
 	void	Imgui_Render();
+#ifdef _DEBUG
 	void	Imgui_Render(const _tchar* pActorName,vector<_float3>* vec_ColiderSize);
-
+#endif
 	PxVec3						Get_ScalingBox(PxRigidActor *pActor);
 		
 	PxRigidActor*				Find_StaticGameObject(_int iIndex);
