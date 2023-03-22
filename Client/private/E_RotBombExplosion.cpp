@@ -65,6 +65,32 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(m_eEFfectDesc.bActive);
+
+	if (m_eEFfectDesc.bActive == true)
+	{
+		m_fTimeDelta += fTimeDelta;
+		_float3 vScaled = m_pTransformCom->Get_Scaled();
+		if (vScaled.x >= 1.5f)
+		{
+			m_eEFfectDesc.bActive = false;
+			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_matrix));
+		}
+		else
+		{
+			vScaled *= fTimeDelta + 1.1f;
+			m_pTransformCom->Set_Scaled(vScaled);
+
+			for (auto& pChild : m_vecChild)
+				pChild->Set_AddScale(fTimeDelta + 1.1f);
+		}
+	}
+	else
+	{
+		m_pTransformCom->Set_Scaled(_float3(0.8f, 0.8f, 0.8f));
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
+	}
 }
 
 void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
@@ -72,8 +98,8 @@ void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+// 	if (m_pParent != nullptr)
+// 		Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 

@@ -23,8 +23,14 @@ public:
 	virtual void			ImGui_PhysXValueProperty() override;
 	virtual void			ImGui_AnimationProperty() override;
 
+public:
+	void					Set_Child();
+
 private:
 	class CKena*				m_pKena = nullptr;
+
+private:
+	_bool	m_bBomb = false;
 
 private:
 	HRESULT					SetUp_Components();

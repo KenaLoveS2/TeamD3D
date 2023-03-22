@@ -19,6 +19,7 @@ public:
 	virtual HRESULT Render() override;
 	void			Reset();
 
+
 private:
 	HRESULT SetUp_ShaderResources();
 	void	Imgui_RenderProperty() override;

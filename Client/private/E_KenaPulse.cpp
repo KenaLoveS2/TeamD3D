@@ -112,32 +112,9 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-#pragma region	 test
-	//ImGui::Begin("pulse");
-	//if (ImGui::Button("rebuild"))
-	//	m_pShaderCom->ReCompile();
-
-	//static bool alpha_preview = true;
-	//static bool alpha_half_preview = false;
-	//static bool drag_and_drop = true;
-	//static bool options_menu = true;
-	//static bool hdr = false;
-
-	//ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	//static bool   ref_color = false;
-	//static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vSelectColor = m_eEFfectDesc.vColor;
-
-	//ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	//ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	//m_eEFfectDesc.vColor = vSelectColor;
-
-	//ImGui::End();
-#pragma endregion test
 	__super::Tick(fTimeDelta);
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+	m_fTimeDelta += fTimeDelta;
 
 	switch (m_ePulseType)
 	{
@@ -182,11 +159,10 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 				m_fDissolveTime = 0.0f;
 			}
 		}
-
 		break;
+
 	case Client::CE_KenaPulse::PULSE_PARRY:
 
-		m_fTimeDelta += fTimeDelta;
 		m_eEFfectDesc.iPassCnt = 0;
 
 		for (auto& pChild : m_vecChild)
@@ -204,18 +180,55 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		}
 
 		break;
+
+	case CE_KenaPulse::PULSE_BOMBEXPLOSION:
+
+		m_eEFfectDesc.iPassCnt = 1;
+
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+
+		if (vScaled.x > 3.f)
+		{
+			m_pTransformCom->Set_Scaled(vScaled);
+			if (m_fTimeDelta > 3.f)
+			{
+				m_bBombDissolve = true;
+				m_fDissolveTime = 0.f;
+				m_fTimeDelta = 0.0f;
+			}
+		}
+		else
+		{
+			vScaled *= fTimeDelta + 1.1f;
+			m_pTransformCom->Set_Scaled(vScaled);
+		}
+		break;
+	}
+
+	if (m_bBombDissolve)
+	{
+		m_fDissolveTime += fTimeDelta;
+		if (m_fDissolveTime > 5.f)
+		{
+			m_eEFfectDesc.bActive = false;
+			m_bBombDissolve = false;
+			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
+			m_fDissolveTime = 0.0f;
+			m_fTimeDelta = 0.0f;
+		}
 	}
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
+	//if (m_eEFfectDesc.bActive == false)
+	//	return;
 
-	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT)
+	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT
+		&& m_pParent != nullptr)
 	{
-		if (m_pParent != nullptr)
-			Set_Matrix();
+		Set_Matrix();
 	}
 	
 	__super::Late_Tick(fTimeDelta);
@@ -224,7 +237,7 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
-		if(m_ePulseType == CE_KenaPulse::PULSE_PARRY)
+		if(m_ePulseType != CE_KenaPulse::PULSE_DEFAULT)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 	}
 }
@@ -268,7 +281,10 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
 		return E_FAIL;
 
-	if(m_bDesolve)
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bBombDissolve", &m_bBombDissolve, sizeof(_bool))))
+		return E_FAIL;
+
+	if(m_bDesolve || m_bBombDissolve)
 	{
 		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
 			return E_FAIL;
@@ -282,14 +298,20 @@ void CE_KenaPulse::Imgui_RenderProperty()
 	static _int iType = 0;
 	ImGui::RadioButton("Default", &iType, 0);
 	ImGui::RadioButton("Pulse", &iType, 1);
+	ImGui::RadioButton("Bomb", &iType, 2);
 
 	if (iType == 0)
-		m_ePulseType = CE_KenaPulse::PULSE_DEFAULT; 
-	else
+		m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
+	else if (iType == 1)
 		m_ePulseType = CE_KenaPulse::PULSE_PARRY;
+	else
+		m_ePulseType = CE_KenaPulse::PULSE_BOMBEXPLOSION;
 
 	if (ImGui::Button("Active"))
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
+
+	if (ImGui::Button("Bomb"))
+		m_bBombDissolve = !m_bBombDissolve;
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

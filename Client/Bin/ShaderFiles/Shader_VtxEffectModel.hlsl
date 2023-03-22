@@ -7,7 +7,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DepthTexture, g_NormalTexture;
 texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
 
-texture2D		g_DissolveTexture[4];
+texture2D		g_DissolveTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
@@ -23,6 +23,7 @@ float4  g_WorldCamPosition;
 
 /* Dissolve */
 bool    g_bDissolve;
+bool    g_bBombDissolve;
 float   g_fDissolveTime;
 /* ~Dissolve */
 
@@ -150,6 +151,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = saturate((mask + glow) * BackPulseColor * 2.f) * fresnel_Pulse + BackPulseColor;
 	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
 
+	if (g_bBombDissolve)
+		Out.vDiffuse.a = Out.vDiffuse.a * g_fDissolveTime;
+
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
@@ -192,13 +196,7 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	{
 		float fDissolveAmount = g_fDissolveTime;
 
-		float4 Dissolve0 = g_DissolveTexture[0].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve1 = g_DissolveTexture[1].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve2 = g_DissolveTexture[2].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve3 = g_DissolveTexture[3].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
-		Dissolve = saturate(Dissolve);
-
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
 		//Dissolve function
 		half dissolve_value = Dissolve.r;
 
@@ -206,6 +204,23 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 			discard;
 
 		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
+
+	if (g_bBombDissolve)
+	{
+		float  fDissolveAmount = g_fDissolveTime;
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+ 
+		half   dissolve_value = Dissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
 		{
 			if (Out.vDiffuse.a != 0.0f)
 				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);

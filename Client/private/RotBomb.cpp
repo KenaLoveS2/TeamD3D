@@ -5,6 +5,7 @@
 #include "Kena.h"
 #include "Kena_State.h"
 #include "Bone.h"
+#include "E_KenaPulse.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -49,6 +50,11 @@ HRESULT CRotBomb::Initialize(void * pArg)
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
 	m_eEFfectDesc.bActive = false;
+
+	Set_Child();
+	for (auto& pchild : m_vecChild)
+		pchild->Set_Parent(this);
+
 	return S_OK;
 }
 
@@ -63,13 +69,31 @@ void CRotBomb::Tick(_float fTimeDelta)
 
 	m_pTransformCom->Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (m_bBomb && m_eEFfectDesc.bActive == true)
+	{
+		m_fTimeDelta += fTimeDelta;
+		if (m_fTimeDelta > 1.f)
+		{
+			/* if => Child Active True */
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			for (auto& pChild : m_vecChild)
+			{
+				pChild->Set_Active(true);
+				pChild->Set_Position(vPos);
+			}
+			dynamic_cast<CE_KenaPulse*>(m_vecChild.back())->Set_Type(CE_KenaPulse::PULSE_BOMBEXPLOSION);
+
+			m_eEFfectDesc.bActive = false;
+			m_fTimeDelta = 0.0f;
+		}
+	}
 }
 
 void CRotBomb::Late_Tick(_float fTimeDelta)
 {
 	//if (m_eEFfectDesc.bActive == false)
 	//	return;
-	int a = 0;
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -131,6 +155,21 @@ void CRotBomb::Imgui_RenderProperty()
 	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
 	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
 	m_eEFfectDesc.vColor = vSelectColor;
+
+	if (ImGui::Button("Bomb"))
+	{
+		m_bBomb = true;
+		m_eEFfectDesc.bActive = true;
+	}
+
+	if (ImGui::Button("ChildActive false"))
+	{
+		m_bBomb = false;
+		m_eEFfectDesc.bActive = false;
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+	}
+
 }
 
 void CRotBomb::ImGui_ShaderValueProperty()
@@ -144,6 +183,22 @@ void CRotBomb::ImGui_PhysXValueProperty()
 void CRotBomb::ImGui_AnimationProperty()
 {
 	m_pModelCom->Imgui_RenderProperty();
+}
+
+void CRotBomb::Set_Child()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", L"RotBombExplosion"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+	
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"Pulse"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CRotBomb::SetUp_Components()
