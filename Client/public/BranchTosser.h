@@ -42,6 +42,8 @@ private:
 		DROP_3,
 		DROP_END
 	};
+private:
+	CBone* m_pBone = nullptr;
 
 private:
 	CBranchTosser(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -27,18 +27,24 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_UI(2.f), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
-
 	if (pArg != nullptr)
 		memcpy(&m_Desc, pArg, sizeof(CMonster::DESC));
 	else
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = -8.f;
+		m_Desc.WorldMatrix._43 = -8.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+	m_pBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
+
 	return S_OK;
 }
 
@@ -138,10 +144,9 @@ void CBranchTosser::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	m_pWeapon->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	m_pWeapon->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 
@@ -154,11 +159,9 @@ void CBranchTosser::Late_Tick(_float fTimeDelta)
 
 	m_pWeapon->Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom != nullptr)
-	{
-		if (CGameInstance::GetInstance()->Key_Pressing(DIK_F7))
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-
+	if (m_pRendererCom) // && m_bSpawn
+	{	
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
@@ -169,9 +172,7 @@ HRESULT CBranchTosser::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -185,15 +186,10 @@ HRESULT CBranchTosser::Render()
 
 HRESULT CBranchTosser::RenderShadow()
 {
-	if (FAILED(__super::RenderShadow()))
-		return E_FAIL;
+	if (FAILED(__super::RenderShadow())) return E_FAIL;
+	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
 
 	return S_OK;
@@ -434,11 +430,8 @@ HRESULT CBranchTosser::SetUp_Components()
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
 	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BranshTosser.json");
-
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, L"../Bin/Resources/Anim/Enemy/BranchTosser/bt_AO_R_M_1k.png");
 		m_pModelCom->SetUp_Material(i, WJTextureType_EMISSIVE, L"../Bin/Resources/Anim/Enemy/BranchTosser/bt_EMISSIVE_1k.png");
@@ -455,11 +448,9 @@ HRESULT CBranchTosser::SetUp_Components()
 	Safe_AddRef(WeaponDesc.pSocket);
 	Safe_AddRef(m_pTransformCom);
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-	m_pWeapon = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), L"BranchTosserWeapon",&WeaponDesc);
+	m_pWeapon = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), L"BranchTosserWeapon",&WeaponDesc);
 	assert(m_pWeapon && "BranchTosser Weapon is nullptr");
-	RELEASE_INSTANCE(CGameInstance)
-			
+				
 	return S_OK;
 }
 
@@ -468,9 +459,9 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	m_bDying && Bind_Dissolove(m_pShaderCom);
 
@@ -479,20 +470,10 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 
 HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	if (nullptr == m_pShaderCom) return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
 
 	return S_OK;
 }
@@ -500,23 +481,22 @@ HRESULT CBranchTosser::SetUp_ShadowShaderResources()
 void CBranchTosser::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
-	{
-		CBone* pBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
-		_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	
+	_matrix SocketMatrix = m_pBone->Get_OffsetMatrix() * m_pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-		SocketMatrix = XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x)
-			* XMMatrixRotationY(m_vecPivotRot[COLL_WEAPON].y)
-			* XMMatrixRotationZ(m_vecPivotRot[COLL_WEAPON].z)
-			*XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
-			* SocketMatrix;
+	SocketMatrix =
+		XMMatrixRotationX(m_vecPivotRot[COLL_WEAPON].x) *
+		XMMatrixRotationY(m_vecPivotRot[COLL_WEAPON].y) *
+		XMMatrixRotationZ(m_vecPivotRot[COLL_WEAPON].z) *
+		XMMatrixTranslation(m_vecPivot[COLL_WEAPON].x, m_vecPivot[COLL_WEAPON].y, m_vecPivot[COLL_WEAPON].z)
+		* SocketMatrix;
 
-		_float4x4 mat;
-		XMStoreFloat4x4(&mat, SocketMatrix);
-		m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
-	}
+	_float4x4 mat;
+	XMStoreFloat4x4(&mat, SocketMatrix);
+	m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
 }
 
 void CBranchTosser::AdditiveAnim(_float fTimeDelta)
