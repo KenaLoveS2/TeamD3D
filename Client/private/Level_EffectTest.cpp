@@ -83,10 +83,10 @@ HRESULT CLevel_EffectTest::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, 1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.05f, 0.05f, 0.05f, 1.f);
-	LightDesc.vAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
-	LightDesc.vSpecular = _float4(0.05f, 0.05f, 0.05f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	LightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
+	LightDesc.vSpecular = _float4(0.0f, 0.0f, 0.0f, 1.f);
 	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
 

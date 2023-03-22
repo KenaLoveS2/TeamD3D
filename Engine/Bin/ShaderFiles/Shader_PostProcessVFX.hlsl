@@ -3,6 +3,8 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 matrix			g_LightCamWorldMatrix,	g_CamViewMatrix, g_CamProjMatrix;
+
+float4			g_vLightCamLook , g_vCamLook;
 float4			g_vLightCamPos;
 
 matrix			g_ReflectViewMatrix;
@@ -194,31 +196,68 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 	return Out;
 }
 
+float3 cc(float3 color, float factor, float factor2) // color modifier
+{
+	float w = color.x + color.y + color.z;
+	return lerp(color, (float3) w*factor, w*factor2);
+}
+
 PS_OUT PS_FLARE(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
-
-	matrix	 matVP;
-	matVP = mul(g_CamViewMatrix, g_CamProjMatrix);
-	float4	vLightPosToPixel = mul(g_vLightCamPos, matVP); // 이건 Sun의 투영 좌표
-
-	float2 direction = vLightPosToPixel.xy - float2(0.5, 0.5);
-	float distance = length(direction);
-	float angle = atan2(direction.y, direction.x);
+	PS_OUT Out = (PS_OUT)0;
 	float4 CurColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
 
-	if (distance < 2.f) 
-	{
-		float spriteSize = lerp(0.2, 1.0, distance / 2.f);
-		float spriteAngle = angle + lerp(0, 1.57, distance / 2.f);
-		float spriteOpacity = lerp(0.1, 1.0, distance / 2.f) * 2.f;
-		CurColor += spriteOpacity * g_FlareTexture.Sample(LinearSampler, In.vTexUV * spriteSize + float2(cos(spriteAngle), sin(spriteAngle)) * spriteSize * 0.5);
-	}
-	//float4 FlareColor = g_FlareTexture.Sample(LinearSampler, In.vTexUV);
-	//if (FlareColor.a <= 0.1f)
-	//	discard;
+	/* Dot */
+	float3 lightDir = normalize(g_vLightCamLook.xyz);
+	float3 camDir = normalize(g_vCamLook.xyz);
+	float3 up = float3(0.0f, 1.0f, 0.0f);
 
-	Out.vColor = CurColor;
+	float dotProduct = dot(lightDir, camDir);
+	float verticalDotProduct = dot(camDir, up);
+	float verticalAngle = acos(verticalDotProduct);
+	float falloff = saturate(1.0f - dotProduct - pow(verticalAngle, 3.0f));
+	float falloffIntensity = pow(falloff, 3.0f);
+	/* Dot */
+
+	float4 lightpos = g_vLightCamPos;
+	matrix matVP;
+	matVP = mul(g_CamViewMatrix, g_CamProjMatrix);
+	lightpos = mul(vector(lightpos.xyz, 1.f), matVP);
+
+	float2	vNewUV;
+	vNewUV.x = (lightpos.x / lightpos.w) * 0.5f + 0.5f;
+	vNewUV.y = (lightpos.y / lightpos.w) * -0.5f + 0.5f;
+
+	// Ghost
+	float GhostCount = 3.0f;
+	float GhostSpacing = 0.5f;
+	float3 GhostColor = float3(0.5f, 0.5f, 0.25f) * falloffIntensity;
+	float2 GhostDir = normalize(float2(vNewUV) - In.vTexUV);
+	for (float i = 1.0f; i <= GhostCount; i += 1.0f)
+	{
+		float GhostOffset = i * GhostSpacing;
+		float2 GhostUV = In.vTexUV + GhostDir * GhostOffset;
+		float3 Ghost = g_LDRTexture.Sample(LinearSampler, GhostUV).rgb * GhostColor;
+		GhostColor.rgb += Ghost;
+	}
+
+	// Ghost
+	//Out.vColor = CurColor /*+ float4(GhostColor, 1.f) * maskColor.r * 2.f*/ + FlareColor * 0.3f;
+
+	float4 FlareColor = g_FlareTexture.Sample(LinearSampler, vNewUV);
+	FlareColor *= falloffIntensity;
+	Out.vColor = CurColor + FlareColor * 0.3f;
+
+	// Streak
+	float3 StreakColor = float3(0.1f, 0.1f, 0.05f) * falloffIntensity;
+	float StreakLength = pow(falloff, 0.25f) * 1.0f;
+	float2 StreakDir = normalize(float2(vNewUV) - In.vTexUV);
+	float2 StreakUV = (StreakDir + 1.0f) / 2.0f;
+	float StreakMask = 1.0f - saturate((length(float2(vNewUV) - In.vTexUV) - StreakLength) / StreakLength);
+	float3 Streak = g_LDRTexture.Sample(LinearSampler, StreakUV).rgb * StreakColor * StreakMask;
+	Out.vColor.rgb += Streak;
+	// Streak
+
 	return Out;
 }
 

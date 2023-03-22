@@ -13,12 +13,15 @@ _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
 	, m_pUIHPBar(nullptr)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
+	
 }
 
 CMonster::CMonster(const CMonster & rhs)
 	: CGameObject(rhs)
 	, m_pUIHPBar(nullptr)
+	, m_pGameInstance(CGameInstance::GetInstance())
 {
 }
 

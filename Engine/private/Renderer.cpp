@@ -33,9 +33,7 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("MOTIONBLUR", &m_bMotionBlur);
 	ImGui::Checkbox("FLARE", &m_bFlare);
 	if(ImGui::Button("ReCompile"))
-	{
 		ReCompile();
-	}
 }
 
 void CRenderer::EraseStaticShadowObject(CGameObject * pObject)
@@ -933,18 +931,18 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_MotionBlur();
 	}
 
-	//if (m_bFlare)
-	//{
-	//	pLDRSour_SRV = pLDRSour->Get_SRV();
-	//	pLDRDest_RTV = pLDRDest->Get_RTV();
-	//	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
-	//		return E_FAIL;
-	//	m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
-	//	pLDRTmp = pLDRSour;
-	//	pLDRSour = pLDRDest;
-	//	pLDRDest = pLDRTmp;
-	//	PostProcess_Flare();
-	//}
+	if (m_bFlare)
+	{
+		pLDRSour_SRV = pLDRSour->Get_SRV();
+		pLDRDest_RTV = pLDRDest->Get_RTV();
+		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
+			return E_FAIL;
+		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
+		pLDRTmp = pLDRSour;
+		pLDRSour = pLDRDest;
+		pLDRDest = pLDRTmp;
+		PostProcess_Flare();
+	}
 
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
@@ -1095,11 +1093,15 @@ HRESULT CRenderer::PostProcess_Flare()
 {
 	if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_FlareTexture", *m_pFlareTexture)))
 		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vLightCamLook", &CGameInstance::GetInstance()->Get_LightCamLook(), sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamLook", &CGameInstance::GetInstance()->Get_CamLook_Float4(), sizeof(_float4))))
+		return E_FAIL;
 	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vLightCamPos", &CGameInstance::GetInstance()->Get_LightCamPosition(), sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamViewMatrix", &CPipeLine::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamProjMatrix", &CPipeLine::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_CamProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	m_pShader_PostProcess->Begin(5);

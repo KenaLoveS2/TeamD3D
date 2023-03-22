@@ -1144,8 +1144,8 @@
     <ClInclude Include="..\public\E_KenaParryHand.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_Explosion.h">
-      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    <ClInclude Include="..\public\BranchTosser_Tree.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
@@ -1795,8 +1795,8 @@
     <ClCompile Include="..\private\E_KenaParryHand.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_Explosion.cpp">
-      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>

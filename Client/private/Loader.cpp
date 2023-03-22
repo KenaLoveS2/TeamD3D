@@ -33,10 +33,13 @@
 #include "WoodKnight.h"
 #include "BranchTosser.h"
 #include "BranchTosser_Weapon.h"
+#include "BranchTosser_Tree.h"
 #include "ShieldStick.h"
 #include "ShieldStick_Weapon.h"
 #include "Sapling.h"
 #include "Mage.h"
+#include "BossWarrior.h"
+#include "BossWarrior_Hat.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -1562,12 +1565,26 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_Component_Model_Boss_Warrior
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_Boss_Warrior_Hat
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior_Hat",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/Boss_Warrior_Hat/Boss_Warrior_Hat.mdat"), PivotMatrix)))) return E_FAIL;
+
 	// Prototype_Component_Model_Rope_Rock
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rope_RotRock", true, false, true))) return E_FAIL;
 
-	// Prototype_Component_Model_BranchTosser_Projectile
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Enemy/BranchTosser", true, false, false))) return E_FAIL;
+	// Prototype_Component_Model_BranchTosser_Projectile	
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser_Projectile",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), PivotMatrix)))) return E_FAIL;
 
+	// Prototype_Component_Model_MY_BranchTosser_Tree
+	_matrix TempMatrix = XMMatrixScaling(0.1f, 0.05f, 0.1f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MY_BranchTosser_Tree",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), TempMatrix)))) return E_FAIL;
+	
 	// Prototype_Component_Model_HeroRot
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_HeroRot",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/HeroRot/HeroRot.mdat"), PivotMatrix)))) return E_FAIL;
@@ -1614,8 +1631,11 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_BranchTosser
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosser"), CBranchTosser::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	
-	// Prototype_GameObject_Mage
+	// Prototype_GameObject_BranchTosserWeapon
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserWeapon"), CBranchTosser_Weapon::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	
+	// Prototype_GameObject_BranchTosserWeapon
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BranchTosserTree"), CBranchTosser_Tree::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	// Prototype_GameObject_ShieldStick
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShieldStick"), CShieldStick::Create(m_pDevice, m_pContext)))) return E_FAIL;
@@ -1649,7 +1669,13 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	
 	// Prototype_GameObject_Saiya
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Saiya"), CSaiya::Create(m_pDevice, m_pContext)))) return E_FAIL;
-	
+
+	// Prototype_GameObject_BossWarrior
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossWarrior"), CBossWarrior::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_BossWarrior_Hat
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossWarrior_Hat"), CBossWarrior_Hat::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
 	return S_OK;
 }
 
