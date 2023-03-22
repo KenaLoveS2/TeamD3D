@@ -25,6 +25,7 @@ public:
 	HRESULT			Bind_RawValue(CShader * pShaderCom, const char * pConstanctName);
 
 	void			ResetInfo() { m_vecInstanceInfo.clear(); }
+	void			Refresh_InstanceCount();
 
 private:
 	_uint			  m_iInitNumInstance = 0;
