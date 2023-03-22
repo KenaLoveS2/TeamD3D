@@ -30,8 +30,8 @@ HRESULT CLightCamera::Initialize(void * pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
 	else 
 	{
-		CameraDesc.vEye = _float4(-30.f, 120.f, -50.f, 1.f);
-		CameraDesc.vAt = _float4(60.f, 0.f, 60.f, 1.f);
+		CameraDesc.vEye = _float4(-30.f, 200.f, -50.f, 1.f);
+		CameraDesc.vAt = _float4(128.f, 0.f, 128.f, 1.f);
 		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 		CameraDesc.fFovy = XMConvertToRadians(90.0f);
 		CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
@@ -50,8 +50,18 @@ HRESULT CLightCamera::Initialize(void * pArg)
 void CLightCamera::Tick(_float TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	m_pTransformCom->LookAt(XMLoadFloat4(&m_CameraDesc.vAt));
+
+	if(m_bSwitch)
+	{
+		pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
+		pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
+	}
+
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
+
+	//Imgui_RenderProperty();
 }
 
 void CLightCamera::Late_Tick(_float TimeDelta)
@@ -66,11 +76,13 @@ HRESULT CLightCamera::Render()
 
 void CLightCamera::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Switching Cam", &m_bSwitch);
 	float fAt[3] = { m_CameraDesc.vAt.x,m_CameraDesc.vAt.y, m_CameraDesc.vAt.z};
-	ImGui::DragFloat3("At", fAt, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat3("At", fAt, 0.1f, -1000.f, 2000.f);
 	m_CameraDesc.vAt.x = fAt[0];
 	m_CameraDesc.vAt.y = fAt[1];
 	m_CameraDesc.vAt.z = fAt[2];
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 CLightCamera * CLightCamera::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

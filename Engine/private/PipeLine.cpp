@@ -27,6 +27,12 @@ _matrix CPipeLine::Get_TransformMatrix_Inverse(TRANSFORMSTATE eState) const
 	return XMLoadFloat4x4(&m_TransformMatrices_Inverse[eState]);
 }
 
+_float4 CPipeLine::Get_LightCamLook()
+{
+	_float4 vLook;
+	memcpy(&vLook, &m_TransformMatrices_Inverse[D3DTS_DYNAMICLIGHTVEIW].m[2][0], sizeof(_float4));
+	return vLook;
+}
 
 _float4 CPipeLine::Get_CamRight_Float4()
 {
@@ -91,7 +97,10 @@ void CPipeLine::Tick()
 {
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_VIEW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_VIEW])));
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_PROJ], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_PROJ])));
+	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_LIGHTVIEW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_LIGHTVIEW])));
+	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_DYNAMICLIGHTVEIW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_DYNAMICLIGHTVEIW])));
 	memcpy(&m_vCamPosition, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[3][0], sizeof(_float4));
+	memcpy(&m_vLightCamPosition, &m_TransformMatrices_Inverse[D3DTS_DYNAMICLIGHTVEIW].m[3][0], sizeof(_float4));
 }
 
 void CPipeLine::Free()

@@ -45,19 +45,18 @@ HRESULT CControlRoom::Initialize(void* pArg)
 
 	m_MapShadowArray.fill(false);
 
+	CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_0"));
+
 	return S_OK;
 }
 
 HRESULT CControlRoom::Late_Initialize(void* pArg)
 {
-
-	
 	CGameObject* pPlayerPtr = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
 	if (pPlayerPtr == nullptr)
 		return S_OK;
 
 	m_pPlayerTransformPtr = pPlayerPtr->Get_TransformCom();
-
 
 	return S_OK;
 }
@@ -67,41 +66,45 @@ void CControlRoom::Tick(_float fTimeDelta)
 	CGameObject::Tick(fTimeDelta);
 
 	if (m_pPlayerTransformPtr ==nullptr)
-	{
 		return;
-	}
 
 	_float4 vPlayerPos;
 	XMStoreFloat4(&vPlayerPos, m_pPlayerTransformPtr->Get_State(CTransform::STATE_TRANSLATION));
-
 
 	if (false == m_MapShadowArray[0] && vPlayerPos.z > 240.f)
 	{
 		//To.do 
 		// 2번째 터레인 쉐도우 온
 		m_MapShadowArray[0] = true;
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_1"));
+		m_pRendererCom->ShootStaticShadow();
 	}
 	else if (false == m_MapShadowArray[1] && vPlayerPos.z > 480.f)
 	{
 		//To.do 
 		// 3번째 터레인 쉐도우 온
 		m_MapShadowArray[1] = true;
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_2"));
+		m_pRendererCom->ShootStaticShadow();
 	}
 	else if (false == m_MapShadowArray[2] && vPlayerPos.z > 710.f)
 	{
 		//To.do 
 		// 4번째 터레인 쉐도우 온
 		m_MapShadowArray[2] = true;
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_3"));
+		m_pRendererCom->ShootStaticShadow();
 	}
 	else if (false == m_MapShadowArray[3] && vPlayerPos.z > 917.f)
 	{
 		//To.do 
 		// 5번째 터레인 쉐도우 온
 		m_MapShadowArray[3] = true;
+		CGameInstance::GetInstance()->Work_LightCamera(TEXT("LIGHT_CAM_4"));
+		m_pRendererCom->ShootStaticShadow();
 	}
 	else
 		return;
-
 }
 
 void CControlRoom::Late_Tick(_float fTimeDelta)

@@ -181,6 +181,7 @@ public:
 	void Create_Px_InstTriangle(class CTransform* pParentTransform);
 	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
 	
+	void Set_DurationRate(_uint iAnimIndex, _float fRate);
 };
 
 END

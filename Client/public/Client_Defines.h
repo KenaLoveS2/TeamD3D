@@ -70,7 +70,7 @@ extern unsigned int	g_LEVEL;
 static const _float4x4 g_IdentityFloat4x4 = {
 	1,0,0,0,
 	0,1,0,0,
-	1,0,1,0,
+	0,0,1,0,
 	0,0,0,1,
 };
 

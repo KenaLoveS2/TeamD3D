@@ -118,6 +118,9 @@ void CSpiritArrow::Late_Tick(_float fTimeDelta)
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CSpiritArrow::Render()

@@ -121,6 +121,8 @@ public: /* For.PipeLine */
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 	
 		_float4 Get_CamPosition();
+		_float4 Get_LightCamPosition();
+		_float4 Get_LightCamLook();
 
 		_float4		Get_CamRight_Float4();
 		_float4		Get_CamUp_Float4();
@@ -194,6 +196,11 @@ public: /* For.PipeLine */
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		class CCamera* Get_WorkCameraPtr();
+
+		HRESULT Add_LightCamera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+		HRESULT Work_LightCamera(const _tchar* pCameraTag);
+		class CCamera* Find_LightCamera(const _tchar* pCameraTag);
+
 		_float*		Get_CameraFar();
 		_float*		Get_CameraNear();
 		_float*		Get_CameraFov();

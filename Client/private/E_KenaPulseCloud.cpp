@@ -39,7 +39,7 @@ HRESULT CE_KenaPulseCloud::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(1.0f, 1.0f);
-	m_eEFfectDesc.vScale = XMVectorSet(3.f, 3.f, 1.f, 1.f);
+	m_eEFfectDesc.vScale = XMVectorSet(3.2f, 3.2f, 1.f, 1.f);
 	return S_OK;
 }
 
@@ -92,21 +92,18 @@ void CE_KenaPulseCloud::Tick(_float fTimeDelta)
 
 void CE_KenaPulseCloud::Late_Tick(_float fTimeDelta)
 {
-	//__super::Late_Tick(fTimeDelta);
+
+	if (m_pParent != nullptr)
+		Set_Matrix();
 
 	if (m_eEFfectDesc.IsBillboard == true)
 		CUtile::Execute_BillBoard(m_pTransformCom, m_eEFfectDesc.vScale);
-// 	else
-// 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 	}
-
-	if (m_pParent != nullptr)
-		Set_Matrix();
 }
 
 HRESULT CE_KenaPulseCloud::Render()

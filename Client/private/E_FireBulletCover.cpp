@@ -43,8 +43,7 @@ HRESULT CE_FireBulletCover::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);		
 
 	m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
-	m_eEFfectDesc.vScale = XMVectorSet(0.23f, 0.23f, 0.23f, 0.23f);
-
+	m_eEFfectDesc.vScale = XMVectorSet(0.23f, 0.23f, 0.23f, 1.f);
 	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
@@ -52,12 +51,6 @@ HRESULT CE_FireBulletCover::Initialize(void * pArg)
 void CE_FireBulletCover::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (m_pParent != nullptr)
-	{
-		if (dynamic_cast<CEffect_Base*>(m_pParent)->Get_Active() == true)
-			m_eEFfectDesc.bActive = true;
-	}
 }
 
 void CE_FireBulletCover::Late_Tick(_float fTimeDelta)

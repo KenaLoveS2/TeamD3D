@@ -211,11 +211,6 @@ void CEffect_Point_Instancing::Tick(_float fTimeDelta)
 
 	m_pVIInstancingBufferCom->Tick(fTimeDelta);
 
-	if (m_eEFfectDesc.bActive == true)
-		m_fLife += fTimeDelta;
-	else
-		m_fLife = 0.0f;
-
 	if (m_eEFfectDesc.bStart == true)
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
