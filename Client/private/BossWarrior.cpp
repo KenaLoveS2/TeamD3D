@@ -371,4 +371,5 @@ CGameObject* CBossWarrior::Clone(void* pArg)
 void CBossWarrior::Free()
 {
 	CMonster::Free();
+	Safe_Release(m_pHat);
 }

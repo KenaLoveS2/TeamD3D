@@ -1575,9 +1575,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser_Projectile",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), PivotMatrix)))) return E_FAIL;
 
-	// Prototype_Component_Model_BranchTosser_Tree
+	// Prototype_Component_Model_MY_BranchTosser_Tree
 	_matrix TempMatrix = XMMatrixScaling(0.1f, 0.05f, 0.1f);
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser_Tree",
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MY_BranchTosser_Tree",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/BranchTosser/BranchTosser_Projectile.mdat"), TempMatrix)))) return E_FAIL;
 	
 	// Prototype_Component_Model_HeroRot

@@ -377,8 +377,6 @@ void CMonster::Free()
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	return 0;
-
 	if (pTarget && m_bSpawn)
 	{
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
