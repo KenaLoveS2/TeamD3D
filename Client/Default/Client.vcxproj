@@ -179,6 +179,8 @@
     <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
+    <ClInclude Include="..\public\BossWarrior.h" />
+    <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
     <ClInclude Include="..\public\BranchTosser_Tree.h" />
@@ -399,6 +401,8 @@
     <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
+    <ClCompile Include="..\private\BossWarrior.cpp" />
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
     <ClCompile Include="..\private\BranchTosser_Tree.cpp" />

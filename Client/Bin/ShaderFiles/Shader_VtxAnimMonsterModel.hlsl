@@ -21,6 +21,9 @@ Texture2D<float4>      g_AOTexture;
 Texture2D<float4>      g_RoughnessTexture;
 Texture2D<float4>      g_MaskTexture;
 
+float4			g_EmissiveColor = (float4)1.f;
+float				g_fHDRIntensity = 0.f;
+
 /* EnemyWisp Texture */
 texture2D      g_NoiseTexture;
 texture2D      g_ReamTexture;
@@ -234,7 +237,7 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc);
+	FinalColor = vDiffuse +	(vDiffuse * vEmissiveDesc * g_EmissiveColor);
 
 	if (g_bDissolve)
 	{
@@ -266,7 +269,7 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 
 	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc), 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
 	Out.vAmbient = vAO_R_MDesc;
 
 	return Out;
