@@ -343,7 +343,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 			pEffect.second->Late_Initialize();
 	}
 
-
 	return S_OK;
 }
 
@@ -359,7 +358,8 @@ void CKena::Tick(_float fTimeDelta)
 	else
 	{
 		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD)
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 	}
 
@@ -400,6 +400,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
 	{
+		fTimeDelta /= fTimeRate;
 		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 		fTimeDelta *= fTimeRate;
 	}
@@ -409,7 +410,8 @@ void CKena::Tick(_float fTimeDelta)
 		if (m_fHitStopTime <= 0.f)
 		{
 			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD)
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);

@@ -10,7 +10,7 @@ BEGIN(Client)
 class CRotBomb final : public CEffect_Mesh
 {
 public:
-	enum BOMBSTATE { BOMB_CHARGE, BOMB_READY, BOMB_RELEASE, BOMB_LAND, BOMB_BOOM, BOMBSTATE_END };
+	enum BOMBSTATE { BOMB_CHARGE, BOMB_INJECT_CHARGE, BOMB_READY, BOMB_RELEASE, BOMB_LAND, BOMB_BOOM, BOMBSTATE_END };
 	enum ANIMATION { CHARGE, CHARGE_LOOP, INJECT, LAND, LAND_LOOP, LAND_RUMBLE_ADD, REFPOSE, ANIMATION_END };
 	enum CHILD_TYPE { CHILD_COVER, CHILD_PARTICLE, CHILD_END };
 
@@ -42,15 +42,19 @@ public:
 private:
 	CAnimationState*		m_pAnimation = nullptr;
 	class CKena*				m_pKena = nullptr;
+	class CE_BombTrail*		m_pPathTrail = nullptr;
 
 private:
 	BOMBSTATE				m_eCurState = BOMBSTATE_END;
 	BOMBSTATE				m_ePreState = BOMBSTATE_END;
 
+	_bool						m_bInject = false;
 	_float						m_fInitScale = 0.1f;
 	_float						m_fMaxScale = 1.f;
 	_float						m_fInjectScale = 1.3f;
 	_float						m_fScale = 1.f;
+	_float3					m_vAimPos;
+	list<_float4>				m_PathList;
 
 	_bool						m_bHit = false;
 	CGameObject*			m_pTarget = nullptr;
@@ -67,6 +71,7 @@ private:
 
 	BOMBSTATE				Check_State();
 	void						Update_State(_float fTimeDelta);
+	void						Calculate_Path(_float fTimeDelta);
 
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 

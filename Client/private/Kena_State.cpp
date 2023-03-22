@@ -115,7 +115,7 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 	}
 
 	/* Bomb */
-	if (m_pKena->m_bBomb == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurBombCount() > 0)
+	if (m_pKena->m_bBomb == true && m_pKena->m_pCurBomb == nullptr && m_pStatus->Get_CurBombCount() > 0)
 	{
 		for (auto pBomb : m_pKena->m_vecBomb)
 		{
@@ -727,6 +727,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_CANCEL", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"BOMB_RELEASE", this, &CKena_State::MouseUp_Right)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::KeyInput_Direction)
@@ -856,6 +857,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOMB_CANCEL", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"BOMB_RELEASE", this, &CKena_State::MouseUp_Right)
@@ -1179,6 +1181,14 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Start(this, &CKena_State::Start_Bomb_Inject)
 		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject)
 		.Init_End(this, &CKena_State::End_Bomb_Inject)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_CANCEL", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -3171,6 +3181,7 @@ void CKena_State::Start_Attack_4_Return(_float fTimeDelta)
 void CKena_State::Start_Bomb_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
 	m_pKena->m_bJump = false;
 }
 
@@ -3474,6 +3485,12 @@ void CKena_State::Start_Bomb_Cancel_Run_Right(_float fTimeDelta)
 void CKena_State::Start_Bomb_Inject(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOMB_INJECT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
 }
 
 void CKena_State::Start_Bomb_Air_Into(_float fTimeDelta)
@@ -4554,7 +4571,7 @@ void CKena_State::Start_Pulse_Parry(_float fTimeDelta)
 
 	m_pKena->m_bPulse = false;
 
-	//m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_WorldMatrix().r[3]);
+	m_pTransform->LookAt_NoUpDown(m_pKena->m_pAttackObject->Get_WorldMatrix().r[3]);
 
 	m_pKena->m_bParry = false;
 	m_pKena->m_bParryLaunch = true;
@@ -5685,6 +5702,11 @@ void CKena_State::End_Bomb_Cancel_Run(_float fTimeDelta)
 
 void CKena_State::End_Bomb_Inject(_float fTimeDelta)
 {
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBomb = false;
+	m_pKena->m_bInjectBomb = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 }
 
 void CKena_State::End_Bomb_Air_Into(_float fTimeDelta)
@@ -6219,8 +6241,7 @@ _bool CKena_State::HeavyAttack3_Perfect()
 
 _bool CKena_State::Parry()
 {
-	//return m_pKena->m_bParry;
-	return true;
+	return m_pKena->m_bParry;
 }
 
 _bool CKena_State::Damaged_Dir_Front()

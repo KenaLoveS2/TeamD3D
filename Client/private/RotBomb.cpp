@@ -8,6 +8,7 @@
 #include "Bone.h"
 #include "E_KenaPulse.h"
 #include "E_P_Explosion.h"
+#include "E_BombTrail.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -33,7 +34,7 @@ HRESULT CRotBomb::Initialize(void * pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 10.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -60,7 +61,7 @@ HRESULT CRotBomb::Initialize(void * pArg)
 HRESULT CRotBomb::Late_Initialize(void * pArg)
 {
 	_float3 vPos = _float3(0.f, 0.f, 0.f);
-	_float3 vPivotScale = _float3(m_fScale * 0.25f, 0.f, 1.f);
+	_float3 vPivotScale = _float3(m_fScale * 0.125f, 0.f, 1.f);
 	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
 
 	// Capsule X == radius , Y == halfHeight
@@ -91,6 +92,8 @@ HRESULT CRotBomb::Late_Initialize(void * pArg)
 		pChild->Set_Parent(this);
 		pChild->Late_Initialize(nullptr);
 	}
+	m_pPathTrail->Set_Parent(this);
+	m_pPathTrail->Late_Initialize(nullptr);
 
 	return S_OK;
 }
@@ -100,12 +103,11 @@ void CRotBomb::Tick(_float fTimeDelta)
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 	if (fTimeRate != 1.f)
 		fTimeDelta /= fTimeRate;
-	
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	__super::Tick(fTimeDelta);
-
+	m_pPathTrail->Reset();
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
 	
@@ -113,29 +115,44 @@ void CRotBomb::Tick(_float fTimeDelta)
 	PxShape*			pShape = nullptr;
 	pActor->getShapes(&pShape, sizeof(PxShape));
 	PxSphereGeometry& Geometry = pShape->getGeometry().sphere();
-	Geometry.radius = m_fScale * 0.25f;
+	Geometry.radius = m_fScale * 0.125f;
 	pShape->setGeometry(Geometry);
 
 	m_pTransformCom->Tick(fTimeDelta);
 
 	m_pAnimation->Play_Animation(fTimeDelta);
+
+	for (auto pChild : m_vecChild)
+		pChild->Tick(fTimeDelta);
+
+	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_pPathTrail->Set_Position(vPos);
+	
+	m_pPathTrail->Tick(fTimeDelta);
 }
 
 void CRotBomb::Late_Tick(_float fTimeDelta)
 {
+	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
+	if (fTimeRate != 1.f)
+		fTimeDelta /= fTimeRate;
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	__super::Late_Tick(fTimeDelta);
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
 
-	if(m_pRendererCom != nullptr)
+	m_pPathTrail->Late_Tick(fTimeDelta);
+
+	if(m_pRendererCom != nullptr && m_eCurState < CRotBomb::BOMB_BOOM)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 	}
+
+	for (auto pChild : m_vecChild)
+		pChild->Late_Tick(fTimeDelta);
 }
 
 HRESULT CRotBomb::Render()
@@ -158,7 +175,7 @@ HRESULT CRotBomb::Render()
 				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
 		}
 
-		if (i == 1) //  1== inrot
+		if (i == 1 && m_bInject) //  1== inrot
 		{
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -220,6 +237,8 @@ void CRotBomb::ImGui_AnimationProperty()
 	if (ImGui::Button("Reset"))
 		Reset();
 
+	m_pPathTrail->Imgui_RenderProperty();
+
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
 	ImGui::Text("Current State : %d", (_int)m_eCurState);
@@ -245,7 +264,9 @@ void CRotBomb::Reset()
 {
 	m_eCurState = BOMBSTATE_END;
 	m_ePreState = BOMBSTATE_END;
+	m_bInject = false;
 	m_fScale = m_fInitScale;
+	m_PathList.clear();
 	m_bHit = false;
 	m_pTarget = nullptr;
 	m_vHitPosition = _float4::One;
@@ -255,6 +276,9 @@ void CRotBomb::Reset()
 
 	m_eEFfectDesc.bActive = false;
 	m_fTimeDelta = 0.f;
+
+	m_pPathTrail->Set_Active(false);
+	m_pPathTrail->Reset();
 }
 
 void CRotBomb::Set_Child()
@@ -275,6 +299,10 @@ void CRotBomb::Set_Child()
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Position(vPos);
+
+	m_pPathTrail = dynamic_cast<CE_BombTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_BombTrail", L"RotBombTrail"));
+	NULL_CHECK_RETURN(m_pPathTrail, );
+	m_pPathTrail->Set_Position(vPos);
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -335,10 +363,13 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 
 	if (m_eCurState == CRotBomb::BOMBSTATE_END)
 	{
+		m_pPathTrail->Set_Active(false);
+
 		if (iKenaState == (_uint)CKena_State::BOMB_INTO_ADD)
 		{
 			eState = CRotBomb::BOMB_CHARGE;
 			m_pAnimation->State_Animation("CHARGE");
+			m_pPathTrail->Set_Active(true);
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_CHARGE)
@@ -347,14 +378,56 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 		{
 			eState = CRotBomb::BOMB_READY;
 			m_pAnimation->State_Animation("CHARGE_LOOP");
+			m_pPathTrail->Set_Active(true);
+		}
+		else if (iKenaState == (_uint)CKena_State::BOMB_INJECT_ADD)
+		{
+			eState = CRotBomb::BOMB_INJECT_CHARGE;
+			m_pAnimation->State_Animation("INJECT");
+			m_bInject = true;
+			m_pPathTrail->Set_Active(true);
+		}
+		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
+		{
+			eState = CRotBomb::BOMB_RELEASE;
+			m_pAnimation->State_Animation("CHARGE_LOOP");
+			m_fScale = m_fMaxScale;
+			m_pPathTrail->Set_Active(false);
+			m_pPathTrail->Copy_Path(m_PathList);
+		}
+	}
+	else if (m_eCurState == CRotBomb::BOMB_INJECT_CHARGE)
+	{
+		if (iKenaState == (_uint)CKena_State::BOMB_LOOP_ADD)
+		{
+			eState = CRotBomb::BOMB_READY;
+			m_pAnimation->State_Animation("CHARGE_LOOP");
+			m_pPathTrail->Set_Active(true);
+		}
+		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
+		{
+			eState = CRotBomb::BOMB_RELEASE;
+			m_pAnimation->State_Animation("CHARGE_LOOP");
+			m_fScale = m_fInjectScale;
+			m_pPathTrail->Set_Active(false);
+			m_pPathTrail->Copy_Path(m_PathList);
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_READY)
 	{
-		if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
+		if (iKenaState == (_uint)CKena_State::BOMB_INJECT_ADD)
+		{
+			eState = CRotBomb::BOMB_INJECT_CHARGE;
+			m_pAnimation->State_Animation("INJECT");
+			m_bInject = true;
+			m_pPathTrail->Set_Active(true);
+		}
+		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
 		{
 			eState = CRotBomb::BOMB_RELEASE;
 			m_pAnimation->State_Animation("CHARGE_LOOP");
+			m_pPathTrail->Set_Active(false);
+			m_pPathTrail->Copy_Path(m_PathList);
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_RELEASE)
@@ -377,19 +450,19 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 		if (m_bBoom == true)
 		{
 			eState = CRotBomb::BOMB_BOOM;
-			m_pAnimation->State_Animation("LAND_RUMBLE");
+
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			for (auto& pChild : m_vecChild)
+			{
+				pChild->Set_Active(true);
+				pChild->Set_Position(vPos);
+			}
 		}
 	}
 	else if (m_eCurState == CRotBomb::BOMB_BOOM)
 	{
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		for (auto& pChild : m_vecChild)
-		{
-			pChild->Set_Active(true);
-			pChild->Set_Position(vPos);
-		}
-
-		Reset();
+		if (m_vecChild[CHILD_COVER]->Get_Active() == false)
+			Reset();
 	}
 
 	return eState;
@@ -400,7 +473,7 @@ void CRotBomb::Update_State(_float fTimeDelta)
 	CModel*	pModel = dynamic_cast<CModel*>(m_pKena->Find_Component(L"Com_Model"));
 	CBone*	pHand = pModel->Get_BonePtr("rt_hand_socket_jnt");
 	_matrix	matSocket;
-
+	
 	switch (m_eCurState)
 	{
 	case CRotBomb::BOMB_CHARGE:
@@ -410,8 +483,24 @@ void CRotBomb::Update_State(_float fTimeDelta)
 		vHandPos = XMVectorSetY(vHandPos, XMVectorGetY(vHandPos) + 0.2f);
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHandPos);
 
+		Calculate_Path(fTimeDelta);
+
 		m_fScale += fTimeDelta;
 		CUtile::Saturate<_float>(m_fScale, m_fInitScale, m_fMaxScale);
+
+		break;
+		}
+	case CRotBomb::BOMB_INJECT_CHARGE:
+		{
+		matSocket = pHand->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+		_vector	vHandPos = matSocket.r[3];
+		vHandPos = XMVectorSetY(vHandPos, XMVectorGetY(vHandPos) + 0.2f);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHandPos);
+
+		Calculate_Path(fTimeDelta);
+
+		m_fScale += fTimeDelta;
+		CUtile::Saturate<_float>(m_fScale, m_fInitScale, m_fInjectScale);
 
 		break;
 		}
@@ -422,11 +511,23 @@ void CRotBomb::Update_State(_float fTimeDelta)
 		vHandPos = XMVectorSetY(vHandPos, XMVectorGetY(vHandPos) + 0.2f);
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vHandPos);
 
+		Calculate_Path(fTimeDelta);
+
 		break;
 		}
 	case CRotBomb::BOMB_RELEASE:
 		{
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float4	vTarget = m_PathList.front();
+		_float4	vDir = vTarget - vPos;
+
+		m_pTransformCom->Go_Direction(vDir, fTimeDelta);
+
+		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float4	vAfterDir = vTarget - vPos;
+		_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDir), XMVector3Normalize(vAfterDir))));
+		if (fAngle == XM_PI)
+			m_PathList.pop_front();
 
 		break;
 		}
@@ -450,6 +551,29 @@ void CRotBomb::Update_State(_float fTimeDelta)
 	}
 
 	m_pTransformCom->Set_Scaled(_float3(m_fScale, m_fScale, m_fScale));
+}
+
+void CRotBomb::Calculate_Path(_float fTimeDelta)
+{
+	_float3	vCamPos = CGameInstance::GetInstance()->Get_CamPosition_Float3();
+	_float3	vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float3();
+	_float3	vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float3();
+	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4	vTargetPos;
+
+	if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 10.f, &m_vAimPos))
+	{
+		vTargetPos = XMVectorSetW(m_vAimPos, 1.f);
+		m_pTransformCom->LookAt(vTargetPos);
+	}
+	else
+	{
+		vCamLook.Normalize();
+		vTargetPos = XMVectorSetW(vCamPos + vCamLook * 10.f, 1.f);
+		m_pTransformCom->LookAt(vTargetPos);
+	}
+
+	m_pPathTrail->Add_BezierCurve(vPos, vTargetPos, fTimeDelta);
 }
 
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -504,4 +628,5 @@ void CRotBomb::Free()
 	__super::Free();
 
 	Safe_Release(m_pAnimation);
+	Safe_Release(m_pPathTrail);
 }

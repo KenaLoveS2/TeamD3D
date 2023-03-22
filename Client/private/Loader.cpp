@@ -130,6 +130,8 @@
 #include "E_KenaParry.h"
 #include "E_KenaParryHand.h"
 #include "E_RotBombExplosion.h"
+#include "E_P_Explosion.h"
+#include "E_BombTrail.h"
 /* ~Effects */
 
 /* Components*/
@@ -147,7 +149,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_P_Explosion.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1460,7 +1461,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Kena_MainOutfit", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Kena/Outfit/MainOutfit/Kena_MainOutfit.model", PivotMatrix)), E_FAIL);
 
 	/* Prototype_Component_Model_Rot_Bomb */
-	PivotMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PivotMatrix = XMMatrixScaling(0.0025f, 0.0025f, 0.0025f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Rot_Bomb", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Rot Bomb/Rot_Bomb.model", PivotMatrix)), E_FAIL);
 
 	/* Prototype_Component_Model_Spirit_Arrow */
@@ -1478,6 +1479,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_Rot_Bomb */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Rot_Bomb", CRotBomb::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_BombTrail */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_BombTrail", CE_BombTrail::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_GameObject_Spirit_Arrow */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_SpiritArrow", CSpiritArrow::Create(m_pDevice, m_pContext)), E_FAIL);
