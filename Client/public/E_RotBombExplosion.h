@@ -27,6 +27,10 @@ private:
 private:
 	_float4x4 m_SaveInitWorldMatrix;
 
+	_bool		m_bBomb = false;
+	_float		m_fBombTime = 0.0f;
+	_float		m_fDissolveTime = 0.0f;
+
 public:
 	static  CE_RotBombExplosion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*  Clone(void* pArg = nullptr) override;

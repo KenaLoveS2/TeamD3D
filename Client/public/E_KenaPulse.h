@@ -7,7 +7,7 @@ BEGIN(Client)
 class CE_KenaPulse final : public CEffect_Mesh
 {
 public:
-	enum PULSETYPE { PULSE_DEFAULT, PULSE_PARRY, PULSE_BOMBEXPLOSION, PULSE_END };
+	enum PULSETYPE { PULSE_DEFAULT, PULSE_PARRY, PULSE_END };
 
 private:
 	CE_KenaPulse(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -44,7 +44,6 @@ private:
 private:
 	_bool	m_bDesolve = true;
 	_bool	m_bNoActive = false;
-	_bool	m_bBombDissolve = false;
 
 	_float	m_fActivePlusScale = 1.3f;
 	_float	m_fDissolveTime = 0.0f;

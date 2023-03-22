@@ -208,9 +208,9 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Rot_Bomb"), L"Bomb", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	//Prototype_GameObject_RotBombExplosion
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"pulsecover", nullptr, &pGameObject)))
-		return E_FAIL;
+	////Prototype_GameObject_RotBombExplosion
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"pulsecover", nullptr, &pGameObject)))
+	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
 	//	return E_FAIL;
