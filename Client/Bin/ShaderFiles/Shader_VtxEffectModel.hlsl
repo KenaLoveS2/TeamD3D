@@ -151,10 +151,24 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = saturate((mask + glow) * BackPulseColor * 2.f) * fresnel_Pulse + BackPulseColor;
 	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
 
-	if (g_bBombDissolve)
-		Out.vDiffuse.a = Out.vDiffuse.a * g_fDissolveTime;
-
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
+	if (g_bBombDissolve)
+	{
+		float  fDissolveAmount = g_fDissolveTime;
+		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+
+		half   dissolve_value = Dissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+		}
+	}
+
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
 

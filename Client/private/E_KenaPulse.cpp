@@ -95,6 +95,8 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 
 	Set_Child();
 	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
+	m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
+
 	return S_OK;
 }
 
@@ -107,7 +109,6 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
 
 	return S_OK;
-
 }
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
@@ -153,7 +154,7 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 				pChild->Set_Active(true);
 
 			m_fDissolveTime += fTimeDelta;
-			if (m_fDissolveTime > 1.f)
+			if (m_fDissolveTime > 0.1f)
 			{
 				m_bDesolve = false;
 				m_fDissolveTime = 0.0f;
@@ -194,13 +195,13 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			if (m_fTimeDelta > 3.f)
 			{
 				m_bBombDissolve = true;
-				m_fDissolveTime = 0.f;
-				m_fTimeDelta = 0.0f;
+			//	m_fDissolveTime = 0.f;
+			//	m_fTimeDelta = 0.0f;
 			}
 		}
 		else
 		{
-			vScaled *= fTimeDelta + 1.1f;
+			vScaled *= fTimeDelta + 1.2f;
 			m_pTransformCom->Set_Scaled(vScaled);
 		}
 		break;
@@ -222,8 +223,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-	//if (m_eEFfectDesc.bActive == false)
-	//	return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT
 		&& m_pParent != nullptr)
@@ -284,11 +285,8 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bBombDissolve", &m_bBombDissolve, sizeof(_bool))))
 		return E_FAIL;
 
-	if(m_bDesolve || m_bBombDissolve)
-	{
-		if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
-			return E_FAIL;
-	}
+	if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
+		return E_FAIL;
 
 	return S_OK;
 }
