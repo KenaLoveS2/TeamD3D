@@ -23,6 +23,8 @@ public:
 	HRESULT Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes = 0);
 	HRESULT Clear(_uint iLevelIndex);
 
+	
+
 public:
 	HRESULT					Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT					Clone_GameObject(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pPrototypeTag,

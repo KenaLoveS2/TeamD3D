@@ -80,6 +80,11 @@ _bool CFrustum::isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
+_float CFrustum::isInFrustum_WorldSpace(_int iPlaneIndex,_fvector vWorldPos)
+{
+	return  XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_PlanesInLocal[iPlaneIndex]), vWorldPos));
+}
+
 void CFrustum::Make_Planes(_float4 * pPlanes, const _float3 * pPoints)
 {
 	XMStoreFloat4(&pPlanes[0], 

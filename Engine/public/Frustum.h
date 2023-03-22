@@ -20,6 +20,7 @@ public:
 public:
 	_bool isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
+	_float isInFrustum_WorldSpace(_int iPlaneIndex, _fvector vWorldPos);
 
 private:
 	_float3				m_vPoints[8];

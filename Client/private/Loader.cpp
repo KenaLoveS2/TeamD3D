@@ -309,6 +309,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 #pragma  endregion ANIM_OBJ
 	
+	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
+		return E_FAIL;
 
 	_bool bRealObject = true;
 #ifdef FOR_MAPTOOL   
@@ -384,6 +386,8 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
+
+
 
 #endif 
 
@@ -551,7 +555,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion PulseStone
 
 #pragma  region Rock
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true, false, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/Rock_Arch", true, true, true)))
 		assert(!"Issue");
@@ -731,6 +735,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #endif
 	if (true == bRealObject)
 	{
+	
 #pragma region GroundCover
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "GroundCover/Branches", true, true, true,true)))
 			assert(!"Issue");
@@ -868,7 +873,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Rock", true, true, true)))
 			return E_FAIL;
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rock/God_Rock", true, true, true, false, true)))
 			return E_FAIL;
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Cliff/Cliff_Cap", true, true, true)))
@@ -2043,7 +2048,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Rock", true, true, true)))
 		return E_FAIL;
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/God_Rock", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rock/God_Rock", true, true, true, false, true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Cliff/Cliff_Cap", true, true, true)))

@@ -40,17 +40,29 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 void CBorn_GroundCover::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	
-	m_pModelCom->Play_Animation(fTimeDelta);
+
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+
+	const _vector	 vDir = camPos - vPos;
+	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
+
+	_float f = XMVectorGetX(XMVector4Length(vDir));
+
+	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
+		m_bRenderCheck = false;
+
+	if(m_bRenderCheck)
+		m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CBorn_GroundCover::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
-
-	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(50.f, WolrdMat))
+	
+	if (m_pRendererCom && m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

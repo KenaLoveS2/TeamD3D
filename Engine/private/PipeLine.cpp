@@ -27,6 +27,7 @@ _matrix CPipeLine::Get_TransformMatrix_Inverse(TRANSFORMSTATE eState) const
 	return XMLoadFloat4x4(&m_TransformMatrices_Inverse[eState]);
 }
 
+
 _float4 CPipeLine::Get_CamRight_Float4()
 {
 	_float4 vRight;

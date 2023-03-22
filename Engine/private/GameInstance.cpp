@@ -469,6 +469,7 @@ void CGameInstance::Get_Back()
 	m_pObject_Manager->Get_Back();
 }
 
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -693,6 +694,16 @@ _bool CGameInstance::isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange)
 
 	return m_pFrustum->isInFrustum_LocalSpace(vLocalPos, fRange);
 }
+
+_float CGameInstance::isInFrustum_WorldSpace(_int iPlaneIndex, _fvector vWorldPos)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->isInFrustum_WorldSpace(iPlaneIndex, vWorldPos);
+}
+
+
 
 ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
 {

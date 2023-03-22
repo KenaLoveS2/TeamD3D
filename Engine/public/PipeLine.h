@@ -19,6 +19,8 @@ public:
 	_float4x4	Get_TransformFloat4x4_Inverse(TRANSFORMSTATE eState) const;
 	_matrix		Get_TransformMatrix_Inverse(TRANSFORMSTATE eState) const;
 	
+	
+
 	_float4		Get_CamPosition() const {	return m_vCamPosition; }	
 	
 
