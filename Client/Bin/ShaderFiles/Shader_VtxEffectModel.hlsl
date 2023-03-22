@@ -23,7 +23,6 @@ float4  g_WorldCamPosition;
 
 /* Dissolve */
 bool    g_bDissolve;
-bool    g_bBombDissolve;
 float   g_fDissolveTime;
 /* ~Dissolve */
 
@@ -152,23 +151,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse.a = (g_vColor.r * 5.f + 0.5f) * 0.2f;
 
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
-	if (g_bBombDissolve)
-	{
-		float  fDissolveAmount = g_fDissolveTime;
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-
-		half   dissolve_value = Dissolve.r;
-
-		if (dissolve_value <= fDissolveAmount)
-			discard;
-
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
-	}
-
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
 
@@ -210,9 +192,8 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	{
 		float fDissolveAmount = g_fDissolveTime;
 
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
 
 		if (dissolve_value >= fDissolveAmount)
 			discard;
@@ -220,24 +201,7 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
 		{
 			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
-		}
-	}
-
-	if (g_bBombDissolve)
-	{
-		float  fDissolveAmount = g_fDissolveTime;
-		float4 Dissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
- 
-		half   dissolve_value = Dissolve.r;
-
-		if (dissolve_value <= fDissolveAmount)
-			discard;
-
-		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
 
@@ -454,14 +418,33 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 	if (dissolve_value <= fDissolveAmount)
 		discard;
 
-	else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-	{
-		if (Out.vDiffuse.a != 0.0f)
-			Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
-	}
+	//else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+	//{
+	//	if (Out.vDiffuse.a != 0.0f)
+	//		Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+	//}
 
 	float4 vColor = g_vColor;
 	Out.vDiffuse = vDiffuse * vColor * 3.f;
+	Out.vDiffuse.a = 0.3f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		}
+	}
+
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 
@@ -473,18 +456,41 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 1.3f);
+	float  time = frac(g_Time * 1.8f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
 
-	float4 outglow = float4(fresnel_glow(6, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 0.2f);
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuse.a = vDiffuse.r;
 
-	if (vDiffuse.a < 0.3f)
+	if (vDiffuse.a < 0.2f)
 		discard;
-	vDiffuse.rgb = vDiffuse.rgb + g_vColor.rgb;
 
-	Out.vDiffuse = vDiffuse + outglow;
+	float4 fresnelColor = float4(0.0f, 205.f, 205.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(5.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
+
+	float4 vColor = float4(15.f, 40.f, 79.f, 0.0f) / 255.f;
+	float4 vBaseColor = lerp(vDiffuse, vColor, 0.5f);
+
+	Out.vDiffuse = vBaseColor * fresnel * 2.f;
+	Out.vDiffuse.a = 0.2f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		}
+	}
+
 	return Out;
 }
 
@@ -644,6 +650,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_PULSEINNER();
+	}
+
+	pass Default_CCW //12
+	{
+		SetRasterizerState(RS_CW);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
 }

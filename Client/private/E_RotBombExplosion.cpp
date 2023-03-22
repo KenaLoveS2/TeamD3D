@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\E_RotBombExplosion.h"
 #include "GameInstance.h"
+#include "Effect_Mesh_T.h"
 
 CE_RotBombExplosion::CE_RotBombExplosion(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -63,33 +64,50 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
-
 	if (m_eEFfectDesc.bActive == true)
 	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(true);
+
 		m_fTimeDelta += fTimeDelta;
 		_float3 vScaled = m_pTransformCom->Get_Scaled();
-		if (vScaled.x >= 1.5f)
+
+		if (vScaled.x > 3.f) // 내 스케일이 3보다 커지면 현재 크기 유지
 		{
-			m_eEFfectDesc.bActive = false;
-			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_matrix));
+			m_fBombTime += fTimeDelta;
+			m_vecChild[0]->Set_Active(false); // 자식은 끄고 내 크기 유지
+
+			if (m_fBombTime > 4.f) // 현재 상태에서 4초가 지나면 
+			{
+				m_bBomb = true;	   // Bomb 상태전환
+				dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_Dissolve(true);
+			}
 		}
 		else
 		{
-			vScaled *= fTimeDelta + 1.1f;
+			vScaled *= fTimeDelta + 1.3f;
 			m_pTransformCom->Set_Scaled(vScaled);
-
-			for (auto& pChild : m_vecChild)
-				pChild->Set_AddScale(fTimeDelta + 1.1f);
+			m_vecChild[0]->Set_AddScale(fTimeDelta + 1.3f);
 		}
 	}
-	else
-	{
-		m_pTransformCom->Set_Scaled(_float3(0.8f, 0.8f, 0.8f));
 
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
+	if (m_bBomb) // 사라짐
+	{
+		m_fDissolveTime += fTimeDelta;
+		dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_DissolveTime(m_fDissolveTime);
+		if (m_fDissolveTime > 1.f)
+		{
+			m_bBomb = false;
+			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_Dissolve(false);
+			dynamic_cast<CEffect_Mesh_T*>(m_vecChild[0])->Set_DissolveTime(0.0f);
+			m_eEFfectDesc.bActive = false;
+			m_fDissolveTime = 0.0f;
+			m_fBombTime = 0.0f;
+
+			m_pTransformCom->Set_Scaled(_float3(0.9f, 0.9f, 0.9f));
+			for (auto& pChild : m_vecChild)
+				pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
+		}
 	}
 }
 
@@ -98,8 +116,8 @@ void CE_RotBombExplosion::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-// 	if (m_pParent != nullptr)
-// 		Set_Matrix();
+ 	//if (m_pParent != nullptr)
+ 	//	Set_Matrix();
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -129,6 +147,10 @@ HRESULT CE_RotBombExplosion::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bBomb, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -6,6 +6,11 @@ BEGIN(Client)
 class CRotBomb final : public CEffect_Mesh
 {
 public:
+	enum CHILD_TYPE
+	{
+		CHILD_COVER, CHILD_PARTICLE, CHILD_END
+	};
+public:
 	CRotBomb(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CRotBomb(const CRotBomb& rhs);
 	virtual ~CRotBomb() = default;
@@ -31,6 +36,7 @@ private:
 
 private:
 	_bool	m_bBomb = false;
+	_bool	m_bReset = false;
 
 private:
 	HRESULT					SetUp_Components();

@@ -95,8 +95,6 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 
 	Set_Child();
 	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
-	m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
-
 	return S_OK;
 }
 
@@ -114,8 +112,16 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	_float3 vScaled = m_pTransformCom->Get_Scaled();
+
+	ImGui::Begin("pulse");
+	if (ImGui::Button("recompile"))
+		m_pShaderCom->ReCompile();
+	ImGui::End();
+
+ 	if (m_eEFfectDesc.bActive == false)
+ 		return;
 	m_fTimeDelta += fTimeDelta;
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
 
 	switch (m_ePulseType)
 	{
@@ -141,7 +147,7 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			{
 				m_eEFfectDesc.bActive = false;
 				m_bNoActive = false;
-				m_bDesolve = true;
+				// m_bDesolve = true;
 				memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 				m_fDissolveTime = 0.0f;
 				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
@@ -152,72 +158,32 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		{
 			for (auto& pChild : m_vecChild)
 				pChild->Set_Active(true);
-
-			m_fDissolveTime += fTimeDelta;
-			if (m_fDissolveTime > 0.1f)
-			{
-				m_bDesolve = false;
-				m_fDissolveTime = 0.0f;
-			}
+			// m_bDesolve = true;
 		}
 		break;
 
 	case Client::CE_KenaPulse::PULSE_PARRY:
 
-		m_eEFfectDesc.iPassCnt = 0;
+		m_eEFfectDesc.iPassCnt = 12;
+		m_fTimeDelta += fTimeDelta;
 
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		m_pTransformCom->Set_Scaled(_float3(fTimeDelta + 1.5f));
-		if (m_fTimeDelta > 0.5f)
+		if (vScaled.x > 2.5f)
 		{
-			memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
+			m_pTransformCom->Set_WorldMatrix_float4x4(m_SaveInitWorldMatrix);
 			m_eEFfectDesc.bActive = false;
 			m_eEFfectDesc.iPassCnt = 1;
 
 			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
-			m_fTimeDelta = 0.0f;
-		}
-
-		break;
-
-	case CE_KenaPulse::PULSE_BOMBEXPLOSION:
-
-		m_eEFfectDesc.iPassCnt = 1;
-
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(false);
-
-		if (vScaled.x > 3.f)
-		{
-			m_pTransformCom->Set_Scaled(vScaled);
-			if (m_fTimeDelta > 3.f)
-			{
-				m_bBombDissolve = true;
-			//	m_fDissolveTime = 0.f;
-			//	m_fTimeDelta = 0.0f;
-			}
 		}
 		else
 		{
-			vScaled *= fTimeDelta + 1.2f;
+			vScaled *= fTimeDelta + 1.1f;
 			m_pTransformCom->Set_Scaled(vScaled);
 		}
 		break;
-	}
-
-	if (m_bBombDissolve)
-	{
-		m_fDissolveTime += fTimeDelta;
-		if (m_fDissolveTime > 5.f)
-		{
-			m_eEFfectDesc.bActive = false;
-			m_bBombDissolve = false;
-			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
-			m_fDissolveTime = 0.0f;
-			m_fTimeDelta = 0.0f;
-		}
 	}
 }
 
@@ -226,11 +192,8 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT
-		&& m_pParent != nullptr)
-	{
+	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_pParent != nullptr)
 		Set_Matrix();
-	}
 	
 	__super::Late_Tick(fTimeDelta);
 
@@ -277,17 +240,18 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_bBombDissolve", &m_bBombDissolve, sizeof(_bool))))
-		return E_FAIL;
+	//if (m_bDesolve)
+	//{
+	//	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
+	//		return E_FAIL;
 
-	if (FAILED(m_pDissolveTexture->Bind_ShaderResources(m_pShaderCom, "g_DissolveTexture")))
-		return E_FAIL;
-
+	//	_float fTextureIdx = m_pDissolveTexture->Get_TextureIdx();
+	//	if (FAILED(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", fTextureIdx)))
+	//		return E_FAIL;
+	//}
 	return S_OK;
 }
 
@@ -302,14 +266,10 @@ void CE_KenaPulse::Imgui_RenderProperty()
 		m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
 	else if (iType == 1)
 		m_ePulseType = CE_KenaPulse::PULSE_PARRY;
-	else
-		m_ePulseType = CE_KenaPulse::PULSE_BOMBEXPLOSION;
 
 	if (ImGui::Button("Active"))
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
 
-	if (ImGui::Button("Bomb"))
-		m_bBombDissolve = !m_bBombDissolve;
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

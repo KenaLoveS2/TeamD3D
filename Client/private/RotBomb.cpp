@@ -6,6 +6,7 @@
 #include "Kena_State.h"
 #include "Bone.h"
 #include "E_KenaPulse.h"
+#include "E_P_Explosion.h"
 
 CRotBomb::CRotBomb(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -82,9 +83,8 @@ void CRotBomb::Tick(_float fTimeDelta)
 				pChild->Set_Active(true);
 				pChild->Set_Position(vPos);
 			}
-			dynamic_cast<CE_KenaPulse*>(m_vecChild.back())->Set_Type(CE_KenaPulse::PULSE_BOMBEXPLOSION);
-
 			m_eEFfectDesc.bActive = false;
+
 			m_fTimeDelta = 0.0f;
 		}
 	}
@@ -190,13 +190,19 @@ void CRotBomb::Set_Child()
 	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
+	m_vecChild.reserve(CHILD_END);
+
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RotBombExplosion", L"RotBombExplosion"));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
 	
-	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"Pulse"));
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", L"RotBombExplosion_P"));
 	NULL_CHECK_RETURN(pEffectBase, );
 	m_vecChild.push_back(pEffectBase);
+
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Position(vPos);
 
 	RELEASE_INSTANCE(CGameInstance);
 }
