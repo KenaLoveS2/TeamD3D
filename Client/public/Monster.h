@@ -169,6 +169,7 @@ public:
 	static void Set_MonsterUseKenaPos(_float4 vKenaPos) { m_vKenaPos = vKenaPos ; }
 
 	_bool IsParried();
+	_float Get_DissolveTime() { return m_fDissolveTime; }
 };
 
 END

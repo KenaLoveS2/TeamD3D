@@ -678,3 +678,8 @@ HRESULT CAnimation::Synchronization_ChannelsBonePtr(CModel * pModel, const strin
 
 	return S_OK;
 }
+
+void CAnimation::Set_DurationRate(_float fRate)
+{
+	m_Duration *= fRate;
+}

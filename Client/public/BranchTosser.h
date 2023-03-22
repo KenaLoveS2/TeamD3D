@@ -1,6 +1,12 @@
 #pragma once
 #include "Monster.h"
 
+#define BRANCH_TOSSER_WEAPON_COUNT		3
+
+BEGIN(Engine)
+class CBone;
+END
+
 BEGIN(Client)
 
 class CBranchTosser : public CMonster
@@ -43,9 +49,6 @@ private:
 		DROP_END
 	};
 private:
-	CBone* m_pBone = nullptr;
-
-private:
 	CBranchTosser(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBranchTosser(const CBranchTosser& rhs);
 	virtual ~CBranchTosser() = default;
@@ -81,7 +84,11 @@ private:
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 
-	class CGameObject* m_pWeapon = nullptr;
+	class CBranchTosser_Weapon* m_pWeapon[BRANCH_TOSSER_WEAPON_COUNT] = { nullptr, };
+	CBone* m_pWeaponBone = nullptr;
+	class CBranchTosser_Tree* m_pTree = nullptr;
+
+	_uint m_iAttackCount = 0;
 
 	_int	 m_iDropType = DROP_1;
 	_float m_fIdleToAttack = 0.f;

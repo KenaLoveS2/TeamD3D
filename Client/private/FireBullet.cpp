@@ -258,7 +258,7 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		break;
 	}
 	case STATE_EXPLOSION_START:
-	{		
+	{	
 		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
 		m_vecChild[CHILD_EXPLOSION]->Set_Position(m_vTargetPos);
 
@@ -269,7 +269,7 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	{	
 		m_eEFfectDesc.bActive = false;
 		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
-
+		
 		if (bActive == false)
 			m_eState = STATE_RESET;
 

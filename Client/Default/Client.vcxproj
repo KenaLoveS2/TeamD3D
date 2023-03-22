@@ -181,6 +181,7 @@
     <ClInclude Include="..\Public\Born_GroundCover.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
+    <ClInclude Include="..\public\BranchTosser_Tree.h" />
     <ClInclude Include="..\public\BranchTosser_Weapon.h" />
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\public\CameraForNpc.h" />
@@ -399,6 +400,7 @@
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp" />
     <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\private\CameraForNpc.cpp" />

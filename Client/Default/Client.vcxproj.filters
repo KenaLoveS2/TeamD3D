@@ -1138,6 +1138,9 @@
     <ClInclude Include="..\public\E_KenaParryHand.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BranchTosser_Tree.h">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1782,6 +1785,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_KenaParryHand.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp">
+      <Filter>02.GameObjects\Monster\BranchTosser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

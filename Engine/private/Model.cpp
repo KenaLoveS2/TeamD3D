@@ -2636,3 +2636,8 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 
 
 #endif
+
+void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
+{
+	m_Animations[iAnimIndex]->Set_DurationRate(fRate);
+}
