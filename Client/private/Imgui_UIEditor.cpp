@@ -211,9 +211,9 @@ void CImgui_UIEditor::Load_List()
 	{
 		m_vecEffectTag.clear();
 
-		//for (auto effect : m_vecEffects)
-		//	Safe_Release(effect);
-		//m_vecEffects.clear();
+		for (auto effect : m_vecEffects)
+			Safe_Release(effect);
+		m_vecEffects.clear();
 	}
 
 	/* Load Type Data */
@@ -234,8 +234,17 @@ void CImgui_UIEditor::Load_List()
 		string strEffect;
 		jSub.get_to<string>(strEffect);
 		m_vecEffectTag.push_back(strEffect);
-	}
 
+		wstring wstr;
+		wstr.assign(strEffect.begin(), strEffect.end());
+		_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
+
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
+		if (m_pEffect != nullptr)
+			m_vecEffects.push_back(m_pEffect);
+
+	}
 
 }
 

@@ -51,7 +51,7 @@ HRESULT CUI_NodeBossHP::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-	m_bActive = true;
+	//m_bActive = true;
 
 	/* Events */
 	UIDESC* tDesc = (UIDESC*)pArg;

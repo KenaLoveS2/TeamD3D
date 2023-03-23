@@ -31,7 +31,7 @@ public:
 
 public:
 	HRESULT							Save_Data();
-	HRESULT							Load_Data(char* fileName);
+	HRESULT							Load_Data(_tchar* fileName);
 
 private:
 	HRESULT							SetUp_Components();
@@ -49,7 +49,7 @@ private:
 	
 private: 
 	CGameObject*					m_pTarget;
-	char*							m_pfileName;
+	_tchar*							m_pfileName;
 
 private: /* struct 로 뺄 수도 있는 목록 */
 	_int							m_iRenderPass;

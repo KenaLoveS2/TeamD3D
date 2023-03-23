@@ -44,7 +44,7 @@ HRESULT CEffect_Particle_Base::Initialize(void * pArg)
 
 	if (pArg != nullptr)
 	{
-		m_pfileName = (char*)pArg;
+		m_pfileName = (_tchar*)pArg;
 		if (FAILED(Load_Data(m_pfileName)))
 			SetUp_Buffer();
 	}
@@ -59,19 +59,18 @@ HRESULT CEffect_Particle_Base::Initialize(void * pArg)
 
 	/* temp */
 	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
-	m_iTextureIndex = 53;
 
 	return S_OK;
 }
 
 HRESULT CEffect_Particle_Base::Late_Initialize(void * pArg)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(
-		g_LEVEL, L"Layer_Player", L"Kena"));
-	RELEASE_INSTANCE(CGameInstance);
+	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(
+	//	g_LEVEL, L"Layer_Player", L"Kena"));
+	//RELEASE_INSTANCE(CGameInstance);
 
-	m_pTransformCom->Set_Position(pKena->Get_TransformCom()->Get_Position());
+	//m_pTransformCom->Set_Position(pKena->Get_TransformCom()->Get_Position());
 
 	return S_OK;
 }
@@ -239,6 +238,13 @@ HRESULT CEffect_Particle_Base::Save_Data()
 			strSaveDirectory += ".json";
 
 			Json	json;
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&m_pTransformCom->Get_Position() + i++);
+				json["00. Position"].push_back(fElement);
+			}
+
 			json["01. TextureIndex"] = m_iTextureIndex;
 			json["02. RenderPass"] = m_iRenderPass;
 			for (_uint i = 0; i < 4; ++i)
@@ -292,7 +298,7 @@ HRESULT CEffect_Particle_Base::Save_Data()
 	return S_OK;
 }
 
-HRESULT CEffect_Particle_Base::Load_Data(char* fileName)
+HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 {
 	if (fileName == nullptr)
 		return E_FAIL;
@@ -309,14 +315,23 @@ HRESULT CEffect_Particle_Base::Load_Data(char* fileName)
 
 	Json	jLoad;
 
-	string filePath = "../Bin/Data/Effect_UI/";
+	wstring filePath = L"../Bin/Data/Effect_UI/";
 	filePath += fileName;
+	filePath += L".json";
 
 	ifstream file(filePath);
 	if (file.fail())
 		return E_FAIL;
 	file >> jLoad;
 	file.close();
+
+	_float4 vPos;
+	for (auto fElement : jLoad["00. Position"])
+	{
+		static int i = 0;
+		fElement.get_to<_float>(*((float*)&vPos + i++));
+	}
+	m_pTransformCom->Set_Position(vPos);
 
 	jLoad["01. TextureIndex"].get_to<_int>(m_iTextureIndex);
 	jLoad["02. RenderPass"].get_to<_int>(m_iRenderPass);
