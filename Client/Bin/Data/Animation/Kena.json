@@ -1922,7 +1922,7 @@
     {
         "0. State Name": "BOW_AIR_CHARGE_LOOP",
         "1. Looping": true,
-        "2. Lerp Duration": 0.20000000298023224,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Air_RefPose",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1974,7 +1974,7 @@
     {
         "0. State Name": "BOW_AIR_RELEASE",
         "1. Looping": false,
-        "2. Lerp Duration": 0.0,
+        "2. Lerp Duration": 0.2,
         "3. Main Animation": "A_Kena_Aim_Air_RefPose",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -1992,7 +1992,7 @@
     {
         "0. State Name": "BOW_AIR_RETURN",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Aim_Air_RefPose",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
@@ -2744,5 +2744,797 @@
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",
         "6. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "BOMB_INTO",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_FORWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_BACKWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Left",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INTO_RUN_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Right",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_FORWARD",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_FORWARD_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_FORWARD_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_BACKWARD",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_BACKWARD_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_BACKWARD_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_LEFT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Left",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_LOOP_RUN_RIGHT",
+        "1. Looping": true,
+        "2. Lerp Duration": 0.2,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Right",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_FORWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_BACKWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Left",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_RELEASE_RUN_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Right",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_FORWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Forward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Forward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_BACKWARD",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Left",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Backward",
+        "4. Blend Animation": "A_Kena_Aim_Run_Right",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Backward",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_LEFT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Left",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Left",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_CANCEL_RUN_RIGHT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Run_Right",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Run_Right",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_INJECT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bomb_Inject",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_AIR_INTO",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Into",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_AIR_LOOP",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Loop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_AIR_RELEASE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Release",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOMB_AIR_CANCEL",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_Air_Loop",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_Air_Loop",
+                "4. Additive Animation": "A_Kena_Bomb_Cancel",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_Inject",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Bow_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "5. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE",
+        "1. Looping": false,
+        "2. Lerp Duration": 0.20000000298023224,
+        "3. Main Animation": "A_Kena_Aim_RefPose",
+        "4. Blend Animation": "N/A",
+        "5. Joint Index": "N/A",
+        "6. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Reference Animation": "A_Kena_Aim_RefPose",
+                "4. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "5. Joint Index": "N/A"
+            }
+        ]
     }
 ]

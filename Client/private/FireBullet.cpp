@@ -29,7 +29,7 @@ HRESULT CFireBullet::Initialize(void * pArg)
 
 	if (pArg == nullptr)
 	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+		GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}
 	else
@@ -90,17 +90,13 @@ HRESULT CFireBullet::Late_Initialize(void * pArg)
 
 void CFireBullet::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
 	FireBullet_Proc(fTimeDelta);
-
 	m_pTransformCom->Tick(fTimeDelta);
-
-	 __super::Tick(fTimeDelta);
-
-	 for (auto& iter : m_vecChild)
-		 iter->Tick(fTimeDelta);
 }
 
 void CFireBullet::Late_Tick(_float fTimeDelta)
@@ -111,9 +107,6 @@ void CFireBullet::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
-
-	for (auto& iter : m_vecChild)
-		iter->Late_Tick(fTimeDelta);	
 }
 
 HRESULT CFireBullet::Render()
@@ -232,6 +225,8 @@ void CFireBullet::Free()
 
 void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 {
+	m_vTargetPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
 	switch (m_eState)
 	{
 	case STATE_WAIT:
@@ -244,17 +239,14 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	case STATE_CREATE:
 	{
 		// 생성 시뮬레이션
-
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(true);
-		m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
+		// m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
 
 		m_eState = STATE_CHASE;
 
 		break;
 	}
 	case STATE_CHASE:
-	{
+	{	
 		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f);
 		
 		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f))
@@ -266,18 +258,19 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		break;
 	}
 	case STATE_EXPLOSION_START:
-	{
-		m_vecChild[CHILD_COVER]->Set_Active(false);
-		m_vecChild[CHILD_BACK]->Set_Active(false);
+	{	
 		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
+		m_vecChild[CHILD_EXPLOSION]->Set_Position(m_vTargetPos);
 
 		m_eState = STATE_EXPLOSION;
 		break;
 	}
 	case STATE_EXPLOSION:
-	{
+	{	
+		m_eEFfectDesc.bActive = false;
 		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
-		if(bActive == false)
+		
+		if (bActive == false)
 			m_eState = STATE_RESET;
 
 		break;

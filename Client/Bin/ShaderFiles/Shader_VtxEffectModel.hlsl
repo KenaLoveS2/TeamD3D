@@ -7,7 +7,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DepthTexture, g_NormalTexture;
 texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
 
-texture2D		g_DissolveTexture[4];
+texture2D		g_DissolveTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
@@ -192,15 +192,8 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	{
 		float fDissolveAmount = g_fDissolveTime;
 
-		float4 Dissolve0 = g_DissolveTexture[0].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve1 = g_DissolveTexture[1].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve2 = g_DissolveTexture[2].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve3 = g_DissolveTexture[3].Sample(LinearSampler, In.vTexUV);
-		float4 Dissolve = Dissolve0 * Dissolve1 * Dissolve2 * Dissolve3 * 2.f;
-		Dissolve = saturate(Dissolve);
-
-		//Dissolve function
-		half dissolve_value = Dissolve.r;
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
 
 		if (dissolve_value >= fDissolveAmount)
 			discard;
@@ -208,7 +201,7 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
 		{
 			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(vBaseColor.rgb * step(dissolve_value + fDissolveAmount, 0.05f), Out.vDiffuse.a);
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
 
@@ -375,7 +368,7 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
 
 	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
-	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;;
+	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;
 	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
 
 	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
@@ -412,12 +405,101 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	return Out;
 }
 
+//PS_PULSECOVER
+PS_OUT PS_PULSECOVER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  fDissolveAmount = 0.8f;
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	half   dissolve_value = vDiffuse.r;
+
+	if (dissolve_value <= fDissolveAmount)
+		discard;
+
+	//else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+	//{
+	//	if (Out.vDiffuse.a != 0.0f)
+	//		Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+	//}
+
+	float4 vColor = g_vColor;
+	Out.vDiffuse = vDiffuse * vColor * 3.f;
+	Out.vDiffuse.a = 0.3f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		}
+	}
+
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+
+	return Out;
+}
+
+//PS_PULSEINNER
+PS_OUT PS_PULSEINNER(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 1.8f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
+
+	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	vDiffuse.a = vDiffuse.r;
+
+	if (vDiffuse.a < 0.2f)
+		discard;
+
+	float4 fresnelColor = float4(0.0f, 205.f, 205.f, 255.f) / 255.f;
+	float4 fresnel = float4(fresnel_glow(5.0f, 1.5f, fresnelColor.rgb, In.vNormal.rgb, In.vViewDir), fresnelColor.a);
+
+	float4 vColor = float4(15.f, 40.f, 79.f, 0.0f) / 255.f;
+	float4 vBaseColor = lerp(vDiffuse, vColor, 0.5f);
+
+	Out.vDiffuse = vBaseColor * fresnel * 2.f;
+	Out.vDiffuse.a = 0.2f;
+
+	if (g_bDissolve)
+	{
+		float fDissolveAmount = g_fDissolveTime;
+
+		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
+		half dissolve_value = vDissolve.r;
+
+		if (dissolve_value <= fDissolveAmount)
+			discard;
+
+		else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+		}
+	}
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -531,7 +613,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAGEBULLET();
 	}
 
-	pass Effect_MageCover // 8
+	pass Effect_MageCover // 9
 	{
 		SetRasterizerState(RS_CULLNONE);
 		SetDepthStencilState(DS_Default, 0);
@@ -543,4 +625,44 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAGEBULLETCOVER();
 	}
+
+	pass Effect_PulseCover // 10
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PULSECOVER();
+	}
+
+	pass Effect_PulseInner // 11
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PULSEINNER();
+	}
+
+	pass Default_CCW //12
+	{
+		SetRasterizerState(RS_CW);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
 }

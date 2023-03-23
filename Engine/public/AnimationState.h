@@ -68,6 +68,7 @@ public:
 	const _uint		Get_CurrentAnimIndex() const;
 	const _uint		Get_PreAnimIndex() const;
 	const _bool&		Get_AnimationFinish();
+	const _bool		Get_AnimationFinish(const string& strStateName);
 	const _float		Get_AnimationProgress() const;
 	const _bool&		Get_Preview() const { return m_bPreview; }
 

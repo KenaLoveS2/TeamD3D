@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
+#include "EnviromentObj.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -11,7 +11,7 @@ END
 
 BEGIN(Client)
 
-class CWaterPlane : public CGameObject
+class CWaterPlane : public CEnviromentObj
 {
 private:
 	CWaterPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

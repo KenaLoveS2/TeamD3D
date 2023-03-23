@@ -83,7 +83,6 @@ HRESULT CSpiritArrow::Late_Initialize(void * pArg)
 
 	_smatrix	matPivot = XMMatrixTranslation(0.f, 0.f, m_fScale * m_fScalePosRate);
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
-	m_pRendererCom->Set_PhysXRender(true);
 
 	Set_Child();
 
@@ -118,6 +117,9 @@ void CSpiritArrow::Late_Tick(_float fTimeDelta)
 
 	if (m_ePreState != m_eCurState)
 		m_ePreState = m_eCurState;
+
+	if (m_pRendererCom != nullptr)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CSpiritArrow::Render()

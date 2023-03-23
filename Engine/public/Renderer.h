@@ -35,6 +35,9 @@ public:
 	void			ShootStaticShadow() { m_bStaticShadow = true; };
 	void			Imgui_Render();
 
+	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
+	void			EraseStaticShadowObject(class CGameObject* pObject);
+
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 
@@ -71,13 +74,14 @@ private:
 	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
-
 	_bool										m_bDynamicShadow = false;
 	_bool										m_bSSAO = true;
-
 	_float										m_fDistortTime = 0.f;
+	_float										m_fPrevCaptureTime = 0.f;
 
 private:
+	void Increase_Time();
+
 	HRESULT Render_StaticShadow();
 	HRESULT Render_Priority();
 	HRESULT Render_Shadow();
@@ -94,11 +98,16 @@ private:
 	HRESULT Render_UI();
 	HRESULT Render_UILast();
 	HRESULT Render_Viewer();		// Model Viewer
+	HRESULT Render_PrevFrame();
 
 	HRESULT PostProcess_Distort();
 	_bool		m_bDistort = true;
 	HRESULT PostProcess_GrayScale();
 	_bool		m_bGrayScale = false;
+	HRESULT PostProcess_MotionBlur();
+	_bool		m_bMotionBlur = false;
+	HRESULT PostProcess_Flare();
+	_bool		m_bFlare = false;
 
 #ifdef _DEBUG
 private:
@@ -115,6 +124,7 @@ private:
 	HRESULT CreateTexture(const _tchar* pTextureFilePath, ID3D11ShaderResourceView**& OUT pTexture);
 	ID3D11ShaderResourceView** 	m_pFlareTexture = nullptr;
 	ID3D11ShaderResourceView** 	m_pDistortionTexture = nullptr;
+
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CRenderer* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;

@@ -104,7 +104,7 @@ public: /* For.Object_Manager */
 
 	void		Set_SingleLayer(_uint iCurLevel, const _tchar* pLayerTag);
 	void		Get_Back();
-
+	
 
 
 public: /* For.Component_Manager */
@@ -119,7 +119,10 @@ public: /* For.PipeLine */
 		_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
 		_float4x4 Get_TransformFloat4x4_Inverse(CPipeLine::TRANSFORMSTATE eState);
 		void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	
 		_float4 Get_CamPosition();
+		_float4 Get_LightCamPosition();
+		_float4 Get_LightCamLook();
 
 		_float4		Get_CamRight_Float4();
 		_float4		Get_CamUp_Float4();
@@ -153,7 +156,7 @@ public: /* For.PipeLine */
 	public: /* For.Frustum */
 		_bool isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 		_bool isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
-
+		_float isInFrustum_WorldSpace(_int iPlaneIndex, _fvector vWorldPos);
 	public: /* For.Target_Manager */
 		ID3D11ShaderResourceView* Get_DepthTargetSRV();
 		ID3D11ShaderResourceView* Get_ReflectSRV();
@@ -193,6 +196,11 @@ public: /* For.PipeLine */
 		HRESULT Work_Camera(const _tchar* pCameraTag);
 		class CCamera* Find_Camera(const _tchar* pCameraTag);
 		class CCamera* Get_WorkCameraPtr();
+
+		HRESULT Add_LightCamera(const _tchar* pCameraTag, class CCamera* pCamrea, _bool bWorkFlag = false);
+		HRESULT Work_LightCamera(const _tchar* pCameraTag);
+		class CCamera* Find_LightCamera(const _tchar* pCameraTag);
+
 		_float*		Get_CameraFar();
 		_float*		Get_CameraNear();
 		_float*		Get_CameraFov();

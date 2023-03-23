@@ -38,26 +38,34 @@ HRESULT CStone::Initialize(void * pArg)
 HRESULT CStone::Late_Initialize(void * pArg)
 {
 	_float3 vPos, vSize;
-	vSize = _float3(1.f, 1.f, 1.f);
+	vSize = _float3(0.87f, 1.f, 0.85f);
 	vPos = _float3(0.0f, 0.5f, 0.0f);
 
-	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble03" ||
-		m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_RuinsKit_Rubble01")
-	{
-		return S_OK;
-	}
 
-	if (m_pModelCom->Get_IStancingModel() == true)
+	if (m_pModelCom->Get_UseTriangleMeshActor())
 	{
-		if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02" 
+
+		if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02"
 			|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_01")
-			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos,true); //(0~1)
+		{
+			if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02")
+				vSize = _float3(0.63f, 1.f, 0.85f);
+
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos, true); //(0~1)
+		}
+		
 		else
-			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	}
 	else
-		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	{
+		if (m_pModelCom->Get_IStancingModel() == true)
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+		else
+			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	}
 
+	m_pRendererCom->Set_PhysXRender(true);
 	return S_OK;
 }
 
@@ -364,6 +372,7 @@ HRESULT CStone::SetUp_ShadowShaderResources()
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

@@ -69,7 +69,7 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
 	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset());
+	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset(1.25f, 0.55f, 0.55f, 0.7f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_PULSE			, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_PARRY			, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_HEAVYATTACK, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, false));
@@ -88,13 +88,15 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	if (CGameInstance::GetInstance()->Key_Down(DIK_F1))
 		m_bMouseFix = !m_bMouseFix;
 
-	if (m_pKena->Get_State(CKena::STATE_AIM) == true)
+	if (m_pKena->Get_State(CKena::STATE_AIM) == true && m_pKena->Get_State(CKena::STATE_INJECTBOW) == false)
 	{
 		if (m_pKena->Get_State(CKena::STATE_JUMP) == true)
 			Set_CamOffset(CCamera_Player::CAMOFFSET_AIR_AIM);
 		else
 			Set_CamOffset(CCamera_Player::CAMOFFSET_AIM);
 	}
+	if (m_pKena->Get_State(CKena::STATE_INJECTBOW) == true)
+		Set_CamOffset(CCamera_Player::CAMOFFSET_INJECTBOW);
 	if (m_pKena->Get_State(CKena::STATE_PULSE) == true)
 		Set_CamOffset(CCamera_Player::CAMOFFSET_PULSE);
 	if (m_pKena->Get_State(CKena::STATE_PARRY) == true)

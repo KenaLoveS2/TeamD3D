@@ -469,6 +469,7 @@ void CGameInstance::Get_Back()
 	m_pObject_Manager->Get_Back();
 }
 
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -545,6 +546,18 @@ _float4 CGameInstance::Get_CamPosition()
 		return _float4(0.0f, 0.f, 0.f, 1.f);
 
 	return m_pPipeLine->Get_CamPosition();	
+}
+
+_float4 CGameInstance::Get_LightCamPosition()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_LightCamPosition();
+}
+
+_float4 CGameInstance::Get_LightCamLook()
+{
+	if (nullptr == m_pPipeLine) return _float4(0.0f, 0.f, 0.f, 1.f);
+	return m_pPipeLine->Get_LightCamLook();
 }
 
 _float4 CGameInstance::Get_CamRight_Float4()
@@ -693,6 +706,16 @@ _bool CGameInstance::isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange)
 
 	return m_pFrustum->isInFrustum_LocalSpace(vLocalPos, fRange);
 }
+
+_float CGameInstance::isInFrustum_WorldSpace(_int iPlaneIndex, _fvector vWorldPos)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->isInFrustum_WorldSpace(iPlaneIndex, vWorldPos);
+}
+
+
 
 ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
 {
@@ -866,6 +889,24 @@ CCamera * CGameInstance::Get_WorkCameraPtr()
 	NULL_CHECK_RETURN(m_pCamera_Manager, nullptr);
 
 	return m_pCamera_Manager->Get_WorkCameraPtr();
+}
+
+HRESULT CGameInstance::Add_LightCamera(const _tchar* pCameraTag, CCamera* pCamrea, _bool bWorkFlag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Add_LightCamera(pCameraTag, pCamrea, bWorkFlag);
+}
+
+HRESULT CGameInstance::Work_LightCamera(const _tchar* pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return E_FAIL;
+	return m_pCamera_Manager->Work_LightCamera(pCameraTag);
+}
+
+CCamera* CGameInstance::Find_LightCamera(const _tchar* pCameraTag)
+{
+	if (m_pCamera_Manager == nullptr) return nullptr;
+	return m_pCamera_Manager->Find_LightCamera(pCameraTag);
 }
 
 _float* CGameInstance::Get_CameraFar()

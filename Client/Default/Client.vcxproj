@@ -179,8 +179,11 @@
     <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
+    <ClInclude Include="..\public\BossWarrior.h" />
+    <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
+    <ClInclude Include="..\public\BranchTosser_Tree.h" />
     <ClInclude Include="..\public\BranchTosser_Weapon.h" />
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\public\CameraForNpc.h" />
@@ -208,6 +211,7 @@
     <ClInclude Include="..\public\Effect_Trail_T.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
+    <ClInclude Include="..\public\E_BombTrail.h" />
     <ClInclude Include="..\public\E_FireBulletCloud.h" />
     <ClInclude Include="..\public\E_FireBulletCover.h" />
     <ClInclude Include="..\public\E_FireBulletExplosion.h" />
@@ -218,6 +222,9 @@
     <ClInclude Include="..\public\E_EnemyWispTrail.h" />
     <ClInclude Include="..\public\E_KenaDust.h" />
     <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h" />
+    <ClInclude Include="..\public\E_KenaParry.h" />
+    <ClInclude Include="..\public\E_KenaParryHand.h" />
+    <ClInclude Include="..\public\E_P_Explosion.h" />
     <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -235,6 +242,7 @@
     <ClInclude Include="..\public\E_P_KenaHit.h" />
     <ClInclude Include="..\public\E_P_Sapling.h" />
     <ClInclude Include="..\public\E_P_SpiritArrow.h" />
+    <ClInclude Include="..\public\E_RotBombExplosion.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_Sapling.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
@@ -285,6 +293,7 @@
     <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\Saiya.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
+    <ClInclude Include="..\Public\TelePort_Flower.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasHatCart.h" />
     <ClInclude Include="..\public\UI_CanvasItemBar.h" />
@@ -396,8 +405,11 @@
     <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
+    <ClCompile Include="..\private\BossWarrior.cpp" />
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
+    <ClCompile Include="..\private\BranchTosser_Tree.cpp" />
     <ClCompile Include="..\private\BranchTosser_Weapon.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\private\CameraForNpc.cpp" />
@@ -424,6 +436,7 @@
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
+    <ClCompile Include="..\private\E_BombTrail.cpp" />
     <ClCompile Include="..\private\E_FireBulletCloud.cpp" />
     <ClCompile Include="..\private\E_FireBulletCover.cpp" />
     <ClCompile Include="..\private\E_FireBulletExplosion.cpp" />
@@ -433,6 +446,9 @@
     <ClCompile Include="..\private\E_EnemyWispTrail.cpp" />
     <ClCompile Include="..\private\E_KenaDust.cpp" />
     <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp" />
+    <ClCompile Include="..\private\E_KenaParry.cpp" />
+    <ClCompile Include="..\private\E_KenaParryHand.cpp" />
+    <ClCompile Include="..\private\E_P_Explosion.cpp" />
     <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -451,6 +467,7 @@
     <ClCompile Include="..\private\E_P_KenaHit.cpp" />
     <ClCompile Include="..\private\E_P_Sapling.cpp" />
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
+    <ClCompile Include="..\private\E_RotBombExplosion.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_Sapling.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
@@ -501,6 +518,7 @@
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
+    <ClCompile Include="..\Private\TelePort_Flower.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasHatCart.cpp" />
     <ClCompile Include="..\private\UI_CanvasItemBar.cpp" />

@@ -527,8 +527,8 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		if (true == m_isFinished && true == m_isLooping)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
-		if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
-			continue;
+		//if (m_Duration > 1.f && m_Channels[i]->Get_KeyFrameCount() == 2)
+		//	continue;
 
 		if (m_Channels[i]->Get_BoneLocked() == true)
 		{
@@ -677,4 +677,9 @@ HRESULT CAnimation::Synchronization_ChannelsBonePtr(CModel * pModel, const strin
 	m_iNumChannels = (_uint)m_Channels.size();
 
 	return S_OK;
+}
+
+void CAnimation::Set_DurationRate(_float fRate)
+{
+	m_Duration *= fRate;
 }

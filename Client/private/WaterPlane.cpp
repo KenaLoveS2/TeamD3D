@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CWaterPlane::CWaterPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	:CGameObject(pDevice, pContext)
+	:CEnviromentObj(pDevice, pContext)
 {
 }
 
 CWaterPlane::CWaterPlane(const CWaterPlane& rhs)
-	:CGameObject(rhs)
+	: CEnviromentObj(rhs)
 {
 }
 
@@ -20,11 +20,12 @@ HRESULT CWaterPlane::Initialize_Prototype()
 
 HRESULT CWaterPlane::Initialize(void* pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+
+	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
+
+	m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	m_EnviromentDesc.ObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
+
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	m_pTransformCom->Set_Position(_float4(15.f, 0.f, 15.f, 1.f));
 	return S_OK;

@@ -6,8 +6,10 @@
 #include "Kena_Parts.h"
 #include "Kena_Staff.h"
 #include "SpiritArrow.h"
+#include "RotBomb.h"
 #include "Camera_Player.h"
 #include "Effect_Base.h"
+#include "E_KenaPulse.h"
 
 #include "GroundMark.h"
 #include "Terrain.h"
@@ -107,6 +109,14 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bInjectBow;
 		break;
 
+	case STATE_BOMB:
+		return m_bBomb;
+		break;
+
+	case STATE_INJECTBOMB:
+		return m_bInjectBomb;
+		break;
+
 	case STATE_PULSE:
 		return m_bPulse;
 		break;
@@ -175,6 +185,7 @@ HRESULT CKena::Initialize(void * pArg)
 HRESULT CKena::Late_Initialize(void * pArg)
 {
 	FAILED_CHECK_RETURN(Ready_Arrows(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Bombs(), E_FAIL);
 
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
 	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
@@ -332,7 +343,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 			pEffect.second->Late_Initialize();
 	}
 
-
 	return S_OK;
 }
 
@@ -340,14 +350,16 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	// m_pKenaStatus->Set_Attack(30);
+	m_pKenaStatus->Set_Attack(50);
 #endif	
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
 	{
-		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 	}
 
@@ -388,6 +400,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	if (fTimeRate != CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60"))
 	{
+		fTimeDelta /= fTimeRate;
 		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
 		fTimeDelta *= fTimeRate;
 	}
@@ -396,7 +409,9 @@ void CKena::Tick(_float fTimeDelta)
 	{
 		if (m_fHitStopTime <= 0.f)
 		{
-			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY)
+			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
@@ -461,6 +476,9 @@ void CKena::Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Tick(fTimeDelta);
+
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Tick(fTimeDelta);
 	
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -681,6 +699,9 @@ void CKena::Late_Tick(_float fTimeDelta)
 	for (auto& pArrow : m_vecArrow)
 		pArrow->Late_Tick(fTimeDelta);
 
+	for (auto& pBomb : m_vecBomb)
+		pBomb->Late_Tick(fTimeDelta);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 }
@@ -809,6 +830,12 @@ void CKena::Imgui_RenderProperty()
 	_float2	ArrowCoolTime{ m_pKenaStatus->Get_CurArrowCoolTime(), m_pKenaStatus->Get_InitArrowCoolTime() };
 	ImGui::InputFloat2("Arrow CoolTime", (_float*)&ArrowCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
+	_int	BombCount[2] = { m_pKenaStatus->Get_CurBombCount(), m_pKenaStatus->Get_MaxBombCount() };
+	ImGui::InputInt2("Bomb Count", (_int*)&BombCount, ImGuiInputTextFlags_ReadOnly);
+
+	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
+	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
 	__super::Imgui_RenderProperty();
 }
 
@@ -913,6 +940,9 @@ void CKena::ImGui_ShaderValueProperty()
 void CKena::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
+
+	//m_vecBomb.front()->ImGui_PhysXValueProperty();
+	//m_vecBomb.back()->ImGui_PhysXValueProperty();
 
 	//_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
 
@@ -1032,6 +1062,11 @@ void CKena::Push_EventFunctions()
 	TurnOnPulseJump(true, 0.f);
 	TurnOnHeavyAttack_Into(true, 0.f);
 	TurnOnInteractStaff(true, 0.f);
+
+	TurnOnPulseParry(true, 0.f);
+	TurnOnPulseParryHand(true, 0.f);
+	TurnOnPulseParryRange(true, 0.f);
+
 }
 
 void CKena::Calc_RootBoneDisplacement(_fvector vDisplacement)
@@ -1177,6 +1212,26 @@ HRESULT CKena::Ready_Arrows()
 	return S_OK;
 }
 
+HRESULT CKena::Ready_Bombs()
+{
+	_uint		iBombCount = m_pKenaStatus->Get_MaxBombCount();
+	_tchar*	pTag = nullptr;
+	CRotBomb*	pBomb = nullptr;
+
+	for (_uint i = 0; i < iBombCount; ++i)
+	{
+		pTag = CUtile::Create_DummyString(L"RotBomb", i);
+
+		pBomb = dynamic_cast<CRotBomb*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Rot_Bomb", pTag, nullptr));
+		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, pBomb);
+		pBomb->Late_Initialize(nullptr);
+		pBomb->Reset();
+		m_vecBomb.push_back(pBomb);
+	}
+
+	return S_OK;
+}
+
 HRESULT CKena::Ready_Effects()
 {
 	CEffect_Base*	pEffectBase = nullptr;
@@ -1186,8 +1241,15 @@ HRESULT CKena::Ready_Effects()
 	/* Pulse */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulse", L"KenaPulse"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("KenaPulse", pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaParry", L"KenaPulseParry"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaPulseParry", pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaParryHand", L"KenaPulseParryHand"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_mapEffect.emplace("KenaPulseParryHand", pEffectBase);
 
 	/* Damage */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaDamage", L"Damage"));
@@ -1219,6 +1281,9 @@ HRESULT CKena::Ready_Effects()
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_InteractStaff", L"InteractStaff"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	m_mapEffect.emplace("InteractStaff", pEffectBase);
+
+	for (auto& pEffects : m_mapEffect)
+		pEffects.second->Set_Parent(this);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -1632,6 +1697,63 @@ void CKena::TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["InteractStaff"]->Set_Active(true);
 }
 
+void CKena::TurnOnPulseParry(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParry);
+		return;
+	}
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("winterCape_mid4_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulseParry"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulseParry"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulseParry"]->Set_Active(true);
+}
+
+void CKena::TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParryHand);
+		return;
+	}
+
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("lf_hand_socket_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulseParryHand"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulseParryHand"]->Set_Active(true);
+}
+
+void CKena::TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CKena::TurnOnPulseParryRange);
+		return;
+	}
+	dynamic_cast<CE_KenaPulse*>(m_mapEffect["KenaPulse"])->Set_Type(CE_KenaPulse::PULSE_PARRY);
+
+	CBone*	pBodyBonePtr = m_pModelCom->Get_BonePtr("lf_hand_socket_jnt");
+	_matrix SocketMatrix = pBodyBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matIntoAttack = m_mapEffect["KenaPulse"]->Get_TransformCom()->Get_WorldMatrix();
+	matIntoAttack.r[3] = matWorldSocket.r[3];
+	m_mapEffect["KenaPulse"]->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
+	m_mapEffect["KenaPulse"]->Set_Active(true);
+}
+
 CKena * CKena::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena*	pInstance = new CKena(pDevice, pContext);
@@ -1669,6 +1791,10 @@ void CKena::Free()
 	for (auto pArrow : m_vecArrow)
 		Safe_Release(pArrow);
 	m_vecArrow.clear();
+
+	for (auto pBomb : m_vecBomb)
+		Safe_Release(pBomb);
+	m_vecBomb.clear();
 
 	for (auto& Pair : m_mapEffect)
 		Safe_Release(Pair.second);
