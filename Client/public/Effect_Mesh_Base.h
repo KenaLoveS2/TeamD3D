@@ -2,19 +2,20 @@
 #include "Effect_Base_S2.h"
 
 BEGIN(Engine)
+class CModel;
 class CShader;
 class CRenderer;
 class CTexture;
-class CVIBuffer_Point_Instancing_S2;
-END 
+class CVIBuffer_Rect;
+END
 
 BEGIN(Client)
-class CEffect_Particle_Base final : public CEffect_Base_S2
+class CEffect_Mesh_Base final : public CEffect_Base_S2
 {
 private:
-	CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CEffect_Particle_Base(const CEffect_Particle_Base& rhs);
-	virtual ~CEffect_Particle_Base() = default;
+	CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs);
+	virtual ~CEffect_Mesh_Base() = default;
 
 public:
 	virtual HRESULT					Initialize_Prototype();
@@ -32,20 +33,21 @@ public:
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();
-	HRESULT							SetUp_Buffer();
 
-
+private: /* Tool Function */
+	HRESULT							Set_ModelCom();
 
 private:
 	CShader*						m_pShaderCom;
 	CRenderer*						m_pRendererCom;
-	CTexture*						m_pTextureCom;
-	CVIBuffer_Point_Instancing_S2*	m_pVIBufferCom;
-	
-public:
-	static CEffect_Particle_Base*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*					Clone(void* pArg = nullptr) override;
-	virtual void							Free()			override;
+	CTexture*						m_pDiffuseTextureCom[5];
+	CTexture*						m_pMaskTextureCom[5];
+	CVIBuffer_Rect*					m_pVIBufferCom;
+	CModel*							m_pModelCom;
 
+public:
+	static CEffect_Mesh_Base*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*				Clone(void* pArg = nullptr) override;
+	virtual void						Free()			override;
 };
 END

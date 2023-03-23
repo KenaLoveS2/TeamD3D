@@ -9,7 +9,7 @@
 #include "UI_Event_ChangeImg.h"
 #include "UI_Event_Animation.h"
 #include "UI_Event_Fade.h"
-#include "Effect_Particle_Base.h"
+#include "Effect_Base_S2.h"
 
 /* Defines for Imgui */
 #define		AND			ImGui::SameLine()
@@ -97,11 +97,8 @@ void CImgui_UIEditor::Imgui_FreeRender()
 
 
 Exit:
-	Text("<3D UI(Effect)>");
-	if (CollapsingHeader("Effect_Particle Control"))
-	{
-		Particle_Tool();
-	}
+	if (CollapsingHeader("Effect Tool"))
+		Effect_Tool();
 
 	End();
 
@@ -165,26 +162,23 @@ void CImgui_UIEditor::EventList()
 
 }
 
-void CImgui_UIEditor::Particle_Tool()
+void CImgui_UIEditor::Effect_Tool()
 {
 	if (Button("Load Effect List"))
 		Load_List();
+	AND;
+	if (Button("Save Effect List"))
+		Save_List();
 
 	static	char szSaveFileName[MAX_PATH] = "";
 	ImGui::SetNextItemWidth(200);
-	ImGui::InputTextWithHint("##SaveData", "Effect(File) Name", szSaveFileName, MAX_PATH);
-
+	ImGui::InputTextWithHint("##EffectName", "Effect(File) Name", szSaveFileName, MAX_PATH);
+	AND;
 	if (Button("Create New Effect"))
 	{
 		string str = szSaveFileName;
-		wstring wstr;
-		wstr.assign(str.begin(), str.end());
+		Create_Effect(str);
 
-		_tchar* tag = CUtile::Create_StringAuto(wstr.c_str());
-		m_pEffect = nullptr;
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
-			L"Prototype_GameObject_Effect_Particle_Base", tag, tag, (CGameObject**)&m_pEffect);
-		
 		if (m_pEffect != nullptr)
 		{
 			m_vecEffects.push_back(m_pEffect);
@@ -198,19 +192,14 @@ void CImgui_UIEditor::Particle_Tool()
 	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
 		m_pEffect = m_vecEffects[iSelectedEffect];
 
-	if(nullptr != m_pEffect)
-		m_pEffect->Imgui_RenderProperty();
+	LINE;
+	LINE;
 
+	if (nullptr == m_pEffect)
+		return;
 
+	m_pEffect->Imgui_RenderProperty();
 
-
-
-
-
-
-
-	//if (pEffect == nullptr)
-	//	return;
 
 	//pEffect->Imgui_RenderProperty();
 
@@ -247,15 +236,56 @@ void CImgui_UIEditor::Load_List()
 		jSub.get_to<string>(strEffect);
 		m_vecEffectTag.push_back(strEffect);
 
-		wstring wstr;
-		wstr.assign(strEffect.begin(), strEffect.end());
-		_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
+		m_pEffect = nullptr;
+		Create_Effect(strEffect);
 
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
-			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 		if (m_pEffect != nullptr)
 			m_vecEffects.push_back(m_pEffect);
 	}
+
+}
+
+void CImgui_UIEditor::Save_List()
+{
+	Json json;
+
+	json["01. NumEffects"] = (_int)m_vecEffectTag.size();
+
+	for (auto tag : m_vecEffectTag)
+		json["02. FileName"].push_back(tag);
+
+
+	string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
+
+	ofstream file(filePath);
+	file << json;
+	file.close();
+
+}
+
+void CImgui_UIEditor::Create_Effect(string strEffect)
+{
+	wstring wstr;
+	wstr.assign(strEffect.begin(), strEffect.end());
+	_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
+
+	string type;
+	for (auto c : strEffect)
+	{
+		if (c == '_')
+			break;
+		type += c;
+	}
+
+	if (type == "Particle")
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
+	else if(type == "Mesh")
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
+	else if(type == "Texture")
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Texture_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 
 }
 
