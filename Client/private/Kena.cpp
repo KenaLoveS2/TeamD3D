@@ -945,7 +945,8 @@ void CKena::ImGui_ShaderValueProperty()
 
 void CKena::ImGui_PhysXValueProperty()
 {
-	__super::ImGui_PhysXValueProperty();
+	// __super::ImGui_PhysXValueProperty();
+	m_mapEffect["KenaPulse"]->ImGui_PhysXValueProperty();
 
 	//m_vecBomb.front()->ImGui_PhysXValueProperty();
 	//m_vecBomb.back()->ImGui_PhysXValueProperty();
