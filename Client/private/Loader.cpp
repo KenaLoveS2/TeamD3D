@@ -1644,8 +1644,23 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_FakeShaman
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FakeShaman",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_FakeShaman/FakeShaman.mdat"), PivotMatrix)))) return E_FAIL;
-	/*********************************************************************************************************************************************/
 
+	// Prototype_Component_Model_ShamanTrap_Decal_Geo
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_Decal_Geo",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_Decal_Geo.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapHexPlane
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHexPlane",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapHexPlane.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapPlane
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapPlane",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapPlane.mdat"), PivotMatrix)))) return E_FAIL;
+	/*********************************************************************************************************************************************/
 
 	// Prototype_Component_Model_Rope_Rock
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rope_RotRock", true, false, true))) return E_FAIL;

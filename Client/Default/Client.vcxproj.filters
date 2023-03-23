@@ -1157,6 +1157,24 @@
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
+    <ClInclude Include="..\public\ShamanTrap.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapHex.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossHunter.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossShaman.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HunterArrow.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FakeShaman.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1815,6 +1833,24 @@
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
+    <ClCompile Include="..\private\ShamanTrap.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapHex.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossHunter.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HunterArrow.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FakeShaman.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
