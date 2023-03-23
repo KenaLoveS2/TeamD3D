@@ -76,7 +76,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	CE_PulseObject::E_PulseObject_DESC PulseObj_Desc;		
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_RECIVE;	// 0¹ø  :PULSE_OBJ_RECIVE
-	PulseObj_Desc.fIncreseRatio = 1.3f;
+	PulseObj_Desc.fIncreseRatio = 1.1f;
 	PulseObj_Desc.fPulseMaxSize = 2.f;
 	PulseObj_Desc.vResetSize = _float3(0.25f, 0.25f, 0.25f);
 	PulseObj_Desc.vResetPos = _float4(vPos.x, vPos.y+1.5f, vPos.z, vPos.w);
@@ -89,7 +89,7 @@ HRESULT CCrystal::Late_Initialize(void * pArg)
 	/*Deliver_PulseE*/
 	ZeroMemory(&PulseObj_Desc, sizeof(PulseObj_Desc));
 	PulseObj_Desc.eObjType = CE_PulseObject::PULSE_OBJ_DELIVER; // 1¹ø  :PULSE_OBJ_DELIVER
-	PulseObj_Desc.fIncreseRatio = 1.07f;
+	PulseObj_Desc.fIncreseRatio = 1.05f;
 	PulseObj_Desc.fPulseMaxSize = 10.f;
 	PulseObj_Desc.vResetSize = _float3(1.f, 1.f, 1.f);
 	PulseObj_Desc.vResetPos = vPos;

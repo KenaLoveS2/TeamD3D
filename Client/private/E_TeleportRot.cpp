@@ -38,7 +38,6 @@ HRESULT CE_TeleportRot::Initialize(void * pArg)
 	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_fInitSpriteCnt = { 0.0f ,0.0f };
-	m_fDurationTime = 0.2f;
 
 	return S_OK;
 }
@@ -50,12 +49,12 @@ void CE_TeleportRot::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	m_fTimeDelta += fTimeDelta;
-	if (m_fTimeDelta > m_fDurationTime)
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 0.2f)
 	{
 		ResetSprite();
 		m_eEFfectDesc.bActive = false;
-		m_fTimeDelta = 0.0f;
+		m_fDurationTime = 0.0f;
 	}
 }
 

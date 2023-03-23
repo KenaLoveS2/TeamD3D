@@ -1,0 +1,106 @@
+TwoSided = false
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[4] =
+{
+    ReferencedTextures[0] = Texture2D'/Engine/EngineMaterials/Good64x64TilingNoiseHighFreq.Good64x64TilingNoiseHighFreq'
+    ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_Comp_E_R_Ao.T_TeleportFlower_Comp_E_R_Ao'
+    ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_D_2.T_TeleportFlower_D_2'
+    ReferencedTextures[3] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_N.T_TeleportFlower_N'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[7] =
+                {
+                    ParameterInfos[0] = { Name=Roughness }
+                    ParameterInfos[1] = { Name=Fresnel }
+                    ParameterInfos[2] = { Name=FadeLength }
+                    ParameterInfos[3] = { Name=FadeOffset }
+                    ParameterInfos[4] = { Name=Spec }
+                    ParameterInfos[5] = { Name=EmissiveAmount }
+                    ParameterInfos[6] = { Name=DitherRandomness }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=BaseColor }
+                }
+            }
+            Entries[2] = { ParameterInfos[0]={} }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[7] = { 1.75, -0.5, 50, 100, 0.4, 2, 1 }
+        VectorValues[1] =
+        {
+            VectorValues[0] = { R=0, G=0, B=0.15, A=0 }
+        }
+        TextureValues[0] = {}
+    }
+    ReferencedTextures[4] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_D_2.T_TeleportFlower_D_2'
+        ReferencedTextures[1] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_N.T_TeleportFlower_N'
+        ReferencedTextures[2] = Texture2D'/Game/Mochi/Art/Interactables/TeleportFlower/Textures/V2/T_TeleportFlower_Comp_E_R_Ao.T_TeleportFlower_Comp_E_R_Ao'
+        ReferencedTextures[3] = Texture2D'/Engine/EngineMaterials/Good64x64TilingNoiseHighFreq.Good64x64TilingNoiseHighFreq'
+    }
+}
+BlendMode = BLEND_Opaque (0)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[0] = {}
+CollectedScalarParameters[7] =
+{
+    CollectedScalarParameters[0] = { Value=1.75, Name=Roughness, Group=None }
+    CollectedScalarParameters[1] = { Value=-0.5, Name=Fresnel, Group=None }
+    CollectedScalarParameters[2] = { Value=50, Name=FadeLength, Group=None }
+    CollectedScalarParameters[3] = { Value=100, Name=FadeOffset, Group=None }
+    CollectedScalarParameters[4] = { Value=0.4, Name=Spec, Group=None }
+    CollectedScalarParameters[5] = { Value=2, Name=EmissiveAmount, Group=None }
+    CollectedScalarParameters[6] = { Value=1, Name=DitherRandomness, Group=None }
+}
+CollectedVectorParameters[1] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0, G=0, B=0.15, A=0 }
+        Name = BaseColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_TeleportFlower_Comp_E_R_Ao
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_TeleportFlower_D_2
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_TeleportFlower_N
+    }
+}

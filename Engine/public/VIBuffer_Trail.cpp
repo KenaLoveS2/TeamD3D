@@ -11,6 +11,7 @@ CVIBuffer_Trail::CVIBuffer_Trail(ID3D11Device * pDevice, ID3D11DeviceContext * p
 CVIBuffer_Trail::CVIBuffer_Trail(const CVIBuffer_Trail & rhs)
 	: CVIBuffer_Instancing(rhs)
 	, m_iInitNumInstance(rhs.m_iInitNumInstance)
+	, m_pSpeeds(rhs.m_pSpeeds)
 {
 }
 
@@ -18,6 +19,11 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+	m_pSpeeds = new _float[iNumInstance];
+
+	for (_uint i = 0; i < iNumInstance; ++i)
+		m_pSpeeds[i] = rand() % 5 + 1.0f;
 
 	m_iNumInstance = iNumInstance;
 	m_iInitNumInstance = iNumInstance;
@@ -81,7 +87,6 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 
 	Safe_Delete_Array(pIndices);
 #pragma endregion
-
 
 #pragma region INSTANCE_BUFFER
 
@@ -181,6 +186,40 @@ HRESULT CVIBuffer_Trail::Render()
 	return S_OK;
 }
 
+HRESULT CVIBuffer_Trail::Trail_Tick(CTransform* pTransform, CGameObject* pGameObject, _float fTimeDelta)
+{
+// 	if (pGameObject == nullptr)
+// 		return S_OK;
+	
+	//CTransform* pTransform = nullptr;
+	//pTransform = pGameObject->Get_TransformCom();
+
+	//_vector vDir = pTransform->Get_State(CTransform::STATE_LOOK) * -1.f;
+	//_vector vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
+
+	_vector vDir = XMVectorSet(0.0f, 1.f, 0.0f, 0.0f);
+	_vector vPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+	_vector vMyPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_vector vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + vDir * (m_pSpeeds[i] * 0.3f) * fTimeDelta;
+
+		_float fDistance = XMVectorGetY(XMVector3Length(vMovePos - vMyPos));
+		fDistance > 2.f ? XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
+			vPos) : XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+	return S_OK;
+}
+
 void CVIBuffer_Trail::Add_Instance(_float4x4 InfoMatrix)
 {
 	if (m_vecInstanceInfo.size() >= m_iInitNumInstance)
@@ -249,4 +288,7 @@ void CVIBuffer_Trail::Free()
 	__super::Free();
 
 	m_vecInstanceInfo.clear();
+
+	if (false == m_isCloned)
+		Safe_Delete_Array(m_pSpeeds);
 }
