@@ -2,6 +2,7 @@
 #include "..\public\E_KenaTrail.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "Kena.h"
 
 CE_KenaTrail::CE_KenaTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -47,11 +48,11 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.6f; //5.f
-	m_eEFfectDesc.fLife = 0.15f; //1.f
+	m_eEFfectDesc.fWidth = 0.8f; //5.f
+	m_eEFfectDesc.fLife = 0.25f; //1.f
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
+	m_eEFfectDesc.fSegmentSize = 0.01f; // 0.5f
 	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
@@ -59,6 +60,18 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 	m_iTrailTypeTexture = 7;
 
 	m_eEFfectDesc.bActive = false;
+
+	m_vInitColor = XMVectorSet(0.0f, 195.f, 255.f, 255.f) / 255.f;
+	m_vHeavyAttacktColor = XMVectorSet(255.f, 89.0f, 0.0f, 255.f) / 255.f;
+	return S_OK;
+}
+
+HRESULT CE_KenaTrail::Late_Initialize(void * pArg)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -66,6 +79,17 @@ void CE_KenaTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+
+	if (m_pKena->Get_State(CKena::STATE_PERFECTATTACK) == true)
+	{
+		m_eEFfectDesc.vColor = m_vHeavyAttacktColor= XMVectorSet(255.f, 89.0f, 0.0f, 255.f) / 255.f;
+		m_eEFfectDesc.fWidth = 1.3f; //5.f
+	}
+	else
+	{
+		m_eEFfectDesc.vColor = m_vInitColor;
+		m_eEFfectDesc.fWidth = 0.8f; //5.f
+	}
 }
 
 void CE_KenaTrail::Late_Tick(_float fTimeDelta)
@@ -113,7 +137,6 @@ HRESULT CE_KenaTrail::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
 		return E_FAIL;
 

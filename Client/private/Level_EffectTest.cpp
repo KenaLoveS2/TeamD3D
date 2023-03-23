@@ -192,6 +192,9 @@ HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 	CGameObject* pGameObject = nullptr;
 
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
+		return E_FAIL;
+
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_DistortionSphere"), L"Distortion", nullptr, &pGameObject)))
 	//	return E_FAIL;
 
@@ -206,6 +209,9 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	CGameObject* pGameObject = nullptr;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Rot_Bomb"), L"Bomb", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RectTrail"), L"recttrail", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	////Prototype_GameObject_RotBombExplosion

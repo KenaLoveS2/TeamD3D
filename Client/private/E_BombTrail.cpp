@@ -47,15 +47,15 @@ HRESULT CE_BombTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.08f;
+	m_eEFfectDesc.fWidth = 0.1f;
 	m_eEFfectDesc.fLife = 1.f;
 	m_eEFfectDesc.bAlpha = false;
-	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
+	m_eEFfectDesc.fAlpha = 1.0f;
+	m_eEFfectDesc.fSegmentSize = 0.01f; // 0.5f
 	m_eEFfectDesc.vColor = XMVectorSet(0.f, 0.f, 0.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
-	m_iTrailFlowTexture = 5;
+	m_iTrailFlowTexture = 8;
 	m_iTrailTypeTexture = 7;
 
 	m_eEFfectDesc.bActive = false;
@@ -74,8 +74,8 @@ void CE_BombTrail::Tick(_float fTimeDelta)
 		return;
 	}
 	
-	_uint		iSize = (_uint)m_vecPositions.size();
-	_float		fRadian = 0.f;
+	_uint	iSize = (_uint)m_vecPositions.size();
+	_float	fRadian = 0.f;
 	_float4	vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 	_float4	vCurPos;
 	_float4	vPrePos;
@@ -83,6 +83,7 @@ void CE_BombTrail::Tick(_float fTimeDelta)
 	_float4	vUp;
 	_float4	vLook;
 	_float4	vDir;
+
 	for (_uint i = 0; i < iSize; ++i)
 	{
 		vCurPos = m_vecPositions[i];

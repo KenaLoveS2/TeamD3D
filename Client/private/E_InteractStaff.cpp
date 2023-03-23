@@ -37,7 +37,6 @@ HRESULT CE_InteractStaff::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_fDurationTime = 0.3f;
 
 	Set_Child();
 	for (auto& pChild : m_vecChild)
@@ -52,33 +51,34 @@ void CE_InteractStaff::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-	m_fTimeDelta += fTimeDelta;
+	m_fDurationTime += fTimeDelta;
 
 	if(m_eType == CE_InteractStaff::TYPE_KENASTAFF)
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(m_eEFfectDesc.bActive);
 
-		m_eEFfectDesc.vScale *= 1.1f + fTimeDelta;
+		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
-		if (m_fTimeDelta > m_fDurationTime)
+		if (m_fDurationTime > 0.5f)
 		{
 			ResetSprite();
-			m_eEFfectDesc.vScale = _float3(0.05f, 0.05f, 0.05f);
+			m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
 			m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
+			m_fDurationTime = 0.0f;
 		}
 	}
 	else
 	{
 		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
-		m_fDurationTime = 0.5f;
+		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
-		if (m_fTimeDelta > m_fDurationTime)
+		if (m_fDurationTime > 0.3f)
 		{
 			ResetSprite();			
-			m_eEFfectDesc.vScale = _float3(0.05f, 0.05f, 0.05f);
-			m_fTimeDelta = 0.0f;
+			m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+			m_fDurationTime = 0.0f;
 		}
 	}
 
@@ -89,10 +89,10 @@ void CE_InteractStaff::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
+	//if (m_pParent != nullptr)
+	//	Set_Matrix();
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_InteractStaff::Render()
