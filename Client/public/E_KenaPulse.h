@@ -43,6 +43,7 @@ public:
 	virtual HRESULT Render() override;
 	void			Reset();
 	virtual _int	Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual void	ImGui_PhysXValueProperty()override;
 
 private:
 	HRESULT SetUp_ShaderResources();
