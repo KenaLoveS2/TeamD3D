@@ -1627,10 +1627,15 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
+
+
+	// Prototype_Component_Model_Boss_Warrior	
+
 	/**********************************/
 	/************For.Warrior***********/
 	/**********************************/
 	// Prototype_Component_Model_Boss_Warrior
+	PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.mdat"), PivotMatrix)))) return E_FAIL;
 
@@ -1639,6 +1644,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/Boss_Warrior_Hat/Boss_Warrior_Hat.mdat"), PivotMatrix)))) return E_FAIL;
 	/*********************************************************************************************************************************************/
 
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	/**********************************/
 	/************ For. Hunter **********/
 	/**********************************/
@@ -1677,6 +1683,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
 	/*********************************************************************************************************************************************/
 
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	// Prototype_Component_Model_Rope_Rock
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rope_RotRock", true, false, true))) return E_FAIL;
 

@@ -5,6 +5,13 @@
 class CBossWarrior_Hat final : public CMonsterWeapon
 {
 private:
+	_bool m_bHeadShot = false;
+	_bool m_bEnd = false;
+
+	_float4x4 m_SocketPivotMatrix;
+	_uint m_iShaderPass = 6;
+
+private:
 	CBossWarrior_Hat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossWarrior_Hat(const CBossWarrior_Hat& rhs);
 	virtual ~CBossWarrior_Hat() = default;
@@ -31,5 +38,7 @@ public:
 	static CBossWarrior_Hat*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
 };
 

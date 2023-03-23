@@ -1,13 +1,40 @@
 #pragma once
 #include "Monster.h"
 
-BEGIN(Client)
+#define WARRIR_CLOSE_ATTACK_COUNT			4
+#define WARRIR_FAR_ATTACK_COUNT				2
 
+#define COL_WEAPON_TEXT					TEXT("BossWarrior_Weapon")
+#define COL_RIGHT_LEG_TEXT				TEXT("BossWarrior_RightLeg")
+
+BEGIN(Client)
 class CBossWarrior : public CMonster
 {
 private:
 	enum ANIMATION
 	{
+		AWAKE, 
+		BELL_CALL, 
+		BIG_JUMP,
+		BLOCK_COUNTER_ATTACK, BLOCK_EXIT, BLOCK_INTO, BLOCK_HIT_1, BLOCK_HIT_2,
+		CHARGE_ATTACK, COMBO_ATTACK,
+		DEATH, 
+		DODGE_R, 
+		ENRAGE, 
+		GRAB, GRAB_ATTACK,
+		IDLE_ADDITIVE, IDLE_LOOP, 
+		JUMP_ATTACK, JUMP_BACK,
+		LOOK_DOWN, LOOK_L, LOOK_R, LOOK_UP, 
+		PARRIED, 
+		RUN, 
+		STAGGER, STAGGER_BACK,
+		STRAFE_L, STRAFE_R, 
+		SWEEP_ATTACK, 
+		TAGE_DAMAGE, 
+		TRIP_UPPERCUT,
+		TURN_180, TURN_L, TURN_R, 
+		UPPER_CUT, 
+		WALK, WALK_BACKWARDS, 
 		ANIMATION_END
 	};
 
@@ -66,19 +93,47 @@ private:
 	void Reset_AF();
 
 private:
-	vector<_float3> m_vecPivot;
-	vector<_float3> m_vecPivotScale;
-	vector<_float3> m_vecPivotRot;
+	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};
+	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, -0.31f};
+	_float4x4 m_WeaponPivotMatrix;
+
+
+	_float3 m_vRightLegPivotTrans = { -0.26f, -0.02f, -0.06f};	
+	_float4x4 m_RightLegPivotMatrix;
+
 
 	class CGameObject* m_pHat = nullptr;
 
 	_float4 m_fEmissiveColor = _float4(10.f, 0.f, 10.f, 0.f);
 	_float	m_fHDRIntensity = 0.2f;
 
+	CBone* m_pWeaponBone = nullptr;
+	CBone* m_pRightLegBone = nullptr;
+
+	_uint m_iCloseAttackIndex = 0;
+	_uint m_iFarAttackIndex = 0;
+
+	_bool m_bEnRageReady = true;
+	_bool m_bBellCall = false;
+	_bool m_bBlockHit = false;
+
+
+	_float m_fBlockRange = 2.f;
+	_float m_fJumpBackRange = 2.5f;
+	_float m_fCloseAttackRange = 4.f;
+	_float m_fFarAttackRange = 7.f;
+
+	_float m_fBlockTime = 0.f;
+
 public:
 	static CBossWarrior*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
 	virtual void						Free() override;
+
+	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+
+	void Attack_Start(_uint iAnimIndex);
+	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
 };
 
 END
