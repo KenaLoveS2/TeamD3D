@@ -20,6 +20,7 @@ public:
 
 public:
 	void	Imgui_RenderProperty();
+	void	Set_Child();
 
 public:
 	static  CE_KenaParry* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

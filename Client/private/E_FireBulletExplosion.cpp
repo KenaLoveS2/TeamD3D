@@ -36,8 +36,7 @@ HRESULT CE_FireBulletExplosion::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_fInitSpriteCnt = _float2(0.0f, 0.0f);
-	m_fDurationTime = 0.2f;
-	m_eEFfectDesc.vScale = XMVectorSet(1.5f, 1.5f, 1.5f, 1.5f);
+	m_eEFfectDesc.vScale = XMVectorSet(2.f, 2.f, 2.f, 1.f);
 	return S_OK;
 }
 
@@ -47,13 +46,13 @@ void CE_FireBulletExplosion::Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == true)
 	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 0.2f)
+		m_fDurationTime += fTimeDelta;
+		if (m_fDurationTime > 0.5f)
 		{
 			ResetSprite();
 			m_eEFfectDesc.bActive = false;
 			m_bFinishSprite = false;
-			m_fTimeDelta = 0.0f;
+			m_fDurationTime = 0.0f;
 		}
 	}
 }

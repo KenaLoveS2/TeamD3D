@@ -229,10 +229,10 @@ void CVIBuffer_Point_Instancing::Set_Speeds(_double pSpeed)
 		m_InstanceData[i].pSpeeds = pSpeed;
 }
 
-void CVIBuffer_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
+void CVIBuffer_Point_Instancing::Set_RandomSpeeds(_float fmin, _float fmax)
 {
 	for (_uint i = 0; i < m_iNumInstance; i++)
-		m_InstanceData[i].pSpeeds = CUtile::Get_RandomFloat((_float)fMin, (_float)fMax);
+		m_InstanceData[i].pSpeeds = CUtile::Get_RandomFloat(fmin, fmax);
 }
 
 HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
@@ -253,7 +253,9 @@ HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
 		m_InstanceData[i].SpeedMinMax = _float2((_float)m_InstanceData->pSpeeds, (_float)m_InstanceData->pSpeeds);
 		m_InstanceData[i].fPSize = _float2(0.2f, 0.2f);
 	}
-	Set_RandomSpeeds(0.5, 2.0);
+
+	for (_uint i = 0; i < m_iNumInstance; i++)
+		m_InstanceData[i].pSpeeds = rand() % 2;
 
 	m_iNumInstance = iNumInstance;
 

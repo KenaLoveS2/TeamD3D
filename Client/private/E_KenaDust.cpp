@@ -48,16 +48,12 @@ void CE_KenaDust::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if (m_eEFfectDesc.bActive == true)
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 1.6f)
 	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.6f)
-		{
-			m_eEFfectDesc.fWidthFrame = 0.0;
-			m_eEFfectDesc.fHeightFrame = 0.0;
-			m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
-		}
+		ResetSprite();
+		m_eEFfectDesc.bActive = false;
+		m_fDurationTime = 0.0f;
 	}
 }
 

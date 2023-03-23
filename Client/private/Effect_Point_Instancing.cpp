@@ -138,12 +138,12 @@ void CEffect_Point_Instancing::Set_InstanceData(CVIBuffer_Point_Instancing::INST
 	dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_InstanceData(eInstanceData);
 }
 
-void CEffect_Point_Instancing::Set_RandomSpeeds(_double fMin, _double fMax)
+void CEffect_Point_Instancing::Set_RandomSpeeds(_float fmin, _float fmax)
 {
 	if (nullptr == m_pVIInstancingBufferCom)
 		return;
 
-	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_RandomSpeeds(fMin, fMax);
+	return dynamic_cast<CVIBuffer_Point_Instancing*>(m_pVIInstancingBufferCom)->Set_RandomSpeeds(fmin, fmax);
 }
 
 HRESULT CEffect_Point_Instancing::Set_Pos(_float3 fMin, _float3 fMax)
