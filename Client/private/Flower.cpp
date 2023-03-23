@@ -44,9 +44,13 @@ void CFlower::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
-	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(80.f, WolrdMat))
+	_bool bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 80.f);
+
+
+	if (m_pRendererCom && m_bRenderActive && bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

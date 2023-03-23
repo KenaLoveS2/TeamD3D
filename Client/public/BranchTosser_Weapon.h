@@ -1,9 +1,19 @@
 #pragma once
-
 #include "MonsterWeapon.h"
 
+BEGIN(Engine)
+class CTexture;
+END
+
+BEGIN(Client)
 class CBranchTosser_Weapon final : public Client::CMonsterWeapon
 {
+private:
+	_bool m_bGoStraight = false;
+	class CBranchTosser* m_pBranchTosser = nullptr;
+	CTexture* m_pDissolveTextureCom = nullptr;
+	_uint m_iShaderPass = 1;
+
 private:
 	CBranchTosser_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBranchTosser_Weapon(const CBranchTosser_Weapon& rhs);
@@ -31,5 +41,12 @@ public:
 	static CBranchTosser_Weapon*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
-};
 
+	void Set_GoStraight(_bool bFlag) { m_bGoStraight = bFlag; }
+
+	void Set_OwnerBranchTosser(class CBranchTosser* pOwner) { m_pBranchTosser = pOwner; }
+
+	void Set_ShaderPassIndex(_uint iIndex) { m_iShaderPass = iIndex; }
+	void Clear() { m_pTransformCom->Clear_Actor(); }
+};
+END

@@ -47,36 +47,79 @@ HRESULT CE_BombTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.6f; //5.f
-	m_eEFfectDesc.fLife = 0.15f; //1.f
+	m_eEFfectDesc.fWidth = 0.08f;
+	m_eEFfectDesc.fLife = 1.f;
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
-	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
+	m_eEFfectDesc.vColor = XMVectorSet(0.f, 0.f, 0.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
 	m_iTrailFlowTexture = 5;
 	m_iTrailTypeTexture = 7;
 
 	m_eEFfectDesc.bActive = false;
+
 	return S_OK;
 }
 
 void CE_BombTrail::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-	m_fTimeDelta += fTimeDelta;
+	//__super::Tick(fTimeDelta);
+
+	if (m_eEFfectDesc.bActive == false)
+	{
+		m_vecPositions.clear();
+		ResetInfo();
+		return;
+	}
+	
+	_uint		iSize = (_uint)m_vecPositions.size();
+	_float		fRadian = 0.f;
+	_float4	vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_float4	vCurPos;
+	_float4	vPrePos;
+	_float4	vRight;
+	_float4	vUp;
+	_float4	vLook;
+	_float4	vDir;
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		vCurPos = m_vecPositions[i];
+
+		if (i == 0)
+			vPrePos = XMLoadFloat4(&vCurPos) + XMVector3Normalize(vCurPos - m_vecPositions[i + 1]) * 0.1f;
+		else
+			vPrePos = m_vecPositions[i - 1];
+
+		vRight = XMVector3Normalize(vCurPos - vPrePos);
+		vDir = XMVector3Normalize(vCamPos - vCurPos);
+
+		fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
+		if (fRadian < 5.f)
+			continue;
+
+		vUp = XMVector3Cross(vRight, vDir);
+		vLook = XMVector3Cross(vRight, vUp);
+
+		_smatrix TrailMatrix(vRight, vUp, vLook, vCurPos);
+		m_pVITrailBufferCom->Add_Instance(TrailMatrix);
+	}
+
+	m_pVITrailBufferCom->Refresh_InstanceCount();
 }
 
 void CE_BombTrail::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
 	{
+		m_vecPositions.clear();
 		ResetInfo();
 		return;
 	}
 
-	__super::Late_Tick(fTimeDelta);
+	if (m_pRendererCom != nullptr)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CE_BombTrail::Render()
@@ -87,10 +130,78 @@ HRESULT CE_BombTrail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(4);
+	m_pShaderCom->Begin(10);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;
+}
+
+void CE_BombTrail::Imgui_RenderProperty()
+{
+	if (ImGui::Button("RECOMPILE"))
+		m_pShaderCom->ReCompile();
+}
+
+void CE_BombTrail::Add_BezierCurve(const _float4 & vStartPos, const _float4 & vSplinePos, _float fTimeDelta)
+{
+	m_vecPositions.clear();
+
+	_float4	vDir = vSplinePos - vStartPos;
+	_float		fLength = XMVectorGetX(XMVector3Length(vDir));
+
+	if (fLength > 5.f)
+	{
+		_float4	vNorDir;
+		vDir.Normalize(vNorDir);
+		_float4	vTurnPoint = vStartPos + vNorDir * 5.f;
+
+		m_vecPositions.push_back(vStartPos);
+
+		_float4	vA = vSplinePos - vTurnPoint;
+		_float4	vNorA = XMVector3Cross(vA * -1.f, m_pParent->Get_WorldMatrix().r[0]);
+		_float4	vEndPos = XMLoadFloat4(&vSplinePos) + XMVector3Normalize(vNorA) * XMVectorGetX(XMVector3Length(vA));
+
+		_float4	vPointA;
+		_float4	vPointB;
+		_float4	vPath;
+		for (_float fRatio = 0.f; fRatio <= 1.f; fRatio += fTimeDelta)
+		{
+			vPointA = _float4::Lerp(vTurnPoint, vSplinePos, fRatio);
+			vPointB = _float4::Lerp(vSplinePos, vEndPos, fRatio);
+			vPath = _float4::Lerp(vPointA, vPointB, fRatio);
+
+			m_vecPositions.push_back(vPath);
+		}
+
+		m_vecPositions.push_back(vEndPos);
+
+		_float4	vDropPos = XMLoadFloat4(&vEndPos) + XMVector3Normalize(vNorA) * fLength;
+		m_vecPositions.push_back(vDropPos);
+	}
+	else
+	{
+		m_vecPositions.push_back(vStartPos);
+		m_vecPositions.push_back(vSplinePos);
+	}
+}
+
+void CE_BombTrail::Copy_Path(list<_float4> & PathList)
+{
+	if (PathList.empty() == false)
+		PathList.clear();
+
+	_uint	iSize = (_uint)m_vecPositions.size();
+
+	for (_uint i = 1; i < iSize; ++i)
+		PathList.push_back(m_vecPositions[i]);
+}
+
+void CE_BombTrail::Reset()
+{
+// 	if (m_eEFfectDesc.bActive == false)
+// 		m_vecPositions.clear();
+
+	ResetInfo();
 }
 
 HRESULT CE_BombTrail::SetUp_ShaderResources()
@@ -110,6 +221,22 @@ HRESULT CE_BombTrail::SetUp_ShaderResources()
 	/* Type */
 	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
+
+// 	/* Trail */
+// 	if (FAILED(m_pShaderCom->Set_RawValue("g_IsTrail", &m_eEFfectDesc.IsTrail, sizeof(_bool))))
+// 		return E_FAIL;
+// 	if (FAILED(m_pShaderCom->Set_RawValue("g_fWidth", &m_eEFfectDesc.fWidth, sizeof(_float))))
+// 		return E_FAIL;
+// 	if (FAILED(m_pShaderCom->Set_RawValue("g_fLife", &m_eEFfectDesc.fLife, sizeof(_float))))
+// 		return E_FAIL;
+// 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDistanceAlpha", &m_eEFfectDesc.bAlpha, sizeof(_bool))))
+// 		return E_FAIL;
+// 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float))))
+// 		return E_FAIL;
+// 
+// 	if (FAILED(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize")))
+// 		return E_FAIL;
+// 	/* Trail*/
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))
 		return E_FAIL;

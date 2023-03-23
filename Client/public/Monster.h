@@ -103,6 +103,8 @@ public:
 	_bool							Get_Bind() { return m_bBind; }
 
 protected:
+	class CGameInstance *m_pGameInstance = nullptr;
+
 	PLAYERLOOKAT_DIR				m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
 	DESC								m_Desc;
 	CRenderer*						m_pRendererCom = nullptr;
@@ -167,6 +169,7 @@ public:
 	static void Set_MonsterUseKenaPos(_float4 vKenaPos) { m_vKenaPos = vKenaPos ; }
 
 	_bool IsParried();
+	_float Get_DissolveTime() { return m_fDissolveTime; }
 };
 
 END

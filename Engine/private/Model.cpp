@@ -1603,7 +1603,7 @@ _bool CModel::Culling_InstancingMeshs(_float fCameraDistance,_fmatrix ParentMat)
 
 	for (auto& pInstMesh : m_InstancingMeshes)
 	{
-		iCulling_Result = 	( iCulling_Result & pInstMesh->Culling_InstancingMesh(fCameraDistance,m_pInstancingMatrix ,ParentMat));
+		iCulling_Result = 	( iCulling_Result & pInstMesh->Occlusion_Culling_InstancingMesh(fCameraDistance,m_pInstancingMatrix ,ParentMat));
 		if (iCulling_Result & 0)
 			return true;
 	}
@@ -2636,3 +2636,8 @@ void CModel::Imgui_MeshInstancingyPosControl(_float yPos)
 
 
 #endif
+
+void CModel::Set_DurationRate(_uint iAnimIndex, _float fRate)
+{
+	m_Animations[iAnimIndex]->Set_DurationRate(fRate);
+}

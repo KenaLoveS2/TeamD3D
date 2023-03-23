@@ -19,9 +19,12 @@ public:
 	_float4x4	Get_TransformFloat4x4_Inverse(TRANSFORMSTATE eState) const;
 	_matrix		Get_TransformMatrix_Inverse(TRANSFORMSTATE eState) const;
 	
-	_float4		Get_CamPosition() const {	return m_vCamPosition; }	
 	
 
+	_float4		Get_CamPosition() const {	return m_vCamPosition; }	
+	_float4		Get_LightCamPosition() const { return m_vLightCamPosition; }
+
+	_float4		Get_LightCamLook();
 	_float4		Get_CamRight_Float4();
 	_float4		Get_CamUp_Float4();
 	_float4		Get_CamLook_Float4();
@@ -29,8 +32,6 @@ public:
 	_float3		Get_CamUp_Float3();
 	_float3		Get_CamLook_Float3();
 	_float3		Get_CamPosition_Float3();
-
-	_float4		Get_LightCamPosition() const { return m_vLightCamPosition; }
 
 public:
 	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix);	

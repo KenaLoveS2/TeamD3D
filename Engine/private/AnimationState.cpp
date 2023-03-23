@@ -45,6 +45,17 @@ const _bool & CAnimationState::Get_AnimationFinish()
 		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->IsFinished();
 }
 
+const _bool CAnimationState::Get_AnimationFinish(const string & strStateName)
+{
+	CAnimState*	pAnimState = m_mapAnimState[strStateName];
+	NULL_CHECK_RETURN(pAnimState, false);
+
+	if (pAnimState->m_vecAdditiveAnim.empty() == true)
+		return pAnimState->m_pMainAnim->IsFinished();
+	else
+		return pAnimState->m_vecAdditiveAnim.back()->m_pAdditiveAnim->IsFinished();
+}
+
 const _float CAnimationState::Get_AnimationProgress() const
 {
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)

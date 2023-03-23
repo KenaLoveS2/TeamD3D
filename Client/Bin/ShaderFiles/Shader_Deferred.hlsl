@@ -306,11 +306,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float3 specular = (F * G * D) / (4.0 * dot(V, N) * dot(N, L));
 
 	// Diffuse (Lambertian) term
-	float3 diffuse = DiffuseLight.rgb / PI;
+	float3 diffuse = D *  DiffuseLight.rgb / PI;
 
 	// Final color
 	Out.vShade = (float4(diffuse, 1.f) + saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (AmbientLight)));
-	Out.vSpecular = float4(specular * dot(N, L), 1.f);
+	Out.vSpecular = float4((specular) * dot(N, L), 1.f) * g_vLightSpecular;
 
 	return Out;
 }
@@ -319,7 +319,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
 	PS_OUT_LIGHT			Out = (PS_OUT_LIGHT)0;
 
-	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
@@ -374,8 +373,10 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSpecular			 = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSSAODesc		 = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
+	/* expect specular... i don't know use it */
+
 	if(g_bSSAO)
-		Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b) /* + vSpecular*/ * vSSAODesc.r;
+		Out.vColor =	CalcHDRColor(vDiffuse * vShade, vDepthDesc.b)  * vSSAODesc.r;
 	else
 		Out.vColor = CalcHDRColor(vDiffuse * vShade, vDepthDesc.b);
 

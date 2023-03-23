@@ -44,9 +44,23 @@ void CGrass::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+	
+	const _vector	 vDir = camPos - vPos;
 
-	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(50.f, WolrdMat))
+	_bool bRenderCheck =	CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 25.f);
+
+	_float f = XMVectorGetX(XMVector4Length(vDir));
+
+	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
+	{
+		bRenderCheck = false;
+	}
+
+
+	if (m_pRendererCom && m_bRenderActive && bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

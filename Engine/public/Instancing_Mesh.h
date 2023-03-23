@@ -40,7 +40,7 @@ public:
 	virtual HRESULT Render();
 
 	_int	Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
-
+	_int	Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat);
 
 public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
@@ -71,24 +71,21 @@ private:		/*for.Lod */
 
 private:		/*For.Instancing*/
 	vector<_float4>						m_pInstancingPositions;				// Instancing 한 포지션들의 벡터			
-	
-	
-	
-	
-	
 	_uint								m_iOriginNumPrimitive = 0;			// 기존 NumPrimitive Data
 	_uint								m_iIncreaseInstancingNumber = 0;
 	
 	vector<_float>						m_vecOriginYPos;
 	_float								m_fIncreaseYPos = 0.f;
 
-
+	_vector								m_corners[8];
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
 private:
 	HRESULT	Set_up_Instancing();
+	_bool	IsOccluded(_fmatrix Worldmat);
 
+	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 
 public:
 	static CInstancing_Mesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, 

@@ -439,6 +439,23 @@ HRESULT CInstancing_Mesh::Initialize(void * pArg, CGameObject * pOwner)
 {
 	FAILED_CHECK_RETURN(__super::Initialize(pArg, pOwner), E_FAIL);
 
+	_float		 fMinX = 0.f, fMaxX = 0.f, fMinY = 0.f, fMaxY = 0.f, fMinZ = 0.f, fMaxZ = 0.f;
+
+	Calc_InstMinMax(&fMinX, &fMaxX, &fMinY, &fMaxY, &fMinZ, &fMaxZ);
+
+
+	m_corners[0] = XMVectorSet(fMinX, fMinY, fMinZ, 1.0f);
+	m_corners[1] = XMVectorSet(fMaxX, fMinY, fMinZ, 1.0f);
+	m_corners[2] = XMVectorSet(fMinX, fMaxY, fMinZ, 1.0f);
+	m_corners[3] = XMVectorSet(fMaxX, fMaxY, fMinZ, 1.0f);
+	m_corners[4] = XMVectorSet(fMinX, fMinY, fMaxZ, 1.0f);
+	m_corners[5] = XMVectorSet(fMaxX, fMinY, fMaxZ, 1.0f);
+	m_corners[6] = XMVectorSet(fMinX, fMaxY, fMaxZ, 1.0f);
+	m_corners[7] = XMVectorSet(fMaxX, fMaxY, fMaxZ, 1.0f);
+
+
+
+
 	return S_OK;
 }
 
@@ -504,24 +521,25 @@ HRESULT CInstancing_Mesh::Render()
 
 _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
 {
-	_float4 vCamPos	=	CGameInstance::GetInstance()->Get_CamPosition();
 
 	list<_float4x4> InstPos;
-	_float fCameDistance = 0.f;
-	_float4 vTransPos;
 	
+	_float4 vCamPos	=	CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+	
+	const _vector distLimit = XMVectorReplicate(fCameraDistanceLimit);
+
 	for (auto OriginPos : InstanceMatrixVec)
 	{
-		
 		_matrix matTransWorld = XMLoadFloat4x4(OriginPos)* ParentMat;
 
-		memcpy(&vTransPos, &matTransWorld.r[3], sizeof(_float4));
-		
-		_vector	 vDir =	XMLoadFloat4(&(vCamPos - vTransPos));
+		_vector vTransPos = XMVectorSetW(matTransWorld.r[3], 1.0f);
+		vTransPos = XMVectorSwizzle(vTransPos, 0, 1, 2, 3);
+		const _vector	 vDir = camPos - vTransPos;
 
-		fCameDistance  = XMVectorGetX(XMVector3Length(vDir));
+		const _vector vDistance  (XMVector3Length(vDir));
 
-		if (fCameDistance < fCameraDistanceLimit)
+		if (XMVector4Less(vDistance, distLimit))
 		{
 			InstPos.push_back(*OriginPos);
 		}
@@ -551,6 +569,63 @@ _int CInstancing_Mesh::Culling_InstancingMesh(_float fCameraDistanceLimit, vecto
 
 	return 1;
 
+}
+
+_int CInstancing_Mesh::Occlusion_Culling_InstancingMesh(_float fCameraDistanceLimit, vector<_float4x4*> InstanceMatrixVec, _fmatrix ParentMat)
+{
+	return 1;
+	list<_float4x4> InstPos;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	/*wjf*/
+	for (auto OriginPos : InstanceMatrixVec)
+	{
+		_matrix matTransWorld = XMLoadFloat4x4(OriginPos)* ParentMat;
+		_vector vTransPos = XMVectorSetW(matTransWorld.r[3], 1.0f);
+		vTransPos = XMVectorSwizzle(vTransPos, 0, 1, 2, 3);
+
+		if (pGameInstance->isInFrustum_WorldSpace(vTransPos, 10.f))  	/*절두체 컬링*/
+		{
+			_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+			_vector camPos = XMLoadFloat4(&vCamPos);
+			const _vector distLimit = XMVectorReplicate(fCameraDistanceLimit);
+			const _vector	 vDir = camPos - vTransPos;
+			const _vector vDistance(XMVector3Length(vDir));
+
+			if (XMVector4Less(vDistance, distLimit))				/* 위치 컬링*/
+			{
+				//if (!IsOccluded(matTransWorld))					/*OCullsion Culling*/
+				{
+					InstPos.push_back(*OriginPos);
+				}
+			}
+		}
+	}
+
+
+	m_iNumInstance = (_int)InstPos.size();
+
+	if (m_iNumInstance == 0)
+		return 0;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	_int iIndex = 0;
+	for (auto &Iter : InstPos)
+	{
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vRight, &Iter.m[0], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vUp, &Iter.m[1], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex].vLook, &Iter.m[2], sizeof(_float4));
+		memcpy(&((VTXMATRIX*)SubResource.pData)[iIndex++].vPosition, &Iter.m[3], sizeof(_float4));
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	InstPos.clear();
+
+	return 1;
 }
 
 void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix PivotMatrix)
@@ -833,6 +908,72 @@ HRESULT CInstancing_Mesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel * pM
 HRESULT CInstancing_Mesh::Set_up_Instancing()
 {
 	return S_OK;
+}
+
+_bool CInstancing_Mesh::IsOccluded(_fmatrix Worldmat)
+{
+	for (int i = 0; i < 8; ++i)	// 박스를 구성한다. * World mat
+		m_corners[i] = XMVector4Transform(m_corners[i], Worldmat);
+
+	_bool isInside = false;
+
+	for (int i = 0; i < 6; ++i)	// 6개 평면 모두 내부에 있으면 경계 상자가 보이는것
+	{
+		for (int j = 0; j < 8; ++j)
+		{
+			float dot = CGameInstance::GetInstance()->isInFrustum_WorldSpace(i, m_corners[j]);
+			if (dot >= 0)
+			{
+				isInside = true;	// 하나라도 안보이면 컬링
+			}
+		}
+		if (!isInside)
+		{
+			return true; 
+		}
+	}
+	
+
+	return false; 
+}
+
+void CInstancing_Mesh::Calc_InstMinMax(_float * pMinX, _float * pMaxX, _float * pMinY, _float * pMaxY, _float * pMinZ, _float * pMaxZ)
+{
+	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = INT_MIN;
+
+	if (m_eType == CModel::TYPE_NONANIM)
+	{
+		for (_uint j = 0; j < m_iNumVertices; ++j) {
+			Xmin = min(Xmin, m_pNonAnimVertices[j].vPosition.x);
+			Xmax = max(Xmax, m_pNonAnimVertices[j].vPosition.x);
+
+			Ymin = min(Ymin, m_pNonAnimVertices[j].vPosition.y);
+			Ymax = max(Ymax, m_pNonAnimVertices[j].vPosition.y);
+
+			Zmin = min(Zmin, m_pNonAnimVertices[j].vPosition.z);
+			Zmax = max(Zmax, m_pNonAnimVertices[j].vPosition.z);
+		}
+	}
+	else 
+	{
+		for (_uint j = 0; j < m_iNumVertices; ++j) {
+			Xmin = min(Xmin, m_pAnimVertices[j].vPosition.x);
+			Xmax = max(Xmax, m_pAnimVertices[j].vPosition.x);
+
+			Ymin = min(Ymin, m_pAnimVertices[j].vPosition.y);
+			Ymax = max(Ymax, m_pAnimVertices[j].vPosition.y);
+
+			Zmin = min(Zmin, m_pAnimVertices[j].vPosition.z);
+			Zmax = max(Zmax, m_pAnimVertices[j].vPosition.z);
+		}
+	}
+
+	*pMinX = Xmin;
+	*pMaxX = Xmax;
+	*pMinY = Ymin;
+	*pMaxY = Ymax;
+	*pMinZ = Zmin;
+	*pMaxZ = Zmax;
 }
 
 CInstancing_Mesh * CInstancing_Mesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext,
