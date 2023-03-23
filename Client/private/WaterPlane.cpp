@@ -45,9 +45,11 @@ void CWaterPlane::Tick(_float fTimeDelta)
 
 void CWaterPlane::Late_Tick(_float fTimeDelta)
 {
-	CGameObject::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom)
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	if (m_pRendererCom && m_bRenderActive && CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f))
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);

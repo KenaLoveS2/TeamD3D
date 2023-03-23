@@ -1157,6 +1157,7 @@
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1815,6 +1816,7 @@
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

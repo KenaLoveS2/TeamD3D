@@ -178,10 +178,14 @@ public:
 
 	void Calc_InstMinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ);
 	void Create_InstModelPxBox(const _tchar* pActorName, CTransform* pConnectTransform, _uint iColliderIndex, _float3 vSize, _float3 _vPos =_float3(0.f,0.f,0.f), _bool bRotation=false);
+	
+	
+	void Create_PxTriangle(const _tchar* szCloneName,class CTransform* pParentTransform, PX_USER_DATA* pUserData);
 	void Create_Px_InstTriangle(class CTransform* pParentTransform);
 	void SetUp_InstModelColider(vector<_float3> vecColiderSize);
 	
 	void Set_DurationRate(_uint iAnimIndex, _float fRate);
 };
+
 
 END

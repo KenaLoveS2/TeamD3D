@@ -7,7 +7,7 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-//#define FOR_MAP_GIMMICK
+#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
@@ -47,7 +47,7 @@ namespace Client
 		COL_BOSS_MONSTER, COL_BOSS_MONSTER_WEAPON,
 		
 		COL_GROUND, COL_ENVIROMENT,COL_PULSE_PLATE,
-		COL_PULSE,
+		COL_PULSE, COL_GIMMICK_TREE,
 		COLLIDER_INDEX_END,
 	};
 

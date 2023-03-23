@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "Bone.h"
 #include "Utile.h"
-
+#include "PhysX_Manager.h"
 CMesh::CMesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
 {
@@ -504,6 +504,53 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(HANDLE hFile, CModel* pModel)
 	return S_OK;
 }
 
+
+void CMesh::Create_PxTriangle_size(const _tchar * szCloneName, CTransform * pTransform, PX_USER_DATA* pUserData)
+{
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	PxTriangleMeshDesc TriangleMeshDesc;
+
+	_float4x4 MatPosTrans;
+	_float4 vPos, vRight, vUp, vLook, vFloat4Len;
+	_float  fXSize, fYSize, fZSize;
+	MatPosTrans = pTransform->Get_WorldMatrixFloat4x4();
+
+	ZeroMemory(&TriangleMeshDesc, sizeof(TriangleMeshDesc));
+	TriangleMeshDesc.points.count = m_iNumVertices;
+	TriangleMeshDesc.points.stride = sizeof(PxVec3);
+	TriangleMeshDesc.points.data = m_pPxVertices;
+	TriangleMeshDesc.triangles.count = m_iNumPrimitive;
+	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+	TriangleMeshDesc.triangles.data = m_pPxIndicies;
+
+	memcpy(&vRight, &MatPosTrans.m[0], sizeof(_float4));
+	memcpy(&vUp, &MatPosTrans.m[1], sizeof(_float4));
+	memcpy(&vLook, &MatPosTrans.m[2], sizeof(_float4));
+	memcpy(&vPos, &MatPosTrans.m[3], sizeof(_float4));
+
+	fXSize = XMVectorGetX(XMVector4Length(XMLoadFloat4(&vRight)));
+	fYSize = XMVectorGetY(XMVector4Length(XMLoadFloat4(&vUp)));
+	fZSize = XMVectorGetZ(XMVector4Length(XMLoadFloat4(&vLook)));
+
+	XMStoreFloat4(&vRight, XMVector3Normalize(XMLoadFloat4(&vRight)));
+	XMStoreFloat4(&vUp, XMVector3Normalize(XMLoadFloat4(&vUp)));
+	XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
+
+	_float4x4 matNew;
+	XMStoreFloat4x4(&matNew, XMMatrixIdentity());
+
+	memcpy(&MatPosTrans.m[0], &vRight, sizeof(_float4));
+	memcpy(&MatPosTrans.m[1], &vUp, sizeof(_float4));
+	memcpy(&MatPosTrans.m[2], &vLook, sizeof(_float4));
+	memcpy(&MatPosTrans.m[3], &vPos, sizeof(_float4));
+
+	PxRigidStatic *pStaticRigid = pPhysX->Create_TriangleMeshActor_Static(TriangleMeshDesc, pUserData
+		, 0.5f, 0.5f, 0.1f, _float3(fXSize, fYSize, fZSize));
+
+
+	pPhysX->Set_ActorMatrix(pStaticRigid, (MatPosTrans));		// 노말라이즈 매트릭스보내고
+}
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, HANDLE hFile, CModel* pModel, _bool bIsLod, _bool bUseTriangleMeshActor)
 {

@@ -2437,6 +2437,17 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 
 }
 
+void CModel::Create_PxTriangle(const _tchar * szCloneName, CTransform * pParentTransform, PX_USER_DATA* pUserData)
+{
+	if (m_Meshes.size() == 0)
+		return;
+
+	for (auto &iter : m_Meshes)
+	{
+		iter->Create_PxTriangle_size(szCloneName, pParentTransform, pUserData);
+	}
+}
+
 void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)
 {
 	if (m_InstancingMeshes.size() == 0 || m_bIsInstancing ==false)
