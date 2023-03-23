@@ -62,6 +62,12 @@ HRESULT CKena_Staff::Ready_Effects()
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("KenaCharge", pEffectBase);
 
+	/* RectTrailTest */
+	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"RectTrail"));
+	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	//pEffectBase->Set_Parent(this);
+	//m_mapEffect.emplace("RectTrail", pEffectBase);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

@@ -311,8 +311,7 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			return 0;
 
 		// KenaPulse °ø°İ·Â ±ğ±â
-		// m_pStatus->Set_Shield((CMonster*)pTarget->);
-
+		m_pStatus->Under_Shield(((CMonster*)pTarget)->Get_MonsterStatusPtr());
 	}
 	return 0;
 }

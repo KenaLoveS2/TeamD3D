@@ -1153,6 +1153,14 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossWarrior.h" />
+    <ClInclude Include="..\public\BossWarrior_Hat.h" />
+    <ClInclude Include="..\public\E_P_Explosion.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_RectTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1806,6 +1814,14 @@
     </ClCompile>
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior.cpp" />
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
+    <ClCompile Include="..\private\E_P_Explosion.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_RectTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -75,14 +75,14 @@ void CE_SpiritArrowTrail::Tick(_float fTimeDelta)
 
 void CE_SpiritArrowTrail::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return ;
+
 	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_SpiritArrowTrail::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

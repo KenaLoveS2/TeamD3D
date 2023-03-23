@@ -100,6 +100,21 @@ void CE_KenaParry::Imgui_RenderProperty()
 		m_eEFfectDesc.bActive = true;
 }
 
+void CE_KenaParry::Set_Child()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Explosion_p", L"Parry_Explosion_P"));
+	NULL_CHECK_RETURN(pEffectBase, );
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
 CE_KenaParry * CE_KenaParry::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)
 {
 	CE_KenaParry * pInstance = new CE_KenaParry(pDevice,pContext);

@@ -19,6 +19,8 @@ public:
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
+	HRESULT Trail_Tick(CTransform* pTransform , CGameObject* pGameObject, _float fTimeDelta);
+
 public:
 	void			Add_Instance(_float4x4 InfoMatrix);
 	HRESULT			Bind_ShaderResouce(class CShader* pShaderCom, const char* pConstanctName);
@@ -30,6 +32,9 @@ public:
 private:
 	_uint			  m_iInitNumInstance = 0;
 	vector<VTXMATRIX> m_vecInstanceInfo;
+
+private:
+	_float*		  m_pSpeeds = nullptr;
 
 public:
 	static CVIBuffer_Trail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iNumInstance = 1);

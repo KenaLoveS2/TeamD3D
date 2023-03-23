@@ -152,6 +152,7 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+#include "E_RectTrail.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1978,9 +1979,9 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_P_Explosion::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Explosion.json"))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_BombTrail */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BombTrail"),
-		CE_BombTrail::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_RectTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RectTrail"),
+		CE_RectTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object
