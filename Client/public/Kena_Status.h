@@ -56,6 +56,9 @@ private:
 	void				Update_ArrowCoolTime(_float fTimeDelta);
 	void				Update_BombCoolTime(_float fTimeDelta);
 
+public:
+	void				Under_Shield(CStatus* pEnemyStatus);
+
 public: /* skill test */
 	enum SKILL { SKILL_STICK, SKILL_SHIELD, SKILL_BOW, SKILL_BOBM, SKILL_END };
 	enum LEVEL { LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_END };

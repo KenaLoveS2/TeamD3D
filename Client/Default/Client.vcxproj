@@ -244,6 +244,7 @@
     <ClInclude Include="..\public\E_P_KenaHit.h" />
     <ClInclude Include="..\public\E_P_Sapling.h" />
     <ClInclude Include="..\public\E_P_SpiritArrow.h" />
+    <ClInclude Include="..\public\E_RectTrail.h" />
     <ClInclude Include="..\public\E_RotBombExplosion.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_Sapling.h" />
@@ -476,6 +477,7 @@
     <ClCompile Include="..\private\E_P_KenaHit.cpp" />
     <ClCompile Include="..\private\E_P_Sapling.cpp" />
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />
+    <ClCompile Include="..\private\E_RectTrail.cpp" />
     <ClCompile Include="..\private\E_RotBombExplosion.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_Sapling.cpp" />

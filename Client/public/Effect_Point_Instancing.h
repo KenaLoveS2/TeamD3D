@@ -36,7 +36,7 @@ public:
 
 	void			Set_PointSetRange(_float fRange) {}
 
-	void			Set_RandomSpeeds(_double fMin, _double fMax);
+	void			Set_RandomSpeeds(_float fmin, _float fmax);
 	HRESULT			Set_Pos(_float3 fMin, _float3 fMax);
 	void			Set_PSize(_float2 PSize);
 	void			Set_RandomPSize(_float2 PSizeMinMax);

@@ -115,6 +115,13 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 	}
 }
 
+void CKena_Status::Under_Shield(CStatus * pEnemyStatus)
+{
+	if (pEnemyStatus == nullptr) return;
+
+	m_iShield -= pEnemyStatus->Get_Attack();
+}
+
 CKena_Status * CKena_Status::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CKena_Status* pInstance = new CKena_Status(pDevice, pContext);

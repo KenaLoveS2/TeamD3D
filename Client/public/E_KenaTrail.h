@@ -14,6 +14,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Late_Initialize(void* pArg) override;
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -24,6 +25,10 @@ private:
 private:
 	class CTexture*			m_pTrailflowTexture = nullptr;
 	class CTexture*			m_pTrailTypeTexture = nullptr;
+
+	class CKena*			m_pKena = nullptr;
+	_vector					m_vInitColor;
+	_vector					m_vHeavyAttacktColor;
 
 private:
 	_uint m_iTrailFlowTexture = 0;
