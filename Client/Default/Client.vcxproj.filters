@@ -469,6 +469,12 @@
     <Filter Include="02.GameObjects\Envrioment\Water">
       <UniqueIdentifier>{aa777415-55e5-4390-9b43-30126a488440}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\06. 3D UI">
+      <UniqueIdentifier>{ca5cc434-6ee6-4df1-b2ac-24432ec0b00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar">
+      <UniqueIdentifier>{1eee8e4f-8b2f-40bc-b6e2-dc86bc9b779e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Object\Kena\Parry">
       <UniqueIdentifier>{01b00c3d-3712-4541-a9cf-fbe68c9e89b4}</UniqueIdentifier>
     </Filter>
@@ -1134,6 +1140,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Born_GroundCover.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Particle_Base.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_NodeBossHP.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_RotBombExplosion.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
@@ -1811,6 +1823,12 @@
     <ClCompile Include="..\Private\Born_GroundCover.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Effect_Particle_Base.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeBossHP.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\E_RotBombExplosion.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Pulse</Filter>
     </ClCompile>
@@ -1930,5 +1948,8 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
