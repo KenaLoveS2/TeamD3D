@@ -249,6 +249,7 @@
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
     <ClInclude Include="..\public\E_TeleportRot.h" />
     <ClInclude Include="..\public\E_Wind.h" />
+    <ClInclude Include="..\Public\FieldBecon_Anim.h" />
     <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -472,6 +473,7 @@
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
+    <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
     <ClCompile Include="..\private\FireBullet.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
