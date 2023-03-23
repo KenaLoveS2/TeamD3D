@@ -253,6 +253,20 @@ PS_OUT PS_MAIN_ROTBOMBCENTER(PS_IN In)
 	return Out;
 }//3
 
+PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//4
+
 technique11 DefaultTechnique
 {
 	pass Effect_EnemyWisp // 0
@@ -307,4 +321,16 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_ROTBOMBCENTER();
 	}
 
+	pass Effect_ShamanTrap //4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SHAMANTRAP();
+	}
 }

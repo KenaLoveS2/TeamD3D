@@ -61,7 +61,7 @@ private:
 public:
 	static CEnemyWisp*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
-	virtual void			Free() override;
+	virtual void					Free() override;
 };
 
 END

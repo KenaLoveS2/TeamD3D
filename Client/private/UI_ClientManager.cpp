@@ -844,10 +844,6 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
 
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
-
 	/********************************************/
 	/*				For. HatCart				*/
 	/********************************************/
@@ -911,7 +907,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
 
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
 
 	/********************************************/
 	/*				For. WorldUI				*/

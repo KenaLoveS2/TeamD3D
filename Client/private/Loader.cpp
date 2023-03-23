@@ -40,6 +40,11 @@
 #include "Mage.h"
 #include "BossWarrior.h"
 #include "BossWarrior_Hat.h"
+#include "BossShaman.h"
+#include "FakeShaman.h"
+#include "BossHunter.h"
+#include "ShamanTrap.h"
+#include "ShamanTrapHex.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -138,6 +143,8 @@
 #include "E_RotBombExplosion.h"
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
+
+
 /* ~Effects */
 
 /* Components*/
@@ -1619,6 +1626,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
+	/**********************************/
+	/************For.Warrior***********/
+	/**********************************/
 	// Prototype_Component_Model_Boss_Warrior
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.mdat"), PivotMatrix)))) return E_FAIL;
@@ -1626,6 +1636,55 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_Boss_Warrior_Hat
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior_Hat",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/Boss_Warrior_Hat/Boss_Warrior_Hat.mdat"), PivotMatrix)))) return E_FAIL;
+	/*********************************************************************************************************************************************/
+
+	/**********************************/
+	/************ For. Hunter **********/
+	/**********************************/
+	// Prototype_Component_Model_Boss_Hunter
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/Boss_Hunter.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_Boss_Hunter_Arrow
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter_Arrow",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Arrow_NonAnim.mdat"), PivotMatrix)))) return E_FAIL;
+	/*********************************************************************************************************************************************/
+
+	/**********************************/
+	/************For. Shaman**********/
+	/**********************************/
+	// Prototype_Component_Model_Boss_Shaman
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Shaman",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Boss_Shaman.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrap
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/ShamanTrap.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapHex
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHex",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/ShamanTrapHex.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_FakeShaman
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FakeShaman",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_FakeShaman/FakeShaman.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrap_Decal_Geo
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_Decal_Geo",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_Decal_Geo.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapHexPlane
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHexPlane",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapHexPlane.mdat"), PivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapPlane
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapPlane",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapPlane.mdat"), PivotMatrix)))) return E_FAIL;
+	/*********************************************************************************************************************************************/
 
 	// Prototype_Component_Model_Rope_Rock
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Rope_RotRock", true, false, true))) return E_FAIL;
@@ -1729,6 +1788,18 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_BossWarrior_Hat
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossWarrior_Hat"), CBossWarrior_Hat::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_BossShaman
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossShaman"), CBossShaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_BossFakeShaman
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossFakeShaman"), CFakeShaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_ShamanTrap
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrap"), CShamanTrap::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_BossHunter
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }
