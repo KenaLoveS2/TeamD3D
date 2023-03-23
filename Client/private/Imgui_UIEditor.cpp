@@ -170,14 +170,19 @@ void CImgui_UIEditor::Particle_Tool()
 	if (Button("Load Effect List"))
 		Load_List();
 
-	//if (Button("Create New Effect"))
-	//{
-	//	m_pEffect = static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString()));
-	//	if (m_pEffect != nullptr)
-	//		m_vecEffects.push_back(m_pEffect);
-	//	else
-	//		return;
-	//}
+	static	char szSaveFileName[MAX_PATH] = "";
+	ImGui::SetNextItemWidth(200);
+	ImGui::InputTextWithHint("##SaveData", "Effect(File) Name", szSaveFileName, MAX_PATH);
+	
+	if (Button("Create New Effect"))
+	{
+		m_pEffect = static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base",
+			CUtile::Create_DummyString()));
+		if (m_pEffect != nullptr)
+			m_vecEffects.push_back(m_pEffect);
+		else
+			return;
+	}
 
 	static _int iSelectedEffect;
 	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
