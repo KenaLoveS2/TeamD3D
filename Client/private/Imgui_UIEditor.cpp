@@ -243,7 +243,6 @@ void CImgui_UIEditor::Load_List()
 			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 		if (m_pEffect != nullptr)
 			m_vecEffects.push_back(m_pEffect);
-
 	}
 
 }
