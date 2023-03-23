@@ -199,9 +199,6 @@
     <Filter Include="02.GameObjects\Rot">
       <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Rot\State">
-      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
@@ -477,6 +474,18 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Object\RotBomb">
       <UniqueIdentifier>{74f04d71-1ea5-4d25-bd3c-fe5411daebfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Boss_Shaman">
+      <UniqueIdentifier>{f8ee03e6-6d0b-49de-8f35-972cd8c01e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Boss_Hunter">
+      <UniqueIdentifier>{c1b90298-8b1e-4eaf-a743-396ce8894aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Boss_Shaman\Trap">
+      <UniqueIdentifier>{8146e8e1-ad6c-4ed1-ad6a-15f1b8559ebd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Boss_Warrior">
+      <UniqueIdentifier>{328bc40a-bed0-4e71-a96f-e57ece9144ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1150,6 +1159,31 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Explosion.h" />
+    <ClInclude Include="..\public\BossShaman.h">
+      <Filter>02.GameObjects\Monster\Boss_Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossHunter.h">
+      <Filter>02.GameObjects\Monster\Boss_Hunter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FakeShaman.h">
+      <Filter>02.GameObjects\Monster\Boss_Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrap.h">
+      <Filter>02.GameObjects\Monster\Boss_Shaman\Trap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapHex.h">
+      <Filter>02.GameObjects\Monster\Boss_Shaman\Trap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior.h">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior_Hat.h">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HunterArrow.h">
+      <Filter>02.GameObjects\Monster\Boss_Hunter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1801,6 +1835,31 @@
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_P_Explosion.cpp" />
+    <ClCompile Include="..\private\BossShaman.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossHunter.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FakeShaman.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrap.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Shaman\Trap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapHex.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Shaman\Trap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HunterArrow.cpp">
+      <Filter>02.GameObjects\Monster\Boss_Hunter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1879,6 +1938,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

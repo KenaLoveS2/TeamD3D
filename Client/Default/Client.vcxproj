@@ -179,8 +179,10 @@
     <ClInclude Include="..\public\Beni.h" />
     <ClInclude Include="..\Public\Border.h" />
     <ClInclude Include="..\Public\Born_GroundCover.h" />
+    <ClInclude Include="..\public\BossHunter.h" />
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
+    <ClInclude Include="..\public\BossShaman.h" />
     <ClInclude Include="..\Public\BowTarget.h" />
     <ClInclude Include="..\public\BranchTosser.h" />
     <ClInclude Include="..\public\BranchTosser_Tree.h" />
@@ -249,6 +251,7 @@
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
     <ClInclude Include="..\public\E_TeleportRot.h" />
     <ClInclude Include="..\public\E_Wind.h" />
+    <ClInclude Include="..\public\FakeShaman.h" />
     <ClInclude Include="..\public\FireBullet.h" />
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
@@ -258,6 +261,7 @@
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
     <ClInclude Include="..\public\HatCart.h" />
+    <ClInclude Include="..\public\HunterArrow.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\Public\Imgui_TerrainEditor.h" />
@@ -291,6 +295,8 @@
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\Saiya.h" />
+    <ClInclude Include="..\public\ShamanTrap.h" />
+    <ClInclude Include="..\public\ShamanTrapHex.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasHatCart.h" />
@@ -402,8 +408,10 @@
     <ClCompile Include="..\private\Beni.cpp" />
     <ClCompile Include="..\Private\Border.cpp" />
     <ClCompile Include="..\Private\Born_GroundCover.cpp" />
+    <ClCompile Include="..\private\BossHunter.cpp" />
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
+    <ClCompile Include="..\private\BossShaman.cpp" />
     <ClCompile Include="..\Private\BowTarget.cpp" />
     <ClCompile Include="..\private\BranchTosser.cpp" />
     <ClCompile Include="..\private\BranchTosser_Tree.cpp" />
@@ -471,6 +479,7 @@
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
+    <ClCompile Include="..\private\FakeShaman.cpp" />
     <ClCompile Include="..\private\FireBullet.cpp" />
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
@@ -480,6 +489,7 @@
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\private\HatCart.cpp" />
+    <ClCompile Include="..\private\HunterArrow.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\Private\Imgui_TerrainEditor.cpp" />
@@ -513,6 +523,8 @@
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
+    <ClCompile Include="..\private\ShamanTrap.cpp" />
+    <ClCompile Include="..\private\ShamanTrapHex.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasHatCart.cpp" />
