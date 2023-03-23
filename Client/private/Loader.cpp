@@ -80,6 +80,7 @@
 
 /* UI */
 #include "BackGround.h"
+#include "Effect_Particle_Base.h"
 
 /* Effects */
 #include "Effect_Point_Instancing.h"
@@ -242,13 +243,14 @@ HRESULT CLoader::Loading_ForGamePlay()
 	
 	FAILED_CHECK_RETURN(Loading_ForWJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
-	
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	// FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
+
+	/* Line Changed : Effect Texture component needed */
+	FAILED_CHECK_RETURN(Loading_ForSY((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_GAMEPLAY), E_FAIL);
 		
@@ -1529,6 +1531,27 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
 	lstrcpy(m_szLoadingText, TEXT("Loading ¼Ò¿µ..."));
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	
+	/********************************************/
+	/*				For. VIBuffer				*/
+	/********************************************/
+
+	/* Prototype_Component_VIBuffer_Point_Instancing_S2 */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"),
+		CVIBuffer_Point_Instancing_S2::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/********************************************/
+	/*				For. GameObject				*/
+	/********************************************/
+
+	/* Effect_Particle_Base  */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Particle_Base"),
+		CEffect_Particle_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

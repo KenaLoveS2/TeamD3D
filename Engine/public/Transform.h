@@ -52,6 +52,8 @@ public:
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
+	_float4	Get_Position() const { return Get_State(STATE_TRANSLATION); }
+
 	TRANSFORMDESC Get_TransformDesc() { return m_TransformDesc; }
 	void		  Set_TransformDesc(TRANSFORMDESC eTransformDesc) { 
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));

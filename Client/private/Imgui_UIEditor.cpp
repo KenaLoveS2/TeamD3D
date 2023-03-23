@@ -9,6 +9,7 @@
 #include "UI_Event_ChangeImg.h"
 #include "UI_Event_Animation.h"
 #include "UI_Event_Fade.h"
+#include "Effect_Particle_Base.h"
 
 /* Defines for Imgui */
 #define		AND			ImGui::SameLine()
@@ -27,6 +28,7 @@ HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
 	m_pCanvas = nullptr;
 	m_pUI = nullptr;
+	m_pEffect = nullptr;
 
 	if (FAILED(Ready_CloneCanvasList()))
 	{
@@ -47,57 +49,62 @@ bool	Editor_Getter(void* data, int index, const char** output)
 }
 void CImgui_UIEditor::Imgui_FreeRender()
 {
-	//if (Begin("UI Editor"))
+	Text("<Canvas>");
+
+	/* Type */
+	if (CollapsingHeader("Type"))
 	{
-		Text("<Canvas>");
+		static int selected_canvasType = 0;
 
-		/* Type */
-		if (CollapsingHeader("Type"))
+		CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+		vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+		vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+		vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+
+		RELEASE_INSTANCE(CGameInstance);
+
+		_uint iNumItems = (_uint)pCanvasProtoTags->size();
+		if (ListBox(" : Type", &selected_canvasType, Editor_Getter, pCanvasNames, iNumItems, iNumItems))
 		{
-			static int selected_canvasType = 0;
-
-			CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
-			vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
-			vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
-			vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
-
-			RELEASE_INSTANCE(CGameInstance);
-
-			_uint iNumItems = (_uint)pCanvasProtoTags->size();
-			if (ListBox(" : Type", &selected_canvasType, Editor_Getter, pCanvasNames, iNumItems, iNumItems))
+			/* Create a Object of the selected type if it doesn't exist. */
+			if (m_vecCanvas[selected_canvasType] == nullptr)
 			{
-				/* Create a Object of the selected type if it doesn't exist. */
-				if (m_vecCanvas[selected_canvasType] == nullptr)
+				CUI::tagUIDesc tDesc;
+				tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
+				if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+					(*pCanvasProtoTags)[selected_canvasType].c_str(),
+					(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
+					MSG_BOX("Failed To Clone Canvas : UIEditor");
+
+				if (m_pCanvas != nullptr)
 				{
-					CUI::tagUIDesc tDesc;
-					tDesc.fileName = (*pCanvasCloneTags)[selected_canvasType].c_str();
-					if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
-						(*pCanvasProtoTags)[selected_canvasType].c_str(),
-						(*pCanvasCloneTags)[selected_canvasType].c_str(), &tDesc, (CGameObject**)&m_pCanvas)))
-						MSG_BOX("Failed To Clone Canvas : UIEditor");
-
-					if (m_pCanvas != nullptr)
-					{
-						m_vecCanvas[selected_canvasType] = m_pCanvas;
-						CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)selected_canvasType, m_pCanvas);
-					}
+					m_vecCanvas[selected_canvasType] = m_pCanvas;
+					CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)selected_canvasType, m_pCanvas);
 				}
-				else
-					m_pCanvas = m_vecCanvas[selected_canvasType];
 			}
+			else
+				m_pCanvas = m_vecCanvas[selected_canvasType];
 		}
-
-		if (m_pCanvas == nullptr)
-			goto Exit;
-
-		m_pCanvas->Imgui_RenderProperty();
-
-		/* For. Add Event To UIs */
-		EventList();
-
-	Exit:
-		End();
 	}
+
+	if (m_pCanvas == nullptr)
+		goto Exit;
+
+	m_pCanvas->Imgui_RenderProperty();
+
+	/* For. Add Event To UIs */
+	EventList();
+
+
+Exit:
+	Text("<3D UI(Effect)>");
+	if (CollapsingHeader("Effect_Particle Control"))
+	{
+		Particle_Tool();
+	}
+
+	End();
+
 }
 
 HRESULT CImgui_UIEditor::Ready_CloneCanvasList()
@@ -158,6 +165,89 @@ void CImgui_UIEditor::EventList()
 
 }
 
+void CImgui_UIEditor::Particle_Tool()
+{
+	if (Button("Load Effect List"))
+		Load_List();
+
+	//if (Button("Create New Effect"))
+	//{
+	//	m_pEffect = static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString()));
+	//	if (m_pEffect != nullptr)
+	//		m_vecEffects.push_back(m_pEffect);
+	//	else
+	//		return;
+	//}
+
+	static _int iSelectedEffect;
+	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
+	{
+
+	}
+
+
+
+	//m_pEffect->Imgui_RenderProperty();
+
+
+
+
+
+
+
+
+
+	//if (pEffect == nullptr)
+	//	return;
+
+	//pEffect->Imgui_RenderProperty();
+
+}
+
+void CImgui_UIEditor::Load_List()
+{
+	/* Clear All Information */
+	if (!m_vecEffectTag.empty())
+	{
+		m_vecEffectTag.clear();
+
+		for (auto effect : m_vecEffects)
+			Safe_Release(effect);
+		m_vecEffects.clear();
+	}
+
+	/* Load Type Data */
+	Json	jLoad;
+	string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
+
+	ifstream file(filePath);
+	if (file.fail())
+		return;
+	file >> jLoad;
+	file.close();
+
+	_int iNumEffects;
+	jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
+
+	for (auto jSub : jLoad["02. FileName"])
+	{
+		string strEffect;
+		jSub.get_to<string>(strEffect);
+		m_vecEffectTag.push_back(strEffect);
+
+		wstring wstr;
+		wstr.assign(strEffect.begin(), strEffect.end());
+		_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
+
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
+		if (m_pEffect != nullptr)
+			m_vecEffects.push_back(m_pEffect);
+
+	}
+
+}
+
 CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)
 {
 	CImgui_UIEditor*	pInstance = new CImgui_UIEditor(pDevice, pContext);
@@ -175,4 +265,11 @@ void CImgui_UIEditor::Free()
 
 	m_vecCanvas.clear();
 
+	/*  Effect */
+	for (auto effect : m_vecEffects)
+		Safe_Release(effect);
+	m_vecEffects.clear();
+
+	m_vecEffectTag.clear();
+	/* ~Effect */
 }
