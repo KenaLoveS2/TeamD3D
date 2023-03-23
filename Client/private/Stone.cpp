@@ -38,12 +38,25 @@ HRESULT CStone::Initialize(void * pArg)
 HRESULT CStone::Late_Initialize(void * pArg)
 {
 	_float3 vPos, vSize;
-	vSize = _float3(1.f, 1.f, 1.f);
+	vSize = _float3(0.87f, 1.f, 0.85f);
 	vPos = _float3(0.0f, 0.5f, 0.0f);
 
 
 	if (m_pModelCom->Get_UseTriangleMeshActor())
-		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+	{
+
+		if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02"
+			|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_01")
+		{
+			if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02")
+				vSize = _float3(0.63f, 1.f, 0.85f);
+
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos, true); //(0~1)
+		}
+		
+		else
+			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+	}
 	else
 	{
 		if (m_pModelCom->Get_IStancingModel() == true)
@@ -52,7 +65,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 	}
 
-
+	m_pRendererCom->Set_PhysXRender(true);
 	return S_OK;
 }
 

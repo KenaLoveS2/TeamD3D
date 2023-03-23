@@ -1150,6 +1150,12 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BossWarrior.h" />
+    <ClInclude Include="..\public\BossWarrior_Hat.h" />
+    <ClInclude Include="..\public\E_P_Explosion.h" />
+    <ClInclude Include="..\Public\TelePort_Flower.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1800,6 +1806,12 @@
     </ClCompile>
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior.cpp" />
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
+    <ClCompile Include="..\private\E_P_Explosion.cpp" />
+    <ClCompile Include="..\Private\TelePort_Flower.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
