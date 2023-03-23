@@ -8,6 +8,7 @@
 #include "UI_NodeRotFrontGuage.h"
 #include "UI_NodeRotCnt.h"
 #include "UI_NodeRotArrow.h"
+#include "UI_NodeBossHP.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -232,6 +233,19 @@ HRESULT CUI_CanvasTop::Ready_Nodes()
 		pGameInstance->Add_String(cloneTag);
 	}
 
+	{ /* BossHP */
+		string strTag = "Node_BossHP";
+		CUI* pUI = nullptr;
+		CUI::UIDESC tDesc;
+		_tchar* cloneTag = CUtile::StringToWideChar(strTag);
+		tDesc.fileName = cloneTag;
+		pUI = static_cast<CUI*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_UI_Node_BossHP", cloneTag, &tDesc));
+		if (FAILED(Add_Node(pUI)))
+			return E_FAIL;
+		m_vecNodeCloneTag.push_back(strTag);
+		pGameInstance->Add_String(cloneTag);
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -304,6 +318,20 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 		break;
 	case CUI_ClientManager::TOP_ROTGET:
 		static_cast<CUI_NodeRotFrontGuage*>(m_vecNode[UI_ROTGUAGE])->Set_Guage(fValue);
+		break;
+	case CUI_ClientManager::TOP_BOSS:
+		if (fValue >= 10.f)
+		{
+			_int iValue = (_int)fValue;
+			switch (iValue)
+			{
+			case 10:
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"¿ö¸®¾î");
+				break;
+			}
+		}
+		else
+			static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Guage(fValue);
 		break;
 	}
 

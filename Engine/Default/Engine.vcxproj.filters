@@ -533,6 +533,9 @@
       <Filter>01.Utility\15. ASM</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_PhysX.h" />
+    <ClInclude Include="..\public\VIBuffer_Point_Instancing_S2.h">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -792,6 +795,9 @@
       <Filter>01.Utility\15. ASM</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_PhysX.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Point_Instancing_S2.cpp">
+      <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
