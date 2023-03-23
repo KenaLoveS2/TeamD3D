@@ -974,6 +974,9 @@ void CTransform::Clear_Actor()
 	{
 		m_pPhysX_Manager->Delete_Actor(iter.pActor);
 	}
+
+	m_pPxActor = nullptr;
+	m_pPhysX_Manager = nullptr;
 }
 
 void CTransform::Update_AllCollider(_float4x4 PivotMatrix)

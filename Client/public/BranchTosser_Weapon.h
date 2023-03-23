@@ -9,9 +9,7 @@ BEGIN(Client)
 class CBranchTosser_Weapon final : public Client::CMonsterWeapon
 {
 private:
-	_bool m_bGoStraight = false;
-	class CBranchTosser* m_pBranchTosser = nullptr;
-	CTexture* m_pDissolveTextureCom = nullptr;
+	_bool m_bGoStraight = false;	
 	_uint m_iShaderPass = 1;
 
 private:
@@ -43,8 +41,6 @@ public:
 	virtual void Free() override;
 
 	void Set_GoStraight(_bool bFlag) { m_bGoStraight = bFlag; }
-
-	void Set_OwnerBranchTosser(class CBranchTosser* pOwner) { m_pBranchTosser = pOwner; }
 
 	void Set_ShaderPassIndex(_uint iIndex) { m_iShaderPass = iIndex; }
 	void Clear() { m_pTransformCom->Clear_Actor(); }

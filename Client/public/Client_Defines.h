@@ -74,5 +74,8 @@ static const _float4x4 g_IdentityFloat4x4 = {
 	0,0,0,1,
 };
 
+static const _bool g_bFalse = false;
+static const _bool g_bTrue = true;
+
 
 using namespace Client;

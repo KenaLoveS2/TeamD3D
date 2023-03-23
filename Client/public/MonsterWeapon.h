@@ -20,7 +20,8 @@ public:
 		_float4x4		PivotMatrix;
 		CBone*			pSocket;
 		CTransform* pTargetTransform;
-	}MONSTERWEAPONDESC;
+		class CMonster* pOwnerMonster;
+	} MONSTERWEAPONDESC;
 
 protected:
 	CMonsterWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -43,6 +44,8 @@ protected:
 	CRenderer*					m_pRendererCom = nullptr;
 	CShader*						m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
+	CTexture* m_pDissolveTextureCom = nullptr;
+	_float m_fDissolveTime = 0.f;
 
 protected:
 	MONSTERWEAPONDESC			m_WeaponDesc;

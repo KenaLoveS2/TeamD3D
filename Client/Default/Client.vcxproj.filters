@@ -478,6 +478,9 @@
     <Filter Include="02.GameObjects\Effect\Object\RotBomb">
       <UniqueIdentifier>{74f04d71-1ea5-4d25-bd3c-fe5411daebfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\BossWarrior">
+      <UniqueIdentifier>{f4988691-f0e6-4136-b68a-0e54db2aa55c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1150,6 +1153,13 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Explosion.h" />
+    <ClInclude Include="..\public\BossWarrior.h">
+      <Filter>02.GameObjects\Monster\BossWarrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior_Hat.h">
+      <Filter>02.GameObjects\Monster\BossWarrior</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1800,6 +1810,13 @@
     </ClCompile>
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Explosion.cpp" />
+    <ClCompile Include="..\private\BossWarrior.cpp">
+      <Filter>02.GameObjects\Monster\BossWarrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
+      <Filter>02.GameObjects\Monster\BossWarrior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
