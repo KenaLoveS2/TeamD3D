@@ -2,6 +2,7 @@
 #include "BossWarrior_Hat.h"
 #include "Bone.h"
 #include "GameInstance.h"
+#include "BossWarrior.h"
 
 CBossWarrior_Hat::CBossWarrior_Hat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
@@ -26,50 +27,97 @@ HRESULT CBossWarrior_Hat::Initialize(void* pArg)
 	if (nullptr != pArg)
 		memcpy(&m_WeaponDesc, pArg, sizeof(m_WeaponDesc));
 
-	if (FAILED(__super::Initialize(pArg)))
+	CGameObject::GAMEOBJECTDESC GameObjDesc;
+	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
+	GameObjDesc.TransformDesc.fSpeedPerSec = 10.f;
+
+	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
 
-	m_vPivotPos = _float4(0.f, 0.f, -1.85f, 0.f);
+	m_vPivotPos = _float4(0.f, 0.11f, -3.80f, 0.f);
 	m_vPivotRot = _float4(-1.5f, 0.f, 3.15f, 0.f);
+	
+	XMStoreFloat4x4(&m_SocketPivotMatrix,
+		XMMatrixRotationX(m_vPivotRot.x)
+		* XMMatrixRotationY(m_vPivotRot.y)
+		* XMMatrixRotationZ(m_vPivotRot.z)
+		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
 
 	return S_OK;
 }
 
 HRESULT CBossWarrior_Hat::Late_Initialize(void* pArg)
-{
+{	
+	{	
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = m_szCloneObjectTag;
+		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fRadius = 0.3f;		
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.isGravity = true;
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 10.f;
+		PxSphereDesc.fLinearDamping = 10.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+	}
+
 	return S_OK;
 }
 
 void CBossWarrior_Hat::Tick(_float fTimeDelta)
 {
+	if (m_bEnd) return;
+
 	__super::Tick(fTimeDelta);
+
+	Imgui_RenderProperty();
+
+	if (m_bHeadShot)
+	{
+		m_fDissolveTime += fTimeDelta * 0.1f;		
+		if (m_fDissolveTime > 1.f) 
+		{
+			m_fDissolveTime = 1.f;
+			m_pTransformCom->Clear_Actor();
+			m_bEnd = true;
+			return;
+		}		
+	}
+
+	_matrix SocketMatrix = m_WeaponDesc.pSocket->Get_OffsetMatrix() * m_WeaponDesc.pSocket->Get_CombindMatrix() * XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	
+	/*XMStoreFloat4x4(&m_SocketPivotMatrix,
+	XMMatrixRotationX(m_vPivotRot.x)
+	* XMMatrixRotationY(m_vPivotRot.y)
+	* XMMatrixRotationZ(m_vPivotRot.z)
+	*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z));
+	*/
+
+	SocketMatrix = XMLoadFloat4x4(&m_SocketPivotMatrix) * SocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
+	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
+
+	m_pTransformCom->Update_AllCollider(m_SocketMatrix);
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBossWarrior_Hat::Late_Tick(_float fTimeDelta)
 {
+	if (m_bEnd) return;
+
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix			SocketMatrix =
-		m_WeaponDesc.pSocket->Get_OffsetMatrix() *
-		m_WeaponDesc.pSocket->Get_CombindMatrix() *
-		XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
-
-	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-	SocketMatrix =
-		XMMatrixRotationX(m_vPivotRot.x)
-		* XMMatrixRotationY(m_vPivotRot.y)
-		* XMMatrixRotationZ(m_vPivotRot.z)
-		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z)
-		* SocketMatrix
-		* m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
-
-	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CBossWarrior_Hat::Render()
@@ -88,7 +136,7 @@ HRESULT CBossWarrior_Hat::Render()
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 0, WJTextureType_ALPHA, "g_OpacityTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderPass), E_FAIL);
 	}
 
 	return S_OK;
@@ -101,7 +149,7 @@ HRESULT CBossWarrior_Hat::RenderShadow()
 
 	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
-
+	
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
@@ -174,25 +222,23 @@ HRESULT CBossWarrior_Hat::SetUp_Components()
 
 HRESULT CBossWarrior_Hat::SetUp_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	if (nullptr == m_pShaderCom) return E_FAIL;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)))) return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bHeadShot, sizeof(_bool)), E_FAIL);
+	if (m_bHeadShot)
+	{	
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
@@ -245,4 +291,18 @@ CGameObject* CBossWarrior_Hat::Clone(void* pArg)
 void CBossWarrior_Hat::Free()
 {
 	__super::Free();
+}
+
+_int CBossWarrior_Hat::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget && m_bHeadShot == false)
+	{
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW))
+		{
+			m_bHeadShot = true;
+			m_iShaderPass = 9;
+		}
+	}
+
+	return 0;
 }

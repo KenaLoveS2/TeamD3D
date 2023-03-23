@@ -45,6 +45,7 @@ HRESULT CBranchTosser::Initialize(void* pArg)
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
+	m_bRotable = true;
 
 	return S_OK;
 }
@@ -488,6 +489,7 @@ HRESULT CBranchTosser::SetUp_Components()
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
+	WeaponDesc.pOwnerMonster = this;
 	Safe_AddRef(WeaponDesc.pSocket);
 	Safe_AddRef(m_pTransformCom);
 
@@ -496,8 +498,7 @@ HRESULT CBranchTosser::SetUp_Components()
 		m_pWeapon[i] = (CBranchTosser_Weapon*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BranchTosserWeapon"), 
 			CUtile::Create_DummyString(L"BranchTosserWeapon", i), &WeaponDesc);
 
-		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");
-		m_pWeapon[i]->Set_OwnerBranchTosser(this);
+		assert(m_pWeapon[i] && "BranchTosser Weapon is nullptr");		
 		m_pWeapon[i]->Late_Initialize(nullptr);
 	}
 				
