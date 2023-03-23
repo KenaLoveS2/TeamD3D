@@ -76,6 +76,7 @@
 #include "LiftRot_Master.h"
 #include "WaterPlane.h"
 #include "TelePort_Flower.h"
+#include "FieldBecon_Anim.h"
 
 /* UI */
 #include "BackGround.h"
@@ -325,13 +326,18 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/TeleportFlower/TeleportFlower.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_FieldBeaconAnim*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_FieldBeaconAnim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/FieldBeacon_Anim/FieldBeacon.mdat"), PivotMatrix))))
+		return E_FAIL;
 
 #pragma  endregion ANIM_OBJ
 	
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
 #ifdef FOR_MAPTOOL   
 
 #else
@@ -1221,6 +1227,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		CTelePort_Flower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_FieldBecon_Anim */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldBecon_Anim"),
+		CFieldBecon_Anim::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
@@ -2084,6 +2095,11 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/TeleportFlower/TeleportFlower.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_FieldBeaconAnim*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FieldBeaconAnim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/FieldBeacon_Anim/FieldBeacon.mdat"), PivotMatrix))))
+		return E_FAIL;
 
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "PowerCrystal", true, false, true)))
@@ -2539,10 +2555,17 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DoorAnim"),
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
 	/* For.Prototype_GameObject_TeleportFlower */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportFlower"),
 		CTelePort_Flower::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_FieldBecon_Anim */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldBecon_Anim"),
+		CFieldBecon_Anim::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_GameObject_Door_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),

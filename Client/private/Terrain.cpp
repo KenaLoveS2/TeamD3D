@@ -79,19 +79,18 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 
 void CTerrain::Tick(_float fTimeDelta)
 {
-	static _bool b = false;
+	/*static _bool b = false;
 
 	if (b == false)
 	{
 		m_pVIBufferCom->initialize_World(m_pTransformCom);
 		b = true;
 	}
-		
+	*/
 
-	return;
 	__super::Tick(fTimeDelta);
 
-	
+	return;
 	m_pGroundMark->Set_Position(m_vBrushPos + _float4(0.f, 1.f, 0.f, 0.f));
 	m_pGroundMark->Tick(fTimeDelta);
 }
@@ -191,32 +190,15 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	if(false == m_bLoadData )
-	{ 
-		/* For.Com_Texture */
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-			return E_FAIL;
-		/* For.Com_Filter */
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-			return E_FAIL;
 
-		m_TerrainDesc.wstrDiffuseTag = TEXT("Prototype_Component_Texture_Terrain");
-		m_TerrainDesc.wstrFilterTag = TEXT("Prototype_Component_Texture_Filter");
-		m_TerrainDesc.wstrNormalTag = TEXT("");
-	}
-	else
-	{
-		/* For.Com_Texture */
-		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-			return E_FAIL;
-		/* For.Com_Filter */
-		if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
-			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-			return E_FAIL;
-	}
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrDiffuseTag.c_str(), TEXT("Com_Texture"),
+		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+		return E_FAIL;
+	/* For.Com_Filter */
+	if (FAILED(__super::Add_Component(g_LEVEL, m_TerrainDesc.wstrFilterTag.c_str(), TEXT("Com_Filter"),
+		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+		return E_FAIL;
 
 	/* For.Com_Brush*/								
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_GroundMark"), TEXT("Com_Brush"),

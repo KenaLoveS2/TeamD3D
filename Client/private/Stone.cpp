@@ -65,7 +65,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 	}
 
-	m_pRendererCom->Set_PhysXRender(true);
+	
 	return S_OK;
 }
 

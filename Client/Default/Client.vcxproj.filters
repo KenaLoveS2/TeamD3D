@@ -1156,6 +1156,7 @@
     <ClInclude Include="..\Public\TelePort_Flower.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FieldBecon_Anim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1813,6 +1814,7 @@
     <ClCompile Include="..\Private\TelePort_Flower.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
