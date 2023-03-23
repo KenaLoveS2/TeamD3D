@@ -300,7 +300,7 @@ _int CBossWarrior_Hat::Execute_Collision(CGameObject * pTarget, _float3 vCollisi
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW))
 		{
 			m_bHeadShot = true;
-			m_iShaderPass = 7;
+			m_iShaderPass = 9;
 		}
 	}
 

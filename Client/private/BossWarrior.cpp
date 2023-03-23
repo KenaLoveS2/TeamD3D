@@ -66,8 +66,8 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 	// 몸통
 	{	
-		_float3 vPivotScale = _float3(1.1f, 1.1f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 2.f, 0.f);
 
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
@@ -289,7 +289,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("SLEEP")				
 		.Tick([this](_float fTimeDelta)
 	{
-		// m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
 		.OnExit([this]()
 	{
@@ -298,8 +298,6 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{	
-		m_bSpawn = true;
-		return false;
 		// 대기 종결 조건 수정 필요
 		m_fSpawnRange = 10.f;
 		return DistanceTrigger(m_fSpawnRange);				
@@ -327,6 +325,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
+		// 한소영 UI HP 바 등장
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
@@ -688,6 +687,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
+		// 한소영 UI HP 바 없어짐
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
@@ -896,8 +896,7 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
-			// m_pUIHPBar->Set_Active(true);
-			// m_pUIHPBar->Set_Guage(m_pMonsterStatusCom->Get_PercentHP());
+			// 한소영 UI HP 바 보스 플레어한테 공격당함
 
 			m_bWeaklyHit = true;
 			m_bStronglyHit = true;
