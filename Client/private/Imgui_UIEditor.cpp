@@ -173,26 +173,33 @@ void CImgui_UIEditor::Particle_Tool()
 	static	char szSaveFileName[MAX_PATH] = "";
 	ImGui::SetNextItemWidth(200);
 	ImGui::InputTextWithHint("##SaveData", "Effect(File) Name", szSaveFileName, MAX_PATH);
-	
+
 	if (Button("Create New Effect"))
 	{
-		m_pEffect = static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base",
-			CUtile::Create_DummyString()));
+		string str = szSaveFileName;
+		wstring wstr;
+		wstr.assign(str.begin(), str.end());
+
+		_tchar* tag = CUtile::Create_StringAuto(wstr.c_str());
+		m_pEffect = nullptr;
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+			L"Prototype_GameObject_Effect_Particle_Base", tag, tag, (CGameObject**)&m_pEffect);
+		
 		if (m_pEffect != nullptr)
+		{
 			m_vecEffects.push_back(m_pEffect);
+			m_vecEffectTag.push_back(str);
+		}
 		else
 			return;
 	}
 
 	static _int iSelectedEffect;
 	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
-	{
+		m_pEffect = m_vecEffects[iSelectedEffect];
 
-	}
-
-
-
-	//m_pEffect->Imgui_RenderProperty();
+	if(nullptr != m_pEffect)
+		m_pEffect->Imgui_RenderProperty();
 
 
 
