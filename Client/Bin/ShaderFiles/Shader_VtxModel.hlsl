@@ -72,11 +72,15 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
 	vNormal = mul(vNormal, g_SocketMatrix);
 
+	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
+	vTangent = mul(vTangent, g_SocketMatrix);
+
 	Out.vPosition = mul(vPosition, matVP); 
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(vTangent);
+	Out.vBinormal = normalize(cross(vNormal.xyz, vTangent.xyz));
 
 	return Out;
 }
