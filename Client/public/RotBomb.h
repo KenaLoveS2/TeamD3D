@@ -72,6 +72,7 @@ private:
 	BOMBSTATE				Check_State();
 	void						Update_State(_float fTimeDelta);
 	void						Calculate_Path(_float fTimeDelta);
+	void						Throw(_float fTimeDelta);
 
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
