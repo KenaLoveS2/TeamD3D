@@ -80,8 +80,12 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bAttack;
 		break;
 
-	case STATE_HEAVYATTACK	:
+	case STATE_HEAVYATTACK:
 		return m_bHeavyAttack;
+		break;
+
+	case STATE_PERFECTATTACK:
+		return m_bPerfectAttack;
 		break;
 
 	case STATE_COMMONHIT:
@@ -332,7 +336,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 		if(pEffect.second != nullptr )
 			pEffect.second->Late_Initialize();
 	}
-
+	pStaff->Late_Initialize(pArg);
 
 	return S_OK;
 }
@@ -698,6 +702,7 @@ HRESULT CKena::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+
 		if (i == 1)
 		{
 			// Arm & Leg

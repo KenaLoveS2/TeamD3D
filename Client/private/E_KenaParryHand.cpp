@@ -46,12 +46,12 @@ void CE_KenaParryHand::Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == true)
 	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 0.2f)
+		m_fDurationTime += fTimeDelta;
+		if (m_fDurationTime > 0.5f)
 		{
 			ResetSprite();
 			m_eEFfectDesc.bActive = false;
-			m_fTimeDelta = 0.0f;
+			m_fDurationTime = 0.0f;
 		}
 	}
 }

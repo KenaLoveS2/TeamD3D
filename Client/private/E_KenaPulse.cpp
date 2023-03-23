@@ -4,6 +4,9 @@
 #include "Effect_Trail.h"
 #include "E_KenaPulseCloud.h"
 #include "E_KenaPulseDot.h"
+#include "Kena.h"
+#include "Kena_Status.h"
+#include "Monster.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -95,11 +98,22 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 
 	Set_Child();
 	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
+
 	return S_OK;
 }
 
 HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 {	
+	/* kena Status */
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
+	m_pStatus = m_pKena->Get_Status();
+	m_eStatus.fCurHp = (_float)m_pStatus->Get_Shield();
+	m_eStatus.fMaxHp = (_float)m_pStatus->Get_MaxShield();
+	RELEASE_INSTANCE(CGameInstance);
+	/* Kena Status */
+
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
@@ -113,14 +127,68 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	ImGui::Begin("pulse");
-	if (ImGui::Button("recompile"))
-		m_pShaderCom->ReCompile();
-	ImGui::End();
+#pragma region PulseStatus test
+//	ImGui::Begin("pulse");
+//
+//	if (ImGui::Button("recompile"))
+//		m_pShaderCom->ReCompile();
+//
+//	/* State test */
+//	static int iType = 0;
+//	iType = m_eStatus.eState;
+//	ImGui::RadioButton("State_Default", &iType, 0);
+//	ImGui::RadioButton("State_Damage", &iType, 1); 
+//	ImGui::RadioButton("State_Default2Damage", &iType, 2); 
+//
+//	_float fRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+//	ImGui::InputFloat("Ratio", &fRatio);
+//
+//	_float2 fHp = { m_eStatus.fCurHp, (_float)m_eStatus.fMaxHp };
+//	ImGui::DragFloat2("Hp", (_float*)&fHp, 1.0f, 0.0f, m_eStatus.fMaxHp);
+//	m_pStatus->Set_Shield((_int)fHp.x);
+//
+//	if(iType == 0)
+//		m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
+//	else if(iType==1)
+//	{
+//		m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DAMAGE;
+//
+//		m_eStatus.fStateDurationTime += fTimeDelta * 1.5f;
+//		if (m_eStatus.fStateDurationTime > 2.f)
+//		{
+//			m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
+//			m_eStatus.fStateDurationTime = 0.0f;
+//		}
+//	}
+//	/* State test */
+//
+//	static bool alpha_preview = true;
+//	static bool alpha_half_preview = false;
+//	static bool drag_and_drop = true;
+//	static bool options_menu = true;
+//	static bool hdr = false;
+//
+//	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+//
+//	static bool   ref_color = false;
+//	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+//
+//	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+//	vSelectColor = m_eEFfectDesc.vColor;
+//
+//	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+//	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+//	m_eEFfectDesc.vColor = vSelectColor;
+//
+//	ImGui::End();
+#pragma endregion PulseStatus test
 
- 	if (m_eEFfectDesc.bActive == false)
- 		return;
+  	if (m_eEFfectDesc.bActive == false)
+  		return;
+
 	m_fTimeDelta += fTimeDelta;
+	Set_Status();
+
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 
 	switch (m_ePulseType)
@@ -163,20 +231,19 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		break;
 
 	case Client::CE_KenaPulse::PULSE_PARRY:
-
-		m_eEFfectDesc.iPassCnt = 12;
+		m_eEFfectDesc.iPassCnt = 0;
 		m_fTimeDelta += fTimeDelta;
 
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		if (vScaled.x > 2.5f)
+		if (vScaled.x > 5.f)
 		{
-			m_pTransformCom->Set_WorldMatrix_float4x4(m_SaveInitWorldMatrix);
 			m_eEFfectDesc.bActive = false;
 			m_eEFfectDesc.iPassCnt = 1;
 
 			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
+			m_pTransformCom->Set_WorldMatrix_float4x4(m_SaveInitWorldMatrix);
 		}
 		else
 		{
@@ -189,8 +256,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
+ 	if (m_eEFfectDesc.bActive == false)
+ 		return;
 
 	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_pParent != nullptr)
 		Set_Matrix();
@@ -235,10 +302,37 @@ void CE_KenaPulse::Reset()
 	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
 }
 
+_int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	_bool bRealAttack = false;
+	if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+	{
+		if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
+			return 0;
+
+		// KenaPulse °ø°Ý·Â ±ð±â
+		// m_pStatus->Set_Shield((CMonster*)pTarget->);
+
+	}
+	return 0;
+}
+
 HRESULT CE_KenaPulse::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
+
+	/* Kena Status */
+	_float fRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_HpRatio", &fRatio, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_PulseState", &m_eStatus.eState, sizeof(_uint))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_DamageDurationTime", &m_eStatus.fStateDurationTime, sizeof(_float))))
+		return E_FAIL;
+	/* Kena Status */
 
 	//if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
 	//	return E_FAIL;
@@ -270,6 +364,12 @@ void CE_KenaPulse::Imgui_RenderProperty()
 	if (ImGui::Button("Active"))
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;
 
+}
+
+void CE_KenaPulse::Set_Status()
+{
+	m_eStatus.fCurHp = (_float)m_pStatus->Get_Shield();
+	m_eStatus.fMaxHp = (_float)m_pStatus->Get_MaxShield();
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

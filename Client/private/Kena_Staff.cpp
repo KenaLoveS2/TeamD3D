@@ -37,6 +37,11 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 HRESULT CKena_Staff::Late_Initialize(void * pArg)
 {
+	for (auto& pEffect : m_mapEffect)
+	{
+		if (pEffect.second != nullptr)
+			pEffect.second->Late_Initialize();
+	}
 	return S_OK;
 }
 

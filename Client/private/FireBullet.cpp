@@ -267,7 +267,6 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	}
 	case STATE_EXPLOSION:
 	{	
-		m_eEFfectDesc.bActive = false;
 		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
 
 		if (bActive == false)

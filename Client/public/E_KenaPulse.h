@@ -9,6 +9,18 @@ class CE_KenaPulse final : public CEffect_Mesh
 public:
 	enum PULSETYPE { PULSE_DEFAULT, PULSE_PARRY, PULSE_END };
 
+	typedef struct tagMyStatus
+	{
+		enum STATE { STATE_DEFAULT, STATE_DAMAGE, STATE_END };
+
+		STATE  eState = STATE_DEFAULT;
+		_float fStateDurationTime = 0.0f;
+
+		_float   fCurHp;
+		_float   fMaxHp;
+
+	}STATUS;
+
 private:
 	CE_KenaPulse(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CE_KenaPulse(const CE_KenaPulse& rhs);
@@ -29,17 +41,24 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void				Reset();
+	void			Reset();
+	virtual _int	Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
 private:
 	HRESULT SetUp_ShaderResources();
 	void	Imgui_RenderProperty() override;
 
+public:
+	void	Set_Status();
+	
 private:
 	class CTexture* m_pDissolveTexture = nullptr;
+	class CKena*	m_pKena = nullptr;
+	class CKena_Status* m_pStatus = nullptr;
 
 	PX_TRIGGER_DATA*		m_pTriggerDAta = nullptr;
 	PULSETYPE				m_ePulseType = PULSE_DEFAULT;
+	STATUS					m_eStatus;
 
 private:
 	_bool	m_bDesolve = true;

@@ -192,6 +192,47 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 }
 
 [maxvertexcount(6)]
+void GS_DEFAULT(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
+{
+	GS_OUT		Out[4];
+
+	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
+	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].vPSize.x * 0.5f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float3		vPosition;
+
+	vPosition = In[0].vPosition + vRight + vUp;
+
+	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[0].vTexUV = float2(0.f, 0.f);
+
+	vPosition = In[0].vPosition - vRight + vUp;
+	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[1].vTexUV = float2(1.f, 0.f);
+
+	vPosition = In[0].vPosition - vRight - vUp;
+	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[2].vTexUV = float2(1.f, 1.f);
+
+	vPosition = In[0].vPosition + vRight - vUp;
+	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	Out[3].vTexUV = float2(0.f, 1.f);
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[1]);
+	Vertices.Append(Out[2]);
+	Vertices.RestartStrip();
+
+	Vertices.Append(Out[0]);
+	Vertices.Append(Out[2]);
+	Vertices.Append(Out[3]);
+	Vertices.RestartStrip();
+
+}
+
+[maxvertexcount(6)]
 void GS_KENATRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vertices)
 {
 	GS_TRAILOUT		Out[4] = 
@@ -696,7 +737,7 @@ PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 
 	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
 
-	float4 vColor = vector(92.0f, 141.f, 226.f, 255.f) / 255.f;
+	float4 vColor = g_vColor;
 	//float4 vColor = vector(0.0f, 195.f, 255.f, 255.f) / 255.f;
 	Out.vColor = flow + vColor;
 	Out.vColor.a = Out.vColor.r * In.fLife;
@@ -881,7 +922,7 @@ technique11 DefaultTechnique
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = compile gs_5_0 GS_MAIN();
+		GeometryShader = compile gs_5_0 GS_DEFAULT();
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FLOWERPARTICLE();

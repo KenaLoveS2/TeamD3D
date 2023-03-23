@@ -1144,6 +1144,9 @@
     <ClInclude Include="..\public\E_P_Explosion.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_BombTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1791,6 +1794,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Explosion.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_BombTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Kena\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

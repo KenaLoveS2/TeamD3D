@@ -57,7 +57,6 @@ void CEffect_Trail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// Set_TrailDesc();
  	m_pVITrailBufferCom->Tick(fTimeDelta);
 }
 

@@ -65,7 +65,7 @@ HRESULT CRotBomb::Late_Initialize(void * pArg)
 }
 
 void CRotBomb::Tick(_float fTimeDelta)
-{
+{	
 	__super::Tick(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -73,20 +73,13 @@ void CRotBomb::Tick(_float fTimeDelta)
 
 	if (m_bBomb && m_eEFfectDesc.bActive == true)
 	{
-		m_fTimeDelta += fTimeDelta;
-		if (m_fTimeDelta > 1.f)
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		for (auto& pChild : m_vecChild)
 		{
-			/* if => Child Active True */
-			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			for (auto& pChild : m_vecChild)
-			{
-				pChild->Set_Active(true);
-				pChild->Set_Position(vPos);
-			}
-			m_eEFfectDesc.bActive = false;
-
-			m_fTimeDelta = 0.0f;
+			pChild->Set_Active(true);
+			pChild->Set_Position(vPos);
 		}
+		m_eEFfectDesc.bActive = false;
 	}
 }
 
@@ -138,38 +131,6 @@ HRESULT CRotBomb::Render()
 
 void CRotBomb::Imgui_RenderProperty()
 {
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
-
-	if (ImGui::Button("Bomb"))
-	{
-		m_bBomb = true;
-		m_eEFfectDesc.bActive = true;
-	}
-
-	if (ImGui::Button("ChildActive false"))
-	{
-		m_bBomb = false;
-		m_eEFfectDesc.bActive = false;
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(false);
-	}
-
 }
 
 void CRotBomb::ImGui_ShaderValueProperty()

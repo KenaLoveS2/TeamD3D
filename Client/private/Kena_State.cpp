@@ -3330,6 +3330,7 @@ void CKena_State::Start_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_RELEASE_PERFECT");
 
 	m_pKena->m_bHeavyAttack = true;
+	m_pKena->m_bPerfectAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_1_Return(_float fTimeDelta)
@@ -3365,6 +3366,7 @@ void CKena_State::Start_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_2_RELEASE_PERFECT");
 
 	m_pKena->m_bHeavyAttack = true;
+	m_pKena->m_bPerfectAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_2_Return(_float fTimeDelta)
@@ -3400,6 +3402,7 @@ void CKena_State::Start_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_3_RELEASE_PERFECT");
 
 	m_pKena->m_bHeavyAttack = true;
+	m_pKena->m_bPerfectAttack = true;
 }
 
 void CKena_State::Start_Heavy_Attack_3_Return(_float fTimeDelta)
@@ -4771,6 +4774,7 @@ void CKena_State::End_Heavy_Attack_1_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
+	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
@@ -4798,6 +4802,7 @@ void CKena_State::End_Heavy_Attack_2_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
+	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
@@ -4825,6 +4830,7 @@ void CKena_State::End_Heavy_Attack_3_Release_Perfect(_float fTimeDelta)
 {
 	m_pKena->m_bAttack = false;
 	m_pKena->m_bHeavyAttack = false;
+	m_pKena->m_bPerfectAttack = false;
 	m_pKena->m_bTrailON = false;
 }
 
