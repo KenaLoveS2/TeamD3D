@@ -9,6 +9,7 @@
 #include "UI_Event_ChangeImg.h"
 #include "UI_Event_Animation.h"
 #include "UI_Event_Fade.h"
+#include "Effect_Particle_Base.h"
 
 /* Defines for Imgui */
 #define		AND			ImGui::SameLine()
@@ -27,6 +28,7 @@ HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
 	m_pCanvas = nullptr;
 	m_pUI = nullptr;
+	m_pEffect = nullptr;
 
 	if (FAILED(Ready_CloneCanvasList()))
 	{
@@ -165,13 +167,75 @@ void CImgui_UIEditor::EventList()
 
 void CImgui_UIEditor::Particle_Tool()
 {
-	/* test */
-	CGameObject* pEffect = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_3DUI", L"Clone_EffectParticleBase");
+	if (Button("Load Effect List"))
+		Load_List();
 
-	if (pEffect == nullptr)
+	//if (Button("Create New Effect"))
+	//{
+	//	m_pEffect = static_cast<CEffect_Particle_Base*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString()));
+	//	if (m_pEffect != nullptr)
+	//		m_vecEffects.push_back(m_pEffect);
+	//	else
+	//		return;
+	//}
+
+	static _int iSelectedEffect;
+	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
+	{
+
+	}
+
+
+
+	//m_pEffect->Imgui_RenderProperty();
+
+
+
+
+
+
+
+
+
+	//if (pEffect == nullptr)
+	//	return;
+
+	//pEffect->Imgui_RenderProperty();
+
+}
+
+void CImgui_UIEditor::Load_List()
+{
+	/* Clear All Information */
+	if (!m_vecEffectTag.empty())
+	{
+		m_vecEffectTag.clear();
+
+		//for (auto effect : m_vecEffects)
+		//	Safe_Release(effect);
+		//m_vecEffects.clear();
+	}
+
+	/* Load Type Data */
+	Json	jLoad;
+	string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
+
+	ifstream file(filePath);
+	if (file.fail())
 		return;
+	file >> jLoad;
+	file.close();
 
-	pEffect->Imgui_RenderProperty();
+	_int iNumEffects;
+	jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
+
+	for (auto jSub : jLoad["02. FileName"])
+	{
+		string strEffect;
+		jSub.get_to<string>(strEffect);
+		m_vecEffectTag.push_back(strEffect);
+	}
+
 
 }
 
@@ -192,4 +256,11 @@ void CImgui_UIEditor::Free()
 
 	m_vecCanvas.clear();
 
+	/*  Effect */
+	for (auto effect : m_vecEffects)
+		Safe_Release(effect);
+	m_vecEffects.clear();
+
+	m_vecEffectTag.clear();
+	/* ~Effect */
 }

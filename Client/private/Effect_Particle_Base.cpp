@@ -163,7 +163,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Size */
 		static _float2	vPSize = tInfo.vPSize;
-		ImGui::DragFloat2("vPSize", (_float*)&vPSize, 0.1f, 0.f, 10.f);
+		ImGui::DragFloat2("vPSize", (_float*)&vPSize, 0.1f, 0.f, 10.f, "%.3f");
 		tInfo.vPSize = vPSize;
 
 		/* Term */
@@ -173,22 +173,22 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* MinPos */
 		static _float3  vMinPos = tInfo.vMinPos;
-		ImGui::DragFloat3("vMinPos", (_float*)&vMinPos, 0.1f, -50.f, 50.f, "%.2f");
+		ImGui::DragFloat3("vMinPos", (_float*)&vMinPos, 0.1f, -50.f, 50.f, "%.3f");
 		tInfo.vMinPos = vMinPos;
 
 		/* MaxPos */
 		static _float3  vMaxPos = tInfo.vMaxPos;
-		ImGui::DragFloat3("vMaxPos", (_float*)&vMaxPos, 0.1f, -50.f, 50.f, "%.2f");
+		ImGui::DragFloat3("vMaxPos", (_float*)&vMaxPos, 0.1f, -50.f, 50.f, "%.3f");
 		tInfo.vMaxPos = vMaxPos;
 
 		/* SpeedMin */
 		static _float3  vSpeedMin = tInfo.vSpeedMin;
-		ImGui::DragFloat3("vSpeedMin", (_float*)&vSpeedMin, 0.1f, -10.f, 10.f, "%.2f");
+		ImGui::DragFloat3("vSpeedMin", (_float*)&vSpeedMin, 0.1f, -10.f, 10.f, "%.3f");
 		tInfo.vSpeedMin = vSpeedMin;
 
 		/* SpeedMax */
 		static _float3  vSpeedMax = tInfo.vSpeedMax;
-		ImGui::DragFloat3("vSpeedMax", (_float*)&vSpeedMax, 0.1f, -10.f, 10.f, "%.2f");
+		ImGui::DragFloat3("vSpeedMax", (_float*)&vSpeedMax, 0.1f, -10.f, 10.f, "%.3f");
 		tInfo.vSpeedMax = vSpeedMax;
 
 
@@ -215,16 +215,79 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		}
 	}
 
+	ImGui::Separator();
+	Save_Data();
+
 }
 
 HRESULT CEffect_Particle_Base::Save_Data()
 {
-	//string szSaveFileName;
-	//ImGui::SetNextItemWidth(200);
-	//ImGui::InputTextWithHint("##SaveData", "File Name", &szSaveFileName, MAX_PATH);
-	//ImGui::SameLine();
-	//if (ImGui::Button("Save"))
-	//	ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select Json", ".json", "../Bin/Data/Effect_UI/", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+	static	char szSaveFileName[MAX_PATH] = "";
+	ImGui::SetNextItemWidth(200);
+	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select Json", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
+
+	if (ImGuiFileDialog::Instance()->Display("Select File"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			string		strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+			strSaveDirectory += "\\";
+			strSaveDirectory += szSaveFileName;
+			strSaveDirectory += ".json";
+
+			Json	json;
+			json["01. TextureIndex"] = m_iTextureIndex;
+			json["02. RenderPass"] = m_iRenderPass;
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&m_vColor + i++);
+				json["03. Color"].push_back(fElement);
+			}
+
+			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+			json["04. Type"] = (_int)tInfo.eType;
+			json["05. NumInstance"] = tInfo.iNumInstance;
+			json["06. Term"] = tInfo.fTerm;
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&tInfo.vPSize + i++);
+				json["07. PSize"].push_back(fElement);
+			}
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&tInfo.vSpeedMin + i++);
+				json["08. SpeedMin"].push_back(fElement);
+			}
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&tInfo.vSpeedMax + i++);
+				json["09. SpeedMax"].push_back(fElement);
+			}
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&tInfo.vMinPos + i++);
+				json["10. minPos"].push_back(fElement);
+			}
+
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&tInfo.vMaxPos + i++);
+				json["11. maxPos"].push_back(fElement);
+			}
+
+			ofstream file(strSaveDirectory.c_str());
+			file << json;
+			file.close();
+			ImGuiFileDialog::Instance()->Close();
+		}
+	}
 
 	return S_OK;
 }
@@ -239,10 +302,6 @@ HRESULT CEffect_Particle_Base::Load_Data(char* fileName)
 	//{
 	//	if (ImGuiFileDialog::Instance()->IsOk())
 	//	{
-
-
-
-
 	//		ImGuiFileDialog::Instance()->Close();
 	//	}
 	//}
@@ -259,10 +318,10 @@ HRESULT CEffect_Particle_Base::Load_Data(char* fileName)
 	file >> jLoad;
 	file.close();
 
-	jLoad["1. TextureIndex"].get_to<_int>(m_iTextureIndex);
-	jLoad["2. RenderPass"].get_to<_int>(m_iRenderPass);
+	jLoad["01. TextureIndex"].get_to<_int>(m_iTextureIndex);
+	jLoad["02. RenderPass"].get_to<_int>(m_iRenderPass);
 	
-	for (auto fElement : jLoad["3. Color"])
+	for (auto fElement : jLoad["03. Color"])
 	{
 		static int i = 0;
 		fElement.get_to<_float>(*((float*)&m_vColor + i++));
@@ -272,25 +331,25 @@ HRESULT CEffect_Particle_Base::Load_Data(char* fileName)
 	using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
 
 	_int iType;
-	jLoad["4. Type"].get_to<_int>(iType);
+	jLoad["04. Type"].get_to<_int>(iType);
 	tInfo.eType = (pointType)iType;
-	jLoad["5. NumInstance"].get_to<_int>(tInfo.iNumInstance);
-	jLoad["6. Term"].get_to<_float>(tInfo.fTerm);
+	jLoad["05. NumInstance"].get_to<_int>(tInfo.iNumInstance);
+	jLoad["06. Term"].get_to<_float>(tInfo.fTerm);
 	tInfo.fTermAcc = 0.f;
 
-	for (auto fElement : jLoad["7. PSize"])
+	for (auto fElement : jLoad["07. PSize"])
 	{
 		static int i = 0;
 		fElement.get_to<_float>(*((float*)&tInfo.vPSize + i++));
 	}
 
-	for (auto fElement : jLoad["8. SpeedMin"])
+	for (auto fElement : jLoad["08. SpeedMin"])
 	{
 		static int i = 0;
 		fElement.get_to<_float>(*((float*)&tInfo.vSpeedMin + i++));
 	}
 
-	for (auto fElement : jLoad["9. SpeedMax"])
+	for (auto fElement : jLoad["09. SpeedMax"])
 	{
 		static int i = 0;
 		fElement.get_to<_float>(*((float*)&tInfo.vSpeedMax + i++));

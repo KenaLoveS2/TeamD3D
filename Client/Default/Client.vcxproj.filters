@@ -472,6 +472,9 @@
     <Filter Include="02.GameObjects\UI\06. 3D UI">
       <UniqueIdentifier>{ca5cc434-6ee6-4df1-b2ac-24432ec0b00b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar">
+      <UniqueIdentifier>{1eee8e4f-8b2f-40bc-b6e2-dc86bc9b779e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1132,6 +1135,9 @@
     <ClInclude Include="..\public\Effect_Particle_Base.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_NodeBossHP.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1770,6 +1776,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect_Particle_Base.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_NodeBossHP.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\08. Top\BossHPBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

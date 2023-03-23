@@ -66,6 +66,7 @@
 #include "UI_NodeRotFrontGuage.h"
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeLvUp.h"
+#include "UI_NodeBossHP.h"
 
 /* HatCart */
 #include "UI_CanvasHatCart.h"
@@ -841,7 +842,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
 
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
 
 	/********************************************/
 	/*				For. HatCart				*/
