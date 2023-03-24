@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TelePort_Flower.h"
 #include "GameInstance.h"
+#include "Utile.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
 #include "Kena.h"
@@ -32,6 +33,14 @@ HRESULT CTelePort_Flower::Initialize(void * pArg)
 	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
 
 	m_bRenderActive = true;
+
+	CTransform::TRANSFORMDESC		Desc = m_pTransformCom->Get_TransformDesc();
+	Desc.fSpeedPerSec = 0.f;
+	Desc.fRotationPerSec = XMConvertToRadians(45.f);
+	m_pTransformCom->Set_TransformDesc(Desc);	
+
+	_vector	vScale, vTrans;
+	XMMatrixDecompose(&vScale, &m_vInitQuternion, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
 	m_pModelCom->Set_AnimIndex(0);
 
@@ -72,7 +81,7 @@ HRESULT CTelePort_Flower::Late_Initialize(void * pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_TELEPORT_FLOWER));
-	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_TELEPORT_FLOWER, vPos, 15.f));
+	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_TELEPORT_FLOWER, vPos, 30.f));
 
 	return S_OK;
 }
@@ -96,7 +105,7 @@ void CTelePort_Flower::Tick(_float fTimeDelta)
 /*~Culling*/
 
 	m_eCurState = Check_State();
-	Update_State();
+	Update_State(fTimeDelta);
 	
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
@@ -138,6 +147,7 @@ void CTelePort_Flower::Imgui_RenderProperty()
 
 void CTelePort_Flower::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	m_pModelCom->Imgui_RenderProperty();
 }
 
@@ -217,6 +227,8 @@ CTelePort_Flower::ANIMATION CTelePort_Flower::Check_State()
 				m_pModelCom->Set_AnimIndex((_uint)eState);
 				m_pKena->TurnOn_TeleportFlower();
 				m_pKenaTransform->LookAt_NoUpDown(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+				m_pTransformCom->LookAt(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
+				m_fLerpRatio = 0.f;
 			}
 
 			break;
@@ -275,17 +287,26 @@ CTelePort_Flower::ANIMATION CTelePort_Flower::Check_State()
 				m_pModelCom->Set_AnimIndex((_uint)eState);
 				m_pKena->TurnOn_TeleportFlower();
 				m_pKenaTransform->LookAt_NoUpDown(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+				m_pTransformCom->LookAt(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));
+				m_fLerpRatio = 0.f;
 			}
 
 			break;
 		}
 
+	case CTelePort_Flower::ANIMATION_END:
+		{
+			eState = CTelePort_Flower::CLOSE_LOOP;
+			m_pModelCom->Set_AnimIndex((_uint)eState);
+
+			break;
+		}
 	}
 
 	return eState;
 }
 
-void CTelePort_Flower::Update_State()
+void CTelePort_Flower::Update_State(_float fTimeDelta)
 {
 	switch (m_eCurState)
 	{
@@ -311,16 +332,52 @@ void CTelePort_Flower::Update_State()
 
 	case CTelePort_Flower::INTERACT:
 	{
+		m_bArrowHit = false;
+
+		/*_vector	vRight = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_RIGHT));
+		_vector	vUp = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_UP));
+		_vector	vLook = XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+		_vector	vDir = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vDir, 0.f)), XMVector3Normalize(XMVectorSetY(vLook, 0.f)))));
+
+		if (XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vRight, 0.f)), XMVector3Normalize(XMVectorSetY(vDir, 0.f)))) < 0)
+			fAngle = (XM_PI - fAngle) * -1.f;
+
+		m_pTransformCom->Turn(vUp, fAngle * fTimeDelta);
+
+		vLook = XMVector3Normalize(XMVectorSet(0.f, XMVectorGetY(vLook), 0.f, 0.f));
+		vDir = XMVector3Normalize(XMVectorSet(0.f, XMVectorGetY(vDir), 0.f, 0.f));
+
+		fAngle = acosf(XMVectorGetX(XMVector3Dot(vDir, vLook)));
+
+		m_pTransformCom->Turn(vRight, fAngle * fTimeDelta);
+
+		m_pTransformCom->LookAt(m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION));*/
 
 		break;
 	}
 
 	case CTelePort_Flower::ACTIVATE_LOOP:
 	{
-		
 
 		break;
 	}
+	}
+
+	if (m_fLerpRatio < 1.f && m_eCurState != CTelePort_Flower::INTERACT)
+	{
+		_smatrix		matWorld = m_pTransformCom->Get_WorldMatrix();
+		_vector		vScale, vRotate, vTrans;
+
+		XMMatrixDecompose(&vScale, &vRotate, &vTrans, matWorld);
+
+		vRotate = XMQuaternionSlerp(vRotate, m_vInitQuternion, m_fLerpRatio);
+
+		m_fLerpRatio += fTimeDelta * 0.2f;
+		CUtile::Saturate<_float>(m_fLerpRatio, 0.f, 1.f);
+
+		m_pTransformCom->Set_WorldMatrix(XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vRotate, vTrans));
 	}
 }
 

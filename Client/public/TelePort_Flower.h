@@ -52,13 +52,15 @@ private:
 private:
 	_bool								m_bKenaDetected = false;
 	_bool								m_bArrowHit = false;
+	_vector							m_vInitQuternion;
+	_float								m_fLerpRatio = 0.f;
 
 	ANIMATION						m_eCurState = CLOSE_LOOP;
 	ANIMATION						m_ePreState = CLOSE_LOOP;
 
 private:
 	ANIMATION						Check_State();
-	void								Update_State();
+	void								Update_State(_float fTimeDelta);
 
 private:
 	HRESULT							SetUp_Components();
