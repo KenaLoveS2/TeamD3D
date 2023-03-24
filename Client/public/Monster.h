@@ -134,8 +134,10 @@ protected:
 	_bool	m_bSpawn = false;
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
-
+	
 	_bool m_bRealAttack = false;
+
+	_bool m_bIsFightReady = false;
 
 	_float	m_fHitStopTime = 0.f;
 	_float m_fDissolveTime = 0.0f;
@@ -170,6 +172,15 @@ public:
 
 	_bool IsParried();
 	_float Get_DissolveTime() { return m_fDissolveTime; }
+
+	void Attack_Start(_uint iAnimIndex);
+	void Attack_End(_uint iAnimIndex);
+
+	virtual void Spawn_ByMaster(CMonster* pMaster, _float4 vPos) {}
+	virtual void Clear_ByMinion(CMonster* pMinion) {}
+
+	inline _bool IsFightReady() { return m_bIsFightReady; }
+	void Execute_Dying();
 };
 
 END

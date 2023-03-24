@@ -141,7 +141,6 @@ public:
 
 	virtual _int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 
-	void Attack_Start(_uint iAnimIndex);
 	void Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex);
 };
 

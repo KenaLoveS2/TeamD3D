@@ -63,7 +63,7 @@ HRESULT CBossWarrior_Hat::Late_Initialize(void* pArg)
 		PxSphereDesc.fDynamicFriction = 0.5f;
 		PxSphereDesc.fStaticFriction = 0.5f;
 		PxSphereDesc.fRestitution = 0.1f;
-		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_PARTS;
 
 		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);

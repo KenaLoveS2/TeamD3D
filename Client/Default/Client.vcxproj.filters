@@ -1162,8 +1162,6 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossWarrior.h" />
-    <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\public\E_P_Explosion.h" />
     <ClInclude Include="..\Public\TelePort_Flower.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
@@ -1188,14 +1186,11 @@
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_RectTrail.h" />
-    <ClInclude Include="..\public\Effect_Mesh_Base.h">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    <ClInclude Include="..\public\BossWarrior.h">
+      <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Effect_Texture_Base.h">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Base_S2.h">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    <ClInclude Include="..\public\BossWarrior_Hat.h">
+      <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1854,8 +1849,6 @@
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossWarrior.cpp" />
-    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\private\E_P_Explosion.cpp" />
     <ClCompile Include="..\Private\TelePort_Flower.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
@@ -1880,14 +1873,11 @@
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_RectTrail.cpp" />
-    <ClCompile Include="..\private\Effect_Mesh_Base.cpp">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    <ClCompile Include="..\private\BossWarrior.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Effect_Texture_Base.cpp">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Base_S2.cpp">
-      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

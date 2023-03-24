@@ -1,18 +1,47 @@
 #pragma once
 #include "Monster.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
+
+#define MINION_COUNT		3
 
 BEGIN(Client)
-
 class CBossShaman : public CMonster
 {
 private:
 	enum ANIMATION
 	{
+		IDLE_LOOP,
+		AWAKE, AWAKE_LOOP,
+		BACK_FLIP,
+		DASH_ATTACK, 
+		DEATH,
+		FOG_SNAP, FREEZE_BLAST,
+		FRONT_FLIP, 
+		ICE_DAGGER_EXIT, ICE_DAGGER_INTO,
+		MELEE_ATTACK, 
+		SLEEP, 
+		STAGGER, STAGGER_B, 
+		STRAFE_L, STRAFE_R,
+		STUN_TAKE_DAMAGE, 
+		SUMMON_EXIT,
+		TAKE_DAMAGE, 
+		TELEPORT_EXIT, TELEPORT_HINT, TELEPORT_HINT_END, TELEPORT_INTO, TELEPORT_LOOP,
+		TRAP, TRAP_ATTACK, TRAP_ESCAPE, TRAP_FAIL, TRAP_LOOP, TRAP_SPIN, 
+		TRIPLE_ATTACK, 
+		TURN_L, TURN_R, 
+		WALK, WALK_BACKWARDS, 
+		SUMMON_INTO, SUMMON_LOOP, 
 		ANIMATION_END
 	};
 
 	enum ATTACKTYPE
 	{
+		AT_MELEE_ATTACK,
+		AT_TRIPLE_ATTACK,		
+		AT_TRAP,
+		AT_DASH_ATTACK,
+		AT_FREEZE_BLAST,		
 		ATTACKTYPE_END
 	};
 
@@ -25,6 +54,42 @@ private:
 	{
 		COLL_END
 	};
+
+	enum SWORD_RENDER
+	{
+		NO_RENDER,
+		CREATE,
+		RENDER,
+		DISSOLVE,
+		SWORD_RENDER_END,
+	};
+
+private:
+	SWORD_RENDER m_eSwordRenderState = NO_RENDER;
+	_float m_fSwordDissolveTime = 0.f;
+
+	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossWarriorDelegator;
+
+
+	_float m_fIdleTimeCheck = 0.f;
+	
+	_bool m_bTeleportDissolve = false;
+	_float m_fTeleportDissolveTime = 1.f;
+
+	const _float m_fDissolveRate = 1.f / 60.f;
+	const _float m_fBackFlipRange = 2.f;
+	const _float m_fTeleportRange = 2.f;
+		
+	_float m_fTeleportRangeTable[ATTACKTYPE_END] = { 1.5f, 3.f, 4.f, 5.f, 3.f, };
+	
+	_bool m_bTeleport = false;
+	_bool m_bSummon = false;
+	_bool m_bSummonEnd = false;
+	_bool m_bFogSnapEnd = false;
+	
+	ATTACKTYPE m_eAttackType = AT_MELEE_ATTACK;
+
+	class CSticks01* m_pMinions[MINION_COUNT] = { nullptr };
 
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -70,9 +135,17 @@ private:
 	vector<_float3> m_vecPivotRot;
 
 public:
-	static CBossShaman*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
-	virtual void						Free() override;
+	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr)  override;
+	virtual void Free() override;
+
+	void SwordRenderProc(_float fTimeDelta);
+	void Attack_Start(_bool bSwordRender, _uint iAnimIndex);
+	void Attack_End(_bool bSwordRender, _uint iAnimIndex);
+	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
+
+	void Create_Minions();
+	void Summon();
 };
 
 END
