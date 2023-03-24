@@ -153,6 +153,7 @@
 #include "Interaction_Com.h"
 #include "Camera_Player.h"
 #include "CameraForRot.h"
+#include "CinematicCamera.h"
 
 /*Test Objects*/
 #include "LodObject.h"
@@ -1440,8 +1441,10 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
 	// Prototype_GameObject_WaterPlane
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), 
-		CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_CinematicCamera
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CinematicCamera"), CCinematicCamera::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
 

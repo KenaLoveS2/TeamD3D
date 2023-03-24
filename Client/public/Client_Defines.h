@@ -65,6 +65,8 @@ extern bool				g_bNeedResizeSwapChain;
 extern bool				g_bWinActive;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
+extern float				g_fSkyColorIntensity;
+extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
 

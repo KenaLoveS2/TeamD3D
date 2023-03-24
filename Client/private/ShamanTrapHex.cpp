@@ -67,7 +67,7 @@ void CShamanTrapHex::Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	// Turn On After Animation
-	//m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
+	m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
 }
 
 void CShamanTrapHex::Late_Tick(_float fTimeDelta)
@@ -129,6 +129,8 @@ void CShamanTrapHex::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Recompile"))
 		m_pShaderCom->ReCompile();
+	//m_pPart[SHAMAN_0]->Imgui_RenderProperty();
+	//m_pPart[GEO]->Imgui_RenderProperty();
 }
 
 _float4 CShamanTrapHex::Get_JointBonePos()

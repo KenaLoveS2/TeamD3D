@@ -177,9 +177,6 @@ void CEnviromentObj::Free()
 {
 	__super::Free();
 
-	
-
-
 }
 
 

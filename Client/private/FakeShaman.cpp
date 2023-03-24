@@ -118,6 +118,8 @@ void CFakeShaman::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
 	ImGui::Begin("CFakeShaman");
+	if (ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
 	_float3 vPivot = m_vPivotPos;
 	float fPos[3] = { vPivot.x, vPivot.y, vPivot.z };
 	ImGui::DragFloat3("PivotPos", fPos, 0.01f, -100.f, 100.0f);
@@ -165,7 +167,7 @@ HRESULT CFakeShaman::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
-	float fHDRIntensity = 0.f;
+	float fHDRIntensity = 1.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
 	return S_OK;
 }
