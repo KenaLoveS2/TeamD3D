@@ -78,7 +78,7 @@ void CBossWarrior_Hat::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	Imgui_RenderProperty();
+	// Imgui_RenderProperty();
 
 	if (m_bHeadShot)
 	{

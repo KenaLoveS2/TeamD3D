@@ -1626,10 +1626,6 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
-
-
-	// Prototype_Component_Model_Boss_Warrior	
-
 	/**********************************/
 	/************For.Warrior***********/
 	/**********************************/
@@ -1642,12 +1638,12 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior_Hat",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/Boss_Warrior_Hat/Boss_Warrior_Hat.mdat"), PivotMatrix)))) return E_FAIL;
 	/*********************************************************************************************************************************************/
-
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	
 	/**********************************/
 	/************ For. Hunter **********/
 	/**********************************/
 	// Prototype_Component_Model_Boss_Hunter
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/Boss_Hunter.mdat"), PivotMatrix)))) return E_FAIL;
 
