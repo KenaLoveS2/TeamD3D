@@ -82,7 +82,7 @@ private:
 private:
 	TERRAIN_DESC						m_TerrainDesc;
 	_bool								m_bLoadData = false;
-
+	_bool								b = false;
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

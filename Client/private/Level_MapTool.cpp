@@ -66,9 +66,9 @@ HRESULT CLevel_MapTool::Initialize()
 	}
 	 
 
-
-	if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
-		return E_FAIL;
+	/*
+		if (FAILED(p_game_instance->Late_Initialize(LEVEL_MAPTOOL)))
+			return E_FAIL;*/
 
 	return S_OK;
 }
@@ -121,7 +121,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
@@ -136,8 +136,8 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_AnimObj.json");
 
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
 
@@ -236,7 +236,7 @@ HRESULT CLevel_MapTool::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CLevel_MapTool::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
+	
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

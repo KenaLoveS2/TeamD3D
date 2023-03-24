@@ -48,8 +48,8 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
 	
 	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	// 0번
 	{
-		// 1번
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 0);
 		BoxDesc.eType = BOX_STATIC;
@@ -72,12 +72,13 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
 	}
 
+	// 1번
 	{
 		_float4 vPos2 = vPos;
 		vPos2.x += 3.35f;
 		vPos2.y += 6.84f;
 		vPos2.z -= 0.2f;
-		// 2번
+		
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 1);
 		BoxDesc.eType = BOX_STATIC;
@@ -103,12 +104,13 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
 	}
 
+	// 2번
 	{
 		_float4 vPos3 = vPos;
 		vPos3.x += 9.31f;
 		vPos3.y += 8.3f;
 		vPos3.z -= 0.06f;
-		// 3번
+	
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 2);
 		BoxDesc.eType = BOX_STATIC;
@@ -134,12 +136,13 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
 	}
 
+	// 3번
 	{
 		_float4 vPos4 = vPos;
 		vPos4.x += 19.11f;
 		vPos4.y += 11.76f;
 		vPos4.z -= 0.43f;
-		// 4번
+		
 		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
 		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 3);
 		BoxDesc.eType = BOX_STATIC;
@@ -165,7 +168,6 @@ HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 68.f, _float3(0.f, 0.f, 1.f));
 	}
 
-
 	return S_OK;
 }
 
@@ -187,6 +189,7 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 	//	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 15.f);
 	//if (m_bRenderCheck)
 	/*~Culling*/
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
