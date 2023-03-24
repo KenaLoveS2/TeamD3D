@@ -88,7 +88,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas")))) 
+	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_Canvas"))))
 	{
 		MSG_BOX("Layer_Canvas");
 		return E_FAIL;
@@ -98,7 +98,7 @@ HRESULT CLevel_TestPlay::Initialize()
 	{
 		MSG_BOX("Layer_NPC");
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(Ready_Layer_ControlRoom(TEXT("Layer_ControlRoom"))))
 	{
@@ -217,7 +217,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
+
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
@@ -562,7 +562,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Water(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), L"WaterPlane");
+	//pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_WaterPlane"), L"WaterPlane");
 
 	RELEASE_INSTANCE(CGameInstance);
 

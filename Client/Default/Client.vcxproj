@@ -192,6 +192,7 @@
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
+    <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\Public\Crystal.h" />
     <ClInclude Include="..\Public\Cliff_Rock.h" />
@@ -431,6 +432,7 @@
     <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
+    <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
