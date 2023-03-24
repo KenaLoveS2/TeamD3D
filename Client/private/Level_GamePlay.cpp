@@ -219,7 +219,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_TelePortFlower.json");
+	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
 	return S_OK;
 }

@@ -33,8 +33,8 @@ private:
 public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*	Get_Status() { return m_pKenaStatus; }
-	_double						Get_AnimationPlayTime();
+	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
+	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;
 	vector<_float4>*			Get_WeaponPositions() { return &m_vecWeaposPos; }
@@ -44,6 +44,7 @@ public:
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
+	void						TurnOn_TeleportFlower() { m_bTeleportFlower = true; }
 
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
@@ -52,14 +53,14 @@ public:
 	void						Set_StateLock(_bool bLock) { m_bStateLock = bLock; }
 
 public:
-	virtual HRESULT		Initialize_Prototype() override;
-	virtual HRESULT		Initialize(void* pArg) override;
-	virtual HRESULT		Late_Initialize(void* pArg) override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Late_Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT		Render() override;
-	virtual HRESULT		RenderShadow() override;
-	virtual HRESULT		RenderReflect() override;
+	virtual HRESULT			Render() override;
+	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT			RenderReflect() override;
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
@@ -76,7 +77,7 @@ public:
 	void						Call_FocusRotIcon(CGameObject* pTarget);
 	void						Call_FocusMonsterIcon(CGameObject* pTarget);
 	
-	void Dead_FocusRotIcon(CGameObject* pTarget);
+	void						Dead_FocusRotIcon(CGameObject* pTarget);
 
 private:
 	CRenderer*				m_pRendererCom = nullptr;
@@ -121,6 +122,7 @@ private:
 	DAMAGED_FROM			m_eDamagedDir;
 
 	_bool						m_bSprint = false;
+	_bool						m_bTeleportFlower = false;
 
 	_bool						m_bAim = false;
 	_bool						m_bBow = false;

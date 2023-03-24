@@ -81,7 +81,7 @@ HRESULT CRotBomb::Late_Initialize(void * pArg)
 	PxSphereDesc.fStaticFriction = 0.5f;
 	PxSphereDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_ARROW));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_BOMB));
 
 	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
