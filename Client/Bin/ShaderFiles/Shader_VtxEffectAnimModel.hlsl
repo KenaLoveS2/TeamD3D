@@ -26,18 +26,18 @@ texture2D		g_SmoothTexture;
 /* ~EnemyWisp Texture */
 
 // Type
-int		g_TextureRenderType, g_BlendType;
-int		g_SeparateWidth, g_SeparateHeight;
-uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-bool    g_IsUseMask, g_IsUseNormal;
-float   g_WidthFrame, g_HeightFrame, g_Time;
-float4  g_vColor;
-float2  g_UV;
+int			g_TextureRenderType, g_BlendType;
+int			g_SeparateWidth, g_SeparateHeight;
+uint			g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+bool			g_IsUseMask, g_IsUseNormal;
+float			g_WidthFrame, g_HeightFrame, g_Time;
+float4		g_vColor;
+float2		g_UV;
 // ~Type
 
 // Dissolve
-bool  g_bDissolve;
-float g_fDissolveTime;
+bool		g_bDissolve;
+float		g_fDissolveTime;
 float _DissolveSpeed = 0.2f;
 float _FadeSpeed = 1.5f;
 // ~Dissolve
@@ -48,7 +48,7 @@ struct VS_IN
 	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float3		vTangent : TANGENT;
-	uint4		vBlendIndex : BLENDINDEX;
+	uint4			vBlendIndex : BLENDINDEX;
 	float4		vBlendWeight : BLENDWEIGHT;
 };
 
@@ -253,13 +253,16 @@ PS_OUT PS_MAIN_ROTBOMBCENTER(PS_IN In)
 	return Out;
 }//3
 
+float4 g_vEdgeLineColor;
 PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector vEdgeLineTexture = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vDiffuse = vDiffuse;
+	vector vFinalColor = g_vColor + vEdgeLineTexture * g_vEdgeLineColor;
+
+	Out.vDiffuse = vFinalColor;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = (vector)1.f;
