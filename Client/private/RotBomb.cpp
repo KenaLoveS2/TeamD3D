@@ -518,6 +518,8 @@ void CRotBomb::Update_State(_float fTimeDelta)
 
 void CRotBomb::Calculate_Path(_float fTimeDelta)
 {
+	m_matDummy = m_pTransformCom->Get_WorldMatrix();
+
 	_float3	vCamPos = CGameInstance::GetInstance()->Get_CamPosition_Float3();
 	_float3	vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float3();
 	_float3	vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float3();

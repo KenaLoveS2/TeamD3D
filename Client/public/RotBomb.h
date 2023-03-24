@@ -56,6 +56,8 @@ private:
 	_float3					m_vAimPos;
 	list<_float4>				m_PathList;
 
+	_smatrix					m_matDummy;
+
 	_bool						m_bHit = false;
 	CGameObject*			m_pTarget = nullptr;
 	_float4					m_vHitPosition;

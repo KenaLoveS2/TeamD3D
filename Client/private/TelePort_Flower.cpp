@@ -16,23 +16,21 @@ CTelePort_Flower::CTelePort_Flower(const CTelePort_Flower & rhs)
 
 HRESULT CTelePort_Flower::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
 	return S_OK;
 }
 
 HRESULT CTelePort_Flower::Initialize(void * pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_bRenderActive = true;
 
 	m_pModelCom->Set_AnimIndex(0);
+
 	return S_OK;
 }
 
@@ -100,7 +98,7 @@ HRESULT CTelePort_Flower::SetUp_Components()
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
+		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_TeleportFlowerAnim"), TEXT("Com_Model"),
