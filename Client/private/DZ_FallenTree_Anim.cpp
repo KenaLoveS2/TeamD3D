@@ -31,9 +31,6 @@ HRESULT CDZ_FallenTree_Anim::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_bRenderActive = true;
-
-	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
-	
 	
 
 	m_pModelCom->Set_AnimIndex(2);
