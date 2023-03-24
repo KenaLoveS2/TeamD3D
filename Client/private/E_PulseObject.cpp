@@ -97,7 +97,7 @@ void CE_PulseObject::Tick(_float fTimeDelta)
 		m_eEFfectDesc.bActive = false;
 	}
 
-	if (m_fPulseResetTimer >= 3.f)
+	if (m_fPulseResetTimer >= 6.f)
 	{
 		m_bFinish = false;
 		m_fPulseResetTimer = 0.f;
