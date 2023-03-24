@@ -751,12 +751,20 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
 	if (hitResult)
 	{
+		PxRigidActor*		pActor = hit.block.actor;
+		PxShape*			pShape = nullptr;
+		pActor->getShapes(&pShape, sizeof(PxShape));
+		PxShapeFlags Flags = pShape->getFlags();
+
+		if (Flags.isSet(PxShapeFlag::eTRIGGER_SHAPE))
+			return false;
+
 		if(pPositionOut)
 			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
 		
 		if (pObjectOut)
 		{
-			PX_USER_DATA* pUserData = (PX_USER_DATA*)hit.block.actor->userData;
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pActor->userData;
 			pUserData && (*pObjectOut = pUserData->pOwner);
 		}
 	}

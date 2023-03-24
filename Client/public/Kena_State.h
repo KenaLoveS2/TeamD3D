@@ -415,6 +415,8 @@ private:
 	_bool						m_bCombat = false;
 	_float						m_fCombatIdleTime = 0.f;
 
+	_smatrix					m_matPivotOrigin;
+
 private:
 	HRESULT					SetUp_State_Idle();
 	HRESULT					SetUp_State_Run();
@@ -443,6 +445,7 @@ private:
 	HRESULT					SetUp_State_Jump();
 	HRESULT					SetUp_State_Land();
 	HRESULT					SetUp_State_Pulse();
+	HRESULT					SetUp_State_Shield();
 	HRESULT					SetUp_State_Spin_Attack();
 	HRESULT					SetUp_State_Sprint();
 	HRESULT					SetUp_State_TeleportFlower();
@@ -1052,6 +1055,9 @@ private:	/* Changer */
 	_bool	OnGround();
 	_bool	CommonHit();
 	_bool	HeavyHit();
+	_bool	Shield_Small();
+	_bool	Shield_Medium();
+	_bool	Shield_Big();
 	_bool	Pulse_Jump();
 	_bool	Parry();
 	_bool	Teleport_Flower();

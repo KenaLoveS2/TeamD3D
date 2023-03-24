@@ -56,6 +56,31 @@ HRESULT CE_RotBombExplosion::Initialize(void * pArg)
 
 HRESULT CE_RotBombExplosion::Late_Initialize(void * pArg)
 {	
+	_float3 vPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPivotScale = _float3(1.f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_WEAPON;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_BOMB_EXPLOSION));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
 	return S_OK;
 }

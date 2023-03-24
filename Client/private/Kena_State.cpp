@@ -63,6 +63,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Jump(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Land(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Shield(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Spin_Attack(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Sprint(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_TeleportFlower(), E_FAIL);
@@ -78,6 +79,8 @@ void CKena_State::Tick(_double dTimeDelta)
 		m_pTransform->Set_Speed(7.f);
 	else if (m_pKena->m_bAim == true)
 		m_pTransform->Set_Speed(3.5f);
+	else if (m_pKena->m_bPulse == true)
+		m_pTransform->Set_Speed(2.f);
 	else
 		m_pTransform->Set_Speed(5.f);
 }
@@ -2398,6 +2401,11 @@ HRESULT CKena_State::SetUp_State_Pulse()
 
 		.Finish_Setting();
 
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Shield()
+{
 	return S_OK;
 }
 
@@ -5514,7 +5522,7 @@ void CKena_State::Tick_Into_Pulse_From_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Pulse(_float fTimeDelta)
 {
-	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+	Move(fTimeDelta, m_eDir);
 }
 
 void CKena_State::Tick_Pulse_Loop(_float fTimeDelta)
@@ -5531,6 +5539,7 @@ void CKena_State::Tick_Pulse_Into_Idle(_float fTimeDelta)
 
 void CKena_State::Tick_Pulse_Into_Run(_float fTimeDelta)
 {
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
 void CKena_State::Tick_Pulse_Parry(_float fTimeDelta)
@@ -5548,6 +5557,7 @@ void CKena_State::Tick_Pulse_Parry(_float fTimeDelta)
 
 void CKena_State::Tick_Pulse_Walk(_float fTimeDelta)
 {
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
@@ -6334,12 +6344,28 @@ _bool CKena_State::OnGround()
 
 _bool CKena_State::CommonHit()
 {
-	return m_pKena->m_bCommonHit && !m_pKena->m_bHeavyHit;
+	return m_pKena->m_bCommonHit && !m_pKena->m_bHeavyHit && !m_pKena->m_bPulse;
 }
 
 _bool CKena_State::HeavyHit()
 {
-	return !m_pKena->m_bCommonHit && m_pKena->m_bHeavyHit;
+	return !m_pKena->m_bCommonHit && m_pKena->m_bHeavyHit && !m_pKena->m_bPulse;
+}
+
+_bool CKena_State::Shield_Small()
+{
+	return m_pKena->m_bCommonHit && !m_pKena->m_bHeavyHit && m_pKena->m_bPulse;
+}
+
+_bool CKena_State::Shield_Medium()
+{
+	// 언제 쓰이는지 모름.
+	return false;
+}
+
+_bool CKena_State::Shield_Big()
+{
+	return !m_pKena->m_bCommonHit && m_pKena->m_bHeavyHit && m_pKena->m_bPulse;
 }
 
 _bool CKena_State::Pulse_Jump()

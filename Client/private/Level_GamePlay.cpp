@@ -60,8 +60,8 @@ HRESULT CLevel_GamePlay::Initialize()
 // 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 // 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	

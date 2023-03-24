@@ -2370,7 +2370,7 @@
     {
         "0. State Name": "PULSE_INTO_RUN",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
+        "2. Lerp Duration": 0.0,
         "3. Main Animation": "A_Kena_Pulse_IntoRun",
         "4. Blend Animation": "N/A",
         "5. Joint Index": "N/A",

@@ -341,17 +341,17 @@ void CChannel::Additive_TransformMatrixForMonster(_float PlayTime, _float fAddit
 
 void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)
 {
-	if (m_pBone->Get_BoneLocked() == true)
-	{
-		if (isRootBone == true)
-		{
-			matBonesTransfomation = XMMatrixIdentity();
-			m_pBone->Set_TransformMatrix(XMMatrixIdentity());
-			return;
-		}
-		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
-			return;
-	}
+// 	if (m_pBone->Get_BoneLocked() == true)
+// 	{
+// 		if (isRootBone == true)
+// 		{
+// 			matBonesTransfomation = XMMatrixIdentity();
+// 			m_pBone->Set_TransformMatrix(XMMatrixIdentity());
+// 			return;
+// 		}
+// 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
+// 			return;
+// 	}
 
 	_vector			vScale;
 	_vector			vRotation;
@@ -464,7 +464,7 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 		_vector	vSc, vRot, vTrans;
 		XMMatrixDecompose(&vSc, &vRot, &vTrans, matTransform);
 
-		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 	}
 }
@@ -570,7 +570,7 @@ void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRad
 		_vector	vSc, vRot, vTrans;
 		XMMatrixDecompose(&vSc, &vRot, &vTrans, matTransform);
 
-		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 	}
 }

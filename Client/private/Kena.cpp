@@ -381,7 +381,9 @@ void CKena::Tick(_float fTimeDelta)
  			m_bCommonHit = true;
  			//m_bHeavyHit = true;
  			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
- 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+
+			if (m_bPulse == false)
+ 				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
  
  			m_bParry = false;
  			m_pAttackObject = nullptr;
