@@ -5,8 +5,6 @@
 
 BEGIN(Client)
 
-
-
 class CCinematicCamera : public CCamera
 {
 	struct CAMERAKEYFRAME
