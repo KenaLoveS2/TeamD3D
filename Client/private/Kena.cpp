@@ -830,6 +830,12 @@ HRESULT CKena::RenderReflect()
 
 void CKena::Imgui_RenderProperty()
 {
+	if (ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
 
@@ -884,7 +890,6 @@ void CKena::ImGui_ShaderValueProperty()
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
-		system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();
