@@ -65,7 +65,9 @@ void CShamanTrapHex::Tick(_float fTimeDelta)
 		m_pPart[i]->Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
-	m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
+
+	// Turn On After Animation
+	//m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
 }
 
 void CShamanTrapHex::Late_Tick(_float fTimeDelta)
