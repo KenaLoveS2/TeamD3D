@@ -485,7 +485,6 @@ HRESULT CBranchTosser::SetUp_Components()
 
 	CBranchTosser_Weapon::MONSTERWEAPONDESC		WeaponDesc;
 	ZeroMemory(&WeaponDesc, sizeof(CBranchTosser_Weapon::MONSTERWEAPONDESC));
-
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("Branch_Projectile_jnt");
 	WeaponDesc.pTargetTransform = m_pTransformCom;

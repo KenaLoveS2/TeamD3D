@@ -9,6 +9,7 @@
 #include "UI_NodeRotCnt.h"
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeBossHP.h"
+#include "BossWarrior.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -102,16 +103,20 @@ HRESULT CUI_CanvasTop::Render()
 
 HRESULT CUI_CanvasTop::Bind()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(g_LEVEL,
+	
+	CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
 		L"Layer_Player", L"Kena"));
 	if (pKena == nullptr)
-	{
-		RELEASE_INSTANCE(CGameInstance);
 		return E_FAIL;
-	}
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+
+
+	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Monster", L"BossWarrior_0"));
+	if (pBossWarrior == nullptr)
+		return E_FAIL;
+	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -330,6 +335,8 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 				break;
 			}
 		}
+		else if (fValue == -1.f)
+			m_vecNode[UI_BOSSHP]->Set_Active(false);
 		else
 			static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Guage(fValue);
 		break;

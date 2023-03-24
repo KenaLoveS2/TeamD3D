@@ -20,16 +20,19 @@ HRESULT CFakeShaman::Initialize_Prototype()
 
 HRESULT CFakeShaman::Initialize(void* pArg)
 {
+	if (nullptr != pArg)
+		memcpy(&m_Desc, pArg, sizeof(m_Desc));
+
 	CGameObject::GAMEOBJECTDESC		GaemObjectDesc;
 	ZeroMemory(&GaemObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-
 	GaemObjectDesc.TransformDesc.fSpeedPerSec = 1.5f;
 	GaemObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
 	FAILED_CHECK_RETURN(__super::Initialize(&GaemObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
-
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	m_vPivotPos = _float4(0.f, -5.f, 0.f, 0.f);
+	m_vPivotRot = m_Desc.vPivotRot;
 
 	return S_OK;
 }
@@ -42,6 +45,22 @@ HRESULT CFakeShaman::Late_Initialize(void* pArg)
 void CFakeShaman::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	_matrix SocketMatrix =
+		m_Desc.pSocket->Get_OffsetMatrix() *
+		m_Desc.pSocket->Get_CombindMatrix() *
+		XMLoadFloat4x4(&m_Desc.PivotMatrix);
+
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+	SocketMatrix =
+		XMMatrixRotationX(m_vPivotRot.x) * XMMatrixRotationY(m_vPivotRot.y) * XMMatrixRotationZ(m_vPivotRot.z)
+		*XMMatrixTranslation(m_vPivotPos.x, m_vPivotPos.y, m_vPivotPos.z)
+		* SocketMatrix * m_Desc.pTargetTransform->Get_WorldMatrix();
+
+	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
 }
 
 void CFakeShaman::Late_Tick(_float fTimeDelta)
@@ -70,7 +89,7 @@ HRESULT CFakeShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 8), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 11), E_FAIL);
 		}
 		else // UV1
 		{
@@ -78,7 +97,7 @@ HRESULT CFakeShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 7), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
 		}
 	}
 	return S_OK;
@@ -90,7 +109,7 @@ HRESULT CFakeShaman::RenderShadow()
 	if (FAILED(SetUp_ShadowShaderResources())) return E_FAIL;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
-		m_pModelCom->Render(m_pShaderCom, i,  nullptr, 2);
+		m_pModelCom->Render(m_pShaderCom, i,  nullptr, 4);
 
 	return S_OK;
 }
@@ -98,6 +117,20 @@ HRESULT CFakeShaman::RenderShadow()
 void CFakeShaman::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
+	ImGui::Begin("CFakeShaman");
+	_float3 vPivot = m_vPivotPos;
+	float fPos[3] = { vPivot.x, vPivot.y, vPivot.z };
+	ImGui::DragFloat3("PivotPos", fPos, 0.01f, -100.f, 100.0f);
+	m_vPivotPos.x = fPos[0];
+	m_vPivotPos.y = fPos[1];
+	m_vPivotPos.z = fPos[2];
+	_float3 vRotPivot = m_vPivotRot;
+	float fRotPos[3] = { vRotPivot.x, vRotPivot.y, vRotPivot.z };
+	ImGui::DragFloat3("PivotRot", fRotPos, 0.01f, -100.f, 100.0f);
+	m_vPivotRot.x = fRotPos[0];
+	m_vPivotRot.y = fRotPos[1];
+	m_vPivotRot.z = fRotPos[2];
+	ImGui::End();
 }
 
 void CFakeShaman::ImGui_ShaderValueProperty()
@@ -129,6 +162,7 @@ HRESULT CFakeShaman::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
 	float fHDRIntensity = 0.f;
@@ -142,6 +176,7 @@ HRESULT CFakeShaman::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
@@ -178,4 +213,10 @@ void CFakeShaman::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_Desc.pSocket);
+		Safe_Release(m_Desc.pTargetTransform);
+	}
 }

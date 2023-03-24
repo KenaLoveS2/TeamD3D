@@ -9,6 +9,7 @@ texture2D		g_DiffuseTexture;
 
 float4			g_vColor;
 float			g_fAlpha;
+float			g_fHDRItensity;
 
 struct VS_IN
 {
@@ -120,6 +121,7 @@ struct PS_IN
 struct PS_OUT
 {
 	float4		vColor : SV_TARGET0;
+	float4		vDepth : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -133,6 +135,8 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (Out.vColor.a < 0.01f)
 		discard;
+
+	Out.vDepth = vector(0.f, 0.f, g_fHDRItensity, 0.f);
 
 	return Out;
 }
