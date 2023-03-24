@@ -3,14 +3,26 @@
 #include "Effect_Mesh.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CBone;
+END
+
 BEGIN(Client)
 
-class CShamanTrap final : public CEffect_Mesh
+class CShamanTrapPlane final : public CEffect_Mesh
 {
+public:
+	typedef struct tagShamanTrapDesc
+	{
+		_float4x4		PivotMatrix;
+		CBone*			pSocket;
+		CTransform* pTargetTransform;
+	}ShamanTrapDESC;
+
 private:
-	CShamanTrap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CShamanTrap(const CShamanTrap& rhs);
-	virtual ~CShamanTrap() = default;
+	CShamanTrapPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CShamanTrapPlane(const CShamanTrapPlane& rhs);
+	virtual ~CShamanTrapPlane() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -30,10 +42,14 @@ private:
 	HRESULT					SetUp_ShaderResources();
 
 private:
-	_uint							m_iNumMeshes = 0;
+	ShamanTrapDESC					m_Desc;
+	_float4x4									m_SocketMatrix;
+	_float4										m_vPivotPos;
+	_float4										m_vPivotRot;
+	_uint											m_iNumMeshes = 0;
 
 public:
-	static CShamanTrap*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CShamanTrapPlane*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	    Clone(void* pArg = nullptr)  override;
 	virtual void					    Free() override;
 };

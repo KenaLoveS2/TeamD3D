@@ -43,8 +43,9 @@
 #include "BossShaman.h"
 #include "FakeShaman.h"
 #include "BossHunter.h"
-#include "ShamanTrap.h"
 #include "ShamanTrapHex.h"
+#include "ShamanTrapGeo.h"
+#include "ShamanTrapPlane.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -1663,33 +1664,23 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Shaman",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Boss_Shaman.mdat"), PivotMatrix)))) return E_FAIL;
 
-	// Prototype_Component_Model_ShamanTrap
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/ShamanTrap.mdat"), PivotMatrix)))) return E_FAIL;
+	_matrix ShamanTrapPivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	// Prototype_Component_Model_ShamanTrapHex
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHex",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/ShamanTrapHex.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_TrapAsset/ShamanTrapHex.model"), ShamanTrapPivotMatrix)))) return E_FAIL;
+
+	// Prototype_Component_Model_ShamanTrapHexPlane
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHexPlane",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapHexPlane.mdat"), ShamanTrapPivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_FakeShaman
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FakeShaman",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_FakeShaman/FakeShaman.mdat"), PivotMatrix)))) return E_FAIL;
 
-	// Prototype_Component_Model_ShamanTrap_Decal_Geo
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_Decal_Geo",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_Decal_Geo.mdat"), PivotMatrix)))) return E_FAIL;
-
 	// Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrap_DecalGeo_Rescale",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrap_DecalGeo_Rescale.mdat"), PivotMatrix)))) return E_FAIL;
-
-	// Prototype_Component_Model_ShamanTrapHexPlane
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapHexPlane",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapHexPlane.mdat"), PivotMatrix)))) return E_FAIL;
-
-	// Prototype_Component_Model_ShamanTrapPlane
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShamanTrapPlane",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/ShamanTrapDecal/ShamanTrapPlane.mdat"), PivotMatrix)))) return E_FAIL;
 	/*********************************************************************************************************************************************/
 
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1802,8 +1793,14 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_GameObject_BossFakeShaman
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossFakeShaman"), CFakeShaman::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
-	// Prototype_GameObject_ShamanTrap
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrap"), CShamanTrap::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	// Prototype_GameObject_ShamanTrapHex
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapHex"), CShamanTrapHex::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_ShamanTrapGeo
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapGeo"), CShamanTrapGeo::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_ShamanTrapPlane
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrapPlane"), CShamanTrapPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	// Prototype_GameObject_BossHunter
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;

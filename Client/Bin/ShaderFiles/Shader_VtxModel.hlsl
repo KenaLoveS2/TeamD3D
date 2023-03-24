@@ -72,11 +72,15 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
 	vNormal = mul(vNormal, g_SocketMatrix);
 
+	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
+	vTangent = mul(vTangent, g_SocketMatrix);
+
 	Out.vPosition = mul(vPosition, matVP); 
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(vTangent);
+	Out.vBinormal = normalize(cross(vNormal.xyz, vTangent.xyz));
 
 	return Out;
 }
@@ -455,5 +459,31 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
+	}
+
+	pass SOCKET_AO_R_M//10
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M();
+	}
+
+	pass SOCKET_AO_R_M_E//11
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E();
 	}
 }

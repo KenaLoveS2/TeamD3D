@@ -301,8 +301,9 @@
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\Saiya.h" />
-    <ClInclude Include="..\public\ShamanTrap.h" />
+    <ClInclude Include="..\public\ShamanTrapGeo.h" />
     <ClInclude Include="..\public\ShamanTrapHex.h" />
+    <ClInclude Include="..\public\ShamanTrapPlane.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
     <ClInclude Include="..\Public\TelePort_Flower.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
@@ -537,8 +538,9 @@
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />
-    <ClCompile Include="..\private\ShamanTrap.cpp" />
+    <ClCompile Include="..\private\ShamanTrapGeo.cpp" />
     <ClCompile Include="..\private\ShamanTrapHex.cpp" />
+    <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
     <ClCompile Include="..\Private\TelePort_Flower.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
