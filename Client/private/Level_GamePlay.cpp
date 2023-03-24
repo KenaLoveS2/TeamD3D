@@ -470,23 +470,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _tchar * pLayerTag)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	/* UIs */
-	//vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
-	//vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
-	//vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+	vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+	vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+	vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
 
-	//for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
-	//{
-	//	CUI::tagUIDesc tDesc;
-	//	tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
+	for (_uint i = 0; i < CUI_ClientManager::CANVAS_END; ++i)
+	{
+		CUI::tagUIDesc tDesc;
+		tDesc.fileName = (*pCanvasCloneTags)[i].c_str();
 
-	//	CUI_Canvas* pCanvas = nullptr;
-	//	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
-	//		(*pCanvasProtoTags)[i].c_str(), (*pCanvasCloneTags)[i].c_str(), &tDesc, (CGameObject**)&pCanvas)))
-	//		MSG_BOX("Failed To Clone Canvas : UIEditor");
+		CUI_Canvas* pCanvas = nullptr;
+		if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Canvas",
+			(*pCanvasProtoTags)[i].c_str(), (*pCanvasCloneTags)[i].c_str(), &tDesc, (CGameObject**)&pCanvas)))
+			MSG_BOX("Failed To Clone Canvas : UIEditor");
 
-	//	if (pCanvas != nullptr)
-	//		CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
-	//}
+		if (pCanvas != nullptr)
+			CUI_ClientManager::GetInstance()->Set_Canvas((CUI_ClientManager::UI_CANVAS)i, pCanvas);
+	}
 
 	
 	/* 3D UI */
