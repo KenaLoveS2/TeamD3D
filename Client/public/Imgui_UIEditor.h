@@ -9,7 +9,7 @@ class CUI;
 END
 
 BEGIN(Client)
-class CEffect_Particle_Base;
+class CEffect_Base_S2;
 class CImgui_UIEditor final : public CImguiObject
 {
 private:
@@ -24,8 +24,11 @@ private:
 	void	EventList();
 
 private: /* Effect */
-	void	Particle_Tool();
+	void	Effect_Tool();
+
 	void	Load_List();
+	void	Save_List();
+	void	Create_Effect(string strEffect);
 
 private:
 	vector<CUI_Canvas*>				m_vecCanvas;
@@ -33,8 +36,8 @@ private:
 	CUI*							m_pUI;
 
 private: /* Effect */
-	CEffect_Particle_Base*			m_pEffect;
-	vector<CEffect_Particle_Base*>	m_vecEffects;
+	CEffect_Base_S2*			m_pEffect;
+	vector<CEffect_Base_S2*>	m_vecEffects;
 	vector<string>					m_vecEffectTag;
 
 public:
