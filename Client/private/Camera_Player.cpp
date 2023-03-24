@@ -67,11 +67,11 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&CameraDesc), E_FAIL);
 
 	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
-	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset(1.25f, 0.55f, 0.55f, 0.7f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_PULSE			, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_PARRY			, new CCamOffset(1.2f, 0.7f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_PARRY			, new CCamOffset(1.2f, 0.85f, 0.5f, 0.6f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_HEAVYATTACK, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, false));
 
 	m_pCurOffset = m_mapCamOffset[CAMOFFSET_DEFAULT];
@@ -346,20 +346,15 @@ void CCamera_Player::Tick(_float fTimeDelta)
 			vCamPos = _float4::Lerp(m_pPreOffset->vLastPos, vCamPos, m_fCurLerpTime / m_pCurOffset->fLerpDuration);
 			_vector   vCamLook = XMVector3Normalize(XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_LOOK), 0.f));
 			_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vKenaLook, 0.f)), vCamLook)));
+			fAngle = XMConvertToDegrees(fAngle);
+			if (fAngle < 180.f)
+				fAngle *= -1.f;
+			else
+				fAngle = 180.f - fAngle;
 
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fAngle * fTimeDelta);
-
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
-			m_pTransformCom->LookAt(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist);
+			m_pTransformCom->Orbit(vKenaPos + XMVector3Normalize(vKenaRight) * fCamRightDist, XMVectorSet(0.f, 1.f, 0.f, 0.f), fCamDistance, XMConvertToRadians(fAngle) * fTimeDelta);
 		}
 	}
-
-// 	if (m_fTimeSleep > 0.f)
-// 	{
-// 		m_fTimeSleep -= fTimeDelta;
-// 		return;
-// 	}
-// 	else
 
 	_matrix	matWorld = m_pTransformCom->Get_WorldMatrix();
 
