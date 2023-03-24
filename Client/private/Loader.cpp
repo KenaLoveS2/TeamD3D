@@ -335,11 +335,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_TeleportFlowerAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TeleportFlowerAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/TeleportFlower/TeleportFlower.mdat"), PivotMatrix))))
-		return E_FAIL;
+
 
 	/* For.Prototype_Component_Model_FieldBeaconAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -352,14 +348,27 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
+	_bool bRealObject = true;
+	_bool bFlowerCheck = true;
+
+	if (true ==bFlowerCheck)
+	{
+		/* Prototype_Component_Model_TeleportFlower */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TeleportFlowerAnim",
+			CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/TeleportFlower/TeleportFlower.model", PivotMatrix))))
+			return E_FAIL;
+
+		FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
+	}
+
 #ifdef FOR_MAPTOOL   
 
 #else
 #pragma region Test_Gimmick_OBJ
 	if (bRealObject ==false)
 	{
-
+		
 	}
 #pragma endregion
 
@@ -1184,10 +1193,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PulsePlateAnim"),
 		CPulse_Plate_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_TeleportFlower */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportFlower"),
-		CTelePort_Flower::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	/* For.Prototype_GameObject_FieldBecon_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldBecon_Anim"),
@@ -1197,7 +1202,6 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DZ_FallenTree_Anim"),
 		CDZ_FallenTree_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 
 	/* For.Prototype_GameObject_GroundMark */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
@@ -2156,12 +2160,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 	
 
-	/* For.Prototype_Component_Model_PulsePlateAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_TeleportFlowerAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/TeleportFlower/TeleportFlower.mdat"), PivotMatrix))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Model_FieldBeaconAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FieldBeaconAnim",
@@ -2623,11 +2621,6 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CDoor_Anim::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
-	/* For.Prototype_GameObject_TeleportFlower */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TeleportFlower"),
-		CTelePort_Flower::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	/* For.Prototype_GameObject_FieldBecon_Anim */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldBecon_Anim"),
 		CFieldBecon_Anim::Create(m_pDevice, m_pContext))))
