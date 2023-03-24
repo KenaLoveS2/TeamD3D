@@ -25,12 +25,13 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void Imgui_RenderProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
+	CTexture*					m_pTextureCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;	
-	CVIBuffer_Cube*			m_pVIBufferCom = nullptr;
+	CVIBuffer_Cube*		m_pVIBufferCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();

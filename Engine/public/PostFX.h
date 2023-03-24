@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CPostFX : public CBase
+class ENGINE_DLL CPostFX : public CBase
 {
 	DECLARE_SINGLETON(CPostFX)
 private:
@@ -23,11 +23,14 @@ private:
 	void	DownScale(ID3D11ShaderResourceView* pHDRSRV);
 	void	Bloom();
 	void	Blur(ID3D11ShaderResourceView* pInput, ID3D11UnorderedAccessView* pOutput);
-
 	void	FinalPass(ID3D11ShaderResourceView* pHDRSRV);
 
 	static  void	SetDebugName(ID3D11DeviceChild* pObj, const char* pName);
 	HRESULT		CompileShader(PWCHAR strPath, D3D10_SHADER_MACRO* pMacros, char* strEntryPoint, char* strProfile, DWORD dwShaderFlags, ID3DBlob** ppVertexShaderBuffer);
+
+public:
+	void Day();
+	void Night();
 
 private:
 	_bool					m_bOn = false;
@@ -68,11 +71,11 @@ private:
 	_uint							m_iWidth = 0;
 	_uint							m_iHeight = 0;
 	_uint							m_iDownScaleGroups = 0;
-	_float						m_fMiddleGrey = 10.f;
-	_float						m_fWhite = 3.f;
+	_float						m_fMiddleGrey;
+	_float						m_fWhite;
 	_float						m_fAdaptation = 0.f;
-	_float						m_fBloomThreshold = 1.f;
-	_float						m_fBloomScale = 0.5f;
+	_float						m_fBloomThreshold;
+	_float						m_fBloomScale;
 
 	typedef struct
 	{

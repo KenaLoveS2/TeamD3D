@@ -1,0 +1,44 @@
+#pragma once
+
+#include "Client_Defines.h"
+#include "Camera.h"
+
+BEGIN(Client)
+
+class CCinematicCamera : public CCamera
+{
+	struct CAMERAKEYFRAME
+	{
+		_float3 vPos;
+		_float3 vLookAt;
+		_float	fTime;
+	};
+
+private:
+	CCinematicCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CCinematicCamera(const CCinematicCamera& rhs);
+	virtual ~CCinematicCamera() = default;
+
+public:
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg)override;
+	virtual void Tick(_float TimeDelta) override;
+	virtual void Late_Tick(_float TimeDelta) override;
+	virtual HRESULT Render() override;
+	virtual void Imgui_RenderProperty() override;
+
+private:
+	void	AddKeyFrame(CAMERAKEYFRAME keyFrame);
+	void  Interpolate(float time, _float3& position, _float3& lookAt);
+	_float3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
+
+private:
+	vector<CAMERAKEYFRAME> m_keyframes;
+
+public:
+	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual void Free() override;
+};
+
+END

@@ -81,7 +81,7 @@ HRESULT CRotBomb::Late_Initialize(void * pArg)
 	PxSphereDesc.fStaticFriction = 0.5f;
 	PxSphereDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_ARROW));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_BOMB));
 
 	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
@@ -367,13 +367,14 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 	}
 	else if (m_eCurState == CRotBomb::BOMB_INJECT_CHARGE)
 	{
-		if (iKenaState == (_uint)CKena_State::BOMB_LOOP_ADD)
+		if (m_pAnimation->Get_AnimationFinish() == true)
 		{
 			eState = CRotBomb::BOMB_READY;
 			m_pAnimation->State_Animation("CHARGE_LOOP");
 			m_pPathTrail->Set_Active(true);
 		}
-		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
+		
+		if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
 		{
 			eState = CRotBomb::BOMB_RELEASE;
 			m_pAnimation->State_Animation("CHARGE_LOOP");
@@ -386,10 +387,13 @@ CRotBomb::BOMBSTATE CRotBomb::Check_State()
 	{
 		if (iKenaState == (_uint)CKena_State::BOMB_INJECT_ADD)
 		{
-			eState = CRotBomb::BOMB_INJECT_CHARGE;
-			m_pAnimation->State_Animation("INJECT");
-			m_bInject = true;
-			m_pPathTrail->Set_Active(true);
+			if (m_bInject == false)
+			{
+				eState = CRotBomb::BOMB_INJECT_CHARGE;
+				m_pAnimation->State_Animation("INJECT");
+				m_bInject = true;
+				m_pPathTrail->Set_Active(true);
+			}
 		}
 		else if (iKenaState == (_uint)CKena_State::BOMB_RELEASE_ADD)
 		{
@@ -486,17 +490,7 @@ void CRotBomb::Update_State(_float fTimeDelta)
 		}
 	case CRotBomb::BOMB_RELEASE:
 		{
-		_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		_float4	vTarget = m_PathList.front();
-		_float4	vDir = vTarget - vPos;
-
-		m_pTransformCom->Go_Direction(vDir, fTimeDelta);
-
-		vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		_float4	vAfterDir = vTarget - vPos;
-		_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDir), XMVector3Normalize(vAfterDir))));
-		if (fAngle == XM_PI)
-			m_PathList.pop_front();
+		Throw(fTimeDelta);
 
 		break;
 		}
@@ -524,6 +518,8 @@ void CRotBomb::Update_State(_float fTimeDelta)
 
 void CRotBomb::Calculate_Path(_float fTimeDelta)
 {
+	m_matDummy = m_pTransformCom->Get_WorldMatrix();
+
 	_float3	vCamPos = CGameInstance::GetInstance()->Get_CamPosition_Float3();
 	_float3	vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float3();
 	_float3	vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float3();
@@ -543,6 +539,31 @@ void CRotBomb::Calculate_Path(_float fTimeDelta)
 	}
 
 	m_pPathTrail->Add_BezierCurve(vPos, vTargetPos, fTimeDelta);
+}
+
+void CRotBomb::Throw(_float fTimeDelta)
+{
+	if (m_PathList.empty() == true)
+		return;
+
+	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4	vTarget = m_PathList.front();
+	_float4	vDir = vTarget - vPos;
+	_float4	vDist = XMVector3Normalize(vDir) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec * fTimeDelta;
+
+	_float4	vMovedPos = vPos + vDist;
+	_float4	vAfterDir = vTarget - vMovedPos;
+
+	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vDir, 0.f)), XMVector3Normalize(XMVectorSetY(vAfterDir, 0.f)))));
+	if (fAngle == XM_PI)
+	{
+ 		m_PathList.pop_front();
+// 
+// 		Throw(fTimeDelta);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTarget);
+	}
+	else
+		m_pTransformCom->Set_Translation(vMovedPos, vDist);
 }
 
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)

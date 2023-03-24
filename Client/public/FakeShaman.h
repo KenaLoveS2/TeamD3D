@@ -7,11 +7,21 @@ BEGIN(Engine)
 class CRenderer;
 class CModel;
 class CShader;
+class CBone;
 END
 
 BEGIN(Client)
 class CFakeShaman final : public CGameObject
 {
+public:
+	typedef struct tagShamanTrapDesc
+	{
+		_float4x4		PivotMatrix;
+		CBone*			pSocket;
+		CTransform* pTargetTransform;
+		_float4			vPivotRot;
+	}ShamanTrapDESC;
+
 private:
 	CFakeShaman(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CFakeShaman(const CFakeShaman& rhs);
@@ -35,10 +45,14 @@ private:
 	HRESULT SetUp_ShadowShaderResources();
 
 private:
-	CRenderer*	m_pRendererCom = nullptr;
-	CShader*		m_pShaderCom = nullptr;
-	CModel*		m_pModelCom = nullptr;
-	_uint				m_iNumMeshes = 0;
+	ShamanTrapDESC					m_Desc;
+	CRenderer*								m_pRendererCom = nullptr;
+	CShader*									m_pShaderCom = nullptr;
+	CModel*									m_pModelCom = nullptr;
+	_uint											m_iNumMeshes = 0;
+	_float4										m_vPivotPos;
+	_float4										m_vPivotRot;
+	_float4x4									m_SocketMatrix;
 
 public:
 	static CFakeShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -79,14 +79,12 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 
 void CTerrain::Tick(_float fTimeDelta)
 {
-	/*static _bool b = false;
-
 	if (b == false)
 	{
 		m_pVIBufferCom->initialize_World(m_pTransformCom);
 		b = true;
 	}
-	*/
+
 
 	__super::Tick(fTimeDelta);
 
@@ -102,7 +100,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	
+    //m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	return;
 	m_pGroundMark->Late_Tick(fTimeDelta);
 	return;

@@ -745,5 +745,5 @@ technique11 DefaultTechnique
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_NOAO_DN_BM();
-	}//10
+	}//11
 }

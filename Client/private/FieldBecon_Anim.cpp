@@ -32,7 +32,45 @@ HRESULT CFieldBecon_Anim::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 
+	CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
+
 	m_pModelCom->Set_AnimIndex(0);
+	return S_OK;
+}
+
+HRESULT CFieldBecon_Anim::Late_Initialize(void * pArg)
+{
+
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_DYNAMIC;
+	BoxDesc.vPos = CUtile::Float_4to3(vPos);
+	BoxDesc.vSize = _float3(1.4f, 7.61f, 1.92f);
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+	BoxDesc.bKinematic = true;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
+	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
+
+	m_pRendererCom->Set_PhysXRender(true);
+
 	return S_OK;
 }
 
@@ -85,6 +123,37 @@ HRESULT CFieldBecon_Anim::Render()
 	return S_OK;
 }
 
+void CFieldBecon_Anim::ImGui_AnimationProperty()
+{
+	m_pModelCom->Imgui_RenderProperty();
+
+}
+
+void CFieldBecon_Anim::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
+
+	_float3 vPxPivotScale = m_pTransformCom->Get_vPxPivotScale();
+	float fScale[3] = { vPxPivotScale.x, vPxPivotScale.y, vPxPivotScale.z };
+	ImGui::DragFloat3("PxScale", fScale, 0.01f, 0.1f, 100.0f);
+	vPxPivotScale.x = fScale[0]; vPxPivotScale.y = fScale[1]; vPxPivotScale.z = fScale[2];
+	CPhysX_Manager::GetInstance()->Set_ActorScaling(m_szCloneObjectTag, vPxPivotScale);
+	m_pTransformCom->Set_PxPivotScale(vPxPivotScale);
+
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	static _float3 FieldBecon = _float3(0.f, 0.f, 0.f);
+	float fPos[3] = { FieldBecon.x, FieldBecon.y, FieldBecon.z };
+	ImGui::DragFloat3("PxPivotPos", fPos, 0.01f, -100.f, 100.0f);
+	FieldBecon.x = fPos[0]; FieldBecon.y = fPos[1]; FieldBecon.z = fPos[2];
+
+	_float3 Temp;
+	XMStoreFloat3(&Temp,  XMVectorSetW(XMLoadFloat3(&FieldBecon), 1.f));
+
+	CPhysX_Manager::GetInstance()->Set_ActorPosition(
+		m_szCloneObjectTag, Temp);
+
+}
+
 HRESULT CFieldBecon_Anim::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	return S_OK;
@@ -104,12 +173,13 @@ HRESULT CFieldBecon_Anim::SetUp_Components()
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FieldBeaconAnim"), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
+		(CComponent**)&m_pModelCom,nullptr,this)))
 		return E_FAIL;
 
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
 		L"Prototype_Component_Shader_VtxAnimModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	 
 
 	return S_OK;
 }

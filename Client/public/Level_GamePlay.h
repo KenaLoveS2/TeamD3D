@@ -50,11 +50,13 @@ private:
 	HRESULT Ready_Lights();
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Camera(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Environment(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Rot(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_ControlRoom(const _tchar* pLayerTag);
 
 	HRESULT Ready_Thread_CloneObject(const _tchar* pLayerTag);
 	HRESULT Initialize_ThreadData();

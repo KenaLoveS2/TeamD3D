@@ -1223,12 +1223,13 @@ void CRenderer::Free()
 #endif
 	for (_uint i = 0; i < RENDER_END; ++i)
 	{
-		for (auto& pGameObject : m_RenderObjects[i])
+		if (i != RENDER_STATIC_SHADOW)
 		{
-			if(i != RENDER_STATIC_SHADOW)
-				Safe_Release(pGameObject);
+			for (auto& pGameObject : m_RenderObjects[i])
+			{
+					Safe_Release(pGameObject);
+			}
 		}
-
 		m_RenderObjects[i].clear();
 	}
 

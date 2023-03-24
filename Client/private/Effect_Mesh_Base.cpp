@@ -208,6 +208,8 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 			return E_FAIL;
 		break;
 	}
+
+	return S_OK;
 }
 
 CEffect_Mesh_Base * CEffect_Mesh_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
