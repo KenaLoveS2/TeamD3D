@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "..\public\Sky.h"
 #include "GameInstance.h"
+#include "PostFX.h"
+
+float g_fSkyColorIntensity = 1.f;
+bool g_bDayOrNight = true;
 
 CSky::CSky(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -36,7 +40,27 @@ HRESULT CSky::Initialize(void * pArg)
 void CSky::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	
+
+	if(g_bDayOrNight)
+	{
+		CPostFX::GetInstance()->Day();
+		if (g_fSkyColorIntensity <= 1.f)
+		{
+			g_fSkyColorIntensity += fTimeDelta * 0.5f;
+			if (g_fSkyColorIntensity > 1.f)
+				g_fSkyColorIntensity = 1.f;
+		}
+	}
+	else
+	{
+		CPostFX::GetInstance()->Night();
+		if(g_fSkyColorIntensity >= 0.5f)
+		{
+			g_fSkyColorIntensity -= fTimeDelta * 0.5f;
+			if (g_fSkyColorIntensity < 0.5f)
+				g_fSkyColorIntensity = 0.5f;
+		}
+	}
 }
 
 void CSky::Late_Tick(_float fTimeDelta)
@@ -66,6 +90,11 @@ HRESULT CSky::Render()
 	m_pVIBufferCom->Render();
 	
 	return S_OK;
+}
+
+void CSky::Imgui_RenderProperty()
+{
+	ImGui::Checkbox("DayOrNight", &g_bDayOrNight);
 }
 
 HRESULT CSky::SetUp_Components()
@@ -109,6 +138,9 @@ HRESULT CSky::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fColorIntensity", &g_fSkyColorIntensity, sizeof(_float))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

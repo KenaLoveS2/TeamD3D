@@ -336,10 +336,10 @@ void CPostFX::PostProcessing(ID3D11ShaderResourceView* pHDRSRV, ID3D11RenderTarg
 	DownScale(pHDRSRV);
 
 	// Bloom
-		Bloom();
+	Bloom();
 
 	// Blur the bloom values
-		Blur(m_pTempSRV[0], m_pBloomUAV);
+	Blur(m_pTempSRV[0], m_pBloomUAV);
 
 	// Cleanup
 	ZeroMemory(&arrConstBuffers, sizeof(arrConstBuffers));
@@ -541,6 +541,40 @@ void CPostFX::FinalPass(ID3D11ShaderResourceView * pHDRSRV)
 	m_pContext->PSSetConstantBuffers(0, 1, arrConstBuffers);
 	m_pContext->VSSetShader(NULL, NULL, 0);
 	m_pContext->PSSetShader(NULL, NULL, 0);
+}
+
+void CPostFX::Day()
+{
+	if (m_fMiddleGrey <= 10.f)
+	{
+		m_fMiddleGrey += TIMEDELTA * 2.f;
+		if (m_fMiddleGrey > 10.f)
+			m_fMiddleGrey = 10.f;
+	}
+
+	if(m_fWhite >= 2.f)
+	{
+		m_fWhite -= TIMEDELTA;
+		if (m_fWhite < 2.f)
+			m_fWhite = 2.f;
+	}
+}
+
+void CPostFX::Night()
+{
+	if (m_fMiddleGrey > 0.1f)
+	{
+		m_fMiddleGrey -= TIMEDELTA * 2.f;
+		if (m_fMiddleGrey <= 0.1f)
+			m_fMiddleGrey = 0.1f;
+	}
+
+	if (m_fWhite <= 5.f)
+	{
+		m_fWhite += TIMEDELTA;
+		if (m_fWhite > 5.f)
+			m_fWhite = 5.f;
+	}
 }
 
 void CPostFX::SetDebugName(ID3D11DeviceChild * pObj, const char * pName)

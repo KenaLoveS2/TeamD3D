@@ -87,6 +87,14 @@ void CKena_Staff::Tick(_float fTimeDelta)
  
  	for (auto& pEffect : m_mapEffect)
  		pEffect.second->Tick(fTimeDelta);
+
+	ImGui::Begin("STAFF");
+	if (ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+	ImGui::End();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)

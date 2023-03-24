@@ -572,9 +572,9 @@ PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 
 	vector vFinalColor = vDiffuse * g_vColor;
 
-	Out.vDiffuse = vFinalColor;
+	Out.vDiffuse = vFinalColor * 100.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 6.f, 0.f);
 
 	return Out;
 }
