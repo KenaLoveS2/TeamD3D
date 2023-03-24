@@ -128,6 +128,7 @@ HRESULT CUI_ClientManager::Ready_UIs(ID3D11Device * pDevice, ID3D11DeviceContext
 	return S_OK;
 }
 
+
 HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -344,7 +345,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/AbilityCore_HighlightRing.png")))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_SelectedRing");
-	
+
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_SelectedCircle"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/06. Inventory/upgrade/Kena_Ability_BGCircle_01.png")))))
 		return E_FAIL;
@@ -482,7 +483,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 	/*				For. HatCart				*/
 	/********************************************/
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG1"),
-		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_1_%d.png"),2))))
+		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_1_%d.png"), 2))))
 		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG1");
 
@@ -498,6 +499,7 @@ HRESULT CUI_ClientManager::Ready_Proto_TextureComponent(ID3D11Device* pDevice, I
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_ItemBG4"),
 		CTexture::Create(pDevice, pContext, TEXT("../Bin/Resources/Textures/UI/09. Shop/ItemBG_4_%d.png"), 2))))
+		return E_FAIL;
 	Save_TextureComStrings(pGameInstance, L"Prototype_Component_Texture_ItemBG4");
 
 	if (FAILED(pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_HatIconBox"),
@@ -842,10 +844,6 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_RotLvUpCard");
 
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
-		return E_FAIL;
-	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
-
 	/********************************************/
 	/*				For. HatCart				*/
 	/********************************************/
@@ -909,7 +907,9 @@ HRESULT CUI_ClientManager::Ready_Proto_GameObject(ID3D11Device* pDevice, ID3D11D
 		return E_FAIL;
 	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_Window");
 
-
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_UI_Node_BossHP"), CUI_NodeBossHP::Create(pDevice, pContext))))
+		return E_FAIL;
+	Save_NodeStrings(pGameInstance, L"Prototype_GameObject_UI_Node_BossHP");
 
 	/********************************************/
 	/*				For. WorldUI				*/

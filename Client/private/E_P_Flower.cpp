@@ -52,8 +52,18 @@ void CE_P_Flower::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	_vector vPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-	m_pTransformCom->Set_Position(vPos);
+	if(m_pKena == nullptr)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pKena = (CKena*)	pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+		RELEASE_INSTANCE(CGameInstance);
+	}
+	else 
+	{
+		_vector vPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		m_pTransformCom->Set_Position(vPos);
+	}
+
 
 	m_fTimeDelta += fTimeDelta;
 	if (m_fTimeDelta > 60.f)

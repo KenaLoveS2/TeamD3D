@@ -355,7 +355,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(20);
 #endif	
 	
 	if (m_bAim && m_bJump)
@@ -945,7 +945,8 @@ void CKena::ImGui_ShaderValueProperty()
 
 void CKena::ImGui_PhysXValueProperty()
 {
-	__super::ImGui_PhysXValueProperty();
+	// __super::ImGui_PhysXValueProperty();
+	m_mapEffect["KenaPulse"]->ImGui_PhysXValueProperty();
 
 	//m_vecBomb.front()->ImGui_PhysXValueProperty();
 	//m_vecBomb.back()->ImGui_PhysXValueProperty();

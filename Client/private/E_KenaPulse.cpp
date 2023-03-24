@@ -120,6 +120,32 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 	m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
 	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
 
+	_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vOriginPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+
 	return S_OK;
 }
 
@@ -183,8 +209,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 //	ImGui::End();
 #pragma endregion PulseStatus test
 
-  	if (m_eEFfectDesc.bActive == false)
-  		return;
+   	if (m_eEFfectDesc.bActive == false)
+   		return;
 
 	m_fTimeDelta += fTimeDelta;
 	Set_Status();
@@ -252,12 +278,14 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		}
 		break;
 	}
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
- 	if (m_eEFfectDesc.bActive == false)
- 		return;
+  	if (m_eEFfectDesc.bActive == false)
+  		return;
 
 	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_pParent != nullptr)
 		Set_Matrix();
@@ -312,8 +340,14 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 
 		// KenaPulse °ø°Ý·Â ±ð±â
 		m_pStatus->Under_Shield(((CMonster*)pTarget)->Get_MonsterStatusPtr());
+		m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
 	return 0;
+}
+
+void CE_KenaPulse::ImGui_PhysXValueProperty()
+{
+	__super::ImGui_PhysXValueProperty();
 }
 
 HRESULT CE_KenaPulse::SetUp_ShaderResources()

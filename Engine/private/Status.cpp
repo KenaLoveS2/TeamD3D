@@ -66,3 +66,11 @@ void CStatus::UnderAttack(CStatus* pEnemyStatus)
 
 	m_iHP -= pEnemyStatus->m_iAttack;
 }
+
+void CStatus::Add_CurrentHP(_int iValue)
+{
+	m_iHP += iValue;
+
+	m_iHP = m_iHP < 0 ? 0 :
+		m_iHP > m_iMaxHP ? m_iMaxHP : m_iHP;
+}

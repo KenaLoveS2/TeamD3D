@@ -28,8 +28,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	// FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	// FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -46,8 +46,18 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	m_pWeaponBone = m_pModelCom->Get_BonePtr("Halberd_Root_Jnt");
+	m_pRightLegBone = m_pModelCom->Get_BonePtr("char_rt_ankle_jnt");
+
+	XMStoreFloat4x4(&m_WeaponPivotMatrix, 
+		XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
+		* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
+		
+	XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
+	
 	return S_OK;
 }
 
@@ -55,13 +65,10 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 	// 몸통
-	{
-		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
-		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
-		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+	{	
+		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 2.f, 0.f);
 
-		// Capsule X == radius , Y == halfHeight
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
 		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
@@ -69,6 +76,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.isGravity = true;
 		PxCapsuleDesc.fDensity = 1.f;
 		PxCapsuleDesc.fAngularDamping = 0.5f;
 		PxCapsuleDesc.fMass = 10.f;
@@ -81,9 +89,48 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
-		m_pTransformCom->Set_PxPivotScale(vPivotScale);
-		m_pTransformCom->Set_PxPivot(vPivotPos);
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 2.f, 0.f));
+	}
+	
+	{	
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = COL_WEAPON_TEXT;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = 0.18f;
+		PxCapsuleDesc.fHalfHeight = 2.4f;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(PxCapsuleDesc.pActortag, g_IdentityFloat4x4);		
+	}	
+		
+	{
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = COL_RIGHT_LEG_TEXT;
+		PxSphereDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fRadius = 0.4f;		
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 10.f;
+		PxSphereDesc.fLinearDamping = 10.f;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
@@ -98,6 +145,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 	m_pHat->Tick(fTimeDelta);
+	
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
@@ -165,6 +213,18 @@ void CBossWarrior::Imgui_RenderProperty()
 	ImGui::DragFloat3("EmissiveColor", fEmissiveColor, 0.01f, 0.1f, 100.0f);
 	m_fEmissiveColor.x = fEmissiveColor[0]; m_fEmissiveColor.y = fEmissiveColor[1]; m_fEmissiveColor.z = fEmissiveColor[2];
 	ImGui::DragFloat("HDRIntensity", &m_fHDRIntensity, 0.01f, 0.f, 100.f);
+
+	float fTrans[3] = { m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z };
+	ImGui::DragFloat3("Weapon Trans", fTrans, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vWeaPonPivotTrans, fTrans, sizeof(_float3));
+	 
+	float fRot[3] = { m_vWeaPonPivotRot.x, m_vWeaPonPivotRot.y, m_vWeaPonPivotRot.z };
+	ImGui::DragFloat3("Weapon Rot", fRot, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vWeaPonPivotRot, fRot, sizeof(_float3));
+
+	float fLegTrans[3] = { m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z };
+	ImGui::DragFloat3("Leg Trans", fLegTrans, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vRightLegPivotTrans, fLegTrans, sizeof(_float3));
 }
 
 void CBossWarrior::ImGui_AnimationProperty()
@@ -225,8 +285,489 @@ void CBossWarrior::Push_EventFunctions()
 HRESULT CBossWarrior::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
+		.InitState("SLEEP")
+		.AddState("SLEEP")				
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.OnExit([this]()
+	{
+		
+	})
+		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
+		.Predicator([this]()
+	{	
+		// 대기 종결 조건 수정 필요
+		m_fSpawnRange = 10.f;
+		return DistanceTrigger(m_fSpawnRange);				
+	})
+
+		.AddState("READY_SPAWN")
+		.OnStart([this]()
+	{
+		// 등장 연출 필요
+		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
+		m_pModelCom->Set_AnimIndex(AWAKE);
+	})
+		.OnExit([this]()
+	{
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
+		m_bSpawn = true;
+	})
+		.AddTransition("READY_SPAWN to IDLE", "IDLE")
+		.Predicator([this]()
+	{	
+		return AnimFinishChecker(AWAKE);
+	})
+
+	
 		.AddState("IDLE")
+		.OnStart([this]()
+	{
+		// 한소영 UI HP 바 등장
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+		m_fIdleTimeCheck = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fIdleTimeCheck += fTimeDelta;
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})	
+		.AddTransition("IDLE to ENRAGE", "ENRAGE")
+		.Predicator([this]()
+	{
+		return m_bEnRageReady && m_pMonsterStatusCom->Get_PercentHP() < 0.5f;
+	})
+		.AddTransition("IDLE to BLOCK_INTO", "BLOCK_INTO")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fBlockRange) && m_pKena->Get_State(CKena::STATE_ATTACK);
+	})
+		.AddTransition("IDLE to JUMP_BACK", "JUMP_BACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
+	})
+		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
+	})
+		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
+	})
+		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+	})
+		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+	})		
+		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
+	})		
+		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
+	})
+		.AddTransition("IDLE to CHASE", "CHASE")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && !DistanceTrigger(m_fFarAttackRange);
+	})
+
+
+		.AddState("CHARGE_ATTACK")
+		.OnStart([this]()
+	{	
+		Attack_Start(CHARGE_ATTACK);		
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(CHARGE_ATTACK);
+	})
+		
+
+		.AddState("UPPER_CUT")
+		.OnStart([this]()
+	{
+		Attack_Start(UPPER_CUT);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(UPPER_CUT);
+	})
+		
+
+		.AddState("COMBO_ATTACK")
+		.OnStart([this]()
+	{	
+		Attack_Start(COMBO_ATTACK);		
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("COMBO_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(COMBO_ATTACK);
+	})
+
+
+
+		.AddState("SWEEP_ATTACK")
+		.OnStart([this]()
+	{
+		Attack_Start(SWEEP_ATTACK);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("SWEEP_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(SWEEP_ATTACK);
+	})
+
+
+
+		.AddState("ENRAGE")
+		.OnStart([this]()
+	{
+		m_bEnRageReady = false;
+		m_pMonsterStatusCom->Add_CurrentHP(100);
+		Attack_Start(ENRAGE);
+		
+		// 광역 공격 이펙트(레인지)
+		
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("ENRAGE to BELL_CALL", "BELL_CALL")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ENRAGE);
+	})
+
+		.AddState("BELL_CALL")
+		.OnStart([this]()
+	{	
+		m_bBellCall = true;
+		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
+		m_pModelCom->Set_AnimIndex(BELL_CALL);
+		// 몬스터 소환
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("ENRAGE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BELL_CALL);
+	})
+		
+
+
+		.AddState("BLOCK_INTO")
+		.OnStart([this]()
+	{	
+		m_bBlock = true;
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_INTO);
+		m_pModelCom->Set_AnimIndex(BLOCK_INTO);
+	})		
+		.OnExit([this]()
+	{	
+		m_bBlock = false;
+		_uint iAnimIndex = m_bBlockHit ? BLOCK_HIT_2 : IDLE_LOOP;
+		m_pModelCom->Set_AnimIndex(iAnimIndex);
+	})
+		.AddTransition("BLOCK_INTO to BLOCK_HIT", "BLOCK_HIT")
+		.Predicator([this]()
+	{
+		m_bBlockHit = m_pKena->Get_State(CKena::STATE_ATTACK);
+		return AnimFinishChecker(BLOCK_INTO) && m_bBlockHit;
+	})
+		.AddTransition("BLOCK_INTO to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_INTO);
+	})
+
+
+
+		.AddState("BLOCK_HIT")
+		.OnStart([this]()
+	{
+		m_bRealAttack = true;
+		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_HIT_2);
+		m_pModelCom->Set_AnimIndex(BLOCK_HIT_2);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = true;
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("BLOCK_HIT to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BLOCK_HIT_2);
+	})
+		
+
+
+		.AddState("JUMP_BACK")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(JUMP_BACK);
+		m_pModelCom->Set_AnimIndex(JUMP_BACK);
+	})
+		.OnExit([this]()
+	{
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("JUMP_BACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(JUMP_BACK);
+	})
+
+
+
+		.AddState("JUMP_ATTACK")
+		.OnStart([this]()
+	{
+		Attack_Start(JUMP_ATTACK);		
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(JUMP_ATTACK);
+	})
+
+		.AddState("TRIP_UPPERCUT")
+		.OnStart([this]()
+	{
+		Attack_Start(TRIP_UPPERCUT);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(TRIP_UPPERCUT);
+	})
+
+
+
+		.AddState("CHASE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(WALK);
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("CHASE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fFarAttackRange - 1.f);
+	})
+		
+
+
+		.AddState("PARRIED")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
+		m_pModelCom->Set_AnimIndex(PARRIED);
+	})
+		.OnExit([this]()
+	{
+		m_bWeaklyHit = m_bStronglyHit = false;
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("PARRIED to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PARRIED);
+	})
+
+
+		
+		.AddState("DYING")
+		.OnStart([this]()
+	{
+		// 한소영 UI HP 바 없어짐
+		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
+		m_pModelCom->Set_AnimIndex(DEATH);
+
+		m_pKena->Dead_FocusRotIcon(this);
+		m_bDying = true;
+		// m_pUIHPBar->Set_Active(false);		
+	})
+		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
+		.Predicator([this]()
+	{
+		return m_pModelCom->Get_AnimationFinish();
+	})
+
+
+
+		.AddState("DEATH_SCENE")
+		.OnStart([this]()
+	{
+		// 죽은 애니메이션 후 죽음 연출 State
+	})
+		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
+		.Predicator([this]()
+	{
+		return true;
+	})
+		
+
+
+		.AddState("DEATH")
+		.OnStart([this]()
+	{
+		m_pTransformCom->Clear_Actor();
+		Clear_Death();
+	})
+
 
 		.Build();
 
@@ -248,7 +789,7 @@ HRESULT CBossWarrior::SetUp_Components()
 	m_pModelCom->Set_RootBone("VL_Warrior");
 
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_MonsterStatus", L"Com_Status", (CComponent**)&m_pMonsterStatusCom, nullptr, this), E_FAIL);
-	//m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_Sticks01.json");
+	m_pMonsterStatusCom->Load("../Bin/Data/Status/Mon_BossWarrior.json");
 
 	CBossWarrior_Hat::MONSTERWEAPONDESC		WeaponDesc;
 	ZeroMemory(&WeaponDesc, sizeof(CBossWarrior_Hat::MONSTERWEAPONDESC));
@@ -256,14 +797,14 @@ HRESULT CBossWarrior::SetUp_Components()
 	XMStoreFloat4x4(&WeaponDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
 	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("HatJoint");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
+	WeaponDesc.pOwnerMonster = this;
 	Safe_AddRef(WeaponDesc.pSocket);
 	Safe_AddRef(m_pTransformCom);
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-		m_pHat = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossWarrior_Hat"), L"BossWarrior_Hat", &WeaponDesc);
-	assert(m_pHat && "BranchTosser Weapon is nullptr");
-	RELEASE_INSTANCE(CGameInstance)
-
+		
+	m_pHat = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BossWarrior_Hat"), L"BossWarrior_Hat", &WeaponDesc);
+	assert(m_pHat && "Boss Warrior Hat is nullptr");
+	m_pHat->Late_Initialize(nullptr);
+	
 	return S_OK;
 }
 
@@ -272,13 +813,14 @@ HRESULT CBossWarrior::SetUp_ShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &m_fEmissiveColor, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &m_fHDRIntensity, sizeof(_float)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bFalse, sizeof(_bool)), E_FAIL);
+	// m_bDying && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }
@@ -298,23 +840,38 @@ HRESULT CBossWarrior::SetUp_ShadowShaderResources()
 void CBossWarrior::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
-	//{
-	//	CBone* pBone = m_pModelCom->Get_BonePtr("HatJoint");
-	//	_matrix			SocketMatrix = pBone->Get_OffsetMatrix() * pBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	//	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	//	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	//	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	
+	{	
+		_matrix SocketMatrix = m_pWeaponBone->Get_OffsetMatrix() * m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
 
-	//	SocketMatrix = XMMatrixRotationX(m_vecPivotRot[COLL_HAT].x)
-	//		* XMMatrixRotationY(m_vecPivotRot[COLL_HAT].y)
-	//		* XMMatrixRotationZ(m_vecPivotRot[COLL_HAT].z)
-	//		*XMMatrixTranslation(m_vecPivot[COLL_HAT].x, m_vecPivot[COLL_HAT].y, m_vecPivot[COLL_HAT].z)
-	//		* SocketMatrix;
+		XMStoreFloat4x4(&m_WeaponPivotMatrix,
+			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
+			* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
 
-	//	_float4x4 mat;
-	//	XMStoreFloat4x4(&mat, SocketMatrix);
-	//	m_pTransformCom->Update_Collider(m_vecColliderName[COLL_WEAPON].c_str(), mat);
-	//}
+		SocketMatrix = XMLoadFloat4x4(&m_WeaponPivotMatrix) * SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(COL_WEAPON_TEXT, mat);
+	}
+
+	{
+		_matrix SocketMatrix = m_pRightLegBone->Get_OffsetMatrix() * m_pRightLegBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
+
+		SocketMatrix = XMLoadFloat4x4(&m_RightLegPivotMatrix) * SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(COL_RIGHT_LEG_TEXT, mat);
+	}
 }
 
 void CBossWarrior::AdditiveAnim(_float fTimeDelta)
@@ -372,4 +929,69 @@ void CBossWarrior::Free()
 {
 	CMonster::Free();
 	Safe_Release(m_pHat);
+}
+
+
+_int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget && m_bSpawn)
+	{
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
+		{
+			if(m_bBlock == false)
+				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			// 한소영 UI HP 바 보스 플레어한테 공격당함
+
+			m_bWeaklyHit = true;
+			m_bStronglyHit = true;
+
+			m_pKenaHit->Set_Active(true);
+			m_pKenaHit->Set_Position(vCollisionPos);
+
+			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
+			{
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
+				m_pKena->Add_HitStopTime(0.15f);
+				m_fHitStopTime += 0.15f;
+				//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+			}
+			else
+			{
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
+				m_pKena->Add_HitStopTime(0.25f);
+				m_fHitStopTime += 0.25f;
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+
+				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				if (vecWeaponPos->size() == 2)
+				{
+					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
+					vDir = XMVectorSetZ(vDir, 0.f);
+					//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians/(30.f));
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+void CBossWarrior::Attack_Start(_uint iAnimIndex)
+{
+	m_bRealAttack = true;
+
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+}
+
+void CBossWarrior::Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex)
+{
+	(*pAttackIndex)++;
+	(*pAttackIndex) %= iMaxAttackIndex;
+
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+
+	m_bRealAttack = false;
 }

@@ -257,8 +257,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RockGolem"), L"RockGolem_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;*/
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
+	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BranchTosser"), L"BranchTosser_0", nullptr, &pGameObject))) return E_FAIL;
+	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_RotEater"), L"RotEater_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
@@ -275,14 +275,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Sapling"), L"Sapling_0", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;*/
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
+	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Mage"), L"Mage_0", nullptr, &pGameObject))) return E_FAIL;
+	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 
 	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShieldStick"), L"SheildStick_0", nullptr, &pGameObject))) return E_FAIL;
 	// if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossWarrior"), L"BossWarrior_0", nullptr, &pGameObject))) return E_FAIL;
-	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;
+	
+	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;
+	// 
+	// if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossFakeShaman"), L"BossFakeShaman_0", nullptr, &pGameObject))) return E_FAIL;
+	// 
+	// if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrap"), L"ShamanTrap_0", nullptr, &pGameObject))) return E_FAIL;
+	// 
+	// if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossHunter"), L"BossHunter_0", nullptr, &pGameObject))) return E_FAIL;
 
 	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_CRope_RotRock"), L"Rope_RotRock", nullptr, &pGameObject))) return E_FAIL;
 	if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_GAMEPLAY, pGameObject))) return E_FAIL;*/
@@ -496,9 +503,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _tchar * pLayerTag)
 	/* 3D UI */
 	//if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_3DUI", TEXT("Prototype_GameObject_Effect_Particle_Base"), TEXT("Clone_EffectParticleBase"), "Effect_Haze_For_Test" )))
 	//	return E_FAIL;
-
-
-
 
 
 	RELEASE_INSTANCE(CGameInstance);

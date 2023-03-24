@@ -61,7 +61,7 @@ void CE_KenaParry::Tick(_float fTimeDelta)
 		for (auto& pChild : m_vecChild)
 			pChild->Set_AddScale(1.1f + fTimeDelta);
 
-		if (m_fTimeDelta > 0.3f)
+		if (m_fTimeDelta > 0.2f)
 		{
 			ResetSprite();
 			m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 1.f);

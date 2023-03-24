@@ -20,7 +20,7 @@ HRESULT Client::CMonsterWeapon::Initialize_Prototype()
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -32,6 +32,11 @@ HRESULT Client::CMonsterWeapon::Initialize(void* pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	/* For.Com_Dissolve_Texture */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Dissolve"), TEXT("Com_Dissolve_Texture"),
+		(CComponent**)&m_pDissolveTextureCom)))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -88,4 +93,5 @@ void Client::CMonsterWeapon::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pDissolveTextureCom);
 }
