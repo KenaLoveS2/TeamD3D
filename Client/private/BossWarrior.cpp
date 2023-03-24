@@ -309,6 +309,12 @@ HRESULT CBossWarrior::SetUp_State()
 		// 등장 연출 필요
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
+
+				/* HP Bar Active */
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = 10.f; /* == BossWarrior Name */
+		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
+		/* ~HP Bar Active */
 	})
 		.OnExit([this]()
 	{
@@ -325,7 +331,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("IDLE")
 		.OnStart([this]()
 	{
-		// 한소영 UI HP 바 등장
+
+		
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
@@ -731,7 +738,14 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		// 한소영 UI HP 바 없어짐
+		/* HP Bar DeActivate */
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = -1.f;
+		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
+		/* ~HP Bar DeActivate */
+
+
+
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
@@ -941,7 +955,11 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			if(m_bBlock == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
-			// 한소영 UI HP 바 보스 플레어한테 공격당함
+			/* HP Guage */
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
+			/* ~HP Guage */
 
 			m_bWeaklyHit = true;
 			m_bStronglyHit = true;
