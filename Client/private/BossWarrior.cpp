@@ -28,8 +28,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	// FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
+	// FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -336,6 +336,11 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+		m_fIdleTimeCheck = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fIdleTimeCheck += fTimeDelta;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -360,39 +365,43 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("IDLE to JUMP_BACK", "JUMP_BACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fJumpBackRange);
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
 	})
 		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
 	})
 		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
 	})
 		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
 	})
 		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
 	})		
 		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
 	})		
 		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
 	})
-
+		.AddTransition("IDLE to CHASE", "CHASE")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && !DistanceTrigger(m_fFarAttackRange);
+	})
 
 
 		.AddState("CHARGE_ATTACK")
@@ -516,7 +525,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
-		.AddTransition("ENRAGE to IDLE", "IDLE")
+		.AddTransition("ENRAGE to BELL_CALL", "BELL_CALL")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(ENRAGE);
@@ -546,11 +555,13 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("BLOCK_INTO")
 		.OnStart([this]()
 	{	
+		m_bBlock = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BLOCK_INTO);
 		m_pModelCom->Set_AnimIndex(BLOCK_INTO);
 	})		
 		.OnExit([this]()
 	{	
+		m_bBlock = false;
 		_uint iAnimIndex = m_bBlockHit ? BLOCK_HIT_2 : IDLE_LOOP;
 		m_pModelCom->Set_AnimIndex(iAnimIndex);
 	})
@@ -665,6 +676,39 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return AnimFinishChecker(TRIP_UPPERCUT);
 	})
+
+
+
+		.AddState("CHASE")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(WALK);
+		m_pModelCom->Set_AnimIndex(WALK);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pTransformCom->Chase(m_vKenaPos, fTimeDelta);
+	})
+		.OnExit([this]()
+	{
+		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("To PARRIED", "PARRIED")
+		.Predicator([this]()
+	{
+		return IsParried();
+	})
+		.AddTransition("CHASE to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(m_fFarAttackRange - 1.f);
+	})
+		
 
 
 		.AddState("PARRIED")
@@ -908,7 +952,8 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	{
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
 		{
-			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+			if(m_bBlock == false)
+				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			/* HP Guage */
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;

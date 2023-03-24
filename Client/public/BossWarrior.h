@@ -121,15 +121,18 @@ private:
 
 	_bool m_bEnRageReady = true;
 	_bool m_bBellCall = false;
+	_bool m_bBlock = false;
 	_bool m_bBlockHit = false;
 
 
-	_float m_fBlockRange = 2.f;
-	_float m_fJumpBackRange = 2.5f;
-	_float m_fCloseAttackRange = 4.f;
-	_float m_fFarAttackRange = 7.f;
+	_float m_fBlockRange = 2.5f;
+	_float m_fJumpBackRange = 2.5;
+	_float m_fCloseAttackRange = 5.f;
+	_float m_fFarAttackRange = 7.5f;
 
 	_float m_fBlockTime = 0.f;
+	_float m_fIdleTimeCheck = 0.f;
+	const _float m_fIdleTime = 1.f;
 
 public:
 	static CBossWarrior*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
