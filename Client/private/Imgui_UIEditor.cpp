@@ -172,7 +172,7 @@ void CImgui_UIEditor::Effect_Tool()
 
 	static	char szSaveFileName[MAX_PATH] = "";
 	ImGui::SetNextItemWidth(200);
-	ImGui::InputTextWithHint("##EffectName", "Effect(File) Name", szSaveFileName, MAX_PATH);
+	ImGui::InputTextWithHint("##EffectName", "Particle_, Mesh_, Texture_", szSaveFileName, MAX_PATH);
 	AND;
 	if (Button("Create New Effect"))
 	{

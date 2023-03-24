@@ -38,6 +38,7 @@ protected: /* Property */
 	_int							m_iRenderPass;
 	_int							m_iTextureIndex;
 	_float4							m_vColor;
+	_float							m_fHDRIntensity;
 
 public:
 	virtual void					Free()			override;

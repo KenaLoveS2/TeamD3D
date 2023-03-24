@@ -27,8 +27,8 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 
 public:
-	HRESULT							Save_Data();
-	HRESULT							Load_Data(_tchar* fileName);
+	virtual HRESULT							Save_Data() override;
+	virtual HRESULT							Load_Data(_tchar* fileName) override;
 
 private:
 	HRESULT							SetUp_Components();

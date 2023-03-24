@@ -1,5 +1,7 @@
 #pragma once
 #include "Monster.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
 #define WARRIR_CLOSE_ATTACK_COUNT			4
 #define WARRIR_FAR_ATTACK_COUNT				2
@@ -74,6 +76,9 @@ public:
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
 	virtual void					Push_EventFunctions() override;
 
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _float>		m_BossWarriorDelegator;
+
 protected:
 	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
@@ -93,6 +98,7 @@ private:
 	void Reset_AF();
 
 private:
+
 	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};
 	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, -0.31f};
 	_float4x4 m_WeaponPivotMatrix;

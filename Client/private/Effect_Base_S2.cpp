@@ -8,6 +8,7 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_iRenderPass(0)
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_fHDRIntensity(1.f)
 	, m_bFire(false)
 {
 }
@@ -18,6 +19,7 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2 & rhs)
 	, m_iRenderPass(0)
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
+	, m_fHDRIntensity(1.f)
 	, m_bFire(false)
 {
 }
@@ -89,9 +91,9 @@ _float4 CEffect_Base_S2::ColorCode()
 		m_vColor = vSelectColor;
 
 	static _float fAlpha = 1.f;
-	fAlpha = m_vColor.w;
-	if (ImGui::DragFloat("HDR Alpha", &fAlpha, 0.1f, 0.f, 10.f))
-		m_vColor.w = (_float)fAlpha;
+	fAlpha = m_fHDRIntensity;
+	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+		m_fHDRIntensity = fAlpha;
 
 	return vSelectColor;
 }
