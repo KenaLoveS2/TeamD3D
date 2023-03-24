@@ -11,7 +11,7 @@ BEGIN(Client)
 
 class CShamanTrapHex final : public CEffect_Mesh
 {
-	enum PARTS { GEO, PLANE, PARTS_END };
+	enum PARTS { GEO, /*PLANE,*/ SHAMAN_0, SHAMAN_1, SHAMAN_2, SHAMAN_3, SHAMAN_4, PARTS_END };
 
 private:
 	CShamanTrapHex(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,6 +30,8 @@ public:
 public:
 	virtual void			ImGui_AnimationProperty() override;
 	virtual void			Imgui_RenderProperty() override;
+	
+	_float4					Get_JointBonePos();
 
 private:
 	HRESULT				SetUp_Components();
@@ -41,8 +43,8 @@ private:
 
 private:
 	_uint									m_iNumMeshes = 0;
-	_float4								m_vEdgeColor =  _float4(1.f, 0.f, 1.f, 0.3f);
-	_float4								m_vBaseColor =  _float4(1.f, 0.f, 1.f, 0.3f);
+	_float4								m_vEdgeColor;
+	_float4								m_vBaseColor;
 
 public:
 	static CShamanTrapHex*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

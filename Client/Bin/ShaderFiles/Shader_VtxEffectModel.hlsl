@@ -16,17 +16,17 @@ texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 
 /* Type */
 int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask, g_IsUseNormal;
+bool     g_IsUseMask, g_IsUseNormal;
 int		g_SeparateWidth, g_SeparateHeight;
 uint		g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-float   g_WidthFrame, g_HeightFrame, g_Time;
-float4  g_vColor;
-float4  g_WorldCamPosition;
+float     g_WidthFrame, g_HeightFrame, g_Time;
+float4   g_vColor;
+float4   g_WorldCamPosition;
 /* ~Type */
 
 /* Dissolve */
 bool    g_bDissolve;
-float   g_fDissolveTime;
+float    g_fDissolveTime;
 /* ~Dissolve */
 
 /* Arrow */

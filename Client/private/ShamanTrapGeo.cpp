@@ -43,7 +43,7 @@ HRESULT CShamanTrapGeo::Initialize(void* pArg)
 
 	m_vPivotPos = _float4(0.f, 0.f, 0.f, 0.f);
 	m_vPivotRot = _float4(-1.575f, 0.f, -0.525f, 0.f);
-	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 0.3f);
+	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
 	return S_OK;
 }
 

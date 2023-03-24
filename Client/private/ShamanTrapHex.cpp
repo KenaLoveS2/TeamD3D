@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "ShamanTrapPlane.h"
 #include "ShamanTrapGeo.h"
+#include "FakeShaman.h"
 
 CShamanTrapHex::CShamanTrapHex(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEffect_Mesh(pDevice, pContext)
@@ -47,7 +48,9 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	m_eEFfectDesc.bActive = true;
 
 	m_pPartBone = m_pModelCom->Get_BonePtr("Geo");
-	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 0.3f);
+	m_vEdgeColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
+	m_vBaseColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
+	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
 	return S_OK;
 }
 
@@ -57,10 +60,12 @@ void CShamanTrapHex::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-	m_pPart[GEO]->Tick(fTimeDelta);
-	m_pPart[PLANE]->Tick(fTimeDelta);
+
+	for(int i = 0; i < PARTS_END; ++i)
+		m_pPart[i]->Tick(fTimeDelta);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
-	m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.5f);
+	m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
 }
 
 void CShamanTrapHex::Late_Tick(_float fTimeDelta)
@@ -69,8 +74,9 @@ void CShamanTrapHex::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
-	m_pPart[GEO]->Late_Tick(fTimeDelta);
-	//m_pPart[PLANE]->Late_Tick(fTimeDelta);
+
+	for (int i = 0; i < PARTS_END; ++i)
+		m_pPart[i]->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -121,11 +127,24 @@ void CShamanTrapHex::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Recompile"))
 		m_pShaderCom->ReCompile();
-	SetColor(m_vBaseColor, "BaseColor");
-	m_eEFfectDesc.vColor = m_vBaseColor;
-	SetColor(m_vEdgeColor, "EdgeColor");
-	m_pPart[GEO]->Imgui_RenderProperty();
-	//m_pPart[PLANE]->Imgui_RenderProperty();
+}
+
+_float4 CShamanTrapHex::Get_JointBonePos()
+{
+	// 로테이션이 0,0,0 에서 가능한 뼈, pos는 y값은 수정을 해야할수도 있습니다.
+	CBone* pBone = m_pModelCom->Get_BonePtr("joint6_end");
+	_matrix			SocketMatrix =
+		pBone->Get_OffsetMatrix() *
+		pBone->Get_CombindMatrix() *
+		m_pModelCom->Get_PivotMatrix() *
+		m_pTransformCom->Get_WorldMatrix();
+	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+	_float4x4 pivotMatrix;
+	XMStoreFloat4x4(&pivotMatrix, SocketMatrix);
+	_float4 vPos = _float4(pivotMatrix._41, pivotMatrix._42, pivotMatrix._43, 1.f);
+	return vPos;
 }
 
 HRESULT CShamanTrapHex::SetUp_Components()
@@ -140,23 +159,88 @@ HRESULT CShamanTrapHex::SetUp_Components()
 	}
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-	CShamanTrapGeo::ShamanTrapDESC GeoTrapDesc;
-	ZeroMemory(&GeoTrapDesc, sizeof(CShamanTrapGeo::ShamanTrapDESC));
-	XMStoreFloat4x4(&GeoTrapDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
-	GeoTrapDesc.pSocket = m_pModelCom->Get_BonePtr("Geo");
-	GeoTrapDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(GeoTrapDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
-	m_pPart[GEO] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapGeo"), TEXT("ShamanTrapGeo"), &GeoTrapDesc);
+	{
+		CShamanTrapGeo::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapGeo::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("Geo");
+		Desc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[GEO] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapGeo"), TEXT("ShamanTrapGeo"), &Desc);
+	}
 
-	CShamanTrapPlane::ShamanTrapDESC ShamanTrapDesc;
-	ZeroMemory(&ShamanTrapDesc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
-	XMStoreFloat4x4(&ShamanTrapDesc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
-	ShamanTrapDesc.pSocket = m_pModelCom->Get_BonePtr("Geo");
-	ShamanTrapDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(ShamanTrapDesc.pSocket);
-	Safe_AddRef(m_pTransformCom);
-	m_pPart[PLANE] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapPlane"), TEXT("ShamanTrapPlane"), &ShamanTrapDesc);
+	//{
+	//	CShamanTrapPlane::ShamanTrapDESC Desc;
+	//	ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+	//	XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+	//	Desc.pSocket = m_pModelCom->Get_BonePtr("Geo");
+	//	Desc.pTargetTransform = m_pTransformCom;
+	//	Safe_AddRef(Desc.pSocket);
+	//	Safe_AddRef(m_pTransformCom);
+	//	m_pPart[PLANE] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_ShamanTrapPlane"), TEXT("ShamanTrapPlane"), &Desc);
+	//}
+
+	{
+		CFakeShaman::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("joint3_end");
+		Desc.pTargetTransform = m_pTransformCom;
+		Desc.vPivotRot = _float4(0.f, 2.1f, 0.f, 0.f);
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[SHAMAN_0] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_0"), &Desc);
+	}
+
+	{
+		CFakeShaman::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("joint4_end");
+		Desc.pTargetTransform = m_pTransformCom;
+		Desc.vPivotRot = _float4(0.f, -2.1f, 0.f, 0.f);
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[SHAMAN_1] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_1"), &Desc);
+	}
+
+	{
+		CFakeShaman::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("joint5_end");
+		Desc.pTargetTransform = m_pTransformCom;
+		Desc.vPivotRot = _float4(0.f, -1.1f, 0.f, 0.f);
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[SHAMAN_2] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_2"), &Desc);
+	}
+
+	{
+		CFakeShaman::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("joint2_end");
+		Desc.vPivotRot = _float4(0.f, 3.25f, 0.f, 0.f);
+		Desc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[SHAMAN_3] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_3"), &Desc);
+	}
+
+	{
+		CFakeShaman::ShamanTrapDESC Desc;
+		ZeroMemory(&Desc, sizeof(CShamanTrapPlane::ShamanTrapDESC));
+		XMStoreFloat4x4(&Desc.PivotMatrix, m_pModelCom->Get_PivotMatrix());
+		Desc.pSocket = m_pModelCom->Get_BonePtr("joint7_end");
+		Desc.vPivotRot = _float4(0.f, 1.1f, 0.f, 0.f);
+		Desc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(Desc.pSocket);
+		Safe_AddRef(m_pTransformCom);
+		m_pPart[SHAMAN_4] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_4"), &Desc);
+	}
+
 	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
