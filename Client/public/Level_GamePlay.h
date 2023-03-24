@@ -50,6 +50,7 @@ private:
 	HRESULT Ready_Lights();
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Camera(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Environment(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);

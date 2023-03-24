@@ -374,19 +374,19 @@ void CKena::Tick(_float fTimeDelta)
 
 	Test_Raycast();
 
-// 	if (m_bParry == true)
-// 	{
-// 		if (m_iCurParryFrame == m_iParryFrameCount)
-// 		{
-// 			m_bCommonHit = true;
-// 			//m_bHeavyHit = true;
-// 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
-// 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
-// 
-// 			m_bParry = false;
-// 			m_pAttackObject = nullptr;
-// 		}
-// 	}
+ 	if (m_bParry == true)
+ 	{
+ 		if (m_iCurParryFrame == m_iParryFrameCount)
+ 		{
+ 			m_bCommonHit = true;
+ 			//m_bHeavyHit = true;
+ 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
+ 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+ 
+ 			m_bParry = false;
+ 			m_pAttackObject = nullptr;
+ 		}
+ 	}
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
