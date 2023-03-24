@@ -346,168 +346,63 @@ void CModel::Imgui_RenderProperty()
 		}
 	}
 
-	if (ImGui::CollapsingHeader("Animations"))
+	if (!m_Animations.empty())
 	{
-		static _int	iSelectAnimation = -1;
-		static _int	iSelectFunction = -1;
-		static _int	iSelectEvent = -1;
-		static _bool	bAddEvent = false;
-		CAnimation*	pAnimation = nullptr;
-		char**			ppAnimationTag = new char*[m_iNumAnimations];
-		static string	strSearchTag = "";
-		_bool			bSearchMode = false;
-		char**			ppFunctionTags = nullptr;
-
-		string			LastSearchTag = strSearchTag;
-		ImGui::InputText("Search", &strSearchTag);
-		if (strSearchTag != "")
-			bSearchMode = true;
-		else
-			bSearchMode = false;
-
-		if (LastSearchTag != strSearchTag)
-			iSelectAnimation = -1;
-
-		string		strCompareTag = "";
-		_uint		iSearchedCount = 0;
-		for (_uint i = 0; i < m_iNumAnimations; ++i)
+		if (ImGui::CollapsingHeader("Animations"))
 		{
-			_uint	iTagLength = 0;
+			static _int	iSelectAnimation = -1;
+			static _int	iSelectFunction = -1;
+			static _int	iSelectEvent = -1;
+			static _bool	bAddEvent = false;
+			CAnimation*	pAnimation = nullptr;
+			char**			ppAnimationTag = new char*[m_iNumAnimations];
+			static string	strSearchTag = "";
+			_bool			bSearchMode = false;
+			char**			ppFunctionTags = nullptr;
 
-			if (bSearchMode)
-			{
-				strCompareTag = m_Animations[i]->Get_Name();
-
-				if (strCompareTag.find(strSearchTag) != string::npos)
-				{
-					iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
-					ppAnimationTag[iSearchedCount] = new char[iTagLength];
-					sprintf_s(ppAnimationTag[iSearchedCount++], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
-				}
-				else
-					continue;
-			}
+			string			LastSearchTag = strSearchTag;
+			ImGui::InputText("Search", &strSearchTag);
+			if (strSearchTag != "")
+				bSearchMode = true;
 			else
-			{
-				iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
-				ppAnimationTag[i] = new char[iTagLength];
-				sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
-			}
-		}
-		if (bSearchMode == true)
-			ImGui::ListBox("Animation Search", &iSelectAnimation, ppAnimationTag, (_int)iSearchedCount);
-		else
-			ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+				bSearchMode = false;
 
-		if (ImGui::Button("Split All Animation Tag"))
-		{
-			if (bSearchMode == true)
-			{
-				for (_uint i = 0; i < iSearchedCount; ++i)
-					Safe_Delete_Array(ppAnimationTag[i]);
-				Safe_Delete_Array(ppAnimationTag);
-			}
-			else
-			{
-				for (_uint i = 0; i < m_iNumAnimations; ++i)
-					Safe_Delete_Array(ppAnimationTag[i]);
-				Safe_Delete_Array(ppAnimationTag);
-			}
+			if (LastSearchTag != strSearchTag)
+				iSelectAnimation = -1;
 
-			iSelectAnimation = -1;
+			string		strCompareTag = "";
+			_uint		iSearchedCount = 0;
 			for (_uint i = 0; i < m_iNumAnimations; ++i)
 			{
-				char* pSlittedTag = CUtile::Split_String(const_cast<char*>(m_Animations[i]->Get_Name()), '|');
-				m_Animations[i]->Set_Name(pSlittedTag);
-				Safe_Delete_Array(pSlittedTag);
-			}
+				_uint	iTagLength = 0;
 
-			return;
-		}
-		static _double	dMasterSpeed = 24.0;
-		ImGui::InputDouble("Default Speed = 24.0", &dMasterSpeed, 0.5, 1.0, "%.3f");
-		if (ImGui::Button("Change All Animations Speed"))
-		{
-			for (auto& pAnim : m_Animations)
-				pAnim->Get_AnimationTickPerSecond() = dMasterSpeed;
-		}
-
-		if (iSelectAnimation != -1)
-		{
-			static _bool	bReName = false;
-			static char	szNewName[MAX_PATH] = "";
-
-			if (bSearchMode == true)
-			{
-				for (auto& pAnim : m_Animations)
+				if (bSearchMode)
 				{
-					if (!strcmp(pAnim->Get_Name(), ppAnimationTag[iSelectAnimation]))
-					{
-						pAnimation = pAnim;
-						break;
-					}
-				}
-			}
-			else
-				pAnimation = m_Animations[iSelectAnimation];
+					strCompareTag = m_Animations[i]->Get_Name();
 
-			if (ImGui::Button("Play"))
-			{
-				m_bPausePlay = false;
-				m_bPreview = true;
-				pAnimation->Reset_Animation();
-
-				if (bSearchMode == true)
-				{
-					for (_uint i = 0; i < m_iNumAnimations; ++i)
+					if (strCompareTag.find(strSearchTag) != string::npos)
 					{
-						if (pAnimation == m_Animations[i])
-						{
-							Set_AnimIndex(i);
-							m_pOwner->Set_AnimationIndex(i);
-							break;
-						}
+						iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+						ppAnimationTag[iSearchedCount] = new char[iTagLength];
+						sprintf_s(ppAnimationTag[iSearchedCount++], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
 					}
+					else
+						continue;
 				}
 				else
 				{
-					Set_AnimIndex(iSelectAnimation);
-					m_pOwner->Set_AnimationIndex(iSelectAnimation);
+					iTagLength = _uint(strlen(m_Animations[i]->Get_Name())) + 1;
+					ppAnimationTag[i] = new char[iTagLength];
+					sprintf_s(ppAnimationTag[i], sizeof(char) * iTagLength, m_Animations[i]->Get_Name());
 				}
-				m_pOwner->Update_Child();
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("ReName"))
+			if (bSearchMode == true)
+				ImGui::ListBox("Animation Search", &iSelectAnimation, ppAnimationTag, (_int)iSearchedCount);
+			else
+				ImGui::ListBox("Animation List", &iSelectAnimation, ppAnimationTag, (_int)m_iNumAnimations);
+
+			if (ImGui::Button("Split All Animation Tag"))
 			{
-				bReName = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Delete"))
-			{
-				for (_uint i = 0; i < m_iNumAnimations; ++i)
-					Safe_Delete_Array(ppAnimationTag[i]);
-				Safe_Delete_Array(ppAnimationTag);
-
-				auto	iter = m_Animations.begin();
-				for (_int i = 0; i < iSelectAnimation; ++i)
-					++iter;
-
-				Safe_Release(m_Animations[iSelectAnimation]);
-				m_Animations.erase(iter);
-
-				m_iNumAnimations--;
-				iSelectAnimation = -1;
-
-				return;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel"))
-			{
-				m_bPreview = false;
-				iSelectAnimation = -1;
-				bReName = false;
-				pAnimation = nullptr;
-
 				if (bSearchMode == true)
 				{
 					for (_uint i = 0; i < iSearchedCount; ++i)
@@ -521,132 +416,240 @@ void CModel::Imgui_RenderProperty()
 					Safe_Delete_Array(ppAnimationTag);
 				}
 
+				iSelectAnimation = -1;
+				for (_uint i = 0; i < m_iNumAnimations; ++i)
+				{
+					char* pSlittedTag = CUtile::Split_String(const_cast<char*>(m_Animations[i]->Get_Name()), '|');
+					m_Animations[i]->Set_Name(pSlittedTag);
+					Safe_Delete_Array(pSlittedTag);
+				}
+
 				return;
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Save"))
+			static _double	dMasterSpeed = 24.0;
+			ImGui::InputDouble("Default Speed = 24.0", &dMasterSpeed, 0.5, 1.0, "%.3f");
+			if (ImGui::Button("Change All Animations Speed"))
 			{
-				m_wstrModelFilePath.erase(m_wstrModelFilePath.find_last_of(L"."), string::npos);
-				m_wstrModelFilePath += L".model";
-
-				Save_Model(m_wstrModelFilePath);
+				for (auto& pAnim : m_Animations)
+					pAnim->Get_AnimationTickPerSecond() = dMasterSpeed;
 			}
 
-			if (bReName)
+			if (iSelectAnimation != -1)
 			{
-				ImGui::InputText("Input New Name", szNewName, MAX_PATH);
+				static _bool	bReName = false;
+				static char	szNewName[MAX_PATH] = "";
 
-				if (ImGui::Button("Split Name"))
+				if (bSearchMode == true)
 				{
-					char* pSplittedName = CUtile::Split_String(ppAnimationTag[iSelectAnimation], '|');
-					strcpy_s(szNewName, pSplittedName);
-					Safe_Delete_Array(pSplittedName);
+					for (auto& pAnim : m_Animations)
+					{
+						if (!strcmp(pAnim->Get_Name(), ppAnimationTag[iSelectAnimation]))
+						{
+							pAnimation = pAnim;
+							break;
+						}
+					}
+				}
+				else
+					pAnimation = m_Animations[iSelectAnimation];
+
+				if (ImGui::Button("Play"))
+				{
+					m_bPausePlay = false;
+					m_bPreview = true;
+					pAnimation->Reset_Animation();
+
+					if (bSearchMode == true)
+					{
+						for (_uint i = 0; i < m_iNumAnimations; ++i)
+						{
+							if (pAnimation == m_Animations[i])
+							{
+								Set_AnimIndex(i);
+								m_pOwner->Set_AnimationIndex(i);
+								break;
+							}
+						}
+					}
+					else
+					{
+						Set_AnimIndex(iSelectAnimation);
+						m_pOwner->Set_AnimationIndex(iSelectAnimation);
+					}
+					m_pOwner->Update_Child();
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("Confirm"))
+				if (ImGui::Button("ReName"))
 				{
-					pAnimation->Set_Name(szNewName);
-					sprintf_s(szNewName, "");
+					bReName = true;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Delete"))
+				{
+					for (_uint i = 0; i < m_iNumAnimations; ++i)
+						Safe_Delete_Array(ppAnimationTag[i]);
+					Safe_Delete_Array(ppAnimationTag);
+
+					auto	iter = m_Animations.begin();
+					for (_int i = 0; i < iSelectAnimation; ++i)
+						++iter;
+
+					Safe_Release(m_Animations[iSelectAnimation]);
+					m_Animations.erase(iter);
+
+					m_iNumAnimations--;
+					iSelectAnimation = -1;
+
+					return;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel"))
+				{
+					m_bPreview = false;
+					iSelectAnimation = -1;
 					bReName = false;
+					pAnimation = nullptr;
+
+					if (bSearchMode == true)
+					{
+						for (_uint i = 0; i < iSearchedCount; ++i)
+							Safe_Delete_Array(ppAnimationTag[i]);
+						Safe_Delete_Array(ppAnimationTag);
+					}
+					else
+					{
+						for (_uint i = 0; i < m_iNumAnimations; ++i)
+							Safe_Delete_Array(ppAnimationTag[i]);
+						Safe_Delete_Array(ppAnimationTag);
+					}
+
+					return;
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("Undo"))
+				if (ImGui::Button("Save"))
 				{
-					sprintf_s(szNewName, "");
-					bReName = false;
+					m_wstrModelFilePath.erase(m_wstrModelFilePath.find_last_of(L"."), string::npos);
+					m_wstrModelFilePath += L".model";
+
+					Save_Model(m_wstrModelFilePath);
 				}
-			}
 
-			ImGui::Separator();
-			const _uint&		iChannelCount = pAnimation->Get_ChannelCount();
-			ImGui::InputInt("Num of Channel", (_int*)&iChannelCount, 0, 0, ImGuiInputTextFlags_ReadOnly);
-			ImGui::Separator();
-			_double&	dPlayTime = pAnimation->Get_PlayTime();
-			ImGui::InputDouble("Current Play Time", &dPlayTime, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
-			_double&	dDuration = pAnimation->Get_AnimationDuration();
-			ImGui::InputDouble("Duration", &dDuration, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
-			_float		fProgress = _float(dPlayTime / dDuration);
-			ImGui::InputFloat("Progress", &fProgress, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_ReadOnly);
-			_float&	fBlendDuration = pAnimation->Get_BlendDuration();
-			ImGui::InputFloat("Blend Duration", &fBlendDuration, 0.01f, 0.05f, "%.3f");
-			ImGui::SameLine();
-			if (ImGui::SmallButton("reset"))
-				fBlendDuration = 0.2f;
-
-			ImGui::Separator();
-			ImGui::BulletText("Animation Type");
-			CAnimation::ANIMTYPE&		eAnimType = pAnimation->Get_AnimationType();
-			if (ImGui::RadioButton("Common", eAnimType == CAnimation::ANIMTYPE_COMMON))
-				eAnimType = CAnimation::ANIMTYPE_COMMON;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Additive", eAnimType == CAnimation::ANIMTYPE_ADDITIVE))
-				eAnimType = CAnimation::ANIMTYPE_ADDITIVE;
-
-			ImGui::Separator();
-			ImGui::BulletText("Loop");
-			if (ImGui::RadioButton("Allow", pAnimation->IsLooping()))
-				pAnimation->IsLooping() = true;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Disallow", !pAnimation->IsLooping()))
-				pAnimation->IsLooping() = false;
-
-			ImGui::Separator();
-			ImGui::BulletText("Animation Speed");
-			_double&	dTickPerSecond = pAnimation->Get_AnimationTickPerSecond();
-			ImGui::InputDouble("Input Speed", &dTickPerSecond, 0.5, 1.0);
-			ImGui::SameLine();
-			if (ImGui::Button("Reset"))
-				dTickPerSecond = 24.0;
-
-			ImGui::Separator();
-			ImGui::BulletText("Play Progress");
-			if (ImGui::SliderFloat("Set Progress", &fProgress, 0.f, 1.f))
-			{
-				bAddEvent = true;
-				m_bPausePlay = true;
-				m_pOwner->Update_Child();
-				pAnimation->Reset_Animation();
-				dPlayTime = (_double)fProgress * dDuration;
-			}
-			if (bAddEvent == true)
-			{
-				_uint	iFuncCnt = 0;
-				CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTags);
-
-				ImGui::Combo("Select Function", &iSelectFunction, ppFunctionTags, iFuncCnt);
-				if (ImGui::Button("Add Event") && iSelectFunction > -1)
+				if (bReName)
 				{
-					_tchar		wszFunctionTag[128] = L"";
-					CUtile::CharToWideChar(ppFunctionTags[iSelectFunction], wszFunctionTag);
-					pAnimation->Add_Event(_float(dPlayTime), string(ppFunctionTags[iSelectFunction]));
+					ImGui::InputText("Input New Name", szNewName, MAX_PATH);
+
+					if (ImGui::Button("Split Name"))
+					{
+						char* pSplittedName = CUtile::Split_String(ppAnimationTag[iSelectAnimation], '|');
+						strcpy_s(szNewName, pSplittedName);
+						Safe_Delete_Array(pSplittedName);
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Confirm"))
+					{
+						pAnimation->Set_Name(szNewName);
+						sprintf_s(szNewName, "");
+						bReName = false;
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Undo"))
+					{
+						sprintf_s(szNewName, "");
+						bReName = false;
+					}
 				}
+
+				ImGui::Separator();
+				const _uint&		iChannelCount = pAnimation->Get_ChannelCount();
+				ImGui::InputInt("Num of Channel", (_int*)&iChannelCount, 0, 0, ImGuiInputTextFlags_ReadOnly);
+				ImGui::Separator();
+				_double&	dPlayTime = pAnimation->Get_PlayTime();
+				ImGui::InputDouble("Current Play Time", &dPlayTime, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
+				_double&	dDuration = pAnimation->Get_AnimationDuration();
+				ImGui::InputDouble("Duration", &dDuration, 0.0, 0.0, "%.3f", ImGuiInputTextFlags_ReadOnly);
+				_float		fProgress = _float(dPlayTime / dDuration);
+				ImGui::InputFloat("Progress", &fProgress, 0.f, 0.f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+				_float&	fBlendDuration = pAnimation->Get_BlendDuration();
+				ImGui::InputFloat("Blend Duration", &fBlendDuration, 0.01f, 0.05f, "%.3f");
 				ImGui::SameLine();
-				if (ImGui::Button("Escape"))
+				if (ImGui::SmallButton("reset"))
+					fBlendDuration = 0.2f;
+
+				ImGui::Separator();
+				ImGui::BulletText("Animation Type");
+				CAnimation::ANIMTYPE&		eAnimType = pAnimation->Get_AnimationType();
+				if (ImGui::RadioButton("Common", eAnimType == CAnimation::ANIMTYPE_COMMON))
+					eAnimType = CAnimation::ANIMTYPE_COMMON;
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Additive", eAnimType == CAnimation::ANIMTYPE_ADDITIVE))
+					eAnimType = CAnimation::ANIMTYPE_ADDITIVE;
+
+				ImGui::Separator();
+				ImGui::BulletText("Loop");
+				if (ImGui::RadioButton("Allow", pAnimation->IsLooping()))
+					pAnimation->IsLooping() = true;
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Disallow", !pAnimation->IsLooping()))
+					pAnimation->IsLooping() = false;
+
+				ImGui::Separator();
+				ImGui::BulletText("Animation Speed");
+				_double&	dTickPerSecond = pAnimation->Get_AnimationTickPerSecond();
+				ImGui::InputDouble("Input Speed", &dTickPerSecond, 0.5, 1.0);
+				ImGui::SameLine();
+				if (ImGui::Button("Reset"))
+					dTickPerSecond = 24.0;
+
+				ImGui::Separator();
+				ImGui::BulletText("Play Progress");
+				if (ImGui::SliderFloat("Set Progress", &fProgress, 0.f, 1.f))
 				{
-					bAddEvent = false;
-					iSelectFunction = -1;
+					bAddEvent = true;
+					m_bPausePlay = true;
+					m_pOwner->Update_Child();
+					pAnimation->Reset_Animation();
+					dPlayTime = (_double)fProgress * dDuration;
 				}
+				if (bAddEvent == true)
+				{
+					_uint	iFuncCnt = 0;
+					CFunction_Manager::GetInstance()->Get_FunctionNames(m_pOwner, iFuncCnt, ppFunctionTags);
 
-				for (_uint i = 0; i < iFuncCnt; ++i)
-					Safe_Delete_Array(ppFunctionTags[i]);
-				Safe_Delete_Array(ppFunctionTags);
+					ImGui::Combo("Select Function", &iSelectFunction, ppFunctionTags, iFuncCnt);
+					if (ImGui::Button("Add Event") && iSelectFunction > -1)
+					{
+						_tchar		wszFunctionTag[128] = L"";
+						CUtile::CharToWideChar(ppFunctionTags[iSelectFunction], wszFunctionTag);
+						pAnimation->Add_Event(_float(dPlayTime), string(ppFunctionTags[iSelectFunction]));
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Escape"))
+					{
+						bAddEvent = false;
+						iSelectFunction = -1;
+					}
+
+					for (_uint i = 0; i < iFuncCnt; ++i)
+						Safe_Delete_Array(ppFunctionTags[i]);
+					Safe_Delete_Array(ppFunctionTags);
+				}
+				ImGui::Separator();
+				ImGui::BulletText("Event");
+				pAnimation->ImGui_RenderEvents(iSelectEvent);
 			}
-			ImGui::Separator();
-			ImGui::BulletText("Event");
-			pAnimation->ImGui_RenderEvents(iSelectEvent);
-		}
 
-		if (bSearchMode == true)
-		{
-			for (_uint i = 0; i < iSearchedCount; ++i)
-				Safe_Delete_Array(ppAnimationTag[i]);
-			Safe_Delete_Array(ppAnimationTag);
-		}
-		else
-		{
-			for (_uint i = 0; i < m_iNumAnimations; ++i)
-				Safe_Delete_Array(ppAnimationTag[i]);
-			Safe_Delete_Array(ppAnimationTag);
+			if (bSearchMode == true)
+			{
+				for (_uint i = 0; i < iSearchedCount; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
+			else
+			{
+				for (_uint i = 0; i < m_iNumAnimations; ++i)
+					Safe_Delete_Array(ppAnimationTag[i]);
+				Safe_Delete_Array(ppAnimationTag);
+			}
 		}
 	}
 

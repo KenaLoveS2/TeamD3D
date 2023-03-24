@@ -33,6 +33,12 @@ float	g_WaveFrequency;
 float	g_UVSpeed;
 /* ~Arrow */
 
+/* HpRatio */
+float   g_HpRatio;
+float	g_DamageDurationTime;
+uint	g_PulseState;
+/* HpRatio */
+
 bool	g_bPulseRecive = false;
 
 struct VS_IN
@@ -185,8 +191,42 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	vBaseColor.rgb = vBaseColor.rgb * vGreencolor.rgb;
 
 	float4 vfinaladdcolor = float4(8.0f, 155.f, 125.f, 255.f) / 255.f;
-	vfinaladdcolor.rgb = vfinaladdcolor.rgb * 3.f;
-	Out.vDiffuse = vBaseColor + vMovingDot_fresnel + vMovingMask_fresnel * vfinaladdcolor;
+	vfinaladdcolor.rgb = vfinaladdcolor.rgb * 2.f;
+
+	float4 finalcolor = vBaseColor + vMovingDot_fresnel + vMovingMask_fresnel * vfinaladdcolor * float4(117.f, 94.f, 215.f, 212.f) / 255.f;
+
+	float	fHpRatio = max(0.f, g_HpRatio);
+	float	fColorRatio;
+	vector	vColor;
+
+	if (fHpRatio > 0.7f)
+	{
+		vColor = float4(0.f, 0.f, 0.f, 0.f);
+	}
+	else if (fHpRatio > 0.3f && fHpRatio <= 0.7f)
+	{
+		fColorRatio = 1.f - ((fHpRatio - 0.3f) / 0.4f);
+		vColor = float4(fColorRatio, 0.f, fColorRatio, 0.f) * 2.f;
+	}
+	else
+	{
+		fColorRatio = fHpRatio / 0.3f;
+		vColor = float4(1.f, 0.f, fColorRatio, 0.f) * 2.f;
+	}
+	finalcolor = finalcolor + vColor;
+
+	if (g_PulseState == 1) //Default2Damage
+	{
+		vector vColor = float4(255.f, 0.f, 255.f, 0.0f) / 255.f;
+		float fTime = min(g_DamageDurationTime, 2.f);
+
+		if (1.f < fTime)   // 1.0 이상 컬러값이 내려가야함
+			vColor = vColor * (2.f - fTime);
+		else // 1.0 이하 컬러값이 올라가야함
+			vColor = vColor * fTime;
+
+		finalcolor = finalcolor + vColor;
+	}
 
 	if (g_bDissolve)
 	{
@@ -200,11 +240,12 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 
 		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
 		{
-			if (Out.vDiffuse.a != 0.0f)
-				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
+			if (finalcolor.a != 0.0f)
+				finalcolor = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), finalcolor.a);
 		}
 	}
 
+	Out.vDiffuse = finalcolor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 1.f, 0.f);
 	return Out;
@@ -512,7 +553,7 @@ technique11 DefaultTechnique
 	pass Effect_Pulse // 1
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -651,18 +692,4 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_PULSEINNER();
 	}
-
-	pass Default_CCW //12
-	{
-		SetRasterizerState(RS_CW);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
 }

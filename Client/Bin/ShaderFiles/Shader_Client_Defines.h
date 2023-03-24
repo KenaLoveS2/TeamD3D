@@ -65,6 +65,12 @@ RasterizerState RS_CW
 FrontCounterClockwise = false;
 };
 
+RasterizerState RS_CULLOFF
+{
+	CullMode = Front;
+	FrontCounterClockwise = false;
+};
+
 RasterizerState RS_CULLNONE
 {
 FillMode = Solid;

@@ -18,6 +18,9 @@ public:
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private:
+	class CKena*		m_pKena = nullptr;
+	
 public:
 	static  CE_P_Flower* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*  Clone(void* pArg = nullptr) override;

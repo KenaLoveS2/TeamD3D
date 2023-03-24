@@ -2127,7 +2127,7 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 		ImGui::BulletText("Playback Particle Speed : "); ImGui::SameLine();
 		ImGui::SetNextItemWidth(150);
 		ImGui::InputFloat2("##PlaybackParticleSpeed", (_float*)&fSpeed);
-		pParticle->Set_RandomSpeeds(fSpeed.x, fSpeed.y);
+		pParticle->Set_RandomSpeeds(fSpeed.x,fSpeed.y);
 
 		ImGui::BulletText("Playback Particle PSize : "); ImGui::SameLine();
 		ImGui::SetNextItemWidth(150);

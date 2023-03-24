@@ -7,8 +7,8 @@
             "Object Data": [
                 {
                     "Child Count": 0,
-                    "CloneObject Component InstnaceData PSizeX": 0.5,
-                    "CloneObject Component InstnaceData PSizeY": 0.5,
+                    "CloneObject Component InstnaceData PSizeX": 1.0,
+                    "CloneObject Component InstnaceData PSizeY": 1.0,
                     "CloneObject Component InstnaceData Position": [
                         -7.8300018310546875,
                         3.299600124359131,
@@ -28,12 +28,12 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 300,
+                    "CloneObject Component PointDesc CreateInstance": 100,
                     "CloneObject Component PointDesc CreateRange": 0.0,
                     "CloneObject Component PointDesc Dir": [
                         1.0,
                         0.0,
-                        1.0,
+                        0.0,
                         0.0
                     ],
                     "CloneObject Component PointDesc DurationTime": 0.0,
@@ -46,15 +46,15 @@
                     "CloneObject Component PointDesc InstanceIndex": 0,
                     "CloneObject Component PointDesc IsAlive": false,
                     "CloneObject Component PointDesc Max": [
-                        100.0,
+                        30.0,
                         5.0,
-                        100.0
+                        30.0
                     ],
                     "CloneObject Component PointDesc MaxTime": 0.0,
                     "CloneObject Component PointDesc Min": [
-                        -100.0,
+                        -30.0,
                         2.0,
-                        -100.0
+                        -30.0
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [
@@ -148,7 +148,7 @@
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
-                    "Instance DataCnt": 300,
+                    "Instance DataCnt": 100,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
                         1.0,
