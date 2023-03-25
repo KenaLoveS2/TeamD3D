@@ -251,7 +251,9 @@
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
+    <ClInclude Include="..\public\E_Swipes_Charged.h" />
     <ClInclude Include="..\public\E_TeleportRot.h" />
+    <ClInclude Include="..\public\E_WarriorTrail.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\public\FakeShaman.h" />
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
@@ -484,7 +486,9 @@
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
+    <ClCompile Include="..\private\E_WarriorTrail.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\private\FakeShaman.cpp" />
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
@@ -666,6 +670,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl" />

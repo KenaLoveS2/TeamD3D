@@ -484,6 +484,15 @@
     <Filter Include="02.GameObjects\Effect\Object\RotBomb">
       <UniqueIdentifier>{74f04d71-1ea5-4d25-bd3c-fe5411daebfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss">
+      <UniqueIdentifier>{ac11102d-179d-449f-be85-258a6e80c577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Common">
+      <UniqueIdentifier>{fa14887e-ddde-47e8-ad84-aaea047f7d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Trail">
+      <UniqueIdentifier>{3a60ed03-cc56-4777-8106-0c790e316283}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1164,7 +1173,6 @@
     </ClInclude>
     <ClInclude Include="..\public\BossWarrior.h" />
     <ClInclude Include="..\public\BossWarrior_Hat.h" />
-    <ClInclude Include="..\public\E_P_Explosion.h" />
     <ClInclude Include="..\Public\TelePort_Flower.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
@@ -1186,6 +1194,18 @@
     </ClInclude>
     <ClInclude Include="..\public\FakeShaman.h">
       <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Explosion.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_RectTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1846,7 +1866,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BossWarrior.cpp" />
     <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
-    <ClCompile Include="..\private\E_P_Explosion.cpp" />
     <ClCompile Include="..\Private\TelePort_Flower.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
@@ -1868,6 +1887,18 @@
     </ClCompile>
     <ClCompile Include="..\private\FakeShaman.cpp">
       <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Explosion.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_RectTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1950,6 +1981,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

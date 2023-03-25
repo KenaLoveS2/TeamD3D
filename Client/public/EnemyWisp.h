@@ -17,8 +17,8 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
 	_bool	IsActiveState();
@@ -52,16 +52,24 @@ private:
 	void					TurnOffParticle(_bool bIsInit, _float fTimeDelta);
 
 public:
+	/* MovementTrail Particle */
+	HRESULT					SetUp_MovementTrail();
+	void					Update_MovementTrail(const char* pBoneTag);
+
+public:
 	_bool	Get_Dissolve() { return m_bDissolve; }
 
 private:
-	_bool m_bDissolve = false;
+	_bool  m_bDissolve = false;
 	_float m_fDissolveTimeDelta = 0.0f;
+
+private:
+	class CE_RectTrail*		m_pMovementTrail = nullptr;
 
 public:
 	static CEnemyWisp*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
-	virtual void					Free() override;
+	virtual void			Free() override;
 };
 
 END

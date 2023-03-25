@@ -163,6 +163,7 @@ unsigned int	g_LEVEL = 0;
 #include "Json/json.hpp"
 #include <fstream>
 #include "E_RectTrail.h"
+#include "E_Swipes_Charged.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -2101,6 +2102,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_RectTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RectTrail"),
 		CE_RectTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Swipes_Charged */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Swipes_Charged"),
+		CE_Swipes_Charged::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Swipes_Changed.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

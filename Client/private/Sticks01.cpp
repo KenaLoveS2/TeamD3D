@@ -51,6 +51,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 
+	/* Create MovementTrail */
+	SetUp_MovementTrail();
 	return S_OK;
 }
 
@@ -144,6 +146,9 @@ void CSticks01::Tick(_float fTimeDelta)
 {	
 	if (m_bDeath) return;
 	
+	/* Update MovementTrail */
+	Update_MovementTrail("char_weightSpine_c_jnt");
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);

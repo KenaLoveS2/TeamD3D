@@ -312,7 +312,7 @@ PS_OUT PS_MAIN_AO_R_M_G(PS_IN In)
 		float  _ColorThreshold2 = 0.4f;
 		float4 _DissolveColor2 = float4(255.f, 163.f, 44.f, 1.0f) / 255.f; //orange
 
-																		   // add edge colors0
+		 // add edge colors0
 		float thresh1 = fDissolveAmount * _ColorThreshold1;
 		float useDissolve1 = noiseSample - thresh1 < 0;
 		FinalColor = (1 - useDissolve1)* FinalColor + useDissolve1 * _DissolveColor1;

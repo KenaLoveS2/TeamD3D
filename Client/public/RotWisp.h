@@ -71,6 +71,10 @@ public:
 	_bool							Get_Collect() { return m_bCollect; }
 	HRESULT		Set_Effects();
 
+	/* MovementTrail Particle */
+public:
+	void							Update_MovementTrail(const char* pBoneTag);
+
 private:
 	CShader*						m_pShaderCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
@@ -84,9 +88,11 @@ private:
 private:
 	_bool							m_bPulse = false;
 	_bool							m_bCollect = false;
-	
+	_bool							m_bAppear = false;
+
 private:
 	class CE_InteractStaff*			m_pEffect = nullptr;
+	class CE_RectTrail*				m_pMovementTrail = nullptr;
 
 public:
 	static CRotWisp*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
