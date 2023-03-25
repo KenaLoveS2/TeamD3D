@@ -131,7 +131,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 			if (m_ePointDesc->bSpread == true)
 			{
-				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), 0.f)) * m_ePointDesc->fCreateRange;
+				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMVectorSet(CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), CUtile::Get_RandomFloat(-5.f, 5.f), 0.f)) * 2.f;//m_ePointDesc->fCreateRange;
 
 				XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f) + m_ePointDesc[i].vExplosionDir);
 
@@ -541,13 +541,48 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_float fTimeDelta)
 		{
 			if (m_ePointDesc->bSpread == true)
 			{
-				vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
-				fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
+				if(m_ePointDesc->bUseGravity == true)
+				{
+					if (m_ePointDesc[i].bGravity == true) // ม฿ทย
+					{
+						if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y <= -5.0f)
+						{
+							m_ePointDesc[i].bGravity = false;
+							m_fAngle = 0.0f;
+							XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
+						}
+						else
+						{
+							_float4 vDir = m_ePointDesc[i].vExplosionDir;
+							m_fAngle -= fTimeDelta * 5.f;
+							vDir = XMVector3TransformNormal(m_ePointDesc[i].vExplosionDir,
+								XMMatrixRotationAxis(XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vRight), XMConvertToRadians(m_fAngle)));
 
-				if (fDistance > m_ePointDesc[i].fRange)
-					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
+							_float4 vPosition = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + XMLoadFloat4(&vDir) * _float(m_InstanceData->pSpeeds) * fTimeDelta;
+							vPosition.y -= _float(m_InstanceData->pSpeeds) * fTimeDelta;
+							XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vPosition);
+						}
+					}
+
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
+					fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
+
+					if (fDistance > m_ePointDesc[i].fRange)
+						m_ePointDesc[i].bGravity = true;
+					else
+						XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+
+				}
 				else
-					XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+				{
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + m_ePointDesc[i].vExplosionDir * _float(m_InstanceData->pSpeeds) * m_ePointDesc->fTimeDelta;
+					fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
+
+					if (fDistance > m_ePointDesc[i].fRange)
+						XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, m_ePointDesc[i].vOriginPos);
+					else
+						XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+				}
 			}
 			else
 			{

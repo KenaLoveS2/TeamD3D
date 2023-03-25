@@ -168,6 +168,8 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+#include "E_Warrior_PlaneRoot.h"
+#include "E_Warrior_Root.h"
 
 
 
@@ -1871,8 +1873,19 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_WindLoop */
+	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_WindLoop",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/WindLoop.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Warrior_Root */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Warrior_Root",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Warrior_Root.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Plane_Root */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Plane_Root",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Plane_Root.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
@@ -2102,6 +2115,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_Warrior_FireSwipe */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_FireSwipe"),
 		CE_Warrior_FireSwipe::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_Root */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_Root"),
+		CE_Warrior_Root::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_PlaneRoot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_PlaneRoot"),
+		CE_Warrior_PlaneRoot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

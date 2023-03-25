@@ -4,12 +4,12 @@
 
 BEGIN(Client)
 
-class CE_Warrior_FireSwipe final : public CEffect_Mesh
+class CE_Warrior_PlaneRoot final : public CEffect_Mesh
 {
 private:
-	CE_Warrior_FireSwipe(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CE_Warrior_FireSwipe(const CE_Warrior_FireSwipe& rhs);
-	virtual ~CE_Warrior_FireSwipe() = default;
+	CE_Warrior_PlaneRoot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CE_Warrior_PlaneRoot(const CE_Warrior_PlaneRoot& rhs);
+	virtual ~CE_Warrior_PlaneRoot() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath = nullptr);
@@ -23,17 +23,15 @@ public:
 public:
 	virtual _int	Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual void	ImGui_PhysXValueProperty()override;
-
-public:
-	HRESULT SetUp_SwipeTexture();
+	virtual void	Imgui_RenderProperty() override;
 
 private:
+	HRESULT SetUp_TextureComponents();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
-	void	Imgui_RenderProperty() override;
 
 public:
-	static  CE_Warrior_FireSwipe* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
+	static  CE_Warrior_PlaneRoot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*		  Clone(void* pArg = nullptr) override;
 	virtual void				  Free() override;
 

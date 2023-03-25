@@ -161,7 +161,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
-	Update_Trail("Halberd_Jnt8");
+	Update_Trail("Halberd_Jnt6");
 
 	m_pHat->Tick(fTimeDelta);
 
@@ -815,6 +815,7 @@ HRESULT CBossWarrior::SetUp_Effects()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	CEffect_Base* pEffectBase = nullptr;
 
+	/* Trail */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorTrail", L"W_Trail"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
@@ -825,6 +826,25 @@ HRESULT CBossWarrior::SetUp_Effects()
 	pEffectBase->Set_Parent(this);
 	dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_BOSS);
 	m_mapEffect.emplace("W_MovementParticle", pEffectBase);
+	/* Trail */
+
+	/* Swipe */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_FireSwipe", L"W_FireSwipe"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_FireSwipe", pEffectBase);
+
+	/* Root */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_Root", L"W_Root"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_Root", pEffectBase);
+
+	/* PlaneRoot */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_PlaneRoot", L"W_PlaneRoot"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_PlaneRoot", pEffectBase);
 
 	return S_OK;
 }

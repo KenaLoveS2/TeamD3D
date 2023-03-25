@@ -261,6 +261,8 @@
     <ClInclude Include="..\public\E_TeleportRot.h" />
     <ClInclude Include="..\public\E_WarriorTrail.h" />
     <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
+    <ClInclude Include="..\public\E_Warrior_PlaneRoot.h" />
+    <ClInclude Include="..\public\E_Warrior_Root.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\public\FakeShaman.h" />
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
@@ -504,6 +506,8 @@
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
     <ClCompile Include="..\private\E_WarriorTrail.cpp" />
     <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
+    <ClCompile Include="..\private\E_Warrior_PlaneRoot.cpp" />
+    <ClCompile Include="..\private\E_Warrior_Root.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\private\FakeShaman.cpp" />
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />

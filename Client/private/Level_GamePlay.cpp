@@ -13,6 +13,7 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Imgui_MapEditor.h"
+#include "Imgui_Effect.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -36,6 +37,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		p_game_instance->Add_ImguiObject(CTool_Animation::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImGui_PhysX::Create(m_pDevice, m_pContext));
 		p_game_instance->Add_ImguiObject(CImgui_ShaderEditor::Create(m_pDevice, m_pContext));
+		p_game_instance->Add_ImguiObject(CImgui_Effect::Create(m_pDevice, m_pContext));
 
 	RELEASE_INSTANCE(CGameInstance)
 		
@@ -297,9 +299,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameObject* pGameObject = nullptr;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"FireSwipe", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_Root"), L"Warrior_Root", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_PlaneRoot"), L"Warrior_PlaneRoot", nullptr, &pGameObject)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

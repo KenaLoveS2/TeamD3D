@@ -27,6 +27,9 @@ public:
 		_bool 		bRotation = false;
 		_float      fMoveY = 0.0f;
 
+		_bool		bGravity = false;
+		_bool		bUseGravity = false;
+
 		// Shape_Box  //
 		_float3     fMin = { 1.f,1.f,1.f };
 		_float3     fMax = { 1.f,1.f,1.f };
@@ -93,6 +96,9 @@ public:
 private:
 	POINTDESC*		m_ePointDesc;
 	INSTANCEDATA*   m_InstanceData;
+
+	_float			m_fGravity = 9.8f;
+	_float			m_fAngle = 0.0f;
 
 public:
 	static CVIBuffer_Point_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iNumInstance = 1);
