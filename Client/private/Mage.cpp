@@ -935,7 +935,7 @@ void CMage::Summon()
 
 	for (_uint i = 0; i < MAGE_STICK_COUNT; i++)
 	{
-		m_pSticks[i]->Spawn_ByMage(this, vPos + vOffset[i]);
+		m_pSticks[i]->Spawn_ByMaster(this, vPos + vOffset[i]);
 		m_SticksList.push_back(m_pSticks[i]);
 	}
 }
@@ -1001,11 +1001,11 @@ void CMage::Free()
 	Safe_Release(m_pFireBullet);
 }
 
-void CMage::Erase_StickList(CSticks01* pStick)
+void CMage::Clear_ByMinion(CMonster* pMinion)
 {
 	for (auto iter = m_SticksList.begin(); iter != m_SticksList.end();)
 	{
-		if (*iter == pStick)
+		if (*iter == pMinion)
 			iter = m_SticksList.erase(iter);
 		else
 			iter++;

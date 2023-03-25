@@ -41,8 +41,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -10.f;
-		m_Desc.WorldMatrix._43 = -10.f;
+		m_Desc.WorldMatrix._41 = -15.f;
+		m_Desc.WorldMatrix._43 = -15.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -330,9 +330,7 @@ HRESULT CBossWarrior::SetUp_State()
 	
 		.AddState("IDLE")
 		.OnStart([this]()
-	{
-
-		
+	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
@@ -352,7 +350,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return IsParried();
 	})	
-		.AddTransition("IDLE to ENRAGE", "ENRAGE")
+		.AddTransition("IDLE to ENRAGE", "ENRAGE") // 기모아서 가오잡음
 		.Predicator([this]()
 	{
 		return m_bEnRageReady && m_pMonsterStatusCom->Get_PercentHP() < 0.5f;
@@ -367,32 +365,32 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
 	})
-		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK") // 내려찍기
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT")
+		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT") // 내려찍기 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 3;
 	})		
-		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK")
+		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK") // 점프해서 바닥을 찍는다
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
 	})		
-		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT")
+		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT") // 3단 공격 1,2번째 공격에 검기가 날라가고 3번째에 터지는 듯한 느낌
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
@@ -691,7 +689,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -744,15 +742,12 @@ HRESULT CBossWarrior::SetUp_State()
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
 		/* ~HP Bar DeActivate */
 
-
-
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
 
 		m_pKena->Dead_FocusRotIcon(this);
-		m_bDying = true;
-		// m_pUIHPBar->Set_Active(false);		
+		m_bDying = true;		
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -995,21 +990,10 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	return 0;
 }
 
-void CBossWarrior::Attack_Start(_uint iAnimIndex)
-{
-	m_bRealAttack = true;
-
-	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
-	m_pModelCom->Set_AnimIndex(iAnimIndex);
-}
-
 void CBossWarrior::Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex)
 {
 	(*pAttackIndex)++;
 	(*pAttackIndex) %= iMaxAttackIndex;
 
-	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
-	m_pModelCom->Set_AnimIndex(iAnimIndex);
-
-	m_bRealAttack = false;
+	CMonster::Attack_End(iAnimIndex);
 }

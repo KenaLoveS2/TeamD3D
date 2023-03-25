@@ -55,9 +55,7 @@ HRESULT CMainApp::Initialize()
 	Ready_BufferLock_UnLock();
 
 	srand((_uint)time(NULL));
-
 	
-
 	return S_OK;
 }
 

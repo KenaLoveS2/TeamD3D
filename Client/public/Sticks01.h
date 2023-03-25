@@ -124,21 +124,21 @@ private:
 	_bool	m_bStrafeLeft = false;
 	_bool	m_bStrafeRight = false;
 
-	_bool m_bSpawnByMage = false;
+	_bool m_bSpawnByMaster = false;
 
 private:
 	vector<wstring> m_vecColliderName;
 	vector<_float3> m_vecPivot;
 	vector<_float3> m_vecPivotScale;
 
-	class CMage* m_pMage = nullptr;
+	class CMonster* m_pMaster = nullptr;
 	CBone* m_pWeaponBone = nullptr;
 public:
 	static CSticks01*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg = nullptr)  override;
 	virtual void						Free() override;
 
-	void Spawn_ByMage(class CMage* pMage, _float4 vPos);
+	void Spawn_ByMaster(class CMonster* pMaster, _float4 vPos);
 };
 
 END
