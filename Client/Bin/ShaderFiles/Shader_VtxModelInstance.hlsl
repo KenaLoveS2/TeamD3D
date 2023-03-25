@@ -558,6 +558,28 @@ PS_OUT_TESS PS_MAIN_NOAO_DN_BM(PS_IN_TESS In)
 	return Out;
 }//11
 
+PS_OUT_TESS PS_MAIN_CINE(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = In.vNormal.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = (float4)1.f;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}//12
+
+
 struct PS_IN_SHADOW
 {
 	float4		vPosition : SV_POSITION;
@@ -746,4 +768,17 @@ technique11 DefaultTechnique
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_NOAO_DN_BM();
 	}//11
+
+	pass Cine 
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_CINE();
+	}//12
 }

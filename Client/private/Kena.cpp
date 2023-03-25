@@ -769,7 +769,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REFLECT, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -852,51 +852,23 @@ HRESULT CKena::RenderShadow()
 	return S_OK;
 }
 
-HRESULT CKena::RenderReflect()
+HRESULT CKena::RenderCine()
 {
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
 
-	FAILED_CHECK_RETURN(SetUp_ReflectShaderResources(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		if (i == 1)
-		{
-			// Arm & Leg
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
-		}
-		else if (i == 4)
-		{
-			// Eye Render
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
-		}
-		else if (i == 5 || i == 6)
-		{
-			// HEAD
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
-		}
-		else if (i == 0)
+		if (i == 0)
 		{
 			// Render Off
 			continue;
 		}
-		else
-		{
-			// Eye Lash
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
-		}
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 	}
 
 	return S_OK;
@@ -1456,11 +1428,11 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-HRESULT CKena::SetUp_ReflectShaderResources()
+HRESULT CKena::SetUp_CineShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_REFLECTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;

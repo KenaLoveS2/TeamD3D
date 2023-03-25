@@ -56,7 +56,7 @@ public:
 	void					Camera_Shake(_float4 vDir, _float fAngle);
 	void					TimeSleep(_float fDuration);
 
-	void					Update_ReflectWorld();
+	//void					Update_ReflectWorld();
 	
 private:
 	class CKena*			m_pKena = nullptr;
