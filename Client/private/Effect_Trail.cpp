@@ -136,17 +136,70 @@ HRESULT CEffect_Trail::Render()
 	return S_OK;
 }
 
+void CEffect_Trail::Trail_LateTick(_float fTimeDelta)
+{
+	__super::Late_Tick(fTimeDelta);
+
+	_float  fRadian = 0.0f;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	_vector vRight = XMVector3Normalize(pGameInstance->Get_CamRight_Float4());
+	_vector vUp = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	_vector vLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	_vector vCamPos = pGameInstance->Get_CamPosition();
+
+	for (_uint i = 0; i < (_uint)m_vecProPos.size(); ++i)
+	{
+		if (m_vecProPos[i].w <0.5f)
+			continue;
+
+		vDir = XMVector3Normalize(vCamPos - XMLoadFloat4(&m_vecProPos[i]));
+
+		fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
+		if (fRadian < 5.f)
+			continue;
+
+		vUp = XMVector3Cross(vRight, vDir);
+		vLook = XMVector3Cross(vRight, vUp);
+
+		_float fWidth = CUtile::Get_RandomFloat(0.1f, m_eEFfectDesc.fWidth);
+		vLook = XMVectorSetW(vLook, fWidth);
+		m_vecProPos[i].w = m_eEFfectDesc.fLife;
+
+		_smatrix TrailMatrix(vRight, vUp, vLook, m_vecProPos[i]);
+		m_pVITrailBufferCom->Add_Instance(TrailMatrix);
+	}
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+}
+
+void CEffect_Trail::Trail_InputRandomPos(_float4 vPosition)
+{
+	_vector vmin = XMVectorSet(vPosition.x - 0.5f, vPosition.y - 0.5f, vPosition.z - 0.5f, 1.f);
+	_vector vmax = XMVectorSet(vPosition.x + 0.5f, vPosition.y + 0.5f, vPosition.z + 0.5f, 1.f);
+	
+	_float4 vRandomPos = CUtile::Get_RandomVector(vmin, vmax);
+	vRandomPos.w = 1.f;
+	m_vecProPos.push_back(vRandomPos);
+}
+
+void CEffect_Trail::Trail_InputPos(_float4 vPosition)
+{
+	m_vecProPos.push_back(vPosition);
+}
+
 HRESULT CEffect_Trail::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom))) 
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
+		(CComponent**)&m_pRendererCom), E_FAIL);
 
-/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	/* For.Com_Shader */
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom), E_FAIL);
 
 	/***********
 	*  TEXTURE *
@@ -160,8 +213,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this), E_FAIL);
 	}
 
 	/* For.MaskTexture */
@@ -173,8 +225,7 @@ HRESULT CEffect_Trail::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this), E_FAIL);
 	}
 
 	return S_OK;
@@ -185,64 +236,41 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV()), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	/* Trail */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsTrail", &m_eEFfectDesc.IsTrail, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fWidth", &m_eEFfectDesc.fWidth, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fLife", &m_eEFfectDesc.fLife, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_bDistanceAlpha", &m_eEFfectDesc.bAlpha, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize")))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_IsTrail", &m_eEFfectDesc.IsTrail, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fWidth", &m_eEFfectDesc.fWidth, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fLife", &m_eEFfectDesc.fLife, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDistanceAlpha", &m_eEFfectDesc.bAlpha, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fAlpha", &m_eEFfectDesc.fAlpha, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pVITrailBufferCom->Bind_RawValue(m_pShaderCom, "g_InfoSize"), E_FAIL);
 
 	/* Texture Total Cnt */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof _uint)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof _uint), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint), E_FAIL);
 
 	_uint iTextureRenderType = (_uint)m_eEFfectDesc.eTextureRenderType;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &iTextureRenderType, sizeof(_uint))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_TextureRenderType", &iTextureRenderType, sizeof(_uint)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool)), E_FAIL);
 
 	/* TEX_SPRITE */
 	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int))))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int)), E_FAIL);
 	}
-	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
@@ -251,9 +279,7 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 
 		char szDTexture[64] = "";
 		CUtile::WideCharToChar(strBindDTexture.c_str(), szDTexture);
-
-		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i])))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i]), E_FAIL);
 	}
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
@@ -264,8 +290,7 @@ HRESULT CEffect_Trail::SetUp_ShaderResources()
 		char szMTexture[64] = "";
 		CUtile::WideCharToChar(strBindMTexture.c_str(), szMTexture);
 
-		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i])))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i]), E_FAIL);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);

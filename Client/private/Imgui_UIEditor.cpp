@@ -164,11 +164,9 @@ void CImgui_UIEditor::EventList()
 
 void CImgui_UIEditor::Effect_Tool()
 {
-	if (Button("Load Effect List"))
-		Load_List();
-	AND;
-	if (Button("Save Effect List"))
-		Save_List();
+	Load_List(); AND; 
+	Save_List();
+
 
 	static	char szSaveFileName[MAX_PATH] = "";
 	ImGui::SetNextItemWidth(200);
@@ -177,6 +175,7 @@ void CImgui_UIEditor::Effect_Tool()
 	if (Button("Create New Effect"))
 	{
 		string str = szSaveFileName;
+		strcpy_s(szSaveFileName, MAX_PATH,"");
 		Create_Effect(str);
 
 		if (m_pEffect != nullptr)
@@ -207,59 +206,94 @@ void CImgui_UIEditor::Effect_Tool()
 
 void CImgui_UIEditor::Load_List()
 {
-	/* Clear All Information */
-	if (!m_vecEffectTag.empty())
-	{
-		m_vecEffectTag.clear();
-
-		for (auto effect : m_vecEffects)
-			Safe_Release(effect);
-		m_vecEffects.clear();
-	}
+	if (Button("Load Effect List"))
+		ImGuiFileDialog::Instance()->OpenDialog("Load File", "Select Json", ".json", "../Bin/Data/Effect_UI", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
 	/* Load Type Data */
-	Json	jLoad;
-	string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
-
-	ifstream file(filePath);
-	if (file.fail())
-		return;
-	file >> jLoad;
-	file.close();
-
-	_int iNumEffects;
-	jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
-
-	for (auto jSub : jLoad["02. FileName"])
+	
+	if (ImGuiFileDialog::Instance()->Display("Load File"))
 	{
-		string strEffect;
-		jSub.get_to<string>(strEffect);
-		m_vecEffectTag.push_back(strEffect);
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			/* Clear All Information */
+			if (!m_vecEffectTag.empty())
+			{
+				for (auto tag : m_vecEffectTag)
+				{
+					wstring wstr;
+					wstr.assign(tag.begin(), tag.end());
+					CGameInstance::GetInstance()->Delete_Object(g_LEVEL,
+						L"Layer_Effect_S2", wstr.c_str());
+				}
 
-		m_pEffect = nullptr;
-		Create_Effect(strEffect);
+				//for (auto effect : m_vecEffects)
+				//	Safe_Release(effect);
+				m_vecEffectTag.clear();
+				m_vecEffects.clear();
+			}
 
-		if (m_pEffect != nullptr)
-			m_vecEffects.push_back(m_pEffect);
+
+			string		strFilePath = ImGuiFileDialog::Instance()->GetFilePathName();
+
+			Json	jLoad;
+			//string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
+
+			ifstream file(strFilePath);
+			if (file.fail())
+				return;
+			file >> jLoad;
+			file.close();
+
+			_int iNumEffects;
+			jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
+
+			for (auto jSub : jLoad["02. FileName"])
+			{
+				string strEffect;
+				jSub.get_to<string>(strEffect);
+				m_vecEffectTag.push_back(strEffect);
+
+				Create_Effect(m_vecEffectTag.back());
+
+				if (m_pEffect != nullptr)
+					m_vecEffects.push_back(m_pEffect);
+			}
+			ImGuiFileDialog::Instance()->Close();
+		}
+		else
+			ImGuiFileDialog::Instance()->Close();
 	}
-
 }
 
 void CImgui_UIEditor::Save_List()
 {
-	Json json;
+	if (Button("Save Effect List"))
+		ImGuiFileDialog::Instance()->OpenDialog("Save List", "Select Json", ".json", "../Bin/Data/Effect_UI/", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
-	json["01. NumEffects"] = (_int)m_vecEffectTag.size();
+	if (ImGuiFileDialog::Instance()->Display("Save List"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			Json json;
 
-	for (auto tag : m_vecEffectTag)
-		json["02. FileName"].push_back(tag);
+			json["01. NumEffects"] = (_int)m_vecEffectTag.size();
+
+			for (auto tag : m_vecEffectTag)
+				json["02. FileName"].push_back(tag);
 
 
-	string filePath = "../Bin/Data/Effect_UI/00.Effect_List.json";
+			string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
 
-	ofstream file(filePath);
-	file << json;
-	file.close();
+			ofstream file(filePath);
+			file << json;
+			file.close();
+
+			ImGuiFileDialog::Instance()->Close();
+		}
+		else
+			ImGuiFileDialog::Instance()->Close();
+	}
+
 
 }
 
@@ -277,16 +311,17 @@ void CImgui_UIEditor::Create_Effect(string strEffect)
 		type += c;
 	}
 
+	m_pEffect = nullptr;
+
 	if (type == "Particle")
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 	else if(type == "Mesh")
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 	else if(type == "Texture")
-		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_3DUI",
+		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Texture_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
-
 }
 
 CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)
@@ -307,8 +342,8 @@ void CImgui_UIEditor::Free()
 	m_vecCanvas.clear();
 
 	/*  Effect */
-	for (auto effect : m_vecEffects)
-		Safe_Release(effect);
+	//for (auto effect : m_vecEffects)
+	//	Safe_Release(effect);
 	m_vecEffects.clear();
 
 	m_vecEffectTag.clear();

@@ -84,6 +84,7 @@
 #include "TelePort_Flower.h"
 #include "FieldBecon_Anim.h"
 #include "DZ_FallenTree_Anim.h"
+#include "Chest_Anim.h"
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -144,7 +145,10 @@
 #include "E_RotBombExplosion.h"
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
-
+#include "E_RectTrail.h"
+#include "E_Swipes_Charged.h"
+#include "E_WarriorTrail.h"
+#include "E_Warrior_FireSwipe.h"
 
 /* ~Effects */
 
@@ -164,7 +168,7 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_RectTrail.h"
+
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -336,8 +340,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/PulsePlate_Anim/PulsePlate_Anim.model"), PivotMatrix))))
 		return E_FAIL;
 
-
-
 	/* For.Prototype_Component_Model_FieldBeaconAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_FieldBeaconAnim",
@@ -361,6 +363,15 @@ HRESULT CLoader::Loading_ForMapTool()
 			return E_FAIL;
 
 		FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
+
+		/* For.Prototype_Component_Model_ChestAnim*/
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
+			return E_FAIL;
+
+
+		FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 	}
 
 #ifdef FOR_MAPTOOL   
@@ -623,7 +634,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma endregion ~Statue
 
 #pragma region Stone
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true,false,true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, true, true)))
 		assert(!"Issue");
@@ -962,7 +973,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/StoneFloor_2", true, true, true)))
 			return E_FAIL;
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Bridge", true, true, true, false, true)))
 			assert(!"Issue");
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Stone/Stone_Stairs", true, true, true)))
@@ -1603,28 +1614,24 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BranchTosser",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/BranchTosser/BranchTosser.model"), PivotMatrix)))) return E_FAIL;
 
-
-
-	// Prototype_Component_Model_Boss_Warrior	
-
 	/**********************************/
 	/************For.Warrior***********/
 	/**********************************/
 	// Prototype_Component_Model_Boss_Warrior
 	PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_Boss_Warrior_Hat
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior_Hat",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Enemy/Boss_Warrior_Hat/Boss_Warrior_Hat.mdat"), PivotMatrix)))) return E_FAIL;
 	/*********************************************************************************************************************************************/
-
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	
 	/**********************************/
 	/************ For. Hunter **********/
 	/**********************************/
 	// Prototype_Component_Model_Boss_Hunter
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/Boss_Hunter.mdat"), PivotMatrix)))) return E_FAIL;
 
@@ -1822,6 +1829,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_FireSwipe */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FireSwipe",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/FireSwipe.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Cube */
@@ -2083,6 +2095,21 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_RectTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Swipes_Charged */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Swipes_Charged"),
+		CE_Swipes_Charged::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Swipes_Changed.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_WarriorTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorTrail"),
+		CE_WarriorTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_FireSwipe */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_FireSwipe"),
+		CE_Warrior_FireSwipe::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
@@ -2313,7 +2340,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/StoneFloor_2", true, true, true)))
 		return E_FAIL;
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Bridge", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Bridge", true, true, true, false, true)))
 		assert(!"Issue");
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true)))

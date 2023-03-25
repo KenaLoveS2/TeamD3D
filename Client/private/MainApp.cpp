@@ -55,9 +55,7 @@ HRESULT CMainApp::Initialize()
 	Ready_BufferLock_UnLock();
 
 	srand((_uint)time(NULL));
-
 	
-
 	return S_OK;
 }
 
@@ -82,7 +80,8 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Render_ImGui();
 
-	m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	//m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	m_pGameInstance->Clear_Graphic_Device(&_float4(0.5f, 0.5f, 0.5f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
 
@@ -245,6 +244,11 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	/* Prototype_Component_Shader_VtxEffectPointInstance */
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_VtxEffect_BossTrail */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffect_BossTrail"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffect_BossTrail.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/* Prototype_Component_Shader_EffectS2 */

@@ -51,6 +51,8 @@ HRESULT CSticks01::Initialize(void* pArg)
 
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
 
+	/* Create MovementTrail */
+	SetUp_MovementTrail();
 	return S_OK;
 }
 
@@ -144,6 +146,9 @@ void CSticks01::Tick(_float fTimeDelta)
 {	
 	if (m_bDeath) return;
 	
+	/* Update MovementTrail */
+	Update_MovementTrail("char_weightSpine_c_jnt");
+
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
@@ -337,7 +342,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddTransition("RESURRECT to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMage;
+		return DistanceTrigger(m_fSpawnRange) || m_bSpawnByMaster;
 		// return AnimFinishChecker(RESURRECT) && m_bSpawn;
 	})
 
@@ -528,6 +533,7 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("INTOCHARGE")
 		.OnStart([this]()
 	{
+		m_bIsFightReady = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(INTOCHARGE);
 		m_pModelCom->Set_AnimIndex(INTOCHARGE);
 	})
@@ -985,11 +991,11 @@ HRESULT CSticks01::SetUp_State()
 	{
 		Clear_Death();
 		
-		if (m_pMage && m_bSpawnByMage)
+		if (m_pMaster && m_bSpawnByMaster)
 		{
-			m_bSpawnByMage = false;
-			m_pMage->Erase_StickList(this);
-			m_pMage = nullptr;
+			m_bSpawnByMaster = false;
+			m_pMaster->Clear_ByMinion(this);
+			m_pMaster = nullptr;
 		}
 	})		
 		.Build();
@@ -1241,7 +1247,7 @@ void CSticks01::Free()
 	CMonster::Free();
 }
 
-void CSticks01::Spawn_ByMage(CMage* pMage, _float4 vPos)
+void CSticks01::Spawn_ByMaster(CMonster* pMaster, _float4 vPos)
 {
 	m_bDeath = false;
 
@@ -1252,13 +1258,13 @@ void CSticks01::Spawn_ByMage(CMage* pMage, _float4 vPos)
 	m_pTransformCom->Set_Position(vPos);
 	m_pEnemyWisp->Set_Position(vPos);
 
-	m_bSpawnByMage = true;
+	m_bSpawnByMaster = true;
 	Reset_Attack();
 
 	m_vKenaPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
 	m_pMonsterStatusCom->Revive();
-	m_pMage = pMage;
+	m_pMaster = pMaster;
 };
 
 

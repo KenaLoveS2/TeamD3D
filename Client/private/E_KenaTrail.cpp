@@ -37,11 +37,9 @@ HRESULT CE_KenaTrail::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Trail Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailFlow"), L"Com_flowTexture", (CComponent**)&m_pTrailflowTexture, this), E_FAIL);
 
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailType"), L"Com_typeTexture", (CComponent**)&m_pTrailTypeTexture, this)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_TrailType"), L"Com_typeTexture", (CComponent**)&m_pTrailTypeTexture, this), E_FAIL);
 	/* Trail Texture */
 
 	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300);
@@ -77,6 +75,9 @@ HRESULT CE_KenaTrail::Late_Initialize(void * pArg)
 
 void CE_KenaTrail::Tick(_float fTimeDelta)
 {
+	if (m_pKena == nullptr)
+		m_pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
@@ -128,11 +129,11 @@ HRESULT CE_KenaTrail::SetUp_ShaderResources()
 	/* Instance Buffer */
 
 	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaFlowTexture", m_iTrailFlowTexture)))
+	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_FlowTexture", m_iTrailFlowTexture)))
 		return E_FAIL;
 
 	/* Type */
-	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
+	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_TypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_UV", &m_fUV, sizeof(_float2))))
