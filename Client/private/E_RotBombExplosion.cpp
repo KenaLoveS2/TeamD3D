@@ -110,12 +110,16 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			vScaled *= fTimeDelta + 1.3f;
+			vScaled.x += fTimeDelta * 2.f;
+			vScaled.y += fTimeDelta * 2.f;
+			vScaled.z += fTimeDelta * 2.f;
 			m_pTransformCom->Set_Scaled(vScaled);
-			m_vecChild[0]->Set_AddScale(fTimeDelta + 1.3f);
+			m_vecChild[0]->Set_AddScale(fTimeDelta * 2.f);
 		}
 	}
-
+	else
+		Reset();
+	
 	if (m_bBomb) // »ç¶óÁü
 	{
 		m_fDissolveTime += fTimeDelta;
@@ -165,6 +169,14 @@ HRESULT CE_RotBombExplosion::Render()
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
+}
+
+void CE_RotBombExplosion::Reset()
+{
+	m_bBomb = false;
+	m_fTimeDelta = 0.f;
+	m_fBombTime = 0.f;
+	m_fDissolveTime = 0.f;
 }
 
 HRESULT CE_RotBombExplosion::SetUp_ShaderResources()

@@ -230,6 +230,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			_float3 vScale = Get_InitMatrixScaled();
 			Set_InitMatrixScaled(vScale * 1.3f);
 
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
+
 			_float4 vPos;
 			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 			CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
@@ -244,12 +247,15 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 				// m_bDesolve = true;
 				memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 				m_fDissolveTime = 0.0f;
-				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 			}
 		}
 
 		if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
 		{
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 1.f);
+
 			for (auto& pChild : m_vecChild)
 				pChild->Set_Active(true);
 			// m_bDesolve = true;
@@ -327,7 +333,7 @@ void CE_KenaPulse::Reset()
 	memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 	Set_InitMatrixScaled(Get_InitMatrixScaled());
 
-	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 }
 
 _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -339,7 +345,30 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			return 0;
 
 		// KenaPulse °ø°Ý·Â ±ð±â
-		m_pStatus->Under_Shield(((CMonster*)pTarget)->Get_MonsterStatusPtr());
+		CStatus*	pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+		if (pStatus->Get_Attack() > 10)
+			m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+		else
+			m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+		m_pKena->Set_AttackObject(pTarget);
+		//
+		CKena:: DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
+		CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
+		_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vDir.Normalize();
+
+		_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+		if (fFrontBackAngle >= 0.f)
+			eDir = CKena::DAMAGED_FRONT;
+		else
+			eDir = CKena::DAMAGED_BACK;
+
+		m_pKena->Set_DamagedDir(eDir);
+		//
+		m_pStatus->Under_Shield(pStatus);
 		m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
 	return 0;

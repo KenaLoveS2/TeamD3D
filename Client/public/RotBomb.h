@@ -77,6 +77,7 @@ private:
 	void						Throw(_float fTimeDelta);
 
 	virtual _int				Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
+	virtual _int				Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 public:
 	static CRotBomb*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

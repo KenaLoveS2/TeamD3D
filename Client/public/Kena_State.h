@@ -279,13 +279,13 @@ public:
 		RUNNING_JUMP_LEFT, RUNNING_JUMP_SQUAT_LEFT, RUNNING_SHORT_HOP_LEFT,
 		RUN_STOP,
 
-		/* SHILED */
-		SHILED_IMPACT, SHILED_IMPACT_BIG, SHILED_IMPACT_MEDIUM,
-		SHILED_RELEASE,
-		SHILED_SMALL_STAGGER,	/* DAMAGED FROM FORWARD, LEFT, RIGHT, BACKWARD */
-		SHILED_BREAK_BACK, SHILED_BREAK_FRONT,
+		/* SHIELD */
+		SHIELD_IMPACT, SHIELD_IMPACT_BIG, SHIELD_IMPACT_MEDIUM,
+		SHIELD_RELEASE,
+		SHIELD_SMALL_STAGGER,	/* DAMAGED FROM FORWARD, LEFT, RIGHT, BACKWARD */
+		SHIELD_BREAK_BACK, SHIELD_BREAK_FRONT,
 		SHIELD_EYES,
-		SHIELD_STAGGER_SMALL_BACK, SHIELD_STAGGER_SMALL_LEFT, SHILED_STAGGER_SMALL_RIGHT,
+		SHIELD_STAGGER_SMALL_BACK, SHIELD_STAGGER_SMALL_LEFT, SHIELD_STAGGER_SMALL_RIGHT,
 
 		SHORT_HOP,
 
@@ -690,6 +690,12 @@ private:
 	void						Start_Pulse_Walk_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Right(_float fTimeDelta);
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SHIELD */
+	void						Start_Shield_Impact(_float fTimeDelta);
+	void						Start_Shield_Impact_Medium(_float fTimeDelta);
+	void						Start_Shield_Impact_Big(_float fTimeDelta);
+	void						Start_Shield_Break_Front(_float fTimeDelta);
+	void						Start_Shield_Break_Back(_float fTimeDelta);
 	/* SPIN ATTACK */
 	void						Start_Spin_Attack(_float fTimeDelta);
 	void						Start_Spin_Attack_Return(_float fTimeDelta);
@@ -863,6 +869,12 @@ private:
 	void						Tick_Pulse_Parry(_float fTimeDelta);
 	void						Tick_Pulse_Walk(_float fTimeDelta);
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SHIELD */
+	void						Tick_Shield_Impact(_float fTimeDelta);
+	void						Tick_Shield_Impact_Medium(_float fTimeDelta);
+	void						Tick_Shield_Impact_Big(_float fTimeDelta);
+	void						Tick_Shield_Break_Front(_float fTimeDelta);
+	void						Tick_Shield_Break_Back(_float fTimeDelta);
 	/* SPIN ATTACK */
 	void						Tick_Spin_Attack(_float fTimeDelta);
 	void						Tick_Spin_Attack_Return(_float fTimeDelta);
@@ -1036,6 +1048,12 @@ private:
 	void						End_Pulse_Parry(_float fTimeDelta);
 	void						End_Pulse_Walk(_float fTimeDelta);
 	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* SHIELD */
+	void						End_Shield_Impact(_float fTimeDelta);
+	void						End_Shield_Impact_Medium(_float fTimeDelta);
+	void						End_Shield_Impact_Big(_float fTimeDelta);
+	void						End_Shield_Break_Front(_float fTimeDelta);
+	void						End_Shield_Break_Back(_float fTimeDelta);
 	/* SPIN ATTACK */
 	void						End_Spin_Attack(_float fTimeDelta);
 	void						End_Spin_Attack_Return(_float fTimeDelta);
@@ -1058,6 +1076,8 @@ private:	/* Changer */
 	_bool	Shield_Small();
 	_bool	Shield_Medium();
 	_bool	Shield_Big();
+	_bool	Shield_Break_Front();
+	_bool	Shield_Break_Back();
 	_bool	Pulse_Jump();
 	_bool	Parry();
 	_bool	Teleport_Flower();
@@ -1076,6 +1096,7 @@ private:	/* Changer */
 	_bool	Damaged_Dir_Right();
 	_bool	Check_PipCount();
 	_bool	Check_ArrowCount();
+	_bool	Check_Shield();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();

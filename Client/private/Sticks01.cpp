@@ -143,7 +143,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 void CSticks01::Tick(_float fTimeDelta)
 {	
 	if (m_bDeath) return;
-	
+	m_pMonsterStatusCom->Set_Attack(100);
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);

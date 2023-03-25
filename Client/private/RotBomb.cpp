@@ -606,6 +606,20 @@ _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 		}
 	}
 
+	if (iColliderIndex == (_uint)COL_PLAYER_ARROW && m_eCurState == CRotBomb::BOMB_LAND)
+		m_bBoom = true;
+
+	return 0;
+}
+
+_int CRotBomb::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iTriggerIndex == (_int)ON_TRIGGER_PARAM_ACTOR)
+	{
+		if (iColliderIndex == (_int)TRIGGER_PULSE && m_eCurState == CRotBomb::BOMB_LAND)
+			m_bBoom = true;
+	}
+
 	return 0;
 }
 
