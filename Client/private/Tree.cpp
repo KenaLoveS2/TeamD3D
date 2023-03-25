@@ -244,7 +244,6 @@ HRESULT CTree::RenderShadow()
 	return S_OK;
 }
 
-#ifdef _DEBUG
 HRESULT CTree::RenderCine()
 {
 	if (FAILED(__super::RenderCine()))
@@ -275,7 +274,6 @@ HRESULT CTree::RenderCine()
 
 	return S_OK;
 }
-#endif
 
 void CTree::Imgui_RenderProperty()
 {

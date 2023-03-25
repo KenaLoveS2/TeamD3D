@@ -46,7 +46,7 @@ void CKena_MainOutfit::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 }
 
@@ -166,10 +166,9 @@ void CKena_MainOutfit::ImGui_ShaderValueProperty()
 	}
 }
 
-#ifdef _DEBUG
 HRESULT CKena_MainOutfit::RenderCine()
 {
-	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
@@ -177,11 +176,6 @@ HRESULT CKena_MainOutfit::RenderCine()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i == 0)
-		{
-			// Render Off
-			continue;
-		}
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 	}
@@ -198,7 +192,6 @@ HRESULT CKena_MainOutfit::SetUp_CineShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
-#endif
 
 HRESULT CKena_MainOutfit::SetUp_Components()
 {

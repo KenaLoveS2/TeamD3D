@@ -134,7 +134,6 @@ void CTerrain::Imgui_RenderProperty()
 	ImGui::End();*/
 }
 
-#ifdef _DEBUG
 HRESULT CTerrain::RenderCine()
 {
 	if (FAILED(__super::Render()))
@@ -158,7 +157,6 @@ HRESULT CTerrain::SetUp_CineShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	return S_OK;
 }
-#endif
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
 {

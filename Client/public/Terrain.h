@@ -54,10 +54,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual void Imgui_RenderProperty() override;
 
-#ifdef _DEBUG
 	virtual HRESULT		RenderCine() override;
 	HRESULT					SetUp_CineShaderResources();
-#endif
 
 private:
 	CShader*						m_pShaderCom = nullptr;

@@ -769,7 +769,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -852,7 +852,6 @@ HRESULT CKena::RenderShadow()
 	return S_OK;
 }
 
-#ifdef _DEBUG
 HRESULT CKena::RenderCine()
 {
 	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
@@ -874,7 +873,6 @@ HRESULT CKena::RenderCine()
 
 	return S_OK;
 }
-#endif
 
 void CKena::Imgui_RenderProperty()
 {
@@ -1430,7 +1428,6 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-#ifdef _DEBUG
 HRESULT CKena::SetUp_CineShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
@@ -1440,7 +1437,6 @@ HRESULT CKena::SetUp_CineShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
-#endif
 
 HRESULT CKena::SetUp_State()
 {

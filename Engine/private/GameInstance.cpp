@@ -854,7 +854,7 @@ vector<string>* CGameInstance::Get_UIString(_uint iKey)
 	return m_pString_Manager->Get_UIString(iKey);
 }
 
-void CGameInstance::Add_UIWString(_uint iKey, wstring str)
+void CGameInstance::Add_UIWString(_uint iKey, const wstring & str)
 {
 	if (m_pString_Manager == nullptr) return;
 	return m_pString_Manager->Add_UIWString(iKey, str);

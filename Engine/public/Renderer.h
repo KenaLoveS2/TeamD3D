@@ -54,7 +54,7 @@ private:
 
 private:
 #ifdef _DEBUG
-	list<class CComponent*>				m_DebugObject;
+	list<class CComponent*>					m_DebugObject;
 	typedef list<class CComponent*>		DEBUGOBJECTS;
 #endif
 private:
@@ -75,10 +75,10 @@ private:
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
 	_bool										m_bDynamicShadow = false;
-	_bool										m_bCine = true;
 	_bool										m_bSSAO = true;
 	_float										m_fDistortTime = 0.f;
 	_float										m_fPrevCaptureTime = 0.f;
+	_bool										m_bCine = false;
 
 private:
 	void Increase_Time();
@@ -86,7 +86,7 @@ private:
 	HRESULT Render_StaticShadow();
 	HRESULT Render_Priority();
 	HRESULT Render_Shadow();
-	HRESULT Render_Cine();
+	
 	HRESULT Render_NonAlphaBlend();
 	HRESULT Render_LightAcc();
 	HRESULT Render_SSAO();
@@ -110,10 +110,9 @@ private:
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
 
-#ifdef _DEBUG
 private:
 	HRESULT Render_DebugObject();
-#endif
+	HRESULT Render_Cine();
 
 public:
 	ID3D11ShaderResourceView*		Get_LDRTexture() { return m_pLDRTexture; }

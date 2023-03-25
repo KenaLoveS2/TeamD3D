@@ -31,8 +31,10 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("DISTORT", &m_bDistort);
 	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
 	ImGui::Checkbox("MOTIONBLUR", &m_bMotionBlur);
-	ImGui::Checkbox("FLARE", &m_bFlare); 
+	ImGui::Checkbox("FLARE", &m_bFlare);
+
 	ImGui::Checkbox("CINE", &m_bCine);
+
 	if(ImGui::Button("ReCompile"))
 		ReCompile();
 }
@@ -501,7 +503,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		}
 	RELEASE_INSTANCE(CGameInstance);
 
-	m_pTarget_Manager->Render_Debug(TEXT("MRT_CINE"));
+	if(m_bCine)
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_CINE"));
 
 	if (nullptr != m_pTarget_Manager && m_bDebugRender)
 	{

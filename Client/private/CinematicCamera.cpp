@@ -167,7 +167,9 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_fDeltaTime = 0.f;
 	}
 
+#ifdef _DEBUG
 	ImGui::Checkbox("DebugRender", &m_bDebugRender);
+#endif // _DEBUG
 
 	if(!m_bPlay)
 	{

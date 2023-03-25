@@ -135,7 +135,6 @@ void CBorder::ImGui_ShaderValueProperty()
 {
 }
 
-#ifdef _DEBUG
 HRESULT CBorder::RenderCine()
 {
 	if (FAILED(__super::RenderCine()))
@@ -166,7 +165,6 @@ HRESULT CBorder::RenderCine()
 
 	return S_OK;
 }
-#endif
 
 HRESULT CBorder::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {

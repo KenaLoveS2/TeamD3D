@@ -113,7 +113,7 @@ vector<string>* CString_Manager::Get_UIString(_uint iKey)
 	return &iter->second;
 }
 
-void CString_Manager::Add_UIWString(_uint iKey, wstring str)
+void CString_Manager::Add_UIWString(_uint iKey, const wstring & str)
 {
 	auto iter = m_mapUIWString.find(iKey);
 	if (iter == m_mapUIWString.end())

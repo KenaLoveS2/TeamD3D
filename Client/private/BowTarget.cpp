@@ -131,7 +131,6 @@ HRESULT CBowTarget::RenderShadow()
 	return S_OK;
 }
 
-#ifdef _DEBUG
 HRESULT CBowTarget::RenderCine()
 {
 	if (FAILED(__super::RenderCine()))
@@ -162,7 +161,6 @@ HRESULT CBowTarget::RenderCine()
 
 	return S_OK;
 }
-#endif
 
 HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {

@@ -25,9 +25,7 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
-#ifdef _DEBUG
 	virtual HRESULT		RenderCine() override;
-#endif
 
 private:
 	CModel*									m_pModelCom = nullptr;

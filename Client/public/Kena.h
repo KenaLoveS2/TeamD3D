@@ -64,10 +64,8 @@ public:
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
 
-#ifdef _DEBUG
 	virtual HRESULT		RenderCine() override;
 	HRESULT					SetUp_CineShaderResources();
-#endif
 
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
