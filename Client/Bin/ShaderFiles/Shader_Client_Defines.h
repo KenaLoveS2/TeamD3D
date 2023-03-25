@@ -67,7 +67,7 @@ FrontCounterClockwise = false;
 
 RasterizerState RS_CULLOFF
 {
-	CullMode = Front;
+	CullMode = none;
 	FrontCounterClockwise = false;
 };
 

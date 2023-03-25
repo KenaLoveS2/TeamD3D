@@ -45,6 +45,9 @@ HRESULT CSapling::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+
+	/* Create MovementTrail */
+	SetUp_MovementTrail();
 	return S_OK;
 }
 
@@ -94,6 +97,9 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 void CSapling::Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
+
+	/* Update MovementTrail */
+	Update_MovementTrail("BombJoint");
 
 	__super::Tick(fTimeDelta);
 

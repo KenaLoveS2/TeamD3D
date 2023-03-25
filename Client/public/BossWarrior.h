@@ -65,29 +65,33 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void					Imgui_RenderProperty() override;
-	virtual void					ImGui_AnimationProperty() override;
-	virtual void					ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+	virtual void			ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void					Push_EventFunctions() override;
+	virtual void			Push_EventFunctions() override;
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float>		m_BossWarriorDelegator;
 
 protected:
-	virtual  HRESULT			SetUp_State() override;
-	virtual	HRESULT			SetUp_Components() override;
-	virtual	HRESULT			SetUp_ShaderResources() override;
-	virtual  HRESULT			SetUp_ShadowShaderResources() override;
+	virtual HRESULT		    SetUp_State() override;
+	virtual	HRESULT		    SetUp_Components() override;
+	virtual	HRESULT		    SetUp_ShaderResources() override;
+	virtual HRESULT		    SetUp_ShadowShaderResources() override;
+
+public:
+	HRESULT SetUp_Effects();
+	void	Update_Trail(const char* pBoneTag);
 
 private:
-	void	Update_Collider(_float fTimeDelta) override;
-	void	AdditiveAnim(_float fTimeDelta) override;
+	void Update_Collider(_float fTimeDelta) override;
+	void AdditiveAnim(_float fTimeDelta) override;
 
 private:
 	void Set_AttackType();
@@ -97,18 +101,20 @@ private:
 	void Set_AFType();
 	void Reset_AF();
 
-private:
+private:	/* Animation Event Func */
+	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOffTrail(_bool bIsInit, _float fTimeDelta);
 
+private:
 	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};
 	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, -0.31f};
 	_float4x4 m_WeaponPivotMatrix;
 
-
 	_float3 m_vRightLegPivotTrans = { -0.26f, -0.02f, -0.06f};	
 	_float4x4 m_RightLegPivotMatrix;
 
-
 	class CGameObject* m_pHat = nullptr;
+	map<const string, class CEffect_Base*>	m_mapEffect;
 
 	_float4 m_fEmissiveColor = _float4(10.f, 0.f, 10.f, 0.f);
 	_float	m_fHDRIntensity = 0.2f;

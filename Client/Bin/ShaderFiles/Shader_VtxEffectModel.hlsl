@@ -2,32 +2,36 @@
 
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+float4			g_WorldCamPosition;
+float			g_fFar = 500.f;
 /**********************************/
 
 /* For. Parts */
 matrix			g_SocketMatrix;
 /************/
 
+/**********Common Texture*********/
 texture2D		g_DepthTexture, g_NormalTexture;
 texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
-texture2D		g_DissolveTexture;
+
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
+/**********************************/
 
-/* Type */
+/**********Common Option*********/
 int		g_TextureRenderType, g_BlendType;
-bool     g_IsUseMask, g_IsUseNormal;
+bool    g_IsUseMask, g_IsUseNormal;
 int		g_SeparateWidth, g_SeparateHeight;
-uint		g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-float     g_WidthFrame, g_HeightFrame, g_Time;
-float4   g_vColor;
-float4   g_WorldCamPosition;
-/* ~Type */
+uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+float   g_WidthFrame, g_HeightFrame, g_Time;
+float4  g_vColor;
+/**********************************/
 
-/* Dissolve */
-bool    g_bDissolve;
-float    g_fDissolveTime;
-/* ~Dissolve */
+/**********Dissolve*********/
+bool       g_bDissolve;
+float      g_fDissolveTime;
+texture2D  g_DissolveTexture;
+/***************************/
 
 /* Arrow */
 float	g_WaveHeight;
@@ -187,7 +191,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 2.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.0f, 0.0f, 0.0f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
 
 	return Out;
 }
@@ -228,6 +232,7 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 	float	fColorRatio;
 	vector	vColor;
 
+	/************************** Hp **************************/
 	if (fHpRatio > 0.7f)
 	{
 		vColor = float4(0.f, 0.f, 0.f, 0.f);
@@ -256,27 +261,33 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 
 		finalcolor = finalcolor + vColor;
 	}
+	/************************** Hp **************************/
 
 	if (g_bDissolve)
 	{
-		float fDissolveAmount = g_fDissolveTime;
+		float fDissolveAmount = g_fDissolveTime * 2.f;
+		float vDissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-		float4 vDissolve = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
-		half dissolve_value = vDissolve.r;
+		float useDissolve = vDissolve - fDissolveAmount < 0;
 
-		if (dissolve_value >= fDissolveAmount)
-			discard;
-
-		else if (dissolve_value >= fDissolveAmount && fDissolveAmount != 0)
+		if (g_HpRatio <= 0.0f)
 		{
-			if (finalcolor.a != 0.0f)
-				finalcolor = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), finalcolor.a);
+			finalcolor = finalcolor + useDissolve;
+			float threshold = fDissolveAmount * 0.3f * 1.5f;
+
+			clip(vDissolve - threshold);
+		}
+		else
+		{
+			finalcolor = finalcolor + useDissolve*(1 - useDissolve);
+			float threshold = fDissolveAmount * 0.7f;
+			clip(threshold - vDissolve);
 		}
 	}
 
 	Out.vDiffuse = finalcolor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	return Out;
 }
 
@@ -444,7 +455,7 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
 	Out.vDiffuse = vfinalblendColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -470,7 +481,7 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	float4 vColor = float4(255.f, 136.f, 98.f, 255.f) / 255.f;
 	Out.vDiffuse = vDissolve * vColor * 3.f;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -487,12 +498,6 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 
 	if (dissolve_value <= fDissolveAmount)
 		discard;
-
-	//else if (dissolve_value <= fDissolveAmount && fDissolveAmount != 0)
-	//{
-	//	if (Out.vDiffuse.a != 0.0f)
-	//		Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
-	//}
 
 	float4 vColor = g_vColor;
 	Out.vDiffuse = vDiffuse * vColor * 3.f;
@@ -516,7 +521,7 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 	}
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -564,6 +569,39 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 	return Out;
 }
 
+
+//PS_SWIPES_CHARGED
+PS_OUT PS_SWIPES_CHARGED(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.8f, 1.0f), float2(0.0f, time));
+
+	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
+
+	vector vRedRim = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vector vIcenoise = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+
+	vector vLerpTexture = lerp(vRedRim, vIcenoise, vRedRim.r);
+	vLerpTexture.a = vLerpTexture.r;
+
+	vector texturefresnel = vector(fresnel_glow(4.f, 4.5f, vLerpTexture.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	texturefresnel.a = texturefresnel.r * 0.1f;
+
+	vector fresnel = vector(fresnel_glow(0.5f, 3.5f, swipes_charged_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
+	fresnel.a = fresnel.r * 0.1f;
+
+	vector vSwipe05 = g_DTexture_2.Sample(LinearSampler, OffsetUV);
+	vSwipe05.a = vSwipe05.r * 0.1f;
+
+	Out.vDiffuse = texturefresnel + fresnel + vSwipe05 * (swipes_charged_color * 3.f);
+
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	return Out;
+}
+
 PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -574,7 +612,35 @@ PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 
 	Out.vDiffuse = vFinalColor * 100.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 6.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 6.f, 0.f);
+
+	return Out;
+}
+
+//PS_FIRE_SWIPES
+PS_OUT PS_FIRE_SWIPES(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.3f, 1.0f), float2(0.0f, time));
+
+	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
+
+	vector customNoise = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	customNoise.a = customNoise.r;
+	vector t_fur_noise = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+	t_fur_noise.a = 0.2f;
+	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f));
+	vector T_swipe05 = g_DTexture_3.Sample(LinearSampler, OffsetUV);
+	T_swipe05.a = T_swipe05.r * 0.1f;
+
+	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 3.5f);
+	T_ramp04.a = T_ramp04.r * fAlpha;
+
+	Out.vDiffuse = T_ramp04;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -749,4 +815,31 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_EFFECTSHAMAN();
 	}
+
+	pass Swipes_Charged // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SWIPES_CHARGED();
+	}
+
+	pass Fire_Swipes // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FIRE_SWIPES();
+	}
+
 }

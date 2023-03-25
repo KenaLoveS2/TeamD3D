@@ -145,7 +145,10 @@
 #include "E_RotBombExplosion.h"
 #include "E_P_Explosion.h"
 #include "E_BombTrail.h"
-
+#include "E_RectTrail.h"
+#include "E_Swipes_Charged.h"
+#include "E_WarriorTrail.h"
+#include "E_Warrior_FireSwipe.h"
 
 /* ~Effects */
 
@@ -165,7 +168,7 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-#include "E_RectTrail.h"
+
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1611,7 +1614,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_Boss_Warrior
 	PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Warrior/Boss_Warrior.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_Boss_Warrior_Hat
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Warrior_Hat",
@@ -1820,6 +1823,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_FireSwipe */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FireSwipe",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/FireSwipe.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Cube */
@@ -2079,6 +2087,21 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_RectTrail */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RectTrail"),
 		CE_RectTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Swipes_Charged */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Swipes_Charged"),
+		CE_Swipes_Charged::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Swipes_Changed.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_WarriorTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorTrail"),
+		CE_WarriorTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_FireSwipe */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_FireSwipe"),
+		CE_Warrior_FireSwipe::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object
