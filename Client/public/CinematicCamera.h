@@ -30,10 +30,14 @@ public:
 private:
 	void	AddKeyFrame(CAMERAKEYFRAME keyFrame);
 	void  Interpolate(float time, _float3& position, _float3& lookAt);
-	_float3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
+	XMFLOAT3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
 
 private:
+	_bool	m_bPlay = false;
 	vector<CAMERAKEYFRAME> m_keyframes;
+
+	_float	m_fDeltaTime = 0.f;
+	_float	m_fInputTime = 0.5f;
 
 public:
 	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

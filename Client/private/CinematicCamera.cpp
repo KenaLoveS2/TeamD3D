@@ -43,9 +43,48 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CCinematicCamera::Tick(_float TimeDelta)
+void CCinematicCamera::Tick(_float fTimeDelta)
 {
-	CCamera::Tick(TimeDelta);
+	if (m_bPlay)
+	{
+		m_fDeltaTime += fTimeDelta;
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		_float3 InterPolatePos = _float3(vPos.x, vPos.y, vPos.z);
+		_float3 InterPolateLook = _float3(vLook.x, vLook.y, vLook.z);
+		Interpolate(m_fDeltaTime, InterPolatePos, InterPolateLook);
+		vPos = _float4(InterPolatePos.x, InterPolatePos.y, InterPolatePos.z, 1.f);
+		vLook = _float4(InterPolateLook.x, InterPolateLook.y, InterPolateLook.z, 0.f);
+		m_pTransformCom->Set_Position(vPos);
+		m_pTransformCom->Set_Look(vLook);
+	}
+	else
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+		if (pGameInstance->Key_Pressing(DIK_W))
+			m_pTransformCom->Go_Straight(fTimeDelta);
+
+		if (pGameInstance->Key_Pressing(DIK_S))
+			m_pTransformCom->Go_Backward(fTimeDelta);
+
+		if (pGameInstance->Key_Pressing(DIK_A))
+			m_pTransformCom->Go_Left(fTimeDelta);
+
+		if (pGameInstance->Key_Pressing(DIK_D))
+			m_pTransformCom->Go_Right(fTimeDelta);
+
+		if (pGameInstance->Get_DIMouseState(DIM_RB) & 0x80)
+		{
+			long	MouseMove = 0;
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+				m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+		}
+		RELEASE_INSTANCE(CGameInstance);
+	}
+	CCamera::Tick(fTimeDelta);
 }
 
 void CCinematicCamera::Late_Tick(_float TimeDelta)
@@ -61,6 +100,28 @@ HRESULT CCinematicCamera::Render()
 void CCinematicCamera::Imgui_RenderProperty()
 {
 	CCamera::Imgui_RenderProperty();
+	ImGui::InputFloat("InputTime", &m_fInputTime);
+	if(ImGui::Button("Add KeyFrame"))
+	{
+		CAMERAKEYFRAME keyFrame;
+		ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
+		if(m_fInputTime != 0.f)
+		{
+			keyFrame.fTime = (m_keyframes.size() * m_fInputTime) + 0.5f;
+			keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			keyFrame.vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			m_keyframes.push_back(keyFrame);
+		}
+	}
+
+	if (ImGui::Button("Clear") && m_bPlay)
+	{
+		m_fDeltaTime = 0.f;
+		m_keyframes.clear();
+	}
+		
+
+	ImGui::Checkbox("Play", &m_bPlay);
 }
 
 void CCinematicCamera::AddKeyFrame(CAMERAKEYFRAME keyFrame)
@@ -84,17 +145,24 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 		i++;
 	}
 
-	// Calculate the parameter t for the interpolation
-	float t = (time - m_keyframes[i - 1].fTime) / (m_keyframes[i].fTime - m_keyframes[i - 1].fTime);
+	if (numKeyframes > i + 2)
+	{
+		// Calculate the parameter t for the interpolation
+		float t = 0.f;
+		if(m_keyframes[i].fTime - m_keyframes[i - 1].fTime != 0)
+			 t = (time - m_keyframes[i - 1].fTime) / (m_keyframes[i].fTime - m_keyframes[i - 1].fTime);
+		else
+			t = time - m_keyframes[i - 1].fTime;
 
-	// Calculate the interpolated position and look-at direction
-	position = CatmullRomInterpolation(m_keyframes[i - 1].vPos, m_keyframes[i].vPos,
-		m_keyframes[i + 1].vPos, m_keyframes[i + 2].vPos, t);
-	lookAt = CatmullRomInterpolation(m_keyframes[i - 1].vLookAt, m_keyframes[i].vLookAt,
-		m_keyframes[i + 1].vLookAt, m_keyframes[i + 2].vLookAt, t);
+		// Calculate the interpolated position and look-at direction
+		position = CatmullRomInterpolation(m_keyframes[i - 1].vPos, m_keyframes[i].vPos,
+			m_keyframes[i + 1].vPos, m_keyframes[i + 2].vPos, t);
+		lookAt = CatmullRomInterpolation(m_keyframes[i - 1].vLookAt, m_keyframes[i].vLookAt,
+			m_keyframes[i + 1].vLookAt, m_keyframes[i + 2].vLookAt, t);
+	}
 }
 
-_float3 CCinematicCamera::CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t)
+XMFLOAT3 CCinematicCamera::CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t)
 {
 	XMFLOAT3 v;
 	v.x = 0.5f * ((2.0f * p1.x) +	(-p0.x + p2.x) * t +	(2.0f * p0.x - 5.0f * p1.x + 4.0f * p2.x - p3.x) * t * t +	(-p0.x + 3.0f * p1.x - 3.0f * p2.x + p3.x) * t * t * t);
