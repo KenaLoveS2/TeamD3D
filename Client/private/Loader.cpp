@@ -357,23 +357,35 @@ HRESULT CLoader::Loading_ForMapTool()
 #pragma region Test_Gimmick_OBJ
 	if (bRealObject ==false)
 	{
+#pragma region Map_Four
+/*
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Bell", true, true, true)))
 			assert(!"Map4/Bell");
-
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Beam", true, true, true)))
 			assert(!"Map4/FarmEntranceStructure/Beam");
-
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Pillar", true, true, true)))
 			assert(!"Map4/FarmEntranceStructure/Pillar");
-
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Root", true, true, true)))
 			assert(!"Map4/FarmEntranceStructure/Root");
-
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Structure", true, true, true)))
 			assert(!"Map4/FarmEntranceStructure/Structure");
-
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Tree_Rock", true, true, true)))
-			assert(!"Map4/FarmEntranceStructure/Tree_Rock");
+			assert(!"Map4/FarmEntranceStructure/Tree_Rock");*/
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/BirdHouse", true, true, true)))
+			assert(!"Map4/HouseKit/BirdHouse");
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainGate", true, true, true)))
+			assert(!"Map4/HouseKit/MainGate");
+		
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainHouse", true, true, true)))
+			assert(!"Map4/HouseKit/MainHouse");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/Rock", true, true, true)))
+			assert(!"Map4/HouseKit/Rock");
+
+#pragma endregion Map_Four
+
+	
 
 
 	}
