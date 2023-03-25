@@ -1993,5 +1993,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl">
       <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

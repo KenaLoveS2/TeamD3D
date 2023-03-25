@@ -45,6 +45,10 @@ private:
 	CVIBuffer_Rect*					m_pVIBufferCom;
 	CModel*							m_pModelCom;
 
+private:
+	//aiTextureType					m_eTextureType;
+	_float							m_fTest = 0.f;
+
 public:
 	static CEffect_Mesh_Base*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg = nullptr) override;

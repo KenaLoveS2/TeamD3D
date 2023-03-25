@@ -48,10 +48,12 @@ HRESULT CEffect_Mesh_Base::Initialize(void * pArg)
 		m_pfileName = (_tchar*)pArg;
 		if (FAILED(Load_Data(m_pfileName)))
 		{
+			m_pTransformCom->Set_Scaled({ 5.f, 5.f, 5.f });
 		}
 	}
 	else
 	{
+		m_pTransformCom->Set_Scaled({ 5.f, 5.f, 5.f });
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -60,7 +62,9 @@ HRESULT CEffect_Mesh_Base::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-
+	/* Temp */
+	m_pTransformCom->Set_Scaled({ 5.f, 5.f ,5.f });
+	m_fTest = 0.f;
 	return S_OK;
 }
 
@@ -91,7 +95,12 @@ HRESULT CEffect_Mesh_Base::Render()
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
+	{
+	//	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		//m_pModelCom->Bind_Material(m_pShaderCom, 0, m_eTextureType, "g_DiffuseTexture");
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_iRenderPass);
+	}
 
 	return S_OK;
 }
@@ -104,6 +113,21 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 	Set_ModelCom();
 
 	m_pTransformCom->Imgui_RenderProperty();
+
+	if (ImGui::CollapsingHeader("Render")) {
+		/* RenderPass */
+		static _int iRenderPass;
+		iRenderPass = m_iRenderPass;
+		const char* renderPass[2] = { "Default", "OnlyColor" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+			m_iRenderPass = iRenderPass;
+
+		ColorCode();
+
+		static _float fTest = 0.f;
+		if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
+			m_fTest = fTest;
+	}
 }
 
 HRESULT CEffect_Mesh_Base::Save_Data()
@@ -177,6 +201,9 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 		return E_FAIL; 
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fTest", &m_fTest, sizeof(_float))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
