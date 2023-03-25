@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Bell/Materials/MI_WSArena_Bell.MI_WSArena_Bell'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Bell/Materials/MI_WSArena_Bell.MI_WSArena_Bell'
+        MaterialSlotName = T_SummoningBell_D
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2174.28, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.0661316, Y=0.21167, Z=-297.871 }
+    BoxExtent = { X=256.09, Y=255.327, Z=300.197 }
+    SphereRadius = 384.649
+}

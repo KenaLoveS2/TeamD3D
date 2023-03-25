@@ -1,0 +1,274 @@
+Parent = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/Trees/Giant/_MI_GodTrees_Master._MI_GodTrees_Master'
+ScalarParameterValues[22] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Specular }
+        ParameterValue = 0.03
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_AO_Intensity }
+        ParameterValue = 1.19579
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_Diffuse_Intensity }
+        ParameterValue = 1.88954
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Base_Normal_Intensity }
+        ParameterValue = 1.70333
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Base_Roughness }
+        ParameterValue = 5.42842
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Base_UV_Tiling }
+        ParameterValue = 18.1124
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=Desaturate_Diffuse }
+        ParameterValue = 0.142858
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=Detail_Normal_Intensity }
+        ParameterValue = -1.15742
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=Detail_Roughness }
+        ParameterValue = 3.9
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=Detail_UV_Tiling }
+        ParameterValue = -0.048761
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=Emissive_Contrast }
+        ParameterValue = 0.3
+        ParameterName = None
+    }
+    ScalarParameterValues[11] =
+    {
+        ParameterInfo = { Name=Emissive_Falloff_Distance }
+        ParameterValue = -1.7
+        ParameterName = None
+    }
+    ScalarParameterValues[12] =
+    {
+        ParameterInfo = { Name=Emissive_Falloff_Power }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[13] =
+    {
+        ParameterInfo = { Name=Blend_Bias }
+        ParameterValue = -0.307506
+        ParameterName = None
+    }
+    ScalarParameterValues[14] =
+    {
+        ParameterInfo = { Name=Blend_Sharpness }
+        ParameterValue = 1.90738
+        ParameterName = None
+    }
+    ScalarParameterValues[15] =
+    {
+        ParameterInfo = { Name=TopLayer_Normal_Intensity }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[16] =
+    {
+        ParameterInfo = { Name=TopLayer_UV_Tiling }
+        ParameterValue = 0.256
+        ParameterName = None
+    }
+    ScalarParameterValues[17] =
+    {
+        ParameterInfo = { Name=Global_WindStrength }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[18] =
+    {
+        ParameterInfo = { Name=Blend_Contrast }
+        ParameterValue = 11
+        ParameterName = None
+    }
+    ScalarParameterValues[19] =
+    {
+        ParameterInfo = { Name=Falloff_Distance }
+        ParameterValue = -1
+        ParameterName = None
+    }
+    ScalarParameterValues[20] =
+    {
+        ParameterInfo = { Name=Falloff_Power }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[21] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[5] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Color_Tex_02 }
+        ParameterValue = Texture2D'/Game/Mochi/MaterialLibrary/Textures/Bark/T_TreeBranch_Bark_Tile_D.T_TreeBranch_Bark_Tile_D'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Base_Diffuse_Tex }
+        ParameterValue = Texture2D'/Game/Virtuos/Environment/BarkTileableTexture/T_BarkTileableTexture_D.T_BarkTileableTexture_D'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Base_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Structures/Village/FarmEntranceStructure/Textures/T_EntranceStructure_09_N.T_EntranceStructure_09_N'
+        ParameterName = None
+    }
+    TextureParameterValues[3] =
+    {
+        ParameterInfo = { Name=Base_Comp_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Art/Inorganic/Structures/Village/FarmEntranceStructure/Textures/T_EntranceStructure_09_Comp_M_R_Ao.T_EntranceStructure_09_Comp_M_R_Ao'
+        ParameterName = None
+    }
+    TextureParameterValues[4] =
+    {
+        ParameterInfo = { Name=Detail_Normal_Tex }
+        ParameterValue = Texture2D'/Game/Mochi/Environment/Tests/MaterialBlending_Tests/Textures/T_BarkTest_02_N.T_BarkTest_02_N'
+        ParameterName = None
+    }
+}
+VectorParameterValues[4] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Base_Diffuse_Overlay }
+        ParameterValue = { R=0.166667, G=0.082253, B=0.048598, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Emissive_Color }
+        ParameterValue = { R=0, G=0.533333, B=1, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[2] =
+    {
+        ParameterInfo = { Name=WorldVector_ColorAlign }
+        ParameterValue = { R=0.283423, G=0, B=1, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[3] =
+    {
+        ParameterInfo = { Name=TopLayer_ColorOverlay }
+        ParameterValue = { R=0.664369, G=0.755208, B=0.554606, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Opaque (0)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[7] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_ColorMask }
+            bOverride = true
+        }
+        StaticSwitchParameters[1] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use_Diffuse_Map }
+            bOverride = true
+        }
+        StaticSwitchParameters[2] =
+        {
+            Value = true
+            ParameterInfo = { Name=Detail_Worldspace_UV }
+            bOverride = true
+        }
+        StaticSwitchParameters[3] =
+        {
+            Value = true
+            ParameterInfo = { Name=Invert_Glow_Map }
+            bOverride = true
+        }
+        StaticSwitchParameters[4] =
+        {
+            Value = false
+            ParameterInfo = { Name=Use_Emissive }
+            bOverride = true
+        }
+        StaticSwitchParameters[5] =
+        {
+            Value = true
+            ParameterInfo = { Name=SwitchTo - WorldAlign }
+            bOverride = true
+        }
+        StaticSwitchParameters[6] =
+        {
+            Value = true
+            ParameterInfo = { Name=Enable_TreeWind }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[1] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 8.0625
+        UVChannelIndex = 0
+        TextureName = T_NoiseCaustic02
+    }
+}
