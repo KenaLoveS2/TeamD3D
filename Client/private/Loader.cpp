@@ -85,9 +85,11 @@
 #include "FieldBecon_Anim.h"
 #include "DZ_FallenTree_Anim.h"
 #include "Chest_Anim.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
+#include "Effect_Mesh_Base.h"
 
 /* Effects */
 #include "Effect_Point_Instancing.h"
@@ -1536,6 +1538,11 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/* Effect_Particle_Base  */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Particle_Base"),
 		CEffect_Particle_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Effect_Mesh_Base  */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Mesh_Base"),
+		CEffect_Mesh_Base::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

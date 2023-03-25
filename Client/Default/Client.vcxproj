@@ -668,7 +668,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />

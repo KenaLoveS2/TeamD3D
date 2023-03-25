@@ -79,7 +79,7 @@ void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CEffect_Mesh_Base::Render()
@@ -98,10 +98,12 @@ HRESULT CEffect_Mesh_Base::Render()
 
 void CEffect_Mesh_Base::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader(" > ModelCom"))
-	{
-		Set_ModelCom();
-	}
+	ImGui::Separator();
+
+	ImGui::Text("<Set Model>");
+	Set_ModelCom();
+
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 HRESULT CEffect_Mesh_Base::Save_Data()
@@ -121,6 +123,16 @@ HRESULT CEffect_Mesh_Base::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
+	/* For.Com_Shader */ 
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Mesh_S2"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), TEXT("Com_DiffuseTexture"),
+		(CComponent**)&m_pDiffuseTextureCom[0])))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -138,7 +150,8 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
+	//if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
+	//	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
@@ -177,36 +190,44 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 	ImGui::RadioButton("Cube", &iSelected, 1); ImGui::SameLine();
 	ImGui::RadioButton("Cone", &iSelected, 2); ImGui::SameLine();
 	ImGui::RadioButton("Sphere", &iSelected, 3); ImGui::SameLine();
-	ImGui::RadioButton("ShockBall", &iSelected, 4);
+	ImGui::RadioButton("ShockBall", &iSelected, 4); ImGui::SameLine();
+	ImGui::RadioButton("Cylinder", &iSelected, 5); ImGui::SameLine();
 
-	if (m_pModelCom != nullptr)
+	if (ImGui::Button("Model Confirm"))
 	{
-		Delete_Component(L"Com_Model");
-	}
+		if (m_pModelCom != nullptr)
+		{
+			Delete_Component(L"Com_Model");
+		}
 
-	/* For.Com_Model */
-	switch (iSelected)
-	{
-	case 0:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 1:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 2:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 3:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 4:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
+		/* For.Com_Model */
+		switch (iSelected)
+		{
+		case 0:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 1:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 2:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 3:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 4:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 5:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		}
 	}
 
 	return S_OK;

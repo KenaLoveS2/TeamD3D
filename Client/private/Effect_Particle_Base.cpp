@@ -118,8 +118,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[2] = { "Default", "BlackDiffuse" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+		const char* renderPass[3] = { "DefaultHaze", "BlackHaze", "BlackGather" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 3, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
@@ -139,8 +139,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[1] = { "Haze" };
-		ImGui::ListBox("Type", &iType, list, 1, 1);
+		const char* list[3] = { "Haze", "Gather", "Parabola" };
+		ImGui::ListBox("Type", &iType, list, 3, 5);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -178,6 +178,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		ImGui::DragFloat3("vSpeedMax", (_float*)&vSpeedMax, 0.10f, -10.0f, 10.0f, "%.3f");
 		tInfo.vSpeedMax = vSpeedMax;
 
+		static _float	fPlaySpeed = tInfo.fPlaySpeed;
+		ImGui::DragFloat("fPlaySpeed", &fPlaySpeed, 0.10f, 0.0f, 50.0f, "%.3f");
+		tInfo.fPlaySpeed = fPlaySpeed;
+
 
 		if (ImGui::Button("Reset"))
 		{
@@ -194,6 +198,7 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 			vSpeedMax = tInfo.vSpeedMax;
 			vMinPos = tInfo.vMinPos;
 			vMaxPos = tInfo.vMaxPos;
+			fPlaySpeed = tInfo.fPlaySpeed;
 		} 
 		ImGui::SameLine(); ImGui::PushItemWidth(5);
 		
@@ -202,6 +207,15 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 			if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
 				MSG_BOX("The Update Process ended unexpectedly. Please Check the Code.");
 		}
+	}
+
+	ImGui::Separator();
+	/* Position */
+	{
+		static _float4  vPosition = { 0.f, 0.f,0.f,1.f };
+		vPosition = m_pTransformCom->Get_Position();
+		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
+			m_pTransformCom->Set_Position(vPosition);
 	}
 
 	ImGui::Separator();
@@ -282,6 +296,8 @@ HRESULT CEffect_Particle_Base::Save_Data()
 				json["17. maxPos"].push_back(fElement);
 			}
 
+			json["18. fPlaySpeed"] = tInfo.fPlaySpeed;
+
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
 			file.close();
@@ -339,23 +355,26 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 
 	i = 0;
 	for (auto fElement : jLoad["13. PSize"])
-		fElement.get_to<_float>(*((_float*)&tInfo.vPSize + i++));
+		fElement.get_to<float>(*((float*)&tInfo.vPSize + i++));
 
 	i = 0;
 	for (auto fElement : jLoad["14. SpeedMin"])
-		fElement.get_to<_float>(*((_float*)&tInfo.vSpeedMin + i++));
+		fElement.get_to<float>(*((float*)&tInfo.vSpeedMin + i++));
 
 	i = 0;
 	for (auto fElement : jLoad["15. SpeedMax"])
-		fElement.get_to<_float>(*((_float*)&tInfo.vSpeedMax + i++));
+		fElement.get_to<float>(*((float*)&tInfo.vSpeedMax + i++));
 
 	i = 0;
 	for (auto fElement : jLoad["16. minPos"])
-		fElement.get_to<_float>(*((_float*)&tInfo.vMinPos + i++));
+		fElement.get_to<float>(*((float*)&tInfo.vMinPos + i++));
 
 	i = 0;
 	for (auto fElement : jLoad["17. maxPos"])
-		fElement.get_to<_float>(*((_float*)&tInfo.vMaxPos + i++));
+		fElement.get_to<float>(*((float*)&tInfo.vMaxPos + i++));
+
+	float fValue;
+	jLoad["18. fPlaySpeed"].get_to<float>(fValue);
 
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
@@ -372,7 +391,7 @@ HRESULT CEffect_Particle_Base::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_EffectS2"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Particle_S2"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 

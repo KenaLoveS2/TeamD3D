@@ -60,8 +60,8 @@ HRESULT CLevel_GamePlay::Initialize()
 // 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 // 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -285,7 +285,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossShaman"), L"BossShaman_0", nullptr, &pGameObject))) return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &pGameObject))) return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_ShamanTrapHex"), L"ShamanTrapHex_0", nullptr, &pGameObject))) return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_BossHunter"), L"BossHunter_0", nullptr, &pGameObject))) return E_FAIL;
 
