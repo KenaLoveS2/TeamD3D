@@ -70,7 +70,8 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
+	m_bRenderActive = true;//m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
+
 #else
 	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
 #endif
@@ -175,9 +176,6 @@ HRESULT CEnviromentObj::Set_UpTexture_FilePathToMaterial(CModel * pModel , const
 void CEnviromentObj::Free()
 {
 	__super::Free();
-
-	
-
 
 }
 

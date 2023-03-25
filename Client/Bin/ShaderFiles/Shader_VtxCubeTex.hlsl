@@ -5,6 +5,8 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 textureCUBE		g_Texture;
 
+float				g_fColorIntensity;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -51,8 +53,12 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
-	
+	vector FinalColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+	FinalColor.rgb *= g_fColorIntensity;
+
+	Out.vColor = FinalColor;
+
 	return Out;
 }
 

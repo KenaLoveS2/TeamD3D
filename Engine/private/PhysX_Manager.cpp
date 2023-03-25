@@ -77,6 +77,7 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		(filterData0.word0 == MONSTER_WEAPON  &&  filterData1.word0 == MONSTER_WEAPON) ||
 		
 		(filterData0.word0 == PLAYER_BODY &&  filterData1.word0 == PLAYER_BODY) ||
+		(filterData0.word0 == MONSTER_BODY &&  filterData1.word0 == MONSTER_BODY) ||
 		
 		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == MONSTER_WEAPON)			||
 		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)

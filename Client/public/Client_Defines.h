@@ -38,7 +38,7 @@ namespace Client
 
 	enum COLLIDER_INDEX {
 		COL_NULL, COL_DEFAULT,
-		COL_PLAYER, COL_PLAYER_BUMP, COL_PLAYER_WEAPON, COL_PLAYER_ARROW,
+		COL_PLAYER, COL_PLAYER_BUMP, COL_PLAYER_WEAPON, COL_PLAYER_ARROW, COL_PLAYER_BOMB,
 
 		COL_ROT,
 
@@ -47,7 +47,7 @@ namespace Client
 		COL_BOSS_MONSTER, COL_BOSS_MONSTER_WEAPON,
 		
 		COL_GROUND, COL_ENVIROMENT,COL_PULSE_PLATE,
-		COL_PULSE,
+		COL_PULSE, COL_GIMMICK_TREE, COL_TELEPORT_FLOWER,
 		COLLIDER_INDEX_END,
 	};
 
@@ -55,6 +55,7 @@ namespace Client
 		TRIGGER_ROT,
 		TRIGGER_PULSE_PLATE,
 		TRIGGER_PULSE,
+		TRIGGER_TELEPORT_FLOWER,
 		TRIGGER_END
 	};
 }
@@ -64,6 +65,8 @@ extern bool				g_bNeedResizeSwapChain;
 extern bool				g_bWinActive;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
+extern float				g_fSkyColorIntensity;
+extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
 
@@ -73,6 +76,9 @@ static const _float4x4 g_IdentityFloat4x4 = {
 	0,0,1,0,
 	0,0,0,1,
 };
+
+static const _bool g_bFalse = false;
+static const _bool g_bTrue = true;
 
 
 using namespace Client;

@@ -253,7 +253,10 @@ void CTransform::Imgui_RenderProperty_ForJH()
 {
 	ImGui::Separator();
 	ImGui::InputFloat("Speed Per Sec", &m_TransformDesc.fSpeedPerSec, 0.1f, 0.5f);
-	ImGui::InputFloat("Rotation Per Sec", &m_TransformDesc.fRotationPerSec, 0.01f, 0.05f);
+
+	_float	fRotateDeg = XMConvertToDegrees(m_TransformDesc.fRotationPerSec);
+	ImGui::InputFloat("Rotation Per Sec", &fRotateDeg, 0.01f, 0.05f);
+	m_TransformDesc.fRotationPerSec = XMConvertToRadians(fRotateDeg);
 
 	ImGuizmo::BeginFrame();
 
@@ -563,7 +566,10 @@ void CTransform::Chase(_fvector vTargetPos, _float fTimeDelta, _float fLimit, _b
 	
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
-	LookAt_NoUpDown(vTargetPos);
+	if (bChaseY)
+		LookAt(vTargetPos);
+	else
+		LookAt_NoUpDown(vTargetPos);
 
 	if(fDistance > fLimit)
 	{		
@@ -974,6 +980,9 @@ void CTransform::Clear_Actor()
 	{
 		m_pPhysX_Manager->Delete_Actor(iter.pActor);
 	}
+
+	m_pPxActor = nullptr;
+	m_pPhysX_Manager = nullptr;
 }
 
 void CTransform::Update_AllCollider(_float4x4 PivotMatrix)

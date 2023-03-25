@@ -355,7 +355,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(50);
+	m_pKenaStatus->Set_Attack(20);
 #endif	
 	
 	if (m_bAim && m_bJump)
@@ -374,19 +374,19 @@ void CKena::Tick(_float fTimeDelta)
 
 	Test_Raycast();
 
-// 	if (m_bParry == true)
-// 	{
-// 		if (m_iCurParryFrame == m_iParryFrameCount)
-// 		{
-// 			m_bCommonHit = true;
-// 			//m_bHeavyHit = true;
-// 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
-// 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
-// 
-// 			m_bParry = false;
-// 			m_pAttackObject = nullptr;
-// 		}
-// 	}
+ 	if (m_bParry == true)
+ 	{
+ 		if (m_iCurParryFrame == m_iParryFrameCount)
+ 		{
+ 			m_bCommonHit = true;
+ 			//m_bHeavyHit = true;
+ 			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
+ 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+ 
+ 			m_bParry = false;
+ 			m_pAttackObject = nullptr;
+ 		}
+ 	}
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -830,6 +830,12 @@ HRESULT CKena::RenderReflect()
 
 void CKena::Imgui_RenderProperty()
 {
+	if (ImGui::Button("Recompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
 
@@ -884,7 +890,6 @@ void CKena::ImGui_ShaderValueProperty()
 	{
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
-		system("../../Copy.bat");
 	}
 
 	__super::ImGui_ShaderValueProperty();

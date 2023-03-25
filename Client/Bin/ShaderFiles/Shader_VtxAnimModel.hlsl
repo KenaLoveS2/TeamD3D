@@ -277,10 +277,10 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float4		FinalColor = float4(0, 0, 0, 1);
+	float4		FinalColor = float4(0, 0, 0,1);
 	FinalColor = vDiffuse + vEmissive;
 
-	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
+	Out.vDiffuse = vector(FinalColor.rgb, vDiffuse.a);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;

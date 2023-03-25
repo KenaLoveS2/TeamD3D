@@ -65,13 +65,6 @@ void CUI_NodeBossHP::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_P))
-	{
-		static _float fGuage = 1.f;
-		fGuage -= 0.1f;
-		m_vecEvents[EVENT_GUAGE]->Call_Event(fGuage);
-	}
-
 	__super::Tick(fTimeDelta);
 }
 

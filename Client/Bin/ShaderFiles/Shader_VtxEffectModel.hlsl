@@ -6,17 +6,22 @@ float4			g_WorldCamPosition;
 float			g_fFar = 500.f;
 /**********************************/
 
+/* For. Parts */
+matrix			g_SocketMatrix;
+/************/
+
 /**********Common Texture*********/
 texture2D		g_DepthTexture, g_NormalTexture;
 texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
 
+texture2D		g_DissolveTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 /**********************************/
 
 /**********Common Option*********/
 int		g_TextureRenderType, g_BlendType;
-bool    g_IsUseMask, g_IsUseNormal;
+bool     g_IsUseMask, g_IsUseNormal;
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
@@ -58,9 +63,9 @@ struct VS_OUT
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	float3      vWorldNormal : TEXCOORD2;
-	float3      vViewDir : TEXCOORD3;
-	float4      vWorldPosition : TEXCOORD4;
+	float3		vWorldNormal : TEXCOORD2;
+	float3		vViewDir : TEXCOORD3;
+	float4		vWorldPosition : TEXCOORD4;
 	float4		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 };
@@ -81,7 +86,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
 	Out.vWorldNormal = normalize(mul(In.vNormal, (float3x3)g_WorldMatrix));
-
 	Out.vWorldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vViewDir = normalize(Out.vWorldPosition.xyz - g_WorldCamPosition.xyz);
 
@@ -107,10 +111,37 @@ VS_OUT VS_ARROW(VS_IN In)
 	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
 	Out.vWorldNormal = normalize(mul(In.vNormal, (float3x3)g_WorldMatrix));
-
 	Out.vWorldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vViewDir = normalize(Out.vWorldPosition.xyz - g_WorldCamPosition.xyz);
 
+	return Out;
+}
+
+VS_OUT VS_MAIN_SOCKET(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	vPosition = mul(vPosition, g_SocketMatrix);
+
+	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	vNormal = mul(vNormal, g_SocketMatrix);
+
+	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
+	vTangent = mul(vTangent, g_SocketMatrix);
+
+	Out.vPosition = mul(float4(vPosition.xyz, 1.f), matVP);
+	Out.vNormal = normalize(vNormal);
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
+	Out.vTangent = normalize(vTangent);
+	Out.vBinormal = normalize(cross(vNormal.xyz, vTangent.xyz));
+
+	Out.vWorldNormal = vNormal.xyz;
+	Out.vWorldPosition = float4(vPosition.xyz, 1.f);
+	Out.vViewDir = normalize(Out.vWorldPosition.xyz - g_WorldCamPosition.xyz);
 	return Out;
 }
 
@@ -539,6 +570,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 	return Out;
 }
 
+
 //PS_SWIPES_CHARGED
 PS_OUT PS_SWIPES_CHARGED(PS_IN In)
 {
@@ -568,6 +600,18 @@ PS_OUT PS_SWIPES_CHARGED(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+
+PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	vector vFinalColor = vDiffuse * g_vColor;
+
+	Out.vDiffuse = vFinalColor * 100.f;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 6.f, 0.f);
 
 	return Out;
 }
@@ -730,7 +774,20 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_PULSEINNER();
 	}
 
-	pass Swipes_Charged // 12
+	pass Effect_Shaman //12
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_EFFECTSHAMAN();
+	}
+
+	pass Swipes_Charged // 13
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);

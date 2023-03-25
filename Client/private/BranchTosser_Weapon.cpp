@@ -82,7 +82,7 @@ HRESULT CBranchTosser_Weapon::Late_Initialize(void* pArg)
 		PxCapsuleDesc.fRestitution = 0.1f;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(m_pBranchTosser, false, COL_MONSTER_WEAPON));
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(m_WeaponDesc.pOwnerMonster, false, COL_MONSTER_WEAPON));
 		m_pTransformCom->Add_Collider(PxCapsuleDesc.pActortag, g_IdentityFloat4x4);		
 	}
 
@@ -218,11 +218,6 @@ HRESULT CBranchTosser_Weapon::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	/* For.Com_Dissolve_Texture */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_Dissolve"), TEXT("Com_Dissolve_Texture"),
-		(CComponent**)&m_pDissolveTextureCom)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -271,7 +266,7 @@ HRESULT CBranchTosser_Weapon::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)), E_FAIL);
 	if (bDissolve)
 	{	
-		_float fDissolveTime = m_pBranchTosser->Get_DissolveTime();
+		_float fDissolveTime = m_WeaponDesc.pOwnerMonster->Get_DissolveTime();
 		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &fDissolveTime, sizeof(_float)))) return E_FAIL;
 		if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 	}
@@ -308,6 +303,4 @@ CGameObject* CBranchTosser_Weapon::Clone(void* pArg)
 void CBranchTosser_Weapon::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pDissolveTextureCom);
 }
