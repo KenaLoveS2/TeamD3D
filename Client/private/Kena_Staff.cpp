@@ -226,7 +226,7 @@ void CKena_Staff::ImGui_ShaderValueProperty()
 #ifdef _DEBUG
 HRESULT CKena_Staff::RenderCine()
 {
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
@@ -234,46 +234,13 @@ HRESULT CKena_Staff::RenderCine()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i <= 1)
+		if (i == 0)
 		{
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-			/********************* For. Kena PostProcess By WJ*****************/
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			/******************************************************************/
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
+			// Render Off
+			continue;
 		}
-
-		if (m_pPlayer->Is_Bow() == true)
-		{
-			if (i == 2)
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 9);
-			}
-
-			if (i == 3) // M_bowTrails == 3
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
-			}
-
-			if (i == 4)
-			{
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_NoiseTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_SwipeTexture");
-				m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_GradientTexture");
-				/******************************************************************/
-				m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 10);
-			}
-		}
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 	}
 
 	return S_OK;

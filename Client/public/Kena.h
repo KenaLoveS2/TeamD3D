@@ -62,7 +62,8 @@ public:
 	virtual HRESULT			RenderShadow() override;
 
 #ifdef _DEBUG
-	virtual HRESULT			RenderCine() override;
+	virtual HRESULT		RenderCine() override;
+	HRESULT					SetUp_CineShaderResources();
 #endif
 
 	virtual void				Imgui_RenderProperty() override;
@@ -171,10 +172,6 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
-
-#ifdef _DEBUG
-	HRESULT					SetUp_CineShaderResources();
-#endif
 
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();

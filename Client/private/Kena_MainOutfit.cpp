@@ -169,7 +169,7 @@ void CKena_MainOutfit::ImGui_ShaderValueProperty()
 #ifdef _DEBUG
 HRESULT CKena_MainOutfit::RenderCine()
 {
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
@@ -177,35 +177,13 @@ HRESULT CKena_MainOutfit::RenderCine()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-
 		if (i == 0)
 		{
-			// Real Cloth			
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
+			// Render Off
+			continue;
 		}
-		else	if (i == 1 || i == 2)
-		{
-			// Shoes & Bag
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 5);
-		}
-		else if (i == 3 || i == 4)
-		{
-			// Boots & Hair
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_HairDepthTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_HairAlphaTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_ROOT, "g_HairRootTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 6);
-		}
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 	}
 
 	return S_OK;

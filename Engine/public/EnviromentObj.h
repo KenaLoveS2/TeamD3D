@@ -48,21 +48,26 @@ public:
 	class CRenderer* Get_RendererCom() { return m_pRendererCom; }
 	
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual void Tick(_float fTimeDelta);
-	virtual void Late_Tick(_float fTimeDelta);
-	virtual HRESULT Render();
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(_float fTimeDelta) override;
+	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT Render() override;
+	virtual HRESULT RenderCine() override;
 	virtual void Imgui_RenderProperty() override;
-	virtual void ImGui_ShaderValueProperty();
+	virtual void ImGui_ShaderValueProperty() override;
 	virtual void ImGui_PhysXValueProperty()override;
 
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
-	virtual  void		Imgui_RenderComponentProperties()override;
+	virtual  void				Imgui_RenderComponentProperties()override;
 
 protected:
 	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
+
+#ifdef _DEBUG
+	HRESULT					SetUp_CineShaderResources();
+#endif
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;

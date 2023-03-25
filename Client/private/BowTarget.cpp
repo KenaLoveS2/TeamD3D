@@ -44,7 +44,10 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom && m_bRenderActive)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CBowTarget::Render()
@@ -127,6 +130,39 @@ HRESULT CBowTarget::RenderShadow()
 
 	return S_OK;
 }
+
+#ifdef _DEBUG
+HRESULT CBowTarget::RenderCine()
+{
+	if (FAILED(__super::RenderCine()))
+		return E_FAIL;
+
+	if (FAILED(__super::SetUp_CineShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_pModelCom->Get_IStancingModel())
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
+		}
+	}
+
+	return S_OK;
+}
+#endif
 
 HRESULT CBowTarget::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {

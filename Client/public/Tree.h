@@ -26,6 +26,10 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
+#ifdef _DEBUG
+	virtual HRESULT		RenderCine() override;
+#endif
+
 public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;

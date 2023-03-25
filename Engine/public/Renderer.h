@@ -75,6 +75,7 @@ private:
 	_bool										m_bPhysXRenderFlag = false;
 	_bool										m_bStaticShadow = false;
 	_bool										m_bDynamicShadow = false;
+	_bool										m_bCine = true;
 	_bool										m_bSSAO = true;
 	_float										m_fDistortTime = 0.f;
 	_float										m_fPrevCaptureTime = 0.f;

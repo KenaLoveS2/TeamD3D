@@ -31,7 +31,8 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("DISTORT", &m_bDistort);
 	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
 	ImGui::Checkbox("MOTIONBLUR", &m_bMotionBlur);
-	ImGui::Checkbox("FLARE", &m_bFlare);
+	ImGui::Checkbox("FLARE", &m_bFlare); 
+	ImGui::Checkbox("CINE", &m_bCine);
 	if(ImGui::Button("ReCompile"))
 		ReCompile();
 }
@@ -62,6 +63,17 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 				Safe_Release(pGameObject);
 			}
 			m_RenderObjects[RENDER_SHADOW].clear();
+		}
+	}
+	else if(!m_bCine && eRenderGroup == RENDER_CINE)
+	{
+		if (!m_RenderObjects[eRenderGroup].empty())
+		{
+			for (auto& pGameObject : m_RenderObjects[RENDER_CINE])
+			{
+				Safe_Release(pGameObject);
+			}
+			m_RenderObjects[RENDER_CINE].clear();
 		}
 	}
 	else
@@ -419,8 +431,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 	}
 
-	if (FAILED(Render_Cine()))
-		return E_FAIL;
+	if(m_bCine)
+	{
+		if (FAILED(Render_Cine()))
+			return E_FAIL;
+	}
 
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;

@@ -104,6 +104,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	//CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
     m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	return;
 	m_pGroundMark->Late_Tick(fTimeDelta);
 	return;
@@ -132,6 +133,32 @@ void CTerrain::Imgui_RenderProperty()
 	m_pTransformCom->Imgui_RenderProperty();
 	ImGui::End();*/
 }
+
+#ifdef _DEBUG
+HRESULT CTerrain::RenderCine()
+{
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_CineShaderResources()))
+		return E_FAIL;
+
+	m_pShaderCom->Begin(0);
+
+	m_pVIBufferCom->Render();
+
+	return S_OK;
+}
+
+HRESULT CTerrain::SetUp_CineShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	return S_OK;
+}
+#endif
 
 void CTerrain::Imgui_Tool_Add_Component(_uint iLevel, const _tchar* ProtoTag, const _tchar* ComTag)
 {
