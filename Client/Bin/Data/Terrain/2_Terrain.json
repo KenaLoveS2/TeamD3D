@@ -7,7 +7,7 @@
                               -29.5, 1.186, 485.107, 1.0 ],
       "1_CloneTag": "Terrain2",
       "2_DiffuseTag": "Prototype_Component_Texture_Terrain",
-      "3_FillterTag": "Prototype_Component_Terrain_Two_Filter",
+      "3_FillterTag": "Prototype_Component_Terrain_Three_Filter",
       "4_NormalTag": "",
       "5_Diffuse_TextureNum": 3,
       "6_FillterOne_TextureNum": 0,

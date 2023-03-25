@@ -445,6 +445,7 @@ private:
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Spin_Attack();
 	HRESULT					SetUp_State_Sprint();
+	HRESULT					SetUp_State_TeleportFlower();
 
 private:
 	/* IDLE */
@@ -697,6 +698,8 @@ private:
 	void						Start_Sprint_Lean_Right(_float fTimeDelta);
 	void						Start_Sprint_Turn_180(_float fTimeDelta);
 	void						Start_Sprint_Attack(_float fTimeDelta);
+	/* TELEPORT FLOWER */
+	void						Start_Teleport_Flower(_float fTimeDelta);
 
 private:
 	/* IDLE */
@@ -868,6 +871,8 @@ private:
 	void						Tick_Sprint_Lean_Right(_float fTimeDelta);
 	void						Tick_Sprint_Turn_180(_float fTimeDelta);
 	void						Tick_Sprint_Attack(_float fTimeDelta);
+	/* TELEPORT FLOWER */
+	void						Tick_Teleport_Flower(_float fTimeDelta);
 
 private:
 	/* IDLE */
@@ -1039,12 +1044,19 @@ private:
 	void						End_Sprint_Lean_Right(_float fTimeDelta);
 	void						End_Sprint_Turn_180(_float fTimeDelta);
 	void						End_Sprint_Attack(_float fTimeDelta);
+	/* TELEPORT FLOWER */
+	void						End_Teleport_Flower(_float fTimeDelta);
 
 private:	/* Changer */
 	_bool	TruePass();
 	_bool	OnGround();
 	_bool	CommonHit();
 	_bool	HeavyHit();
+	_bool	Pulse_Jump();
+	_bool	Parry();
+	_bool	Teleport_Flower();
+	_bool	RotWisp_Interactable();
+
 	_bool	Animation_Finish();
 	_bool	Animation_Progress(_float fProgress);
 	_bool	Direction_Change();
@@ -1052,14 +1064,12 @@ private:	/* Changer */
 	_bool	HeavyAttack1_Perfect();
 	_bool	HeavyAttack2_Perfect();
 	_bool	HeavyAttack3_Perfect();
-	_bool	Parry();
 	_bool	Damaged_Dir_Front();
 	_bool	Damaged_Dir_Back();
 	_bool	Damaged_Dir_Left();
 	_bool	Damaged_Dir_Right();
 	_bool	Check_PipCount();
 	_bool	Check_ArrowCount();
-	_bool	RotWisp_Interactable();
 
 	_bool	KeyInput_None();
 	_bool	KeyInput_Direction();

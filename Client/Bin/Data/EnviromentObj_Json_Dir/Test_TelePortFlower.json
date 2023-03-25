@@ -1,1 +1,31 @@
-{"0_LayerTag":"Layer_Enviroment","1_Data":[{"0_ProtoTag":"Prototype_GameObject_TeleportFlower","1_ModelTag":"Prototype_Component_Model_WaterPlaneSmall","2_ShaderOption":0,"3_CloneTag":"TeleFlower_","4_RoomIndex":0,"5_ChapterType":0,"7_Transform State":[-0.5594725608825684,0.828848659992218,0.0,0.0,-0.828848659992218,-0.5594725608825684,0.0,0.0,0.0,0.0,0.9999991655349731,0.0,22.26352310180664,10.448468208312988,1.3604731559753418,1.0]}]}
+{
+    "0_LayerTag": "Layer_Enviroment",
+    "1_Data": [
+        {
+            "0_ProtoTag": "Prototype_GameObject_TeleportFlower",
+            "1_ModelTag": "Prototype_Component_Model_WaterPlaneSmall",
+            "2_ShaderOption": 0,
+            "3_CloneTag": "Teleport_Flower",
+            "4_RoomIndex": 0,
+            "5_ChapterType": 0,
+            "7_Transform State": [
+                -0.5594725608825684,
+                0.828848659992218,
+                0.0,
+                0.0,
+                -0.828848659992218,
+                -0.5594725608825684,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.9999991655349731,
+                0.0,
+                22.26352310180664,
+                10.448468208312988,
+                1.3604731559753418,
+                1.0
+            ]
+        }
+    ]
+}
