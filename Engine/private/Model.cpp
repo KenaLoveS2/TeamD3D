@@ -247,7 +247,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		CloseHandle(hFile);
 	}
 	else if (!lstrcmp(wszExt, L".model"))
-		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
+ 		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
 
 	return S_OK;
 }

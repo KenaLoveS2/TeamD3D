@@ -118,12 +118,12 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 		Out[1].vTexUV = float2(1.0f, 0.f);
 		Out[1].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = vPosition + vUp;
+		vResultPos = vPosition;
 		Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[2].vTexUV = float2(1.0f, 1.f);
 		Out[2].fLife = In[0].fLife / g_fLife;
 
-		vResultPos = vPosition - vUp;
+		vResultPos = vPosition;
 		Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 		Out[3].vTexUV = float2(0.f, 1.f);
 		Out[3].fLife = In[0].fLife / g_fLife;
@@ -190,20 +190,14 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector   type = g_TypeTexture.Sample(LinearSampler, In.vTexUV);
 	vector	 flow = g_FlowTexture.Sample(LinearSampler, In.vTexUV);
+	vector   type = g_TypeTexture.Sample(LinearSampler, In.vTexUV);
+	// R = 1, G = 0.2, B = 1, A = 1
 
-	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
-
-	float4 vColor = g_vColor;
-
-	Out.vColor = flow + vColor;
+	float4 finalcolor = flow + g_vColor;
+	Out.vColor = finalcolor * type;
 	Out.vColor.a = Out.vColor.r * In.fLife;
 	Out.vColor.rgb = Out.vColor.rgb * 1.4f;
-	
-	if (g_bDistanceAlpha == true)
-		Out.vColor.a = Out.vColor.a * fAlpha;
-
 	return Out;
 }
 
@@ -211,7 +205,7 @@ technique11 DefaultTechnique
 {
 	pass Warrior_Trail // 0
 	{
-		SetRasterizerState(RS_CULLNONE);
+		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 

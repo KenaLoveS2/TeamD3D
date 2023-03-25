@@ -14,14 +14,13 @@ matrix			g_SocketMatrix;
 texture2D		g_DepthTexture, g_NormalTexture;
 texture2D		g_MaskTexture, g_ReamTexture, g_DiffuseTexture;
 
-texture2D		g_DissolveTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
 /**********************************/
 
 /**********Common Option*********/
 int		g_TextureRenderType, g_BlendType;
-bool     g_IsUseMask, g_IsUseNormal;
+bool    g_IsUseMask, g_IsUseNormal;
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
@@ -600,6 +599,8 @@ PS_OUT PS_SWIPES_CHARGED(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	return Out;
+}
 
 PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 {
@@ -611,7 +612,35 @@ PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 
 	Out.vDiffuse = vFinalColor * 100.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 6.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 6.f, 0.f);
+
+	return Out;
+}
+
+//PS_FIRE_SWIPES
+PS_OUT PS_FIRE_SWIPES(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float  time = frac(g_Time * 0.5f);
+	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.3f, 1.0f), float2(0.0f, time));
+
+	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
+
+	vector customNoise = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	customNoise.a = customNoise.r;
+	vector t_fur_noise = g_DTexture_1.Sample(LinearSampler, In.vTexUV);
+	t_fur_noise.a = 0.2f;
+	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.5f));
+	vector T_swipe05 = g_DTexture_3.Sample(LinearSampler, OffsetUV);
+	T_swipe05.a = T_swipe05.r * 0.1f;
+
+	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 3.5f);
+	T_ramp04.a = T_ramp04.r * fAlpha;
+
+	Out.vDiffuse = T_ramp04;
+	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -799,4 +828,18 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_SWIPES_CHARGED();
 	}
+
+	pass Fire_Swipes // 14
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FIRE_SWIPES();
+	}
+
 }

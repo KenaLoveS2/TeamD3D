@@ -258,6 +258,7 @@
     <ClInclude Include="..\public\E_Swipes_Charged.h" />
     <ClInclude Include="..\public\E_TeleportRot.h" />
     <ClInclude Include="..\public\E_WarriorTrail.h" />
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\public\FakeShaman.h" />
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
@@ -498,6 +499,7 @@
     <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
     <ClCompile Include="..\private\E_WarriorTrail.cpp" />
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\private\FakeShaman.cpp" />
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />

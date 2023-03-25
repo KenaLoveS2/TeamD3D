@@ -25,6 +25,7 @@ public:
 
 private:
 	HRESULT			SetUp_ShaderResources();
+	HRESULT			SetUp_Components();
 	void			Imgui_RenderProperty() override;
 
 private:

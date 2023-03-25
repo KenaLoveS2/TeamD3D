@@ -41,12 +41,12 @@ HRESULT CE_WarriorTrail::Initialize(void * pArg)
 
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.8f; //5.f
-	m_eEFfectDesc.fLife = 0.25f; //1.f
+	m_eEFfectDesc.fWidth = 3.5f; 
+	m_eEFfectDesc.fLife = 0.7f; 
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.01f; // 0.5f
-	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
+	m_eEFfectDesc.fSegmentSize = 0.01f;
+	m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
 	/* ~Trail Option */
 
 	m_eEFfectDesc.bActive = false;
@@ -62,6 +62,36 @@ void CE_WarriorTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+
+	ImGui::Begin("Warrior Trail");
+
+	if (ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+	ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
+	ImGui::InputFloat("Alpha", &m_eEFfectDesc.fAlpha);
+	ImGui::InputFloat("SegmentSize", &m_eEFfectDesc.fSegmentSize);
+
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
+
+	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
+
+	ImGui::End();
 }
 
 void CE_WarriorTrail::Late_Tick(_float fTimeDelta)
@@ -83,7 +113,7 @@ HRESULT CE_WarriorTrail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(4);
+	m_pShaderCom->Begin(0);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;

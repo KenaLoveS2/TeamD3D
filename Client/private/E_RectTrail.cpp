@@ -45,7 +45,6 @@ HRESULT CE_RectTrail::Initialize(void * pArg)
 
 HRESULT CE_RectTrail::Late_Initialize(void * pArg)
 {
-
 	return S_OK;
 }
 
@@ -171,7 +170,8 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fFrame[0] = 126.f;
 		m_eEFfectDesc.iPassCnt = 11;
 		m_eEFfectDesc.fLife = 0.5f;
-		m_eEFfectDesc.vColor = XMVectorSet(255.f, 120.f, 255.f, 255.f) / 255.f;
+		m_eEFfectDesc.fWidth = 5.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
 		break;
 
 	case Client::CE_RectTrail::OBJ_ROTWISP:

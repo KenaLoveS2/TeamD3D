@@ -36,13 +36,10 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	/* Component */
-	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
-	/* ~Component */
+	if (FAILED(SetUp_Components()))
+		return E_FAIL;
 
 	m_eEFfectDesc.bActive = false;
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_SPHERE;
 	return S_OK;
 }
 
@@ -142,9 +139,17 @@ HRESULT CE_Swipes_Charged::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CE_Swipes_Charged::SetUp_Components()
+{	
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
+	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_SPHERE;
+
+	return S_OK;
+}
+
 void CE_Swipes_Charged::Imgui_RenderProperty()
 {
-	ImGui::InputFloat4("Diffuse", (_float*)&m_eEFfectDesc.fFrame);
 }
 
 CE_Swipes_Charged * CE_Swipes_Charged::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

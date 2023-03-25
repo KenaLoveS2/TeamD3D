@@ -82,7 +82,8 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Render_ImGui();
 
-	m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	//m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	m_pGameInstance->Clear_Graphic_Device(&_float4(0.5f, 0.5f, 0.5f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
 

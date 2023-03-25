@@ -139,8 +139,26 @@ HRESULT CEffect_Mesh_T::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
+	if(Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER)
+	{
+		_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			if (i == 0) // 외부
+			{
+				m_pModelCom->Render(m_pShaderCom, 0, nullptr, 14);
+			}
+			if (i == 1) // 내부
+			{
+				continue;
+				m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
+			}
+		}
+	}
+	
+	//if(m_pModelCom != nullptr)
+	//	m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
 }
@@ -349,7 +367,7 @@ HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FireSwipe"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}
