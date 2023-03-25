@@ -193,6 +193,7 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
+    <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\Public\Crystal.h" />
     <ClInclude Include="..\Public\Cliff_Rock.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h" />
+    <ClInclude Include="..\public\Effect_Mesh_Base.h" />
     <ClInclude Include="..\public\Effect_Particle_Base.h" />
     <ClInclude Include="..\public\Effect_Mesh.h" />
     <ClInclude Include="..\public\Effect_Mesh_T.h" />
@@ -212,6 +214,7 @@
     <ClInclude Include="..\public\Effect_Point_Instancing_T.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\Effect_T.h" />
+    <ClInclude Include="..\public\Effect_Texture_Base.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\public\Effect_Trail_T.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
@@ -431,6 +434,7 @@
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
+    <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
@@ -442,6 +446,7 @@
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp" />
+    <ClCompile Include="..\private\Effect_Mesh_Base.cpp" />
     <ClCompile Include="..\private\Effect_Particle_Base.cpp" />
     <ClCompile Include="..\private\Effect_Mesh.cpp" />
     <ClCompile Include="..\private\Effect_Mesh_T.cpp" />
@@ -449,6 +454,7 @@
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp" />
+    <ClCompile Include="..\private\Effect_Texture_Base.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />

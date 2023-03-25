@@ -9,29 +9,42 @@
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Node(pDevice, pContext)
-	, m_bFullFilled(false)
+	, m_fGuage(0.f)
 {
 }
 
 CUI_NodeAmmoBombGuage::CUI_NodeAmmoBombGuage(const CUI_NodeAmmoBombGuage & rhs)
 	: CUI_Node(rhs)
-	, m_bFullFilled(false)
+	, m_fGuage(0.f)
 {
 }
 
-void CUI_NodeAmmoBombGuage::Set_Guage(_float fNextGuage)
+void CUI_NodeAmmoBombGuage::Set_Guage(_float fGuage)
 {
-	/* Bomb guage doesn't go down step by step. */
-	/* full-filled -> and if use -> it goes zero */
-	/* so if fGuage == 0, fullfilled texture changed to normal texture */
-	/* and after cool time end -> it goes back to Full */
+	m_fGuage = fGuage;
 
-	if (fNextGuage == 0.f)
-	{
-		m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, 0);
-		m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
-	}
+	///* Bomb guage doesn't go down step by step. */
+	///* full-filled -> and if use -> it goes zero */
+	///* so if fGuage == 0, fullfilled texture changed to normal texture */
+	///* and after cool time end -> it goes back to Full */
+	//if (fNextGuage == 0.f)
+	//{
+	//	m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, )0;
+	//	m_vecEvents[EVENT_GUAGE]->Call_Event(-1.f);
+	//}
 
+}
+
+void CUI_NodeAmmoBombGuage::Change_To_FullFilledImage()
+{
+	//m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, TEX_FULL);
+	m_iTextureIdx = TEX_FULL;
+}
+
+void CUI_NodeAmmoBombGuage::Change_To_GuageImage()
+{
+	//m_vecEvents[EVENT_TEXCHANGE]->Call_Event(this, TEX_DEFAULT);
+	m_iTextureIdx = TEX_DEFAULT;
 }
 
 HRESULT CUI_NodeAmmoBombGuage::Initialize_Prototype()
@@ -61,9 +74,10 @@ HRESULT CUI_NodeAmmoBombGuage::Initialize(void * pArg)
 
 	/* Events */
 	/* 이미지가 변경되도록 하는 이벤트 */
-	UIDESC* tDesc = (UIDESC*)pArg;
-	m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
-	m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
+	//UIDESC* tDesc = (UIDESC*)pArg;
+	//m_vecEvents.push_back(CUI_Event_Guage::Create(tDesc->fileName));
+	//m_vecEvents.push_back(CUI_Event_ChangeImg::Create(tDesc->fileName));
+	m_iTextureIdx = TEX_FULL;
 
 	return S_OK;
 }
@@ -159,6 +173,9 @@ HRESULT CUI_NodeAmmoBombGuage::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom[TEXTURE_MASK]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 			return E_FAIL;
 	}
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &m_fGuage, sizeof(_float))))
+		return E_FAIL;
 
 	return S_OK;
 }
