@@ -56,6 +56,31 @@ HRESULT CE_RotBombExplosion::Initialize(void * pArg)
 
 HRESULT CE_RotBombExplosion::Late_Initialize(void * pArg)
 {	
+	_float3 vPos = _float3(0.f, 0.f, 0.f);
+	_float3 vPivotScale = _float3(1.f, 0.f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	// Capsule X == radius , Y == halfHeight
+	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+	PxSphereDesc.eType = SPHERE_DYNAMIC;
+	PxSphereDesc.pActortag = m_szCloneObjectTag;
+	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.fRadius = vPivotScale.x;
+	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxSphereDesc.fDensity = 1.f;
+	PxSphereDesc.fAngularDamping = 0.5f;
+	PxSphereDesc.fMass = 59.f;
+	PxSphereDesc.fLinearDamping = 1.f;
+	PxSphereDesc.bCCD = true;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_WEAPON;
+	PxSphereDesc.fDynamicFriction = 0.5f;
+	PxSphereDesc.fStaticFriction = 0.5f;
+	PxSphereDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_BOMB_EXPLOSION));
+
+	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
 	return S_OK;
 }
@@ -85,12 +110,16 @@ void CE_RotBombExplosion::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			vScaled *= fTimeDelta + 1.3f;
+			vScaled.x += fTimeDelta * 2.f;
+			vScaled.y += fTimeDelta * 2.f;
+			vScaled.z += fTimeDelta * 2.f;
 			m_pTransformCom->Set_Scaled(vScaled);
-			m_vecChild[0]->Set_AddScale(fTimeDelta + 1.3f);
+			m_vecChild[0]->Set_AddScale(fTimeDelta * 2.f);
 		}
 	}
-
+	else
+		Reset();
+	
 	if (m_bBomb) // »ç¶óÁü
 	{
 		m_fDissolveTime += fTimeDelta;
@@ -140,6 +169,14 @@ HRESULT CE_RotBombExplosion::Render()
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
+}
+
+void CE_RotBombExplosion::Reset()
+{
+	m_bBomb = false;
+	m_fTimeDelta = 0.f;
+	m_fBombTime = 0.f;
+	m_fDissolveTime = 0.f;
 }
 
 HRESULT CE_RotBombExplosion::SetUp_ShaderResources()

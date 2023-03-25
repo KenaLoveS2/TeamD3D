@@ -339,19 +339,19 @@ void CChannel::Additive_TransformMatrixForMonster(_float PlayTime, _float fAddit
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
 
-void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)
+void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matBonesTransfomation, _bool RootBoneRotationLock, _bool RootBoneTranslationLock, CChannel * pBlendChannel)
 {
-	if (m_pBone->Get_BoneLocked() == true)
-	{
-		if (isRootBone == true)
-		{
-			matBonesTransfomation = XMMatrixIdentity();
-			m_pBone->Set_TransformMatrix(XMMatrixIdentity());
-			return;
-		}
-		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
-			return;
-	}
+// 	if (m_pBone->Get_BoneLocked() == true)
+// 	{
+// 		if (isRootBone == true)
+// 		{
+// 			matBonesTransfomation = XMMatrixIdentity();
+// 			m_pBone->Set_TransformMatrix(XMMatrixIdentity());
+// 			return;
+// 		}
+// 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
+// 			return;
+// 	}
 
 	_vector			vScale;
 	_vector			vRotation;
@@ -424,7 +424,7 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 		}
 	}
 
-	if (isRootBone == false)
+	if (RootBoneRotationLock == false && RootBoneTranslationLock == false)
 	{
 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
 			matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
@@ -457,19 +457,26 @@ void CChannel::Update_TransformMatrix_ReturnMat(_float PlayTime, _smatrix & matB
 		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
 		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vBasePos, matTransform);
 
-		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+		if (RootBoneTranslationLock == true)
+		{
+			pOwner->Calc_RootBoneDisplacement(vDisplacement);
+			vPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+		}
 
 		matTransform = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		
 		_vector	vSc, vRot, vTrans;
 		XMMatrixDecompose(&vSc, &vRot, &vTrans, matTransform);
 
-		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		if (RootBoneRotationLock == true)
+			vRotation = vRot;
+
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 	}
 }
 
-void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRadio, _smatrix & matBonesTransfomation, _bool isRootBone, CChannel * pBlendChannel)
+void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRadio, _smatrix & matBonesTransfomation, _bool RootBoneRotationLock, _bool RootBoneTranslationLock, CChannel * pBlendChannel)
 {
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
@@ -550,7 +557,7 @@ void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRad
 	vPosition = XMVectorLerp(vBasePos, vPosition, fBlendRadio);
 	vPosition = XMVectorSetW(vPosition, 1.f);
 
-	if (isRootBone == false)
+	if (RootBoneRotationLock == false && RootBoneTranslationLock == false)
 	{
 		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMQuaternionIdentity(), vRotation, vPosition);
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
@@ -563,19 +570,26 @@ void CChannel::Blend_TransformMatrix_ReturnMat(_float PlayTime, _float fBlendRad
 		_matrix			matTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixRotationX(XMConvertToRadians(-90.f)) * pOwner->Get_WorldMatrix();
 		_vector			vDisplacement = XMVector3TransformCoord(vPosition, matTransform) - XMVector3TransformCoord(vPrePos, matTransform);
 
-		pOwner->Calc_RootBoneDisplacement(vDisplacement);
+		if (RootBoneTranslationLock == true)
+		{
+			pOwner->Calc_RootBoneDisplacement(vDisplacement);
+			vPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+		}
 
 		matTransform = XMMatrixRotationX(XMConvertToRadians(-90.f));
 
 		_vector	vSc, vRot, vTrans;
 		XMMatrixDecompose(&vSc, &vRot, &vTrans, matTransform);
 
-		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRot, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		if (RootBoneRotationLock == true)
+			vRotation = vRot;
+
+		matBonesTransfomation = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 		m_pBone->Set_TransformMatrix(matBonesTransfomation);
 	}
 }
 
-void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAdditiveRatio, _smatrix & matBonesTransfomation, _bool isRootBone)
+void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAdditiveRatio, _smatrix & matBonesTransfomation, _bool RootBoneRotationLock, _bool RootBoneTranslationLock)
 {
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, matBonesTransfomation);
@@ -625,7 +639,7 @@ void CChannel::Additive_TransformMatrix_ReturnMat(_float PlayTime, _float fAddit
 	vPosition = XMVectorLerp(vBasePos, vBasePos + vPosition, fAdditiveRatio);
 	vPosition = XMVectorSetW(vPosition, 1.f);
 
-	if (isRootBone == false)
+	if (RootBoneRotationLock == false && RootBoneTranslationLock == false)
 	{
 // 		if (m_pBone->Get_BoneRotateLocked() == false && m_pBone->Get_BonePositioinLocked() == false)
 // 		{

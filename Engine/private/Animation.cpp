@@ -348,7 +348,7 @@ void CAnimation::Update_Bones_AdditiveForMonster(_float fTimeDelta, _float fRati
 	}
 }
 
-void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim, _bool IsLerp)
+void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim, _bool RootBoneRotationLock, _bool RootBoneTranslationLock, _bool IsLerp)
 {
 	if (true == m_isFinished)
 	{
@@ -391,7 +391,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				continue;
 
  			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
- 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true);
+ 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], RootBoneRotationLock, RootBoneTranslationLock);
  			else
 				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i]);
 		}
@@ -407,9 +407,9 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 				continue;
 
 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], RootBoneRotationLock, RootBoneTranslationLock, pBlendAnim->m_Channels[i]);
 			else
-				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
+				m_Channels[i]->Update_TransformMatrix_ReturnMat((_float)m_PlayTime, matBonesTransformation[i], false, false, pBlendAnim->m_Channels[i]);
 		}
 	}
 
@@ -423,7 +423,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	}
 }
 
-void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim)
+void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRatio, _smatrix * matBonesTransformation, const string & strRootBone, CAnimation * pBlendAnim, _bool RootBoneRotationLock, _bool RootBoneTranslationLock)
 {
 	if (true == m_isFinished)
 	{
@@ -468,7 +468,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			}
 
 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true);
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], RootBoneRotationLock, RootBoneTranslationLock);
 			else
 				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i]);
 		}
@@ -487,9 +487,9 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			}
 
 			if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], true, pBlendAnim->m_Channels[i]);
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], RootBoneRotationLock, RootBoneTranslationLock, pBlendAnim->m_Channels[i]);
 			else
-				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], false, pBlendAnim->m_Channels[i]);
+				m_Channels[i]->Blend_TransformMatrix_ReturnMat((_float)m_PlayTime, fBlendRatio, matBonesTransformation[i], false, false, pBlendAnim->m_Channels[i]);
 		}
 	}
 
@@ -503,7 +503,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 	}
 }
 
-void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, const string & strRootBone, _bool IsLerp)
+void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRatio, _smatrix * matBonesTransformation, const string & strRootBone, _bool RootBoneRotationLock, _bool RootBoneTranslationLock, _bool IsLerp)
 {
 	if (true == m_isFinished)
 	{
@@ -537,7 +537,7 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 		}
 		
 		if (!strcmp(m_Channels[i]->Get_Name(), strRootBone.c_str()))
-			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], true);
+			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i], RootBoneRotationLock, RootBoneTranslationLock);
 		else
 			m_Channels[i]->Additive_TransformMatrix_ReturnMat((_float)m_PlayTime, fRatio, matBonesTransformation[i]);
 	}

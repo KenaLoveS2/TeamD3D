@@ -147,17 +147,17 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-
-	if (m_eEFfectDesc.bActive == false)
-   		return;
-
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
 		m_fDissolveTime += fTimeDelta;
 	else
 		m_fDissolveTime = 0.0f;
+
 	Set_Status();
-	
+
+	if (m_eEFfectDesc.bActive == false)
+   		return;
+
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	switch (m_ePulseType)
 	{
@@ -172,6 +172,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			_float3 vScale = Get_InitMatrixScaled();
 			Set_InitMatrixScaled(vScale * 1.3f);
 
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
+
 			_float4 vPos;
 			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 			CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
@@ -185,12 +188,15 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 				m_bNoActive = false;
 				memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 				m_fDissolveTime = 0.0f;
-				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 			}
 		}
 
 		if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
 		{
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 1.f);
+
 			for (auto& pChild : m_vecChild)
 				pChild->Set_Active(true);
 		}
@@ -276,7 +282,7 @@ void CE_KenaPulse::Reset()
 	memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 	Set_InitMatrixScaled(Get_InitMatrixScaled());
 
-	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 }
 
 _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -288,7 +294,30 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			return 0;
 
 		// KenaPulse °ø°Ý·Â ±ð±â
-		m_pStatus->Under_Shield(((CMonster*)pTarget)->Get_MonsterStatusPtr());
+		CStatus*	pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+		if (pStatus->Get_Attack() > 10)
+			m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+		else
+			m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+		m_pKena->Set_AttackObject(pTarget);
+		//
+		CKena:: DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
+		CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
+		_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vDir.Normalize();
+
+		_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+		if (fFrontBackAngle >= 0.f)
+			eDir = CKena::DAMAGED_FRONT;
+		else
+			eDir = CKena::DAMAGED_BACK;
+
+		m_pKena->Set_DamagedDir(eDir);
+		//
+		m_pStatus->Under_Shield(pStatus);
 		m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
 	return 0;
@@ -313,23 +342,8 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	/* Kena Status */
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool)), E_FAIL);
 
-	if (m_eStatus.fCurHp <= 0.0f)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(false);
-		m_bDesolve = true;
-	}
-
 	if (m_bDesolve)
 	{
-		if (m_fDissolveTime > 3.f)
-		{
-			m_bDesolve = false;
-			if (m_eStatus.fCurHp <= 0.0f)
-				m_bPulseZero = true;
-			m_fDissolveTime = 0.0f;
-		}
-
 		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
 	}
@@ -356,8 +370,25 @@ void CE_KenaPulse::Imgui_RenderProperty()
 
 void CE_KenaPulse::Set_Status()
 {
-	m_eStatus.fCurHp = (_float)m_pStatus->Get_Shield();
-	m_eStatus.fMaxHp = (_float)m_pStatus->Get_MaxShield();
+	m_eStatus.fCurHp = m_pStatus->Get_Shield();
+	m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+	if (m_eStatus.fCurHp <= 0.0f)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+		m_bPulseZero = true;
+		Reset();
+		m_eEFfectDesc.bActive = false;
+	}
+	else
+		m_bPulseZero = false;
+
+	if (m_fDissolveTime > 3.f)
+	{
+		m_bDesolve = false;
+		m_fDissolveTime = 0.0f;
+	}
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

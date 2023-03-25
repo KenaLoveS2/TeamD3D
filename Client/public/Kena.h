@@ -45,6 +45,9 @@ public:
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
 	const _bool&				Is_ChargeLight() const { return m_bChargeLight; }
 	void						TurnOn_TeleportFlower() { m_bTeleportFlower = true; }
+	void						Set_State(STATERETURN eState, _bool bValue);
+	void						Set_AttackObject(CGameObject* pObject) { m_pAttackObject = pObject; }
+	void						Set_DamagedDir(DAMAGED_FROM eDir) { m_eDamagedDir = eDir; }
 
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
