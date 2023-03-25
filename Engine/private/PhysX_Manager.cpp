@@ -68,6 +68,7 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		return PxFilterFlag::eDEFAULT;
 	}
 
+
 	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)		||
 		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
 
@@ -77,11 +78,20 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		(filterData0.word0 == MONSTER_WEAPON  &&  filterData1.word0 == MONSTER_WEAPON) ||
 		
 		(filterData0.word0 == PLAYER_BODY &&  filterData1.word0 == PLAYER_BODY) ||
-		(filterData0.word0 == MONSTER_BODY &&  filterData1.word0 == MONSTER_BODY) ||
-		
+				
 		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == MONSTER_WEAPON)			||
-		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)
-	  )
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)	||
+
+
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_PARTS) ||
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_BODY) ||
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_WEAPON) ||		
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == PLAYER_BODY) ||
+
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_PARTS ) ||
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_PARTS ) ||		
+		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == MONSTER_PARTS)
+		)
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}
@@ -1087,7 +1097,7 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
 	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-
+	
 	pTriggerData->pTriggerStatic->attachShape(*pShape);
 	pTriggerData->pTriggerStatic->userData = pTriggerData;
 
@@ -1163,7 +1173,7 @@ PxVec3 CPhysX_Manager::Get_ScalingBox(PxRigidActor *pActor)
 {
 	PxShape* shape;
 	pActor->getShapes(&shape, 1);
-
+	
 	PxGeometryHolder newGeometry = shape->getGeometry();
 	newGeometry.getType();
 

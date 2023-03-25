@@ -34,6 +34,25 @@ HRESULT CWall::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CWall::Late_Initialize(void * pArg)
+{
+	if (m_pModelCom->Get_UseTriangleMeshActor())
+		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+	else
+	{
+		_float3 vPos, vSize;
+		vSize = _float3(0.5f, 0.5f, 0.5f);
+		vPos = _float3(0.0f, 0.f, 0.0f);
+
+		if (m_pModelCom->Get_IStancingModel() == true)
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+		else
+			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	}
+
+	return S_OK;
+}
+
 void CWall::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -45,7 +64,7 @@ void CWall::Late_Tick(_float fTimeDelta)
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
-	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(400.f, WolrdMat))
+	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(250.f, WolrdMat))
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

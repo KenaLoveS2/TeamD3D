@@ -247,7 +247,7 @@ HRESULT CModel::Initialize_Prototype(const _tchar *pModelFilePath, _fmatrix Pivo
 		CloseHandle(hFile);
 	}
 	else if (!lstrcmp(wszExt, L".model"))
-		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
+ 		FAILED_CHECK_RETURN(Load_MeshMaterial(m_wstrModelFilePath), E_FAIL);
 
 	return S_OK;
 }
@@ -2438,6 +2438,17 @@ void CModel::Create_InstModelPxBox(const _tchar * pActorName, CTransform * pConn
 		}
 	}
 
+}
+
+void CModel::Create_PxTriangle(const _tchar * szCloneName, CTransform * pParentTransform, PX_USER_DATA* pUserData)
+{
+	if (m_Meshes.size() == 0)
+		return;
+
+	for (auto &iter : m_Meshes)
+	{
+		iter->Create_PxTriangle_size(szCloneName, pParentTransform, pUserData);
+	}
 }
 
 void CModel::Create_Px_InstTriangle(CTransform* pParentTransform)

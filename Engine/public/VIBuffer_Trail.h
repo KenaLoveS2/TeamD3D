@@ -5,6 +5,9 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Trail final : public CVIBuffer_Instancing
 {
+public:
+	enum TYPE { OBJ_KENA, OBJ_MONSTER, OBJ_BOSS, OBJ_DEFAULT, OBJ_END };
+
 private:
 	CVIBuffer_Trail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Trail(const CVIBuffer_Trail& rhs);
@@ -19,7 +22,7 @@ public:
 	virtual HRESULT Tick(_float fTimeDelta) override;
 	virtual HRESULT Render();
 
-	HRESULT Trail_Tick(CTransform* pTransform , CGameObject* pGameObject, _float fTimeDelta);
+	HRESULT Trail_Tick(_int iObjectType, class CGameObject* pGameObject, _float fTimeDelta);
 
 public:
 	void			Add_Instance(_float4x4 InfoMatrix);

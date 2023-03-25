@@ -24,6 +24,10 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
+	void	Trail_LateTick(_float fTimeDelta);
+	void	Trail_InputRandomPos(_float4 vPosition);
+	void	Trail_InputPos(_float4 vPosition);
+
 public:
 	void	Set_ParticleIdx(_int iIndex) { m_iIndex = iIndex; }
 	_int	Get_ParticleIdx() { return m_iIndex; }
@@ -35,6 +39,8 @@ private:
 protected:
 	_float					m_fTimeDelta = 0.0f;
 	_int					m_iIndex = 0;
+
+	_float					m_fPushBackTime = 0.0f;
 
 public:
 	virtual void			Free() override;

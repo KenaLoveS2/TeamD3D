@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "BossWarrior_Hat.h"
+#include "E_WarriorTrail.h"
+#include "E_RectTrail.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -28,6 +30,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Effects(), E_FAIL);
 	// FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 	// FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
@@ -41,8 +44,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -10.f;
-		m_Desc.WorldMatrix._43 = -10.f;
+		m_Desc.WorldMatrix._41 = -15.f;
+		m_Desc.WorldMatrix._43 = -15.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -139,14 +142,32 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
+	Update_Collider(fTimeDelta);
+	Update_Trail("Halberd_Jnt6");
+	m_pHat->Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
+
+	m_pModelCom->Play_Animation(fTimeDelta);
+	AdditiveAnim(fTimeDelta);
+
+	return;
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
+	Update_Trail("Halberd_Jnt8");
+
 	m_pHat->Tick(fTimeDelta);
-	
+
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -159,6 +180,10 @@ void CBossWarrior::Late_Tick(_float fTimeDelta)
 
 	CMonster::Late_Tick(fTimeDelta);
 	m_pHat->Late_Tick(fTimeDelta);
+
+	for (auto& pEffect : m_mapEffect)
+		pEffect.second->Late_Tick(fTimeDelta);
+
 	if (m_pRendererCom /*&& m_bSpawn*/)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -279,7 +304,10 @@ HRESULT CBossWarrior::Call_EventFunction(const string& strFuncName)
 
 void CBossWarrior::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+
+	TurnOnTrail(true, 0.0f);
+	TurnOffTrail(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -330,9 +358,7 @@ HRESULT CBossWarrior::SetUp_State()
 	
 		.AddState("IDLE")
 		.OnStart([this]()
-	{
-
-		
+	{	
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
@@ -352,7 +378,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return IsParried();
 	})	
-		.AddTransition("IDLE to ENRAGE", "ENRAGE")
+		.AddTransition("IDLE to ENRAGE", "ENRAGE") // 기모아서 가오잡음
 		.Predicator([this]()
 	{
 		return m_bEnRageReady && m_pMonsterStatusCom->Get_PercentHP() < 0.5f;
@@ -367,32 +393,32 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
 	})
-		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK") // 내려찍기
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT")
+		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT") // 내려찍기 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 3;
 	})		
-		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK")
+		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK") // 점프해서 바닥을 찍는다
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
 	})		
-		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT")
+		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT") // 3단 공격 1,2번째 공격에 검기가 날라가고 3번째에 터지는 듯한 느낌
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
@@ -691,7 +717,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -744,15 +770,12 @@ HRESULT CBossWarrior::SetUp_State()
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
 		/* ~HP Bar DeActivate */
 
-
-
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
 
 		m_pKena->Dead_FocusRotIcon(this);
-		m_bDying = true;
-		// m_pUIHPBar->Set_Active(false);		
+		m_bDying = true;		
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -774,7 +797,6 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		
 
-
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
@@ -786,6 +808,41 @@ HRESULT CBossWarrior::SetUp_State()
 		.Build();
 
 	return S_OK;
+}
+
+HRESULT CBossWarrior::SetUp_Effects()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	CEffect_Base* pEffectBase = nullptr;
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorTrail", L"W_Trail"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_Trail", pEffectBase);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"W_MovementParticle"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_BOSS);
+	m_mapEffect.emplace("W_MovementParticle", pEffectBase);
+
+	return S_OK;
+}
+
+void CBossWarrior::Update_Trail(const char * pBoneTag)
+{
+	CBone*	pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+
+	if (m_mapEffect["W_Trail"]->Get_Active() == true)
+	{
+		dynamic_cast<CEffect_Trail*>(m_mapEffect["W_Trail"])->Trail_InputPos(matWorldSocket.r[3]);
+		dynamic_cast<CEffect_Trail*>(m_mapEffect["W_MovementParticle"])->Trail_InputRandomPos(matWorldSocket.r[3]);
+	}
 }
 
 HRESULT CBossWarrior::SetUp_Components()
@@ -913,6 +970,28 @@ void CBossWarrior::Reset_AF()
 {
 }
 
+void CBossWarrior::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnTrail);
+		return;
+	}
+	m_mapEffect["W_Trail"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOffTrail);
+		return;
+	}
+	m_mapEffect["W_Trail"]->Set_Active(false);
+}
+
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBossWarrior*	pInstance = new CBossWarrior(pDevice, pContext);
@@ -942,7 +1021,12 @@ CGameObject* CBossWarrior::Clone(void* pArg)
 void CBossWarrior::Free()
 {
 	CMonster::Free();
+
 	Safe_Release(m_pHat);
+
+	for (auto& Pair : m_mapEffect)
+		Safe_Release(Pair.second);
+	m_mapEffect.clear();
 }
 
 
@@ -995,21 +1079,10 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 	return 0;
 }
 
-void CBossWarrior::Attack_Start(_uint iAnimIndex)
-{
-	m_bRealAttack = true;
-
-	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
-	m_pModelCom->Set_AnimIndex(iAnimIndex);
-}
-
 void CBossWarrior::Attack_End(_uint* pAttackIndex, _uint iMaxAttackIndex, _uint iAnimIndex)
 {
 	(*pAttackIndex)++;
 	(*pAttackIndex) %= iMaxAttackIndex;
 
-	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
-	m_pModelCom->Set_AnimIndex(iAnimIndex);
-
-	m_bRealAttack = false;
+	CMonster::Attack_End(iAnimIndex);
 }

@@ -46,8 +46,8 @@ namespace Client
 		COL_ELETE_MONSTER, COL_ELETE_MONSTER_WEAPON,
 		COL_BOSS_MONSTER, COL_BOSS_MONSTER_WEAPON,
 		
-		COL_GROUND, COL_ENVIROMENT, COL_PULSE_PLATE, COL_TELEPORT_FLOWER,
-		COL_PULSE,
+		COL_GROUND, COL_ENVIROMENT,COL_PULSE_PLATE,
+		COL_PULSE, COL_GIMMICK_TREE, COL_TELEPORT_FLOWER,
 		COLLIDER_INDEX_END,
 	};
 
@@ -65,6 +65,8 @@ extern bool				g_bNeedResizeSwapChain;
 extern bool				g_bWinActive;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
+extern float				g_fSkyColorIntensity;
+extern bool				g_bDayOrNight;
 
 extern unsigned int	g_LEVEL;
 

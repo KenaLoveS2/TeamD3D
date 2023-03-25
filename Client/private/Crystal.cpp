@@ -159,8 +159,10 @@ void CCrystal::Late_Tick(_float fTimeDelta)
 		}
 	}
 #endif
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	
 
-	if (m_pRendererCom && m_bRenderActive)
+	if (m_pRendererCom && m_bRenderActive && CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f))
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

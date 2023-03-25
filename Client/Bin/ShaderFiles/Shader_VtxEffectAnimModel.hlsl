@@ -5,7 +5,7 @@ matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float  g_fFar = 300.f;
+float  g_fFar = 500.f;
 float4 g_WorldCamPosition;
 /**********************************/
 
@@ -260,9 +260,9 @@ PS_OUT PS_MAIN_SHAMANTRAP(PS_IN In)
 
 	vector vEdgeLineTexture = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	vector vFinalColor = g_vColor + vEdgeLineTexture * g_vEdgeLineColor;
+	vector vFinalColor = (g_vColor + vEdgeLineTexture * g_vEdgeLineColor) * 10.f;
 
-	Out.vDiffuse = vFinalColor;
+	Out.vDiffuse = float4(vFinalColor.rgb, g_vColor.a);
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
 	Out.vAmbient = (vector)1.f;

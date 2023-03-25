@@ -52,10 +52,10 @@ void CE_KenaPulseDot::Tick(_float fTimeDelta)
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)
 		Set_Matrix();
