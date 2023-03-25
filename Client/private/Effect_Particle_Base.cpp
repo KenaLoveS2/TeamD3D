@@ -132,8 +132,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		if (m_pVIBufferCom == nullptr)
 			return;
 
-		CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+		CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 		using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
+		ZeroMemory(&tInfo, sizeof(tInfo)); 
+		tInfo = m_pVIBufferCom->Get_Info();
 
 		/* Type */
 		static _int iType = tInfo.eType;
@@ -179,8 +181,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		if (ImGui::Button("Reset"))
 		{
-			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 			using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
+			ZeroMemory(&tInfo, sizeof(tInfo));
+			tInfo = m_pVIBufferCom->Get_Info();
 
 			iType = tInfo.eType;
 			iNumInstance = tInfo.iNumInstance;
@@ -241,7 +245,9 @@ HRESULT CEffect_Particle_Base::Save_Data()
 			}
 			json["04. HDR Intensity"] = m_fHDRIntensity;
 
-			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
+			ZeroMemory(&tInfo, sizeof(tInfo));
+			tInfo = m_pVIBufferCom->Get_Info();
 			json["10. Type"] = (_int)tInfo.eType;
 			json["11. NumInstance"] = tInfo.iNumInstance;
 			json["12. Term"] = tInfo.fTerm;
@@ -416,6 +422,7 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 {
 	/* For. Com_VIBuffer */
 	CVIBuffer_Point_Instancing_S2::POINTINFO	tInfo;
+	ZeroMemory(&tInfo, sizeof(tInfo));
 	tInfo.eType = tInfo.TYPE_HAZE;
 	tInfo.fTerm = 10.0f;
 	tInfo.fTermAcc = 0.0f;
