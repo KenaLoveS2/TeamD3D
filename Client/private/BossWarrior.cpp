@@ -41,8 +41,8 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -10.f;
-		m_Desc.WorldMatrix._43 = -10.f;
+		m_Desc.WorldMatrix._41 = -15.f;
+		m_Desc.WorldMatrix._43 = -15.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -383,7 +383,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
-		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
+		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 3;
 	})		
 		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK") // 점프해서 바닥을 찍는다
 		.Predicator([this]()
@@ -689,7 +689,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()

@@ -3,7 +3,9 @@
 #include "Delegator.h"
 #include "UI_ClientManager.h"
 
-#define MINION_COUNT		3
+#define MINION_COUNT				3
+#define TEXT_COL_SHAMAN_BODY		TEXT("BossShaman_Body_Collider")
+#define TEXT_COL_SHAMAN_WEAPON		TEXT("BossShaman_Weapon_Collider")
 
 BEGIN(Client)
 class CBossShaman : public CMonster
@@ -79,17 +81,32 @@ private:
 	const _float m_fDissolveRate = 1.f / 60.f;
 	const _float m_fBackFlipRange = 2.f;
 	const _float m_fTeleportRange = 2.f;
-		
-	_float m_fTeleportRangeTable[ATTACKTYPE_END] = { 1.5f, 3.f, 4.f, 5.f, 3.f, };
 	
-	_bool m_bTeleport = false;
-	_bool m_bSummon = false;
+	_float m_fTrapOffstY = 1.f;
+	
+	_float m_fTeleportRangeTable[ATTACKTYPE_END] = { 1.5f, 3.f, 4.f, 5.f, 3.f, };
+		
 	_bool m_bSummonEnd = false;
 	_bool m_bFogSnapEnd = false;
+	_bool m_bNoDamage = false;
 	
+	_bool m_bTrapOffset = false;
+	_bool m_bTraptLoop = false;
+	_bool m_bTraptBreak = false;
+
+	_float4 m_vTrapLookPos;
+
+	_float m_fStunTime = 0.f;
+
 	ATTACKTYPE m_eAttackType = AT_MELEE_ATTACK;
 
 	class CSticks01* m_pMinions[MINION_COUNT] = { nullptr };
+	class CShamanTrapHex* m_pShamanTapHex = nullptr;
+
+	CBone* m_pWeaponBone = nullptr;
+	_float4x4 m_WeaponPivotMatrix;
+	_float3 m_vWeaPonPivotRot = { 0.f, 0.f, 0.f };
+	_float3 m_vWeaPonPivotTrans = { -1.2f, -0.59f, -1.3f };
 
 private:
 	CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

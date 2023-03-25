@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "Sticks01.h"
+#include "ShamanTrapHex.h"
 
 CBossShaman::CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -47,6 +48,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
+	m_pWeaponBone = m_pModelCom->Get_BonePtr("sword_root_jnt");
 
 	Create_Minions();
 
@@ -56,11 +58,12 @@ HRESULT CBossShaman::Initialize(void* pArg)
 HRESULT CBossShaman::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+
 	// 몸통
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
-		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
+		_float3 vPivotScale = _float3(0.1f, 0.5f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
@@ -78,7 +81,7 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
-		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
@@ -87,17 +90,67 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
+	
+	{
+		_float3 vPivotScale = _float3(0.6f, 0.7f, 1.f);
+		
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = TEXT_COL_SHAMAN_BODY;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER));
+		m_pTransformCom->Add_Collider(TEXT_COL_SHAMAN_BODY, g_IdentityFloat4x4);
+	}
+
+	{			
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = TEXT_COL_SHAMAN_WEAPON;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = 0.12f;
+		PxCapsuleDesc.fHalfHeight = 1.f;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(TEXT_COL_SHAMAN_WEAPON, g_IdentityFloat4x4);
+	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+
+	m_pShamanTapHex = (CShamanTrapHex*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("ShamanTrapHex_0"));
+	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
+
 	return S_OK;
 }
 
 void CBossShaman::Tick(_float fTimeDelta)
 {
-	/*m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
 	return;
-*/
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -143,6 +196,7 @@ HRESULT CBossShaman::Render()
 		}
 		else if(i == 3) // 검 렌더
 		{	
+			m_eSwordRenderState = RENDER;
 			if (m_eSwordRenderState == NO_RENDER) continue;
 			else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
 				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
@@ -192,6 +246,14 @@ HRESULT CBossShaman::RenderShadow()
 void CBossShaman::Imgui_RenderProperty()
 {
 	CMonster::Imgui_RenderProperty();
+
+	float fTrans[3] = { m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z };
+	ImGui::DragFloat3("Weapon Trans", fTrans, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vWeaPonPivotTrans, fTrans, sizeof(_float3));
+
+	float fRot[3] = { m_vWeaPonPivotRot.x, m_vWeaPonPivotRot.y, m_vWeaPonPivotRot.z };
+	ImGui::DragFloat3("Weapon Rot", fRot, 0.01f, -100.f, 100.0f);
+	memcpy(&m_vWeaPonPivotRot, fRot, sizeof(_float3));
 }
 
 void CBossShaman::ImGui_AnimationProperty()
@@ -274,9 +336,9 @@ HRESULT CBossShaman::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-		_float fValue = 10.f; /* == BossWarrior Name */
-		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
+		//CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		//_float fValue = 20.f; /* == BossWarrior Name */
+		//m_BossWarriorDelegator.broadcast(eBossHP, fValue);
 	})
 		.OnExit([this]()
 	{
@@ -340,7 +402,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("SUMMON_INTO")
 		.OnStart([this]()
 	{
-		m_bSummon = true;
+		m_bNoDamage = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(SUMMON_INTO);
 		m_pModelCom->Set_AnimIndex(SUMMON_INTO);
 		Summon();
@@ -379,7 +441,7 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		m_bSummon = false;
+		m_bNoDamage = false;
 		m_bSummonEnd = true;		
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE_LOOP);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);		
@@ -412,7 +474,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("TELEPORT_INTO")
 		.OnStart([this]()
 	{
-		m_bTeleport = true;
+		m_bNoDamage = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(TELEPORT_INTO);
 		m_pModelCom->Set_AnimIndex(TELEPORT_INTO);
 	})
@@ -490,7 +552,7 @@ HRESULT CBossShaman::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
-		m_bTeleport = false;
+		m_bNoDamage = false;
 	})
 		.AddTransition("IDLE To SUMMON_INTO", "SUMMON_INTO")
 		.Predicator([this]()
@@ -572,25 +634,189 @@ HRESULT CBossShaman::SetUp_State()
 	})
 		
 
-
-
-
 		.AddState("TRAP")
 		.OnStart([this]()
 	{	
-		Attack_Start(false, TRAP);
+		m_pModelCom->ResetAnimIdx_PlayTime(TRAP);
+		m_pModelCom->Set_AnimIndex(TRAP);
+	})
+		.OnExit([this]()
+	{	
+		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_LOOP);
+		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
+	})
+		.AddTransition("TRAP to TRAP_TELEPORT", "TRAP_TELEPORT")
+		.Predicator([this]()
+	{	
+		return AnimFinishChecker(TRAP);	
+	})
+
+		.AddState("TRAP_TELEPORT")
+		.OnStart([this]()
+	{		
+		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
+		m_bTeleportDissolve = true;
+		m_fTeleportDissolveTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fTeleportDissolveTime += m_fDissolveRate;
+	})
+		.OnExit([this]()
+	{	
+		m_fTeleportDissolveTime = 1.f;		
+	})
+		.AddTransition("TRAP_TELEPORT to TRAP_LOOP", "TRAP_LOOP")
+		.Predicator([this]()
+	{
+		return m_fTeleportDissolveTime > 1.f;
+	})
+
+		.AddState("TRAP_LOOP")
+		.OnStart([this]()
+	{	
+		m_bTraptBreak = false;
+		m_bTraptLoop = true;
+		m_bTrapOffset = true;
+		m_bNoDamage = false;
+		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
+
+		m_vTrapLookPos = m_vKenaPos;
+		m_pShamanTapHex->Execute_Trap(m_vKenaPos);
+		m_fTeleportDissolveTime = 0.f;
+		m_bTeleportDissolve = false;
+	})
+		.Tick([this](_float fTimeDelta)
+	{		
+		m_pTransformCom->LookAt_NoUpDown(m_vTrapLookPos);
+		_float4 vTrapPos = m_pShamanTapHex->Get_JointBonePos();
+		vTrapPos.y = 0.f;
+		vTrapPos.y -= m_fTrapOffstY;
+		
+		m_pTransformCom->Set_Position(vTrapPos);
+	})
+		.OnExit([this]()
+	{	
+		m_bTrapOffset = false;
+		m_bTraptLoop = false;		
+		m_pModelCom->Set_AnimIndex(TRAP_LOOP);
+	})
+		.AddTransition("TRAP_LOOP to LASER_FIRE", "LASER_FIRE")
+		.Predicator([this]()
+	{	
+		return m_pShamanTapHex->IsTrapSuccess();
+	})
+		.AddTransition("TRAP_LOOP to TRAP_BREAK", "TRAP_BREAK")
+		.Predicator([this]()
+	{
+		return m_bTraptBreak;
+	})
+
+
+		.AddState("LASER_FIRE")
+		.OnStart([this]()
+	{
+		Attack_Start(false, TRAP_LOOP);
 	})
 		.OnExit([this]()
 	{
 		Attack_End(false, IDLE_LOOP);
-	})
-		.AddTransition("TRAP to IDLE", "IDLE")
+	})		
+		.AddTransition("LASER_FIRE to TRAP_END", "TRAP_END")
 		.Predicator([this]()
 	{
+		// 레이저 발사가 끝나면 아이들로
 		return true;
-		// return AnimFinishChecker(TRAP);
 	})
-		
+
+		.AddState("TRAP_END")
+		.OnStart([this]()
+	{
+		m_bTeleportDissolve = true;
+		m_fTeleportDissolveTime = 0.f;
+
+		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_ESCAPE);
+		m_pModelCom->Set_AnimIndex(TRAP_ESCAPE);
+		m_pShamanTapHex->Execute_End();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fTeleportDissolveTime += m_fDissolveRate * 0.5f;
+		m_pModelCom->Set_AnimIndex(TRAP_ESCAPE);
+	})
+		.OnExit([this]()
+	{	
+		m_fTeleportDissolveTime = 1.f;
+		m_pModelCom->Set_AnimIndex(TELEPORT_LOOP);
+	})
+		.AddTransition("TRAP_END to TELEPORT_LOOP_CREATE", "TELEPORT_LOOP_CREATE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(TRAP_ESCAPE);
+	})
+
+		.AddState("TRAP_BREAK")
+		.OnStart([this]()
+	{
+		m_bTeleportDissolve = true;
+		m_fTeleportDissolveTime = 0.f;
+
+		m_pModelCom->ResetAnimIdx_PlayTime(TRAP_ESCAPE);
+		m_pModelCom->Set_AnimIndex(TRAP_ESCAPE);
+		m_pShamanTapHex->Execute_Break();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fTeleportDissolveTime += m_fDissolveRate * 0.5f;
+	})
+		.OnExit([this]()
+	{	
+		m_fTeleportDissolveTime = 1.f;
+
+		_float4 vPos = m_vKenaPos + _float4(2.f, 0.f, 2.f, 0.f);
+		m_pTransformCom->Set_Position(vPos);
+
+		Attack_End(false, STUN_TAKE_DAMAGE);
+	})
+		.AddTransition("TRAP_BREAK to STUN", "STUN")
+		.Predicator([this]()
+	{	
+		return AnimFinishChecker(TRAP_ESCAPE);
+	})
+
+
+		.AddState("STUN")
+		.OnStart([this]()
+	{
+		m_pModelCom->Set_AnimIndex(STUN_TAKE_DAMAGE);		
+		m_fStunTime = 0.f;
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fTeleportDissolveTime -= m_fDissolveRate;
+		if (m_fTeleportDissolveTime < 0.f)
+		{
+			m_fTeleportDissolveTime = 0.f;
+			m_bTeleportDissolve = false;
+		}
+
+		m_fStunTime += fTimeDelta;
+	})
+		.OnExit([this]()
+	{
+		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
+	})
+		.AddTransition("To DYING", "DYING")
+		.Predicator([this]()
+	{
+		return m_pMonsterStatusCom->IsDead();
+	})
+		.AddTransition("STUN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return TimeTrigger(m_fStunTime, 5.f);
+	})
+
 
 		.AddState("DASH_ATTACK")
 		.OnStart([this]()
@@ -640,9 +866,9 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{	
-		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
-		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
+		m_BossWarriorDelegator.broadcast(eBossHP, fValue);*/
 		
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
@@ -712,9 +938,9 @@ HRESULT CBossShaman::SetUp_ShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
 	float fHDRIntensity = 0.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
@@ -733,9 +959,9 @@ HRESULT CBossShaman::SetUp_ShadowShaderResources()
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_DYNAMICLIGHTVEIW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
 }
@@ -743,6 +969,33 @@ HRESULT CBossShaman::SetUp_ShadowShaderResources()
 void CBossShaman::Update_Collider(_float fTimeDelta)
 {
 	m_pTransformCom->Tick(fTimeDelta);
+
+	{	
+		m_fTrapOffstY = 5.f;
+		_float fTemp[2] = { 1.f , 3.2f };
+		_float4x4 PivotMatrix;
+		XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, fTemp[m_bTrapOffset], 0.f));
+		m_pTransformCom->Update_Collider(TEXT_COL_SHAMAN_BODY, PivotMatrix);
+	}
+	
+
+	if (m_eSwordRenderState == RENDER)
+	{
+		_matrix SocketMatrix = m_pWeaponBone->Get_OffsetMatrix() * m_pWeaponBone->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+		SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
+		SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
+		SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
+
+		XMStoreFloat4x4(&m_WeaponPivotMatrix,
+			XMMatrixRotationX(m_vWeaPonPivotRot.x) * XMMatrixRotationY(m_vWeaPonPivotRot.y) * XMMatrixRotationZ(m_vWeaPonPivotRot.z)
+			* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
+
+		SocketMatrix = XMLoadFloat4x4(&m_WeaponPivotMatrix) * SocketMatrix;
+
+		_float4x4 mat;
+		XMStoreFloat4x4(&mat, SocketMatrix);
+		m_pTransformCom->Update_Collider(TEXT_COL_SHAMAN_WEAPON, mat);
+	}
 }
 
 void CBossShaman::AdditiveAnim(_float fTimeDelta)
@@ -841,13 +1094,13 @@ void CBossShaman::Attack_Start(_bool bSwordRender, _uint iAnimIndex)
 }
 
 void CBossShaman::Attack_End(_bool bSwordRender, _uint iAnimIndex)
-{	
+{
 	m_eSwordRenderState = bSwordRender ? DISSOLVE : m_eSwordRenderState;
-	
-	_uint iTemp = m_eAttackType + 1;	
-	iTemp %= ATTACKTYPE_END;	
+
+	_uint iTemp = m_eAttackType + 1;
+	iTemp %= ATTACKTYPE_END;
 	m_eAttackType = (ATTACKTYPE)iTemp;
-	
+
 	CMonster::Attack_End(iAnimIndex);
 }
 
@@ -856,14 +1109,20 @@ _int CBossShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 {
 	if (pTarget && m_bSpawn)
 	{
+		if (m_bTraptLoop && iColliderIndex == (_int)COL_PLAYER_ARROW)
+		{
+			m_bTraptBreak = true;
+			return 0;
+		}
+
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
 		{
-			if(m_bTeleport == false && m_bSummon == false)
+			if (m_bNoDamage == false)			
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 						
-			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
-			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
+			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);*/
 			
 			m_bWeaklyHit = true;
 			m_bStronglyHit = true;
