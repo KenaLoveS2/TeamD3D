@@ -8,10 +8,11 @@ class CBone;
 END
 
 BEGIN(Client)
-
 class CShamanTrapHex final : public CEffect_Mesh
 {
 	enum PARTS { GEO, /*PLANE,*/ SHAMAN_0, SHAMAN_1, SHAMAN_2, SHAMAN_3, SHAMAN_4, PARTS_END };
+	enum STATE { START_TRAP, TRAP, BREAK_TRAP, END_TRAP, STATE_END };
+	enum ANIMATION { CONTRACT, EXPAND, ANIMATION_END };
 
 private:
 	CShamanTrapHex(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -46,10 +47,24 @@ private:
 	_float4								m_vEdgeColor;
 	_float4								m_vBaseColor;
 
+	STATE m_eState = STATE_END;
+	_float4 m_vInvisiblePos = { -100, -100, -100, 1.f };
+
+	_float m_fTrapTime = 0.f;
+	
+	_bool m_bTrapSuccess = false;
+
 public:
 	static CShamanTrapHex*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	    Clone(void* pArg = nullptr)  override;
 	virtual void					    Free() override;
+
+	void Trap_Proc(_float fTimeDelta);
+	void Execute_Trap(_float4 vPos);
+	void Execute_Break();
+	void Execute_End();
+
+	_bool IsTrapSuccess() { return m_bTrapSuccess; }
 };
 
 END

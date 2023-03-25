@@ -45,12 +45,15 @@ HRESULT CShamanTrapHex::Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix(matiden);
 
 	Push_EventFunctions();
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 
 	m_pPartBone = m_pModelCom->Get_BonePtr("Geo");
 	m_vEdgeColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
 	m_vBaseColor =	_float4(1.f, 0.f, 1.f, 40.f / 255.f);
 	m_eEFfectDesc.vColor = _float4(1.f, 0.f, 1.f, 40.f / 255.f);
+
+	m_pTransformCom->Set_Position(m_vInvisiblePos);
+
 	return S_OK;
 }
 
@@ -61,13 +64,12 @@ void CShamanTrapHex::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	for(int i = 0; i < PARTS_END; ++i)
-		m_pPart[i]->Tick(fTimeDelta);
+	Trap_Proc(fTimeDelta);
+
+	for (auto &pParts : m_pPart)
+		pParts->Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
-
-	// Turn On After Animation
-	m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.25f);
 }
 
 void CShamanTrapHex::Late_Tick(_float fTimeDelta)
@@ -76,19 +78,16 @@ void CShamanTrapHex::Late_Tick(_float fTimeDelta)
 		return;
 
 	__super::Late_Tick(fTimeDelta);
+	
+	for (auto &pParts : m_pPart)
+		pParts->Late_Tick(fTimeDelta);
+		
 
-	for (int i = 0; i < PARTS_END; ++i)
-		m_pPart[i]->Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CShamanTrapHex::Render()
-{
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
+{	
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
@@ -195,6 +194,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
 		m_pPart[SHAMAN_0] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_0"), &Desc);
+		m_pPart[SHAMAN_0]->Late_Initialize(nullptr);
 	}
 
 	{
@@ -207,6 +207,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
 		m_pPart[SHAMAN_1] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_1"), &Desc);
+		m_pPart[SHAMAN_1]->Late_Initialize(nullptr);
 	}
 
 	{
@@ -219,6 +220,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
 		m_pPart[SHAMAN_2] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_2"), &Desc);
+		m_pPart[SHAMAN_2]->Late_Initialize(nullptr);
 	}
 
 	{
@@ -231,6 +233,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
 		m_pPart[SHAMAN_3] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_3"), &Desc);
+		m_pPart[SHAMAN_3]->Late_Initialize(nullptr);
 	}
 
 	{
@@ -243,6 +246,7 @@ HRESULT CShamanTrapHex::SetUp_Components()
 		Safe_AddRef(Desc.pSocket);
 		Safe_AddRef(m_pTransformCom);
 		m_pPart[SHAMAN_4] = p_game_instance->Clone_GameObject(TEXT("Prototype_GameObject_BossFakeShaman"), TEXT("FakeShaman_4"), &Desc);
+		m_pPart[SHAMAN_4]->Late_Initialize(nullptr);
 	}
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -305,6 +309,81 @@ void CShamanTrapHex::Free()
 {
 	CEffect_Mesh::Free();
 
-	for(int i = 0; i < PARTS_END; i++)
-		Safe_Release(m_pPart[i]);
+	for(auto& iter : m_pPart)
+		Safe_Release(iter);
 }
+
+void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
+{
+	static const _float fTrapSuccessTime = 10.f;
+
+	switch (m_eState)
+	{
+	case START_TRAP:
+	{	
+		if (m_pModelCom->Get_AnimationFinish())
+			m_eState = TRAP;
+
+		break;
+	}		
+	case TRAP:
+	{			
+		if (m_fTrapTime > fTrapSuccessTime)
+		{
+			m_bTrapSuccess = true;
+		}
+		else
+		{
+			m_fTrapTime += fTimeDelta;
+			m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * 0.2f);
+		}
+
+		break;
+	}		
+	case BREAK_TRAP:
+	{
+		// 부서지는 파티클이 필요하다
+		if (m_pModelCom->Get_AnimationFinish())
+			m_eState = END_TRAP;
+
+		break;
+	}		
+	case END_TRAP:
+	{
+		// 서서히 없어짐?
+		m_pTransformCom->Set_Position(m_vInvisiblePos);
+		m_eEFfectDesc.bActive = false;
+		m_eState = STATE_END;
+		break;
+	}	
+	}
+}
+
+void CShamanTrapHex::Execute_Trap(_float4 vPos)
+{
+	m_bTrapSuccess = false;
+	m_fTrapTime = 0.f;
+	m_eEFfectDesc.bActive = true;
+	vPos.y -= 0.5f;
+	m_pTransformCom->Set_Position(vPos);
+	m_pModelCom->Set_AnimIndex(CONTRACT);
+
+	m_eState = START_TRAP;
+
+	for (_uint i = SHAMAN_0; i < PARTS_END; i++)
+	{
+		((CFakeShaman*)m_pPart[i])->Clear();
+	}
+}
+
+void CShamanTrapHex::Execute_Break()
+{
+	m_pModelCom->Set_AnimIndex(EXPAND);
+	m_eState = BREAK_TRAP;
+}
+
+void CShamanTrapHex::Execute_End()
+{
+	m_eState = END_TRAP;
+}
+

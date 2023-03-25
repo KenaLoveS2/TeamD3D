@@ -517,3 +517,25 @@ _bool CMonster::IsParried()
 {	
 	return m_fKenaDistance <= 10.f && m_pKena->Get_State(CKena::STATE_PARRY);
 }
+
+void CMonster::Attack_Start(_uint iAnimIndex)
+{
+	m_bRealAttack = true;
+
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+}
+
+void CMonster::Attack_End(_uint iAnimIndex)
+{
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+
+	m_bRealAttack = false;
+}
+
+void CMonster::Execute_Dying()
+{
+	m_pMonsterStatusCom->Set_HP(0);	
+}
+

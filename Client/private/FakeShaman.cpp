@@ -39,11 +39,40 @@ HRESULT CFakeShaman::Initialize(void* pArg)
 
 HRESULT CFakeShaman::Late_Initialize(void* pArg)
 {
+	{
+		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
+		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
+		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = m_szCloneObjectTag;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fAngularDamping = 0.5f;
+		PxCapsuleDesc.fMass = 10.f;
+		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER));
+		m_pTransformCom->Add_Collider(m_szCloneObjectTag, g_IdentityFloat4x4);
+	}
+
 	return CGameObject::Late_Initialize(pArg);
 }
 
 void CFakeShaman::Tick(_float fTimeDelta)
 {
+	if (m_fDissolveTime > 1.f) return;
+		
 	__super::Tick(fTimeDelta);
 
 	_matrix SocketMatrix =
@@ -61,10 +90,20 @@ void CFakeShaman::Tick(_float fTimeDelta)
 		* SocketMatrix * m_Desc.pTargetTransform->Get_WorldMatrix();
 
 	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
+
+	_float4x4 PivotMatrix;
+	XMStoreFloat4x4(&PivotMatrix, XMMatrixTranslation(0.f, 3.f, 0.f) * SocketMatrix);
+
+	m_pTransformCom->Update_AllCollider(PivotMatrix);
+	m_pTransformCom->Tick(fTimeDelta);
+
+	m_fDissolveTime += fTimeDelta * m_bDisolve;
 }
 
 void CFakeShaman::Late_Tick(_float fTimeDelta)
 {
+	if (m_fDissolveTime > 1.f) return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pRendererCom)
@@ -89,7 +128,7 @@ HRESULT CFakeShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 11), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 11 - 2 * m_bDisolve), E_FAIL);
 		}
 		else // UV1
 		{
@@ -97,7 +136,7 @@ HRESULT CFakeShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10 - 1 * m_bDisolve), E_FAIL);
 		}
 	}
 	return S_OK;
@@ -154,6 +193,9 @@ HRESULT CFakeShaman::SetUp_Components()
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Shaman_Uv01_EMISSIVE.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Shaman_Uv02_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Shaman_Uv02_ALPHA.png")), E_FAIL);
+
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Texture_Dissolve", L"Com_Dissolve_Texture", (CComponent**)&m_pDissolveTextureCom), E_FAIL);
+
 	return S_OK;
 }
 
@@ -169,6 +211,15 @@ HRESULT CFakeShaman::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_EmissiveColor", &_float4(1.f, 1.f, 1.f, 1.f), sizeof(_float4)), E_FAIL);
 	float fHDRIntensity = 1.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
+
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDisolve, sizeof(_bool)))) return E_FAIL;
+	if (m_bDisolve)
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -215,10 +266,31 @@ void CFakeShaman::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-
+	Safe_Release(m_pDissolveTextureCom);
+	
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_Desc.pSocket);
 		Safe_Release(m_Desc.pTargetTransform);
 	}
 }
+
+void CFakeShaman::Clear()
+{
+	m_bDisolve = false;
+	m_fDissolveTime = 0.f;
+}
+
+_int CFakeShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	if (pTarget)
+	{
+		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
+		{			
+			m_bDisolve = true;
+		}
+	}
+
+	return 0;
+}
+

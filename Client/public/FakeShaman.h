@@ -49,14 +49,21 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CShader*									m_pShaderCom = nullptr;
 	CModel*									m_pModelCom = nullptr;
+	CTexture* m_pDissolveTextureCom = nullptr;
 	_uint											m_iNumMeshes = 0;
 	_float4										m_vPivotPos;
 	_float4										m_vPivotRot;
 	_float4x4									m_SocketMatrix;
 
+	_bool m_bDisolve = false;
+	_float m_fDissolveTime = false;
+
 public:
 	static CFakeShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	void Clear();
 };
 END

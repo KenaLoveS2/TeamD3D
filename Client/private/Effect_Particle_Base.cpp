@@ -100,13 +100,6 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 	/* Diffuse Texture Select */
 	if (ImGui::CollapsingHeader(" > DiffuseTexture"))
 	{
-		/* RenderPass */
-		static _int iRenderPass;
-		iRenderPass = m_iRenderPass;
-		const char* renderPass[2] = { "Default", "BlackDiffuse" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
-			m_iRenderPass = iRenderPass;
-
 		if (m_pTextureCom == nullptr)
 			return;
 
@@ -122,6 +115,13 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 			}
 		}
 
+		/* RenderPass */
+		static _int iRenderPass;
+		iRenderPass = m_iRenderPass;
+		const char* renderPass[2] = { "Default", "BlackDiffuse" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+			m_iRenderPass = iRenderPass;
+
 		/* Color */
 		ColorCode();
 	}
@@ -132,8 +132,10 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		if (m_pVIBufferCom == nullptr)
 			return;
 
-		CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+		CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 		using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
+		ZeroMemory(&tInfo, sizeof(tInfo)); 
+		tInfo = m_pVIBufferCom->Get_Info();
 
 		/* Type */
 		static _int iType = tInfo.eType;
@@ -148,39 +150,41 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Size */
 		static _float2	vPSize = tInfo.vPSize;
-		ImGui::DragFloat2("vPSize", (_float*)&vPSize, 0.1f, 0.f, 10.f, "%.3f");
+		ImGui::DragFloat2("vPSize", (_float*)&vPSize, 0.10f, 0.0f, 10.0f, "%.3f");
 		tInfo.vPSize = vPSize;
 
 		/* Term */
 		static _float	fTerm = tInfo.fTerm;
-		ImGui::DragFloat("fTerm", &fTerm, 0.1f, 0.f, 100.f);
+		ImGui::DragFloat("fTerm", &fTerm, 0.10f, 0.0f, 100.0f);
 		tInfo.fTerm = fTerm;
 
 		/* MinPos */
 		static _float3  vMinPos = tInfo.vMinPos;
-		ImGui::DragFloat3("vMinPos", (_float*)&vMinPos, 0.1f, -50.f, 50.f, "%.3f");
+		ImGui::DragFloat3("vMinPos", (_float*)&vMinPos, 0.10f, -50.0f, 50.0f, "%.3f");
 		tInfo.vMinPos = vMinPos;
 
 		/* MaxPos */
 		static _float3  vMaxPos = tInfo.vMaxPos;
-		ImGui::DragFloat3("vMaxPos", (_float*)&vMaxPos, 0.1f, -50.f, 50.f, "%.3f");
+		ImGui::DragFloat3("vMaxPos", (_float*)&vMaxPos, 0.10f, -50.0f, 50.0f, "%.3f");
 		tInfo.vMaxPos = vMaxPos;
 
 		/* SpeedMin */
 		static _float3  vSpeedMin = tInfo.vSpeedMin;
-		ImGui::DragFloat3("vSpeedMin", (_float*)&vSpeedMin, 0.1f, -10.f, 10.f, "%.3f");
+		ImGui::DragFloat3("vSpeedMin", (_float*)&vSpeedMin, 0.10f, -10.0f, 10.0f, "%.3f");
 		tInfo.vSpeedMin = vSpeedMin;
 
 		/* SpeedMax */
 		static _float3  vSpeedMax = tInfo.vSpeedMax;
-		ImGui::DragFloat3("vSpeedMax", (_float*)&vSpeedMax, 0.1f, -10.f, 10.f, "%.3f");
+		ImGui::DragFloat3("vSpeedMax", (_float*)&vSpeedMax, 0.10f, -10.0f, 10.0f, "%.3f");
 		tInfo.vSpeedMax = vSpeedMax;
 
 
 		if (ImGui::Button("Reset"))
 		{
-			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
+			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 			using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
+			ZeroMemory(&tInfo, sizeof(tInfo));
+			tInfo = m_pVIBufferCom->Get_Info();
 
 			iType = tInfo.eType;
 			iNumInstance = tInfo.iNumInstance;
@@ -212,7 +216,7 @@ HRESULT CEffect_Particle_Base::Save_Data()
 	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
 	ImGui::SameLine();
 	if (ImGui::Button("Save"))
-		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select Json", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
+		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
 
 	if (ImGuiFileDialog::Instance()->Display("Select File"))
 	{
@@ -225,9 +229,10 @@ HRESULT CEffect_Particle_Base::Save_Data()
 
 			Json	json;
 
+			_float4 vPos = m_pTransformCom->Get_Position();
 			for (_uint i = 0; i < 4; ++i)
 			{
-				_float fElement = *((float*)&m_pTransformCom->Get_Position() + i++);
+				_float fElement = *((_float*)&vPos + i);
 				json["00. Position"].push_back(fElement);
 			}
 
@@ -235,43 +240,46 @@ HRESULT CEffect_Particle_Base::Save_Data()
 			json["02. RenderPass"] = m_iRenderPass;
 			for (_uint i = 0; i < 4; ++i)
 			{
-				_float fElement = *((float*)&m_vColor + i++);
+				_float fElement = *((float*)&m_vColor + i);
 				json["03. Color"].push_back(fElement);
 			}
+			json["04. HDR Intensity"] = m_fHDRIntensity;
 
-			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo = m_pVIBufferCom->Get_Info();
-			json["04. Type"] = (_int)tInfo.eType;
-			json["05. NumInstance"] = tInfo.iNumInstance;
-			json["06. Term"] = tInfo.fTerm;
+			CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
+			ZeroMemory(&tInfo, sizeof(tInfo));
+			tInfo = m_pVIBufferCom->Get_Info();
+			json["10. Type"] = (_int)tInfo.eType;
+			json["11. NumInstance"] = tInfo.iNumInstance;
+			json["12. Term"] = tInfo.fTerm;
 
-			for (_uint i = 0; i < 4; ++i)
+			for (_uint i = 0; i < 2; ++i)
 			{
-				_float fElement = *((float*)&tInfo.vPSize + i++);
-				json["07. PSize"].push_back(fElement);
+				_float fElement = *((float*)&tInfo.vPSize + i);
+				json["13. PSize"].push_back(fElement);
 			}
 
-			for (_uint i = 0; i < 4; ++i)
+			for (_uint i = 0; i < 3; ++i)
 			{
-				_float fElement = *((float*)&tInfo.vSpeedMin + i++);
-				json["08. SpeedMin"].push_back(fElement);
+				_float fElement = *((float*)&tInfo.vSpeedMin + i);
+				json["14. SpeedMin"].push_back(fElement);
 			}
 
-			for (_uint i = 0; i < 4; ++i)
+			for (_uint i = 0; i < 3; ++i)
 			{
-				_float fElement = *((float*)&tInfo.vSpeedMax + i++);
-				json["09. SpeedMax"].push_back(fElement);
+				_float fElement = *((float*)&tInfo.vSpeedMax + i);
+				json["15. SpeedMax"].push_back(fElement);
 			}
 
-			for (_uint i = 0; i < 4; ++i)
+			for (_uint i = 0; i < 3; ++i)
 			{
-				_float fElement = *((float*)&tInfo.vMinPos + i++);
-				json["10. minPos"].push_back(fElement);
+				_float fElement = *((float*)&tInfo.vMinPos + i);
+				json["16. minPos"].push_back(fElement);
 			}
 
-			for (_uint i = 0; i < 4; ++i)
+			for (_uint i = 0; i < 3; ++i)
 			{
-				_float fElement = *((float*)&tInfo.vMaxPos + i++);
-				json["11. maxPos"].push_back(fElement);
+				_float fElement = *((float*)&tInfo.vMaxPos + i);
+				json["17. maxPos"].push_back(fElement);
 			}
 
 			ofstream file(strSaveDirectory.c_str());
@@ -279,6 +287,8 @@ HRESULT CEffect_Particle_Base::Save_Data()
 			file.close();
 			ImGuiFileDialog::Instance()->Close();
 		}
+		else
+			ImGuiFileDialog::Instance()->Close();
 	}
 
 	return S_OK;
@@ -288,16 +298,6 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 {
 	if (fileName == nullptr)
 		return E_FAIL;
-
-	//ImGuiFileDialog::Instance()->OpenDialog("Load File", "Select Json", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
-	//if (ImGuiFileDialog::Instance()->Display("Load File"))
-	//{
-	//	if (ImGuiFileDialog::Instance()->IsOk())
-	//	{
-	//		ImGuiFileDialog::Instance()->Close();
-	//	}
-	//}
-
 
 	Json	jLoad;
 
@@ -311,62 +311,51 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	file >> jLoad;
 	file.close();
 
-	_float4 vPos;
+	_float4 vPos = { 0.f,0.f,0.f,1.f };
+	int i = 0;
 	for (auto fElement : jLoad["00. Position"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&vPos + i++));
-	}
+		fElement.get_to<_float>(*((_float*)&vPos + i++));
 	m_pTransformCom->Set_Position(vPos);
 
 	jLoad["01. TextureIndex"].get_to<_int>(m_iTextureIndex);
 	jLoad["02. RenderPass"].get_to<_int>(m_iRenderPass);
 	
+	i = 0;
 	for (auto fElement : jLoad["03. Color"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&m_vColor + i++));
-	}
+		fElement.get_to<_float>(*((_float*)&m_vColor + i++));
+
+	jLoad["04. HDR Intensity"].get_to<_float>(m_fHDRIntensity);
 
 	CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 	using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
+	ZeroMemory(&tInfo, sizeof(tInfo));
 
-	_int iType;
-	jLoad["04. Type"].get_to<_int>(iType);
+	_int iType = 0;
+	jLoad["10. Type"].get_to<_int>(iType);
 	tInfo.eType = (pointType)iType;
-	jLoad["05. NumInstance"].get_to<_int>(tInfo.iNumInstance);
-	jLoad["06. Term"].get_to<_float>(tInfo.fTerm);
+	jLoad["11. NumInstance"].get_to<_int>(tInfo.iNumInstance);
+	jLoad["12. Term"].get_to<_float>(tInfo.fTerm);
 	tInfo.fTermAcc = 0.f;
 
-	for (auto fElement : jLoad["07. PSize"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&tInfo.vPSize + i++));
-	}
+	i = 0;
+	for (auto fElement : jLoad["13. PSize"])
+		fElement.get_to<_float>(*((_float*)&tInfo.vPSize + i++));
 
-	for (auto fElement : jLoad["08. SpeedMin"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&tInfo.vSpeedMin + i++));
-	}
+	i = 0;
+	for (auto fElement : jLoad["14. SpeedMin"])
+		fElement.get_to<_float>(*((_float*)&tInfo.vSpeedMin + i++));
 
-	for (auto fElement : jLoad["09. SpeedMax"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&tInfo.vSpeedMax + i++));
-	}
+	i = 0;
+	for (auto fElement : jLoad["15. SpeedMax"])
+		fElement.get_to<_float>(*((_float*)&tInfo.vSpeedMax + i++));
 
-	for (auto fElement : jLoad["10. minPos"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&tInfo.vMinPos + i++));
-	}
+	i = 0;
+	for (auto fElement : jLoad["16. minPos"])
+		fElement.get_to<_float>(*((_float*)&tInfo.vMinPos + i++));
 
-	for (auto fElement : jLoad["11. maxPos"])
-	{
-		static int i = 0;
-		fElement.get_to<_float>(*((float*)&tInfo.vMaxPos + i++));
-	}
+	i = 0;
+	for (auto fElement : jLoad["17. maxPos"])
+		fElement.get_to<_float>(*((_float*)&tInfo.vMaxPos + i++));
 
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
@@ -433,13 +422,14 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 {
 	/* For. Com_VIBuffer */
 	CVIBuffer_Point_Instancing_S2::POINTINFO	tInfo;
+	ZeroMemory(&tInfo, sizeof(tInfo));
 	tInfo.eType = tInfo.TYPE_HAZE;
-	tInfo.fTerm = 10.f;
-	tInfo.fTermAcc = 0.f;
+	tInfo.fTerm = 10.0f;
+	tInfo.fTermAcc = 0.0f;
 	tInfo.iNumInstance = 50;
-	tInfo.vPSize = {0.1f, 0.1f};
-	tInfo.vSpeedMin = { -0.1f, 0.1f, -0.1f };
-	tInfo.vSpeedMax = { 0.1f, 0.5f, 0.1f };
+	tInfo.vPSize = {0.10f, 0.10f};
+	tInfo.vSpeedMin = { -0.10f, 0.10f, -0.10f };
+	tInfo.vSpeedMax = { 0.10f, 0.50f, 0.10f };
 	tInfo.vMinPos = { -3.0f, 0.0f, -3.0f };
 	tInfo.vMaxPos = { 3.0f, 0.0f, 3.0f };
 
