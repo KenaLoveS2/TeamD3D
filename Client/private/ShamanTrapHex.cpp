@@ -361,6 +361,7 @@ void CShamanTrapHex::Trap_Proc(_float fTimeDelta)
 
 void CShamanTrapHex::Execute_Trap(_float4 vPos)
 {
+	m_bTrapSuccess = false;
 	m_fTrapTime = 0.f;
 	m_eEFfectDesc.bActive = true;
 	vPos.y -= 0.5f;

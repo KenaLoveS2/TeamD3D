@@ -63,8 +63,8 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	{
 		_float3 vPos = _float3(20.f + (float)(rand() % 10), 3.f, 0.f);
 		//_float3 vPivotScale = _float3(0.25f, 0.25f, 1.f);
-		_float3 vPivotScale = _float3(0.1f, 0.5f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+		_float3 vPivotScale = _float3(0.5f, 0.5f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 1.f, 0.f);
 
 		// Capsule X == radius , Y == halfHeight
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
@@ -146,10 +146,10 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 
 void CBossShaman::Tick(_float fTimeDelta)
 {
-	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);
-	return;
+	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+	//return;
 
 	if (m_bDeath) return;
 
@@ -196,7 +196,6 @@ HRESULT CBossShaman::Render()
 		}
 		else if(i == 3) // °Ë ·»´õ
 		{	
-			m_eSwordRenderState = RENDER;
 			if (m_eSwordRenderState == NO_RENDER) continue;
 			else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
 				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
@@ -704,6 +703,7 @@ HRESULT CBossShaman::SetUp_State()
 		.AddTransition("TRAP_LOOP to LASER_FIRE", "LASER_FIRE")
 		.Predicator([this]()
 	{	
+		// return false;
 		return m_pShamanTapHex->IsTrapSuccess();
 	})
 		.AddTransition("TRAP_LOOP to TRAP_BREAK", "TRAP_BREAK")
