@@ -3,6 +3,12 @@
 #include "Client_Defines.h"
 #include "Camera.h"
 
+BEGIN(Engine)
+class CRenderer;
+class CShader;
+class CModel;
+END
+
 BEGIN(Client)
 
 class CCinematicCamera : public CCamera
@@ -30,10 +36,32 @@ public:
 private:
 	void	AddKeyFrame(CAMERAKEYFRAME keyFrame);
 	void  Interpolate(float time, _float3& position, _float3& lookAt);
-	_float3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
+	XMFLOAT3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
+	HRESULT	SetUp_Components();
+	HRESULT	SetUp_ShaderResources();
 
 private:
+	_bool	m_bPlay = false;
 	vector<CAMERAKEYFRAME> m_keyframes;
+	_float	m_fDeltaTime = 0.f;
+	_float	m_fInputTime = 0.5f;
+
+	CRenderer*					m_pRendererCom = nullptr;
+	CShader*						m_pShaderCom = nullptr;
+	CModel*						m_pModelCom = nullptr;
+
+#pragma region Render Variable
+#ifdef _DEBUG
+private:
+	_bool														m_bDebugRender = false;
+	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
+	BasicEffect*												m_pEffect = nullptr;
+	ID3D11InputLayout*									m_pInputLayout = nullptr;
+	_float4														m_vColor;
+#endif // _DEBUG
+
+	_bool														m_bInitSet = false;
+	class CCamera*										m_pPlayerCam = nullptr;
 
 public:
 	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

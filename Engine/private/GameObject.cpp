@@ -63,7 +63,7 @@ HRESULT CGameObject::RenderShadow()
 	return S_OK;
 }
 
-HRESULT CGameObject::RenderReflect()
+HRESULT CGameObject::RenderCine()
 {
 	return S_OK;
 }

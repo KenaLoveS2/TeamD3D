@@ -145,6 +145,7 @@ HRESULT CSticks01::Late_Initialize(void * pArg)
 void CSticks01::Tick(_float fTimeDelta)
 {	
 	if (m_bDeath) return;
+	m_pMonsterStatusCom->Set_Attack(100);
 	
 	/* Update MovementTrail */
 	Update_MovementTrail("char_weightSpine_c_jnt");

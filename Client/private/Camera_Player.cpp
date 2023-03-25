@@ -422,7 +422,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	}
 
 		__super::Tick(fTimeDelta);
-		Update_ReflectWorld();
+		//Update_ReflectWorld();
 }
 
 void CCamera_Player::Late_Tick(_float fTimeDelta)
@@ -600,33 +600,33 @@ _float4 CCamera_Player::Calculate_CamPosition(CAMOFFSET eOffset, _fvector vTarge
 	return vResultPos;
 }
 
-void CCamera_Player::Update_ReflectWorld()
-{
-	/*_vector   vTargetPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
-	_matrix   matWorld = m_pTransformCom->Get_WorldMatrix();
-	_float3   vScale = m_pTransformCom->Get_Scaled();
-	_vector   vEye = matWorld.r[3];
-	_vector   vLook = XMVector3Normalize(vTargetPos - vEye) * vScale.z;
-	_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
-	_vector   vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
-	matWorld.r[0] = vRight;	matWorld.r[1] = vUp;	matWorld.r[2] = vLook; matWorld.r[3] = vEye;
-	CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_REFLECTVIEW, XMMatrixInverse(nullptr,matWorld));*/
-
-	_vector   vCamPos, vCamLook, vTargetPos;
-	_vector   vCamRight;
-
-	vCamPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
-	vCamRight = m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
-	vTargetPos = vCamPos + vCamLook;
-	_float      fReflectionCamYCoord = -XMVectorGetY(vCamPos) + 2.f * 0.2f;
-	_vector   vReflectionCamPos = XMVectorSet(XMVectorGetX(vCamPos), fReflectionCamYCoord, XMVectorGetZ(vCamPos), 1.f);
-	_float      fReflectionTargetYCoord = -XMVectorGetY(vTargetPos) + 2.f * 0.2f;
-	_vector   vReflectionCamTarget = XMVectorSet(XMVectorGetX(vTargetPos), fReflectionTargetYCoord, XMVectorGetZ(vTargetPos), 1.f);
-	_vector   vForward = vReflectionCamTarget - vReflectionCamPos;
-	_vector   vReflectionCamUp = XMVector3Cross(vCamRight, vForward);
-	CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_REFLECTVIEW, XMMatrixLookAtLH(vReflectionCamPos, vReflectionCamTarget, vReflectionCamUp));
-}
+//void CCamera_Player::Update_ReflectWorld()
+//{
+//	/*_vector   vTargetPos = m_pKenaTransform->Get_State(CTransform::STATE_TRANSLATION);
+//	_matrix   matWorld = m_pTransformCom->Get_WorldMatrix();
+//	_float3   vScale = m_pTransformCom->Get_Scaled();
+//	_vector   vEye = matWorld.r[3];
+//	_vector   vLook = XMVector3Normalize(vTargetPos - vEye) * vScale.z;
+//	_vector   vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+//	_vector   vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+//	matWorld.r[0] = vRight;	matWorld.r[1] = vUp;	matWorld.r[2] = vLook; matWorld.r[3] = vEye;
+//	CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_REFLECTVIEW, XMMatrixInverse(nullptr,matWorld));*/
+//
+//	_vector   vCamPos, vCamLook, vTargetPos;
+//	_vector   vCamRight;
+//
+//	vCamPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+//	vCamLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+//	vCamRight = m_pTransformCom->Get_State(CTransform::STATE_RIGHT);
+//	vTargetPos = vCamPos + vCamLook;
+//	_float      fReflectionCamYCoord = -XMVectorGetY(vCamPos) + 2.f * 0.2f;
+//	_vector   vReflectionCamPos = XMVectorSet(XMVectorGetX(vCamPos), fReflectionCamYCoord, XMVectorGetZ(vCamPos), 1.f);
+//	_float      fReflectionTargetYCoord = -XMVectorGetY(vTargetPos) + 2.f * 0.2f;
+//	_vector   vReflectionCamTarget = XMVectorSet(XMVectorGetX(vTargetPos), fReflectionTargetYCoord, XMVectorGetZ(vTargetPos), 1.f);
+//	_vector   vForward = vReflectionCamTarget - vReflectionCamPos;
+//	_vector   vReflectionCamUp = XMVector3Cross(vCamRight, vForward);
+//	CGameInstance::GetInstance()->Set_Transform(CPipeLine::D3DTS_REFLECTVIEW, XMMatrixLookAtLH(vReflectionCamPos, vReflectionCamTarget, vReflectionCamUp));
+//}
 
 CCamera_Player * CCamera_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
