@@ -60,7 +60,11 @@ public:
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual HRESULT			RenderReflect() override;
+
+#ifdef _DEBUG
+	virtual HRESULT			RenderCine() override;
+#endif
+
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
@@ -167,7 +171,11 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					SetUp_ShadowShaderResources();
-	HRESULT					SetUp_ReflectShaderResources();
+
+#ifdef _DEBUG
+	HRESULT					SetUp_CineShaderResources();
+#endif
+
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
 	void						Update_Collider(_float fTimeDelta);

@@ -104,6 +104,7 @@ void CCamera_Manager::Tick(_float fTimeDelta)
 	if (m_pWorkCamera == nullptr) return;
 
 	m_pWorkCamera->Tick(fTimeDelta);
+
 	if(m_pLightWorkCamera)
 		m_pLightWorkCamera->Tick(fTimeDelta);
 }
@@ -113,6 +114,7 @@ void CCamera_Manager::Late_Tick(_float fTimeDelta)
 	if (m_pWorkCamera == nullptr) return;
 
 	m_pWorkCamera->Late_Tick(fTimeDelta);
+
 	if (m_pLightWorkCamera)
 		m_pLightWorkCamera->Late_Tick(fTimeDelta);
 }

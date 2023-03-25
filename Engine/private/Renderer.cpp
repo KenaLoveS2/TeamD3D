@@ -184,7 +184,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(Initialize_ShadowResources(m_iShadowWidth, m_iShadowHeight)))
 		return E_FAIL;
 
-	if (FAILED(Initialize_ReflectResources(1600, 900)))
+	if (FAILED(Initialize_CineResources(1600, 900)))
 		return E_FAIL;
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
@@ -240,7 +240,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	// For. Water & Distortion
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Effect"), (fSizeX * 0.5f) + fSizeX * 4.f, fSizeY * 0.5f, fSizeX, fSizeY)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Reflect"), (fSizeX * 0.5f) + fSizeX * 4.f, (fSizeY * 0.5f) + fSizeY, fSizeX, fSizeY)))
+
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Cine"),1600.f - 240.f, 900.f - 135.f, 480.f, 270.f)))
 		return E_FAIL;
 
 	// For. PrevFrame
@@ -343,17 +344,17 @@ HRESULT CRenderer::Initialize_ShadowResources(_uint iWidth, _uint iHeight)
 	return S_OK;
 }
 
-HRESULT CRenderer::Initialize_ReflectResources(_uint iWidth, _uint iHeight)
+HRESULT CRenderer::Initialize_CineResources(_uint iWidth, _uint iHeight)
 {
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, L"Target_Reflect", iWidth, iHeight, DXGI_FORMAT_R8G8B8A8_UNORM, &_float4(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, L"Target_Cine", iWidth, iHeight, DXGI_FORMAT_R8G8B8A8_UNORM, &_float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	m_pTarget_Manager->Get_Target(L"Target_Reflect")->SetResizable(false);
+	m_pTarget_Manager->Get_Target(L"Target_Cine")->SetResizable(false);
 
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_REFLECT", L"Target_Reflect")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_CINE", L"Target_Cine")))
 		return E_FAIL;
 
-	// reflect 侩 depthStencil view 积己
+	// CINE 侩 depthStencil view 积己
 	{
 		ID3D11Texture2D*		pDepthStencilTexture = nullptr;
 
@@ -377,7 +378,7 @@ HRESULT CRenderer::Initialize_ReflectResources(_uint iWidth, _uint iHeight)
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
 			return E_FAIL;
 
-		if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pReflectDepthStencilView)))
+		if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pCineDepthStencilView)))
 			return E_FAIL;
 
 		Safe_Release(pDepthStencilTexture);
@@ -418,7 +419,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 	}
 
-	if (FAILED(Render_Reflect()))
+	if (FAILED(Render_Cine()))
 		return E_FAIL;
 
 	if (FAILED(Render_NonAlphaBlend()))
@@ -485,6 +486,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		}
 	RELEASE_INSTANCE(CGameInstance);
 
+	m_pTarget_Manager->Render_Debug(TEXT("MRT_CINE"));
+
 	if (nullptr != m_pTarget_Manager && m_bDebugRender)
 	{
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
@@ -493,7 +496,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_StaticLightDepth"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_SSAO"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_EFFECT"));
-		m_pTarget_Manager->Render_Debug(TEXT("MRT_REFLECT"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_PrevFrame"));
 	}
 #endif
@@ -555,12 +557,12 @@ HRESULT CRenderer::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Reflect()
+HRESULT CRenderer::Render_Cine()
 {
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	m_pContext->ClearDepthStencilView(m_pReflectDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	m_pContext->ClearDepthStencilView(m_pCineDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	D3D11_VIEWPORT			ViewportDesc;
 	ZeroMemory(&ViewportDesc, sizeof ViewportDesc);
 
@@ -573,20 +575,20 @@ HRESULT CRenderer::Render_Reflect()
 	m_pContext->RSSetViewports(iNumViewports, &DepthViewportDesc);
 
 	/* Reflect */
-	if (FAILED(m_pTarget_Manager->Begin_MRTwithDepthStencil(m_pContext, TEXT("MRT_REFLECT"), m_pReflectDepthStencilView)))
+	if (FAILED(m_pTarget_Manager->Begin_MRTwithDepthStencil(m_pContext, TEXT("MRT_CINE"), m_pCineDepthStencilView)))
 		return E_FAIL;
 
-	for (auto& pGameObject : m_RenderObjects[RENDER_REFLECT])
+	for (auto& pGameObject : m_RenderObjects[RENDER_CINE])
 	{
 		if (nullptr != pGameObject)
-			pGameObject->RenderReflect();
+			pGameObject->RenderCine();
 
 		Safe_Release(pGameObject);
 	}
 
-	m_RenderObjects[RENDER_REFLECT].clear();
+	m_RenderObjects[RENDER_CINE].clear();
 
-	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_REFLECT"))))
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_CINE"))))
 		return E_FAIL;
 
 	m_pContext->RSSetViewports(iNumViewports, &ViewportDesc);
@@ -1249,5 +1251,5 @@ void CRenderer::Free()
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pShadowDepthStencilView);
 	Safe_Release(m_pStaticShadowDepthStencilView);
-	Safe_Release(m_pReflectDepthStencilView);
+	Safe_Release(m_pCineDepthStencilView);
 }

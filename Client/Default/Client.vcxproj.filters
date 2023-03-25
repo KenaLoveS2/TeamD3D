@@ -1195,8 +1195,11 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h" />
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1881,8 +1884,11 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp" />
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -695,7 +695,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REFLECT, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -778,11 +778,12 @@ HRESULT CKena::RenderShadow()
 	return S_OK;
 }
 
-HRESULT CKena::RenderReflect()
+#ifdef _DEBUG
+HRESULT CKena::RenderCine()
 {
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 
-	FAILED_CHECK_RETURN(SetUp_ReflectShaderResources(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -827,6 +828,7 @@ HRESULT CKena::RenderReflect()
 
 	return S_OK;
 }
+#endif
 
 void CKena::Imgui_RenderProperty()
 {
@@ -1373,15 +1375,17 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-HRESULT CKena::SetUp_ReflectShaderResources()
+#ifdef _DEBUG
+HRESULT CKena::SetUp_CineShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_REFLECTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
 }
+#endif
 
 HRESULT CKena::SetUp_State()
 {

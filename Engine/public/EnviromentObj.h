@@ -57,7 +57,6 @@ public:
 	virtual void ImGui_ShaderValueProperty();
 	virtual void ImGui_PhysXValueProperty()override;
 
-
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption);
 	virtual  void		Imgui_RenderComponentProperties()override;

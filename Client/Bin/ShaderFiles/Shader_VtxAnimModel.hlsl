@@ -9,7 +9,6 @@ float	   g_fFar = 300.f;
 float4 g_vCamPosition;
 /**************************************/
 
-
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
 Texture2D<float4>		g_AO_R_MTexture;

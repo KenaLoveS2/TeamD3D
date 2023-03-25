@@ -11,7 +11,7 @@ public:
 		RENDER_PRIORITY,
 		RENDER_STATIC_SHADOW,
 		RENDER_SHADOW,
-		RENDER_REFLECT,
+		RENDER_CINE,
 		RENDER_NONALPHABLEND,
 		RENDER_NONLIGHT,
 		RENDER_ALPHABLEND,
@@ -29,7 +29,7 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Initialize_ShadowResources(_uint iWidth, _uint iHeight);
-	virtual HRESULT Initialize_ReflectResources(_uint iWidth, _uint iHeight);
+	virtual HRESULT Initialize_CineResources(_uint iWidth, _uint iHeight);
 
 	HRESULT ReCompile();
 	void			ShootStaticShadow() { m_bStaticShadow = true; };
@@ -69,7 +69,7 @@ private:
 
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
-	ID3D11DepthStencilView*			m_pReflectDepthStencilView = nullptr;
+	ID3D11DepthStencilView*			m_pCineDepthStencilView = nullptr;
 
 	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
 	_bool										m_bPhysXRenderFlag = false;
@@ -85,7 +85,7 @@ private:
 	HRESULT Render_StaticShadow();
 	HRESULT Render_Priority();
 	HRESULT Render_Shadow();
-	HRESULT Render_Reflect();
+	HRESULT Render_Cine();
 	HRESULT Render_NonAlphaBlend();
 	HRESULT Render_LightAcc();
 	HRESULT Render_SSAO();
