@@ -1,6 +1,6 @@
 {
-  "00. m_iMaxShield": 100,
-  "01. m_iShield": 100,
+  "00. m_fMaxShield": 100.0,
+  "01. m_fShield": 100.0,
   "02. m_fInitShieldCoolTime" : 1.5,
   "03. m_fInitShieldRecoveryTime" : 5.0,
   "04. m_iKarma": 500,

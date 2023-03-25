@@ -133,13 +133,15 @@ void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
 {
 	if (m_bShieldBreak == false)
 	{
-		if (m_iShield < m_iMaxShield)
+		if (m_fShield < m_fMaxShield)
 		{
 			if (m_fCurShieldCoolTime < m_fInitShieldCoolTime)
 				m_fCurShieldCoolTime += fTimeDelta;
 			else
-				m_iShield++;
+				m_fShield += fTimeDelta * 3.f;
 		}
+		else
+			m_fShield = m_fMaxShield;
 	}
 	else
 	{
@@ -158,12 +160,12 @@ void CKena_Status::Under_Shield(CStatus * pEnemyStatus)
 {
 	if (pEnemyStatus == nullptr) return;
 
-	m_iShield -= pEnemyStatus->Get_Attack();
+	m_fShield -= (_float)pEnemyStatus->Get_Attack();
 	m_fCurShieldCoolTime = 0.f;
 
-	if (m_iShield <= 0)
+	if (m_fShield <= 0.f)
 	{
-		m_iShield = 0;
+		m_fShield = 0.f;
 		m_bShieldBreak = true;
 	}
 }
@@ -205,8 +207,8 @@ HRESULT CKena_Status::Save()
 
 	CStatus::Save(jKenaStatus);
 
-	jKenaStatus["00. m_iMaxShield"] = m_iMaxShield;
-	jKenaStatus["01. m_iShield"] = m_iShield;
+	jKenaStatus["00. m_fMaxShield"] = m_fMaxShield;
+	jKenaStatus["01. m_fShield"] = m_fShield;
 	jKenaStatus["02. m_fInitShieldCoolTime"] = m_fInitShieldCoolTime;
 	jKenaStatus["03. m_fInitShieldRecoveryTime"] = m_fInitShieldRecoveryTime;
 	jKenaStatus["04. m_iKarma"] = m_iKarma;
@@ -241,8 +243,8 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 
 	CStatus::Load(jKenaStatus);
 
-	jKenaStatus["00. m_iMaxShield"].get_to<_int>(m_iMaxShield);
-	jKenaStatus["01. m_iShield"].get_to<_int>(m_iShield);
+	jKenaStatus["00. m_fMaxShield"].get_to<_float>(m_fMaxShield);
+	jKenaStatus["01. m_fShield"].get_to<_float>(m_fShield);
 	jKenaStatus["02. m_fInitShieldCoolTime"].get_to<_float>(m_fInitShieldCoolTime);
 	jKenaStatus["03. m_fInitShieldRecoveryTime"].get_to<_float>(m_fInitShieldRecoveryTime);
 	jKenaStatus["04. m_iKarma"].get_to<_int>(m_iKarma);

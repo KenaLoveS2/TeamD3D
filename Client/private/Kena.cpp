@@ -922,8 +922,8 @@ void CKena::Imgui_RenderProperty()
 	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
 	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	_int	Shield[2] = { m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
-	ImGui::InputInt2("Shield", (_int*)&Shield, ImGuiInputTextFlags_ReadOnly);
+	_float2	Shield{ m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
+	ImGui::InputFloat2("Shield", (_float*)&Shield, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	_float2	ShieldCoolTime{ m_pKenaStatus->Get_CurShieldCoolTime(), m_pKenaStatus->Get_InitShieldCoolTime() };
 	ImGui::InputFloat2("Shield CoolTime", (_float*)&ShieldCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);

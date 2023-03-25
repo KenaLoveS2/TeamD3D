@@ -147,17 +147,17 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-
-	if (m_eEFfectDesc.bActive == false)
-   		return;
-
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
 		m_fDissolveTime += fTimeDelta;
 	else
 		m_fDissolveTime = 0.0f;
+
 	Set_Status();
-	
+
+	if (m_eEFfectDesc.bActive == false)
+   		return;
+
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	switch (m_ePulseType)
 	{
@@ -342,23 +342,8 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 	/* Kena Status */
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool)), E_FAIL);
 
-	if (m_eStatus.fCurHp <= 0.0f)
-	{
-		for (auto& pChild : m_vecChild)
-			pChild->Set_Active(false);
-		m_bDesolve = true;
-	}
-
 	if (m_bDesolve)
 	{
-		if (m_fDissolveTime > 3.f)
-		{
-			m_bDesolve = false;
-			if (m_eStatus.fCurHp <= 0.0f)
-				m_bPulseZero = true;
-			m_fDissolveTime = 0.0f;
-		}
-
 		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
 	}
@@ -385,8 +370,25 @@ void CE_KenaPulse::Imgui_RenderProperty()
 
 void CE_KenaPulse::Set_Status()
 {
-	m_eStatus.fCurHp = (_float)m_pStatus->Get_Shield();
-	m_eStatus.fMaxHp = (_float)m_pStatus->Get_MaxShield();
+	m_eStatus.fCurHp = m_pStatus->Get_Shield();
+	m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+	if (m_eStatus.fCurHp <= 0.0f)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+		m_bPulseZero = true;
+		Reset();
+		m_eEFfectDesc.bActive = false;
+	}
+	else
+		m_bPulseZero = false;
+
+	if (m_fDissolveTime > 3.f)
+	{
+		m_bDesolve = false;
+		m_fDissolveTime = 0.0f;
+	}
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

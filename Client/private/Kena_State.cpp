@@ -6647,7 +6647,7 @@ _bool CKena_State::Check_ArrowCount()
 
 _bool CKena_State::Check_Shield()
 {
-	return m_pStatus->Get_Shield() > 0;
+	return m_pStatus->Get_Shield() > 0.f;
 }
 
 _bool CKena_State::RotWisp_Interactable()
