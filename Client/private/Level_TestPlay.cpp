@@ -2,6 +2,7 @@
 #include "..\public\Level_TestPlay.h"
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
+#include "CinematicCamera.h"
 
 #include "Imgui_PropertyEditor.h"
 #include "Imgui_MapEditor.h"
@@ -61,6 +62,12 @@ HRESULT CLevel_TestPlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	{
 		MSG_BOX("Layer_Camera");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
+	{
+		MSG_BOX("CinemaCam");
 		return E_FAIL;
 	}
 
@@ -213,11 +220,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -356,7 +363,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
@@ -371,7 +378,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
@@ -379,22 +386,25 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
 
-	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-	CameraDesc.fFovy = XMConvertToRadians(75.0f);
-	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
-	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
 
-	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CinematicCamera", L"CinematicCam_0", &CameraDesc));
+HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
+{
+	/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
+	vector<CCinematicCamera::CAMERAKEYFRAME> v;
+	string chatFileName;
+	CCinematicCamera::Clone_Load_Data("Test.json", v, chatFileName);
+
+	CGameObject* p_game_object = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CinematicCam_0", &v, &p_game_object))) return E_FAIL;
+	CCamera *pCamera = dynamic_cast<CCamera*>(p_game_object);
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
-
-	RELEASE_INSTANCE(CGameInstance);
+	static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
 

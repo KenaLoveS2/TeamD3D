@@ -30,6 +30,7 @@ void CKena_Status::Tick(_float fTimeDelta)
 {
 	Update_ArrowCoolTime(fTimeDelta);
 	Update_BombCoolTime(fTimeDelta);
+	Update_ShieldRecovery(fTimeDelta);
 }
 
 void CKena_Status::Imgui_RenderProperty()
@@ -81,21 +82,35 @@ void CKena_Status::Update_ArrowCoolTime(_float fTimeDelta)
 
 void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 {
+	CUI_ClientManager::UI_PRESENT eBomb = CUI_ClientManager::AMMO_BOMB;
+	CUI_ClientManager::UI_PRESENT eCool = CUI_ClientManager::AMMO_BOMBCOOL;
+	CUI_ClientManager::UI_PRESENT eBombEffect = CUI_ClientManager::AMMO_BOMBEFFECT;
+	CUI_ClientManager::UI_PRESENT eReCharge = CUI_ClientManager::AMMO_BOMBRECHARGE;
+	CUI_ClientManager::UI_PRESENT eMoment = CUI_ClientManager::AMMO_BOMBMOMENT;
+
 	_float fGuage = 0.f;
 
 	if (m_iCurBombCount == m_iMaxBombCount) /* Full */
 	{
 		m_fCurBombCoolTime = 0.0f;
 		fGuage = 1.0f;
-		//m_StatusDelegator.broadcast(eCool, fGuage);
+		m_StatusDelegator.broadcast(eCool, fGuage);
 	}
 	else /* Not Full */
 	{
+		if (m_fCurBombCoolTime == 0.f ) /* Bomb Use Moment */
+		{
+			_float fCount = (_float)m_iCurBombCount;
+			m_StatusDelegator.broadcast(eMoment, fGuage);
+			m_StatusDelegator.broadcast(eBomb, fCount);
+		}
+
+
 		m_fCurBombCoolTime += fTimeDelta;
 		if (m_fCurBombCoolTime >= m_fInitBombCoolTime)
 		{
 			/* Fullfilll Effect Call */
-			//m_StatusDelegator.broadcast(eBombEffect, fGuage);
+			m_StatusDelegator.broadcast(eBombEffect, fGuage);
 
 			++m_iCurBombCount;
 			if (m_iCurBombCount < m_iMaxBombCount)
@@ -105,13 +120,39 @@ void CKena_Status::Update_BombCoolTime(_float fTimeDelta)
 
 			/* ReCharge */
 			_float fIndex = (_float)m_iCurBombCount - 1;
-			_float fCount = (_float)m_iCurBombCount;
-			//m_StatusDelegator.broadcast(eReCharge, fIndex);
-			//m_StatusDelegator.broadcast(eBomb, fCount);
+			
+			m_StatusDelegator.broadcast(eReCharge, fIndex);
 		}
 				fGuage = m_fCurBombCoolTime / m_fInitBombCoolTime;
-		//m_StatusDelegator.broadcast(eCool, fGuage);
+		m_StatusDelegator.broadcast(eCool, fGuage);
 
+	}
+}
+
+void CKena_Status::Update_ShieldRecovery(_float fTimeDelta)
+{
+	if (m_bShieldBreak == false)
+	{
+		if (m_fShield < m_fMaxShield)
+		{
+			if (m_fCurShieldCoolTime < m_fInitShieldCoolTime)
+				m_fCurShieldCoolTime += fTimeDelta;
+			else
+				m_fShield += fTimeDelta * 3.f;
+		}
+		else
+			m_fShield = m_fMaxShield;
+	}
+	else
+	{
+		if (m_fCurShieldRecoveryTime < m_fInitShieldRecoveryTime)
+			m_fCurShieldRecoveryTime += fTimeDelta;
+		else
+		{
+			m_bShieldBreak = false;
+			m_fCurShieldRecoveryTime = 0.f;
+			m_fCurShieldCoolTime = m_fInitShieldCoolTime;
+		}
 	}
 }
 
@@ -119,7 +160,14 @@ void CKena_Status::Under_Shield(CStatus * pEnemyStatus)
 {
 	if (pEnemyStatus == nullptr) return;
 
-	m_iShield -= pEnemyStatus->Get_Attack();
+	m_fShield -= (_float)pEnemyStatus->Get_Attack();
+	m_fCurShieldCoolTime = 0.f;
+
+	if (m_fShield <= 0.f)
+	{
+		m_fShield = 0.f;
+		m_bShieldBreak = true;
+	}
 }
 
 CKena_Status * CKena_Status::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -159,22 +207,24 @@ HRESULT CKena_Status::Save()
 
 	CStatus::Save(jKenaStatus);
 
-	jKenaStatus["00. m_iMaxShield"] = m_iMaxShield;
-	jKenaStatus["01. m_iShield"] = m_iShield;
-	jKenaStatus["02. m_iKarma"] = m_iKarma;
-	jKenaStatus["03. m_iRotLevel"] = m_iRotLevel;
-	jKenaStatus["04. m_iRotCount"] = m_iRotCount;
-	jKenaStatus["05. m_iCrystal"] = m_iCrystal;
-	jKenaStatus["06. m_iMaxPIPCount"] = m_iMaxPIPCount;
-	jKenaStatus["07. m_fCurPIPGuage"] = m_fCurPIPGuage;
-	jKenaStatus["08. m_iMaxArrowCount"] = m_iMaxArrowCount;
-	jKenaStatus["09. m_iCurArrowCount"] = m_iCurArrowCount;
-	jKenaStatus["10. m_fInitArrowCoolTime"] = m_fInitArrowCoolTime;
-	jKenaStatus["11. m_fCurArrowCoolTime"] = m_fCurArrowCoolTime;
-	jKenaStatus["12. m_iMaxBombCount"] = m_iMaxBombCount;
-	jKenaStatus["13. m_iCurBombCount"] = m_iCurBombCount;
-	jKenaStatus["14. m_fInitBombCoolTime"] = m_fInitBombCoolTime;
-	jKenaStatus["15. m_fCurBombCoolTime"] = m_fCurBombCoolTime;
+	jKenaStatus["00. m_fMaxShield"] = m_fMaxShield;
+	jKenaStatus["01. m_fShield"] = m_fShield;
+	jKenaStatus["02. m_fInitShieldCoolTime"] = m_fInitShieldCoolTime;
+	jKenaStatus["03. m_fInitShieldRecoveryTime"] = m_fInitShieldRecoveryTime;
+	jKenaStatus["04. m_iKarma"] = m_iKarma;
+	jKenaStatus["05. m_iRotLevel"] = m_iRotLevel;
+	jKenaStatus["06. m_iRotCount"] = m_iRotCount;
+	jKenaStatus["07. m_iCrystal"] = m_iCrystal;
+	jKenaStatus["08. m_iMaxPIPCount"] = m_iMaxPIPCount;
+	jKenaStatus["09. m_fCurPIPGuage"] = m_fCurPIPGuage;
+	jKenaStatus["10. m_iMaxArrowCount"] = m_iMaxArrowCount;
+	jKenaStatus["11. m_iCurArrowCount"] = m_iCurArrowCount;
+	jKenaStatus["12. m_fInitArrowCoolTime"] = m_fInitArrowCoolTime;
+	jKenaStatus["13. m_fCurArrowCoolTime"] = m_fCurArrowCoolTime;
+	jKenaStatus["14. m_iMaxBombCount"] = m_iMaxBombCount;
+	jKenaStatus["15. m_iCurBombCount"] = m_iCurBombCount;
+	jKenaStatus["16. m_fInitBombCoolTime"] = m_fInitBombCoolTime;
+	jKenaStatus["17. m_fCurBombCoolTime"] = m_fCurBombCoolTime;
 
 	ofstream file(m_strJsonFilePath.c_str());
 	file << jKenaStatus;
@@ -193,22 +243,24 @@ HRESULT CKena_Status::Load(const string & strJsonFilePath)
 
 	CStatus::Load(jKenaStatus);
 
-	jKenaStatus["00. m_iMaxShield"].get_to<_int>(m_iMaxShield);
-	jKenaStatus["01. m_iShield"].get_to<_int>(m_iShield);
-	jKenaStatus["02. m_iKarma"].get_to<_int>(m_iKarma);
-	jKenaStatus["03. m_iRotLevel"].get_to<_int>(m_iRotLevel);
-	jKenaStatus["04. m_iRotCount"].get_to<_int>(m_iRotCount);
-	jKenaStatus["05. m_iCrystal"].get_to<_int>(m_iCrystal);
-	jKenaStatus["06. m_iMaxPIPCount"].get_to<_int>(m_iMaxPIPCount);
-	jKenaStatus["07. m_fCurPIPGuage"].get_to<_float>(m_fCurPIPGuage);
-	jKenaStatus["08. m_iMaxArrowCount"].get_to<_int>(m_iMaxArrowCount);
-	jKenaStatus["09. m_iCurArrowCount"].get_to<_int>(m_iCurArrowCount);
-	jKenaStatus["10. m_fInitArrowCoolTime"].get_to<_float>(m_fInitArrowCoolTime);
-	jKenaStatus["11. m_fCurArrowCoolTime"].get_to<_float>(m_fCurArrowCoolTime);
-	jKenaStatus["12. m_iMaxBombCount"].get_to<_int>(m_iMaxBombCount);
-	jKenaStatus["13. m_iCurBombCount"].get_to<_int>(m_iCurBombCount);
-	jKenaStatus["14. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
-	jKenaStatus["15. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
+	jKenaStatus["00. m_fMaxShield"].get_to<_float>(m_fMaxShield);
+	jKenaStatus["01. m_fShield"].get_to<_float>(m_fShield);
+	jKenaStatus["02. m_fInitShieldCoolTime"].get_to<_float>(m_fInitShieldCoolTime);
+	jKenaStatus["03. m_fInitShieldRecoveryTime"].get_to<_float>(m_fInitShieldRecoveryTime);
+	jKenaStatus["04. m_iKarma"].get_to<_int>(m_iKarma);
+	jKenaStatus["05. m_iRotLevel"].get_to<_int>(m_iRotLevel);
+	jKenaStatus["06. m_iRotCount"].get_to<_int>(m_iRotCount);
+	jKenaStatus["07. m_iCrystal"].get_to<_int>(m_iCrystal);
+	jKenaStatus["08. m_iMaxPIPCount"].get_to<_int>(m_iMaxPIPCount);
+	jKenaStatus["09. m_fCurPIPGuage"].get_to<_float>(m_fCurPIPGuage);
+	jKenaStatus["10. m_iMaxArrowCount"].get_to<_int>(m_iMaxArrowCount);
+	jKenaStatus["11. m_iCurArrowCount"].get_to<_int>(m_iCurArrowCount);
+	jKenaStatus["12. m_fInitArrowCoolTime"].get_to<_float>(m_fInitArrowCoolTime);
+	jKenaStatus["13. m_fCurArrowCoolTime"].get_to<_float>(m_fCurArrowCoolTime);
+	jKenaStatus["14. m_iMaxBombCount"].get_to<_int>(m_iMaxBombCount);
+	jKenaStatus["15. m_iCurBombCount"].get_to<_int>(m_iCurBombCount);
+	jKenaStatus["16. m_fInitBombCoolTime"].get_to<_float>(m_fInitBombCoolTime);
+	jKenaStatus["17. m_fCurBombCoolTime"].get_to<_float>(m_fCurBombCoolTime);
 
 	m_iPipLevel = 1;
 	m_eRotState = RS_GOOD;

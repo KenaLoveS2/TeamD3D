@@ -138,6 +138,74 @@ const _bool CKena::Get_State(STATERETURN eState) const
 	}
 }
 
+void CKena::Set_State(STATERETURN eState, _bool bValue)
+{
+	if (eState == CKena::STATERETURN_END)
+		return;
+
+	switch (eState)
+	{
+	case STATE_ATTACK:
+		m_bAttack = bValue;
+		break;
+
+	case STATE_HEAVYATTACK:
+		m_bHeavyAttack = bValue;
+		break;
+
+	case STATE_PERFECTATTACK:
+		m_bPerfectAttack = bValue;
+		break;
+
+	case STATE_COMMONHIT:
+		m_bCommonHit = bValue;
+		break;
+
+	case STATE_HEAVYHIT:
+		m_bHeavyHit = bValue;
+		break;
+
+	case STATE_SPRINT:
+		m_bSprint = bValue;
+		break;
+
+	case STATE_AIM:
+		m_bAim = bValue;
+		break;
+
+	case STATE_BOW:
+		m_bBow = bValue;
+		break;
+
+	case STATE_INJECTBOW:
+		m_bInjectBow = bValue;
+		break;
+
+	case STATE_BOMB:
+		m_bBomb = bValue;
+		break;
+
+	case STATE_INJECTBOMB:
+		m_bInjectBomb = bValue;
+		break;
+
+	case STATE_PULSE:
+		m_bPulse = bValue;
+		break;
+
+	case STATE_PARRY:
+		m_bParryLaunch = bValue;
+		break;
+
+	case STATE_JUMP:
+		m_bJump = bValue;
+		break;
+
+	default:
+		return;
+	}
+}
+
 HRESULT CKena::Initialize_Prototype()
 {
 	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
@@ -355,7 +423,7 @@ void CKena::Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
-	m_pKenaStatus->Set_Attack(20);
+	//m_pKenaStatus->Set_Attack(20);
 #endif	
 	
 	if (m_bAim && m_bJump)
@@ -364,7 +432,9 @@ void CKena::Tick(_float fTimeDelta)
 	{
 		if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
 			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
-			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
+			m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
 			CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 	}
 
@@ -381,7 +451,9 @@ void CKena::Tick(_float fTimeDelta)
  			m_bCommonHit = true;
  			//m_bHeavyHit = true;
  			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
- 			m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+
+			if (m_bPulse == false)
+ 				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
  
  			m_bParry = false;
  			m_pAttackObject = nullptr;
@@ -416,7 +488,9 @@ void CKena::Tick(_float fTimeDelta)
 		{
 			if (m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::PULSE_PARRY &&
 				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOW_INJECT_ADD &&
-				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD)
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::BOMB_INJECT_ADD && 
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_FRONT &&
+				m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::SHIELD_BREAK_BACK)
 				m_pAnimation->Play_Animation(fTimeDelta / fTimeRate);
 			else
 				m_pAnimation->Play_Animation(fTimeDelta);
@@ -695,7 +769,7 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REFLECT, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -778,51 +852,23 @@ HRESULT CKena::RenderShadow()
 	return S_OK;
 }
 
-HRESULT CKena::RenderReflect()
+HRESULT CKena::RenderCine()
 {
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
 
-	FAILED_CHECK_RETURN(SetUp_ReflectShaderResources(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
 
 	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
-		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		if (i == 1)
-		{
-			// Arm & Leg
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVEMASK, "g_EmissiveMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_HAIR_DEPTH, "g_DetailNormal");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 3);
-		}
-		else if (i == 4)
-		{
-			// Eye Render
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 1);
-		}
-		else if (i == 5 || i == 6)
-		{
-			// HEAD
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SSS_MASK, "g_SSSMaskTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 4);
-		}
-		else if (i == 0)
+		if (i == 0)
 		{
 			// Render Off
 			continue;
 		}
-		else
-		{
-			// Eye Lash
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 7);
-		}
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
 	}
 
 	return S_OK;
@@ -847,6 +893,15 @@ void CKena::Imgui_RenderProperty()
 
 	_float2	BombCoolTime{ m_pKenaStatus->Get_CurBombCoolTime(), m_pKenaStatus->Get_InitBombCoolTime() };
 	ImGui::InputFloat2("Bomb CoolTime", (_float*)&BombCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+	_float2	Shield{ m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
+	ImGui::InputFloat2("Shield", (_float*)&Shield, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+	_float2	ShieldCoolTime{ m_pKenaStatus->Get_CurShieldCoolTime(), m_pKenaStatus->Get_InitShieldCoolTime() };
+	ImGui::InputFloat2("Shield CoolTime", (_float*)&ShieldCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+	_float2	ShieldRecoveryTime{ m_pKenaStatus->Get_CurShieldRecoveryTime(), m_pKenaStatus->Get_InitShieldRecoveryTime() };
+	ImGui::InputFloat2("Shield Recovery Time", (_float*)&ShieldRecoveryTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	__super::Imgui_RenderProperty();
 }
@@ -1373,11 +1428,11 @@ HRESULT CKena::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-HRESULT CKena::SetUp_ReflectShaderResources()
+HRESULT CKena::SetUp_CineShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_REFLECTVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
@@ -1841,7 +1896,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
 		{
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;

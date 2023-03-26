@@ -338,6 +338,13 @@ map<const _tchar*, class CGameObject*>* CGameInstance::Get_ShaderValueObjects(_u
 	return m_pObject_Manager->Get_ShaderValueObjects(iLevelIndex);
 }
 
+map<const _tchar*, class CGameObject*>* CGameInstance::Get_GameObjects(_uint iLevelIndex, const _tchar * pLayerTag)
+{
+	NULL_CHECK_RETURN(m_pObject_Manager, nullptr);
+
+	return m_pObject_Manager->Get_GameObjects(iLevelIndex, pLayerTag);
+}
+
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObject_Manager) return E_FAIL;
@@ -854,7 +861,7 @@ vector<string>* CGameInstance::Get_UIString(_uint iKey)
 	return m_pString_Manager->Get_UIString(iKey);
 }
 
-void CGameInstance::Add_UIWString(_uint iKey, wstring str)
+void CGameInstance::Add_UIWString(_uint iKey, const wstring & str)
 {
 	if (m_pString_Manager == nullptr) return;
 	return m_pString_Manager->Add_UIWString(iKey, str);

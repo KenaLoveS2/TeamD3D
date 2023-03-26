@@ -27,8 +27,8 @@ texture2D g_WispflowTexture;
 texture2D g_WispOutTexture;
 
 matrix    g_KenaInfoMatrix[300];
-texture2D g_KenaFlowTexture;
-texture2D g_KenaTypeTexture;
+texture2D g_FlowTexture;
+texture2D g_TypeTexture;
 
 matrix    g_RotInfoMatrix[300];
 matrix    g_InfoMatrix[100];
@@ -80,6 +80,7 @@ struct VS_TRAILOUT
 	float4      vPosition   : POSITION;
 	float2      vPSize      : PSIZE;
 	float       fLife : TEXCOORD0;
+	float		fWidth : TEXCOORD1;
 	row_major   float4x4    Matrix  : WORLD;
 	uint        InstanceID  : SV_InstanceID;
 };
@@ -105,6 +106,7 @@ VS_TRAILOUT VS_TRAILMAIN(VS_TRAILIN In)
 
 	float4x4    Matrix = In.Matrix;
 	Out.fLife = In.Matrix[3][3];
+	Out.fWidth = In.Matrix[2][3];
 
 	Matrix[0][3] = 0.f;
 	Matrix[1][3] = 0.f;
@@ -139,6 +141,7 @@ struct GS_TRAILIN
 	float4      vPosition   : POSITION;
 	float2      vPSize      : PSIZE;
 	float       fLife : TEXCOORD0;
+	float		fWidth : TEXCOORD1;
 	row_major   float4x4    Matrix  : WORLD;
 	uint        InstanceID  : SV_InstanceID;
 };
@@ -237,34 +240,31 @@ void GS_RECTTRAIL(point GS_TRAILIN In[1], inout TriangleStream<GS_TRAILOUT> Vert
 {
 	GS_TRAILOUT		Out[4];
 
-	float4x4    WorldMatrix = g_InfoMatrix[In[0].InstanceID];
+	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float4x4    WorldMatrix = In[0].Matrix;
 
-	float3		vWorldPos = matrix_postion(WorldMatrix);
+	float3      vUp = matrix_up(WorldMatrix) * In[0].vPSize.y * In[0].fWidth;
+	float3		vRight = matrix_right(WorldMatrix)* In[0].vPSize.x * In[0].fWidth;
+	float3		vPosition = matrix_postion(In[0].Matrix);
 
-	float3		vLook = g_vCamPosition.xyz - vWorldPos;
-	float3		vRight = normalize(cross(float3(0.0f, 1.0f, 0.0f), vLook)) * In[0].vPSize.x * 0.5f;
-	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f;
-
-	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
-	float3		vPosition;
-
-	vPosition = vWorldPos + vRight + vUp;
-	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
+	float3 vResultPos;
+	vResultPos = vPosition - vRight + vUp;
+	Out[0].vPosition = mul(vector(vResultPos, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 	Out[0].fLife = In[0].fLife / g_fLife;
 
-	vPosition = vWorldPos - vRight + vUp;
-	Out[1].vPosition = mul(vector(vPosition, 1.f), matVP);
+	vResultPos = vPosition + vRight + vUp;
+	Out[1].vPosition = mul(vector(vResultPos, 1.f), matVP);
 	Out[1].vTexUV = float2(1.f, 0.f);
 	Out[1].fLife = In[0].fLife / g_fLife;
 
-	vPosition = vWorldPos - vRight - vUp;
-	Out[2].vPosition = mul(vector(vPosition, 1.f), matVP);
+	vResultPos = vPosition + vRight - vUp;
+	Out[2].vPosition = mul(vector(vResultPos, 1.f), matVP);
 	Out[2].vTexUV = float2(1.f, 1.f);
 	Out[2].fLife = In[0].fLife / g_fLife;
 
-	vPosition = vWorldPos + vRight - vUp;
-	Out[3].vPosition = mul(vector(vPosition, 1.f), matVP);
+	vResultPos = vPosition - vRight - vUp;
+	Out[3].vPosition = mul(vector(vResultPos, 1.f), matVP);
 	Out[3].vTexUV = float2(0.f, 1.f);
 	Out[3].fLife = In[0].fLife / g_fLife;
 
@@ -868,8 +868,8 @@ PS_OUT PS_TRAILMAIN(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector   type = g_KenaTypeTexture.Sample(LinearSampler, In.vTexUV);
-	vector	 flow = g_KenaFlowTexture.Sample(LinearSampler, In.vTexUV);
+	vector   type = g_TypeTexture.Sample(LinearSampler, In.vTexUV);
+	vector	 flow = g_FlowTexture.Sample(LinearSampler, In.vTexUV);
 
 	float    fAlpha = 1.f - (abs(0.5f - In.vTexUV.y) * 2.f);
 
@@ -889,8 +889,8 @@ PS_OUT PS_BOMBTRAIL(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector   type = g_KenaTypeTexture.Sample(LinearSampler, In.vTexUV);
-	vector	 flow = g_KenaFlowTexture.Sample(LinearSampler, In.vTexUV);
+	vector   type = g_TypeTexture.Sample(LinearSampler, In.vTexUV);
+	vector	 flow = g_FlowTexture.Sample(LinearSampler, In.vTexUV);
 	flow.a = flow.r;
 
 	float4 vColor = float4(206.f, 180.f, 225.f, 225.f) / 225.f;
@@ -1005,11 +1005,12 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	if (Diffuse.a < 0.01f)
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	if (vDiffuse.a < 0.1f)
 		discard;
-
-	Out.vColor = Diffuse;
+	Out.vColor = vDiffuse + g_vColor;
+	Out.vColor.a = Out.vColor.a * In.fLife;
 	return Out;
 }
 

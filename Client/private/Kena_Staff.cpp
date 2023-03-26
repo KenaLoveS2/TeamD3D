@@ -5,6 +5,7 @@
 #include "Bone.h"
 #include "Effect_Base.h"
 #include "E_KenaTrail.h"
+#include "E_RectTrail.h"
 
 CKena_Staff::CKena_Staff(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CKena_Parts(pDevice, pContext)
@@ -37,11 +38,6 @@ HRESULT CKena_Staff::Initialize(void * pArg)
 
 HRESULT CKena_Staff::Late_Initialize(void * pArg)
 {
-	for (auto& pEffect : m_mapEffect)
-	{
-		if (pEffect.second != nullptr)
-			pEffect.second->Late_Initialize();
-	}
 	return S_OK;
 }
 
@@ -63,10 +59,11 @@ HRESULT CKena_Staff::Ready_Effects()
 	m_mapEffect.emplace("KenaCharge", pEffectBase);
 
 	/* RectTrailTest */
-	//pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"RectTrail"));
-	//NULL_CHECK_RETURN(pEffectBase, E_FAIL);
-	//pEffectBase->Set_Parent(this);
-	//m_mapEffect.emplace("RectTrail", pEffectBase);
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"KenaRectTrail"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_KENA);
+	m_mapEffect.emplace("KenaRectTrail", pEffectBase);
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -83,18 +80,10 @@ void CKena_Staff::Tick(_float fTimeDelta)
  		m_fBowDurationTime = 0.5f;
  
  	m_mapEffect["KenaTrail"]->Set_Active(m_pPlayer->Is_TrailON());
- 	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
+	m_mapEffect["KenaCharge"]->Set_Active(m_pPlayer->Is_ChargeLight());
  
  	for (auto& pEffect : m_mapEffect)
  		pEffect.second->Tick(fTimeDelta);
-
-	ImGui::Begin("STAFF");
-	if (ImGui::Button("Recompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
-	ImGui::End();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -120,6 +109,9 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	}
 	/* ~Weapon Update */
 
+	if (m_mapEffect["KenaTrail"]->Get_Active() == true)
+		dynamic_cast<CE_RectTrail*>(m_mapEffect["KenaRectTrail"])->Trail_InputRandomPos(matWorldSocket.r[3]);
+
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Late_Tick(fTimeDelta);
 
@@ -127,6 +119,7 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 }
 
@@ -228,6 +221,33 @@ void CKena_Staff::ImGui_ShaderValueProperty()
 	m_vMulAmbientColor.x = fColor[0];
 	m_vMulAmbientColor.y = fColor[1];
 	m_vMulAmbientColor.z = fColor[2];
+}
+
+HRESULT CKena_Staff::RenderCine()
+{
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
+
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
+
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+	}
+
+	return S_OK;
+}
+
+HRESULT CKena_Staff::SetUp_CineShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	return S_OK;
 }
 
 HRESULT CKena_Staff::SetUp_Components()

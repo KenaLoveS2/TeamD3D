@@ -2,8 +2,6 @@
 #include "Client_Defines.h"
 #include "EnviromentObj.h"
 
-
-
 BEGIN(Engine)
 class CShader;
 class CRenderer;

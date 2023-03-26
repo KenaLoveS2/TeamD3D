@@ -36,7 +36,7 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
+	//m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
 	return S_OK;
 }
 
@@ -52,10 +52,10 @@ void CE_KenaPulseDot::Tick(_float fTimeDelta)
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
-	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)
 		Set_Matrix();

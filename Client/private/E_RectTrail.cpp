@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Camera.h"
 #include "Kena.h"
+#include "Monster.h"
+#include "Kena_Staff.h"
 
 CE_RectTrail::CE_RectTrail(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Trail(pDevice, pContext)
@@ -36,100 +38,79 @@ HRESULT CE_RectTrail::Initialize(void * pArg)
 	m_pVITrailBufferCom = CVIBuffer_Trail::Create(m_pDevice, m_pContext, 100);
 	m_eEFfectDesc.bActive = false;
 
-	/* Trail Option */
-	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 0.5f; //5.f
-	m_eEFfectDesc.fLife = 1.5f; //1.f
-	m_eEFfectDesc.bAlpha = false;
-	m_eEFfectDesc.fAlpha = 0.6f;
-	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
-	m_eEFfectDesc.vColor = XMVectorSet(160.f, 231.f, 255.f, 255.f) / 255.f;
-	/* ~Trail Option */
+	SetUp_Option(m_eType);
 
-	m_eEFfectDesc.iPassCnt = 11;
 	return S_OK;
 }
 
 HRESULT CE_RectTrail::Late_Initialize(void * pArg)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 
 void CE_RectTrail::Tick(_float fTimeDelta)
 {
- 	__super::Tick(fTimeDelta);	
-	
-	// m_pVITrailBufferCom->Trail_Tick(m_pTransformCom, m_pKena, fTimeDelta); 
+#pragma region Test
+	//if( dynamic_cast<CKena_Staff*>(m_pParent))
+	//{
+	//	ImGui::Begin("RectTrail");
+
+	//	if (ImGui::Button("Recompile"))
+	//		m_pShaderCom->ReCompile();
+
+	//	ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
+	//	ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
+	//	ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
+	//	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
+
+	//	static bool alpha_preview = true;
+	//	static bool alpha_half_preview = false;
+	//	static bool drag_and_drop = true;
+	//	static bool options_menu = true;
+	//	static bool hdr = false;
+
+	//	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	//	static bool   ref_color = false;
+	//	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//	vSelectColor = m_eEFfectDesc.vColor;
+
+	//	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	//	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	//	m_eEFfectDesc.vColor = vSelectColor;
+
+	//	ImGui::End();
+	//}
+#pragma endregion Test
+
+	__super::Tick(fTimeDelta);
+
+	if (dynamic_cast<CKena_Staff*>(m_pParent))
+	{
+		CKena* pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
+		if (pKena->Get_State(CKena::STATE_PERFECTATTACK) == true)
+			m_eEFfectDesc.vColor = XMVectorSet(255.f, 89.0f, 0.0f, 255.f) / 255.f;
+		else
+			m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
+	}
+
+	for (auto& vPosition : m_vecProPos)
+		vPosition.w -= fTimeDelta;
+
+	m_vecProPos.erase(remove_if(m_vecProPos.begin(), m_vecProPos.end(), [](const _float4& vPosition) {
+		return vPosition.w <= 0.0f;
+	}), m_vecProPos.end());
+
+	if (m_pParent != nullptr)
+		m_pVITrailBufferCom->Trail_Tick((_int)m_eType, m_pParent, fTimeDelta);
 }
 
 void CE_RectTrail::Late_Tick(_float fTimeDelta)
 {
-	//if (m_eEFfectDesc.bActive == false)
-	//{
-	//	ResetInfo();
-	//	return;
-	//}
-
-// 	__super::Late_Tick(fTimeDelta);
-
-	/* Rect Trail */
-	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-	if (m_vecProPos.empty() || m_vecProPos.back() != vPos)
-		m_vecProPos.push_back(vPos);
-
-	if (m_vecProPos.size() >= 3)
-	{
-		while (m_vecProPos.size() > 3)
-			m_vecProPos.erase(m_vecProPos.begin());
-
-		CCamera* pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
-		_vector  vCamPos = pCamera->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
-		_float  fSplineLength = XMVectorGetX(XMVector3Length(m_vecProPos[1] - m_vecProPos[2]));
-
-		_vector vPoint0 = m_vecProPos[0];
-		_vector vPoint1 = m_vecProPos[1];
-		_vector vPoint2 = m_vecProPos[2];
-		_vector vPoint3 = m_vecProPos[2];
-
-		_float  fPreLife = 0.0f;
-		if (m_pVITrailBufferCom->Get_InstanceInfo()->size())
-			fPreLife = m_pVITrailBufferCom->Get_InstanceInfo()->back().vPosition.w;
-
-		_uint  iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
-		_vector vPrepos = vPoint1;
-
-		_float  fWeight = 0.0f, fRadian = 0.0f;
-		_vector vPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-		_vector vRight = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		_vector vUp = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		_vector vLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
-		vPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-
-		for (_uint i = 0; i < iSegmentCnt; ++i)
-		{
-			vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			vRight = XMVector3Normalize(vPrepos - vPosition);
-			vDir = XMVectorSet(0.0f, -CUtile::Get_RandomFloat(0.1f, 1.0f), 0.0f, 0.0f);
-
-			vUp = XMVector3Cross(vRight, vDir);
-			vLook = XMVector3Cross(vRight, vUp);
-
-			_smatrix TrailMatrix(vRight, vUp, vLook, vPosition);
-			m_pVITrailBufferCom->Add_Instance(TrailMatrix);
-			vPrepos = vPosition;
-		}
-	}
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+ 	__super::Trail_LateTick(fTimeDelta);
 }
 
 HRESULT CE_RectTrail::Render()
@@ -148,30 +129,6 @@ HRESULT CE_RectTrail::Render()
 
 void CE_RectTrail::Imgui_RenderProperty()
 {
-	if (ImGui::Button("Recompile"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
-	ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
-	ImGui::InputFloat("pass", (_float*)&m_eEFfectDesc.iPassCnt);
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
 }
 
 HRESULT CE_RectTrail::SetUp_ShaderResources()
@@ -186,6 +143,51 @@ HRESULT CE_RectTrail::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
+{
+	m_eEFfectDesc.IsTrail = true;
+	m_eEFfectDesc.fWidth = 1.f;
+
+	switch (eType)
+	{
+	case Client::CE_RectTrail::OBJ_KENA:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 11;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_MONSTER:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 11;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 120.f, 120.f, 255.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_BOSS:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 11;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 5.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_ROTWISP:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 11;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.vColor = XMVectorSet(0.3f, 0.3f, 0.8f, 1.f);
+		break;
+
+	case Client::CE_RectTrail::OBJ_DEFAULT:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 11;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
+		break;
+	}
 }
 
 CE_RectTrail * CE_RectTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)

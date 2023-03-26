@@ -56,7 +56,6 @@ HRESULT CEnviromentObj::Initialize(void * pArg)
 
 	HRESULT SetUp_Component();
 
-
 	return S_OK;
 }
 
@@ -81,7 +80,12 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 HRESULT CEnviromentObj::Render()
 {
 	__super::Render();
+	return S_OK;
+}
 
+HRESULT CEnviromentObj::RenderCine()
+{
+	__super::RenderCine();
 	return S_OK;
 }
 
@@ -170,6 +174,15 @@ HRESULT CEnviromentObj::Set_UpTexture_FilePathToMaterial(CModel * pModel , const
 		pModel->SetUp_Material(i, Type, TexturePath);
 	}
 	
+	return S_OK;
+}
+
+HRESULT CEnviromentObj::SetUp_CineShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	return S_OK;
 }
 

@@ -490,6 +490,9 @@
     <Filter Include="02.GameObjects\Monster\BossShaman">
       <UniqueIdentifier>{d3cbaa63-4b82-4803-9ed5-ea9a5639924d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Effect_S2">
+      <UniqueIdentifier>{d6fef66d-c8ab-4979-ba69-f242b75e5367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1196,7 +1199,17 @@
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
     <ClInclude Include="..\public\CinematicCamera.h" />
-    <ClInclude Include="..\public\Effect_Base_S2.h" />
+    <ClInclude Include="..\Public\Chest_Anim.h" />
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
+    <ClInclude Include="..\public\Effect_Base_S2.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh_Base.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Texture_Base.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1882,7 +1895,17 @@
     </ClCompile>
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
-    <ClCompile Include="..\private\Effect_Base_S2.cpp" />
+    <ClCompile Include="..\Private\Chest_Anim.cpp" />
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
+    <ClCompile Include="..\private\Effect_Base_S2.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh_Base.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Texture_Base.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1961,11 +1984,17 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

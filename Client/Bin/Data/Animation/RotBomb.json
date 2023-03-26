@@ -2,63 +2,77 @@
     {
         "0. State Name": "CHARGE",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
-        "3. Main Animation": "A_Bomb_Charge",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": "N/A"
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Bomb_Charge",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     },
     {
         "0. State Name": "CHARGE_LOOP",
         "1. Looping": true,
-        "2. Lerp Duration": 0.0,
-        "3. Main Animation": "A_Bomb_ChargeLoop",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": "N/A"
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.0,
+        "5. Main Animation": "A_Bomb_ChargeLoop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     },
     {
         "0. State Name": "INJECT",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
-        "3. Main Animation": "A_Bomb_Inject",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": "N/A"
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Bomb_Inject",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     },
     {
         "0. State Name": "LAND",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
-        "3. Main Animation": "A_Bomb_Land",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": "N/A"
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Bomb_Land",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     },
     {
         "0. State Name": "LAND_LOOP",
         "1. Looping": true,
-        "2. Lerp Duration": 0.0,
-        "3. Main Animation": "A_Bomb_LandLoop",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": "N/A"
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.0,
+        "5. Main Animation": "A_Bomb_LandLoop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     },
     {
         "0. State Name": "LAND_RUMBLE",
         "1. Looping": false,
-        "2. Lerp Duration": 0.20000000298023224,
-        "3. Main Animation": "A_Bomb_LandLoop",
-        "4. Blend Animation": "N/A",
-        "5. Joint Index": "N/A",
-        "6. Additive Animation": [
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Bomb_LandLoop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
             {
                 "0. Blend Type": "ADDITIVE",
                 "1. Ratio Control": "MAX",
                 "2. Max Additive Ratio": 1.0,
-                "3. Reference Animation": "A_Bomb_RefPose",
-                "4. Additive Animation": "A_Bomb_LandRumble",
-                "5. Joint Index": "N/A"
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Bomb_RefPose",
+                "6. Additive Animation": "A_Bomb_LandRumble",
+                "7. Joint Index": "N/A"
             }
         ]
     }

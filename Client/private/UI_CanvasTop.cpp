@@ -333,6 +333,12 @@ void CUI_CanvasTop::BindFunction(CUI_ClientManager::UI_PRESENT eType, _float fVa
 			case 10:
 				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"워리어");
 				break;
+			case 20:
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"가면 제작자");
+				break;
+			case 30:
+				static_cast<CUI_NodeBossHP*>(m_vecNode[UI_BOSSHP])->Set_Title(L"헌터");
+				break;
 			}
 		}
 		else if (fValue == -1.f)

@@ -15,6 +15,8 @@ struct ENGINE_DLL  CAdditiveAnimation : public CBase
 	RATIOTYPE	m_eControlRatio = RATIOTYPE_MAX;
 	ADDITIVETYPE	m_eAdditiveType = ADDITIVE;
 	_bool			m_bPlayReverse = false;
+	_bool			m_bRootBoneRotationLock = true;
+	_bool			m_bRootBoneTranslationLock = true;
 	_float			m_fAdditiveRatio = 0.f;
 	_float			m_fMaxAdditiveRatio = 1.f;
 	CAnimation*	m_pRefAnim = nullptr;
@@ -31,6 +33,8 @@ struct ENGINE_DLL CAnimState : public CBase
 {
 	string			m_strStateName = "";
 	_bool			m_bLoop = true;
+	_bool			m_bRootBoneRotationLock = true;
+	_bool			m_bRootBoneTranslationLock = true;
 	_float			m_fLerpDuration = 0.2f;
 	CAnimation*	m_pMainAnim = nullptr;
 	CAnimation*	m_pBlendAnim = nullptr;

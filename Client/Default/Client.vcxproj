@@ -206,6 +206,7 @@
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h" />
+    <ClInclude Include="..\public\Effect_Mesh_Base.h" />
     <ClInclude Include="..\public\Effect_Particle_Base.h" />
     <ClInclude Include="..\public\Effect_Mesh.h" />
     <ClInclude Include="..\public\Effect_Mesh_T.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="..\public\Effect_Point_Instancing_T.h" />
     <ClInclude Include="..\public\Effect_Rect_Instancing.h" />
     <ClInclude Include="..\public\Effect_T.h" />
+    <ClInclude Include="..\public\Effect_Texture_Base.h" />
     <ClInclude Include="..\public\Effect_Trail.h" />
     <ClInclude Include="..\public\Effect_Trail_T.h" />
     <ClInclude Include="..\public\EnemyWisp.h" />
@@ -255,7 +257,10 @@
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
+    <ClInclude Include="..\public\E_Swipes_Charged.h" />
     <ClInclude Include="..\public\E_TeleportRot.h" />
+    <ClInclude Include="..\public\E_WarriorTrail.h" />
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
     <ClInclude Include="..\public\E_Wind.h" />
     <ClInclude Include="..\public\FakeShaman.h" />
     <ClInclude Include="..\Public\FieldBecon_Anim.h" />
@@ -444,6 +449,7 @@
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp" />
+    <ClCompile Include="..\private\Effect_Mesh_Base.cpp" />
     <ClCompile Include="..\private\Effect_Particle_Base.cpp" />
     <ClCompile Include="..\private\Effect_Mesh.cpp" />
     <ClCompile Include="..\private\Effect_Mesh_T.cpp" />
@@ -451,6 +457,7 @@
     <ClCompile Include="..\private\Effect_Point_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_Rect_Instancing.cpp" />
     <ClCompile Include="..\private\Effect_T.cpp" />
+    <ClCompile Include="..\private\Effect_Texture_Base.cpp" />
     <ClCompile Include="..\private\Effect_Trail.cpp" />
     <ClCompile Include="..\private\Effect_Trail_T.cpp" />
     <ClCompile Include="..\private\EnemyWisp.cpp" />
@@ -493,7 +500,10 @@
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
     <ClCompile Include="..\private\E_TeleportRot.cpp" />
+    <ClCompile Include="..\private\E_WarriorTrail.cpp" />
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
     <ClCompile Include="..\private\E_Wind.cpp" />
     <ClCompile Include="..\private\FakeShaman.cpp" />
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
@@ -664,7 +674,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMonsterModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl" />
@@ -676,6 +688,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel_Tess.hlsl" />

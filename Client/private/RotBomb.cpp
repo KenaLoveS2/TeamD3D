@@ -524,6 +524,7 @@ void CRotBomb::Calculate_Path(_float fTimeDelta)
 	_float3	vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float3();
 	_float3	vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float3();
 	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3	vScale = m_pTransformCom->Get_Scaled();
 	_float4	vTargetPos;
 
 	if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 10.f, &m_vAimPos))
@@ -535,35 +536,56 @@ void CRotBomb::Calculate_Path(_float fTimeDelta)
 	{
 		vCamLook.Normalize();
 		vTargetPos = XMVectorSetW(vCamPos + vCamLook * 10.f, 1.f);
-		m_pTransformCom->LookAt(vTargetPos);
+		m_pTransformCom->LookAt(vTargetPos);		
 	}
 
-	m_pPathTrail->Add_BezierCurve(vPos, vTargetPos, fTimeDelta);
+ 	m_pPathTrail->Add_BezierCurve(vPos, vTargetPos, fTimeDelta);
 }
 
 void CRotBomb::Throw(_float fTimeDelta)
 {
 	if (m_PathList.empty() == true)
+	{
+		m_pTransformCom->Projectile_Motion(XMConvertToRadians(170.f), fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta);
 		return;
+	}
 
 	_float4	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4	vTarget = m_PathList.front();
 	_float4	vDir = vTarget - vPos;
-	_float4	vDist = XMVector3Normalize(vDir) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec * fTimeDelta;
 
-	_float4	vMovedPos = vPos + vDist;
-	_float4	vAfterDir = vTarget - vMovedPos;
-
-	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vDir, 0.f)), XMVector3Normalize(XMVectorSetY(vAfterDir, 0.f)))));
-	if (fAngle == XM_PI)
+	if (XMVectorGetX(XMVector3Length(vDir)) == 0.f)
 	{
- 		m_PathList.pop_front();
-// 
-// 		Throw(fTimeDelta);
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTarget);
+		m_PathList.pop_front();
+
+		if (m_PathList.empty() == true)
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta);
+			return;
+		}
+
+		vTarget = m_PathList.front();
 	}
-	else
-		m_pTransformCom->Set_Translation(vMovedPos, vDist);
+
+	m_pTransformCom->LookAt(vTarget);
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTarget);
+
+// 	_float4	vDist = XMVector3Normalize(vDir) * m_pTransformCom->Get_TransformDesc().fSpeedPerSec * fTimeDelta;
+// 
+// 	_float4	vMovedPos = vPos + vDist;
+// 	_float4	vAfterDir = vTarget - vMovedPos;
+// 
+// 	_float		fAngle = acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMVectorSetY(vDir, 0.f)), XMVector3Normalize(XMVectorSetY(vAfterDir, 0.f)))));
+// 	if (fAngle == XM_PI)
+// 	{
+//  		m_PathList.pop_front();
+// // 
+// // 		Throw(fTimeDelta);
+// 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vTarget);
+// 	}
+// 	else
+// 		m_pTransformCom->Set_Translation(vMovedPos, vDist);
 }
 
 _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -582,6 +604,20 @@ _int CRotBomb::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pTarget = pTarget;
 			m_vHitPosition = XMVector3TransformCoord(XMVectorSetW(vCollisionPos, 1.f), pTarget->Get_TransformCom()->Get_WorldMatrix_Inverse());
 		}
+	}
+
+	if (iColliderIndex == (_uint)COL_PLAYER_ARROW && m_eCurState == CRotBomb::BOMB_LAND)
+		m_bBoom = true;
+
+	return 0;
+}
+
+_int CRotBomb::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	if (iTriggerIndex == (_int)ON_TRIGGER_PARAM_ACTOR)
+	{
+		if (iColliderIndex == (_int)TRIGGER_PULSE && m_eCurState == CRotBomb::BOMB_LAND)
+			m_bBoom = true;
 	}
 
 	return 0;

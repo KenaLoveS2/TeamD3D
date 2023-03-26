@@ -91,14 +91,14 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void					Imgui_RenderProperty() override;
-	virtual void					ImGui_AnimationProperty() override;
-	virtual void					ImGui_ShaderValueProperty() override;
-	virtual void					ImGui_PhysXValueProperty() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_AnimationProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+	virtual void			ImGui_PhysXValueProperty() override;
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>		m_SaiyaDelegator;

@@ -48,7 +48,7 @@ HRESULT CE_SpiritArrowTrail::Initialize(void * pArg)
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.5f; //5.f
-	m_eEFfectDesc.fLife = 1.5f; //1.f
+	m_eEFfectDesc.fLife = 5.f; //1.f
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f
@@ -64,19 +64,17 @@ HRESULT CE_SpiritArrowTrail::Initialize(void * pArg)
 
 void CE_SpiritArrowTrail::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.fLife = 0.2f; //1.f
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-
-	if (m_eEFfectDesc.bActive == false)
-		ResetInfo();
 }
 
 void CE_SpiritArrowTrail::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
-		return ;
+	{
+		ResetInfo();
+		return;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -106,11 +104,11 @@ HRESULT CE_SpiritArrowTrail::SetUp_ShaderResources()
 	/* Instance Buffer */
 
 	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaFlowTexture", m_iTrailFlowTexture)))
+	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_FlowTexture", m_iTrailFlowTexture)))
 		return E_FAIL;
 
 	/* Type */
-	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
+	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_TypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof(_float))))

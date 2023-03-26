@@ -127,7 +127,7 @@ HRESULT CUI_CanvasAim::Initialize(void * pArg)
 	m_vecNode[UI_ARROW3]->Set_Active(true);
 	m_vecNode[UI_ARROW4]->Set_Active(true);
 
-
+	m_vecNode[UI_BOMB1]->Set_Active(true);
 
 	return S_OK;
 }

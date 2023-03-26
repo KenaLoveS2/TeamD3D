@@ -81,24 +81,18 @@ HRESULT CE_KenaPulse::Initialize(void * pArg)
 		return E_FAIL;
 
 	/* Component */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"), L"Com_DissolveTexture", (CComponent**)&m_pDissolveTexture, this)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_PulseShield_Dissolve"), L"Com_DissolveTexture", (CComponent**)&m_pDissolveTexture, this), E_FAIL);
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(),
-		TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectModel"), TEXT("Com_Shader"), (CComponent**)&m_pShaderCom), E_FAIL);
 	Set_ModelCom(m_eEFfectDesc.eMeshType);
 	/* ~Component */
 
-	m_eEFfectDesc.bActive = false;
-	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
-
 	Set_Child();
 	m_eEFfectDesc.vColor = XMVectorSet(0.0f, 116.f, 255.f, 255.f) / 255.f;
-
+	m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
+	m_eEFfectDesc.bActive = false;
+	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
 
@@ -153,70 +147,18 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#pragma region PulseStatus test
-//	ImGui::Begin("pulse");
-//
-//	if (ImGui::Button("recompile"))
-//		m_pShaderCom->ReCompile();
-//
-//	/* State test */
-//	static int iType = 0;
-//	iType = m_eStatus.eState;
-//	ImGui::RadioButton("State_Default", &iType, 0);
-//	ImGui::RadioButton("State_Damage", &iType, 1); 
-//	ImGui::RadioButton("State_Default2Damage", &iType, 2); 
-//
-//	_float fRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
-//	ImGui::InputFloat("Ratio", &fRatio);
-//
-//	_float2 fHp = { m_eStatus.fCurHp, (_float)m_eStatus.fMaxHp };
-//	ImGui::DragFloat2("Hp", (_float*)&fHp, 1.0f, 0.0f, m_eStatus.fMaxHp);
-//	m_pStatus->Set_Shield((_int)fHp.x);
-//
-//	if(iType == 0)
-//		m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
-//	else if(iType==1)
-//	{
-//		m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DAMAGE;
-//
-//		m_eStatus.fStateDurationTime += fTimeDelta * 1.5f;
-//		if (m_eStatus.fStateDurationTime > 2.f)
-//		{
-//			m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
-//			m_eStatus.fStateDurationTime = 0.0f;
-//		}
-//	}
-//	/* State test */
-//
-//	static bool alpha_preview = true;
-//	static bool alpha_half_preview = false;
-//	static bool drag_and_drop = true;
-//	static bool options_menu = true;
-//	static bool hdr = false;
-//
-//	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-//
-//	static bool   ref_color = false;
-//	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-//
-//	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-//	vSelectColor = m_eEFfectDesc.vColor;
-//
-//	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-//	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-//	m_eEFfectDesc.vColor = vSelectColor;
-//
-//	ImGui::End();
-#pragma endregion PulseStatus test
-
-   	if (m_eEFfectDesc.bActive == false)
-   		return;
-
 	m_fTimeDelta += fTimeDelta;
+	if (m_bDesolve)
+		m_fDissolveTime += fTimeDelta;
+	else
+		m_fDissolveTime = 0.0f;
+
 	Set_Status();
 
-	_float3 vScaled = m_pTransformCom->Get_Scaled();
+	if (m_eEFfectDesc.bActive == false)
+   		return;
 
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	switch (m_ePulseType)
 	{
 	case Client::CE_KenaPulse::PULSE_DEFAULT:
@@ -230,6 +172,9 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			_float3 vScale = Get_InitMatrixScaled();
 			Set_InitMatrixScaled(vScale * 1.3f);
 
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 0.001f);
+
 			_float4 vPos;
 			XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 			CPhysX_Manager::GetInstance()->Set_ActorPosition(m_pTriggerDAta->pTriggerStatic, CUtile::Float_4to3(vPos));
@@ -241,18 +186,19 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 			{
 				m_eEFfectDesc.bActive = false;
 				m_bNoActive = false;
-				// m_bDesolve = true;
 				memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 				m_fDissolveTime = 0.0f;
-				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+				CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 			}
 		}
 
 		if (m_bNoActive == false && m_eEFfectDesc.bActive == true)
 		{
+			PxRigidActor*		pActor = m_pTransformCom->Get_ActorList()->front().pActor;
+			CPhysX_Manager::GetInstance()->Set_ScalingSphere(pActor, 1.f);
+
 			for (auto& pChild : m_vecChild)
 				pChild->Set_Active(true);
-			// m_bDesolve = true;
 		}
 		break;
 
@@ -278,13 +224,12 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		}
 		break;
 	}
-
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-  	if (m_eEFfectDesc.bActive == false)
+  	if (m_eEFfectDesc.bActive == false || (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_bPulseZero == true))
   		return;
 
 	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_pParent != nullptr)
@@ -298,6 +243,16 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 		if(m_ePulseType != CE_KenaPulse::PULSE_DEFAULT)
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
+	}
+
+	if (m_eStatus.eState == CE_KenaPulse::tagMyStatus::STATE_DAMAGE)
+	{
+		m_eStatus.fStateDurationTime += fTimeDelta * 1.5f;
+		if (m_eStatus.fStateDurationTime > 2.f)
+		{
+			m_eStatus.eState = CE_KenaPulse::tagMyStatus::STATE_DEFAULT;
+			m_eStatus.fStateDurationTime = 0.0f;
+		}
 	}
 }
 
@@ -327,7 +282,7 @@ void CE_KenaPulse::Reset()
 	memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 	Set_InitMatrixScaled(Get_InitMatrixScaled());
 
-	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.f);
+	CPhysX_Manager::GetInstance()->Set_ScalingSphere(m_pTriggerDAta->pTriggerStatic, 0.001f);
 }
 
 _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -339,7 +294,30 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			return 0;
 
 		// KenaPulse °ø°Ý·Â ±ð±â
-		m_pStatus->Under_Shield(((CMonster*)pTarget)->Get_MonsterStatusPtr());
+		CStatus*	pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+		if (pStatus->Get_Attack() > 10)
+			m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+		else
+			m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+		m_pKena->Set_AttackObject(pTarget);
+		//
+		CKena:: DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
+		CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
+		_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		vDir.Normalize();
+
+		_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+		if (fFrontBackAngle >= 0.f)
+			eDir = CKena::DAMAGED_FRONT;
+		else
+			eDir = CKena::DAMAGED_BACK;
+
+		m_pKena->Set_DamagedDir(eDir);
+		//
+		m_pStatus->Under_Shield(pStatus);
 		m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
 	return 0;
@@ -356,29 +334,20 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 		return E_FAIL;
 
 	/* Kena Status */
-	_float fRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_HpRatio", &fRatio, sizeof(_float))))
-		return E_FAIL;
+	m_fHpRatio = m_eStatus.fCurHp / m_eStatus.fMaxHp;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_HpRatio", &m_fHpRatio, sizeof _float), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_PulseState", &m_eStatus.eState, sizeof _uint), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_DamageDurationTime", &m_eStatus.fStateDurationTime, sizeof _float), E_FAIL);
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_PulseState", &m_eStatus.eState, sizeof(_uint))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_DamageDurationTime", &m_eStatus.fStateDurationTime, sizeof(_float))))
-		return E_FAIL;
 	/* Kena Status */
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool)), E_FAIL);
 
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDesolve, sizeof(_bool))))
-	//	return E_FAIL;
+	if (m_bDesolve)
+	{
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
+	}
 
-	//if (m_bDesolve)
-	//{
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float))))
-	//		return E_FAIL;
-
-	//	_float fTextureIdx = m_pDissolveTexture->Get_TextureIdx();
-	//	if (FAILED(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", fTextureIdx)))
-	//		return E_FAIL;
-	//}
 	return S_OK;
 }
 
@@ -401,8 +370,25 @@ void CE_KenaPulse::Imgui_RenderProperty()
 
 void CE_KenaPulse::Set_Status()
 {
-	m_eStatus.fCurHp = (_float)m_pStatus->Get_Shield();
-	m_eStatus.fMaxHp = (_float)m_pStatus->Get_MaxShield();
+	m_eStatus.fCurHp = m_pStatus->Get_Shield();
+	m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+	if (m_eStatus.fCurHp <= 0.0f)
+	{
+		for (auto& pChild : m_vecChild)
+			pChild->Set_Active(false);
+		m_bPulseZero = true;
+		Reset();
+		m_eEFfectDesc.bActive = false;
+	}
+	else
+		m_bPulseZero = false;
+
+	if (m_fDissolveTime > 3.f)
+	{
+		m_bDesolve = false;
+		m_fDissolveTime = 0.0f;
+	}
 }
 
 CE_KenaPulse * CE_KenaPulse::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

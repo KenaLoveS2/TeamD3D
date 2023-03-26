@@ -79,10 +79,10 @@ public:
 	virtual void					ImGui_PhysXValueProperty() override;
 	virtual void					Calc_RootBoneDisplacement(_fvector vDisplacement) override;
 
-	void								Bind(class CRotForMonster* pGameObject[], _int iRotCnt);
-	void								Spawn() { m_bSpawn = true; };
-	void								StringlyHit() { m_bStronglyHit = true; }
-	void								WeakleyHit() { m_bWeaklyHit = true; }
+	void							Bind(class CRotForMonster* pGameObject[], _int iRotCnt);
+	void							Spawn() { m_bSpawn = true; };
+	void							StringlyHit() { m_bStronglyHit = true; }
+	void							WeakleyHit() { m_bWeaklyHit = true; }
 
 public:
 	_bool							AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
@@ -93,35 +93,40 @@ public:
 	_float							DistanceBetweenPlayer();
 	_float							Calc_PlayerLookAtDirection();
 
-	CModel*						Get_Model() { return m_pModelCom; }
+	CModel*							Get_Model() { return m_pModelCom; }
 
 	virtual void					AdditiveAnim(_float fTimeDelta);
-	void								Call_RotIcon();
-	void								Call_MonsterFocusIcon();
-	virtual HRESULT			Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
+	void							Call_RotIcon();
+	void							Call_MonsterFocusIcon();
+	virtual HRESULT					Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag);
 
 	_bool							Get_Bind() { return m_bBind; }
 
+	/* MovementTrail Particle */
+	HRESULT							SetUp_MovementTrail();
+	void							Update_MovementTrail(const char* pBoneTag);
+
 protected:
-	class CGameInstance *m_pGameInstance = nullptr;
+	class CGameInstance*			m_pGameInstance = nullptr;
 
 	PLAYERLOOKAT_DIR				m_PlayerLookAt_Dir = PLAYERLOOKAT_DIREND;
-	DESC								m_Desc;
+	DESC							m_Desc;
 	CRenderer*						m_pRendererCom = nullptr;
-	CShader*							m_pShaderCom = nullptr;
-	CTexture*							m_pDissolveTextureCom = nullptr;
+	CShader*						m_pShaderCom = nullptr;
+	CTexture*						m_pDissolveTextureCom = nullptr;
 	CModel*							m_pModelCom = nullptr;
-	CMonster_Status*			m_pMonsterStatusCom = nullptr;
+	CMonster_Status*				m_pMonsterStatusCom = nullptr;
 
-	CFSMComponent*			m_pFSM = nullptr;
+	CFSMComponent*					m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;	
 
-	CUI_MonsterHP*				m_pUIHPBar;
-	class CEnemyWisp*			m_pEnemyWisp = nullptr;
-	static _float4 m_vKenaPos;
+	CUI_MonsterHP*					m_pUIHPBar;
+	class CEnemyWisp*				m_pEnemyWisp = nullptr;
+	static _float4					m_vKenaPos;
 
-	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
-	class CE_KenaHit* m_pKenaHit = nullptr;
+	class CRotForMonster*			m_pRotForMonster[8] = { nullptr, };
+	class CE_KenaHit*				m_pKenaHit = nullptr;
+	class CE_RectTrail*				m_pMovementTrail = nullptr;
 
 	_uint m_iNumMeshes = 0;
 
@@ -134,8 +139,10 @@ protected:
 	_bool	m_bSpawn = false;
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
-
+	
 	_bool m_bRealAttack = false;
+
+	_bool m_bIsFightReady = false;
 
 	_float	m_fHitStopTime = 0.f;
 	_float m_fDissolveTime = 0.0f;
@@ -170,6 +177,15 @@ public:
 
 	_bool IsParried();
 	_float Get_DissolveTime() { return m_fDissolveTime; }
+
+	void Attack_Start(_uint iAnimIndex);
+	void Attack_End(_uint iAnimIndex);
+
+	virtual void Spawn_ByMaster(CMonster* pMaster, _float4 vPos) {}
+	virtual void Clear_ByMinion(CMonster* pMinion) {}
+
+	inline _bool IsFightReady() { return m_bIsFightReady; }
+	void Execute_Dying();
 };
 
 END
