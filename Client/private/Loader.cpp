@@ -90,6 +90,7 @@
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
 #include "Effect_Mesh_Base.h"
+#include "Effect_Texture_Base.h"
 
 /* Effects */
 #include "Effect_Point_Instancing.h"
@@ -1546,6 +1547,11 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/* Effect_Mesh_Base  */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Mesh_Base"),
 		CEffect_Mesh_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Effect_Texture_Base  */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Texture_Base"),
+		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -34,12 +34,18 @@ public:
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();
+	HRESULT							SetUp_TextureInfo();
 
 private:
 	CShader*						m_pShaderCom;
 	CRenderer*						m_pRendererCom;
 	CTexture*						m_pTextureCom[TEXTURE_END];
 	CVIBuffer_Rect*					m_pVIBufferCom;
+
+private:
+	char*							m_ShaderVarName[TEXTURE_END];
+	_tchar*							m_TextureComName[TEXTURE_END];
+	_int							m_iTextureIndices[TEXTURE_END];
 
 public:
 	static CEffect_Texture_Base*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
