@@ -5,6 +5,9 @@ BEGIN(Client)
 
 class CE_RectTrail final : public CEffect_Trail
 {
+public:
+	enum RECTTRAILTYPE { OBJ_KENA, OBJ_MONSTER, OBJ_BOSS, OBJ_ROTWISP, OBJ_DEFAULT, OBJ_END };
+
 private:
 	CE_RectTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CE_RectTrail(const CE_RectTrail& rhs);
@@ -23,8 +26,12 @@ public:
 private:
 	HRESULT SetUp_ShaderResources();
 
+public:
+	void	SetUp_Option(RECTTRAILTYPE eType);
+
 private:
 	class CKena* m_pKena = nullptr;
+	RECTTRAILTYPE m_eType = OBJ_DEFAULT;
 
 public:
 	static  CE_RectTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

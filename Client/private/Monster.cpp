@@ -7,6 +7,7 @@
 #include "UI_MonsterHP.h"
 #include "Camera.h"
 #include "Camera_Player.h"
+#include "E_RectTrail.h"
 
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
@@ -104,6 +105,7 @@ void CMonster::Tick(_float fTimeDelta)
 
 	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;	
 	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;	
+	m_pMovementTrail ? m_pMovementTrail->Tick(fTimeDelta) : 0;
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -112,7 +114,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
-	
+	m_pMovementTrail ? m_pMovementTrail->Late_Tick(fTimeDelta) : 0;
+
 	Call_RotIcon();
 	Call_MonsterFocusIcon();		
 }
@@ -329,6 +332,32 @@ HRESULT CMonster::Ready_EnemyWisp(const _tchar* szEnemyWispCloneTag)
 	return S_OK;
 }
 
+HRESULT CMonster::SetUp_MovementTrail()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+
+	/* Movement particle */
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
+	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
+	m_pMovementTrail->Set_Parent(this);
+	m_pMovementTrail->SetUp_Option(CE_RectTrail::OBJ_MONSTER);
+
+	return S_OK;
+}
+
+void CMonster::Update_MovementTrail(const char * pBoneTag)
+{
+	CBone*	pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+
+	if (this->m_bSpawn == true)
+		m_pMovementTrail->Trail_InputRandomPos(matWorldSocket.r[3]);
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -372,6 +401,7 @@ void CMonster::Free()
 
 	Safe_Release(m_pEnemyWisp);
 	Safe_Release(m_pKenaHit);	
+	Safe_Release(m_pMovementTrail);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -388,6 +418,8 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
+			CCamera_Player*	pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
 				m_bWeaklyHit = true;
@@ -396,7 +428,9 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
 				m_pKena->Add_HitStopTime(0.15f);
 				m_fHitStopTime += 0.15f;
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+
+				if (pCamera != nullptr)
+					pCamera->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
@@ -406,14 +440,16 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
 				m_pKena->Add_HitStopTime(0.25f);
 				m_fHitStopTime += 0.25f;
-				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
 				
 				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
 				if (vecWeaponPos->size() == 2)
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
+
+					if (pCamera != nullptr)
+						pCamera->Camera_Shake(vDir, XMConvertToRadians(30.f));
 				}
 			}
 		}
@@ -487,3 +523,25 @@ _bool CMonster::IsParried()
 {	
 	return m_fKenaDistance <= 10.f && m_pKena->Get_State(CKena::STATE_PARRY);
 }
+
+void CMonster::Attack_Start(_uint iAnimIndex)
+{
+	m_bRealAttack = true;
+
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+}
+
+void CMonster::Attack_End(_uint iAnimIndex)
+{
+	m_pModelCom->ResetAnimIdx_PlayTime(iAnimIndex);
+	m_pModelCom->Set_AnimIndex(iAnimIndex);
+
+	m_bRealAttack = false;
+}
+
+void CMonster::Execute_Dying()
+{
+	m_pMonsterStatusCom->Set_HP(0);	
+}
+

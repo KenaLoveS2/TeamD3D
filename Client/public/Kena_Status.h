@@ -27,13 +27,18 @@ public:
 
 
 private:
-	_int				m_iMaxShield = 0;
-	_int				m_iShield = 0;
+	_float				m_fMaxShield = 0.f;
+	_float				m_fShield = 0.f;
+	_bool				m_bShieldBreak = false;
+	_float				m_fInitShieldCoolTime = 1.5f;
+	_float				m_fCurShieldCoolTime = 0.f;
+	_float				m_fInitShieldRecoveryTime = 5.f;
+	_float				m_fCurShieldRecoveryTime = 0.f;
 
 	_int				m_iKarma = 0;
 	_int				m_iRotLevel = 0;
 	_int				m_iRotCount = 0;
-	ROTSTATE			m_eRotState = RS_END;
+	ROTSTATE		m_eRotState = RS_END;
 	_int				m_iRotMax = 0;
 	_int				m_iCrystal = 0;
 
@@ -55,6 +60,7 @@ private:
 private:
 	void				Update_ArrowCoolTime(_float fTimeDelta);
 	void				Update_BombCoolTime(_float fTimeDelta);
+	void				Update_ShieldRecovery(_float fTimeDelta);
 
 public:
 	void				Under_Shield(CStatus* pEnemyStatus);
@@ -75,8 +81,13 @@ public:
 	HRESULT Load(const string & strFilePath);
 
 public:
-	inline _int Get_MaxShield() { return m_iMaxShield; }
-	inline _int Get_Shield() { return m_iShield; }
+	inline _float Get_MaxShield() { return m_fMaxShield; }
+	inline _float Get_Shield() { return m_fShield; }
+	inline _float Get_CurShieldCoolTime() { return m_fCurShieldCoolTime; }
+	inline _float Get_InitShieldCoolTime() { return m_fInitShieldCoolTime; }
+	inline _float Get_CurShieldRecoveryTime() { return m_fCurShieldRecoveryTime; }
+	inline _float Get_InitShieldRecoveryTime() { return m_fInitShieldRecoveryTime; }
+	inline _bool Is_ShieldBreak() { return m_bShieldBreak; }
 
 	inline _int Get_Karma() { return m_iKarma; }
 	inline _int Get_RotLevel() { return m_iRotLevel; }
@@ -100,8 +111,8 @@ public:
 
 public:
 
-	inline void Set_MaxShield(_int iValue) { m_iMaxShield = iValue; }
-	inline void Set_Shield(_int iValue) { m_iShield = iValue; }
+	inline void Set_MaxShield(_float fValue) { m_fMaxShield = fValue; }
+	inline void Set_Shield(_float fValue) { m_fShield = fValue; }
 		   
 	inline void Set_Karma(_int iValue) { m_iKarma = iValue; }
 	inline void Set_RotLevel(_int iValue) { m_iRotLevel = iValue; }

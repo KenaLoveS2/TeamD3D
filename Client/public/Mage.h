@@ -133,7 +133,7 @@ public:
 	virtual void								Free() override;
 
 	void Create_Sticks();
-	void Erase_StickList(CSticks01* pStick);
+	virtual void Clear_ByMinion(CMonster* pMinion) override;
 };
 
 END
