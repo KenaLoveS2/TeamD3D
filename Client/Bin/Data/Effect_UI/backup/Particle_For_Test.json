@@ -1,0 +1,17 @@
+{
+    "00. Position"      : [0.0, 0.0, 0.0, 1.0],
+    "01. TextureIndex"  : 0,
+    "02. RenderPass"    : 0,
+    "03. Color"         : [1.0, 1.0, 1.0, 1.0],
+    "04. HDR Intensity" : 2.0,
+
+    "10. Type"          : 0,
+    "11. NumInstance"   : 50,
+    "12. Term"          : 10.0,
+    "13. PSize"         : [ 0.10, 0.10],
+    "14. SpeedMin"      : [-0.10, 0.10, -0.10],
+    "15. SpeedMax"      : [0.10,0.50,0.10],
+    "16. minPos"        : [-3.0, 0.0, -3.0],
+    "17. maxPos"        : [3.0, 0.0, 3.0],
+    "18. fPlaySpeed"    : 1.0
+}
