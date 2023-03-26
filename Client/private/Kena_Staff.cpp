@@ -84,14 +84,6 @@ void CKena_Staff::Tick(_float fTimeDelta)
  
  	for (auto& pEffect : m_mapEffect)
  		pEffect.second->Tick(fTimeDelta);
-
-	ImGui::Begin("STAFF");
-	if (ImGui::Button("Recompile"))
-	{
-		m_pShaderCom->ReCompile();
-		m_pRendererCom->ReCompile();
-	}
-	ImGui::End();
 }
 
 void CKena_Staff::Late_Tick(_float fTimeDelta)
@@ -127,6 +119,7 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 }
 
@@ -228,6 +221,33 @@ void CKena_Staff::ImGui_ShaderValueProperty()
 	m_vMulAmbientColor.x = fColor[0];
 	m_vMulAmbientColor.y = fColor[1];
 	m_vMulAmbientColor.z = fColor[2];
+}
+
+HRESULT CKena_Staff::RenderCine()
+{
+	FAILED_CHECK_RETURN(__super::RenderCine(), E_FAIL);
+
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
+
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 11);
+	}
+
+	return S_OK;
+}
+
+HRESULT CKena_Staff::SetUp_CineShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
+	return S_OK;
 }
 
 HRESULT CKena_Staff::SetUp_Components()
