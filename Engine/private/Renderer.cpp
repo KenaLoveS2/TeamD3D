@@ -222,6 +222,15 @@ HRESULT CRenderer::Initialize_Prototype()
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
 #ifdef _DEBUG
+	m_bDynamicShadow = false;
+	m_bCine = true;
+#else
+	m_bDynamicShadow = true;
+	m_bCine = false;
+#endif
+
+
+#ifdef _DEBUG
 
 	_float fSizeX = 200.f, fSizeY = 200.f;
 

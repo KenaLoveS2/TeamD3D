@@ -363,7 +363,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
@@ -378,7 +378,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 

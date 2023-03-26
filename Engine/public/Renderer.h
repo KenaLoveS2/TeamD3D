@@ -40,6 +40,7 @@ public:
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
+	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
