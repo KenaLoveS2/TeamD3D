@@ -6,6 +6,7 @@ CUI_NodeChat::CUI_NodeChat(ID3D11Device * pDevice, ID3D11DeviceContext * pContex
 	:CUI_Node(pDevice, pContext)
 	, m_szChat(nullptr)
 	, m_fCorrectX(0.f)
+	, m_fCorrectY(0.f)
 {
 }
 
@@ -13,16 +14,19 @@ CUI_NodeChat::CUI_NodeChat(const CUI_NodeChat & rhs)
 	: CUI_Node(rhs)
 	, m_szChat(nullptr)
 	, m_fCorrectX(0.f)
+	, m_fCorrectY(0.f)
 {
 }
 
-void CUI_NodeChat::Set_String(wstring wstr)
+void CUI_NodeChat::Set_String(wstring wstr, _float fCorrectY)
 {
 	Safe_Delete_Array(m_szChat);
 	m_szChat = CUtile::Create_String(wstr.c_str());
 	
 	size_t length = wstr.length();
 	m_fCorrectX = 10.f * _float(length-1);
+
+	m_fCorrectY = fCorrectY;
 }
 
 HRESULT CUI_NodeChat::Initialize_Prototype()
@@ -92,7 +96,7 @@ HRESULT CUI_NodeChat::Render()
 
 	_float4 vPos;
 	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - m_fCorrectX, g_iWinSizeY*0.5f - vPos.y + 300.f };
+	_float2 vNewPos = { vPos.x + g_iWinSizeX*0.5f - m_fCorrectX, g_iWinSizeY*0.5f - vPos.y + m_fCorrectY };
 
 	if (nullptr != m_szChat)
 	{

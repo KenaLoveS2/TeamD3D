@@ -52,7 +52,7 @@ void CImgui_UIEditor::Imgui_FreeRender()
 	Text("<Canvas>");
 
 	/* Type */
-	if (CollapsingHeader("Type"))
+	if (CollapsingHeader("Canvas Type"))
 	{
 		static int selected_canvasType = 0;
 
@@ -188,14 +188,29 @@ void CImgui_UIEditor::Effect_Tool()
 	}
 
 	static _int iSelectedEffect;
+	_int iSelectedBefore = iSelectedEffect;
 	if (ListBox("Desc Files", &iSelectedEffect, Editor_Getter, &m_vecEffectTag, (_int)m_vecEffectTag.size(), 5))
+	{
 		m_pEffect = m_vecEffects[iSelectedEffect];
+		m_pEffect->Set_ActiveFlip();
+	}
 
 	LINE;
 	LINE;
 
 	if (nullptr == m_pEffect)
 		return;
+
+	if (Button("All off"))
+	{
+		for (auto eff : m_vecEffects)
+			eff->Set_Active(false);
+	} AND;
+	if (Button("All On"))
+	{
+		for (auto eff : m_vecEffects)
+			eff->Set_Active(true);
+	};
 
 	m_pEffect->Imgui_RenderProperty();
 

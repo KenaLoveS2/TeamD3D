@@ -75,11 +75,17 @@ HRESULT CEffect_Mesh_Base::Late_Initialize(void * pArg)
 
 void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Tick(fTimeDelta);
 }
 
 void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
@@ -132,6 +138,11 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 
 HRESULT CEffect_Mesh_Base::Save_Data()
 {
+	/* Model Index */
+	/* Texture Index */
+	/* UV Animation */
+	/* m_vColor */
+	/* m_fHDRIntensity*/
 	return S_OK;
 }
 
@@ -219,6 +230,7 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 	ImGui::RadioButton("Sphere", &iSelected, 3); ImGui::SameLine();
 	ImGui::RadioButton("ShockBall", &iSelected, 4); ImGui::SameLine();
 	ImGui::RadioButton("Cylinder", &iSelected, 5); ImGui::SameLine();
+	ImGui::RadioButton("HunterArrow", &iSelected, 6); ImGui::SameLine();
 
 	if (ImGui::Button("Model Confirm"))
 	{
@@ -252,6 +264,10 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 			break;
 		case 5:
 			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 6:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 				return E_FAIL;
 			break;
 		}

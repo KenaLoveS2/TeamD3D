@@ -51,7 +51,7 @@ private:
 	_int							m_iTextureIndices[TEXTURE_END];
 	char*							m_ShaderColorName[TEXTURE_END];
 	_float4							m_vTextureColors[TEXTURE_END];
-	_float3							m_vOriginalScale;
+
 
 public:
 	static CEffect_Texture_Base*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

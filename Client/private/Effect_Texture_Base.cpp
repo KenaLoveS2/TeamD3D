@@ -8,7 +8,6 @@ CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device * pDevice, ID3D11DeviceC
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
 	, m_pVIBufferCom(nullptr)
-	, m_vOriginalScale(1.f, 1.f, 1.f)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
@@ -16,9 +15,8 @@ CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device * pDevice, ID3D11DeviceC
 		m_iTextureIndices[i] = -1;
 		m_ShaderVarName[i] = nullptr;
 		m_TextureComName[i] = nullptr;
-	}
-
-
+		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
+	}	
 }
 
 CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base & rhs)
@@ -26,7 +24,6 @@ CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base & rhs)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
 	, m_pVIBufferCom(nullptr)
-	, m_vOriginalScale(1.f, 1.f, 1.f)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
@@ -34,6 +31,7 @@ CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base & rhs)
 		m_iTextureIndices[i] = -1;
 		m_ShaderVarName[i] = nullptr;
 		m_TextureComName[i] = nullptr;
+		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
 }
 
@@ -85,17 +83,43 @@ HRESULT CEffect_Texture_Base::Late_Initialize(void * pArg)
 
 void CEffect_Texture_Base::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Tick(fTimeDelta);
 }
 
 void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
-	CUtile::Execute_BillBoard(m_pTransformCom, m_pTransformCom->Get_Scaled());
+	_matrix worldMatrix = XMMatrixIdentity();
+	if (m_pTarget != nullptr)
+	{
+		worldMatrix = _smatrix::CreateBillboard(
+			XMLoadFloat4(&m_pTarget->Get_TransformCom()->Get_Position()),
+			CGameInstance::GetInstance()->Get_CamPosition_Float3(),
+			CGameInstance::GetInstance()->Get_CamUp_Float3(),
+			&CGameInstance::GetInstance()->Get_CamLook_Float3());
+	}
+	else
+	{
+		worldMatrix = _smatrix::CreateBillboard(
+			XMVectorSet(0.f, 0.f, 0.f, 1.f),
+			CGameInstance::GetInstance()->Get_CamPosition_Float3(),
+			CGameInstance::GetInstance()->Get_CamUp_Float3(),
+			&CGameInstance::GetInstance()->Get_CamLook_Float3());
+	}
+
+	_smatrix matLocal = m_LocalMatrix;
+	worldMatrix = matLocal * worldMatrix;
+	m_pTransformCom->Set_WorldMatrix(worldMatrix);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 
 }
 
@@ -114,12 +138,59 @@ HRESULT CEffect_Texture_Base::Render()
 
 void CEffect_Texture_Base::Imgui_RenderProperty()
 {
-	if (ImGui::Button("Reset Scale"))
-		m_pTransformCom->Set_Scaled(m_vOriginalScale);
+	if (ImGui::Button("Reset LocalMatrix"))
+		m_LocalMatrix = m_LocalMatrixOriginal;
 
-	m_pTransformCom->Imgui_RenderProperty();
+	/* Transform */
+	{
+		/* Local Position */
+		static _float3  vPosition = { 0.f, 0.f,0.f};
+		vPosition = { m_LocalMatrix._41, m_LocalMatrix._42, m_LocalMatrix._43 };
+		if (ImGui::DragFloat3("LocalPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
+		{
+			m_LocalMatrix._41 = vPosition.x; // right 
+			m_LocalMatrix._42 = vPosition.y; // up 
+			m_LocalMatrix._43 = vPosition.z; // look
+		}
 
+		/* Local Scale */
+		static _float2 vScale = { 1.f, 1.f };
+		_smatrix matLocal = m_LocalMatrix;
+		vScale.x = matLocal.Right().Length();
+		vScale.y = matLocal.Up().Length();
+		if (ImGui::DragFloat2("LocalScale", (_float*)&vScale, 0.10f, 0.001f, 100.0f, "%.3f"))
+		{
+			_float3 vRight	= vScale.x * XMVector3Normalize(matLocal.Right());
+			_float3 vUp		= vScale.y * XMVector3Normalize(matLocal.Up());
+			m_LocalMatrix._11 = vRight.x;
+			m_LocalMatrix._12 = vRight.y;
+			m_LocalMatrix._13 = vRight.z;
 
+			m_LocalMatrix._21 = vUp.x;
+			m_LocalMatrix._22 = vUp.y;
+			m_LocalMatrix._23 = vUp.z;
+
+			_int i = 0;
+		}
+
+		/* Local Rotation */
+		static _float fDegree = 0.f;
+		if (ImGui::DragFloat("Rotation Degree", &fDegree, 0.1f, -180.f, 180.f))
+		{
+			_smatrix matLocal = m_LocalMatrix;
+			matLocal.Right({ matLocal.Right().Length(), 0.f, 0.f });
+			matLocal.Up({ 0.f, matLocal.Up().Length(), 0.f });
+			matLocal.Forward({ 0.f,0.f, 1.f });
+			_float3 translation = matLocal.Translation(); /* save */
+			matLocal.Translation({ 0,0,0 });
+			_matrix matRot = XMMatrixRotationZ(XMConvertToRadians(fDegree));
+			matLocal = matLocal * matRot;
+			matLocal.Translation(translation);
+			XMStoreFloat4x4(&m_LocalMatrix, matLocal);
+		}
+	}
+
+	
 	/* Render Info */
 	for (_uint texID = 0; texID < TEXTURE_END; ++texID)
 	{
@@ -186,11 +257,10 @@ HRESULT CEffect_Texture_Base::Save_Data()
 			}
 			json["02. HDR Intensity"]		= m_fHDRIntensity;
 			
-			_float3 vScale = m_pTransformCom->Get_Scaled();
-			for (_uint i = 0; i < 3; ++i)
+			for (_uint i = 0; i < 16; ++i)
 			{
-				_float fElement = *((float*)&vScale + i);
-				json["03. vScale"].push_back(fElement);
+				_float fElement = *((float*)&m_LocalMatrix + i);
+				json["03. LocalMatrix"].push_back(fElement);
 			}
 			for (_uint i = 0; i < 4; ++i)
 			{
@@ -244,11 +314,12 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar * fileName)
 	jLoad["02. HDR Intensity"].get_to<_float>(m_fHDRIntensity);
 
 	i = 0;
-	_float3 vScale;
-	for (auto fElement : jLoad["03. vScale"])
-		fElement.get_to<_float>(*((_float*)&vScale + i++));
-	m_pTransformCom->Set_Scaled(vScale);	
-	m_vOriginalScale = vScale;
+	_float4x4 matLocal;
+	for (auto fElement : jLoad["03. LocalMatrix"])
+		fElement.get_to<_float>(*((_float*)&matLocal + i++));
+	m_LocalMatrix = matLocal;
+	m_LocalMatrixOriginal = matLocal;
+
 
 	i = 0;
 	if (jLoad.contains("04. MaskColor"))

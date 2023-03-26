@@ -12,6 +12,8 @@ protected:
 
 public:
 	inline	void					Set_Target(CGameObject* pTarget) { m_pTarget = pTarget; }
+	inline  void					Set_Active(_bool bActive) { m_bActive = bActive; }
+	inline  void					Set_ActiveFlip() { m_bActive = !m_bActive; }
 
 public:
 	virtual HRESULT					Initialize_Prototype();
@@ -32,13 +34,18 @@ protected:	/* Tool Function */
 protected:
 	CGameObject*					m_pTarget;
 	_tchar*							m_pfileName;
-	_bool							m_bFire;
+	_bool							m_bActive;
 
 protected: /* Property */
 	_int							m_iRenderPass;
 	_int							m_iTextureIndex;
 	_float4							m_vColor;
 	_float							m_fHDRIntensity;
+
+protected: 
+	_float4x4						m_WorldOriginal;
+	_float4x4						m_LocalMatrix;
+	_float4x4						m_LocalMatrixOriginal;
 
 public:
 	virtual void					Free()			override;

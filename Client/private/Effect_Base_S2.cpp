@@ -9,8 +9,11 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
-	, m_bFire(false)
+	, m_bActive(false)
 {
+	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_LocalMatrixOriginal, XMMatrixIdentity());
 }
 
 CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2 & rhs)
@@ -20,8 +23,11 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2 & rhs)
 	, m_iTextureIndex(0)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
-	, m_bFire(false)
+	, m_bActive(false)
 {
+	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_LocalMatrixOriginal, XMMatrixIdentity());
 }
 
 HRESULT CEffect_Base_S2::Initialize_Prototype()
