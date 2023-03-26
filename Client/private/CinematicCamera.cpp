@@ -4,6 +4,8 @@
 #include "PipeLine.h"
 #include "DebugDraw.h"
 #include "Utile.h"
+#include <codecvt>
+#include <locale>
 
 _float fTemp = 0.f;
 wstring wstrTemp = L"";
@@ -81,12 +83,15 @@ void XM_CALLCONV Draw(PrimitiveBatch<VertexPositionColor>* batch,
 
 CCinematicCamera::CCinematicCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CCamera(pDevice, pContext)
+	, m_iChatIndex(0)
 {
 }
 
 CCinematicCamera::CCinematicCamera(const CCinematicCamera& rhs)
 	:CCamera(rhs)
+	, m_iChatIndex(0)
 {
+	strcpy_s(m_szChatFileName, sizeof(MAX_PATH), rhs.m_szChatFileName);
 }
 
 HRESULT CCinematicCamera::Initialize_Prototype()
@@ -164,11 +169,20 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			_float4 vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			m_keyframes.front().vPos = _float3(vPos.x, vPos.y, vPos.z);
 			m_keyframes.front().vLookAt = _float3(vLookAt.x, vLookAt.y, vLookAt.z);
+			
 			/* Call CinemaUI */
 			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
 			_bool bOn = true;
 			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 			/* ~Call CinemaUI */
+
+			/* Call Chat */
+			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+			_float fY = 550.f;
+			m_CinemaDelegator.broadcast(eChat, bOn, fY, m_vecChat[m_iChatIndex]);
+			m_iChatIndex++;
+			/* ~Call Chat */
+
 			m_bInitSet = false;
 		}
 
@@ -326,11 +340,47 @@ void CCinematicCamera::Imgui_RenderProperty()
 		Safe_Delete_Array(ppKeyFrameNum);
 	}
 
+	if (ImGui::Button("Test Chat"))
+	{
+
+		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+		_bool bVal = true;
+
+		if (m_iChatIndex >= (int)m_vecChat.size())
+		{
+			//m_iChatIndex++;
+			bVal = false;
+			_float fY = 450.f;
+			m_CinemaDelegator.broadcast(eChat, bVal, fY, m_vecChat[0]);
+			return;
+		}
+		else
+		{
+			_float fY = 450.f;
+			m_CinemaDelegator.broadcast(eChat, bVal, fY, m_vecChat[m_iChatIndex]);
+			m_iChatIndex++;
+		}
+
+	}
+
 	if(!m_bPlay)
 	{
 		if (ImGui::Button("KeyFrameClear"))
 			m_keyframes.clear();
 	}
+
+	/* Input ChatFile Name */
+	static	char szSaveFileName[MAX_PATH] = "";
+	ImGui::SetNextItemWidth(200);
+	ImGui::InputTextWithHint("ChatFileName", "File Name", szSaveFileName, MAX_PATH);
+	ImGui::SameLine();
+	if (ImGui::Button("Reset ChatFile"))
+		strcpy_s(szSaveFileName, sizeof(MAX_PATH), m_szChatFileName);
+	ImGui::SameLine();
+	if (ImGui::Button("Confirm ChatFile"))
+		strcpy_s(m_szChatFileName, sizeof(MAX_PATH), szSaveFileName);
+	/* ~Input ChatFile Name */
+
 
 	if(ImGui::CollapsingHeader("Save&Load"))
 	{
@@ -492,6 +542,9 @@ void CCinematicCamera::Save_Data()
 		jCineCamKeyFrameList["1_Data"].push_back(jChild);
 	}
 
+	string str = m_szChatFileName;
+	jCineCamKeyFrameList["2_ChatFileName"] = str;
+
 	file << jCineCamKeyFrameList;
 	file.close();
 	MSG_BOX("Save_jCineCamKeyFrameList");
@@ -533,9 +586,62 @@ void CCinematicCamera::Load_Data()
 
 		m_keyframes.push_back(Desc);
 	}
+
+	//string str;
+	//jLoadCineCamKeyFrameList["2_ChatFileName"].get_to<string>(str);
+
+	///* Chat File Load */
+	//Load_ChatData(str);
+
 }
 
-void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v)
+void CCinematicCamera::Load_ChatData(string str)
+{
+	Json jLoad;
+
+	string filePath = "../Bin/Data/Chat/";
+	filePath += str;
+	filePath += ".json";
+	ifstream file(filePath);
+	if (file.fail())
+		return;
+	file >> jLoad;
+	file.close();
+
+	using convert_type = codecvt_utf8<wchar_t>;
+	wstring_convert<convert_type> utf8_conv;
+
+	//_int iNumChat[10];
+	//_uint i = 0;
+	for (auto jSub : jLoad["Chat"])
+	{
+		string line;
+		jSub.get_to<string>(line);
+		wstring wstr = utf8_conv.from_bytes(line);
+		m_vecChat.push_back(wstr);
+		//iNumChat[i] = iNum;
+
+		//string strSub = "Chat" + to_string(i);
+		//for (size_t j = 1; j <= iNumChat[i]; ++j)
+		//{
+		//	for (auto jSub : jLoad[strSub])
+		//	{
+		//		string str = "line" + to_string(j);
+		//		string line;
+		//		jSub[str].get_to<string>(line);
+
+		//		wstring wstr = utf8_conv.from_bytes(line);
+		//		m_vecChat[i].push_back(wstr);
+		//	}
+		//}
+
+		//++i;
+	}
+
+	/* ~Chat File Load */
+}
+
+void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName)
 {
 	string      strLoadDirectory = "../Bin/Data/CineCam/";
 	strLoadDirectory += JsonFileName;
@@ -563,6 +669,9 @@ void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAM
 
 		v.push_back(Desc);
 	}
+
+	jLoadCineCamKeyFrameList["2_ChatFileName"].get_to<string>(chatFileName);
+
 }
 
 CCinematicCamera* CCinematicCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -601,4 +710,6 @@ void CCinematicCamera::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+
+	m_vecChat.clear();
 }

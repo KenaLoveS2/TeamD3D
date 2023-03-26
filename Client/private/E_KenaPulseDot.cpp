@@ -36,7 +36,7 @@ HRESULT CE_KenaPulseDot::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
+	//m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
 	return S_OK;
 }
 
