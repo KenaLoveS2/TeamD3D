@@ -219,7 +219,7 @@ void CUI_CanvasBottom::BindFunction(CUI_ClientManager::UI_PRESENT eType, _bool b
 		{
 			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
 			m_vecNode[UI_CHAT]->Set_Active(true);
-			static_cast<CUI_NodeChat*>(m_vecNode[UI_CHAT])->Set_String(wstr);
+			static_cast<CUI_NodeChat*>(m_vecNode[UI_CHAT])->Set_String(wstr, fValue);
 		}
 		else
 		{

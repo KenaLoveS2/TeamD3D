@@ -394,7 +394,8 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 {
 	/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
 	vector<CCinematicCamera::CAMERAKEYFRAME> v;
-	CCinematicCamera::Clone_Load_Data("Test.json", v);
+	string chatFileName;
+	CCinematicCamera::Clone_Load_Data("Test.json", v, chatFileName);
 
 	CGameObject* p_game_object = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -402,6 +403,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 	CCamera *pCamera = dynamic_cast<CCamera*>(p_game_object);
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
+	static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
 	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
