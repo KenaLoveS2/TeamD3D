@@ -45,8 +45,6 @@ HRESULT CGimmick_EnviObj::Late_Initialize(void * pArg)
 
 	m_pControlRoom->Add_GimmickObj(m_EnviromentDesc.iRoomIndex,this,m_EnviromentDesc.eChapterType);
 
-
-
 	return S_OK;
 }
 

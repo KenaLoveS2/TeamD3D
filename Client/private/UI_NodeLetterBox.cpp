@@ -80,7 +80,6 @@ void CUI_NodeLetterBox::Tick(_float fTimeDelta)
 void CUI_NodeLetterBox::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 }
 
 HRESULT CUI_NodeLetterBox::Render()

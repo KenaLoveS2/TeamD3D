@@ -23,6 +23,62 @@ void XM_CALLCONV DrawLine(PrimitiveBatch<VertexPositionColor>* batch,
 	batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, verts, 2);
 }
 
+void XM_CALLCONV DrawRing(PrimitiveBatch<VertexPositionColor>* batch,
+	FXMVECTOR origin,
+	FXMVECTOR majorAxis,
+	FXMVECTOR minorAxis,
+	GXMVECTOR color)
+{
+	static const size_t c_ringSegments = 32;
+
+	VertexPositionColor verts[c_ringSegments + 1];
+
+	FLOAT fAngleDelta = XM_2PI / float(c_ringSegments);
+	// Instead of calling cos/sin for each segment we calculate
+	// the sign of the angle delta and then incrementally calculate sin
+	// and cosine from then on.
+	XMVECTOR cosDelta = XMVectorReplicate(cosf(fAngleDelta));
+	XMVECTOR sinDelta = XMVectorReplicate(sinf(fAngleDelta));
+	XMVECTOR incrementalSin = XMVectorZero();
+	static const XMVECTORF32 s_initialCos =
+	{
+		{ { 1.f, 1.f, 1.f, 1.f } }
+	};
+	XMVECTOR incrementalCos = s_initialCos.v;
+	for (size_t i = 0; i < c_ringSegments; i++)
+	{
+		XMVECTOR pos = XMVectorMultiplyAdd(majorAxis, incrementalCos, origin);
+		pos = XMVectorMultiplyAdd(minorAxis, incrementalSin, pos);
+		XMStoreFloat3(&verts[i].position, pos);
+		XMStoreFloat4(&verts[i].color, color);
+		// Standard formula to rotate a vector.
+		XMVECTOR newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
+		XMVECTOR newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
+		incrementalCos = newCos;
+		incrementalSin = newSin;
+	}
+	verts[c_ringSegments] = verts[0];
+
+	batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, c_ringSegments + 1);
+}
+
+void XM_CALLCONV Draw(PrimitiveBatch<VertexPositionColor>* batch,
+	const BoundingSphere& sphere,
+	FXMVECTOR color)
+{
+	XMVECTOR origin = XMLoadFloat3(&sphere.Center);
+
+	const float radius = sphere.Radius;
+
+	XMVECTOR xaxis = g_XMIdentityR0 * radius;
+	XMVECTOR yaxis = g_XMIdentityR1 * radius;
+	XMVECTOR zaxis = g_XMIdentityR2 * radius;
+
+	DrawRing(batch, origin, xaxis, zaxis, color);
+	DrawRing(batch, origin, xaxis, yaxis, color);
+	DrawRing(batch, origin, yaxis, zaxis, color);
+}
+
 CCinematicCamera::CCinematicCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CCamera(pDevice, pContext)
 {
@@ -46,19 +102,21 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	CCamera::CAMERADESC			CameraDesc;
 	ZeroMemory(&CameraDesc, sizeof CameraDesc);
 
-	if (nullptr != pArg)
-		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
-	else
-	{
-		CameraDesc.vEye = _float4(0.f, 10.f, -10.f, 1.f);
-		CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
-		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-	}
+	CameraDesc.vEye = _float4(0.f, 7.f, -5.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+	CameraDesc.fFovy = XMConvertToRadians(75.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(CCamera::Initialize(&CameraDesc)))
 		return E_FAIL;
+
+	if(pArg != nullptr)
+		m_keyframes = *(vector<CAMERAKEYFRAME>*)pArg;
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
@@ -77,11 +135,13 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	ImGui::Begin("CinematicCam");
 	Imgui_RenderProperty();
 	ImGui::End();
+#endif
 
-	m_iNumKeyFrames = m_keyframes.size();
+	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
@@ -100,18 +160,32 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
 			RELEASE_INSTANCE(CGameInstance)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float4 vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			m_keyframes.front().vPos = _float3(vPos.x, vPos.y, vPos.z);
+			m_keyframes.front().vLookAt = _float3(vLookAt.x, vLookAt.y, vLookAt.z);
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = true;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
 			m_bInitSet = false;
 		}
 
 		if(m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
 		{
 			m_fDeltaTime += fTimeDelta;
+		}
+		else
+		{
+			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
 			/* Call CinemaUI */
 			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
 			_bool bOn = false;
 			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 			/* ~Call CinemaUI */
 		}
+
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 		_float3 InterPolatePos = _float3(vPos.x, vPos.y, vPos.z);
@@ -123,6 +197,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Look(vLook);
 		CCamera::Tick(fTimeDelta);
 	}
+
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_CINEVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
 }
@@ -143,7 +218,7 @@ HRESULT CCinematicCamera::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, 12);
 
-	if (m_iNumKeyFrames <= 4)
+	if (m_iNumKeyFrames < 4)
 		return S_OK;
 
 #ifdef _DEBUG
@@ -157,10 +232,25 @@ HRESULT CCinematicCamera::Render()
 	m_pContext->IASetInputLayout(m_pInputLayout);
 	m_pBatch->Begin();
 
+	BoundingSphere**	ppSphere = new BoundingSphere*[m_iNumKeyFrames];
+
 	for (unsigned int   i = 1; i < m_iNumKeyFrames; ++i)
-		DrawLine(m_pBatch, m_keyframes[i -1].vPos, m_keyframes[i].vPos, _float4(1.f, 0.f, 1.f, 1.f));
+	{
+		DrawLine(m_pBatch, m_keyframes[i - 1].vPos, m_keyframes[i].vPos, _float4(1.f, 0.f, 1.f, 1.f));
+	}
+
+	for (unsigned int i = 0; i < m_iNumKeyFrames; ++i)
+	{
+		ppSphere[i] = new BoundingSphere(m_keyframes[i].vPos, 0.3f);
+		Draw(m_pBatch, *ppSphere[i], _float4(0.f, 0.f, 1.f, 1.f));
+	}
 
 	m_pBatch->End();
+
+	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
+		Safe_Delete(ppSphere[i]);
+	Safe_Delete_Array(ppSphere);
+
 #endif // _DEBUG
 
 	return CCamera::Render();
@@ -245,6 +335,43 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_keyframes.clear();
 	}
 
+	if(ImGui::CollapsingHeader("Save&Load"))
+	{
+		ImGui::Checkbox("CineCamWriteFileOn", &m_bSaveWrite);
+
+		if (m_bSaveWrite)
+			ImGui::InputText("CineCamSave_Name : ", &m_strFileName);
+
+		if (ImGui::Button("Confirm_CineCamSave"))
+			ImGuiFileDialog::Instance()->OpenDialog("CineCam Save Folder", "Select CineCam Save Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+
+		if (ImGuiFileDialog::Instance()->Display("CineCam Save Folder"))
+		{
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
+			{
+				Save_Data();
+				ImGuiFileDialog::Instance()->Close();
+			}
+
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel 눌렀을 때
+				ImGuiFileDialog::Instance()->Close();
+		}
+
+		if (ImGui::Button("Confirm_CineCamLoad"))
+			ImGuiFileDialog::Instance()->OpenDialog("CineCam Load Folder", "Select CineCam Load Folder", ".json", "../Bin/Data", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
+
+		if (ImGuiFileDialog::Instance()->Display("CineCam Load Folder"))
+		{
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK 눌렀을 때
+			{
+				Load_Data();
+				ImGuiFileDialog::Instance()->Close();
+			}
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel 눌렀을 때
+				ImGuiFileDialog::Instance()->Close();
+		}
+	}
+
 	m_pTransformCom->Imgui_RenderProperty();
 }
 
@@ -264,11 +391,11 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 
 	// Find the two keyframes that surround the given time
 	int i = 1;
-	while (i < m_iNumKeyFrames - 1 && m_keyframes[i].fTime < time) {
+	while (i < (int)m_iNumKeyFrames - 1 && m_keyframes[i].fTime < time) {
 		i++;
 	}
 
-	if (i < m_iNumKeyFrames - 1)
+	if (i < (int)m_iNumKeyFrames - 1)
 	{
 		// Calculate the parameter t for the interpolation
 		float t = 0.f;
@@ -310,6 +437,135 @@ HRESULT CCinematicCamera::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	return S_OK;
+}
+
+void CCinematicCamera::Play()
+{
+	m_bPlay = true;
+	m_bInitSet = true;
+}
+
+void CCinematicCamera::Save_Data()
+{
+	string      strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+	if (m_bSaveWrite == true)
+	{
+		char   szDash[128] = "\\";
+		strcat_s(szDash, m_strFileName.c_str());
+		strSaveDirectory += string(szDash);
+		strSaveDirectory += ".json";
+	}
+	else
+	{
+		string	   strSaveFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
+		char   szDash[128] = "\\";
+		strcat_s(szDash, strSaveFileName.c_str());
+		strSaveDirectory += string(szDash);
+	}
+
+	ofstream      file(strSaveDirectory.c_str());
+	Json	jCineCamKeyFrameList;
+
+	jCineCamKeyFrameList["0_KeyFrameSize"] = m_iNumKeyFrames;
+
+	_float		fElement = 0.f;
+
+	for(_uint i = 0; i < m_iNumKeyFrames; ++i)
+	{
+		Json jChild;
+		_float3 vPos = m_keyframes[i].vPos;
+		_float3 vLookAt = m_keyframes[i].vLookAt;
+		for (int i = 0; i < 3; ++i)
+		{
+			fElement = 0.f;
+			memcpy(&fElement, (float*)&vPos + i, sizeof(float));
+			jChild["0_Pos"].push_back(fElement);		
+		}
+
+		for (int i = 0; i < 3; ++i)
+		{
+			fElement = 0.f;
+			memcpy(&fElement, (float*)&vLookAt + i, sizeof(float));
+			jChild["1_LookAt"].push_back(fElement);
+		}
+
+		jChild["2_Time"] = m_keyframes[i].fTime;
+
+		jCineCamKeyFrameList["1_Data"].push_back(jChild);
+	}
+
+	file << jCineCamKeyFrameList;
+	file.close();
+	MSG_BOX("Save_jCineCamKeyFrameList");
+}
+
+void CCinematicCamera::Load_Data()
+{
+	list<CGameObject*> gameobjectList;
+
+	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12로 들가면 비슷한 다른 함수 더 있음.
+	string	   strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
+	char   szDash[128] = "\\";
+	strcat_s(szDash, strLoadFileName.c_str());
+	strLoadDirectory += string(szDash);
+
+	ifstream      file(strLoadDirectory.c_str());
+	Json	jLoadCineCamKeyFrameList;
+	file >> jLoadCineCamKeyFrameList;
+	file.close();
+
+	m_keyframes.clear();
+
+	jLoadCineCamKeyFrameList["0_KeyFrameSize"].get_to<_uint>(m_iNumKeyFrames);
+	_float3 vPos;
+	_float3 vLookAt;
+	for(auto jLoadChild:jLoadCineCamKeyFrameList["1_Data"])
+	{
+		CAMERAKEYFRAME Desc;
+		ZeroMemory(&Desc, sizeof(CAMERAKEYFRAME));
+		int k = 0;
+		for (float fElement : jLoadChild["0_Pos"])
+			memcpy(((float*)&vPos) + (k++), &fElement, sizeof(float));
+		Desc.vPos = vPos;
+		int j = 0;
+		for (float fElement : jLoadChild["1_LookAt"])	
+			memcpy(((float*)&vLookAt) + (j++), &fElement, sizeof(float));
+		Desc.vLookAt = vLookAt;
+		Desc.fTime = jLoadChild["2_Time"];
+
+		m_keyframes.push_back(Desc);
+	}
+}
+
+void CCinematicCamera::Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v)
+{
+	string      strLoadDirectory = "../Bin/Data/CineCam/";
+	strLoadDirectory += JsonFileName;
+
+	ifstream      file(strLoadDirectory.c_str());
+	Json	jLoadCineCamKeyFrameList;
+	file >> jLoadCineCamKeyFrameList;
+	file.close();
+
+	_float3 vPos;
+	_float3 vLookAt;
+	for (auto jLoadChild : jLoadCineCamKeyFrameList["1_Data"])
+	{
+		CAMERAKEYFRAME Desc;
+		ZeroMemory(&Desc, sizeof(CAMERAKEYFRAME));
+		int k = 0;
+		for (float fElement : jLoadChild["0_Pos"])
+			memcpy(((float*)&vPos) + (k++), &fElement, sizeof(float));
+		Desc.vPos = vPos;
+		int j = 0;
+		for (float fElement : jLoadChild["1_LookAt"])
+			memcpy(((float*)&vLookAt) + (j++), &fElement, sizeof(float));
+		Desc.vLookAt = vLookAt;
+		Desc.fTime = jLoadChild["2_Time"];
+
+		v.push_back(Desc);
+	}
 }
 
 CCinematicCamera* CCinematicCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
