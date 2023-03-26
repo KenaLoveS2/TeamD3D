@@ -14,6 +14,7 @@
 #include "PipeLine.h"
 #include "Transform.h"
 #include "GameInstance.h"
+#include "Channel.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -100,6 +101,11 @@ const _double& CModel::Get_PlayTime() const
 	return m_Animations[m_iCurrentAnimIndex]->Get_PlayTime();
 }
 
+const _double & CModel::Get_LastPlayTime() const
+{
+	return m_Animations[m_iCurrentAnimIndex]->Get_LastPlayTime();
+}
+
 const _float CModel::Get_AnimationProgress() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationProgress();
@@ -108,6 +114,17 @@ const _float CModel::Get_AnimationProgress() const
 const _bool & CModel::Get_AnimationFinish() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->IsFinished();
+}
+
+vector<KEYFRAME>* CModel::Get_KeyFrames(const char * pBoneName)
+{
+	CBone* pBone = Get_BonePtr(pBoneName);
+	NULL_CHECK_RETURN(pBone, nullptr);
+
+	CChannel*		pChannel = m_Animations[m_iCurrentAnimIndex]->Find_Channel(pBone);
+	NULL_CHECK_RETURN(pChannel, nullptr);
+
+	return pChannel->Get_KeyFrames();
 }
 
 void CModel::Set_PlayTime(_double dPlayTime)

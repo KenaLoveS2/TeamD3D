@@ -26,12 +26,14 @@ public:
 	const _float					Get_AnimationProgress() const { return _float(m_PlayTime / m_Duration); }
 	_double&						Get_AnimationDuration() { return m_Duration; }
 	_double&						Get_PlayTime() { return m_PlayTime; }
+	_double&						Get_LastPlayTime() { return m_LastPlayTime; }
 	const _double					Get_PlayRate() { return m_PlayTime / m_Duration; }
 	_double&						Get_AnimationTickPerSecond() { return m_TickPerSecond; }
 	const char*					Get_Name() const { return m_szName; }
 	_float&						Get_BlendDuration() { return m_fBlendDuration; }
 
 	const _uint&					Get_ChannelCount() const { return m_iNumChannels; }
+	class CChannel*				Find_Channel(class CBone* pBone);
 	void							Set_AnimIndex(_uint iAnimIndex) { m_iAnimationIndex = iAnimIndex; }
 	void							Set_AnimationType(ANIMTYPE eType) { m_eAnimType = eType; }
 	void							Set_PlayTime(_double dPlayTime);
@@ -68,6 +70,7 @@ private:
 	ANIMTYPE						m_eAnimType = ANIMTYPE_END;
 
 	_double						m_PlayTime = 0.0;
+	_double						m_LastPlayTime = 0.0;
 
 	_bool							m_isFinished = false;
 	_bool							m_isLooping = false;
@@ -80,7 +83,7 @@ private:
 	multimap<_float, const string>		m_mapEvent;
 
 private:
-	void	Call_Event(_float fLastPlayTime, _float fTimeDelta);
+	void	Call_Event(_float fTimeDelta);
 
 public:
 	static CAnimation* Create(HANDLE hFile, class CModel* pModel);

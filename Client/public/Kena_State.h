@@ -433,6 +433,7 @@ private:
 	HRESULT					SetUp_State_Bow_Inject();
 	HRESULT					SetUp_State_Bow_Air();
 	HRESULT					SetUp_State_Combat();
+	HRESULT					SetUp_State_Crouch();
 	HRESULT					SetUp_State_Damaged_Common();
 	HRESULT					SetUp_State_Damaged_Heavy();
 	HRESULT					SetUp_State_Dodge();
@@ -444,6 +445,9 @@ private:
 	HRESULT					SetUp_State_Interact();
 	HRESULT					SetUp_State_Jump();
 	HRESULT					SetUp_State_Land();
+	HRESULT					SetUp_State_LevelUp();
+	HRESULT					SetUp_State_Mask();
+	HRESULT					SetUp_State_Meditate();
 	HRESULT					SetUp_State_Pulse();
 	HRESULT					SetUp_State_Shield();
 	HRESULT					SetUp_State_Spin_Attack();
@@ -613,6 +617,9 @@ private:
 	void						Start_Lock_On_To_Idle(_float fTimeDelta);
 	void						Start_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						Start_Combat_Run(_float fTimeDelta);
+	/* CROUCH */
+	void						Start_Crouch_To_Idle(_float fTimeDelta);
+	void						Start_Crouch_To_Run(_float fTimeDelta);
 	/* DAMAGED */
 	void						Start_Take_Damage_Front(_float fTimeDelta);
 	void						Start_Take_Damage_Back(_float fTImeDelta);
@@ -671,6 +678,17 @@ private:
 	void						Start_Bow_Land(_float fTimeDelta);
 	void						Start_Ledge_Land(_float fTimeDelta);
 	void						Start_Slide_Land(_float fTimeDelta);
+	/* LEVEL UP */
+	void						Start_Level_Up(_float fTimeDelta);
+	/* MASK */
+	void						Start_Mask_On(_float fTimeDelta);
+	void						Start_Mask_Loop(_float fTimeDelta);
+	void						Start_Mask_Off(_float fTimeDelta);
+	void						Start_Mask_Off_Memory_Collect(_float fTimeDelta);
+	/* MEDITATE */
+	void						Start_Meditate_Into(_float fTimeDelta);
+	void						Start_Meditate_Loop(_float fTimeDelta);
+	void						Start_Meditate_Exit(_float fTimeDelta);
 	/* PULSE */
 	void						Start_Into_Pulse(_float fTimeDelta);
 	void						Start_Into_Pulse_From_Run(_float fTimeDelta);
@@ -800,6 +818,9 @@ private:
 	void						Tick_Lock_On_To_Idle(_float fTimeDelta);
 	void						Tick_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						Tick_Combat_Run(_float fTimeDelta);
+	/* CROUCH */
+	void						Tick_Crouch_To_Idle(_float fTimeDelta);
+	void						Tick_Crouch_To_Run(_float fTimeDelta);
 	/* DAMAGED */
 	void						Tick_Take_Damage_Front(_float fTimeDelta);
 	void						Tick_Take_Damage_Back(_float fTImeDelta);
@@ -858,6 +879,17 @@ private:
 	void						Tick_Bow_Land(_float fTimeDelta);
 	void						Tick_Ledge_Land(_float fTimeDelta);
 	void						Tick_Slide_Land(_float fTimeDelta);
+	/* LEVEL UP */
+	void						Tick_Level_Up(_float fTimeDelta);
+	/* MASK */
+	void						Tick_Mask_On(_float fTimeDelta);
+	void						Tick_Mask_Loop(_float fTimeDelta);
+	void						Tick_Mask_Off(_float fTimeDelta);
+	void						Tick_Mask_Off_Memory_Collect(_float fTimeDelta);
+	/* MEDITATE */
+	void						Tick_Meditate_Into(_float fTimeDelta);
+	void						Tick_Meditate_Loop(_float fTimeDelta);
+	void						Tick_Meditate_Exit(_float fTimeDelta);
 	/* PULSE */
 	void						Tick_Into_Pulse(_float fTimeDelta);
 	void						Tick_Into_Pulse_From_Run(_float fTimeDelta);
@@ -979,6 +1011,9 @@ private:
 	void						End_Lock_On_To_Idle(_float fTimeDelta);
 	void						End_Combat_Idle_Into_Run(_float fTimeDelta);
 	void						End_Combat_Run(_float fTimeDelta);
+	/* CROUCH */
+	void						End_Crouch_To_Idle(_float fTimeDelta);
+	void						End_Crouch_To_Run(_float fTimeDelta);
 	/* DAMAGED */
 	void						End_Take_Damage_Front(_float fTimeDelta);
 	void						End_Take_Damage_Back(_float fTImeDelta);
@@ -1037,6 +1072,17 @@ private:
 	void						End_Bow_Land(_float fTimeDelta);
 	void						End_Ledge_Land(_float fTimeDelta);
 	void						End_Slide_Land(_float fTimeDelta);
+	/* LEVEL UP */
+	void						End_Level_Up(_float fTimeDelta);
+	/* MASK */
+	void						End_Mask_On(_float fTimeDelta);
+	void						End_Mask_Loop(_float fTimeDelta);
+	void						End_Mask_Off(_float fTimeDelta);
+	void						End_Mask_Off_Memory_Collect(_float fTimeDelta);
+	/* MEDITATE */
+	void						End_Meditate_Into(_float fTimeDelta);
+	void						End_Meditate_Loop(_float fTimeDelta);
+	void						End_Meditate_Exit(_float fTimeDelta);
 	/* PULSE */
 	void						End_Into_Pulse(_float fTimeDelta);
 	void						End_Into_Pulse_From_Run(_float fTimeDelta);
@@ -1121,7 +1167,9 @@ private:	/* Changer */
 	_bool	KeyDown_F();
 	_bool	KeyDown_Q();
 	_bool	KeyDown_R();
+	_bool	KeyDown_T();
 	_bool	KeyDown_Space();
+	_bool	KeyDown_BackSpace();
 	_bool	KeyDown_LCtrl();
 	_bool	MouseDown_Left();
 	_bool	MouseDown_Middle();

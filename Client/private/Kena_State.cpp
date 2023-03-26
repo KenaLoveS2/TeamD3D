@@ -51,6 +51,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Bow_Inject(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Bow_Air(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Combat(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Crouch(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Common(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Heavy(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
@@ -62,6 +63,8 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Interact(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Jump(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Land(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Mask(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Meditate(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Pulse(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Shield(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Spin_Attack(), E_FAIL);
@@ -182,7 +185,9 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"TAKE_DAMAGE", this, &CKena_State::CommonHit)
-		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q)
+		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q, &CKena_State::RotWisp_Interactable)
+		.Init_Changer(L"MEDITATE_INTO", this, &CKena_State::KeyDown_Q)
+		.Init_Changer(L"MASK_ON", this, &CKena_State::KeyDown_T)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
@@ -2100,6 +2105,25 @@ HRESULT CKena_State::SetUp_State_Combat()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Crouch()
+{
+	m_pStateMachine->Add_State(L"CROUCH_TO_IDLE")
+		.Init_Start(this, &CKena_State::Start_Crouch_To_Idle)
+		.Init_Tick(this, &CKena_State::Tick_Crouch_To_Idle)
+		.Init_End(this, &CKena_State::End_Crouch_To_Idle)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"CROUCH_TO_RUN")
+		.Init_Start(this, &CKena_State::Start_Crouch_To_Run)
+		.Init_Tick(this, &CKena_State::Tick_Crouch_To_Run)
+		.Init_End(this, &CKena_State::End_Crouch_To_Run)
+		.Init_Changer(L"RUN", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_Damaged_Common()
 {
 	m_pStateMachine->Add_State(L"TAKE_DAMAGE")
@@ -3109,6 +3133,75 @@ HRESULT CKena_State::SetUp_State_Land()
 		.Init_Start(this, &CKena_State::Start_Slide_Land)
 		.Init_Tick(this, &CKena_State::Tick_Slide_Land)
 		.Init_End(this, &CKena_State::End_Slide_Land)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_LevelUp()
+{
+	m_pStateMachine->Add_State(L"LEVEL_UP")
+		.Init_Start(this, &CKena_State::Start_Level_Up)
+		.Init_Tick(this, &CKena_State::Tick_Level_Up)
+		.Init_End(this, &CKena_State::End_Level_Up)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Mask()
+{
+	m_pStateMachine->Add_State(L"MASK_ON")
+		.Init_Start(this, &CKena_State::Start_Mask_On)
+		.Init_Tick(this, &CKena_State::Tick_Mask_On)
+		.Init_End(this, &CKena_State::End_Mask_On)
+		.Init_Changer(L"MASK_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"MASK_LOOP")
+		.Init_Start(this, &CKena_State::Start_Mask_Loop)
+		.Init_Tick(this, &CKena_State::Tick_Mask_Loop)
+		.Init_End(this, &CKena_State::End_Mask_Loop)
+		.Init_Changer(L"MASK_OFF", this, &CKena_State::KeyDown_T)
+
+		.Add_State(L"MASK_OFF")
+		.Init_Start(this, &CKena_State::Start_Mask_Off)
+		.Init_Tick(this, &CKena_State::Tick_Mask_Off)
+		.Init_End(this, &CKena_State::End_Mask_Off)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"MASK_OFF_MEMORY_COLLECT")
+		.Init_Start(this, &CKena_State::Start_Mask_Off_Memory_Collect)
+		.Init_Tick(this, &CKena_State::Tick_Mask_Off_Memory_Collect)
+		.Init_End(this, &CKena_State::End_Mask_Off_Memory_Collect)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_Meditate()
+{
+	m_pStateMachine->Add_State(L"MEDITATE_INTO")
+		.Init_Start(this, &CKena_State::Start_Meditate_Into)
+		.Init_Tick(this, &CKena_State::Tick_Meditate_Into)
+		.Init_End(this, &CKena_State::End_Meditate_Into)
+		.Init_Changer(L"MEDITATE_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"MEDITATE_LOOP")
+		.Init_Start(this, &CKena_State::Start_Meditate_Loop)
+		.Init_Tick(this, &CKena_State::Tick_Meditate_Loop)
+		.Init_End(this, &CKena_State::End_Meditate_Loop)
+		.Init_Changer(L"MEDITATE_EXIT", this, &CKena_State::KeyDown_BackSpace)
+
+		.Add_State(L"MEDITATE_EXIT")
+		.Init_Start(this, &CKena_State::Start_Meditate_Exit)
+		.Init_Tick(this, &CKena_State::Tick_Meditate_Exit)
+		.Init_End(this, &CKena_State::End_Meditate_Exit)
+		.Init_Changer(L"CROUCH_TO_RUN", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"CROUCH_TO_IDLE", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_None)
 
 		.Finish_Setting();
 
@@ -4408,6 +4501,16 @@ void CKena_State::Start_Combat_Run(_float fTimeDelta)
 	m_pAnimationState->State_Animation("COMBAT_RUN_ADDITIVE_POSE");
 }
 
+void CKena_State::Start_Crouch_To_Idle(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("CROUCH_TO_IDLE");
+}
+
+void CKena_State::Start_Crouch_To_Run(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("CROUCH_TO_RUN");
+}
+
 void CKena_State::Start_Take_Damage_Front(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_FRONT");
@@ -4700,6 +4803,46 @@ void CKena_State::Start_Ledge_Land(_float fTimeDelta)
 void CKena_State::Start_Slide_Land(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SLIDE_LAND");
+}
+
+void CKena_State::Start_Level_Up(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("LEVEL_UP");
+}
+
+void CKena_State::Start_Mask_On(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MASK_ON");
+}
+
+void CKena_State::Start_Mask_Loop(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MASK_LOOP");
+}
+
+void CKena_State::Start_Mask_Off(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MASK_OFF");
+}
+
+void CKena_State::Start_Mask_Off_Memory_Collect(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MASK_OFF_MEMORY_COLLECT");
+}
+
+void CKena_State::Start_Meditate_Into(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MEDITATE_INTO");
+}
+
+void CKena_State::Start_Meditate_Loop(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MEDITATE_LOOP");
+}
+
+void CKena_State::Start_Meditate_Exit(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("MEDITATE_EXIT");
 }
 
 void CKena_State::Start_Into_Pulse(_float fTimeDelta)
@@ -5424,6 +5567,15 @@ void CKena_State::Tick_Combat_Run(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Crouch_To_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Crouch_To_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
 void CKena_State::Tick_Take_Damage_Front(_float fTimeDelta)
 {
 }
@@ -5650,6 +5802,38 @@ void CKena_State::Tick_Ledge_Land(_float fTimeDelta)
 }
 
 void CKena_State::Tick_Slide_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Level_Up(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Mask_On(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Mask_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Mask_Off(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Mask_Off_Memory_Collect(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Meditate_Into(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Meditate_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Meditate_Exit(_float fTimeDelta)
 {
 }
 
@@ -6181,6 +6365,14 @@ void CKena_State::End_Combat_Run(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Crouch_To_Idle(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Crouch_To_Run(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Take_Damage_Front(_float fTimeDelta)
 {
 }
@@ -6398,6 +6590,38 @@ void CKena_State::End_Ledge_Land(_float fTimeDelta)
 }
 
 void CKena_State::End_Slide_Land(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Level_Up(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Mask_On(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Mask_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Mask_Off(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Mask_Off_Memory_Collect(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Meditate_Into(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Meditate_Loop(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Meditate_Exit(_float fTimeDelta)
 {
 }
 
@@ -6841,9 +7065,25 @@ _bool CKena_State::KeyDown_R()
 	return false;
 }
 
+_bool CKena_State::KeyDown_T()
+{
+	if (m_pGameInstance->Key_Down(DIK_T))
+		return true;
+
+	return false;
+}
+
 _bool CKena_State::KeyDown_Space()
 {
 	if (m_pGameInstance->Key_Down(DIK_SPACE))
+		return true;
+
+	return false;
+}
+
+_bool CKena_State::KeyDown_BackSpace()
+{
+	if (m_pGameInstance->Key_Down(DIK_BACKSPACE))
 		return true;
 
 	return false;

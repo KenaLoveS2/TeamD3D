@@ -34,6 +34,7 @@ public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
 	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
+	CAnimationState*		Get_AnimationStateMachine() { return m_pAnimation; }
 	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;

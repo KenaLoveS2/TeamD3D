@@ -4,6 +4,7 @@
 #include "Kena.h"
 #include "Bone.h"
 #include "Effect_Base.h"
+#include "AnimationState.h"
 #include "E_KenaTrail.h"
 #include "E_RectTrail.h"
 
@@ -118,10 +119,69 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 	/* ~Weapon Update */
 
 	if (m_mapEffect["KenaTrail"]->Get_Active() == true)
+	{
+// 		CAnimationState*	pAnimation = m_pPlayer->Get_AnimationStateMachine();
+// 
+// 		_float		fCurPlayTime = pAnimation->Get_AnimationPlayTime();
+// 		_float		fStartPlayTime = pAnimation->Get_AnimationLastPlayTime();
+// 
+// 		vector<KEYFRAME>*	pKeyFrames = pAnimation->Get_KeyFrames("staff_skin8_jnt");
+// 		if (pKeyFrames != nullptr)
+// 		{
+// 			_uint iFrame = 0;
+// 			while (fStartPlayTime >= (*pKeyFrames)[iFrame + 1].Time)
+// 				iFrame++;
+// 
+// 			_float	fRatio = _float((fStartPlayTime - (*pKeyFrames)[iFrame].Time) / ((*pKeyFrames)[iFrame + 1].Time - (*pKeyFrames)[iFrame].Time));
+// 			_float4	vStartPosition = XMVectorLerp(XMLoadFloat3(&(*pKeyFrames)[iFrame].vPosition), XMLoadFloat3(&(*pKeyFrames)[iFrame + 1].vPosition), fRatio);
+// 			vStartPosition = XMVector3TransformCoord(vStartPosition, matWorldSocket);
+// 
+// 			if (fCurPlayTime >= (*pKeyFrames)[iFrame + 1].Time)
+// 				iFrame++;
+// 
+// 			fRatio = _float((fCurPlayTime - (*pKeyFrames)[iFrame].Time) / ((*pKeyFrames)[iFrame + 1].Time - (*pKeyFrames)[iFrame].Time));
+// 			_float4	vEndPosition = XMVectorLerp(XMLoadFloat3(&(*pKeyFrames)[iFrame].vPosition), XMLoadFloat3(&(*pKeyFrames)[iFrame + 1].vPosition), fRatio);
+// 			vEndPosition = XMVector3TransformCoord(vEndPosition, matWorldSocket);
+// 
+// 			vector<_float4>		vecPositions;
+// 			_float4				vPosition;
+// 			for (_float Ratio = 0.f; Ratio < 1.f; Ratio += 0.1f)
+// 			{
+// 				vPosition = XMVectorLerp(vStartPosition, vEndPosition, Ratio);
+// 				vecPositions.push_back(vPosition);
+// 			}
+// // 			for (auto& KeyFrame : *pKeyFrames)
+// // 			{
+// // 				if (KeyFrame.Time < fStartPlayTime)
+// // 					continue;
+// // 
+// // 				if (KeyFrame.Time > fCurPlayTime)
+// // 				{
+// // 					if (vecPositions.back() != matWorldSocket.r[3])
+// // 						vecPositions.push_back(matWorldSocket.r[3]);
+// // 					break;
+// // 				}
+// // 
+// // 				vPosition = XMVector3TransformCoord(XMLoadFloat3(&KeyFrame.vPosition), matWorldSocket);
+// // 				vecPositions.push_back(vPosition);
+// // 			}
+// 
+// 			dynamic_cast<CE_KenaTrail*>(m_mapEffect["KenaTrail"])->Trail_KeyFrames(&vecPositions, fTimeDelta);
+// 			//m_mapEffect["KenaTrail"]->Late_Tick(fTimeDelta);
+// 		}
+
 		dynamic_cast<CE_RectTrail*>(m_mapEffect["KenaRectTrail"])->Trail_InputRandomPos(matWorldSocket.r[3]);
+	}
+//	else
+//		dynamic_cast<CE_KenaTrail*>(m_mapEffect["KenaTrail"])->ResetInfo();
 
 	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Late_Tick(fTimeDelta);
+	{
+//		if (pEffect.first != "KenaTrail")
+			pEffect.second->Late_Tick(fTimeDelta);
+// 		else
+// 			continue;
+	}
 
 	if (m_pRendererCom != nullptr)
 	{
