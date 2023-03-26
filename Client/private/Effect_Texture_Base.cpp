@@ -8,11 +8,12 @@ CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device * pDevice, ID3D11DeviceC
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_vOriginalScale(1.f, 1.f, 1.f)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
 		m_pTextureCom[i] = nullptr;
-		m_iTextureIndices[i] = 0;
+		m_iTextureIndices[i] = -1;
 		m_ShaderVarName[i] = nullptr;
 		m_TextureComName[i] = nullptr;
 	}
@@ -25,11 +26,12 @@ CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base & rhs)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
 	, m_pVIBufferCom(nullptr)
+	, m_vOriginalScale(1.f, 1.f, 1.f)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
 		m_pTextureCom[i] = nullptr;
-		m_iTextureIndices[i] = 0;
+		m_iTextureIndices[i] = -1;
 		m_ShaderVarName[i] = nullptr;
 		m_TextureComName[i] = nullptr;
 	}
@@ -55,12 +57,10 @@ HRESULT CEffect_Texture_Base::Initialize(void * pArg)
 	{
 		m_pfileName = (_tchar*)pArg;
 		if (FAILED(Load_Data(m_pfileName)))
-		{
-		}
+			m_pTransformCom->Set_Scaled(_float3(5.f, 5.f, 1.f));
 	}
 	else
-	{
-	}
+		m_pTransformCom->Set_Scaled(_float3(5.f, 5.f, 1.f));
 
 	if (FAILED(SetUp_Components()))
 	{
@@ -73,7 +73,7 @@ HRESULT CEffect_Texture_Base::Initialize(void * pArg)
 
 
 	/* temp */
-	m_pTransformCom->Set_Scaled(_float3(50.f, 50.f, 50.f));
+	
 
 	return S_OK;
 }
@@ -114,7 +114,11 @@ HRESULT CEffect_Texture_Base::Render()
 
 void CEffect_Texture_Base::Imgui_RenderProperty()
 {
+	if (ImGui::Button("Reset Scale"))
+		m_pTransformCom->Set_Scaled(m_vOriginalScale);
+
 	m_pTransformCom->Imgui_RenderProperty();
+
 
 	/* Render Info */
 	for (_uint texID = 0; texID < TEXTURE_END; ++texID)
@@ -139,25 +143,124 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 			/* RenderPass */
 			static _int iRenderPass;
 			iRenderPass = m_iRenderPass;
-			const char* renderPass[1] = { "Default"};
-			if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 1, 5))
+			const char* renderPass[2] = { "Default", "MaskDefault"};
+			if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
 				m_iRenderPass = iRenderPass;
 
 			/* Color */
-			ColorCode();
+			Color(texID);
 		}
 	}
+
+	ImGui::Separator();
+	Save_Data();
 
 
 }
 
 HRESULT CEffect_Texture_Base::Save_Data()
 {
+	static	char szSaveFileName[MAX_PATH] = "";
+	ImGui::SetNextItemWidth(200);
+	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
+
+	if (ImGuiFileDialog::Instance()->Display("Select File"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			string		strSaveDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();
+			strSaveDirectory += "\\";
+			strSaveDirectory += szSaveFileName;
+			strSaveDirectory += ".json";
+
+			Json	json;
+
+			json["00. RenderPass"]			= m_iRenderPass;
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&m_vTextureColors[TEXTURE_DIFFUSE] + i);
+				json["01. Color"].push_back(fElement);
+			}
+			json["02. HDR Intensity"]		= m_fHDRIntensity;
+			
+			_float3 vScale = m_pTransformCom->Get_Scaled();
+			for (_uint i = 0; i < 3; ++i)
+			{
+				_float fElement = *((float*)&vScale + i);
+				json["03. vScale"].push_back(fElement);
+			}
+			for (_uint i = 0; i < 4; ++i)
+			{
+				_float fElement = *((float*)&m_vTextureColors[TEXTURE_MASK] + i);
+				json["04. MaskColor"].push_back(fElement);
+			}
+
+			
+			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
+			json["11. MaskTextureIndex"]	= m_iTextureIndices[TEXTURE_MASK];
+
+
+			ofstream file(strSaveDirectory.c_str());
+			file << json;
+			file.close();
+			ImGuiFileDialog::Instance()->Close();
+		}
+		else
+			ImGuiFileDialog::Instance()->Close();
+	}
+
+
+
+
 	return S_OK;
 }
 
 HRESULT CEffect_Texture_Base::Load_Data(_tchar * fileName)
 {
+	if (fileName == nullptr)
+		return E_FAIL;
+
+	Json	jLoad;
+
+	wstring filePath = L"../Bin/Data/Effect_UI/";
+	filePath += fileName;
+	filePath += L".json";
+
+	ifstream file(filePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	jLoad["00. RenderPass"].get_to<_int>(m_iRenderPass);
+
+	int i = 0;
+	for (auto fElement : jLoad["01. Color"])
+		fElement.get_to<_float>(*((_float*)&m_vTextureColors[TEXTURE_DIFFUSE] + i++));
+
+	jLoad["02. HDR Intensity"].get_to<_float>(m_fHDRIntensity);
+
+	i = 0;
+	_float3 vScale;
+	for (auto fElement : jLoad["03. vScale"])
+		fElement.get_to<_float>(*((_float*)&vScale + i++));
+	m_pTransformCom->Set_Scaled(vScale);	
+	m_vOriginalScale = vScale;
+
+	i = 0;
+	if (jLoad.contains("04. MaskColor"))
+	{
+		for (auto fElement : jLoad["04. MaskColor"])
+			fElement.get_to<_float>(*((_float*)&m_vTextureColors[TEXTURE_MASK] + i++));
+	}
+
+
+	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
+	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
+
 	return S_OK;
 }
 
@@ -206,16 +309,23 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		if (FAILED(m_pTextureCom[i]->Bind_ShaderResource(m_pShaderCom, 
+		if (m_iTextureIndices[i] != -1)
+		{
+			if (FAILED(m_pTextureCom[i]->Bind_ShaderResource(m_pShaderCom,
 				m_ShaderVarName[i], m_iTextureIndices[i])))
-			return E_FAIL;
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Set_RawValue(m_ShaderColorName[i], 
+				&m_vTextureColors[i], sizeof(_float4))))
+				return E_FAIL;
+		}
+
 	}
 
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
-	//	return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
-	//	return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -230,7 +340,38 @@ HRESULT CEffect_Texture_Base::SetUp_TextureInfo()
 	m_TextureComName[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
 	m_TextureComName[TEXTURE_MASK]		= L"Com_MaskTexture";
 
+	m_ShaderColorName[TEXTURE_DIFFUSE]	= "g_vColor";
+	m_ShaderColorName[TEXTURE_MASK]		= "g_vMaskColor";
+
 	return S_OK;
+}
+
+void CEffect_Texture_Base::Color(_int iTexID)
+{
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_vTextureColors[iTexID];
+
+	if (ImGui::ColorPicker4("CurColor##4", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL))
+		m_vTextureColors[iTexID] = vSelectColor;
+	if (ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags))
+		m_vTextureColors[iTexID] = vSelectColor;
+
+	static _float fAlpha = 1.f;
+	fAlpha = m_fHDRIntensity;
+	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+		m_fHDRIntensity = fAlpha;
+
 }
 
 CEffect_Texture_Base * CEffect_Texture_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
