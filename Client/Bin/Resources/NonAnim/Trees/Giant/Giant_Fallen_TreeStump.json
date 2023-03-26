@@ -3,14 +3,14 @@
   "1_First": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_BarkTest_03_D.dds",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_TreeBranch_Bark_Tile_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_BarkTest_02_N.png",
       "7_MASK_path": "NONE",
-      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/T_TreeBranch_Bark_Tile_D.dds",
+      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/T_BarkTest_03_D.dds",
       "9_SPRINT_EMISSIVE_path": "NONE",
       "10_HAIR_DEPTH_Path": "NONE",
       "11_ALPHA_path": "NONE",
@@ -25,14 +25,14 @@
   "2_Second": [
     {
       "0_None_path": "NONE",
-      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_BarkTest_03_D.dds",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_TreeBranch_Bark_Tile_D.dds",
       "2_SPECULAR_path": "NONE",
       "3_AMBIENT_path": "NONE",
       "4_EMISSIVE_path": "NONE",
       "5_EMISSIVEMASK_path": "NONE",
       "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_FallenTree_Stump_01_N.png",
       "7_MASK_path": "NONE",
-      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/T_TreeBranch_Bark_Tile_D.dds",
+      "8_SSS_MASK_path": "../Bin/Resources/NonAnim/Textures/T_BarkTest_03_D.dds",
       "9_SPRINT_EMISSIVE_path": "NONE",
       "10_HAIR_DEPTH_Path": "NONE",
       "11_ALPHA_path": "NONE",

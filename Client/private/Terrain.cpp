@@ -102,8 +102,9 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	//CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-    m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+  
+	//m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	return;
 	m_pGroundMark->Late_Tick(fTimeDelta);
 	return;
