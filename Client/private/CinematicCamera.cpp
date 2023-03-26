@@ -5,6 +5,9 @@
 #include "DebugDraw.h"
 #include "Utile.h"
 
+_float fTemp = 0.f;
+wstring wstrTemp = L"";
+
 void XM_CALLCONV DrawLine(PrimitiveBatch<VertexPositionColor>* batch,
 	FXMVECTOR pointA, FXMVECTOR pointB, FXMVECTOR color)
 {
@@ -101,8 +104,14 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		}
 
 		if(m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
+		{
 			m_fDeltaTime += fTimeDelta;
-
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = false;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
+		}
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 		_float3 InterPolatePos = _float3(vPos.x, vPos.y, vPos.z);
@@ -185,6 +194,11 @@ void CCinematicCamera::Imgui_RenderProperty()
 		{
 			m_fDeltaTime = 0.f;
 			m_bPausePlay = false;
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = true;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
 		}
 
 		static _int iSelectKeyFrame = -1;
@@ -219,7 +233,13 @@ void CCinematicCamera::Imgui_RenderProperty()
 			Safe_Delete_Array(ppKeyFrameNum[i]);
 		Safe_Delete_Array(ppKeyFrameNum);
 	}
-	if (!m_bPlay)
+
+	/*if (ImGui::Button("InitPlay"))
+	{
+		m_bInitSet = true;
+	}*/
+
+	if(!m_bPlay)
 	{
 		if (ImGui::Button("KeyFrameClear"))
 			m_keyframes.clear();

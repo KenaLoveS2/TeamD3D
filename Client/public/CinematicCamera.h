@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "Camera.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -32,6 +34,9 @@ public:
 	virtual void Late_Tick(_float TimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual void Imgui_RenderProperty() override;
+
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>	m_CinemaDelegator;
 
 private:
 	void	AddKeyFrame(CAMERAKEYFRAME keyFrame);

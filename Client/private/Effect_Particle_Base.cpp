@@ -50,7 +50,7 @@ HRESULT CEffect_Particle_Base::Initialize(void * pArg)
 	}
 
 	/* temp */
-	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
+	//m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 
 	return S_OK;
 }

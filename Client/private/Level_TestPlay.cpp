@@ -391,7 +391,9 @@ HRESULT CLevel_TestPlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 		CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 		CGameObject* p_game_object = nullptr;
-		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CinematicCam_0", &CameraDesc, &p_game_object))) return E_FAIL;
+
+		/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, L"CinemaCam", TEXT("Prototype_GameObject_CinematicCamera"), L"CinematicCam_0", &CameraDesc, &p_game_object))) return E_FAIL;
 		pCamera = dynamic_cast<CCamera*>(p_game_object);
 		NULL_CHECK_RETURN(pCamera, E_FAIL);
 		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
