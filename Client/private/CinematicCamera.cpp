@@ -359,7 +359,8 @@ void CCinematicCamera::Imgui_RenderProperty()
 		}
 		else
 		{
-			m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
+			_float fY = 450.f;
+			m_CinemaDelegator.broadcast(eChat, bVal, fY, m_vecChat[m_iChatIndex]);
 			m_iChatIndex++;
 		}
 
