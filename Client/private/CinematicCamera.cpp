@@ -74,7 +74,22 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
-	if (m_bPlay && m_keyframes.size() >= 4)
+	ImGui::Begin("CinematicCam");
+	Imgui_RenderProperty();
+	ImGui::End();
+
+	_uint keyframeSize = m_keyframes.size();
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+
+	if(pGameInstance->Key_Down(DIK_L))
+	{
+		m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
+		if(m_pPlayerCam)
+			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
+	}
+
+	if (m_bPlay &&keyframeSize >= 4)
 	{
 		if (m_bInitSet)
 		{
@@ -84,7 +99,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 			m_bInitSet = false;
 		}
-
+	
 		m_fDeltaTime += fTimeDelta;
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
@@ -97,7 +112,6 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Look(vLook);
 		CCamera::Tick(fTimeDelta);
 	}
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_CINEVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
 }
@@ -106,7 +120,7 @@ void CCinematicCamera::Late_Tick(_float TimeDelta)
 {
 	CCamera::Late_Tick(TimeDelta);
 
-	if (m_pRendererCom)
+	if (m_pRendererCom && CGameInstance::GetInstance()->Get_WorkCameraPtr() != this)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
@@ -176,6 +190,8 @@ void CCinematicCamera::Imgui_RenderProperty()
 		if (ImGui::Button("Clear"))
 			m_keyframes.clear();
 	}
+
+	m_pTransformCom->Imgui_RenderProperty();
 }
 
 void CCinematicCamera::AddKeyFrame(CAMERAKEYFRAME keyFrame)
@@ -210,9 +226,9 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 
 		// Calculate the interpolated position and look-at direction
 		position = CatmullRomInterpolation(m_keyframes[i - 1].vPos, m_keyframes[i].vPos,
-			m_keyframes[i + 1].vPos, m_keyframes[i + 2].vPos, t);
+			m_keyframes[i + 1].vPos, m_keyframes[i + 1].vPos, t);
 		lookAt = CatmullRomInterpolation(m_keyframes[i - 1].vLookAt, m_keyframes[i].vLookAt,
-			m_keyframes[i + 1].vLookAt, m_keyframes[i + 2].vLookAt, t);
+			m_keyframes[i + 1].vLookAt, m_keyframes[i + 1].vLookAt, t);
 	}
 }
 
