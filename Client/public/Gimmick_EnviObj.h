@@ -27,9 +27,11 @@ public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual HRESULT		Late_Initialize(void* pArg=nullptr)override;
-	virtual void		Tick(_float fTimeDelta) override;
-	virtual void		Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderCine() override;
+	virtual HRESULT		RenderShadow() override;
 
 public:
 	_bool				Gimmik_Start(_float fTimeDelta);
@@ -55,8 +57,8 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-
-
+	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_CineShaderResources();
 
 public:
 	static  CGimmick_EnviObj*	   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
