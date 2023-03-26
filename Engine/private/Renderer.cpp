@@ -592,7 +592,7 @@ HRESULT CRenderer::Render_Cine()
 	DepthViewportDesc.Height = (_float)900;
 	m_pContext->RSSetViewports(iNumViewports, &DepthViewportDesc);
 
-	/* Reflect */
+	/* Cine */
 	if (FAILED(m_pTarget_Manager->Begin_MRTwithDepthStencil(m_pContext, TEXT("MRT_CINE"), m_pCineDepthStencilView)))
 		return E_FAIL;
 

@@ -15,6 +15,7 @@ BEGIN(Client)
 
 class CCinematicCamera : public CCamera
 {
+public:
 	struct CAMERAKEYFRAME
 	{
 		_float3 vPos;
@@ -34,6 +35,7 @@ public:
 	virtual void Late_Tick(_float TimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual void Imgui_RenderProperty() override;
+	void Play();
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>	m_CinemaDelegator;
@@ -45,9 +47,17 @@ private:
 	HRESULT	SetUp_Components();
 	HRESULT	SetUp_ShaderResources();
 
+	void Save_Data();
+	void Load_Data();
+
+public:
+	static void Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v);
+
 private:
 	_bool	m_bPlay = false;
+
 	vector<CAMERAKEYFRAME> m_keyframes;
+
 	_float	m_fDeltaTime = 0.f;
 	_float	m_fInputTime = 0.5f;
 
@@ -58,7 +68,6 @@ private:
 #pragma region Render Variable
 #ifdef _DEBUG
 private:
-	_bool														m_bDebugRender = false;
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
 	BasicEffect*												m_pEffect = nullptr;
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
@@ -67,6 +76,10 @@ private:
 
 	_bool														m_bInitSet = false;
 	class CCamera*										m_pPlayerCam = nullptr;
+	_bool														m_bPausePlay = false;
+	_uint															m_iNumKeyFrames = 0;
+	_bool														m_bSaveWrite = false;
+	string														m_strFileName;
 
 public:
 	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
