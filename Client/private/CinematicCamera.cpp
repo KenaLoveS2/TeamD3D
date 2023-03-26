@@ -5,6 +5,9 @@
 #include "DebugDraw.h"
 #include "Utile.h"
 
+_float fTemp = 0.f;
+wstring wstrTemp = L"";
+
 void XM_CALLCONV DrawLine(PrimitiveBatch<VertexPositionColor>* batch,
 	FXMVECTOR pointA, FXMVECTOR pointB, FXMVECTOR color)
 {
@@ -98,6 +101,13 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			RELEASE_INSTANCE(CGameInstance)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 			m_bInitSet = false;
+
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = true;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
+
 		}
 	
 		m_fDeltaTime += fTimeDelta;
@@ -179,6 +189,11 @@ void CCinematicCamera::Imgui_RenderProperty()
 		ImGui::Checkbox("Play", &m_bPlay);
 		if(ImGui::Button("CinematicPlay"))
 			m_fDeltaTime = 0.f;
+	}
+
+	if (ImGui::Button("InitPlay"))
+	{
+		m_bInitSet = true;
 	}
 
 #ifdef _DEBUG
