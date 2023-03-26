@@ -34,8 +34,6 @@ private:
 	HRESULT							SetUp_ShaderResources();
 	HRESULT							SetUp_Buffer();
 
-
-
 private:
 	CShader*						m_pShaderCom;
 	CRenderer*						m_pRendererCom;

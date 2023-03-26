@@ -48,10 +48,12 @@ HRESULT CEffect_Mesh_Base::Initialize(void * pArg)
 		m_pfileName = (_tchar*)pArg;
 		if (FAILED(Load_Data(m_pfileName)))
 		{
+			m_pTransformCom->Set_Scaled({ 5.f, 5.f, 5.f });
 		}
 	}
 	else
 	{
+		m_pTransformCom->Set_Scaled({ 5.f, 5.f, 5.f });
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -60,7 +62,9 @@ HRESULT CEffect_Mesh_Base::Initialize(void * pArg)
 		return E_FAIL;
 	}
 
-
+	/* Temp */
+	m_pTransformCom->Set_Scaled({ 5.f, 5.f ,5.f });
+	m_fTest = 0.f;
 	return S_OK;
 }
 
@@ -79,7 +83,7 @@ void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CEffect_Mesh_Base::Render()
@@ -91,16 +95,38 @@ HRESULT CEffect_Mesh_Base::Render()
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
+	{
+	//	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		//m_pModelCom->Bind_Material(m_pShaderCom, 0, m_eTextureType, "g_DiffuseTexture");
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_iRenderPass);
+	}
 
 	return S_OK;
 }
 
 void CEffect_Mesh_Base::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader(" > ModelCom"))
-	{
-		Set_ModelCom();
+	ImGui::Separator();
+
+	ImGui::Text("<Set Model>");
+	Set_ModelCom();
+
+	m_pTransformCom->Imgui_RenderProperty();
+
+	if (ImGui::CollapsingHeader("Render")) {
+		/* RenderPass */
+		static _int iRenderPass;
+		iRenderPass = m_iRenderPass;
+		const char* renderPass[2] = { "Default", "OnlyColor" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+			m_iRenderPass = iRenderPass;
+
+		ColorCode();
+
+		static _float fTest = 0.f;
+		if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
+			m_fTest = fTest;
 	}
 }
 
@@ -121,6 +147,16 @@ HRESULT CEffect_Mesh_Base::SetUp_Components()
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
+	/* For.Com_Shader */ 
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Mesh_S2"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), TEXT("Com_DiffuseTexture"),
+		(CComponent**)&m_pDiffuseTextureCom[0])))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -138,7 +174,8 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
+	//if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
+	//	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
@@ -166,6 +203,9 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fTest", &m_fTest, sizeof(_float))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -177,36 +217,44 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 	ImGui::RadioButton("Cube", &iSelected, 1); ImGui::SameLine();
 	ImGui::RadioButton("Cone", &iSelected, 2); ImGui::SameLine();
 	ImGui::RadioButton("Sphere", &iSelected, 3); ImGui::SameLine();
-	ImGui::RadioButton("ShockBall", &iSelected, 4);
+	ImGui::RadioButton("ShockBall", &iSelected, 4); ImGui::SameLine();
+	ImGui::RadioButton("Cylinder", &iSelected, 5); ImGui::SameLine();
 
-	if (m_pModelCom != nullptr)
+	if (ImGui::Button("Model Confirm"))
 	{
-		Delete_Component(L"Com_Model");
-	}
+		if (m_pModelCom != nullptr)
+		{
+			Delete_Component(L"Com_Model");
+		}
 
-	/* For.Com_Model */
-	switch (iSelected)
-	{
-	case 0:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 1:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 2:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 3:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
-	case 4:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-		break;
+		/* For.Com_Model */
+		switch (iSelected)
+		{
+		case 0:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Plane"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 1:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cube"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 2:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cone"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 3:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 4:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		case 5:
+			if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+			break;
+		}
 	}
 
 	return S_OK;
