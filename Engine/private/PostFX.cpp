@@ -562,11 +562,11 @@ void CPostFX::Day()
 
 void CPostFX::Night()
 {
-	if (m_fMiddleGrey > 0.1f)
+	if (m_fMiddleGrey > 0.2f)
 	{
 		m_fMiddleGrey -= TIMEDELTA * 2.f;
-		if (m_fMiddleGrey <= 0.1f)
-			m_fMiddleGrey = 0.1f;
+		if (m_fMiddleGrey <= 0.2f)
+			m_fMiddleGrey = 0.2f;
 	}
 
 	if (m_fWhite <= 5.f)

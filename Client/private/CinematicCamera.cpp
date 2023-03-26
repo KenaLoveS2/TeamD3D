@@ -108,7 +108,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
@@ -206,12 +206,15 @@ void CCinematicCamera::Late_Tick(_float TimeDelta)
 {
 	CCamera::Late_Tick(TimeDelta);
 
+#ifdef _DEBUG
 	if (m_pRendererCom && CGameInstance::GetInstance()->Get_WorkCameraPtr() != this)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+#endif
 }
 
 HRESULT CCinematicCamera::Render()
 {
+#ifdef _DEBUG
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 	_uint	 iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -221,7 +224,6 @@ HRESULT CCinematicCamera::Render()
 	if (m_iNumKeyFrames < 4)
 		return S_OK;
 
-#ifdef _DEBUG
 	m_pEffect->SetWorld(XMMatrixIdentity());
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
 	m_pEffect->SetView(pInst->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
@@ -323,11 +325,6 @@ void CCinematicCamera::Imgui_RenderProperty()
 			Safe_Delete_Array(ppKeyFrameNum[i]);
 		Safe_Delete_Array(ppKeyFrameNum);
 	}
-
-	/*if (ImGui::Button("InitPlay"))
-	{
-		m_bInitSet = true;
-	}*/
 
 	if(!m_bPlay)
 	{
