@@ -490,6 +490,9 @@
     <Filter Include="02.GameObjects\Monster\BossShaman">
       <UniqueIdentifier>{d3cbaa63-4b82-4803-9ed5-ea9a5639924d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Effect_S2">
+      <UniqueIdentifier>{d6fef66d-c8ab-4979-ba69-f242b75e5367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1981,11 +1984,17 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

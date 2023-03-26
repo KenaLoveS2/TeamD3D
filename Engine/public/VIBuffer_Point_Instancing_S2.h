@@ -7,12 +7,13 @@ class ENGINE_DLL CVIBuffer_Point_Instancing_S2 final : public CVIBuffer_Instanci
 public:
 	typedef struct tagPtInfo
 	{
-		enum TYPE { TYPE_HAZE, TYPE_END };
+		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA ,TYPE_END };
 
 		TYPE	eType = TYPE_HAZE;
 
 		_float	fTerm = 0.0f;
 		_float	fTermAcc = 0.0f;
+		_float	fPlaySpeed = 1.0f; /* Diffrenst usage by Type */
 		_int	iInstanceIndex = 0;
 		_int	iNumInstance = 0;
 
@@ -42,6 +43,8 @@ public:
 
 private: /* Tick Function By Type */
 	HRESULT		Tick_Haze(_float TimeDelta);
+	HRESULT		Tick_Gather(_float TimeDelta);
+	HRESULT		Tick_Parabola(_float TimeDelta);
 private:
 	void		Safe_Delete_Arrays();
 	void		Reset();
@@ -52,7 +55,6 @@ private:
 	_float*			m_pYSpeeds		= nullptr;
 	_float*			m_pZSpeeds		= nullptr;
 	_float3*		m_pPositions	= nullptr;
-	_float4*		m_pRotAxis		= nullptr;
 
 public:
 	static CVIBuffer_Point_Instancing_S2* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
