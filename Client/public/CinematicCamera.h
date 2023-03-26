@@ -53,7 +53,6 @@ private:
 #pragma region Render Variable
 #ifdef _DEBUG
 private:
-	_bool														m_bDebugRender = false;
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
 	BasicEffect*												m_pEffect = nullptr;
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
@@ -62,6 +61,8 @@ private:
 
 	_bool														m_bInitSet = false;
 	class CCamera*										m_pPlayerCam = nullptr;
+	_bool														m_bPausePlay = false;
+	_uint															m_iNumKeyFrames = 0;
 
 public:
 	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

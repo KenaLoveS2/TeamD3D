@@ -78,7 +78,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 	Imgui_RenderProperty();
 	ImGui::End();
 
-	_uint keyframeSize = m_keyframes.size();
+	m_iNumKeyFrames = m_keyframes.size();
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
@@ -89,7 +89,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 	}
 
-	if (m_bPlay &&keyframeSize >= 4)
+	if (m_bPlay &&m_iNumKeyFrames >= 4)
 	{
 		if (m_bInitSet)
 		{
@@ -99,8 +99,10 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 			m_bInitSet = false;
 		}
-	
-		m_fDeltaTime += fTimeDelta;
+
+		if(m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
+			m_fDeltaTime += fTimeDelta;
+
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 		_float3 InterPolatePos = _float3(vPos.x, vPos.y, vPos.z);
@@ -132,7 +134,7 @@ HRESULT CCinematicCamera::Render()
 	for (_uint i = 0; i < iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, 12);
 
-	if (m_keyframes.size() <= 4)
+	if (m_iNumKeyFrames <= 4)
 		return S_OK;
 
 #ifdef _DEBUG
@@ -146,8 +148,7 @@ HRESULT CCinematicCamera::Render()
 	m_pContext->IASetInputLayout(m_pInputLayout);
 	m_pBatch->Begin();
 
-	unsigned int keyFrameSize = m_keyframes.size();
-	for (unsigned int   i = 1; i < keyFrameSize; ++i)
+	for (unsigned int   i = 1; i < m_iNumKeyFrames; ++i)
 		DrawLine(m_pBatch, m_keyframes[i -1].vPos, m_keyframes[i].vPos, _float4(1.f, 0.f, 1.f, 1.f));
 
 	m_pBatch->End();
@@ -172,22 +173,55 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_keyframes.push_back(keyFrame);
 		}
 	}
-	ImGui::DragFloat("Duration", &m_fDeltaTime, 0.1f, 0.f, 1000.f);
 
-	if(m_keyframes.size() >= 4)
+	if (m_keyframes.size() >= 4)
 	{
+		if (ImGui::SliderFloat("Duration", &m_fDeltaTime, 0.f, m_keyframes.back().fTime))
+		{
+			m_bPausePlay = true;
+		}
 		ImGui::Checkbox("Play", &m_bPlay);
-		if(ImGui::Button("CinematicPlay"))
+		if (ImGui::Button("CinematicPlay"))
+		{
 			m_fDeltaTime = 0.f;
+			m_bPausePlay = false;
+		}
+
+		static _int iSelectKeyFrame = -1;
+		char**			ppKeyFrameNum = new char*[m_iNumKeyFrames];
+
+		for(_uint i = 0; i < m_iNumKeyFrames; ++i)
+		{
+			ppKeyFrameNum[i] = new char[16];
+			sprintf_s(ppKeyFrameNum[i], sizeof(char) * 16, "%u", i);
+		}
+
+		ImGui::ListBox("KeyFrameList", &iSelectKeyFrame, ppKeyFrameNum, (int)m_iNumKeyFrames);
+
+		if(iSelectKeyFrame != -1)
+		{
+			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
+			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
+			m_keyframes[iSelectKeyFrame].vPos = _float3(fPos[0], fPos[1], fPos[2]);
+			float fLookAT[3] = { m_keyframes[iSelectKeyFrame].vLookAt.x , m_keyframes[iSelectKeyFrame].vLookAt.y,m_keyframes[iSelectKeyFrame].vLookAt.z };
+			ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1000.f);
+			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
+			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
+
+			if(ImGui::Button("Erase"))
+			{
+				m_keyframes.erase(m_keyframes.begin() + iSelectKeyFrame);
+				iSelectKeyFrame = -1;
+			}
+		}
+
+		for (_uint i = 0; i < m_iNumKeyFrames; ++i)
+			Safe_Delete_Array(ppKeyFrameNum[i]);
+		Safe_Delete_Array(ppKeyFrameNum);
 	}
-
-#ifdef _DEBUG
-	ImGui::Checkbox("DebugRender", &m_bDebugRender);
-#endif // _DEBUG
-
-	if(!m_bPlay)
+	if (!m_bPlay)
 	{
-		if (ImGui::Button("Clear"))
+		if (ImGui::Button("KeyFrameClear"))
 			m_keyframes.clear();
 	}
 
@@ -201,8 +235,7 @@ void CCinematicCamera::AddKeyFrame(CAMERAKEYFRAME keyFrame)
 
 void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookAt)
 {
-	int numKeyframes = m_keyframes.size();
-	if (numKeyframes < 4) {
+	if (m_iNumKeyFrames < 4) {
 		// Not enough keyframes to interpolate, just return the first keyframe
 		position = m_keyframes[0].vPos;
 		lookAt = m_keyframes[0].vLookAt;
@@ -211,11 +244,11 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 
 	// Find the two keyframes that surround the given time
 	int i = 1;
-	while (i < numKeyframes - 2 && m_keyframes[i].fTime < time) {
+	while (i < m_iNumKeyFrames - 1 && m_keyframes[i].fTime < time) {
 		i++;
 	}
 
-	if (numKeyframes > i + 2)
+	if (i < m_iNumKeyFrames - 1)
 	{
 		// Calculate the parameter t for the interpolation
 		float t = 0.f;
