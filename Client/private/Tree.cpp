@@ -65,7 +65,9 @@ void CTree::Late_Tick(_float fTimeDelta)
 	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat))
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+#ifdef _DEBUG
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+#endif
 	}
 }
 

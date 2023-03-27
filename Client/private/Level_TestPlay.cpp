@@ -399,7 +399,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_CineCamera(const _tchar * pLayerTag)
 
 	CGameObject* p_game_object = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CinematicCam_0", &v, &p_game_object))) return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CINE_CAM0", &v, &p_game_object))) return E_FAIL;
 	CCamera *pCamera = dynamic_cast<CCamera*>(p_game_object);
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);

@@ -45,7 +45,10 @@ void CBowTarget::Late_Tick(_float fTimeDelta)
 
 	if (m_pRendererCom && m_bRenderActive)
 	{
+#ifdef _DEBUG
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+#endif
+
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
 }
