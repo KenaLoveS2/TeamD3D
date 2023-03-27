@@ -172,6 +172,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Defines.h" />
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Client_Utilty.h" />
     <ClInclude Include="..\public\BackGround.h" />
@@ -192,7 +193,6 @@
     <ClInclude Include="..\public\CameraForRot.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
     <ClInclude Include="..\Public\Crystal.h" />
@@ -418,6 +418,7 @@
     <ClInclude Include="UI_NodeRotSkill.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Engine\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
@@ -436,7 +437,6 @@
     <ClCompile Include="..\private\CameraForRot.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
-    <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />

@@ -1198,7 +1198,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h">
@@ -1210,6 +1209,10 @@
     <ClInclude Include="..\public\Effect_Texture_Base.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h" />
+    <ClInclude Include="..\public\E_WarriorTrail.h" />
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
+    <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1894,7 +1897,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp">
@@ -1906,6 +1908,10 @@
     <ClCompile Include="..\private\Effect_Texture_Base.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
+    <ClCompile Include="..\private\E_WarriorTrail.cpp" />
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
+    <ClCompile Include="..\..\Engine\private\CinematicCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1996,5 +2002,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
       <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
   </ItemGroup>
 </Project>
