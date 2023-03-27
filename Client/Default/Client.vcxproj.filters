@@ -1212,7 +1212,7 @@
     <ClInclude Include="..\public\E_Swipes_Charged.h" />
     <ClInclude Include="..\public\E_WarriorTrail.h" />
     <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
-    <ClInclude Include="..\public\CinematicCamera.h">
+    <ClInclude Include="..\..\Engine\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>

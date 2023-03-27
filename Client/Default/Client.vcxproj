@@ -418,7 +418,6 @@
     <ClInclude Include="UI_NodeRotSkill.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Engine\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Base_Ground.cpp" />
     <ClCompile Include="..\private\Beni.cpp" />
