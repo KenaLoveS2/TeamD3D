@@ -42,7 +42,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
@@ -65,11 +64,15 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
 	vNormal = mul(vNormal, g_SocketMatrix);
 
+	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
+	vTangent = mul(vTangent, g_SocketMatrix);
+
 	Out.vPosition = mul(vPosition, matVP);
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(vTangent);
+	Out.vBinormal = normalize(cross(vNormal.xyz, vTangent.xyz));
 
 	return Out;
 }
@@ -128,7 +131,7 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 
 	pt.EdgeTess[0] = 1;
 	pt.EdgeTess[1] = 1;
-	pt.EdgeTess[2] =1;
+	pt.EdgeTess[2] = 1;
 
 	pt.InsideTess = (pt.EdgeTess[0] + pt.EdgeTess[1] + pt.EdgeTess[2]) / 3.f;
 	// Assign Positions

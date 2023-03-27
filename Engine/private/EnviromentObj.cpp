@@ -74,7 +74,6 @@ void CEnviromentObj::Late_Tick(_float fTimeDelta)
 #else
 	m_bRenderActive = m_pEnviroment_Manager->Is_RenderIndex(m_EnviromentDesc.iRoomIndex);
 #endif
-	
 }
 
 HRESULT CEnviromentObj::Render()

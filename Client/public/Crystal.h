@@ -29,19 +29,21 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
+	virtual HRESULT		RenderCine() override;
+
 public:
 	void			Set_GimmickActive(_bool bGimmickActive) { m_bGimmickActive = bGimmickActive; }
 
 private:	
-	CModel*							m_pModelCom = nullptr;
-	class CInteraction_Com*			m_pInteractionCom = nullptr;
-	class CControlMove*				m_pControlMoveCom = nullptr;
+	CModel*											m_pModelCom = nullptr;
+	class CInteraction_Com*					m_pInteractionCom = nullptr;
+	class CControlMove*						m_pControlMoveCom = nullptr;
 	
-	class CControlRoom*				m_pControlRoom = nullptr;
+	class CControlRoom*						m_pControlRoom = nullptr;
 
 private:
 	vector<class CEffect_Base*>			m_VecCrystal_Effect;
-	_bool								m_bGimmickActive = false;
+	_bool												m_bGimmickActive = false;
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 

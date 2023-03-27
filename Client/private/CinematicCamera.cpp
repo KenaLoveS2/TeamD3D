@@ -317,7 +317,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 		}
 
 
-		// ½Ã³×¸¶Æ½ÀÎÁö µð¹ö±× ÇÃ·¹ÀÌÀÎÁö ±¸ºÐÇÒ°Í.
+		// ï¿½Ã³×¸ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½.
 		if (ImGui::Button("CinematicPlay"))
 		{
 			m_fDeltaTime = 0.f;
@@ -439,13 +439,13 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		if (ImGuiFileDialog::Instance()->Display("CineCam Save Folder"))
 		{
-			if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			{
 				Save_Data();
 				ImGuiFileDialog::Instance()->Close();
 			}
 
-			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				ImGuiFileDialog::Instance()->Close();
 		}
 
@@ -454,12 +454,12 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		if (ImGuiFileDialog::Instance()->Display("CineCam Load Folder"))
 		{
-			if (ImGuiFileDialog::Instance()->IsOk())        // OK ´­·¶À» ¶§
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 			{
 				Load_Data();
 				ImGuiFileDialog::Instance()->Close();
 			}
-			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ´­·¶À» ¶§
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				ImGuiFileDialog::Instance()->Close();
 		}
 	}
@@ -599,7 +599,7 @@ void CCinematicCamera::Load_Data()
 {
 	list<CGameObject*> gameobjectList;
 
-	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12·Î µé°¡¸é ºñ½ÁÇÑ ´Ù¸¥ ÇÔ¼ö ´õ ÀÖÀ½.
+	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12ï¿½ï¿½ ï¿½é°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	string      strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 	char   szDash[128] = "\\";
 	strcat_s(szDash, strLoadFileName.c_str());
