@@ -109,12 +109,12 @@ HRESULT CQuest::Load_File(const _tchar * fileName)
 	file >> jLoad;
 	file.close();
 
-	using convert_type = codecvt_utf8<wchar_t>;
-	wstring_convert<convert_type> utf8_conv;
-
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
+	
 	string strMain;
 	jLoad["MainQuest"].get_to<string>(strMain);
-	m_Main.first = utf8_conv.from_bytes(strMain);
+	m_Main.first = CUtile::utf8_to_wstring(strMain);
 
 	size_t iNumSubs;
 	jLoad["NumSubs"].get_to<size_t>(iNumSubs);
@@ -127,7 +127,7 @@ HRESULT CQuest::Load_File(const _tchar * fileName)
 			string subQuest;
 			jSub[str].get_to<string>(subQuest);
 
-			wstring wstr = utf8_conv.from_bytes(subQuest);
+			wstring wstr = CUtile::utf8_to_wstring(subQuest);
 			m_vecSub.push_back({ wstr,false });
 		}
 	}
@@ -139,11 +139,11 @@ HRESULT CQuest::Save_File()
 {
 	Json	json;
 
-	using convert_type = codecvt_utf8<wchar_t>;
+	//using convert_type = codecvt_utf8<wchar_t>;
 
 	wstring main = m_Main.first;
-	wstring_convert<convert_type> utf8_conv;
-	json["MainQuest"] = utf8_conv.to_bytes(main);
+	//wstring_convert<convert_type> utf8_conv;
+	json["MainQuest"] = CUtile::wstring_to_utf8(main);
 	json.dump();
 
 	json["NumSubs"] = m_vecSub.size();
@@ -153,7 +153,7 @@ HRESULT CQuest::Save_File()
 	for (auto pair : m_vecSub)
 	{
 		string str = "sub" + to_string(i);
-		jSub[str] = utf8_conv.to_bytes(pair.first);
+		jSub[str] = CUtile::wstring_to_utf8(pair.first);
 		json.dump();
 		i++;
 	}

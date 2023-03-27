@@ -101,13 +101,16 @@ void CImGui_Monster::MonsterList()
 					if (ImGui::Selectable(szViewName, bObjectSelected))
 						m_wstrSelectedProtoName = ProtoPair.first;			// 리스트 박스를 누르면 현재 프로토 타입 이름을 가져옴
 				}
-
 			}
 			ImGui::EndListBox();
 		}
 	}
 
 	CLayer* pLayer = m_pGameInstance->Find_Layer(g_LEVEL, L"Layer_Monster");
+
+	if(pLayer == nullptr)
+		return;
+
 	if (!m_wstrSelectedProtoName.empty())
 	{
 		ImGui::Text("ProtoName : "); ImGui::SameLine(); ImGui::Text(CUtile::WstringToString(m_wstrSelectedProtoName).c_str());
@@ -220,6 +223,7 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 		for (auto& iter : gameobjectList)
 			iter->Late_Initialize();
 	}
+
 	gameobjectList.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -281,15 +285,16 @@ void CImGui_Monster::Save()
 
 		jChild["3_ProtoObjTag"] = pProtoObjTag;
 
-		Safe_Delete_Array(pProtoObjTag);
-
 		pCloneObjTag = CUtile::WideCharToChar(const_cast<_tchar*>(pMonster->Get_ObjectCloneName()));
 
 		jChild["4_CloneObjTag"] = pCloneObjTag;
 
-		Safe_Delete_Array(pCloneObjTag);
-
 		jMonsterObjList["1_Data"].push_back(jChild);
+
+		pProtoObjTag = "";
+		pCloneObjTag = "";
+		Safe_Delete_Array(pProtoObjTag);
+		Safe_Delete_Array(pCloneObjTag);
 	}
 
 	file << jMonsterObjList;

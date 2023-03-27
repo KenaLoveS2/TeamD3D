@@ -127,13 +127,14 @@ HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float f
 	return S_OK;
 }
 
-void CRenderTarget::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
+HRESULT CRenderTarget::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 {
 	pShader->Set_Matrix("g_WorldMatrix", &m_WorldMatrix);
 	pShader->Set_ShaderResourceView("g_Texture", m_pSRV);
 
 	pShader->Begin(0);
 	pVIBuffer->Render();
+	return S_OK;
 }
 #endif // _DEBUG
 

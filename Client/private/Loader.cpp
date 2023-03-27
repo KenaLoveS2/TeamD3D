@@ -1364,6 +1364,8 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, 
 	_bool bIsJsonMatarial, _bool bPivotScale, _bool bUseTriangleMeshActor)
 {
+	bIsLod = false;
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 

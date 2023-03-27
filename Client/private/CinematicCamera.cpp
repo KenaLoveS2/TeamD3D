@@ -125,7 +125,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
 	m_pEffect = new BasicEffect(m_pDevice);
 	m_pEffect->SetVertexColorEnabled(true);
@@ -133,7 +133,7 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	size_t			iShaderByteCodeSize;
 	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeSize);
 	m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount, pShaderByteCode, iShaderByteCodeSize, &m_pInputLayout);
-#endif
+//#endif
 
 	return S_OK;
 }
@@ -238,7 +238,7 @@ void CCinematicCamera::Late_Tick(_float TimeDelta)
 
 HRESULT CCinematicCamera::Render()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 	_uint	 iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -276,9 +276,7 @@ HRESULT CCinematicCamera::Render()
 	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 		Safe_Delete(ppSphere[i]);
 	Safe_Delete_Array(ppSphere);
-
-#endif // _DEBUG
-
+//#endif // _DEBUG
 	return CCamera::Render();
 }
 
@@ -642,8 +640,8 @@ void CCinematicCamera::Load_ChatData(string str)
 	file >> jLoad;
 	file.close();
 
-	using convert_type = codecvt_utf8<wchar_t>;
-	wstring_convert<convert_type> utf8_conv;
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
 
 	//_int iNumChat[10];
 	//_uint i = 0;
@@ -651,7 +649,7 @@ void CCinematicCamera::Load_ChatData(string str)
 	{
 		string line;
 		jSub.get_to<string>(line);
-		wstring wstr = utf8_conv.from_bytes(line);
+		wstring wstr = /*utf8_conv.from_bytes(line);*/ CUtile::utf8_to_wstring(line);
 		m_vecChat.push_back(wstr);
 		//iNumChat[i] = iNum;
 
@@ -735,11 +733,11 @@ CGameObject* CCinematicCamera::Clone(void* pArg)
 void CCinematicCamera::Free()
 {
 	CCamera::Free();
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
-#endif // _DEBUG
+//#endif // _DEBUG
 
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);

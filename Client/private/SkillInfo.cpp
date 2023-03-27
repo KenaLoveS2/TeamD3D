@@ -109,8 +109,8 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 	RELEASE_INSTANCE(CGameInstance);
 
 	/* 2. Name, Description, Condition ,State */
-	using convert_type = codecvt_utf8<wchar_t>;
-	wstring_convert<convert_type> utf8_conv;
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
 	
 	for (_uint i = 0; i < 5; ++i)
 	{
@@ -121,8 +121,8 @@ HRESULT CSkillInfo::Load_File(ID3D11Device* pDevice, ID3D11DeviceContext*	pConte
 			jLevel["Name"].get_to<string>(strName);
 			jLevel["Desc"].get_to<string>(strDesc);
 
-			m_tDesc[i].wstrName = utf8_conv.from_bytes(strName);
-			m_tDesc[i].wstrDesc = utf8_conv.from_bytes(strDesc);
+			m_tDesc[i].wstrName = CUtile::utf8_to_wstring(strName);
+			m_tDesc[i].wstrDesc = CUtile::utf8_to_wstring(strDesc);
 
 			_int iState;
 			jLevel["State"].get_to<int>(iState);

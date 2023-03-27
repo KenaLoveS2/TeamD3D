@@ -243,6 +243,26 @@ _float4x4 CUtile::ConvertMatrix_PxToD3D(PxMat44 PxMatrix)
 	return D3dXMatrix;
 }
 
+wstring CUtile::utf8_to_wstring(const string& str)
+{
+	int wstr_len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[wstr_len];
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wstr, wstr_len);
+	wstring result(wstr);
+	delete[] wstr;
+	return result;
+}
+
+string CUtile::wstring_to_utf8(const wstring& wstr)
+{
+	int str_len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
+	char* str = new char[str_len];
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, str, str_len, NULL, NULL);
+	string result(str);
+	delete[] str;
+	return result;
+}
+
 void CUtile::Execute_BillBoard(CTransform* pTransform, _float3 vScale)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();

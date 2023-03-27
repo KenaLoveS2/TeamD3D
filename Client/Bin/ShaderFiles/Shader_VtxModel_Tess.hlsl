@@ -98,7 +98,7 @@ VS_OUT_TESS VS_MAIN_TESS(VS_IN In)
 	Out.vPosition = In.vPosition;
 	Out.vNormal = In.vNormal;
 	Out.vTexUV = In.vTexUV;
-	Out.vProjPos = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vProjPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
 	Out.vBinormal = normalize(cross(In.vNormal.xyz, Out.vTangent.xyz));
 
@@ -549,7 +549,6 @@ technique11 DefaultTechnique
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
-		//HullShader = compile  hu_5_0 ;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
@@ -560,10 +559,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
 	}
 
@@ -573,10 +572,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_TESS();
 	}
 
@@ -586,10 +585,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_TESS_MRAO();
 	}
 
@@ -599,10 +598,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_H_R_AO();
 	}
 
@@ -612,10 +611,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_ERAO();
 	}
 
@@ -625,10 +624,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_MRAO_E();
 	}
 
@@ -638,10 +637,10 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
-		HullShader = compile hs_5_0 HS_MAIN();
-		DomainShader = compile ds_5_0 DS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_CINE();
 	}
 }

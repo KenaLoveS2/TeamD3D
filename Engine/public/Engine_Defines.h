@@ -1,6 +1,5 @@
 #pragma once
 
-
 #define IMGUI_LEFT_LABEL(func, label, ...) (ImGui::TextUnformatted(label), ImGui::SameLine(), func("##" label, __VA_ARGS__))
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "ImGui\imgui.h"
@@ -29,7 +28,7 @@
 #include <DirectXTK/SpriteFont.h>
 
 #include <d3dcompiler.h>
-#include <TypeInfo.h>
+#include <typeinfo>
 #include <DirectXCollision.h>
 
 #define DIRECTINPUT_VERSION 0x0800
@@ -77,6 +76,5 @@ using namespace physx;
 #endif
 
 #endif // _DEBUG
-
 
 using namespace Engine;

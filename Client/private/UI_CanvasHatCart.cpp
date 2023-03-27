@@ -148,8 +148,8 @@ HRESULT CUI_CanvasHatCart::Ready_Nodes()
 	file >> jLoad;
 	file.close();
 
-	using convert_type = codecvt_utf8<wchar_t>;
-	wstring_convert<convert_type> utf8_conv;
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
 
 	size_t iNumHat;
 	jLoad["NumHat"].get_to<size_t>(iNumHat);
@@ -161,7 +161,7 @@ HRESULT CUI_CanvasHatCart::Ready_Nodes()
 
 		string sName;
 		jInfo["Name"].get_to<string>(sName);
-		wstring wstr = utf8_conv.from_bytes(sName);
+		wstring wstr = CUtile::utf8_to_wstring(sName);
 
 		_int iPrice;
 		jInfo["Price"].get_to<_int>(iPrice);
