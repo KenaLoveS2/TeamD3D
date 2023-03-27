@@ -349,6 +349,16 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/FieldBeacon_Anim/FieldBeacon.mdat"), PivotMatrix))))
 		return E_FAIL;
 
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_DoorCrystal_Anim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Door/DoorCrystal/DoorCrystal_Anim_0.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_StoneDoor_Anim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Door/StoneDoor/StoneDoor_Anim_0.mdat"), PivotMatrix))))
+		return E_FAIL;
+
 #pragma  endregion ANIM_OBJ
 	
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
@@ -380,6 +390,8 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 #else
 	/* Prototype_Component_Model_TeleportFlower */
+	
+	/* ÀçÈ£Çü ²¨*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TeleportFlowerAnim",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/TeleportFlower/TeleportFlower.model", PivotMatrix))))
@@ -392,6 +404,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
+	/* ~ÀçÈ£Çü ²¨*/
+
+	/*º´ÁÖÇü ²¨*/
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
+	// Prototype_GameObject_CRope_RotRock
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	/*~º´ÁÖÇü ²¨*/
 #endif 
 
 #pragma region Map_Four
@@ -429,7 +448,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Map4/LightHouse/Structure");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/RusuHut", true, true, true)))
 		assert(!"Map4/RusuHut");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true,false,true)))
 		assert(!"Map4/SummoningRoom");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true)))
 		assert(!"VillageCart");
@@ -2289,7 +2308,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		assert(!"Map4/LightHouse/Structure");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/RusuHut", true, true, true)))
 		assert(!"Map4/RusuHut");
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/SummoningRoom", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/SummoningRoom", true, true, true, false, true)))
 		assert(!"Map4/SummoningRoom");
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
 		assert(!"VillageCart");
