@@ -29,7 +29,7 @@
 #include <DirectXTK/SpriteFont.h>
 
 #include <d3dcompiler.h>
-#include <TypeInfo.h>
+#include <typeinfo>
 #include <DirectXCollision.h>
 
 #define DIRECTINPUT_VERSION 0x0800

@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Model.h"
 #include "Function_Manager.h"
+#include "Channel.h"
 
 CAnimationState::CAnimationState()
 {
@@ -56,12 +57,52 @@ const _bool CAnimationState::Get_AnimationFinish(const string & strStateName)
 		return pAnimState->m_vecAdditiveAnim.back()->m_pAdditiveAnim->IsFinished();
 }
 
+const _float CAnimationState::Get_AnimationDuration() const
+{
+	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		return (_float)m_pCurAnim->m_pMainAnim->Get_AnimationDuration();
+	else
+		return (_float)m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationDuration();
+}
+
+const _float CAnimationState::Get_AnimationPlayTime() const
+{
+	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		return (_float)m_pCurAnim->m_pMainAnim->Get_PlayTime();
+	else
+		return (_float)m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_PlayTime();
+}
+
+const _float CAnimationState::Get_AnimationLastPlayTime() const
+{
+	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		return (_float)m_pCurAnim->m_pMainAnim->Get_LastPlayTime();
+	else
+		return (_float)m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_LastPlayTime();
+}
+
 const _float CAnimationState::Get_AnimationProgress() const
 {
 	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
 		return m_pCurAnim->m_pMainAnim->Get_AnimationProgress();
 	else
 		return m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Get_AnimationProgress();
+}
+
+vector<KEYFRAME>* CAnimationState::Get_KeyFrames(const string & strBoneName)
+{
+	CBone*		pBone = m_pModel->Get_BonePtr(strBoneName.c_str());
+	NULL_CHECK_RETURN(pBone, nullptr);
+
+	CChannel*		pChannel = nullptr;
+	if (m_pCurAnim->m_vecAdditiveAnim.empty() == true)
+		pChannel = m_pCurAnim->m_pMainAnim->Find_Channel(pBone);
+	else
+		pChannel = m_pCurAnim->m_vecAdditiveAnim.back()->m_pAdditiveAnim->Find_Channel(pBone);
+
+	NULL_CHECK_RETURN(pChannel, nullptr);
+
+	return pChannel->Get_KeyFrames();
 }
 
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
@@ -402,6 +443,16 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 					}
 				}
 
+				if (pAdditiveAnim->m_listLockedBoneIndex.empty() == false)
+				{
+					for (_uint& iIndex : pAdditiveAnim->m_listLockedBoneIndex)
+					{
+						pJoint = m_pModel->Get_BonePtr(iIndex);
+						assert(pJoint != nullptr);
+						pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
+					}
+				}
+
 				if (pAdditiveAnim->m_eAdditiveType == CAdditiveAnimation::ADDITIVE)
 				{
 					CUtile::Saturate<_float>(pAdditiveAnim->m_fAdditiveRatio, 0.f, pAdditiveAnim->m_fMaxAdditiveRatio);
@@ -488,6 +539,16 @@ void CAnimationState::Play_Animation(_float fTimeDelta)
 						pJoint = m_pModel->Get_BonePtr(Pair.first.c_str());
 						assert(pJoint != nullptr);
 						pJoint->Set_BoneLocked(Pair.second);
+					}
+				}
+
+				if (pAdditiveAnim->m_listLockedBoneIndex.empty() == false)
+				{
+					for (_uint& iIndex : pAdditiveAnim->m_listLockedBoneIndex)
+					{
+						pJoint = m_pModel->Get_BonePtr(iIndex);
+						assert(pJoint != nullptr);
+						pJoint->Set_BoneLocked(CBone::LOCKTO_ALONE);
 					}
 				}
 

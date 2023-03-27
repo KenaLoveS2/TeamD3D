@@ -73,8 +73,12 @@ public:
 	const _uint		Get_PreAnimIndex() const;
 	const _bool&		Get_AnimationFinish();
 	const _bool		Get_AnimationFinish(const string& strStateName);
+	const _float		Get_AnimationDuration() const;
+	const _float		Get_AnimationPlayTime() const;
+	const _float		Get_AnimationLastPlayTime() const;
 	const _float		Get_AnimationProgress() const;
 	const _bool&		Get_Preview() const { return m_bPreview; }
+	vector<KEYFRAME>*		Get_KeyFrames(const string& strBoneName);
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
