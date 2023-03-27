@@ -199,9 +199,6 @@
     <Filter Include="02.GameObjects\Rot">
       <UniqueIdentifier>{526e37c9-0914-47ad-a480-bf42a912dc45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Rot\State">
-      <UniqueIdentifier>{9c5da9a7-56e1-4528-bade-5fbacbdf3429}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\02. Canvas-Node\03. Quest">
       <UniqueIdentifier>{79a6ab43-3eb3-4649-88b9-ba2520a5d792}</UniqueIdentifier>
     </Filter>
@@ -496,11 +493,25 @@
     <Filter Include="02.GameObjects\Player\Mask">
       <UniqueIdentifier>{ebeccba5-de53-4b66-9934-ff83890b23d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Hunter">
+      <UniqueIdentifier>{f47cead2-1b48-47c0-958f-1459cc3959ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Shaman">
+      <UniqueIdentifier>{db748687-bd96-4327-b90f-b25695bc7f58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Warrior">
+      <UniqueIdentifier>{504cc5a8-48d6-4e46-a832-6308326f8998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1004.알아서해라">
+      <UniqueIdentifier>{d5c35ee8-e862-4572-a4ef-380d6d9c707b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
       <Filter>02.GameObjects\Player</Filter>
+    </Text>
+    <Text Include="ReadMe.txt">
+      <Filter>1004.알아서해라</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -747,9 +758,6 @@
     <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_CanvasQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClInclude>
@@ -862,8 +870,6 @@
     <ClInclude Include="..\public\MonsterWeapon.h">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LiftRot.h" />
-    <ClInclude Include="..\public\LiftRot_Master.h" />
     <ClInclude Include="..\Public\DeadZoneObj.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -936,8 +942,6 @@
     <ClInclude Include="..\public\E_KenaHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
-    <ClInclude Include="..\Public\Pulse_Plate_Anim.h" />
     <ClInclude Include="..\public\E_KenaJump.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClInclude>
@@ -971,8 +975,6 @@
     <ClInclude Include="..\public\E_EnemyWispBackground.h">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ControlRoom.h" />
-    <ClInclude Include="..\public\DynamicLightCamera.h" />
     <ClInclude Include="..\public\UI_MonsterHP.h">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClInclude>
@@ -1012,7 +1014,6 @@
     <ClInclude Include="..\public\E_KenaDust.h">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClInclude>
@@ -1022,8 +1023,6 @@
     <ClInclude Include="..\public\E_RotTrail.h">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ImGui_Monster.h" />
-    <ClInclude Include="..\public\ImGui_Rot.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClInclude>
@@ -1171,26 +1170,8 @@
     <ClInclude Include="..\public\E_BombTrail.h">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BossWarrior.h" />
-    <ClInclude Include="..\public\BossWarrior_Hat.h" />
     <ClInclude Include="..\Public\TelePort_Flower.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\FieldBecon_Anim.h" />
-    <ClInclude Include="..\public\ShamanTrapHex.h">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\BossHunter.h">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\BossShaman.h">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\HunterArrow.h">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FakeShaman.h">
-      <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_P_Explosion.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
@@ -1199,13 +1180,6 @@
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\Public\Chest_Anim.h" />
-    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
-    <ClInclude Include="..\public\Effect_Base_S2.h" />
-    <ClInclude Include="..\public\ShamanTrapGeo.h" />
-    <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\Effect_Mesh_Base.h" />
-    <ClInclude Include="..\public\Effect_Texture_Base.h" />
     <ClInclude Include="..\public\E_Warrior_PlaneRoot.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
@@ -1245,7 +1219,6 @@
     <ClInclude Include="..\public\Taro_Mask.h">
       <Filter>02.GameObjects\Player\Mask</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
     <ClInclude Include="..\public\E_WarriorTrail.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
@@ -1254,6 +1227,84 @@
     </ClInclude>
     <ClInclude Include="..\public\E_Swipes_Charged.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossHunter.h">
+      <Filter>02.GameObjects\Monster\Hunter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossShaman.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior.h">
+      <Filter>02.GameObjects\Monster\Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossWarrior_Hat.h">
+      <Filter>02.GameObjects\Monster\Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FakeShaman.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapHex.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HunterArrow.h">
+      <Filter>02.GameObjects\Monster\Hunter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapGeo.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapPlane.h">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotForMonster.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LiftRot_Master.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LiftRot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DynamicLightCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Monster.h">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Chest_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Base_S2.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh_Base.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Texture_Base.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FieldBecon_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
+      <Filter>1004.알아서해라</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1485,9 +1536,6 @@
     <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>02.GameObjects\Effect\Base\Mesh Type</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_CanvasQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClCompile>
@@ -1600,8 +1648,6 @@
     <ClCompile Include="..\private\MonsterWeapon.cpp">
       <Filter>02.GameObjects\Monster\MonsterWeapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LiftRot.cpp" />
-    <ClCompile Include="..\private\LiftRot_Master.cpp" />
     <ClCompile Include="..\Private\DeadZoneObj.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
@@ -1674,8 +1720,6 @@
     <ClCompile Include="..\private\E_KenaHit.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp" />
     <ClCompile Include="..\private\E_KenaJump.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Jump</Filter>
     </ClCompile>
@@ -1709,8 +1753,6 @@
     <ClCompile Include="..\private\E_EnemyWispBackGround.cpp">
       <Filter>02.GameObjects\Effect\Object\Enemy\Wisp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ControlRoom.cpp" />
-    <ClCompile Include="..\private\DynamicLightCamera.cpp" />
     <ClCompile Include="..\private\UI_MonsterHP.cpp">
       <Filter>02.GameObjects\UI\03. WorldUI\Monster</Filter>
     </ClCompile>
@@ -1750,7 +1792,6 @@
     <ClCompile Include="..\private\E_KenaDust.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\Dust</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\HeavyAttack</Filter>
     </ClCompile>
@@ -1760,8 +1801,6 @@
     <ClCompile Include="..\private\E_RotTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Rot</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ImGui_Monster.cpp" />
-    <ClCompile Include="..\private\ImGui_Rot.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp">
       <Filter>02.GameObjects\Effect\Object\Kena\SpiritArrow</Filter>
     </ClCompile>
@@ -1909,26 +1948,8 @@
     <ClCompile Include="..\private\E_BombTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\RotBomb</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BossWarrior.cpp" />
-    <ClCompile Include="..\private\BossWarrior_Hat.cpp" />
     <ClCompile Include="..\Private\TelePort_Flower.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\FieldBecon_Anim.cpp" />
-    <ClCompile Include="..\private\ShamanTrapHex.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\BossHunter.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\BossShaman.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\HunterArrow.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FakeShaman.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_P_Explosion.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
@@ -1938,13 +1959,6 @@
     </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\Private\Chest_Anim.cpp" />
-    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
-    <ClCompile Include="..\private\Effect_Base_S2.cpp" />
-    <ClCompile Include="..\private\ShamanTrapGeo.cpp" />
-    <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\Effect_Mesh_Base.cpp" />
-    <ClCompile Include="..\private\Effect_Texture_Base.cpp" />
     <ClCompile Include="..\private\E_Warrior_PlaneRoot.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClCompile>
@@ -1995,6 +2009,81 @@
     </ClCompile>
     <ClCompile Include="..\private\E_Swipes_Charged.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossHunter.cpp">
+      <Filter>02.GameObjects\Monster\Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossShaman.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior.cpp">
+      <Filter>02.GameObjects\Monster\Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossWarrior_Hat.cpp">
+      <Filter>02.GameObjects\Monster\Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FakeShaman.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapHex.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HunterArrow.cpp">
+      <Filter>02.GameObjects\Monster\Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapGeo.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapPlane.cpp">
+      <Filter>02.GameObjects\Monster\Shaman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotForMonster.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LiftRot_Master.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LiftRot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DynamicLightCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Monster.cpp">
+      <Filter>02.GameObjects\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Chest_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Base_S2.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh_Base.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Texture_Base.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2074,13 +2163,21 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

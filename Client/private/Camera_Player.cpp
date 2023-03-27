@@ -467,6 +467,10 @@ void CCamera_Player::Imgui_RenderProperty()
 		strcpy_s(szOffset, "DEFAULT");
 		break;
 
+	case CCamera_Player::CAMOFFSET_MASK:
+		strcpy_s(szOffset, "MASK");
+		break;
+
 	case CCamera_Player::CAMOFFSET_AIM:
 		strcpy_s(szOffset, "AIM");
 		break;
@@ -506,7 +510,7 @@ void CCamera_Player::Imgui_RenderProperty()
 		m_pCurOffset->bPlayerControl = false;
 	ImGui::InputFloat4("Last Position", (_float*)&m_pCurOffset->vLastPos, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
+	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "MASK", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
 	static _int	iSelectOffset = -1;
 	ImGui::ListBox("Offset", &iSelectOffset, pOffsetTag, (_int)CAMOFFSET_END);
 
