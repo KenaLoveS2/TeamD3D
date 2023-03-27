@@ -13,6 +13,7 @@
 #include "UI_ClientManager.h"
 #include "UI.h"
 #include "Imgui_MapEditor.h"
+#include "CinematicCamera.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -60,8 +61,8 @@ HRESULT CLevel_GamePlay::Initialize()
 // 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
 // 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
 
 	// Ready_Thread_CloneObject(TEXT(""));
 	
@@ -212,6 +213,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	pCamera = dynamic_cast<CCamera*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_CameraForNpc", L"CameraForNpc", &CameraDesc));
 	NULL_CHECK_RETURN(pCamera, E_FAIL);
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"NPC_CAM", pCamera), E_FAIL);
+
+
+
+
+	/* CineCam Test */
+	vector<CCinematicCamera::CAMERAKEYFRAME> v;
+	string chatFileName;
+	CCinematicCamera::Clone_Load_Data("Test.json", v, chatFileName);
+
+	CGameObject* p_game_object = nullptr;
+	if (FAILED(pGameInstance->Clone_GameObject(g_LEVEL, L"CinemaCam", TEXT("Prototype_GameObject_CinematicCamera"), L"CINE_CAM0", &v, &p_game_object))) return E_FAIL;
+	pCamera = nullptr;
+	pCamera = dynamic_cast<CCamera*>(p_game_object);
+	NULL_CHECK_RETURN(pCamera, E_FAIL);
+	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
+	static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+	/* CineCam Test */
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

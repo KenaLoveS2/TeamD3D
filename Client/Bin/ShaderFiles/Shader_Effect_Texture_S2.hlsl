@@ -8,24 +8,24 @@ texture2D		g_MaskTexture;
 
 float			g_fHDRItensity;
 
-float4	g_vColor = { 1.f, 1.f, 1.f, 1.f };
-float4	g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
+float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
+float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
 
 /* Old (remove later) */
-texture2D		g_Texture;
-texture2D		g_DepthTexture;
-texture2D		g_NoiseTexture;
+//texture2D		g_Texture;
+//texture2D		g_DepthTexture;
+//texture2D		g_NoiseTexture;
 
 
-int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
-int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
-float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;	/* UV Move Speed */
-
-float4	g_vMinColor = { 0.f, 0.f, 0.f,0.f };
-
-float	g_fAlpha = 1.f;
-float	g_fAmount = 1.f; /* Guage Data (normalized) */
-float	g_fEnd = 0.f;
+//int		g_XFrameNow = 0, g_YFrameNow = 0;	/* Current Sprite frame */
+//int		g_XFrames = 1, g_YFrames = 1;		/* the number of sprites devided each side */
+//float	g_fSpeedX = 0.f, g_fSpeedY = 0.f;	/* UV Move Speed */
+//
+//float4	g_vMinColor = { 0.f, 0.f, 0.f,0.f };
+//
+//float	g_fAlpha = 1.f;
+//float	g_fAmount = 1.f; /* Guage Data (normalized) */
+//float	g_fEnd = 0.f;
 
 
 struct VS_IN
