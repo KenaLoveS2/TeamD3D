@@ -1493,7 +1493,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ����..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
 		return E_FAIL;
@@ -1519,7 +1519,7 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ��ȣ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 재호 ..."));
 
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -1588,7 +1588,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading �ҿ�..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	
@@ -1626,7 +1626,7 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ����..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1873,7 +1873,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ����..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2272,7 +2272,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ����..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
 
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 

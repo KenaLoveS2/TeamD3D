@@ -1198,22 +1198,12 @@
     <ClInclude Include="..\public\E_RectTrail.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_Swipes_Charged.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_WarriorTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h" />
     <ClInclude Include="..\public\ShamanTrapGeo.h" />
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\E_Warrior_FireSwipe.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Mesh_Base.h" />
     <ClInclude Include="..\public\Effect_Texture_Base.h" />
     <ClInclude Include="..\public\E_Warrior_PlaneRoot.h">
@@ -1256,6 +1246,15 @@
       <Filter>02.GameObjects\Player\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
+    <ClInclude Include="..\public\E_WarriorTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1937,12 +1936,6 @@
     <ClCompile Include="..\private\E_RectTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_Swipes_Charged.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_WarriorTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
@@ -1950,9 +1943,6 @@
     <ClCompile Include="..\private\Effect_Base_S2.cpp" />
     <ClCompile Include="..\private\ShamanTrapGeo.cpp" />
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Mesh_Base.cpp" />
     <ClCompile Include="..\private\Effect_Texture_Base.cpp" />
     <ClCompile Include="..\private\E_Warrior_PlaneRoot.cpp">
@@ -1996,6 +1986,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Taro_Mask.cpp">
       <Filter>02.GameObjects\Player\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2076,12 +2075,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
-      <Filter>97.ShaderFiles\Effect</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

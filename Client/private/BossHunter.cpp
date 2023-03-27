@@ -1173,6 +1173,9 @@ void CBossHunter::Create_Arrow()
 		assert(m_pArrows[i] && "Failed!! -> CBossHunter::Create_Arrow()");
 		m_pArrows[i]->Late_Initialize(nullptr);
 		m_pArrows[i]->Set_BowBonePtr(m_pModelCom->Get_BonePtr("Bow_RootJnt"));
+
+		Safe_AddRef(ArrowDesc.pSocket);
+		Safe_AddRef(m_pTransformCom);
 	}
 }
 
