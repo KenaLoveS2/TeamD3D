@@ -172,6 +172,8 @@ private:
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
 
+	_float m_fChangeColorTime = 0.f;
+
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
 	CUI_FocusMonster*		m_pUI_FocusMonster;
@@ -217,7 +219,7 @@ public:
 
 
 	_float m_fTest = 0.f;
-	_bool	m_bStateLock;
+	_bool  m_bStateLock;
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

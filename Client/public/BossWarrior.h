@@ -104,6 +104,18 @@ private:
 private:	/* Animation Event Func */
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOnSwipesCharged(_bool bIsInit, _float fTimeDelta);
+	void TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta);
+	void TurnOnShockFrontExtended(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta);
+	void TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta);
+	void TurnOnRoot(_bool bIsInit, _float fTimeDelta);
+	void TurnOnPlaneRoot(_bool bIsInit, _float fTimeDelta);
+
+	// EnrageInto
+	void TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta);
+	void TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta);
 
 private:
 	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};

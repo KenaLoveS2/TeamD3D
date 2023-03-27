@@ -984,8 +984,39 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 		flower.rgb = flower.rgb + g_vColor.rgb + float3(1.f, 0.0f, 0.0f);
 	else
 		flower.rgb = (float3)1.f;
-
 	Out.vColor = flower;
+
+	return Out;
+}
+
+//PS_FRONTVIEWBLINK
+PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	if (g_TextureRenderType == 1)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+
+	}
+
+	vector	 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+
+	vDiffuse.rgb = vDiffuse.rgb * (float3)0.f + g_vColor.rgb;
+	vDiffuse.a = vDiffuse.a * 0.4f;
+
+	Out.vColor = vDiffuse * 1.5f;
+
+	//float fTime = min(g_Time, 2.f);
+
+	//if (1.f < fTime)   // 내려가야함
+	//	Out.vColor.a = Out.vColor.a * (2.f - fTime);
+
 	return Out;
 }
 
@@ -1170,5 +1201,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_RECTTRAIL();
+	}
+
+	pass frontviewblink // 12
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_DEFAULT();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_FRONTVIEWBLINK();
 	}
 }

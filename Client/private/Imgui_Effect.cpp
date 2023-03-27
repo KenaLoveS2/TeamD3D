@@ -2395,6 +2395,7 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 			static _float4 vPosition = { 0.0f,0.0f,0.0f,1.0f };
 			static _int    iSpread = 0;
 			static _bool   bSpread = true;
+			static _float  fRange = 0.0f;
 
 			ImGui::BulletText("Playback OriginPos : ");
 			ImGui::InputFloat3("OriginPos", (_float*)&vPosition);
@@ -2407,11 +2408,18 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 			if (ImGui::RadioButton("Gather", &iSpread, 1))
 				bSpread = false;
 
+			ImGui::BulletText("CreateRange : "); ImGui::SameLine();
+			ImGui::SetNextItemWidth(150);
+			ImGui::InputFloat("##CreateRange", &fRange, 0.0f, 1.0f);
+
+			ImGui::Checkbox("Gravity", &ePointDesc->bUseGravity);
+
 			ImGui::SameLine();
 			if (ImGui::Button("Set Explosion"))
 			{
 				ePointDesc->vOriginPos = vPosition;
 				ePointDesc->bSpread = bSpread;
+				ePointDesc->fCreateRange = fRange;
 
 				pParticle->Set_ShapePosition();
 			}
@@ -3307,16 +3315,6 @@ void CImgui_Effect::CreateEffect_Particle(_int& iCreateCnt, _int& iCurSelect, _i
 				}
 
 				ImGui::Separator();
-				ImGui::BulletText("Blend Type : ");
-				if (ImGui::RadioButton("BlendType_Default", &iBlendType, 0))
-					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_DEFAULT;
-				if (ImGui::RadioButton("BlendType_Alpha", &iBlendType, 1))
-					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ALPHA;
-				if (ImGui::RadioButton("BlendType_OneEffect", &iBlendType, 2))
-					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_ONEEFFECT;
-				if (ImGui::RadioButton("BlendType_Mix", &iBlendType, 3))
-					m_eEffectDesc.eBlendType = CEffect_Base::EFFECTDESC::BLENDSTATE::BLENDSTATE_MIX;
-
 				ImGui::InputInt("iPassCnt", &m_eEffectDesc.iPassCnt);
 				ImGui::Separator();
 

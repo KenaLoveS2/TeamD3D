@@ -33,13 +33,12 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
 	m_eEFfectDesc.bActive = false;
+	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
 
@@ -84,22 +83,48 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	m_fTimeDelta += fTimeDelta;
+	m_vecChild[0]->Set_Active(true);
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+
+	if (vScaled.x > 20.f)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_pTransformCom->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
+		m_vecChild[0]->Set_Active(false);
+		m_vecChild[0]->Get_TransformCom()->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
+		m_fTimeDelta = 0.0f;
+	}
+	else
+	{
+		vScaled.x += fTimeDelta * 4.f + 0.2f;
+		vScaled.y += fTimeDelta * 4.f + 0.2f;
+		vScaled.z += fTimeDelta * 4.f + 0.2f;
+		m_pTransformCom->Set_Scaled(vScaled);
+		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 2.3f);
+	}
+
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Swipes_Charged::Late_Tick(_float fTimeDelta)
 {
-  	//if (m_eEFfectDesc.bActive == false)
-  	//	return;
+  	if (m_eEFfectDesc.bActive == false)
+  		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	//if (m_pParent != nullptr)
+	//	Set_Matrix();
 	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_EFFECT, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+	}
 }
 
 HRESULT CE_Swipes_Charged::Render()
@@ -145,6 +170,27 @@ HRESULT CE_Swipes_Charged::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Sphere"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_SPHERE;
 
+	return S_OK;
+}
+
+HRESULT CE_Swipes_Charged::SetUp_Child()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
+
+	/* Plane */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_ShockFronExtended_Plane", L"Charged_Plane"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+
+	CEffect_Base::EFFECTDESC effectDesc = pEffectBase->Get_EffectDesc();
+
+	effectDesc.vColor = XMVectorSet(1.f, 0.166602f, 0.419517f, 0.0f);
+	pEffectBase->Set_EffectDesc(effectDesc);
+	pEffectBase->Get_TransformCom()->Set_Scaled(_float3(5.f, 5.f, 5.f));
+	pEffectBase->Set_Parent(this);
+
+	m_vecChild.push_back(pEffectBase);
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

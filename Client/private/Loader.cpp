@@ -154,7 +154,16 @@
 #include "E_Swipes_Charged.h"
 #include "E_WarriorTrail.h"
 #include "E_Warrior_FireSwipe.h"
-
+#include "E_Distortion_Plane.h"
+#include "E_EnrageInto.h"
+#include "E_Warrior_PlaneRoot.h"
+#include "E_Warrior_Root.h"
+#include "E_Warriorcloud.h"
+#include "E_P_Warrior.h"
+#include "E_Warrior_ShockFronExtended.h"
+#include "E_Hieroglyph.h"
+#include "E_P_ShockFrontEntended.h"
+#include "E_Warrior_ShockFronExtended_Plane.h"
 /* ~Effects */
 
 /* Components*/
@@ -173,6 +182,9 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
+
+
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -391,7 +403,7 @@ HRESULT CLoader::Loading_ForMapTool()
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	
-	/* ÀçÈ£Çü ²¨*/
+	/* ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TeleportFlowerAnim",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/TeleportFlower/TeleportFlower.model", PivotMatrix))))
@@ -404,13 +416,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	/* ~ÀçÈ£Çü ²¨*/
+	/* ~ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½*/
 
-	/*º´ÁÖÇü ²¨*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
 	// Prototype_GameObject_CRope_RotRock
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
-	/*~º´ÁÖÇü ²¨*/
+	/*~ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
 #endif 
 
 #pragma region Map_Four
@@ -1322,31 +1334,7 @@ HRESULT CLoader::Loading_ForTestEffect()
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_EFFECT), E_FAIL);
 	
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_EFFECT), E_FAIL);
-
-	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Rot",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
-
-	// Prototype_GameObject_RotForMonster
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
-
-	// Prototype_Component_Model_Sticks01
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Sticks01",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Sticks01/Sticks01.model"), PivotMatrix)))) return E_FAIL;
-
-	// Prototype_Component_Model_Mage
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_EFFECT, L"Prototype_Component_Model_Mage",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Mage/Mage.model"), PivotMatrix)))) return E_FAIL;
-
-	// Prototype_GameObject_Sticks01
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sticks01"), CSticks01::Create(m_pDevice, m_pContext)))) return E_FAIL;
-
-	// Prototype_GameObject_Mage
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mage"), CMage::Create(m_pDevice, m_pContext)))) return E_FAIL;
-
-	// Prototype_GameObject_FireBullet
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBullet"), CFireBullet::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	FAILED_CHECK_RETURN(Loading_ForBJ((_uint)LEVEL_EFFECT), E_FAIL);
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 	
@@ -1420,6 +1408,8 @@ HRESULT CLoader::LoadNonAnimModel(_uint iLevelIndex)
 HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName, _bool bIsLod, _bool bIsInstancing, 
 	_bool bIsJsonMatarial, _bool bPivotScale, _bool bUseTriangleMeshActor)
 {
+	bIsLod = false;
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -1503,7 +1493,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ¿øÁØ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ì›ì¤€..."));
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
 		return E_FAIL;
@@ -1529,7 +1519,7 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ÀçÈ£..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ìž¬í˜¸ ..."));
 
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -1598,7 +1588,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ¼Ò¿µ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ì†Œì˜..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	
@@ -1636,7 +1626,7 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading º´ÁÖ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ë³‘ì£¼..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1883,7 +1873,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading Çý¿ø..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading í˜œì›..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -1919,11 +1909,6 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_FireSwipe */
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FireSwipe",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/FireSwipe.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Cube */
@@ -1969,6 +1954,26 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_Model_WindLoop */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_WindLoop",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/WindLoop.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Warrior_Root */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Warrior_Root",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Warrior_Root.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Plane_Root */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Plane_Root",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Plane_Root.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_FireSwipe */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_FireSwipe",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/FireSwipe.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_ShockFront_Extended */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShockFront_Extended",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ShockFront_Extended.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
@@ -2200,6 +2205,56 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_Warrior_FireSwipe::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Warrior_Root */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_Root"),
+		CE_Warrior_Root::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_PlaneRoot */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_PlaneRoot"),
+		CE_Warrior_PlaneRoot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* For.Prototype_GameObject_WarriorCloud */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WarriorCloud"),
+		CE_Warriorcloud::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_WarriorCloud.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_P"),
+		CE_P_Warrior::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Warrior.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_ShockFrontExtended */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"),
+		CE_Warrior_ShockFrontExtended::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_Hieroglyph */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_Hieroglyph"),
+		CE_Hieroglyph::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_Hieroglyph.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_ShockFrontEntended_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_ShockFrontEntended_P"),
+		CE_P_ShockFrontEntended::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_ShockFrontEntended.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Warrior_ShockFronExtended_Plane */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Warrior_ShockFronExtended_Plane"),
+		CE_Warrior_ShockFronExtended_Plane::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_GroundPlane.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Distortion_Plane */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Distortion_Plane"),
+		CE_Distortion_Plane::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_DistortionPlane.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnrageInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageInto"),
+		CE_EnrageInto::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageInto.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
@@ -2217,7 +2272,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading Çö¿í..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading í˜„ìš±..."));
 
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 
