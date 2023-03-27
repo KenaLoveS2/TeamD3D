@@ -769,7 +769,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
