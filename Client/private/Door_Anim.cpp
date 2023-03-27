@@ -41,6 +41,7 @@ void CDoor_Anim::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	
 
+	m_pModelCom->Set_AnimIndex(1);
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
