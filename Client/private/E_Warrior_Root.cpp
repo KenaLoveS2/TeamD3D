@@ -31,6 +31,7 @@ HRESULT CE_Warrior_Root::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
 	m_eEFfectDesc.iPassCnt = 16;
 	m_eEFfectDesc.fFrame[0] = 16.f;
@@ -81,19 +82,28 @@ void CE_Warrior_Root::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Active(m_eEFfectDesc.bActive);
+
 	if (m_eEFfectDesc.bActive == false)
    		return;
+
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 0.5f)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_fTimeDelta = 0.0f;
+		m_fDurationTime = 0.0f;
+	}
 
 	// m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
 {
-//   	if (m_eEFfectDesc.bActive == false)
-//   		return;
+   	if (m_eEFfectDesc.bActive == false)
+   		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
 	
 	__super::Late_Tick(fTimeDelta);
 
@@ -133,7 +143,7 @@ HRESULT CE_Warrior_Root::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -146,28 +156,25 @@ HRESULT CE_Warrior_Root::SetUp_Components()
 	return S_OK;
 }
 
+HRESULT CE_Warrior_Root::SetUp_Child()
+{
+	CEffect_Base* pEffectBase = nullptr;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_WarriorCloud", L"W_Cloud"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	for (auto& pChild : m_vecChild)
+		pChild->Set_Parent(this);
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 void CE_Warrior_Root::Imgui_RenderProperty()
 {
-	ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
-	ImGui::InputFloat4("Diffuse", (_float*)&m_eEFfectDesc.fFrame);
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
+	__super::Imgui_RenderProperty();
 }
 
 CE_Warrior_Root * CE_Warrior_Root::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

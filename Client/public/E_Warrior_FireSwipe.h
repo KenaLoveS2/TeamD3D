@@ -32,6 +32,9 @@ private:
 	HRESULT SetUp_Components();
 	void	Imgui_RenderProperty() override;
 
+private:
+	_float	m_fDurationTime = 0.0f;
+
 public:
 	static  CE_Warrior_FireSwipe* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*		  Clone(void* pArg = nullptr) override;

@@ -426,6 +426,17 @@ void CKena::Tick(_float fTimeDelta)
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
 	
+	if (m_bCommonHit || m_bHeavyHit || m_bParryLaunch)
+		m_fChangeColorTime += fTimeDelta;
+
+	if (m_fChangeColorTime > 1.f)
+	{
+		m_bCommonHit = false;
+		m_bHeavyHit = false;
+		m_bParryLaunch = false;
+		m_fChangeColorTime = 0.0f;
+	}
+	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -881,6 +892,13 @@ void CKena::Imgui_RenderProperty()
 		m_pShaderCom->ReCompile();
 		m_pRendererCom->ReCompile();
 	}
+
+	if (ImGui::Button("m_bHeavyHit"))
+		m_bHeavyHit = true;
+	if (ImGui::Button("m_bCommonHit"))
+		m_bCommonHit = true;
+	if (ImGui::Button("m_bParryLaunch"))
+		m_bParryLaunch = !m_bParryLaunch;
 
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
@@ -1414,6 +1432,13 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_fLashDensity", &m_fLashDensity, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
+
+	_bool bHit = false;
+	if (m_bHeavyHit == true || m_bCommonHit == true)
+		bHit = true;
+	m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
 
 	return S_OK;
 }

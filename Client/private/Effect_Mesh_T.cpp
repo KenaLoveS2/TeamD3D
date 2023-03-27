@@ -54,6 +54,33 @@ void CEffect_Mesh_T::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
+	if (m_eEFfectDesc.eTextureRenderType == CEffect_Base::tagEffectDesc::TEX_SPRITE)
+	{
+		if (m_fTimeDelta > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fWidthFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+			m_fTimeDelta = 0.0;
+
+			if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+			{
+				if (m_eEFfectDesc.fTimeDelta < 1.f)
+					m_eEFfectDesc.fHeightFrame++;
+				else
+					m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+				m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+
+				if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+					m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+			}
+
+		}
+	}
+
 	if (m_eEFfectDesc.bStart == true)
 		m_fFreePosTimeDelta += fTimeDelta;
 
@@ -139,10 +166,35 @@ HRESULT CEffect_Mesh_T::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 	
-	if(m_pModelCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
+ 	if(m_pModelCom != nullptr)
+ 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
 
 	return S_OK;
+}
+
+void CEffect_Mesh_T::Imgui_RenderProperty()
+{
+	static _int iType = 0;
+	ImGui::RadioButton("Sprite", &iType, 0);
+	ImGui::RadioButton("One", &iType, 1);
+
+	if (ImGui::Button("Reset"))
+		m_fTimeDelta = 0.0f;
+
+	if (iType == 0)
+	{
+		m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_SPRITE;
+
+		//ImGui::InputFloat("Width", &m_eEFfectDesc.fWidthFrame);
+		//ImGui::InputFloat("Height", &m_eEFfectDesc.fHeightFrame);
+		ImGui::InputFloat("DurationTime", &m_eEFfectDesc.fTimeDelta);
+		ImGui::InputInt("Width", &m_eEFfectDesc.iWidthCnt);
+		ImGui::InputInt("Height", &m_eEFfectDesc.iHeightCnt);
+	}
+	else
+		m_eEFfectDesc.eTextureRenderType = CEffect_Base::tagEffectDesc::TEX_ONE;
+
+
 }
 
 HRESULT CEffect_Mesh_T::Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char * ProtoTag)
@@ -349,7 +401,7 @@ HRESULT CEffect_Mesh_T::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FireSwipe"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}
@@ -411,7 +463,7 @@ HRESULT CEffect_Mesh_T::SetUp_ShaderResources()
 		return E_FAIL;
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
-
+	
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
@@ -428,6 +480,11 @@ HRESULT CEffect_Mesh_T::SetUp_ShaderResources()
 
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof _uint), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof _bool), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int)), E_FAIL);
 
 	/* Normal Texture */
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_IsUseNormal", &m_eEFfectDesc.IsNormal, sizeof _bool), E_FAIL);

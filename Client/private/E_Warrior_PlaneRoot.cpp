@@ -77,23 +77,30 @@ HRESULT CE_Warrior_PlaneRoot::Late_Initialize(void * pArg)
 void CE_Warrior_PlaneRoot::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	m_fTimeDelta += fTimeDelta;
 
-	if (m_eEFfectDesc.bActive == false)
-   		return;
-
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 1.f)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_fTimeDelta = 0.0f;
+		m_fDurationTime = 0.0f;
+	}
 
 	// m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_PlaneRoot::Late_Tick(_float fTimeDelta)
 {
-//   	if (m_eEFfectDesc.bActive == false)
-//   		return;
+ //  	if (m_eEFfectDesc.bActive == false)
+	//{
+	//	m_fTimeDelta = 0.0f;
+	//	return;
+	//}
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
-	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
@@ -135,6 +142,7 @@ HRESULT CE_Warrior_PlaneRoot::SetUp_TextureComponents()
 	m_eEFfectDesc.fFrame[0] = 14.f; 
 	m_eEFfectDesc.fFrame[1] = 15.f;
 
+	m_eEFfectDesc.iPassCnt = 17;
 	return S_OK;
 }
 
@@ -157,26 +165,7 @@ HRESULT CE_Warrior_PlaneRoot::SetUp_Components()
 
 void CE_Warrior_PlaneRoot::Imgui_RenderProperty()
 {
-	ImGui::InputInt("Pass", &m_eEFfectDesc.iPassCnt);
-	ImGui::InputFloat4("Diffuse", (_float*)&m_eEFfectDesc.fFrame);
-
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
+	__super::Imgui_RenderProperty();
 }
 
 CE_Warrior_PlaneRoot * CE_Warrior_PlaneRoot::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

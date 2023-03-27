@@ -147,16 +147,21 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_fTimeDelta += fTimeDelta;
-	if (m_bDesolve)
-		m_fDissolveTime += fTimeDelta;
-	else
-		m_fDissolveTime = 0.0f;
-
-	Set_Status();
-
 	if (m_eEFfectDesc.bActive == false)
    		return;
+
+	m_fTimeDelta += fTimeDelta;
+	if (m_bDesolve)
+	{
+		m_fDissolveTime += fTimeDelta;
+		if (m_fDissolveTime > 3.f)
+		{
+			m_bDesolve = false;
+			m_fDissolveTime = 0.0f;
+		}
+	}
+	else
+		m_fDissolveTime = 0.0f;
 
 	_float3 vScaled = m_pTransformCom->Get_Scaled();
 	switch (m_ePulseType)
@@ -224,12 +229,14 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		}
 		break;
 	}
+
 	m_pTransformCom->Tick(fTimeDelta);
+	Set_Status();
 }
 
 void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 {
-  	if (m_eEFfectDesc.bActive == false || (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_bPulseZero == true))
+  	if (m_eEFfectDesc.bActive == false)
   		return;
 
 	if (m_ePulseType == CE_KenaPulse::PULSE_DEFAULT && m_pParent != nullptr)
@@ -276,8 +283,6 @@ void CE_KenaPulse::Reset()
 	dynamic_cast<CE_KenaPulseDot*>(m_vecChild.back())->Set_ShapePosition();
 
 	m_bNoActive = false;
-	m_bDesolve = true;
-	m_fDissolveTime = 0.f;
 
 	memcpy(&m_InitWorldMatrix, &m_SaveInitWorldMatrix, sizeof(_float4x4));
 	Set_InitMatrixScaled(Get_InitMatrixScaled());
@@ -318,7 +323,17 @@ _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		m_pKena->Set_DamagedDir(eDir);
 		//
 		m_pStatus->Under_Shield(pStatus);
-		m_eStatus.eState = STATUS::STATE_DAMAGE;
+
+		m_eStatus.fCurHp = m_pStatus->Get_Shield();
+		m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+		if (m_eStatus.fCurHp <= 0.0f)
+		{
+			m_bDesolve = true;
+			m_fDissolveTime = 0.0f;
+		}
+		else
+			m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
 	return 0;
 }
@@ -377,17 +392,10 @@ void CE_KenaPulse::Set_Status()
 	{
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
-		m_bPulseZero = true;
-		Reset();
-		m_eEFfectDesc.bActive = false;
-	}
-	else
-		m_bPulseZero = false;
 
-	if (m_fDissolveTime > 3.f)
-	{
-		m_bDesolve = false;
-		m_fDissolveTime = 0.0f;
+		if (m_bDesolve == false)
+			m_eEFfectDesc.bActive = false;
+		Reset();
 	}
 }
 

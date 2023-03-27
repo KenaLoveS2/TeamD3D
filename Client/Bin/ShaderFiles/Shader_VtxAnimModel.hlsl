@@ -5,7 +5,7 @@ matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float	   g_fFar = 300.f;
+float  g_fFar = 300.f;
 float4 g_vCamPosition;
 /**************************************/
 
@@ -53,7 +53,7 @@ float4 SSS(float3 position, float3 normal, float3 dir, float4 color, float2 vUV,
 	// Calculate the distance that light travels through the material
 	float scatterDistance = sqrt(surfaceDistance) * amount;
 	// Calculate the diffuse term for the subsurface scattering
-	float diffuse = saturate(dot(normal, -dir)); // ���⼭ �𷺼��� ���� �����̿��� �׷��Ƿ� �̰͵� ���۵��?�ٲ�����.
+	float diffuse = saturate(dot(normal, -dir)); 
 	vector vDiffuse = Texturediffuse.Sample(LinearSampler, vUV);
 	// Calculate the subsurface scattering term
 	float4 scattering = (1 - exp(-scatterDistance)) * vDiffuse * diffuse;
@@ -203,7 +203,7 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
-	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
+	Out.vDiffuse = vector(FinalColor.rgb, 1.f) ;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;

@@ -86,6 +86,9 @@ public:
 	HRESULT			Set_RandomPSize(_float2 PSizeMinMax);
 	void			Set_Speeds(_double pSpeed);
 	void			Set_RandomSpeeds(_float fmin, _float fmax);
+	void			Set_Gravity(_bool bUseGravity) { m_ePointDesc->bUseGravity = bUseGravity; }
+	void			Set_GravityTimeZero() { m_fGravity = 0.0f; }
+	void			Set_ResetOriginPos();
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);

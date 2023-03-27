@@ -22,7 +22,7 @@ public:
 	{
 		// Effect Type = texture, texture_Particle , mesh
 		enum EFFECTTYPE { EFFECT_PLANE, EFFECT_PARTICLE, EFFECT_MESH, EFFECT_TRAIL, EFFECT_END };
-		enum MESHTYPE { MESH_PLANE, MESH_CUBE, MESH_CONE, MESH_SPHERE, MESH_CYLINDER, MESH_END };
+		enum MESHTYPE { MESH_PLANE, MESH_CUBE, MESH_CONE, MESH_SPHERE, MESH_CYLINDER, MESH_ETC, MESH_END };
 		enum PARTICLETYPE { PARTICLE_BOX, PARTICLE_SPHERE, PARTICLE_CONE, PARTICLE_SPREAD, PARTICLE_END };
 		enum TEXTURERENDERTYPE { TEX_ONE, TEX_SPRITE, TEX_END };
 		enum TEXTURETYPE { TYPE_DIFFUSE, TYPE_MASK, TYPE_END };
@@ -176,6 +176,7 @@ public:
 	virtual void				 Tick(_float fTimeDelta) override;
 	virtual void				 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				 Render() override;
+	virtual void				Imgui_RenderProperty()override;
 
 public:
 	virtual HRESULT				 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }

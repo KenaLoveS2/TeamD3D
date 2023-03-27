@@ -5,6 +5,7 @@
 #include "BossWarrior_Hat.h"
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
+#include "E_Hieroglyph.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -308,6 +309,17 @@ void CBossWarrior::Push_EventFunctions()
 
 	TurnOnTrail(true, 0.0f);
 	TurnOffTrail(true, 0.0f);
+	TurnOnSwipesCharged(true, 0.0f);
+	TurnOnHieroglyph(true, 0.0f);
+	TurnOnShockFrontExtended(true, 0.0f);
+
+	TurnOnFireSwipe(true, 0.0f);
+	TurnOnFireSwipe_End(true, 0.0f);
+	TurnOnRoot(true, 0.0f);
+	TurnOnPlaneRoot(true, 0.0f);
+
+	TurnOnEnrage_Into(true, 0.0f);
+	TurnOnEnrage_Attck(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -685,6 +697,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_mapEffect["W_FireSwipe"]->Set_Active(false);
 		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
@@ -845,6 +858,46 @@ HRESULT CBossWarrior::SetUp_Effects()
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("W_PlaneRoot", pEffectBase);
+
+	/* Warrior_Charged */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Swipes_Charged", L"Warrior_Charged"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("Warrior_Charged", pEffectBase);
+
+	/* W_ShockFront */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_ShockFrontExtended", L"W_ShockFront"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("W_ShockFront", pEffectBase);
+
+	/* Hieroglyph */
+	_tchar*		pCloneTag = nullptr;
+	string		strMapTag = "";
+	for (_uint i = 0; i < 4; ++i)
+	{
+		pCloneTag = CUtile::Create_DummyString(L"W_Hieroglyph", i);
+		strMapTag = "W_Hieroglyph" + to_string(i);
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Warrior_Hieroglyph", pCloneTag));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		m_mapEffect.emplace(strMapTag, pEffectBase);
+	}
+
+	/* W_DistortionPlane */
+	{
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Distortion_Plane", L"W_DistortionPlane"));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		m_mapEffect.emplace("W_DistortionPlane", pEffectBase);
+	}
+
+	/* W_Enrageinto */
+	{
+		pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_EnrageInto", L"W_Enrageinto"));
+		NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+		pEffectBase->Set_Parent(this);
+		m_mapEffect.emplace("W_Enrageinto", pEffectBase);
+	}
 
 	return S_OK;
 }
@@ -1010,6 +1063,218 @@ void CBossWarrior::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_mapEffect["W_Trail"]->Set_Active(false);
+}
+
+void CBossWarrior::TurnOnSwipesCharged(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnSwipesCharged);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_mapEffect["Warrior_Charged"]->Set_Position(vPos);
+	m_mapEffect["Warrior_Charged"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnHieroglyph);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (dynamic_cast<CE_Hieroglyph*>(Pair.second))
+		{
+			if (Pair.second->Get_Active() == false)
+			{
+				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
+				_float4 vPos;
+				_float	fRange = 1.0f;
+				if (Pair.first == "W_Hieroglyph0") // 왼쪽아래
+				{
+					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
+					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
+				}
+				if (Pair.first == "W_Hieroglyph1") // 왼쪽 위
+				{
+					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
+					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
+				}
+				if (Pair.first == "W_Hieroglyph2") // 오른쪽 아래
+				{
+					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
+					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
+				}
+				if (Pair.first == "W_Hieroglyph3") // 오른쪽 위
+				{
+					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
+					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);
+				}
+
+				Pair.second->Set_Position(vPos);
+				Pair.second->Set_Active(true);
+			}
+		}
+	}
+}
+
+void CBossWarrior::TurnOnShockFrontExtended(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnShockFrontExtended);
+		return;
+	}
+
+	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt8");
+	_matrix matrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+
+	_float4 vPosition = matSocket.r[3];
+	m_mapEffect["W_ShockFront"]->Set_Position(vPosition);
+	m_mapEffect["W_ShockFront"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe);
+		return;
+	}
+	CBone*  pUpBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt6"); // UP
+	CBone*  pCenterBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt7"); // DOWN == center
+
+	_matrix UpMatrix = pUpBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix CenterMatrix = pCenterBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matUpSocket = UpMatrix * matWorld;
+	_matrix matCenterSocket = CenterMatrix * matWorld;
+
+	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vPosition = matCenterSocket.r[3];
+	_vector vRight = XMVector3Normalize(matUpSocket.r[3] - vPosition);
+	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
+	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
+	m_mapEffect["W_FireSwipe"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe_End);
+		return;
+	}
+	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt8");
+	_matrix matrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+
+	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vPosition = matSocket.r[3];
+	_vector vRight = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); 
+	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
+	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
+	m_mapEffect["W_FireSwipe"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnRoot(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnRoot);
+		return;
+	}
+	// W_Root
+
+	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_EndJnt"); // end
+	_matrix EndMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+	_matrix matEndSocket = EndMatrix * matWorld;
+
+	_vector vPosition = matEndSocket.r[3];
+	_vector vRight = matWorld.r[2];
+	_vector vLook = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), vRight));
+	_vector vUp = XMVector3Normalize(XMVector3Cross(vRight, vLook));
+
+	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
+	m_mapEffect["W_Root"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
+	m_mapEffect["W_Root"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnPlaneRoot(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnPlaneRoot);
+		return;
+	}
+	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt8"); // end
+	_matrix EndMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+
+	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
+	_matrix matEndSocket = EndMatrix * matWorld;
+
+	_vector vPosition = matEndSocket.r[3];
+	_vector vLook = XMVector3Normalize(vPosition - matWorld.r[3]);
+	_vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), vLook));
+	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+
+	_smatrix worldmatrix(vLook,  vUp, -vRight, vPosition);
+	m_mapEffect["W_PlaneRoot"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
+	m_mapEffect["W_PlaneRoot"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnEnrage_Into);
+		return;
+	}
+	
+	_float3 vEffectScale = m_mapEffect["W_Enrageinto"]->Get_TransformCom()->Get_Scaled();
+	_float4 vWarriorPos = m_pTransformCom->Get_Position();
+	vWarriorPos.y = vWarriorPos.y + (vEffectScale.y * 0.5f);
+
+	m_mapEffect["W_Enrageinto"]->Set_Position(vWarriorPos);
+	m_mapEffect["W_Enrageinto"]->Set_Active(true);
+
+	if (m_mapEffect["W_Enrageinto"]->Get_Active() == false)
+		m_mapEffect["W_DistortionPlane"]->Set_Active(true);
+}
+
+void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnEnrage_Attck);
+		return;
+	}
+
+	// 기둥이랑 먼지가 전역적으로 나와야 함 
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

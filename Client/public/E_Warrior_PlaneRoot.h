@@ -30,6 +30,9 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
 
+private:
+	_float	m_fDurationTime = 0.0f;
+
 public:
 	static  CE_Warrior_PlaneRoot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
 	virtual CGameObject*		  Clone(void* pArg = nullptr) override;
