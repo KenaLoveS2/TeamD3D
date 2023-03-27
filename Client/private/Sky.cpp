@@ -44,6 +44,7 @@ void CSky::Tick(_float fTimeDelta)
 	if(g_bDayOrNight)
 	{
 		CPostFX::GetInstance()->Day();
+		m_pRendererCom->Set_Flare(true);
 		if (g_fSkyColorIntensity <= 1.f)
 		{
 			g_fSkyColorIntensity += fTimeDelta * 0.5f;
@@ -54,6 +55,7 @@ void CSky::Tick(_float fTimeDelta)
 	else
 	{
 		CPostFX::GetInstance()->Night();
+		m_pRendererCom->Set_Flare(false);
 		if(g_fSkyColorIntensity >= 0.5f)
 		{
 			g_fSkyColorIntensity -= fTimeDelta * 0.5f;

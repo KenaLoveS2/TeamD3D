@@ -420,7 +420,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 		m_RandomShakeList.pop_front();
 	}
-
+	
 		__super::Tick(fTimeDelta);
 		//Update_ReflectWorld();
 }

@@ -1195,7 +1195,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h">
@@ -1212,6 +1211,9 @@
     <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
     <ClInclude Include="..\public\UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1894,7 +1896,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp">
@@ -1911,6 +1912,9 @@
     <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
     <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

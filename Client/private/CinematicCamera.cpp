@@ -88,7 +88,7 @@ CCinematicCamera::CCinematicCamera(ID3D11Device* pDevice, ID3D11DeviceContext* p
 }
 
 CCinematicCamera::CCinematicCamera(const CCinematicCamera& rhs)
-	:CCamera(rhs)
+	: CCamera(rhs)
 	, m_iChatIndex(0)
 {
 	strcpy_s(m_szChatFileName, sizeof(MAX_PATH), rhs.m_szChatFileName);
@@ -113,14 +113,14 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 	CameraDesc.fFovy = XMConvertToRadians(75.0f);
 	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
 	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
+	CameraDesc.fFar = 500.f;
 	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
 	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(CCamera::Initialize(&CameraDesc)))
 		return E_FAIL;
 
-	if(pArg != nullptr)
+	if (pArg != nullptr)
 		m_keyframes = *(vector<CAMERAKEYFRAME>*)pArg;
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
@@ -150,10 +150,10 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
-	if(pGameInstance->Key_Down(DIK_L))
+	if (pGameInstance->Key_Down(DIK_L))
 	{
 		m_pPlayerCam = pGameInstance->Find_Camera(L"PLAYER_CAM");
-		if(m_pPlayerCam)
+		if (m_pPlayerCam)
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_pPlayerCam->Get_TransformCom()->Get_WorldMatrixFloat4x4());
 	}
 
@@ -169,7 +169,7 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			_float4 vLookAt = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 			m_keyframes.front().vPos = _float3(vPos.x, vPos.y, vPos.z);
 			m_keyframes.front().vLookAt = _float3(vLookAt.x, vLookAt.y, vLookAt.z);
-			
+
 			/* Call CinemaUI */
 			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
 			_bool bOn = true;
@@ -186,18 +186,12 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_bInitSet = false;
 		}
 
-		if(m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
-		{
+		if (m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
 			m_fDeltaTime += fTimeDelta;
-		}
 		else
 		{
-			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
-			/* Call CinemaUI */
-			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
-			_bool bOn = false;
-			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
-			/* ~Call CinemaUI */
+			m_bPlay = false;
+			m_bFinished = true;
 		}
 
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -211,7 +205,20 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Look(vLook);
 		CCamera::Tick(fTimeDelta);
 	}
-
+	else if(m_bFinished)
+	{
+		if(!m_bFinishSet)
+		{
+			CGameInstance::GetInstance()->Work_Camera(TEXT("PLAYER_CAM"));
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = false;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
+			m_bFinishSet = true;
+		}
+	}
+	
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_CINEVIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	RELEASE_INSTANCE(CGameInstance)
 }
@@ -220,12 +227,15 @@ void CCinematicCamera::Late_Tick(_float TimeDelta)
 {
 	CCamera::Late_Tick(TimeDelta);
 
+#ifdef _DEBUG
 	if (m_pRendererCom && CGameInstance::GetInstance()->Get_WorkCameraPtr() != this)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+#endif
 }
 
 HRESULT CCinematicCamera::Render()
 {
+#ifdef _DEBUG
 	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 	_uint	 iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -235,7 +245,6 @@ HRESULT CCinematicCamera::Render()
 	if (m_iNumKeyFrames < 4)
 		return S_OK;
 
-#ifdef _DEBUG
 	m_pEffect->SetWorld(XMMatrixIdentity());
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
 	m_pEffect->SetView(pInst->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
@@ -248,7 +257,7 @@ HRESULT CCinematicCamera::Render()
 
 	BoundingSphere**	ppSphere = new BoundingSphere*[m_iNumKeyFrames];
 
-	for (unsigned int   i = 1; i < m_iNumKeyFrames; ++i)
+	for (unsigned int i = 1; i < m_iNumKeyFrames; ++i)
 	{
 		DrawLine(m_pBatch, m_keyframes[i - 1].vPos, m_keyframes[i].vPos, _float4(1.f, 0.f, 1.f, 1.f));
 	}
@@ -273,12 +282,14 @@ HRESULT CCinematicCamera::Render()
 void CCinematicCamera::Imgui_RenderProperty()
 {
 	CCamera::Imgui_RenderProperty();
+
 	ImGui::InputFloat("InputTime", &m_fInputTime);
-	if(ImGui::Button("Add KeyFrame"))
+
+	if (ImGui::Button("Add KeyFrame"))
 	{
 		CAMERAKEYFRAME keyFrame;
 		ZeroMemory(&keyFrame, sizeof(CAMERAKEYFRAME));
-		if(m_fInputTime != 0.f)
+		if (m_fInputTime != 0.f)
 		{
 			keyFrame.fTime = m_fInputTime + m_keyframes.size() *  0.5f;
 			keyFrame.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -289,26 +300,47 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 	if (m_keyframes.size() >= 4)
 	{
+		static _int iSelectKeyFrame = -1;
+		char**			ppKeyFrameNum = new char*[m_iNumKeyFrames];
+
 		if (ImGui::SliderFloat("Duration", &m_fDeltaTime, 0.f, m_keyframes.back().fTime))
 		{
 			m_bPausePlay = true;
+			m_bPlay = true;
+			iSelectKeyFrame = -1;
 		}
-		ImGui::Checkbox("Play", &m_bPlay);
+				
+		// 시네마틱인지 디버그 플레이인지 구분할것.
 		if (ImGui::Button("CinematicPlay"))
 		{
 			m_fDeltaTime = 0.f;
+			m_bPlay = true;
 			m_bPausePlay = false;
+			CGameInstance::GetInstance()->Work_Camera(m_szCloneObjectTag);
 			/* Call CinemaUI */
 			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
 			_bool bOn = true;
 			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 			/* ~Call CinemaUI */
 		}
+		ImGui::SameLine();
+		if(ImGui::Button("CinemaUIOff"))
+		{
+			/* Call CinemaUI */
+			CUI_ClientManager::UI_PRESENT eLetterBox = CUI_ClientManager::BOT_LETTERBOX;
+			_bool bOn = false;
+			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
+			/* ~Call CinemaUI */
+		}
 
-		static _int iSelectKeyFrame = -1;
-		char**			ppKeyFrameNum = new char*[m_iNumKeyFrames];
-
-		for(_uint i = 0; i < m_iNumKeyFrames; ++i)
+		if(ImGui::Button("DebugPlay"))
+		{
+			m_fDeltaTime = 0.f;
+			m_bPlay = true;
+			m_bPausePlay = false;
+		}
+		
+		for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 		{
 			ppKeyFrameNum[i] = new char[16];
 			sprintf_s(ppKeyFrameNum[i], sizeof(char) * 16, "%u", i);
@@ -316,7 +348,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		ImGui::ListBox("KeyFrameList", &iSelectKeyFrame, ppKeyFrameNum, (int)m_iNumKeyFrames);
 
-		if(iSelectKeyFrame != -1)
+		if (iSelectKeyFrame != -1)
 		{
 			float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
 			ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
@@ -326,7 +358,10 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_keyframes[iSelectKeyFrame].vLookAt = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
 			ImGui::DragFloat("KFTime", &m_keyframes[iSelectKeyFrame].fTime);
 
-			if(ImGui::Button("Erase"))
+			m_pTransformCom->Set_Position(m_keyframes[iSelectKeyFrame].vPos);
+			m_pTransformCom->Set_Look(m_keyframes[iSelectKeyFrame].vLookAt);
+
+			if (ImGui::Button("Erase"))
 			{
 				m_keyframes.erase(m_keyframes.begin() + iSelectKeyFrame);
 				iSelectKeyFrame = -1;
@@ -338,14 +373,8 @@ void CCinematicCamera::Imgui_RenderProperty()
 		Safe_Delete_Array(ppKeyFrameNum);
 	}
 
-	if (ImGui::Button("InitPlay"))
-	{
-		m_bInitSet = true;
-	}
-
 	if (ImGui::Button("Test Chat"))
 	{
-
 		CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 		_bool bVal = true;
 
@@ -363,10 +392,9 @@ void CCinematicCamera::Imgui_RenderProperty()
 			m_CinemaDelegator.broadcast(eChat, bVal, fY, m_vecChat[m_iChatIndex]);
 			m_iChatIndex++;
 		}
-
 	}
 
-	if(!m_bPlay)
+	if (!m_bPlay)
 	{
 		if (ImGui::Button("KeyFrameClear"))
 			m_keyframes.clear();
@@ -385,7 +413,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 	/* ~Input ChatFile Name */
 
 
-	if(ImGui::CollapsingHeader("Save&Load"))
+	if (ImGui::CollapsingHeader("Save&Load"))
 	{
 		ImGui::Checkbox("CineCamWriteFileOn", &m_bSaveWrite);
 
@@ -449,8 +477,8 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 	{
 		// Calculate the parameter t for the interpolation
 		float t = 0.f;
-		if(m_keyframes[i].fTime - m_keyframes[i - 1].fTime != 0)
-			 t = (time - m_keyframes[i - 1].fTime) / (m_keyframes[i].fTime - m_keyframes[i - 1].fTime);
+		if (m_keyframes[i].fTime - m_keyframes[i - 1].fTime != 0)
+			t = (time - m_keyframes[i - 1].fTime) / (m_keyframes[i].fTime - m_keyframes[i - 1].fTime);
 		else
 			t = time - m_keyframes[i - 1].fTime;
 
@@ -465,9 +493,9 @@ void CCinematicCamera::Interpolate(float time, _float3& position, _float3& lookA
 XMFLOAT3 CCinematicCamera::CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t)
 {
 	XMFLOAT3 v;
-	v.x = 0.5f * ((2.0f * p1.x) +	(-p0.x + p2.x) * t +	(2.0f * p0.x - 5.0f * p1.x + 4.0f * p2.x - p3.x) * t * t +	(-p0.x + 3.0f * p1.x - 3.0f * p2.x + p3.x) * t * t * t);
-	v.y = 0.5f * ((2.0f * p1.y) +	(-p0.y + p2.y) * t +	(2.0f * p0.y - 5.0f * p1.y + 4.0f * p2.y - p3.y) * t * t +	(-p0.y + 3.0f * p1.y - 3.0f * p2.y + p3.y) * t * t * t);
-	v.z = 0.5f * ((2.0f * p1.z) +	(-p0.z + p2.z) * t +	(2.0f * p0.z - 5.0f * p1.z + 4.0f * p2.z - p3.z) * t * t +	(-p0.z + 3.0f * p1.z - 3.0f * p2.z + p3.z) * t * t * t);
+	v.x = 0.5f * ((2.0f * p1.x) + (-p0.x + p2.x) * t + (2.0f * p0.x - 5.0f * p1.x + 4.0f * p2.x - p3.x) * t * t + (-p0.x + 3.0f * p1.x - 3.0f * p2.x + p3.x) * t * t * t);
+	v.y = 0.5f * ((2.0f * p1.y) + (-p0.y + p2.y) * t + (2.0f * p0.y - 5.0f * p1.y + 4.0f * p2.y - p3.y) * t * t + (-p0.y + 3.0f * p1.y - 3.0f * p2.y + p3.y) * t * t * t);
+	v.z = 0.5f * ((2.0f * p1.z) + (-p0.z + p2.z) * t + (2.0f * p0.z - 5.0f * p1.z + 4.0f * p2.z - p3.z) * t * t + (-p0.z + 3.0f * p1.z - 3.0f * p2.z + p3.z) * t * t * t);
 	return v;
 }
 
@@ -521,7 +549,7 @@ void CCinematicCamera::Save_Data()
 
 	_float		fElement = 0.f;
 
-	for(_uint i = 0; i < m_iNumKeyFrames; ++i)
+	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 	{
 		Json jChild;
 		_float3 vPos = m_keyframes[i].vPos;
@@ -530,7 +558,7 @@ void CCinematicCamera::Save_Data()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&vPos + i, sizeof(float));
-			jChild["0_Pos"].push_back(fElement);		
+			jChild["0_Pos"].push_back(fElement);
 		}
 
 		for (int i = 0; i < 3; ++i)
@@ -573,7 +601,7 @@ void CCinematicCamera::Load_Data()
 	jLoadCineCamKeyFrameList["0_KeyFrameSize"].get_to<_uint>(m_iNumKeyFrames);
 	_float3 vPos;
 	_float3 vLookAt;
-	for(auto jLoadChild:jLoadCineCamKeyFrameList["1_Data"])
+	for (auto jLoadChild : jLoadCineCamKeyFrameList["1_Data"])
 	{
 		CAMERAKEYFRAME Desc;
 		ZeroMemory(&Desc, sizeof(CAMERAKEYFRAME));
@@ -582,7 +610,7 @@ void CCinematicCamera::Load_Data()
 			memcpy(((float*)&vPos) + (k++), &fElement, sizeof(float));
 		Desc.vPos = vPos;
 		int j = 0;
-		for (float fElement : jLoadChild["1_LookAt"])	
+		for (float fElement : jLoadChild["1_LookAt"])
 			memcpy(((float*)&vLookAt) + (j++), &fElement, sizeof(float));
 		Desc.vLookAt = vLookAt;
 		Desc.fTime = jLoadChild["2_Time"];
