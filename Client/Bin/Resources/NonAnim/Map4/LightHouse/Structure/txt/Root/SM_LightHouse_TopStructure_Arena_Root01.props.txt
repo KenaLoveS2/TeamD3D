@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/LightHouse/Materials/MI_LightHouse_TopStructure_Root.MI_LightHouse_TopStructure_Root'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/LightHouse/Materials/MI_LightHouse_TopStructure_Root.MI_LightHouse_TopStructure_Root'
+        MaterialSlotName = MI_LightHouse_TopStructure_Root5
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 4428.98, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-442.557, Y=-280.575, Z=446.239 }
+    BoxExtent = { X=1060.01, Y=656.551, Z=1459.25 }
+    SphereRadius = 1587.96
+}
