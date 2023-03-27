@@ -11,7 +11,7 @@
 #include "UI_FocusNPC.h"
 
 /* For. Delegator Default Value (meaningless) */
-_float		fDefaultVal = -1.f;
+_float		fDefaultVal = 400.f; /* Default Chat Value */
 _bool		bDefaultVal = false;
 wstring		wstrDefault = L"";
 

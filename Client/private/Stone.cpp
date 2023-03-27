@@ -98,7 +98,12 @@ void CStone::Late_Tick(_float fTimeDelta)
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
 	if (m_pRendererCom && m_bRenderActive && false == m_pModelCom->Culling_InstancingMeshs(200.f, WolrdMat))
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+#ifdef _DEBUG
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+#endif
+	}
 }
 
 HRESULT CStone::Render()
@@ -247,6 +252,37 @@ HRESULT CStone::RenderShadow()
 		}
 	}
 		
+	return S_OK;
+}
+
+HRESULT CStone::RenderCine()
+{
+	if (FAILED(__super::RenderCine()))
+		return E_FAIL;
+
+	if (FAILED(__super::SetUp_CineShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_pModelCom->Get_IStancingModel())
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
+		}
+	}
+
 	return S_OK;
 }
 

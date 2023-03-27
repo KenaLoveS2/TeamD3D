@@ -490,6 +490,9 @@
     <Filter Include="02.GameObjects\Monster\BossShaman">
       <UniqueIdentifier>{d3cbaa63-4b82-4803-9ed5-ea9a5639924d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Effect_S2">
+      <UniqueIdentifier>{d6fef66d-c8ab-4979-ba69-f242b75e5367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -861,9 +864,6 @@
     <ClInclude Include="..\Public\DeadZoneObj.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="UI_NodeRotSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
@@ -1195,7 +1195,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
-    <ClInclude Include="..\public\CinematicCamera.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect_Base_S2.h">
@@ -1206,6 +1205,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Effect_Texture_Base.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h" />
+    <ClInclude Include="..\public\E_WarriorTrail.h" />
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
+    <ClInclude Include="..\public\UI_NodeRotSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicCamera.h">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1557,9 +1565,6 @@
     <ClCompile Include="..\Private\DeadZoneObj.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="UI_NodeRotSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
@@ -1891,7 +1896,6 @@
       <Filter>02.GameObjects\Monster\BossShaman</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
-    <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect_Base_S2.cpp">
@@ -1902,6 +1906,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Effect_Texture_Base.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
+    <ClCompile Include="..\private\E_WarriorTrail.cpp" />
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1981,11 +1994,18 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_EffectS2.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Particle_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
+      <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
   </ItemGroup>
 </Project>

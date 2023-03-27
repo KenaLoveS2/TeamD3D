@@ -74,6 +74,8 @@ public: /* For.Object_Manager */
 	class CGameObject* Get_GameObjectPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pCloneObjectTag);
 	map<const _tchar*, class CGameObject*>*	Get_AnimObjects(_uint iLevelIndex);
 	map<const _tchar*, class CGameObject*>*	Get_ShaderValueObjects(_uint iLevelIndex);
+	map <const _tchar*, class CGameObject*>* Get_GameObjects(_uint iLevelIndex, const _tchar* pLayerTag);
+
 
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const _tchar* pCloneObjectTag = nullptr, void* pArg = nullptr);
@@ -187,7 +189,7 @@ public: /* For.PipeLine */
 		/* Only For UI */
 		void				Add_UIString(_uint iKey, string str);
 		vector<string>*		Get_UIString(_uint iKey);
-		void				Add_UIWString(_uint iKey, wstring str);
+		void				Add_UIWString(_uint iKey, const wstring& str);
 		vector<wstring>*	Get_UIWString(_uint iKey);
 
 

@@ -85,9 +85,12 @@
 #include "FieldBecon_Anim.h"
 #include "DZ_FallenTree_Anim.h"
 #include "Chest_Anim.h"
+
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
+#include "Effect_Mesh_Base.h"
+#include "Effect_Texture_Base.h"
 
 /* Effects */
 #include "Effect_Point_Instancing.h"
@@ -1451,6 +1454,12 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
+	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+
+	// Prototype_Component_Model_CineCam
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CineCam",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/CineCam.mdat"), PivotMatrix)))) return E_FAIL;
+
 	// Prototype_GameObject_WaterPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
@@ -1539,6 +1548,16 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	/* Effect_Particle_Base  */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Particle_Base"),
 		CEffect_Particle_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Effect_Mesh_Base  */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Mesh_Base"),
+		CEffect_Mesh_Base::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Effect_Texture_Base  */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Texture_Base"),
+		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1797,7 +1816,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 134))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 135))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */

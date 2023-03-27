@@ -42,7 +42,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
@@ -65,11 +64,15 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
 	vNormal = mul(vNormal, g_SocketMatrix);
 
+	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
+	vTangent = mul(vTangent, g_SocketMatrix);
+
 	Out.vPosition = mul(vPosition, matVP);
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(vTangent);
+	Out.vBinormal = normalize(cross(vNormal.xyz, vTangent.xyz));
 
 	return Out;
 }
@@ -128,7 +131,7 @@ PatchTess ConstantHS(InputPatch<VS_OUT_TESS, 3> Patch, uint PatchID : SV_Primiti
 
 	pt.EdgeTess[0] = 1;
 	pt.EdgeTess[1] = 1;
-	pt.EdgeTess[2] =1;
+	pt.EdgeTess[2] = 1;
 
 	pt.InsideTess = (pt.EdgeTess[0] + pt.EdgeTess[1] + pt.EdgeTess[2]) / 3.f;
 	// Assign Positions
@@ -404,6 +407,27 @@ PS_OUT_TESS PS_MAIN_MRAO_E(PS_IN_TESS In)
 	return Out;
 }//3
 
+PS_OUT_TESS PS_MAIN_CINE(PS_IN_TESS In)
+{
+	PS_OUT_TESS		Out = (PS_OUT_TESS)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	float3		vNormal = In.vNormal.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+	float4 vAORM = (float4)1.f;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vAmbient = vAORM;
+	return Out;
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -606,5 +630,18 @@ technique11 DefaultTechnique
 		HullShader = compile hs_5_0 HS_MAIN();
 		DomainShader = compile ds_5_0 DS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_MRAO_E();
+	}
+
+	pass Cine //10
+	{
+		SetRasterizerState(RS_Default); //RS_Default , RS_Wireframe
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN_TESS();
+		GeometryShader = NULL;
+		HullShader = compile hs_5_0 HS_MAIN();
+		DomainShader = compile ds_5_0 DS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_CINE();
 	}
 }
