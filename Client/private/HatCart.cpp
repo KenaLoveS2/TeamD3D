@@ -32,6 +32,7 @@ HRESULT CHatCart::Initialize(void * pArg)
 
 	m_bRenderActive = true;
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_STATIC_SHADOW, this);
+
 	return S_OK;
 }
 
@@ -125,6 +126,18 @@ HRESULT CHatCart::RenderShadow()
 	return S_OK;
 }
 
+void CHatCart::Imgui_RenderProperty()
+{
+}
+
+void CHatCart::ImGui_AnimationProperty()
+{
+}
+
+void CHatCart::ImGui_PhysXValueProperty()
+{
+}
+
 HRESULT CHatCart::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
@@ -150,6 +163,21 @@ HRESULT CHatCart::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pCom
 
 }
 
+_int CHatCart::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
+{
+	return _int();
+}
+
+_int CHatCart::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return _int();
+}
+
+_int CHatCart::Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+	return _int();
+}
+
 
 
 HRESULT CHatCart::SetUp_Components()
@@ -162,12 +190,13 @@ HRESULT CHatCart::SetUp_Components()
 	/* For.Com_Shader */
 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (m_EnviromentDesc.iCurLevel == 0)
-		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
+		m_EnviromentDesc.iCurLevel = g_LEVEL;
 
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
 	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
+		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
+
 	/* For.Com_Shader */
 	if (m_pModelCom->Get_IStancingModel())
 	{

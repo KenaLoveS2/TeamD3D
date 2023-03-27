@@ -1215,12 +1215,10 @@
     <ClInclude Include="..\public\UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CinematicCamera.h">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Taro_Mask.h">
       <Filter>02.GameObjects\Player\Mask</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Engine\public\CinematicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
