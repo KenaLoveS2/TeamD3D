@@ -176,12 +176,15 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 			m_CinemaDelegator.broadcast(eLetterBox, bOn, fTemp, wstrTemp);
 			/* ~Call CinemaUI */
 
-			/* Call Chat */
-			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
-			_float fY = 550.f;
-			m_CinemaDelegator.broadcast(eChat, bOn, fY, m_vecChat[m_iChatIndex]);
-			m_iChatIndex++;
-			/* ~Call Chat */
+			if (!m_vecChat.empty())
+			{
+				/* Call Chat */
+				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				_float fY = 450.f;
+				m_CinemaDelegator.broadcast(eChat, bOn, fY, m_vecChat[m_iChatIndex]);
+				m_iChatIndex++;
+				/* ~Call Chat */
+			}
 
 			m_bInitSet = false;
 		}
