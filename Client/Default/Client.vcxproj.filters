@@ -864,9 +864,6 @@
     <ClInclude Include="..\Public\DeadZoneObj.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
-    <ClInclude Include="UI_NodeRotSkill.h">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_NodeSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
@@ -1212,6 +1209,9 @@
     <ClInclude Include="..\public\E_Swipes_Charged.h" />
     <ClInclude Include="..\public\E_WarriorTrail.h" />
     <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
+    <ClInclude Include="..\public\UI_NodeRotSkill.h">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
@@ -1565,9 +1565,6 @@
     <ClCompile Include="..\Private\DeadZoneObj.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
-    <ClCompile Include="UI_NodeRotSkill.cpp">
-      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_NodeSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
@@ -1913,6 +1910,9 @@
     <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
     <ClCompile Include="..\private\E_WarriorTrail.cpp" />
     <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
+    <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
+      <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
