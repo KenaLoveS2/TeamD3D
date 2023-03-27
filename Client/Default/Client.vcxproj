@@ -311,6 +311,7 @@
     <ClInclude Include="..\public\ShamanTrapHex.h" />
     <ClInclude Include="..\public\ShamanTrapPlane.h" />
     <ClInclude Include="..\public\SpiritArrow.h" />
+    <ClInclude Include="..\public\Taro_Mask.h" />
     <ClInclude Include="..\Public\TelePort_Flower.h" />
     <ClInclude Include="..\public\UI_CanvasBottom.h" />
     <ClInclude Include="..\public\UI_CanvasHatCart.h" />
@@ -554,6 +555,7 @@
     <ClCompile Include="..\private\ShamanTrapHex.cpp" />
     <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
     <ClCompile Include="..\private\SpiritArrow.cpp" />
+    <ClCompile Include="..\private\Taro_Mask.cpp" />
     <ClCompile Include="..\Private\TelePort_Flower.cpp" />
     <ClCompile Include="..\private\UI_CanvasBottom.cpp" />
     <ClCompile Include="..\private\UI_CanvasHatCart.cpp" />

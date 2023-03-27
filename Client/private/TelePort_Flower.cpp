@@ -42,7 +42,7 @@ HRESULT CTelePort_Flower::Initialize(void * pArg)
 	_vector	vScale, vTrans;
 	XMMatrixDecompose(&vScale, &m_vInitQuternion, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
-	m_pModelCom->Set_AnimIndex(0);
+	m_pModelCom->Set_AnimIndex((_uint)CLOSE_LOOP);
 
 	return S_OK;
 }

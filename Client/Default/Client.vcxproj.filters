@@ -493,6 +493,9 @@
     <Filter Include="97.ShaderFiles\Effect_S2">
       <UniqueIdentifier>{d6fef66d-c8ab-4979-ba69-f242b75e5367}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Mask">
+      <UniqueIdentifier>{ebeccba5-de53-4b66-9934-ff83890b23d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -1215,6 +1218,9 @@
     <ClInclude Include="..\public\CinematicCamera.h">
       <Filter>02.GameObjects\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Taro_Mask.h">
+      <Filter>02.GameObjects\Player\Mask</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1915,6 +1921,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Taro_Mask.cpp">
+      <Filter>02.GameObjects\Player\Mask</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

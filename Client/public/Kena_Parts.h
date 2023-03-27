@@ -14,7 +14,7 @@ class CKena_Parts abstract : public CGameObject
 {
 public:
 	typedef enum KenaPartsType {
-		KENAPARTS_OUTFIT, KENAPARTS_STAFF, KENAPARTS_ROT, KENAPARTS_END
+		KENAPARTS_OUTFIT, KENAPARTS_STAFF, KENAPARTS_ROT, KENAPARTS_MASK, KENAPARTS_END
 	} KENAPARTS_TYPE;
 
 	typedef struct tagKenaParts : public CGameObject::GAMEOBJECTDESC
@@ -29,17 +29,21 @@ protected:
 	virtual ~CKena_Parts() = default;
 
 public:
-	virtual HRESULT		Initialize_Prototype() override;
-	virtual HRESULT		Initialize(void* pArg) override;
-	virtual void		Tick(_float fTimeDelta) override;
-	virtual void		Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT		Render() override;
-	virtual HRESULT		RenderShadow() override;
-	virtual void		Imgui_RenderProperty() override;
-	virtual void		ImGui_ShaderValueProperty() override;
+	const KenaPartsType&	Get_PartsType() const { return m_tPartsInfo.eType; }
+	void						Set_Active(_bool bActive) { m_bActive = bActive; }
 
 public:
-	void				Model_Synchronization(_bool bPausePlay);
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT		Render() override;
+	virtual HRESULT		RenderShadow() override;
+	virtual void			Imgui_RenderProperty() override;
+	virtual void			ImGui_ShaderValueProperty() override;
+
+public:
+	void					Model_Synchronization(_bool bPausePlay);
 
 protected:
 	CRenderer*			m_pRendererCom = nullptr;
@@ -49,6 +53,7 @@ protected:
 protected:
 	class CKena*			m_pPlayer = nullptr;
 	KENAPARTS_DESC	m_tPartsInfo;
+	_bool					m_bActive = false;
 
 protected:
 	virtual HRESULT		Ready_Parts() { return S_OK; }

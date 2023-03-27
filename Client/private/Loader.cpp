@@ -14,6 +14,7 @@
 #include "Kena.h"
 #include "Kena_Staff.h"
 #include "Kena_MainOutfit.h"
+#include "Taro_Mask.h"
 #include "SpiritArrow.h"
 #include "RotBomb.h"
 
@@ -171,8 +172,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
-
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -1495,8 +1494,15 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_TeleportFlowerAnim", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/TeleportFlower/TeleportFlower.model", PivotMatrix)), E_FAIL);
 
+	/* Prototype_Component_Model_ChestAnim */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ChestAnim", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Chest_Anim/Chest.model", PivotMatrix)), E_FAIL);
+
 	/* Prototype_Component_Model_Spirit_Arrow */
 	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Spirit_Arrow", false, false, false), E_FAIL);
+
+	/* Prototype_Component_Model_Taro_Mask */
+	FAILED_CHECK_RETURN(LoadNonAnimFolderModel(iLevelIndex, "Taro_Mask", false, false, false), E_FAIL);
 
 	/* GAMEOBJECTS */
 	/* Prototype_GameObject_Kena */
@@ -1507,6 +1513,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_Kena_MainOutfit */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena_MainOutfit", CKena_MainOutfit::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Kena_Taro_Mask */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Kena_Taro_Mask", CTaro_Mask::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_GameObject_Rot_Bomb */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Rot_Bomb", CRotBomb::Create(m_pDevice, m_pContext)), E_FAIL);
@@ -1519,6 +1528,9 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 	/* Prototype_GameObject_TeleportFlower */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
+
+	/* Prototype_GameObject_Chest */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 
 	/* Prototype_GameObject_Player_Camera */
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Camera_Player", CCamera_Player::Create(m_pDevice, m_pContext)), E_FAIL);
