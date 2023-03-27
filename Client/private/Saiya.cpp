@@ -305,8 +305,6 @@ HRESULT CSaiya::SetUp_State()
 			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
 
 			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
-
-
 		})
 		.AddTransition("CHAT to IDLE", "IDLE")
 			.Predicator([this]()
@@ -373,8 +371,8 @@ HRESULT CSaiya::SetUp_UI()
 	file >> jLoad;
 	file.close();
 
-	using convert_type = codecvt_utf8<wchar_t>;
-	wstring_convert<convert_type> utf8_conv;
+	//using convert_type = codecvt_utf8<wchar_t>;
+	//wstring_convert<convert_type> utf8_conv;
 
 	_int iNumChat[10];
 	_uint i = 0;
@@ -391,7 +389,7 @@ HRESULT CSaiya::SetUp_UI()
 				string line;
 				jSub[str].get_to<string>(line);
 
-				wstring wstr = utf8_conv.from_bytes(line);
+				wstring wstr = CUtile::utf8_to_wstring(line);
 				m_vecChat[i].push_back(wstr);
 			}
 		}

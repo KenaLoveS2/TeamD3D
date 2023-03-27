@@ -181,9 +181,6 @@
     <Filter Include="01.Utility\08.Frustum">
       <UniqueIdentifier>{bdc70052-d085-478b-aaf9-b36946b13e14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Default">
-      <UniqueIdentifier>{d0ac0723-89d4-4377-87cd-9923ff18a755}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\14. Json">
       <UniqueIdentifier>{29563d4c-8ecf-4d87-8e7d-bce5fa8457ce}</UniqueIdentifier>
     </Filter>
@@ -228,6 +225,9 @@
     </Filter>
     <Filter Include="01.Utility\10.Sounds\09.RenderTargets\Manager">
       <UniqueIdentifier>{8b81c84f-77ba-488c-be7a-1f6749335cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Default">
+      <UniqueIdentifier>{d0ac0723-89d4-4377-87cd-9923ff18a755}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -424,7 +424,7 @@
       <Filter>01.Utility\13. HDR</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>97. Default</Filter>
+      <Filter>97.Default</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Json\json.hpp">
       <Filter>01.Utility\14. Json</Filter>
@@ -481,7 +481,6 @@
     <ClInclude Include="..\public\AnimationState.h">
       <Filter>01.Utility\15. ASM</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ImGui_PhysX.h" />
     <ClInclude Include="..\public\VIBuffer_Point_Instancing_S2.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
     </ClInclude>
@@ -535,6 +534,9 @@
     </ClInclude>
     <ClInclude Include="..\public\ImGui\imgui.h">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_PhysX.h">
+      <Filter>01.Utility\11.ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -716,7 +718,7 @@
       <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>97. Default</Filter>
+      <Filter>97.Default</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Imgui_ShaderEditor.cpp">
       <Filter>01.Utility\13. HDR\ImGui</Filter>
@@ -755,7 +757,6 @@
     <ClCompile Include="..\private\AnimationState.cpp">
       <Filter>01.Utility\15. ASM</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ImGui_PhysX.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point_Instancing_S2.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
     </ClCompile>
@@ -797,6 +798,9 @@
     </ClCompile>
     <ClCompile Include="..\public\ImGui\imgui.cpp">
       <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_PhysX.cpp">
+      <Filter>01.Utility\11.ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

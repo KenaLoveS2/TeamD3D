@@ -41,7 +41,8 @@ public:
 	static PxMat44 ConvertMatrix_D3DToPx(_float4x4 D3dXMatrix);
 	static _float4x4 ConvertMatrix_PxToD3D(PxMat44 PxMatrix);
 	
-	
+	static wstring utf8_to_wstring(const string& str);
+	static string wstring_to_utf8(const wstring& wstr);
 
 	static _float4 Calc_RayDirByMousePos(HWND hWnd, ID3D11DeviceContext *pContext, _float4 vRayPos);
 

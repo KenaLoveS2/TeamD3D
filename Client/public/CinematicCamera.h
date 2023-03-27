@@ -79,13 +79,13 @@ private:
 	_int															m_iChatIndex;
 
 #pragma region Render Variable
-#ifdef _DEBUG
+//#ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;
 	BasicEffect*												m_pEffect		= nullptr;
 	ID3D11InputLayout*									m_pInputLayout	= nullptr;
 	_float4														m_vColor;
-#endif // _DEBUG
+//#endif // _DEBUG
 	_bool														m_bSaveWrite	= false;
 	string														m_strFileName;
 

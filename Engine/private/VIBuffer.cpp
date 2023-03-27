@@ -75,8 +75,6 @@ HRESULT CVIBuffer::Render()
 	return S_OK;
 }
 
-
-
 HRESULT CVIBuffer::Create_VertexBuffer()
 {
 	if (nullptr != m_pVB)
