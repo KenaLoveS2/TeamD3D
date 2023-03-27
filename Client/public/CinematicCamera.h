@@ -57,36 +57,37 @@ public:
 	static void Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName);
 
 private:
-	vector<CAMERAKEYFRAME>		m_keyframes;
-	_bool						m_bPlay			= false;
-	_float						m_fDeltaTime	= 0.f;
-	_float						m_fInputTime	= 0.5f;
+	vector<CAMERAKEYFRAME>					m_keyframes;
+	_bool														m_bInitSet		= false;
+	_bool														m_bFinishSet   = false;
+	_bool														m_bPlay			= false;
+	_bool														m_bFinished    = false;
+	_bool														m_bPausePlay = false;
+	_float														m_fDeltaTime	= 0.f;
+	_float														m_fInputTime	= 0.5f;
+	_uint															m_iNumKeyFrames = 0;
 
 private:
-	CRenderer*					m_pRendererCom	= nullptr;
-	CShader*					m_pShaderCom	= nullptr;
-	CModel*						m_pModelCom		= nullptr;
+	CRenderer*												m_pRendererCom	= nullptr;
+	CShader*													m_pShaderCom	= nullptr;
+	CModel*													m_pModelCom		= nullptr;
+	CCamera*													m_pPlayerCam = nullptr;
 
 private:
-	char						m_szChatFileName[MAX_PATH] = "";
-	vector<wstring>				m_vecChat;
-	_int						m_iChatIndex;
+	char															m_szChatFileName[MAX_PATH] = "";
+	vector<wstring>										m_vecChat;
+	_int															m_iChatIndex;
 
 #pragma region Render Variable
 #ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;
-	BasicEffect*								m_pEffect		= nullptr;
-	ID3D11InputLayout*							m_pInputLayout	= nullptr;
-	_float4										m_vColor;
+	BasicEffect*												m_pEffect		= nullptr;
+	ID3D11InputLayout*									m_pInputLayout	= nullptr;
+	_float4														m_vColor;
 #endif // _DEBUG
-
-	_bool										m_bInitSet		= false;
-	class CCamera*								m_pPlayerCam	= nullptr;
-	_bool										m_bPausePlay	= false;
-	_uint										m_iNumKeyFrames = 0;
-	_bool										m_bSaveWrite	= false;
-	string										m_strFileName;
+	_bool														m_bSaveWrite	= false;
+	string														m_strFileName;
 
 public:
 	static CCinematicCamera*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
