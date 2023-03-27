@@ -754,9 +754,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return m_pModelCom->Get_AnimationFinish();
 	})
-
-
-
+		
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
@@ -768,8 +766,6 @@ HRESULT CBossWarrior::SetUp_State()
 		return true;
 	})
 		
-
-
 		.AddState("DEATH")
 		.OnStart([this]()
 	{
@@ -939,7 +935,6 @@ void CBossWarrior::Free()
 	CMonster::Free();
 	Safe_Release(m_pHat);
 }
-
 
 _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {

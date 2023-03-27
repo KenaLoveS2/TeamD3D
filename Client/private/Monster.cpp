@@ -5,8 +5,6 @@
 #include "RotForMonster.h"
 
 #include "UI_MonsterHP.h"
-#include "Camera.h"
-#include "Camera_Player.h"
 
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 

@@ -46,6 +46,7 @@
 #include "ShamanTrapHex.h"
 #include "ShamanTrapGeo.h"
 #include "ShamanTrapPlane.h"
+#include "HunterArrow.h"
 
 /* Objects */
 #include "Cliff_Rock.h"
@@ -1624,11 +1625,15 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	// Prototype_Component_Model_Boss_Hunter
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/Boss_Hunter.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/Boss_Hunter.model"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_Component_Model_Boss_Hunter_Arrow
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.0f)) * XMMatrixRotationZ(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.f, 0.f, 0.75f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Hunter_Arrow",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Arrow_NonAnim.mdat"), PivotMatrix)))) return E_FAIL;
+	
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
 	/*********************************************************************************************************************************************/
 
 	/**********************************/
@@ -1778,6 +1783,9 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 	// Prototype_GameObject_BossHunter
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BossHunter"), CBossHunter::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_GameObject_HunterArrow
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HunterArrow"), CHunterArrow::Create(m_pDevice, m_pContext)))) return E_FAIL;
 
 	return S_OK;
 }
