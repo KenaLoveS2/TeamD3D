@@ -1,7 +1,7 @@
 #pragma once
+#include "MonsterWeapon.h"
 
-#include"MonsterWeapon.h"
-
+BEGIN(Client)
 class CShieldStick_Weapon final : public CMonsterWeapon
 {
 private:
@@ -32,4 +32,4 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 };
-
+END

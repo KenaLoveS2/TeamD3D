@@ -41,6 +41,19 @@ CGameObject* CObject_Manager::Get_GameObjectPtr(_uint iLevelIndex, const _tchar 
 	return pLayer->Get_GameObjectPtr(pCloneObjectTag);
 }
 
+map<const _tchar*, class CGameObject*>* CObject_Manager::Get_GameObjects(_uint iLevelIndex, const _tchar * pLayerTag)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return nullptr;
+
+	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_CloneObjects();
+}
+
 HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels, _uint iNumCopyPrototypes)
 {
 	if (nullptr != m_pLayers)

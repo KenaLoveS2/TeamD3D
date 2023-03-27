@@ -102,6 +102,7 @@ protected:
 public:
 	HRESULT   Load_E_Desc(const _tchar* pFilePath);
 	_float4x4 Get_InitMatrix() { return m_InitWorldMatrix; }
+	vector<_float4>*	Get_PrePos() { return &m_vecProPos; }
 	HRESULT   Set_InitTrail(const _tchar* pPrototypeTag, _int iCnt);
 	HRESULT   Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag, _matrix worldmatrix);
 

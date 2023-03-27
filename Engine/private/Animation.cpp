@@ -123,6 +123,18 @@ HRESULT CAnimation::Add_Event(_float fPlayTime, const string & strFuncName)
 	return S_OK;
 }
 
+CChannel * CAnimation::Find_Channel(CBone * pBone)
+{
+	const auto	iter = find_if(m_Channels.begin(), m_Channels.end(), [pBone](CChannel* pChannel) {
+		return pChannel->Get_BonePtr() == pBone;
+	});
+
+	if (iter == m_Channels.end())
+		return nullptr;
+
+	return *iter;
+}
+
 void CAnimation::Set_PlayTime(_double dPlayTime)
 {
 	for (auto& pChannel : m_Channels)
@@ -219,10 +231,10 @@ void CAnimation::Update_Bones(_float fTimeDelta, const string & strRootBone)
 			return;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	Call_Event(fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -255,10 +267,10 @@ void CAnimation::Update_Bones_Blend(_float fTimeDelta, _float fBlendRatio, const
 			return;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	Call_Event(fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -289,10 +301,10 @@ void CAnimation::Update_Bones_Additive(_float fTimeDelta, _float fRatio, const s
 			m_isFinished = false;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	Call_Event(fTimeDelta);
 
 	if (m_isLooping == false)
 		CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
@@ -363,7 +375,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 			fTimeDelta = 0.f;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	if (pBlendAnim != nullptr)
@@ -375,7 +387,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	}
 
 	if (IsLerp == false)
-		Call_Event(fLastPlayTime, fTimeDelta);
+		Call_Event(fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -438,7 +450,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			fTimeDelta = 0.f;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	if (pBlendAnim != nullptr)
@@ -449,7 +461,7 @@ void CAnimation::Update_Bones_Blend_ReturnMat(_float fTimeDelta, _float fBlendRa
 			pBlendAnim->m_isFinished = true;
 	}
 
-	Call_Event(fLastPlayTime, fTimeDelta);
+	Call_Event(fTimeDelta);
 
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
@@ -511,11 +523,11 @@ void CAnimation::Update_Bones_Additive_ReturnMat(_float fTimeDelta, _float fRati
 			m_isFinished = false;
 	}
 
-	_float		fLastPlayTime = (_float)m_PlayTime;
+	m_LastPlayTime = m_PlayTime;
 	m_PlayTime += m_TickPerSecond * fTimeDelta;
 
 	if (IsLerp == false)
-		Call_Event(fLastPlayTime, fTimeDelta);
+		Call_Event(fTimeDelta);
 
 	CUtile::Saturate<_double>(m_PlayTime, 0.0, m_Duration);
 
@@ -594,7 +606,7 @@ void CAnimation::Reset_Animation()
 	m_isFinished = false;
 }
 
-void CAnimation::Call_Event(_float fLastPlayTime, _float fTimeDelta)
+void CAnimation::Call_Event(_float fTimeDelta)
 {
 	if (m_mapEvent.empty() == true || fTimeDelta == 0.f)
 		return;
@@ -605,7 +617,7 @@ void CAnimation::Call_Event(_float fLastPlayTime, _float fTimeDelta)
 	{
 		_tchar		wszFunctionTag[128] = L"";
 
-		if (fLastPlayTime <= Pair.first && Pair.first <= m_PlayTime)
+		if ((_float)m_LastPlayTime <= Pair.first && Pair.first <= (_float)m_PlayTime)
 		{
 			wsprintf(wszFunctionTag, L"");
 			CUtile::CharToWideChar(Pair.second.c_str(), wszFunctionTag);

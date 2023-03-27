@@ -36,6 +36,9 @@ private:
 	HRESULT							SetUp_ShaderResources();
 	HRESULT							SetUp_TextureInfo();
 
+private: /* Tool Function */
+	void							Color(_int iTextureType);
+
 private:
 	CShader*						m_pShaderCom;
 	CRenderer*						m_pRendererCom;
@@ -46,6 +49,9 @@ private:
 	char*							m_ShaderVarName[TEXTURE_END];
 	_tchar*							m_TextureComName[TEXTURE_END];
 	_int							m_iTextureIndices[TEXTURE_END];
+	char*							m_ShaderColorName[TEXTURE_END];
+	_float4							m_vTextureColors[TEXTURE_END];
+
 
 public:
 	static CEffect_Texture_Base*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -191,6 +191,110 @@ void CEffect_Trail::Trail_InputPos(_float4 vPosition)
 	m_vecProPos.push_back(vPosition);
 }
 
+void CEffect_Trail::Trail_KeyFrames(vector<_float4>* vecKeyFrames, _float fTimeDelta)
+{
+	if (m_eEFfectDesc.bActive == false)
+	{
+		ResetInfo();
+		m_vecProPos.clear();
+		return;
+	}
+
+	__super::Late_Tick(fTimeDelta);
+
+	//m_vecProPos.swap(*vecKeyFrames);
+	
+	_uint	iSize = (_uint)vecKeyFrames->size();
+	_uint	iPrePosSize = (_uint)m_vecProPos.size();
+	_uint	iStartIndex;
+
+	if (iPrePosSize == 0)
+		iStartIndex = 2;
+	else if (iPrePosSize > 0)
+		iStartIndex = iPrePosSize;
+
+	for (_uint i = 0; i < iSize; ++i)
+		m_vecProPos.push_back((*vecKeyFrames)[i]);
+
+	if ((_int)m_vecProPos.size() >= 3)
+	{
+		// 			while((_int)m_vecProPos.size() > 3)
+		// 				m_vecProPos.erase(m_vecProPos.begin());
+
+		CCamera*	pCamera = CGameInstance::GetInstance()->Get_WorkCameraPtr();
+		_vector	vCamPos = pCamera->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+		iPrePosSize = (_uint)m_vecProPos.size();
+
+		for (_uint i = iStartIndex; i < iPrePosSize; ++i)
+		{
+			_float		fSplineLength = XMVectorGetX(XMVector3Length(m_vecProPos[i - 1] - m_vecProPos[i]));
+
+			_vector vPoint0 = m_vecProPos[i - 2];
+			_vector vPoint1 = m_vecProPos[i - 1];
+			_vector vPoint2 = m_vecProPos[i];
+			_vector vPoint3;
+
+			if (i != iPrePosSize - 1)
+				vPoint3 = m_vecProPos[i + 1];
+			else
+				vPoint3 = m_vecProPos[i];
+
+			_float  fPreLife = 0.0f;
+			_float	fMaxLife = 0.f;
+			if (m_pVITrailBufferCom->Get_InstanceInfo()->size())
+			{
+				fPreLife = m_pVITrailBufferCom->Get_InstanceInfo()->back().vPosition.w;
+				fMaxLife = fPreLife + (i - iStartIndex + 1) / iSize * (m_eEFfectDesc.fLife - fPreLife);
+			}
+			else
+				fMaxLife = m_eEFfectDesc.fLife;
+
+
+			_uint  iSegmentCnt = _uint(fSplineLength / m_eEFfectDesc.fSegmentSize);
+
+			if (iSegmentCnt == 0)
+				continue;
+
+			_vector vPrepos = vPoint1;
+
+			_float  fWeight = 0.0f, fRadian = 0.0f;
+			_vector vSplinePos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			_vector vRight = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+			_vector vUp = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+			_vector vLook = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+			_vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+			for (_uint j = 0; j < iSegmentCnt; ++j)
+			{
+				fWeight = _float(j + 1) / _float(iSegmentCnt);
+				CUtile::Saturate<_float>(fWeight, 0.f, 1.f);
+
+				vSplinePos = XMVectorCatmullRom(vPoint0, vPoint1, vPoint2, vPoint3, fWeight);
+
+				vRight = XMVector3Normalize(vSplinePos - vPrepos);
+				vDir = XMVector3Normalize(vCamPos - vSplinePos);
+
+				fRadian = XMConvertToDegrees(fabs(acosf(XMVectorGetX(XMVector3Dot(vDir, vRight)))));
+				if (fRadian < 5.f)
+					continue;
+
+				vUp = XMVector3Cross(vRight, vDir);
+				vLook = XMVector3Cross(vRight, vUp);
+
+				vSplinePos = XMVectorSetW(vSplinePos, CUtile::FloatLerp(fPreLife, fMaxLife, fWeight));
+
+				_smatrix TrailMatrix(vRight, vUp, vLook, vSplinePos);
+				m_pVITrailBufferCom->Add_Instance(TrailMatrix);
+				vPrepos = vSplinePos;
+			}
+		}
+	}
+	
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+}
+
 HRESULT CEffect_Trail::SetUp_Components()
 {
 	/* For.Com_Renderer */

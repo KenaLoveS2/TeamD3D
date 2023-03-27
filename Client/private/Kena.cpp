@@ -73,7 +73,7 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
@@ -99,6 +99,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	case STATE_SPRINT:
 		return m_bSprint;
+		break;
+
+	case STATE_MASK:
+		return m_bMask;
 		break;
 
 	case STATE_AIM:
@@ -167,6 +171,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_SPRINT:
 		m_bSprint = bValue;
+		break;
+
+	case STATE_MASK:
+		m_bMask = bValue;
 		break;
 
 	case STATE_AIM:
@@ -780,7 +788,6 @@ void CKena::Late_Tick(_float fTimeDelta)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		//m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 	}
 
 	for (auto& pPart : m_vecPart)
@@ -1272,6 +1279,17 @@ HRESULT CKena::Ready_Parts()
 	m_vecPart.push_back(pPart);
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
+
+	/* Taro Mask */
+	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
+
+	PartDesc.pPlayer = this;
+	PartDesc.eType = CKena_Parts::KENAPARTS_MASK;
+
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Taro_Mask", L"Kena_Mask", &PartDesc));
+	NULL_CHECK_RETURN(pPart, E_FAIL);
+
+	m_vecPart.push_back(pPart);
 
 	RELEASE_INSTANCE(CGameInstance);
 

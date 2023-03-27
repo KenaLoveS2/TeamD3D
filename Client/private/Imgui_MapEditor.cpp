@@ -762,7 +762,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain2"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -811,7 +811,7 @@ void CImgui_MapEditor::Imgui_Instancing_control(CGameObject * pSelectEnviObj)
 	ImGui::DragFloat("Radius", &m_fRadius, 0.5f, 1.f, 10.f);
 	
 	_float4 vPickingPos;
-	_matrix TerrainMatrix;
+	_matrix TerrainMatrix = XMMatrixIdentity();
 	if (m_bIstancingObjPicking == true && m_pSelectedTerrain != nullptr)
 	{
 		if (m_pSelectedTerrain->CreateEnvrObj_PickingPos(vPickingPos))

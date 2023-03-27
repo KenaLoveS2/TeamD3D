@@ -50,7 +50,7 @@ HRESULT CEffect_Particle_Base::Initialize(void * pArg)
 	}
 
 	/* temp */
-	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
+	//m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 
 	return S_OK;
 }
@@ -69,6 +69,9 @@ HRESULT CEffect_Particle_Base::Late_Initialize(void * pArg)
 
 void CEffect_Particle_Base::Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Tick(fTimeDelta);
 
 	m_pVIBufferCom->Tick(fTimeDelta);
@@ -76,6 +79,9 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 
 void CEffect_Particle_Base::Late_Tick(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)

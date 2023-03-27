@@ -67,6 +67,7 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&CameraDesc), E_FAIL);
 
 	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
+	m_mapCamOffset.emplace(CAMOFFSET_MASK			, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset(1.25f, 0.55f, 0.55f, 0.7f, true));
@@ -420,7 +421,7 @@ void CCamera_Player::Tick(_float fTimeDelta)
 
 		m_RandomShakeList.pop_front();
 	}
-
+	
 		__super::Tick(fTimeDelta);
 		//Update_ReflectWorld();
 }

@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "Camera.h"
+#include "Delegator.h"
+#include "UI_ClientManager.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -13,6 +15,7 @@ BEGIN(Client)
 
 class CCinematicCamera : public CCamera
 {
+public:
 	struct CAMERAKEYFRAME
 	{
 		_float3 vPos;
@@ -26,47 +29,70 @@ private:
 	virtual ~CCinematicCamera() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg)override;
-	virtual void Tick(_float TimeDelta) override;
-	virtual void Late_Tick(_float TimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual void Imgui_RenderProperty() override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg)override;
+	virtual void		Tick(_float TimeDelta) override;
+	virtual void		Late_Tick(_float TimeDelta) override;
+	virtual HRESULT		Render() override;
+	virtual void		Imgui_RenderProperty() override;
+	void				Play();
+
+public:
+	Delegator<CUI_ClientManager::UI_PRESENT, _bool, _float, wstring>	m_CinemaDelegator;
+	void		Load_ChatData(string str);
 
 private:
-	void	AddKeyFrame(CAMERAKEYFRAME keyFrame);
-	void  Interpolate(float time, _float3& position, _float3& lookAt);
-	XMFLOAT3 CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
-	HRESULT	SetUp_Components();
-	HRESULT	SetUp_ShaderResources();
+	void		AddKeyFrame(CAMERAKEYFRAME keyFrame);
+	void		Interpolate(float time, _float3& position, _float3& lookAt);
+	XMFLOAT3	CatmullRomInterpolation(_float3 p0, _float3 p1, _float3 p2, _float3 p3, float t);
+	HRESULT		SetUp_Components();
+	HRESULT		SetUp_ShaderResources();
 
 private:
-	_bool	m_bPlay = false;
-	vector<CAMERAKEYFRAME> m_keyframes;
-	_float	m_fDeltaTime = 0.f;
-	_float	m_fInputTime = 0.5f;
+	void		Save_Data();
+	void		Load_Data();
 
-	CRenderer*					m_pRendererCom = nullptr;
-	CShader*						m_pShaderCom = nullptr;
-	CModel*						m_pModelCom = nullptr;
+
+public:
+	static void Clone_Load_Data(string JsonFileName, vector<CAMERAKEYFRAME>& v, string& chatFileName);
+
+private:
+	vector<CAMERAKEYFRAME>					m_keyframes;
+	_bool														m_bInitSet		= false;
+	_bool														m_bFinishSet   = false;
+	_bool														m_bPlay			= false;
+	_bool														m_bFinished    = false;
+	_bool														m_bPausePlay = false;
+	_float														m_fDeltaTime	= 0.f;
+	_float														m_fInputTime	= 0.5f;
+	_uint															m_iNumKeyFrames = 0;
+
+private:
+	CRenderer*												m_pRendererCom	= nullptr;
+	CShader*													m_pShaderCom	= nullptr;
+	CModel*													m_pModelCom		= nullptr;
+	CCamera*													m_pPlayerCam = nullptr;
+
+private:
+	char															m_szChatFileName[MAX_PATH] = "";
+	vector<wstring>										m_vecChat;
+	_int															m_iChatIndex;
 
 #pragma region Render Variable
 #ifdef _DEBUG
 private:
-	_bool														m_bDebugRender = false;
-	PrimitiveBatch<VertexPositionColor>*		m_pBatch = nullptr;
-	BasicEffect*												m_pEffect = nullptr;
-	ID3D11InputLayout*									m_pInputLayout = nullptr;
+	PrimitiveBatch<VertexPositionColor>*		m_pBatch		= nullptr;
+	BasicEffect*												m_pEffect		= nullptr;
+	ID3D11InputLayout*									m_pInputLayout	= nullptr;
 	_float4														m_vColor;
 #endif // _DEBUG
-
-	_bool														m_bInitSet = false;
-	class CCamera*										m_pPlayerCam = nullptr;
+	_bool														m_bSaveWrite	= false;
+	string														m_strFileName;
 
 public:
-	static CCinematicCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
-	virtual void Free() override;
+	static CCinematicCamera*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*		Clone(void* pArg = nullptr) override;
+	virtual void				Free() override;
 };
 
 END

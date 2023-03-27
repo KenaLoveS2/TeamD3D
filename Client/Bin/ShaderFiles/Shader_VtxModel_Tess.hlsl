@@ -42,14 +42,14 @@ VS_OUT VS_MAIN(VS_IN In)
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
-    Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-    Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
-    Out.vTexUV = In.vTexUV;
-    Out.vProjPos = Out.vPosition;
-    Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
-    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
-    return Out;
+	return Out;
 }
 
 VS_OUT VS_MAIN_SOCKET(VS_IN In)
@@ -296,7 +296,7 @@ PS_OUT_TESS PS_MAIN_TESS(PS_IN_TESS In)
     if (0.1f > vDiffuse.a)
         discard;
 
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+    /* Åºï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));
@@ -440,7 +440,7 @@ struct PS_IN
 
 struct PS_OUT
 {
-    /*SV_TARGET0 : ¸ðµç Á¤º¸°¡ °áÁ¤µÈ ÇÈ¼¿ÀÌ´Ù. AND 0¹øÂ° ·»´õÅ¸°Ù¿¡ ±×¸®±âÀ§ÇÑ »ö»óÀÌ´Ù. */
+    /*SV_TARGET0 : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½Ì´ï¿½. AND 0ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ù¿ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. */
     float4      vDiffuse  : SV_TARGET0;
     float4      vNormal : SV_TARGET1;
     float4      vDepth   : SV_TARGET2;
@@ -457,7 +457,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (0.1f > vDiffuse.a)
         discard;
 
-    /* ÅºÁ¨Æ®½ºÆäÀÌ½º */
+    /* Åºï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ */
     float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
     float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
     vNormal = normalize(mul(vNormal, WorldMatrix));

@@ -27,6 +27,8 @@ public:
 	virtual HRESULT		RenderShadow() override;
 	virtual void				ImGui_ShaderValueProperty() override;
 
+	virtual HRESULT		RenderCine() override;
+
 private:
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;	 

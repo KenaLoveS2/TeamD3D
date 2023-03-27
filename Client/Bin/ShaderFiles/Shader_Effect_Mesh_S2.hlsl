@@ -6,12 +6,15 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vCamPosition;
 //texture2D		g_DepthTexture;
 texture2D		g_DiffuseTexture;
+texture2D		g_MaskTexture;
 
-float4			g_vColor;
-float			g_fAlpha;
+float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
+float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
+
+//float			g_fAlpha;
 float			g_fHDRItensity;
 
-float			g_fTest;
+float			g_fTest; /* discard Y Range option */
 
 struct VS_IN
 {
