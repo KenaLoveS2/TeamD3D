@@ -10,17 +10,16 @@ Client::CMonsterWeapon::CMonsterWeapon(ID3D11Device* pDevice, ID3D11DeviceContex
 
 Client::CMonsterWeapon::CMonsterWeapon(const CMonsterWeapon& rhs)
 	:CGameObject(rhs)
+	, m_SocketMatrix(g_IdentityFloat4x4)
 {
+	
 }
 
 HRESULT Client::CMonsterWeapon::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
-	
+		
 	return S_OK;
 }
 

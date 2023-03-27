@@ -53,7 +53,7 @@ public:
 	}
 
 	_float4	Get_Position() const { return Get_State(STATE_TRANSLATION); }
-
+	
 	TRANSFORMDESC Get_TransformDesc() { return m_TransformDesc; }
 	void		  Set_TransformDesc(TRANSFORMDESC eTransformDesc) { 
 		memcpy(&m_TransformDesc, &eTransformDesc, sizeof(TRANSFORMDESC));
@@ -78,6 +78,9 @@ public:
 	void Set_Look(_fvector vLook);
 	void Set_Right(_fvector vRight);
 	void Set_Up(_fvector vUp);
+
+	_float	Get_PositionY() { return m_WorldMatrix._42; }
+	void	Set_PositionY(_float fY) { m_WorldMatrix._42 = fY; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
