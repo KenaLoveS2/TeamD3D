@@ -1,0 +1,122 @@
+Materials[9] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_Broken_01.MI_Beams_Broken_01'
+    Materials[1] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_RoundLrg.MI_Beams_RoundLrg'
+    Materials[2] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/LightHouse/Arena/Materials/MI_WSArena_Planks.MI_WSArena_Planks'
+    Materials[3] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_House_Planks.MI_House_Planks'
+    Materials[4] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Planks.MI_Planks'
+    Materials[5] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams.MI_Beams'
+    Materials[6] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_Broken_02.MI_Beams_Broken_02'
+    Materials[7] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_StructureBeam_Long_House.MI_StructureBeam_Long_House'
+    Materials[8] = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_RoundSml.MI_Beams_RoundSml'
+}
+SourceModels[0] = {}
+StaticMaterials[9] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_Broken_01.MI_Beams_Broken_01'
+        MaterialSlotName = MI_Beams_Broken_01
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 771.722, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_RoundLrg.MI_Beams_RoundLrg'
+        MaterialSlotName = MI_Beams_RoundLrg
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 751.164, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[2] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/LightHouse/Arena/Materials/MI_WSArena_Planks.MI_WSArena_Planks'
+        MaterialSlotName = MI_WSArena_Planks
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 830.531, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[3] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_House_Planks.MI_House_Planks'
+        MaterialSlotName = MI_House_Planks
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 530.814, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[4] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Planks.MI_Planks'
+        MaterialSlotName = MI_Planks
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 559.732, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[5] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams.MI_Beams'
+        MaterialSlotName = MI_Beams
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 557.353, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[6] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_Broken_02.MI_Beams_Broken_02'
+        MaterialSlotName = MI_Beams_Broken_02
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 508.375, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[7] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_StructureBeam_Long_House.MI_StructureBeam_Long_House'
+        MaterialSlotName = MI_StructureBeam_Long_House
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 808.823, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[8] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/Art/Inorganic/Structures/Farm/Materials/MI_Beams_RoundSml.MI_Beams_RoundSml'
+        MaterialSlotName = MI_Beams_RoundSml
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 330.971, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=0.971558, Y=-2.55066, Z=515.454 }
+    BoxExtent = { X=513.307, Y=713.222, Z=650.051 }
+    SphereRadius = 946.121
+}

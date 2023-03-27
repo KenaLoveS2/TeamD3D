@@ -223,7 +223,7 @@ HRESULT CRenderer::Initialize_Prototype()
 
 #ifdef _DEBUG
 	m_bDynamicShadow = false;
-	m_bCine = true;
+	//m_bCine = true;
 #else
 	m_bDynamicShadow = true;
 	m_bCine = false;
