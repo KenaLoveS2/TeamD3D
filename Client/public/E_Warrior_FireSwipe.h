@@ -24,10 +24,16 @@ public:
 	virtual _int	Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
 	virtual void	ImGui_PhysXValueProperty()override;
 
+public:
+	HRESULT SetUp_SwipeTexture();
+
 private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
 	void	Imgui_RenderProperty() override;
+
+private:
+	_float	m_fDurationTime = 0.0f;
 
 public:
 	static  CE_Warrior_FireSwipe* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

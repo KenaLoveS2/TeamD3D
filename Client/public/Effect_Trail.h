@@ -27,6 +27,7 @@ public:
 	void	Trail_LateTick(_float fTimeDelta);
 	void	Trail_InputRandomPos(_float4 vPosition);
 	void	Trail_InputPos(_float4 vPosition);
+	void	Trail_KeyFrames(vector<_float4>* vecKeyFrames, _float fTimeDelta);
 
 public:
 	void	Set_ParticleIdx(_int iIndex) { m_iIndex = iIndex; }

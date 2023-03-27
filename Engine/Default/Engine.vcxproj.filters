@@ -393,57 +393,6 @@
     <ClInclude Include="..\public\Imgui_Manager.h">
       <Filter>01.Utility\11.ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ImGui\imgui.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imgui_impl_dx11.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imgui_impl_win32.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imgui_internal.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImGuiFileDialog.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImGuiFileDialogConfig.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImGuizmo.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImSequencer.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imstb_rectpack.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imstb_textedit.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imstb_truetype.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImZoomSlider.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\dirent.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\GraphEditor.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\imconfig.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImCurveEdit.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ImGui\ImGradient.h">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI.h">
       <Filter>01.Utility\02.GameObject\UI</Filter>
     </ClInclude>
@@ -535,6 +484,57 @@
     <ClInclude Include="..\public\ImGui_PhysX.h" />
     <ClInclude Include="..\public\VIBuffer_Point_Instancing_S2.h">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\dirent.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\GraphEditor.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imconfig.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImCurveEdit.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImGradient.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_impl_dx11.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_impl_win32.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_internal.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImGuiFileDialog.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImGuiFileDialogConfig.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImGuizmo.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImSequencer.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_rectpack.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_textedit.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_truetype.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\ImZoomSlider.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui.h">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -691,45 +691,6 @@
     <ClCompile Include="..\private\Imgui_PropertyEditor.cpp">
       <Filter>01.Utility\11.ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_demo.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_draw.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_impl_dx11.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_impl_win32.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_tables.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui_widgets.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\ImGuiFileDialog.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\ImGuizmo.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\ImSequencer.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\GraphEditor.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\ImCurveEdit.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\ImGradient.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\ImGui\imgui.cpp">
-      <Filter>01.Utility\11.ImGui\Librarys</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI.cpp">
       <Filter>01.Utility\02.GameObject\UI</Filter>
     </ClCompile>
@@ -797,6 +758,45 @@
     <ClCompile Include="..\private\ImGui_PhysX.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point_Instancing_S2.cpp">
       <Filter>01.Utility\03.Components\02.VIBuffer\Instancing\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\GraphEditor.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\ImCurveEdit.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\ImGradient.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_demo.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_draw.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_impl_dx11.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_impl_win32.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_tables.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui_widgets.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\ImGuiFileDialog.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\ImGuizmo.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\ImSequencer.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\ImGui\imgui.cpp">
+      <Filter>01.Utility\11.ImGui\Librarys</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

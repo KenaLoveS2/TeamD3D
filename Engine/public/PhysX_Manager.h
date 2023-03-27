@@ -25,6 +25,19 @@ public:
 
 		tagPhysxActorBoxDesc()
 		{
+			vPos = { 0.f, 0.f, 0.f };
+			vRotationAxis = { 0.f, 0.f, 0.f };
+			fDegree = 0.f; 			
+			fStaticFriction = 0.5f;
+			fDynamicFriction = 0.5f; 
+			fRestitution = 0.1f;
+						
+			vVelocity = { 0.f, 0.f, 0.f };
+			fDensity = 0.1f;
+			fAngularDamping = 0.1f;
+			fMass = 1.f;
+			fLinearDamping = 0.1f;
+			
 			bCCD = true;
 			bKinematic = false;
 		}
@@ -49,6 +62,17 @@ public:
 
 		tagPhysxActorSphereDesc()
 		{
+			vPos = { 0.f, 0.f, 0.f };			
+			fStaticFriction = 0.5f;
+			fDynamicFriction = 0.5f;
+			fRestitution = 0.1f;
+
+			vVelocity = { 0.f, 0.f, 0.f };
+			fDensity = 0.1f;
+			fAngularDamping = 0.1f;
+			fMass = 1.f;
+			fLinearDamping = 0.1f;
+
 			bCCD = true;
 			bKinematic = false;
 		}
@@ -74,6 +98,19 @@ public:
 
 		tagPhysxActorCapsuleDesc()
 		{
+			vPos = { 0.f, 0.f, 0.f };
+			vRotationAxis = { 0.f, 0.f, 0.f };
+			fDegree = 0.f;
+			fStaticFriction = 0.5f;
+			fDynamicFriction = 0.5f;
+			fRestitution = 0.1f;
+
+			vVelocity = { 0.f, 0.f, 0.f };
+			fDensity = 0.1f;
+			fAngularDamping = 0.1f;
+			fMass = 1.f;
+			fLinearDamping = 0.1f;
+
 			bCCD = true;
 			bKinematic = false;
 		}

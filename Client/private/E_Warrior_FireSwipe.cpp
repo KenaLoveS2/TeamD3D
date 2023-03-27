@@ -15,8 +15,7 @@ CE_Warrior_FireSwipe::CE_Warrior_FireSwipe(const CE_Warrior_FireSwipe & rhs)
 
 HRESULT CE_Warrior_FireSwipe::Initialize_Prototype(const _tchar* pFilePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
 	return S_OK;
 }
@@ -26,13 +25,14 @@ HRESULT CE_Warrior_FireSwipe::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
+	FAILED_CHECK_RETURN(SetUp_SwipeTexture(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
+
 	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
@@ -77,22 +77,29 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fTimeDelta += fTimeDelta;
 
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	m_fTimeDelta += fTimeDelta;
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 1.f)
+	{
+		m_fDurationTime = 0.0f;
+	}
+	else
+		m_pTransformCom->Go_Backward(fTimeDelta * 15.f);
 
 	// m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
 {
-  	if (m_eEFfectDesc.bActive == false)
-  		return;
+   	if (m_eEFfectDesc.bActive == false)
+   		return;
 
-	if (m_pParent != nullptr)
-		Set_Matrix();
+	//if (m_pParent != nullptr)
+	//	Set_Matrix();
 	
 	__super::Late_Tick(fTimeDelta);
 
@@ -108,8 +115,19 @@ HRESULT CE_Warrior_FireSwipe::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		if (i == 0) // 외부
+		{
+			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 14);
+		}
+		if (i == 1) // 내부
+		{
+			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 15);
+		}
+	}
 
 	return S_OK;
 }
@@ -126,6 +144,19 @@ _int CE_Warrior_FireSwipe::Execute_Collision(CGameObject * pTarget, _float3 vCol
 void CE_Warrior_FireSwipe::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
+}
+
+HRESULT CE_Warrior_FireSwipe::SetUp_SwipeTexture()
+{
+	Edit_TextureComponent(5, 0);
+
+	m_eEFfectDesc.fFrame[0] = 27.f;
+	m_eEFfectDesc.fFrame[1] = 54.f;
+	m_eEFfectDesc.fFrame[2] = 4.f;
+	m_eEFfectDesc.fFrame[3] = 57.f;
+	m_eEFfectDesc.fFrame[4] = 16.f;
+
+	return S_OK;
 }
 
 HRESULT CE_Warrior_FireSwipe::SetUp_ShaderResources()
@@ -147,23 +178,6 @@ HRESULT CE_Warrior_FireSwipe::SetUp_Components()
 
 void CE_Warrior_FireSwipe::Imgui_RenderProperty()
 {
-	static bool alpha_preview = true;
-	static bool alpha_half_preview = false;
-	static bool drag_and_drop = true;
-	static bool options_menu = true;
-	static bool hdr = false;
-
-	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-
-	static bool   ref_color = false;
-	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-
-	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vSelectColor = m_eEFfectDesc.vColor;
-
-	ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-	ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-	m_eEFfectDesc.vColor = vSelectColor;
 }
 
 CE_Warrior_FireSwipe * CE_Warrior_FireSwipe::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

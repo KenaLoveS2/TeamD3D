@@ -2119,6 +2119,16 @@
                         "1. Lock To": "Lock Alone"
                     }
                 ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Charge",
+                "7. Joint Index": "N/A"
             }
         ]
     },
@@ -4296,6 +4306,127 @@
         "3. Root Bone Translation": true,
         "4. Lerp Duration": 0.20000000298023224,
         "5. Main Animation": "A_Kena_TeleportFlower",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "CROUCH_TO_IDLE",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Crouch_ToIdle",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "CROUCH_TO_RUN",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Crouch_ToRun",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MEDITATE_INTO",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Meditate_Into",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MEDITATE_LOOP",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Meditate_Loop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MEDITATE_EXIT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Meditate_Exit",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "LEVEL_UP",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_RotLevelUp",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MASK_ON",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_MaskOn",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MASK_OFF",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_MaskOff",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MASK_OFF_MEMORY_COLLECT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_MaskOff_MemoryCollect",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "MASK_LOOP",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_MaskLoop",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "INSPECT_MASK_GATE",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_InspectMaskGate",
         "6. Blend Animation": "N/A",
         "7. Joint Index": "N/A",
         "8. Additive Animation": "N/A"

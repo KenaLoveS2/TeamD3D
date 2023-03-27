@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\UI_NodeSkill.h"
+#include "UI_NodeSkill.h"
 #include "UI_NodeEffect.h"
 #include "GameInstance.h"
 #include "Json/json.hpp"

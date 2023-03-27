@@ -138,6 +138,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	//	Out.vColor = Out.vColor * g_vColor;
 	//else
 	//	Out.vColor = (Out.vColor * g_vColor) + (Out.vColor * (1.f - g_vColor));
+
 	Out.vColor = Out.vColor * g_vColor;
 	Out.vColor.a = Out.vColor.r;
 	Out.vColor = saturate(Out.vColor.r* g_vColor) * 4.5f;
@@ -444,6 +445,39 @@ PS_OUT PS_MAIN_E_ONETEXTURE(PS_IN In)
 	return Out;
 }
 
+//PS_MAIN_E_BLINK
+PS_OUT PS_MAIN_E_BLINK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	/* Sprite */
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
+	In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
+
+	/* DiffuseTexture */
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	//if (vDiffuse.a < 0.1f)
+	//	discard;
+
+	Out.vColor = vDiffuse;
+	Out.vColor = Out.vColor * g_vColor;
+	Out.vColor = saturate(Out.vColor.r * g_vColor) * 2.5f;
+	Out.vColor.rgb = Out.vColor.rgb * 2.f;
+
+	float fTime = min(g_Time, 5.f);
+
+	if (2.5f < fTime)   // Time 이상 컬러값이 내려가야함
+		Out.vColor.a = Out.vColor.a * (5.f - fTime);
+	else // Time 이하 컬러값이 올라가야함
+		Out.vColor.a = Out.vColor.a * (fTime / 5.f);
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -587,5 +621,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_E_ONETEXTURE();
+	}
+
+	pass Effect_Blink // 11
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_E_BLINK();
 	}
 }

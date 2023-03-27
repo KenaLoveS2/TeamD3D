@@ -73,7 +73,7 @@ const _bool CKena::Get_State(STATERETURN eState) const
 {
 	/* Used by Camera */
 	if (eState == CKena::STATERETURN_END)
-		return !m_bHeavyAttack && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
+		return !m_bHeavyAttack && !m_bMask && !m_bAim && !m_bInjectBow && !m_bPulse && !m_bParryLaunch;
 
 	switch (eState)
 	{
@@ -99,6 +99,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 
 	case STATE_SPRINT:
 		return m_bSprint;
+		break;
+
+	case STATE_MASK:
+		return m_bMask;
 		break;
 
 	case STATE_AIM:
@@ -167,6 +171,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_SPRINT:
 		m_bSprint = bValue;
+		break;
+
+	case STATE_MASK:
+		m_bMask = bValue;
 		break;
 
 	case STATE_AIM:
@@ -425,6 +433,17 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
+	
+	if (m_bCommonHit || m_bHeavyHit || m_bParryLaunch)
+		m_fChangeColorTime += fTimeDelta;
+
+	if (m_fChangeColorTime > 1.f)
+	{
+		m_bCommonHit = false;
+		m_bHeavyHit = false;
+		m_bParryLaunch = false;
+		m_fChangeColorTime = 0.0f;
+	}
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
@@ -881,6 +900,13 @@ void CKena::Imgui_RenderProperty()
 		m_pRendererCom->ReCompile();
 	}
 
+	if (ImGui::Button("m_bHeavyHit"))
+		m_bHeavyHit = true;
+	if (ImGui::Button("m_bCommonHit"))
+		m_bCommonHit = true;
+	if (ImGui::Button("m_bParryLaunch"))
+		m_bParryLaunch = !m_bParryLaunch;
+
 	_int	ArrowCount[2] = { m_pKenaStatus->Get_CurArrowCount(), m_pKenaStatus->Get_MaxArrowCount() };
 	ImGui::InputInt2("Arrow Count", (_int*)&ArrowCount, ImGuiInputTextFlags_ReadOnly);
 
@@ -1254,6 +1280,17 @@ HRESULT CKena::Ready_Parts()
 	pGameInstance->Add_AnimObject(LEVEL_GAMEPLAY, pPart);
 	m_pAnimation->Add_AnimSharingPart(dynamic_cast<CModel*>(pPart->Find_Component(L"Com_Model")), true);
 
+	/* Taro Mask */
+	ZeroMemory(&PartDesc, sizeof(CKena_Parts::KENAPARTS_DESC));
+
+	PartDesc.pPlayer = this;
+	PartDesc.eType = CKena_Parts::KENAPARTS_MASK;
+
+	pPart = dynamic_cast<CKena_Parts*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Kena_Taro_Mask", L"Kena_Mask", &PartDesc));
+	NULL_CHECK_RETURN(pPart, E_FAIL);
+
+	m_vecPart.push_back(pPart);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -1413,6 +1450,13 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_fLashDensity", &m_fLashDensity, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
+
+	_bool bHit = false;
+	if (m_bHeavyHit == true || m_bCommonHit == true)
+		bHit = true;
+	m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
 
 	return S_OK;
 }

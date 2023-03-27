@@ -8,6 +8,8 @@
 #include "E_KenaHit.h"
 #include "Kena_Status.h"
 #include "RotForMonster.h"
+#include "Camera.h"
+#include "Camera_Player.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -174,6 +176,7 @@ public:
 	void End_Bind();
 
 	static void Set_MonsterUseKenaPos(_float4 vKenaPos) { m_vKenaPos = vKenaPos ; }
+	static _float4 Get_MonsterUseKenaPos() { return m_vKenaPos; }
 
 	_bool IsParried();
 	_float Get_DissolveTime() { return m_fDissolveTime; }

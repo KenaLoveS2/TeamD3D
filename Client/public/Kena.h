@@ -23,7 +23,14 @@ class CKena final : public CGameObject
 public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
-	enum STATERETURN { STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK, STATE_COMMONHIT, STATE_HEAVYHIT, STATE_SPRINT, STATE_AIM, STATE_BOW, STATE_INJECTBOW, STATE_BOMB, STATE_INJECTBOMB,  STATE_PULSE, STATE_PARRY, STATE_JUMP, STATERETURN_END };
+	enum STATERETURN {
+		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
+		STATE_COMMONHIT, STATE_HEAVYHIT,
+		STATE_SPRINT, STATE_MASK,
+		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
+		STATE_BOMB, STATE_INJECTBOMB, 
+		STATE_PULSE, STATE_PARRY,
+		STATE_JUMP, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -34,6 +41,7 @@ public:
 	class CKena_State*		Get_State() { return m_pKenaState; }
 	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
 	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
+	CAnimationState*		Get_AnimationStateMachine() { return m_pAnimation; }
 	_double					Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
 	const _uint				Get_AnimationStateIndex() const;
@@ -50,6 +58,7 @@ public:
 	void						Set_DamagedDir(DAMAGED_FROM eDir) { m_eDamagedDir = eDir; }
 
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
+	void						Set_ChestInteractable(_bool bInteractable) { m_bChestInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
 
 	const _bool&				Is_StateLock() const{ return m_bStateLock; }
@@ -136,6 +145,7 @@ private:
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
+	_bool						m_bMask = false;
 
 	_float						m_fInertia = 5.f;
 
@@ -147,6 +157,7 @@ private:
 	_float						m_fCurJumpSpeed;
 
 	_bool						m_bRotWispInteractable = false;
+	_bool						m_bChestInteractable = false;
 
 	/* Effect Control */
 	_bool						m_bTrailON = false;
@@ -160,6 +171,8 @@ private:
 	_float						m_fLashWidth = 10.f;
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
+
+	_float m_fChangeColorTime = 0.f;
 
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
@@ -206,7 +219,7 @@ public:
 
 
 	_float m_fTest = 0.f;
-	_bool	m_bStateLock;
+	_bool  m_bStateLock;
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

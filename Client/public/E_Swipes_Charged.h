@@ -26,10 +26,12 @@ public:
 private:
 	HRESULT			SetUp_ShaderResources();
 	HRESULT			SetUp_Components();
+	HRESULT			SetUp_Child();
 	void			Imgui_RenderProperty() override;
 
 private:
 	PX_TRIGGER_DATA*		m_pTriggerData = nullptr;
+	_float4x4 m_SaveInitWorldMatrix;
 
 public:
 	static  CE_Swipes_Charged* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

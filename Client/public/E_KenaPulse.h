@@ -66,7 +66,6 @@ private:
 private:
 	_bool	m_bDesolve = true;
 	_bool	m_bNoActive = false;
-	_bool	m_bPulseZero = false;
 
 	_float	m_fActivePlusScale = 1.3f;
 	_float	m_fDissolveTime = 0.0f;

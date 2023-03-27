@@ -41,8 +41,6 @@ HRESULT CEffect_Mesh::Initialize(void * pArg)
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_MESH;
 	m_eEFfectDesc.eTextureRenderType = CEffect_Base::EFFECTDESC::TEXTURERENDERTYPE::TEX_ONE;
 
-	
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
@@ -343,7 +341,7 @@ HRESULT CEffect_Mesh::Set_ModelCom(EFFECTDESC::MESHTYPE eMeshType)
 			return E_FAIL;
 		break;
 	case Client::CEffect_Base::tagEffectDesc::MESH_CYLINDER:
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_shockball"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Cylinder"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
 	}

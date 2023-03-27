@@ -337,7 +337,7 @@ HRESULT CBossShaman::SetUp_State()
 
 		//CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		//_float fValue = 20.f; /* == BossWarrior Name */
-		//m_BossWarriorDelegator.broadcast(eBossHP, fValue);
+		//m_BossShamanDelegator.broadcast(eBossHP, fValue);
 	})
 		.OnExit([this]()
 	{
@@ -868,7 +868,7 @@ HRESULT CBossShaman::SetUp_State()
 	{	
 		/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
-		m_BossWarriorDelegator.broadcast(eBossHP, fValue);*/
+		m_BossShamanDelegator.broadcast(eBossHP, fValue);*/
 		
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
@@ -968,8 +968,6 @@ HRESULT CBossShaman::SetUp_ShadowShaderResources()
 
 void CBossShaman::Update_Collider(_float fTimeDelta)
 {
-	m_pTransformCom->Tick(fTimeDelta);
-
 	{	
 		m_fTrapOffstY = 5.f;
 		_float fTemp[2] = { 1.f , 3.2f };
@@ -996,6 +994,8 @@ void CBossShaman::Update_Collider(_float fTimeDelta)
 		XMStoreFloat4x4(&mat, SocketMatrix);
 		m_pTransformCom->Update_Collider(TEXT_COL_SHAMAN_WEAPON, mat);
 	}
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CBossShaman::AdditiveAnim(_float fTimeDelta)
@@ -1104,7 +1104,6 @@ void CBossShaman::Attack_End(_bool bSwordRender, _uint iAnimIndex)
 	CMonster::Attack_End(iAnimIndex);
 }
 
-
 _int CBossShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (pTarget && m_bSpawn)
@@ -1122,7 +1121,7 @@ _int CBossShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 						
 			/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
-			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);*/
+			m_BossShamanDelegator.broadcast(eBossHP, fGauge);*/
 			
 			m_bWeaklyHit = true;
 			m_bStronglyHit = true;
@@ -1192,3 +1191,4 @@ void CBossShaman::Summon()
 		m_pMinions[i]->Spawn_ByMaster(this, vPos + vOffset[i]);		
 	}
 }
+

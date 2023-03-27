@@ -599,6 +599,59 @@ HRESULT CEffect_Base::Render()
 	return S_OK;
 }
 
+void CEffect_Base::Imgui_RenderProperty()
+{
+	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+	if (ImGui::CollapsingHeader("Transform : "))
+	{
+		ImGuizmo::BeginFrame();
+		static float snap[3] = { 1.f, 1.f, 1.f };
+		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
+		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+		if (ImGui::RadioButton("MyTranslate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("MyRotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+			mCurrentGizmoOperation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("MyScale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+			mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+		static bool useSnap(false);
+		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+
+		const _matrix&   matWorld = m_pTransformCom->Get_WorldMatrix();
+
+		ImGuizmo::DecomposeMatrixToComponents((_float*)&matWorld, matrixTranslation, matrixRotation, matrixScale);
+		ImGui::InputFloat3("MyTranslate", matrixTranslation);
+		ImGui::InputFloat3("MyRotate", matrixRotation);
+		ImGui::InputFloat3("MyScale", matrixScale);
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, (_float*)&matWorld);
+
+		ImGuiIO&	io = ImGui::GetIO();
+		RECT		rt;
+		GetClientRect(g_hWnd, &rt);
+		POINT		LT{ rt.left, rt.top };
+		ClientToScreen(g_hWnd, &LT);
+		ImGuizmo::SetRect((_float)LT.x, (_float)LT.y, io.DisplaySize.x, io.DisplaySize.y);
+
+		_float4x4		matView, matProj;
+		XMStoreFloat4x4(&matView, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+		XMStoreFloat4x4(&matProj, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+
+		ImGuizmo::Manipulate(
+			reinterpret_cast<_float*>(&matView),
+			reinterpret_cast<_float*>(&matProj),
+			mCurrentGizmoOperation,
+			mCurrentGizmoMode,
+			(_float*)&matWorld,
+			nullptr, useSnap ? &snap[0] : nullptr);
+
+		m_pTransformCom->Set_WorldMatrix(matWorld);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
 HRESULT CEffect_Base::Set_InitChild(EFFECTDESC eEffectDesc, _int iCreateCnt, const char* ProtoTag, _matrix worldmatrix)
 {
 	CEffect_Base*    pEffectBase = nullptr;

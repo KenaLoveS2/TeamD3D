@@ -9,10 +9,13 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(ID3D11Device * pDevice, ID3D11DeviceContext
 	, m_pModelCom(nullptr)
 	, m_pVIBufferCom(nullptr)
 {
-	for (_uint i = 0; i < 5; ++i)
+	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		m_pDiffuseTextureCom[i] = nullptr;
-		m_pMaskTextureCom[i] = nullptr;
+		m_pTextureCom[i] = nullptr;
+		m_iTextureIndices[i] = -1;
+		m_ShaderVarName[i] = nullptr;
+		m_TextureComName[i] = nullptr;
+		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
 }
 
@@ -23,10 +26,13 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base & rhs)
 	, m_pModelCom(nullptr)
 	, m_pVIBufferCom(nullptr)
 {
-	for (_uint i = 0; i < 5; ++i)
+	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		m_pDiffuseTextureCom[i] = nullptr;
-		m_pMaskTextureCom[i] = nullptr;
+		m_pTextureCom[i] = nullptr;
+		m_iTextureIndices[i] = -1;
+		m_ShaderVarName[i] = nullptr;
+		m_TextureComName[i] = nullptr;
+		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
 }
 
@@ -41,6 +47,9 @@ HRESULT CEffect_Mesh_Base::Initialize_Prototype()
 HRESULT CEffect_Mesh_Base::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	if (FAILED(SetUp_TextureInfo()))
 		return E_FAIL;
 
 	if (pArg != nullptr)
@@ -120,20 +129,44 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 
 	m_pTransformCom->Imgui_RenderProperty();
 
-	if (ImGui::CollapsingHeader("Render")) {
-		/* RenderPass */
-		static _int iRenderPass;
-		iRenderPass = m_iRenderPass;
-		const char* renderPass[2] = { "Default", "OnlyColor" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
-			m_iRenderPass = iRenderPass;
 
-		ColorCode();
 
-		static _float fTest = 0.f;
-		if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
-			m_fTest = fTest;
+	/* Render Info */
+	for (_uint texID = 0; texID < TEXTURE_END; ++texID)
+	{
+		if (ImGui::CollapsingHeader(m_ShaderVarName[texID]))
+		{
+			if (m_pTextureCom[texID] == nullptr)
+				return;
+
+			/* Texture Tiles */
+			for (_uint i = 0; i < m_pTextureCom[texID]->Get_TextureIdx(); ++i)
+			{
+				if (i % 6)
+					ImGui::SameLine();
+
+				if (ImGui::ImageButton(m_pTextureCom[texID]->Get_Texture(i), ImVec2(50.f, 50.f)))
+				{
+					m_iTextureIndices[texID] = i;
+				}
+			}
+
+			/* RenderPass */
+			static _int iRenderPass;
+			iRenderPass = m_iRenderPass;
+			const char* renderPass[2] = { "Default", "OnlyColor" };
+			if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+				m_iRenderPass = iRenderPass;
+
+			/* Color */
+			Color(texID);
+
+			static _float fTest = 0.f;
+			if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
+				m_fTest = fTest;
+		}
 	}
+
 }
 
 HRESULT CEffect_Mesh_Base::Save_Data()
@@ -163,10 +196,13 @@ HRESULT CEffect_Mesh_Base::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), TEXT("Com_DiffuseTexture"),
-		(CComponent**)&m_pDiffuseTextureCom[0])))
-		return E_FAIL;
+	/* For Com_Texture */
+	for (_uint i = 0; i < TEXTURE_END; ++i)
+	{
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), m_TextureComName[i],
+			(CComponent**)&m_pTextureCom[i])))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -193,23 +229,20 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 	//if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
 	//	return E_FAIL;
 
-	for (_uint i = 0; i < 5; ++i)
+	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
-		if (m_pDiffuseTextureCom[i] != nullptr)
+		if (m_iTextureIndices[i] != -1)
 		{
-			if (FAILED(m_pDiffuseTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
+			if (FAILED(m_pTextureCom[i]->Bind_ShaderResource(m_pShaderCom,
+				m_ShaderVarName[i], m_iTextureIndices[i])))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Set_RawValue(m_ShaderColorName[i],
+				&m_vTextureColors[i], sizeof(_float4))))
 				return E_FAIL;
 		}
-		if (m_pMaskTextureCom[i] != nullptr)
-		{
-			if (FAILED(m_pDiffuseTextureCom[i]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_iTextureIndex)))
-				return E_FAIL;
-		}
+
 	}
-
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
-		return E_FAIL; 
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
@@ -219,6 +252,11 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+HRESULT CEffect_Mesh_Base::SetUp_TextureInfo()
+{
+	return E_NOTIMPL;
 }
 
 HRESULT CEffect_Mesh_Base::Set_ModelCom()
@@ -309,9 +347,6 @@ void CEffect_Mesh_Base::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pVIBufferCom);
 
-	for (_uint i = 0; i < 5; ++i)
-	{
-		Safe_Release(m_pDiffuseTextureCom[i]);
-		Safe_Release(m_pMaskTextureCom[i]);
-	}
+	for (_uint i = 0; i < TEXTURE_END; ++i)
+		Safe_Release(m_pTextureCom[i]);
 }
