@@ -1,0 +1,69 @@
+{
+  "0_MeshNum": 3,
+  "1_First": [
+    {
+      "0_None_path": "NONE",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_MaskShrine_MainHouse_D.dds",
+      "2_SPECULAR_path": "NONE",
+      "3_AMBIENT_path": "NONE",
+      "4_EMISSIVE_path": "../Bin/Resources/NonAnim/Textures/T_MaskShrine_MainHouse_E.dds",
+      "5_EMISSIVEMASK_path": "NONE",
+      "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_MaskShrine_MainHouse_N.png",
+      "7_MASK_path": "NONE",
+      "8_SSS_MASK_path": "NONE",
+      "9_SPRINT_EMISSIVE_path": "NONE",
+      "10_HAIR_DEPTH_Path": "NONE",
+      "11_ALPHA_path": "NONE",
+      "12_HAIR_ROOT_path": "NONE",
+      "13_COMP_MSK_CURV_path": "NONE",
+      "14_COMP_H_R_AO_path": "NONE",
+      "15_COMP_E_R_AO_path": "NONE",
+      "16_ROUGHNESS_path": "NONE",
+      "17_AMBIENT_OCCLUSION_path":  "../Bin/Resources/NonAnim/Textures/T_MaskShrine_MainHouse_Comp_M_R_AO.dds"
+    }
+  ],
+  "2_Second": [
+    {
+      "0_None_path": "NONE",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_MaskShrine_ribbon_D.dds",
+      "2_SPECULAR_path": "NONE",
+      "3_AMBIENT_path": "NONE",
+      "4_EMISSIVE_path": "NONE",
+      "5_EMISSIVEMASK_path": "NONE",
+      "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/shrineProps_NORMAL.png",
+      "7_MASK_path": "NONE",
+      "8_SSS_MASK_path": "NONE",
+      "9_SPRINT_EMISSIVE_path": "NONE",
+      "10_HAIR_DEPTH_Path": "NONE",
+      "11_ALPHA_path": "NONE",
+      "12_HAIR_ROOT_path": "NONE",
+      "13_COMP_MSK_CURV_path": "NONE",
+      "14_COMP_H_R_AO_path": "NONE",
+      "15_COMP_E_R_AO_path": "NONE",
+      "16_ROUGHNESS_path": "../Bin/Resources/NonAnim/Textures/shrineProps_ROUGHNESS.dds",
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/shrineProps_AO.dds"
+    }
+  ],
+  "3_Third": [
+    {
+      "0_None_path": "NONE",
+      "1_DIFFUSE_path": "../Bin/Resources/NonAnim/Textures/T_Bow_DrawBridge_closed_Rope_D.dds",
+      "2_SPECULAR_path": "NONE",
+      "3_AMBIENT_path": "NONE",
+      "4_EMISSIVE_path": "NONE",
+      "5_EMISSIVEMASK_path": "NONE",
+      "6_NORMALS_path": "../Bin/Resources/NonAnim/Textures/T_Bow_DrawBridge_closed_Rope_N.png",
+      "7_MASK_path": "NONE",
+      "8_SSS_MASK_path": "NONE",
+      "9_SPRINT_EMISSIVE_path": "NONE",
+      "10_HAIR_DEPTH_Path": "NONE",
+      "11_ALPHA_path": "NONE",
+      "12_HAIR_ROOT_path": "NONE",
+      "13_COMP_MSK_CURV_path": "NONE",
+      "14_COMP_H_R_AO_path": "NONE",
+      "15_COMP_E_R_AO_path": "NONE",
+      "16_ROUGHNESS_path": "NONE",
+      "17_AMBIENT_OCCLUSION_path": "../Bin/Resources/NonAnim/Textures/T_Bow_DrawBridge_closed_Rope_Comp_M_R_Ao.dds"
+    }
+
+ ]}

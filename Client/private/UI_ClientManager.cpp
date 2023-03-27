@@ -941,7 +941,8 @@ void CUI_ClientManager::Save_TextureComStrings(CGameInstance* pGameInstance, con
 	// Ex. Prototype_Component_Texture_HUDFrame
 
 	// 1) Add TextureProtoTag(wstr)
-	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG, pTag);
+	wstring		strTag = pTag;
+	pGameInstance->Add_UIWString(CUI_Manager::WSTRKEY_TEXTURE_PROTOTAG, strTag);
 
 	// 2) Add TextureName(To make Texture List)
 	wstring head = L"Prototype_Component_Texture_";

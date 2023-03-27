@@ -270,6 +270,20 @@ PS_OUT PS_MAIN_AO_R_M_E(PS_IN In)
 	return Out;
 }//8
 
+
+PS_OUT PS_MAIN_CINECAM(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+	Out.vDiffuse = FinalColor;
+	Out.vNormal = In.vNormal;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (vector)1.f;
+
+	return Out;
+}//9
+
 struct VS_IN_SHADOW
 {
 	float3	vPosition : POSITION;
@@ -485,5 +499,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_AO_R_M_E();
+	}
+
+	pass CINECAM //12
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_CINECAM();
 	}
 }

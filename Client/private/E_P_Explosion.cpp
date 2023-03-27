@@ -35,7 +35,7 @@ HRESULT CE_P_Explosion::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_eEFfectDesc.bActive = false;
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.5f, 0.5f));
+	//m_pVIInstancingBufferCom->Set_PSize(_float2(0.5f, 0.5f));
 	return S_OK;
 }
 

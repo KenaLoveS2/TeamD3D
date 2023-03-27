@@ -29,6 +29,9 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(55.741f, 15.093f, 1066.333f, 1.f));
+
 	return S_OK;
 }
 
@@ -111,12 +114,15 @@ void CRope_RotRock::Tick(_float fTimeDelta)
 		m_pFSM->Tick(fTimeDelta);
 
 	m_pCuteLiftRot->Tick(fTimeDelta);
+
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CRope_RotRock::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	//m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	m_pCuteLiftRot->Late_Tick(fTimeDelta);
 }

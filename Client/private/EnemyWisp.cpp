@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "Effect_Trail.h"
+#include "E_RectTrail.h"
 
 CEnemyWisp::CEnemyWisp(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -52,6 +53,7 @@ HRESULT CEnemyWisp::Initialize(void * pArg)
 	Push_EventFunctions();
 	m_eEFfectDesc.bActive = true;
 
+	SetUp_MovementTrail();
 	return S_OK;
 }
 
@@ -67,6 +69,7 @@ void CEnemyWisp::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_pMovementTrail)m_pMovementTrail->Tick(fTimeDelta);
 }
 
 void CEnemyWisp::Late_Tick(_float fTimeDelta)
@@ -86,6 +89,8 @@ void CEnemyWisp::Late_Tick(_float fTimeDelta)
 		m_vecChild[CHILD_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	}
 
+	Update_MovementTrail("EnemyWisp_Jnt2");
+	if (m_pMovementTrail)m_pMovementTrail->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
@@ -339,6 +344,30 @@ void CEnemyWisp::TurnOffParticle(_bool bIsInit, _float fTimeDelta)
 	m_vecChild[CHILD_PARTICLE]->Set_Active(false);
 }
 
+HRESULT CEnemyWisp::SetUp_MovementTrail()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+
+	/* Movement particle */
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
+	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
+	m_pMovementTrail->Set_Parent(this);
+	m_pMovementTrail->SetUp_Option(CE_RectTrail::OBJ_MONSTER);
+
+	return S_OK;
+}
+
+void CEnemyWisp::Update_MovementTrail(const char * pBoneTag)
+{
+	CBone*	pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_pMovementTrail->Trail_InputRandomPos(matWorldSocket.r[3]);
+}
+
 CEnemyWisp * CEnemyWisp::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CEnemyWisp * pInstance = new CEnemyWisp(pDevice, pContext);
@@ -366,4 +395,6 @@ CGameObject * CEnemyWisp::Clone(void * pArg)
 void CEnemyWisp::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMovementTrail);
 }

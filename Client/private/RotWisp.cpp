@@ -2,6 +2,7 @@
 #include "..\public\RotWisp.h"
 #include "GameInstance.h"
 #include "E_InteractStaff.h"
+#include "E_RectTrail.h"
 
 CRotWisp::CRotWisp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CGameObject(pDevice, pContext)
@@ -43,15 +44,21 @@ void CRotWisp::Tick(_float fTimeDelta)
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 
+	Update_MovementTrail("wisp_geo");
+
 	if (m_pEffect)m_pEffect->Tick(fTimeDelta);
+	if (m_pMovementTrail)m_pMovementTrail->Tick(fTimeDelta);
 }
 
 void CRotWisp::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
 	if (m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
 	if (m_pEffect)m_pEffect->Late_Tick(fTimeDelta);
+	if (m_pMovementTrail)m_pMovementTrail->Late_Tick(fTimeDelta);
 }
 
 HRESULT CRotWisp::Render()
@@ -108,6 +115,7 @@ HRESULT CRotWisp::SetUp_State()
 		.AddTransition("APPEAR to SPLAT" , "SPLAT")
 		.Predicator([this]()
 	{
+		m_bAppear = true;
 		return AnimFinishChecker(ROTWISP_APPEAR4);
 	})
 
@@ -219,8 +227,27 @@ HRESULT CRotWisp::Set_Effects()
 	m_pEffect->Set_Type(CE_InteractStaff::TYPE::TYPE_ROT);
 //	m_pEffect->Set_Parent(this);
 
+/* Movement particle */
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
+	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
+	m_pMovementTrail->Set_Parent(this);
+	m_pMovementTrail->SetUp_Option(CE_RectTrail::OBJ_ROTWISP);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CRotWisp::Update_MovementTrail(const char * pBoneTag)
+{
+	CBone*	pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+
+	if(m_bAppear == true && m_bCollect == false)
+	m_pMovementTrail->Trail_InputRandomPos(matWorldSocket.r[3]);
 }
 
 CRotWisp* CRotWisp::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -260,4 +287,5 @@ void CRotWisp::Free()
 
 		/* Effect */
 	Safe_Release(m_pEffect);
+	Safe_Release(m_pMovementTrail);
 }

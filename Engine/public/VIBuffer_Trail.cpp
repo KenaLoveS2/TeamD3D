@@ -23,7 +23,7 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 	m_pSpeeds = new _float[iNumInstance];
 
 	for (_uint i = 0; i < iNumInstance; ++i)
-		m_pSpeeds[i] = rand() % 5 + 1.0f;
+		m_pSpeeds[i] = rand() % 1 + 1.0f;
 
 	m_iNumInstance = iNumInstance;
 	m_iInitNumInstance = iNumInstance;
@@ -53,7 +53,7 @@ HRESULT CVIBuffer_Trail::Initialize_Prototype(_uint iNumInstance)
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = _float3(0.0f, 0.0f, 0.0f);
-	pVertices->vPSize = _float2(0.2f, 0.2f);
+	pVertices->vPSize = _float2(0.05f, 0.05f);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -186,37 +186,24 @@ HRESULT CVIBuffer_Trail::Render()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Trail::Trail_Tick(CTransform* pTransform, CGameObject* pGameObject, _float fTimeDelta)
+HRESULT CVIBuffer_Trail::Trail_Tick(_int iObjectType,CGameObject* pGameObject, _float fTimeDelta)
 {
-// 	if (pGameObject == nullptr)
-// 		return S_OK;
-	
-	//CTransform* pTransform = nullptr;
-	//pTransform = pGameObject->Get_TransformCom();
-
-	//_vector vDir = pTransform->Get_State(CTransform::STATE_LOOK) * -1.f;
-	//_vector vPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
-
-	_vector vDir = XMVectorSet(0.0f, 1.f, 0.0f, 0.0f);
-	_vector vPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-
-	_vector vMyPos = pTransform->Get_State(CTransform::STATE_TRANSLATION);
-
-	D3D11_MAPPED_SUBRESOURCE			SubResource;
-	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	if(iObjectType == (_int)OBJ_MONSTER)
 	{
-		_vector vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + vDir * (m_pSpeeds[i] * 0.3f) * fTimeDelta;
+		_float fRange = 3.f;
+		_float4 vDir = XMVectorSet(fRange, CUtile::Get_RandomFloat(-fRange, fRange), CUtile::Get_RandomFloat(-fRange, fRange), 0.0f);
 
-		_float fDistance = XMVectorGetY(XMVector3Length(vMovePos - vMyPos));
-		fDistance > 2.f ? XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,
-			vPos) : XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, vMovePos);
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			XMStoreFloat4(&m_vecInstanceInfo[i].vPosition, XMLoadFloat4(&m_vecInstanceInfo[i].vPosition) - XMLoadFloat4(&vDir) * m_pSpeeds[i] * fTimeDelta);
+	}
+	else
+	{
+		_float4 vDir = pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+			XMStoreFloat4(&m_vecInstanceInfo[i].vPosition, XMLoadFloat4(&m_vecInstanceInfo[i].vPosition));
 	}
 
-	m_pContext->Unmap(m_pInstanceBuffer, 0);
 	return S_OK;
 }
 

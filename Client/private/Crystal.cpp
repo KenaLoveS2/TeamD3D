@@ -163,7 +163,12 @@ void CCrystal::Late_Tick(_float fTimeDelta)
 	
 
 	if (m_pRendererCom && m_bRenderActive && CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f))
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+#ifdef _DEBUG
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+#endif
+	}
 }
 
 HRESULT CCrystal::Render()
@@ -271,6 +276,37 @@ HRESULT CCrystal::RenderShadow()
 		{
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CCrystal::RenderCine()
+{
+	if (FAILED(__super::RenderCine()))
+		return E_FAIL;
+
+	if (FAILED(__super::SetUp_CineShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	if (m_pModelCom->Get_IStancingModel())
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 12), E_FAIL);
+		}
+	}
+	else
+	{
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 10), E_FAIL);
 		}
 	}
 

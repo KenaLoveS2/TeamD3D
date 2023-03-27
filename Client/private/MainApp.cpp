@@ -28,7 +28,7 @@ HRESULT CMainApp::Initialize()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	/* °ÔÀÓ¿£Áø ÃÊ±âÈ­ */
+	/* ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ */
 	GRAPHIC_DESC			GraphicDesc;
 	ZeroMemory(&GraphicDesc, sizeof(GRAPHIC_DESC));
 
@@ -80,7 +80,8 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Render_ImGui();
 
-	m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	//m_pGameInstance->Clear_Graphic_Device(&_float4(0.25f, 0.25f, 0.25f, 1.f));
+	m_pGameInstance->Clear_Graphic_Device(&_float4(0.5f, 0.5f, 0.5f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
 
@@ -245,9 +246,22 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffectPointInstance.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* Prototype_Component_Shader_EffectS2 */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_EffectS2"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_EffectS2.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+	/* Prototype_Component_Shader_Effect_Particle_S2 */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Particle_S2"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Effect_Particle_S2.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_Effect_Mesh_S2 */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Mesh_S2"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Effect_Mesh_S2.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_Effect_Texture_S2 */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Effect_Texture_S2"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Effect_Texture_S2.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+	/* Prototype_Component_Shader_VtxEffect_BossTrail */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffect_BossTrail"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxEffect_BossTrail.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/* For. BackGround */
@@ -349,17 +363,17 @@ HRESULT CMainApp::Ready_BufferLock_UnLock()
 	D3D11_TEXTURE2D_DESC		TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
-	TextureDesc.Width = 256;		// 2ÀÇ ¹è¼ö·Î ¸ÂÃç¾ß‰Â´Ù.
-	TextureDesc.Height = 256;		// 2ÀÇ ¹è¼ö·Î ¸ÂÃç¾ß‰Â´Ù.
+	TextureDesc.Width = 256;		// 2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ß‰Â´ï¿½.
+	TextureDesc.Height = 256;		// 2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ß‰Â´ï¿½.
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
 	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
 
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// µ¿ÀûÀ¸·Î ¸¸µé¾î¾ßÁö ¶ô ¾ð¶ô°¡´É
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU´Â µ¿ÀûÇÒ¶§ ¹«Á¶°Ç
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TextureDesc.MiscFlags = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
@@ -383,7 +397,7 @@ HRESULT CMainApp::Ready_BufferLock_UnLock()
 	D3D11_MAPPED_SUBRESOURCE		SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);
 
-	// D3D11_MAP_WRITE_NO_OVERWRITE ÅøÀÛ¾÷ÇÒ¶§´Â ÀÌ³à¼®À¸·Î ÇÏ´Â°Ô ÁÁÀ½
+	// D3D11_MAP_WRITE_NO_OVERWRITE ï¿½ï¿½ï¿½Û¾ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ ï¿½Ì³à¼®ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
 

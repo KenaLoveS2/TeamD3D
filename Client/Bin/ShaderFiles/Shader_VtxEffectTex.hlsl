@@ -1,24 +1,32 @@
 
 #include "Shader_Client_Defines.h"
 
+/**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+float4			g_WorldCamPosition;
+/**********************************/
 
+/**********Common Texture*********/
 texture2D		g_DepthTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
+/**********************************/
 
-// Type
+/**********Common Option*********/
 int		g_TextureRenderType, g_BlendType;
-
 bool    g_IsUseMask;
-
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
-
 float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
-float4  g_WorldCamPosition;
 float   g_Time;
+/**********************************/
+
+/* HpRatio */
+float   g_HpRatio;
+float	g_DamageDurationTime;
+uint	g_PulseState;
+/* HpRatio */
 
 struct VS_IN
 {
@@ -201,6 +209,7 @@ float2 Distort(float2 uv , float time)
 PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
+
 	vector maskTex = g_MTexture_0.Sample(LinearSampler, In.vTexUV);
 	maskTex.a = maskTex.r;
 	if (maskTex.r >= 0.035f && maskTex.g >= 0.035f && maskTex.b >= 0.035f)
@@ -218,8 +227,42 @@ PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 	albedo.a = albedo.r;
 	
 	float4 finalcolor = lerp(albedo, maskTex, maskTex.r);
-	Out.vColor = finalcolor * float4(3.f, 208.f, 255.f, 84.f) / 255.f * 2.f;
+	finalcolor = finalcolor * float4(3.f, 208.f, 255.f, 84.f) / 255.f * 2.f;
 
+	float	fHpRatio = max(0.f, g_HpRatio);
+	float	fColorRatio;
+	vector	vColor;
+
+	if (fHpRatio > 0.7f)
+	{
+		vColor = float4(0.f, 0.f, 0.f, 0.f);
+	}
+	else if (fHpRatio > 0.3f && fHpRatio <= 0.7f)
+	{
+		fColorRatio = 1.f - ((fHpRatio - 0.3f) / 0.4f);
+		vColor = float4(fColorRatio, 0.f, fColorRatio, 0.f) * 2.f;
+	}
+	else
+	{
+		fColorRatio = fHpRatio / 0.3f;
+		vColor = float4(1.f, 0.f, fColorRatio, 0.f) * 2.f;
+	}
+	finalcolor = finalcolor + vColor;
+
+	if (g_PulseState == 1) //Default2Damage
+	{
+		vector vColor = float4(255.f, 0.f, 255.f, 0.0f) / 255.f;
+		float fTime = min(g_DamageDurationTime, 2.f);
+
+		if (1.f < fTime)   // 1.0 이상 컬러값이 내려가야함
+			vColor = vColor * (2.f - fTime);
+		else // 1.0 이하 컬러값이 올라가야함
+			vColor = vColor * fTime;
+
+		finalcolor = finalcolor + vColor;
+	}
+
+	Out.vColor = finalcolor;
 	return Out;
 }
 

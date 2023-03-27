@@ -21,6 +21,9 @@ public:
 	virtual void				ImGui_AnimationProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;
 
+	virtual HRESULT		RenderCine() override;
+	HRESULT					SetUp_CineShaderResources();
+
 private:
 	virtual HRESULT		SetUp_Components() override;
 	virtual HRESULT		SetUp_ShaderResource() override;

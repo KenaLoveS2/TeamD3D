@@ -39,9 +39,6 @@ HRESULT CTelePort_Flower::Initialize(void * pArg)
 	Desc.fRotationPerSec = XMConvertToRadians(45.f);
 	m_pTransformCom->Set_TransformDesc(Desc);	
 
-	_vector	vScale, vTrans;
-	XMMatrixDecompose(&vScale, &m_vInitQuternion, &vTrans, m_pTransformCom->Get_WorldMatrix());
-
 	m_pModelCom->Set_AnimIndex(0);
 
 	return S_OK;
@@ -82,6 +79,9 @@ HRESULT CTelePort_Flower::Late_Initialize(void * pArg)
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_TELEPORT_FLOWER));
 	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_TELEPORT_FLOWER, vPos, 30.f));
+
+	_vector	vScale, vTrans;
+	XMMatrixDecompose(&vScale, &m_vInitQuternion, &vTrans, m_pTransformCom->Get_WorldMatrix());
 
 	return S_OK;
 }

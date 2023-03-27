@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Pulse_Plate_Anim.h"
+
+#include "CinematicCamera.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
@@ -191,7 +193,7 @@ HRESULT CPulse_Plate_Anim::SetUp_Components()
 	if (m_EnviromentDesc.iCurLevel == 0)
 		m_EnviromentDesc.iCurLevel = LEVEL_MAPTOOL;
 	/* For.Com_Model */ 	/*나중에  레벨 인덱스 수정해야됌*/
-	if (FAILED(__super::Add_Component(g_LEVEL, m_EnviromentDesc.szModelTag.c_str(), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_PulsePlateAnim", TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom, nullptr, this)))
 		return E_FAIL;
 	/* For.Com_Shader */
@@ -215,8 +217,6 @@ HRESULT CPulse_Plate_Anim::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -229,6 +229,12 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 	{
 		m_pControlRoom->PulsePlate_Down_Active(m_EnviromentDesc.iRoomIndex,true);
 		m_pModelCom->Set_AnimIndex(2);
+		if(m_EnviromentDesc.iRoomIndex == 1 && !m_bFirstCinema)
+		{
+			CGameInstance::GetInstance()->Work_Camera(TEXT("CINE_CAM0"));
+			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
+			m_bFirstCinema = true;
+		}
 	}
 
 	if (m_bPlayerColl && (m_pModelCom->Get_AnimIndex() == 2 && m_pModelCom->Get_AnimationFinish())

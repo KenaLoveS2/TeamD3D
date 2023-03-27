@@ -152,37 +152,66 @@ void CE_BombTrail::Add_BezierCurve(const _float4 & vStartPos, const _float4 & vS
 
 	if (fLength > 5.f)
 	{
-		_float4	vNorDir;
-		vDir.Normalize(vNorDir);
-		_float4	vTurnPoint = vStartPos + vNorDir * 5.f;
-
-		m_vecPositions.push_back(vStartPos);
-
-		_float4	vA = vSplinePos - vTurnPoint;
-		_float4	vNorA = XMVector3Cross(vA * -1.f, m_pParent->Get_WorldMatrix().r[0]);
-		_float4	vEndPos = XMLoadFloat4(&vSplinePos) + XMVector3Normalize(vNorA) * XMVectorGetX(XMVector3Length(vA));
+		_float4	vMidPoint = (vStartPos + vSplinePos) * 0.5f;
+		vMidPoint.y += 2.5f;
 
 		_float4	vPointA;
 		_float4	vPointB;
 		_float4	vPath;
 		for (_float fRatio = 0.f; fRatio <= 1.f; fRatio += fTimeDelta)
 		{
-			vPointA = _float4::Lerp(vTurnPoint, vSplinePos, fRatio);
-			vPointB = _float4::Lerp(vSplinePos, vEndPos, fRatio);
+			vPointA = _float4::Lerp(vStartPos, vMidPoint, fRatio);
+			vPointB = _float4::Lerp(vMidPoint, vSplinePos, fRatio);
 			vPath = _float4::Lerp(vPointA, vPointB, fRatio);
 
 			m_vecPositions.push_back(vPath);
 		}
 
-		m_vecPositions.push_back(vEndPos);
-
-		_float4	vDropPos = XMLoadFloat4(&vEndPos) + XMVector3Normalize(vNorA) * fLength;
-		m_vecPositions.push_back(vDropPos);
+// 		_float4	vNorDir;
+// 		vDir.Normalize(vNorDir);
+// 		_float4	vTurnPoint = vStartPos + vNorDir * 5.f;
+// 
+// 		m_vecPositions.push_back(vStartPos);
+// 
+// 		_float4	vA = vSplinePos - vTurnPoint;
+// 		_float4	vNorA = XMVector3Cross(vA * -1.f, m_pParent->Get_WorldMatrix().r[0]);
+// 		_float4	vEndPos = XMLoadFloat4(&vSplinePos) + XMVector3Normalize(vNorA) * XMVectorGetX(XMVector3Length(vA));
+// 
+// 		_float4	vPointA;
+// 		_float4	vPointB;
+// 		_float4	vPath;
+// 		for (_float fRatio = 0.f; fRatio <= 1.f; fRatio += fTimeDelta)
+// 		{
+// 			vPointA = _float4::Lerp(vTurnPoint, vSplinePos, fRatio);
+// 			vPointB = _float4::Lerp(vSplinePos, vEndPos, fRatio);
+// 			vPath = _float4::Lerp(vPointA, vPointB, fRatio);
+// 
+// 			m_vecPositions.push_back(vPath);
+// 		}
+// 
+// 		m_vecPositions.push_back(vEndPos);
+// 
+// 		_float4	vDropPos = XMLoadFloat4(&vEndPos) + XMVector3Normalize(vNorA) * fLength;
+// 		m_vecPositions.push_back(vDropPos);
 	}
 	else
 	{
 		m_vecPositions.push_back(vStartPos);
-		m_vecPositions.push_back(vSplinePos);
+
+		_float4	vMidPoint = (vStartPos + vSplinePos) * 0.5f;
+		vMidPoint.y += 0.3f;
+
+		_float4	vPointA;
+		_float4	vPointB;
+		_float4	vPath;
+		for (_float fRatio = 0.f; fRatio <= 1.f; fRatio += fTimeDelta)
+		{
+			vPointA = _float4::Lerp(vStartPos, vMidPoint, fRatio);
+			vPointB = _float4::Lerp(vMidPoint, vSplinePos, fRatio);
+			vPath = _float4::Lerp(vPointA, vPointB, fRatio);
+
+			m_vecPositions.push_back(vPath);
+		}
 	}
 }
 
