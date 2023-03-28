@@ -56,10 +56,10 @@ void CE_KenaParry::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-		m_eEFfectDesc.vScale *= 1.1f + fTimeDelta;
+		m_eEFfectDesc.vScale *= 1.0f + fTimeDelta;
 
 		for (auto& pChild : m_vecChild)
-			pChild->Set_AddScale(1.1f + fTimeDelta);
+			pChild->Set_AddScale(1.0f + fTimeDelta);
 
 		if (m_fTimeDelta > 0.2f)
 		{
@@ -67,7 +67,7 @@ void CE_KenaParry::Tick(_float fTimeDelta)
 			m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 1.f);
 
 			for (auto& pChild : m_vecChild)
-				pChild->Set_Scale(_float3(0.7f, 0.7f, 1.f));
+				pChild->Set_Scale(_float3(0.5f, 0.5f, 1.f));
 
 			m_eEFfectDesc.bActive = false;
 			m_fTimeDelta = 0.0f;

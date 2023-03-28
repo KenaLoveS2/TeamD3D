@@ -37,7 +37,7 @@ HRESULT CE_SpiritArrowPosition::Initialize(void * pArg)
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 
-	Set_Child();
+//	Set_Child();
 
 	m_eEFfectDesc.bActive = false;
 	return S_OK;

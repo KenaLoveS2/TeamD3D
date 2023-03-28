@@ -48,7 +48,7 @@ HRESULT CE_SpiritArrowTrail::Initialize(void * pArg)
 	/* Trail Option */
 	m_eEFfectDesc.IsTrail = true;
 	m_eEFfectDesc.fWidth = 0.5f; //5.f
-	m_eEFfectDesc.fLife = 5.f; //1.f
+	m_eEFfectDesc.fLife = 1.5f; //1.f
 	m_eEFfectDesc.bAlpha = false;
 	m_eEFfectDesc.fAlpha = 0.6f;
 	m_eEFfectDesc.fSegmentSize = 0.03f; // 0.5f

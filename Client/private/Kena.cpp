@@ -1451,12 +1451,13 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
 
-	_bool bHit = false;
-	if (m_bHeavyHit == true || m_bCommonHit == true)
-		bHit = true;
-	m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
+	/* Kena Damage Parry Value */
+	//_bool bHit = false;
+	//if (m_bHeavyHit == true || m_bCommonHit == true)
+	//	bHit = true;
+	//m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
+	//m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
+	//m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
 
 	return S_OK;
 }
