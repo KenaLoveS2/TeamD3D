@@ -94,7 +94,7 @@
 #include "Effect_Mesh_Base.h"
 #include "Effect_Texture_Base.h"
 
-/* Effects */
+#pragma region Effect_h
 #include "Effect_Point_Instancing.h"
 //Pulse
 #include "E_KenaPulse.h"
@@ -164,7 +164,9 @@
 #include "E_Hieroglyph.h"
 #include "E_P_ShockFrontEntended.h"
 #include "E_Warrior_ShockFronExtended_Plane.h"
-/* ~Effects */
+#include "E_EnrageAttack.h"
+#include "E_P_Enrage.h"
+#pragma endregion Effect_h
 
 /* Components*/
 #include "ControlMove.h"
@@ -182,9 +184,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
-
-
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -410,13 +409,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
 
-	/* For.Prototype_Component_Model_ChestAnim*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
-		return E_FAIL;
-	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	/* ~��ȣ�� ��*/
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Chest_Anim/Chest.model", PivotMatrix)), E_FAIL);
+
+	/* Prototype_GameObject_Chest */
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
+
 
 	/*������ ��*/
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
@@ -757,7 +756,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true, true)))
 		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true,false,true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, true, true)))
 		assert(!"Issue");
@@ -979,7 +978,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true, true)))
 			return E_FAIL;
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true, false, true)))
 			return E_FAIL;
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue/Owl_WrapShrine", false, true, true)))
@@ -2253,6 +2252,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CE_EnrageInto::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageInto.json"))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_EnrageAttack */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageAttack"),
+		CE_EnrageAttack::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageStatue.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnrageAttack_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageAttack_P"),
+		CE_P_Enrage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Enrage.json"))))
+		return E_FAIL;
+
 #pragma endregion Effect_Object
 
 	lstrcpy(m_szLoadingText, TEXT("Loading Effects Distortion..."));
@@ -2461,7 +2470,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true)))
 		return E_FAIL;
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true, false, true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Statue/Owl_WrapShrine", false, true, true)))

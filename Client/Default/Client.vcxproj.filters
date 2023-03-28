@@ -505,6 +505,9 @@
     <Filter Include="1004.알아서해라">
       <UniqueIdentifier>{d5c35ee8-e862-4572-a4ef-380d6d9c707b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack">
+      <UniqueIdentifier>{f7d84a75-d35a-46f6-818b-ccff9d008195}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1306,6 +1309,12 @@
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_EnrageAttack.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Enrage.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2084,6 +2093,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
       <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnrageAttack.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Enrage.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

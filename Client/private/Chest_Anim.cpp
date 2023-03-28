@@ -88,9 +88,10 @@ void CChest_Anim::Tick(_float fTimeDelta)
 	if (m_bOpened == true)
 		return;
 
+#ifdef FOR_MAP_GIMMICK
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta);
-
+#endif
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
