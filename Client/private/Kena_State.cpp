@@ -778,6 +778,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -791,6 +792,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -804,6 +806,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -817,6 +820,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -830,6 +834,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -843,6 +848,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -856,6 +862,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -869,6 +876,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -907,6 +915,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -919,6 +928,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -931,6 +941,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -943,6 +954,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -955,6 +967,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -967,6 +980,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -979,6 +993,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -991,6 +1006,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -1213,8 +1229,124 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"BOMB_CANCEL", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"BOMB_RELEASE", this, &CKena_State::MouseUp_Right)
-		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN")
+		.Init_Start(this, &CKena_State::Start_Bomb_Run)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOMB_INJECT_RUN_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOMB_INJECT_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -3786,6 +3918,104 @@ void CKena_State::Start_Bomb_Inject(_float fTimeDelta)
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
 }
 
+void CKena_State::Start_Bomb_Inject_Run(_float fTimeDelta)
+{
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+	m_pKena->m_bJump = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
 void CKena_State::Start_Bomb_Air_Into(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOMB_AIR_INTO");
@@ -5380,6 +5610,11 @@ void CKena_State::Tick_Bomb_Inject(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Bomb_Inject_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
 void CKena_State::Tick_Bomb_Air_Into(_float fTimeDelta)
 {
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
@@ -6200,6 +6435,15 @@ void CKena_State::End_Bomb_Cancel_Run(_float fTimeDelta)
 }
 
 void CKena_State::End_Bomb_Inject(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBomb = false;
+	m_pKena->m_bInjectBomb = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+}
+
+void CKena_State::End_Bomb_Inject_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBomb = false;

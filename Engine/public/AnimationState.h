@@ -12,7 +12,7 @@ struct ENGINE_DLL  CAdditiveAnimation : public CBase
 	enum RATIOTYPE { RATIOTYPE_MAX, RATIOTYPE_AUTO, RATIOTYPE_CONTROL, RATIOTYPE_END };
 	enum ADDITIVETYPE { ADDITIVE, REPLACE, ADDITIVETYPE_END };
 
-	RATIOTYPE	m_eControlRatio = RATIOTYPE_MAX;
+	RATIOTYPE		m_eControlRatio = RATIOTYPE_MAX;
 	ADDITIVETYPE	m_eAdditiveType = ADDITIVE;
 	_bool			m_bPlayReverse = false;
 	_bool			m_bRootBoneRotationLock = true;
@@ -43,9 +43,6 @@ struct ENGINE_DLL CAnimState : public CBase
 	map<_float, const string>			m_mapEvent;
 	list<_uint>								m_listLockedBoneIndex;
 
-	//_bool			m_bHasLookAnim = false;
-	//vector<CAdditiveAnimation*>		m_vecLookAnim;
-
 	virtual void	Free() override {
 		for (auto pAdditiveAnim : m_vecAdditiveAnim)
 			Safe_Release(pAdditiveAnim);
@@ -67,26 +64,27 @@ private:
 public:
 	CAnimState*		Get_CurrentAnim() { return m_pCurAnim; }
 	CAnimState*		Get_PreAnim() { return m_pPreAnim; }
-	const string&		Get_CurrentAnimName() const { return m_pCurAnim->m_strStateName; }
-	const string&		Get_PreAnimName() const { return m_pPreAnim->m_strStateName; }
+	const string&	Get_CurrentAnimName() const { return m_pCurAnim->m_strStateName; }
+	const string&	Get_PreAnimName() const { return m_pPreAnim->m_strStateName; }
 	const _uint		Get_CurrentAnimIndex() const;
 	const _uint		Get_PreAnimIndex() const;
-	const _bool&		Get_AnimationFinish();
+	const _bool&	Get_AnimationFinish();
 	const _bool		Get_AnimationFinish(const string& strStateName);
-	const _float		Get_AnimationDuration() const;
-	const _float		Get_AnimationPlayTime() const;
-	const _float		Get_AnimationLastPlayTime() const;
-	const _float		Get_AnimationProgress() const;
-	const _bool&		Get_Preview() const { return m_bPreview; }
-	vector<KEYFRAME>*		Get_KeyFrames(const string& strBoneName);
+	const _float	Get_AnimationDuration() const;
+	const _float	Get_AnimationPlayTime() const;
+	const _float	Get_AnimationLastPlayTime() const;
+	const _float	Get_AnimationProgress() const;
+	const _bool&	Get_Preview() const { return m_bPreview; }
+	vector<KEYFRAME>*	Get_KeyFrames(const string& strBoneName);
+	void			Set_RootAnimation(const string& strStateName);
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
 	HRESULT			Initialize_FromFile(const string& strFilePath);
-	void				Tick(_float fTimeDelta);
+	void			Tick(_float fTimeDelta);
 	HRESULT			State_Animation(const string& strStateName, _float fLerpDuration = -1.f);
-	void				Play_Animation(_float fTimeDelta);
-	void				ImGui_RenderProperty();
+	void			Play_Animation(_float fTimeDelta);
+	void			ImGui_RenderProperty();
 
 	HRESULT			Generate_Animation(const string& strFilePath);
 	HRESULT			Add_State(CAnimState* pAnim);

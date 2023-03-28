@@ -540,6 +540,15 @@ private:
 	void						Start_Bomb_Cancel_Run_Left(_float fTimeDelta);
 	void						Start_Bomb_Cancel_Run_Right(_float fTimeDelta);
 	void						Start_Bomb_Inject(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Forward(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Backward(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Left(_float fTimeDelta);
+	void						Start_Bomb_Inject_Run_Right(_float fTimeDelta);
 	/* BOMB AIR */
 	void						Start_Bomb_Air_Into(_float fTimeDelta);
 	void						Start_Bomb_Air_Loop(_float fTimeDelta);
@@ -784,6 +793,7 @@ private:
 	void						Tick_Bomb_Cancel(_float fTimeDelta);
 	void						Tick_Bomb_Cancel_Run(_float fTimeDelta);
 	void						Tick_Bomb_Inject(_float fTimeDelta);
+	void						Tick_Bomb_Inject_Run(_float fTimeDelta);
 	/* BOMB AIR */
 	void						Tick_Bomb_Air_Into(_float fTimeDelta);
 	void						Tick_Bomb_Air_Loop(_float fTimeDelta);
@@ -977,6 +987,7 @@ private:
 	void						End_Bomb_Cancel(_float fTimeDelta);
 	void						End_Bomb_Cancel_Run(_float fTimeDelta);
 	void						End_Bomb_Inject(_float fTimeDelta);
+	void						End_Bomb_Inject_Run(_float fTimeDelta);
 	/* BOMB AIR */
 	void						End_Bomb_Air_Into(_float fTimeDelta);
 	void						End_Bomb_Air_Loop(_float fTimeDelta);
