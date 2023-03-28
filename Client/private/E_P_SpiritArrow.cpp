@@ -35,7 +35,7 @@ HRESULT CE_P_SpiritArrow::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	m_pVIInstancingBufferCom->Set_RandomSpeeds(1.0f, 2.0f);
+	// m_pVIInstancingBufferCom->Set_RandomSpeeds(1.0f, 2.0f);
 	m_eEFfectDesc.bActive = true;
 	return S_OK;
 }
