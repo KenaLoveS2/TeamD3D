@@ -1288,15 +1288,6 @@
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Effect_Base_S2.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Mesh_Base.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Texture_Base.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\FieldBecon_Anim.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1305,6 +1296,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
       <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Base_S2.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh_Base.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Texture_Base.h">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2067,15 +2067,6 @@
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Effect_Base_S2.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Mesh_Base.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Texture_Base.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
@@ -2084,6 +2075,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
       <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Base_S2.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh_Base.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Texture_Base.cpp">
+      <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
