@@ -258,7 +258,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_fInitJumpSpeed = 0.35f;
 
 	m_iObjectProperty = OP_PLAYER;
-
+	m_pKenaStatus->Set_Attack(30);
 	return S_OK;
 }
 
@@ -281,8 +281,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
 	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 10.f;
+	PxCapsuleDesc.fMass = 99999.f;
+	PxCapsuleDesc.fLinearDamping = 1.f;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
@@ -674,11 +674,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 	//CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
-	{
-		CKena* pPlayer = this;
-		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	//{
+	//	CKena* pPlayer = this;
+	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+	//}
 
 	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -1454,9 +1454,9 @@ HRESULT CKena::SetUp_ShaderResources()
 	_bool bHit = false;
 	if (m_bHeavyHit == true || m_bCommonHit == true)
 		bHit = true;
-	m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
+	//m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
+	//m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
+	//m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
 
 	return S_OK;
 }

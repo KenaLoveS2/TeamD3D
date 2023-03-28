@@ -143,7 +143,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	/*__super::Tick(fTimeDelta);
 
 	Update_Collider(fTimeDelta);
 	Update_Trail("Halberd_Jnt6");
@@ -155,7 +155,7 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
 
-	return;
+	return;*/
 
 	if (m_bDeath) return;
 
