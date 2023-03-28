@@ -140,11 +140,11 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	ImGui::Begin("CinematicCam");
-	Imgui_RenderProperty();
-	ImGui::End();
-#endif
+//#ifdef _DEBUG
+//	ImGui::Begin("CinematicCam");
+//	Imgui_RenderProperty();
+//	ImGui::End();
+//#endif
 
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
