@@ -138,6 +138,10 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -148,6 +152,8 @@ void CBossWarrior::Tick(_float fTimeDelta)
 	Update_Collider(fTimeDelta);
 	Update_Trail("Halberd_Jnt6");
 	m_pHat->Tick(fTimeDelta);
+
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 
 	for (auto& pEffect : m_mapEffect)
 		pEffect.second->Tick(fTimeDelta);
@@ -255,6 +261,8 @@ void CBossWarrior::Imgui_RenderProperty()
 
 void CBossWarrior::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	if (ImGui::CollapsingHeader("BossWarrior"))
 	{
 		ImGui::BeginTabBar("BossWarrior Animation & State");
@@ -1159,7 +1167,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	_matrix matUpSocket = UpMatrix * matWorld;
 	_matrix matCenterSocket = CenterMatrix * matWorld;
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matCenterSocket.r[3];
 	_vector vRight = XMVector3Normalize(matUpSocket.r[3] - vPosition);
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
@@ -1182,7 +1190,7 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matSocket.r[3];
 	_vector vRight = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); 
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));

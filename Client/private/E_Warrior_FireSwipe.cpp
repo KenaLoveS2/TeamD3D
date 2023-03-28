@@ -39,37 +39,39 @@ HRESULT CE_Warrior_FireSwipe::Initialize(void * pArg)
 
 HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 {	
-	//_float4 vPos;
-	//XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float3	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3	vPivotScale = _float3(2.57f, 2.37f, 0.45f);
+	_float3	vPivotPos = _float3(0.f, 0.f, 0.f);
 
-	//m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
-	//CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2);
+	
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
+	PxBoxDesc.pActortag = m_szCloneObjectTag;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.vPos = vPos;
+	PxBoxDesc.vSize = vPivotScale;
+	PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDegree = 0.f;
+	PxBoxDesc.isGravity = false;
+	PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 0.2f;
+	PxBoxDesc.fMass = 150.f;
+	PxBoxDesc.fLinearDamping = 10.f;
+	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.bCCD = false;
+	PxBoxDesc.fDynamicFriction = 0.5f;
+	PxBoxDesc.fStaticFriction = 0.5f;
+	PxBoxDesc.fRestitution = 0.1f;
+	
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
+	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
 
-	//_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
-	//_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
-	//_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
-
-	//// Capsule X == radius , Y == halfHeight
-	//CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	//PxSphereDesc.eType = SPHERE_DYNAMIC;
-	//PxSphereDesc.pActortag = m_szCloneObjectTag;
-	//PxSphereDesc.vPos = vOriginPos;
-	//PxSphereDesc.fRadius = vPivotScale.x;
-	//PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	//PxSphereDesc.fDensity = 1.f;
-	//PxSphereDesc.fAngularDamping = 0.5f;
-	//PxSphereDesc.fMass = 59.f;
-	//PxSphereDesc.fLinearDamping = 1.f;
-	//PxSphereDesc.bCCD = true;
-	//PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
-	//PxSphereDesc.fDynamicFriction = 0.5f;
-	//PxSphereDesc.fStaticFriction = 0.5f;
-	//PxSphereDesc.fRestitution = 0.1f;
-
-	//CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER));
-
-	//_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
-	//m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	_tchar* pDummyTag = CUtile::Create_StringAuto(L"Warrior_FireSwipe_Dummy");
+	PxBoxDesc.pActortag = pDummyTag;
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
+	m_pTransformCom->Add_Collider(pDummyTag, matPivot);
 
 	return S_OK;
 }
@@ -79,18 +81,18 @@ void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
+	m_pTransformCom->Tick(fTimeDelta);
+	
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 1.f)
-	{
-		m_fDurationTime = 0.0f;
-	}
-	else
-		m_pTransformCom->Go_Backward(fTimeDelta * 15.f);
-
-	// m_pTransformCom->Tick(fTimeDelta);
+ 	m_fDurationTime += fTimeDelta;
+ 	if (m_fDurationTime > 1.f)
+ 	{
+ 		m_fDurationTime = 0.0f;
+ 	}
+ 	else
+ 		m_pTransformCom->Go_Backward(fTimeDelta ); // * 15.f
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
@@ -141,6 +143,11 @@ _int CE_Warrior_FireSwipe::Execute_Collision(CGameObject * pTarget, _float3 vCol
 	return 0;
 }
 
+void CE_Warrior_FireSwipe::Imgui_RenderProperty()
+{
+	__super::ImGui_PhysXValueProperty();
+}
+
 void CE_Warrior_FireSwipe::ImGui_PhysXValueProperty()
 {
 	__super::ImGui_PhysXValueProperty();
@@ -149,7 +156,7 @@ void CE_Warrior_FireSwipe::ImGui_PhysXValueProperty()
 HRESULT CE_Warrior_FireSwipe::SetUp_SwipeTexture()
 {
 	Edit_TextureComponent(5, 0);
-
+	
 	m_eEFfectDesc.fFrame[0] = 27.f;
 	m_eEFfectDesc.fFrame[1] = 54.f;
 	m_eEFfectDesc.fFrame[2] = 4.f;
@@ -174,10 +181,6 @@ HRESULT CE_Warrior_FireSwipe::SetUp_Components()
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_FireSwipe"), TEXT("Com_Model"), (CComponent**)&m_pModelCom), E_FAIL);
 
 	return S_OK;
-}
-
-void CE_Warrior_FireSwipe::Imgui_RenderProperty()
-{
 }
 
 CE_Warrior_FireSwipe * CE_Warrior_FireSwipe::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

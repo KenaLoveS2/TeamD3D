@@ -212,42 +212,26 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"ShockFront", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Hieroglyph"), L"test", nullptr, &pGameObject)))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Hieroglyph"), L"Warrior_Hieroglyph", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Warrior_FireSwipe", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Distortion_Plane"), L"Distortion_Plane", nullptr, &pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Root"), L"Warrior_Root", nullptr, &pGameObject)))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"Warrior_ShockFrontExtended", nullptr, &pGameObject)))
+		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RectTrail"), L"recttrail", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	////Prototype_GameObject_RotBombExplosion
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"pulsecover", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_FireBullet"), L"bullet", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_FireBulletCover"), L"bulletcover", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHeavyAttackInto"), L"HeavyAttackInto", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_KenaHeavyAttackEnd"), L"HeavyAttackend", nullptr, &pGameObject)))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Add_ShaderValueObject(LEVEL_EFFECT, pGameObject)))
-	//	return E_FAIL;
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Root"), L"Warrior_Root", nullptr, &pGameObject)))
+		return E_FAIL;*/
+		
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Warrior_FireSwipe", nullptr, &pGameObject)))
+		return E_FAIL;*/
+		
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr, &pGameObject)))
+		return E_FAIL;
+		
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"RotBombExplosion", nullptr, &pGameObject)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
