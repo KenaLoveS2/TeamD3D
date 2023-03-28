@@ -14,6 +14,8 @@ public:
 	inline	void					Set_Target(CGameObject* pTarget) { m_pTarget = pTarget; }
 	inline  void					Set_Active(_bool bActive) { m_bActive = bActive; }
 	inline  void					Set_ActiveFlip() { m_bActive = !m_bActive; }
+	inline	void					Set_EffectTag(string str) { m_strEffectTag = str; }
+
 
 public:
 	virtual HRESULT					Initialize_Prototype();
@@ -27,14 +29,17 @@ public:
 	virtual void					Imgui_RenderProperty() = 0;
 	virtual HRESULT					Save_Data() = 0;
 	virtual	HRESULT					Load_Data(_tchar* fileName) = 0;
+	virtual void					Set_DissolveState() {};
+	virtual	void					BackToNormal() {};
 
 protected:	/* Tool Function */
 	_float4		ColorCode();
 
 protected:
-	CGameObject*					m_pTarget;
-	_tchar*							m_pfileName;
+	CGameObject* m_pTarget;
+	_tchar* m_pfileName;
 	_bool							m_bActive;
+	string							m_strEffectTag;/* From Tool Desc */
 
 protected: /* Property */
 	_int							m_iRenderPass;
@@ -42,7 +47,11 @@ protected: /* Property */
 	_float4							m_vColor;
 	_float							m_fHDRIntensity;
 
-protected: 
+	/* For Dissolve */
+	_float							m_fDissolveAlpha;
+	_float							m_fDissolveSpeed;
+
+protected:
 	_float4x4						m_WorldOriginal;
 	_float4x4						m_LocalMatrix;
 	_float4x4						m_LocalMatrixOriginal;

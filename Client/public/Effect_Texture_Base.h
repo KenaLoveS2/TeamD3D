@@ -37,25 +37,25 @@ private:
 	HRESULT							SetUp_TextureInfo();
 
 private: /* Tool Function */
-	void							Color(_int iTextureType);
+	void							ColorCode(_int iTextureType);
 
 private:
-	CShader*						m_pShaderCom;
-	CRenderer*						m_pRendererCom;
-	CTexture*						m_pTextureCom[TEXTURE_END];
-	CVIBuffer_Rect*					m_pVIBufferCom;
+	CShader* m_pShaderCom;
+	CRenderer* m_pRendererCom;
+	CTexture* m_pTextureCom[TEXTURE_END];
+	CVIBuffer_Rect* m_pVIBufferCom;
 
 private:
-	char*							m_ShaderVarName[TEXTURE_END];
-	_tchar*							m_TextureComName[TEXTURE_END];
+	char* m_ShaderVarName[TEXTURE_END];
+	_tchar* m_TextureComName[TEXTURE_END];
 	_int							m_iTextureIndices[TEXTURE_END];
-	char*							m_ShaderColorName[TEXTURE_END];
+	char* m_ShaderColorName[TEXTURE_END];
 	_float4							m_vTextureColors[TEXTURE_END];
 
 
 public:
-	static CEffect_Texture_Base*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*				Clone(void* pArg = nullptr) override;
+	static CEffect_Texture_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void						Free()			override;
 };
 END

@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 
 
-CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect_Base_S2(pDevice, pContext)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
@@ -16,10 +16,10 @@ CEffect_Texture_Base::CEffect_Texture_Base(ID3D11Device * pDevice, ID3D11DeviceC
 		m_ShaderVarName[i] = nullptr;
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
-	}	
+	}
 }
 
-CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base & rhs)
+CEffect_Texture_Base::CEffect_Texture_Base(const CEffect_Texture_Base& rhs)
 	: CEffect_Base_S2(rhs)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
@@ -43,7 +43,7 @@ HRESULT CEffect_Texture_Base::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEffect_Texture_Base::Initialize(void * pArg)
+HRESULT CEffect_Texture_Base::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -71,12 +71,12 @@ HRESULT CEffect_Texture_Base::Initialize(void * pArg)
 
 
 	/* temp */
-	
+
 
 	return S_OK;
 }
 
-HRESULT CEffect_Texture_Base::Late_Initialize(void * pArg)
+HRESULT CEffect_Texture_Base::Late_Initialize(void* pArg)
 {
 	return S_OK;
 }
@@ -144,7 +144,7 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 	/* Transform */
 	{
 		/* Local Position */
-		static _float3  vPosition = { 0.f, 0.f,0.f};
+		static _float3  vPosition = { 0.f, 0.f,0.f };
 		vPosition = { m_LocalMatrix._41, m_LocalMatrix._42, m_LocalMatrix._43 };
 		if (ImGui::DragFloat3("LocalPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 		{
@@ -160,8 +160,8 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 		vScale.y = matLocal.Up().Length();
 		if (ImGui::DragFloat2("LocalScale", (_float*)&vScale, 0.10f, 0.001f, 100.0f, "%.3f"))
 		{
-			_float3 vRight	= vScale.x * XMVector3Normalize(matLocal.Right());
-			_float3 vUp		= vScale.y * XMVector3Normalize(matLocal.Up());
+			_float3 vRight = vScale.x * XMVector3Normalize(matLocal.Right());
+			_float3 vUp = vScale.y * XMVector3Normalize(matLocal.Up());
 			m_LocalMatrix._11 = vRight.x;
 			m_LocalMatrix._12 = vRight.y;
 			m_LocalMatrix._13 = vRight.z;
@@ -190,7 +190,7 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 		}
 	}
 
-	
+
 	/* Render Info */
 	for (_uint texID = 0; texID < TEXTURE_END; ++texID)
 	{
@@ -214,12 +214,18 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 			/* RenderPass */
 			static _int iRenderPass;
 			iRenderPass = m_iRenderPass;
-			const char* renderPass[2] = { "Default", "MaskDefault"};
+			const char* renderPass[2] = { "Default", "MaskDefault" };
 			if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
 				m_iRenderPass = iRenderPass;
 
 			/* Color */
-			Color(texID);
+			ColorCode(texID);
+
+			/* HDR Intensity (Diffuse) */
+			static _float fAlpha = 1.f;
+			fAlpha = m_fHDRIntensity;
+			if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+				m_fHDRIntensity = fAlpha;
 		}
 	}
 
@@ -249,14 +255,14 @@ HRESULT CEffect_Texture_Base::Save_Data()
 
 			Json	json;
 
-			json["00. RenderPass"]			= m_iRenderPass;
+			json["00. RenderPass"] = m_iRenderPass;
 			for (_uint i = 0; i < 4; ++i)
 			{
 				_float fElement = *((float*)&m_vTextureColors[TEXTURE_DIFFUSE] + i);
 				json["01. Color"].push_back(fElement);
 			}
-			json["02. HDR Intensity"]		= m_fHDRIntensity;
-			
+			json["02. HDR Intensity"] = m_fHDRIntensity;
+
 			for (_uint i = 0; i < 16; ++i)
 			{
 				_float fElement = *((float*)&m_LocalMatrix + i);
@@ -268,9 +274,9 @@ HRESULT CEffect_Texture_Base::Save_Data()
 				json["04. MaskColor"].push_back(fElement);
 			}
 
-			
+
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
-			json["11. MaskTextureIndex"]	= m_iTextureIndices[TEXTURE_MASK];
+			json["11. MaskTextureIndex"] = m_iTextureIndices[TEXTURE_MASK];
 
 
 			ofstream file(strSaveDirectory.c_str());
@@ -288,7 +294,7 @@ HRESULT CEffect_Texture_Base::Save_Data()
 	return S_OK;
 }
 
-HRESULT CEffect_Texture_Base::Load_Data(_tchar * fileName)
+HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 {
 	if (fileName == nullptr)
 		return E_FAIL;
@@ -371,7 +377,7 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -386,7 +392,7 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 				m_ShaderVarName[i], m_iTextureIndices[i])))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Set_RawValue(m_ShaderColorName[i], 
+			if (FAILED(m_pShaderCom->Set_RawValue(m_ShaderColorName[i],
 				&m_vTextureColors[i], sizeof(_float4))))
 				return E_FAIL;
 		}
@@ -405,19 +411,19 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 HRESULT CEffect_Texture_Base::SetUp_TextureInfo()
 {
 	/* Ready For Textures */
-	m_ShaderVarName[TEXTURE_DIFFUSE]	= "g_DiffuseTexture";
-	m_ShaderVarName[TEXTURE_MASK]		= "g_MaskTexture";
+	m_ShaderVarName[TEXTURE_DIFFUSE] = "g_DiffuseTexture";
+	m_ShaderVarName[TEXTURE_MASK] = "g_MaskTexture";
 
-	m_TextureComName[TEXTURE_DIFFUSE]	= L"Com_DiffuseTexture";
-	m_TextureComName[TEXTURE_MASK]		= L"Com_MaskTexture";
+	m_TextureComName[TEXTURE_DIFFUSE] = L"Com_DiffuseTexture";
+	m_TextureComName[TEXTURE_MASK] = L"Com_MaskTexture";
 
-	m_ShaderColorName[TEXTURE_DIFFUSE]	= "g_vColor";
-	m_ShaderColorName[TEXTURE_MASK]		= "g_vMaskColor";
+	m_ShaderColorName[TEXTURE_DIFFUSE] = "g_vColor";
+	m_ShaderColorName[TEXTURE_MASK] = "g_vMaskColor";
 
 	return S_OK;
 }
 
-void CEffect_Texture_Base::Color(_int iTexID)
+void CEffect_Texture_Base::ColorCode(_int iTexID)
 {
 	static bool alpha_preview = true;
 	static bool alpha_half_preview = false;
@@ -438,16 +444,12 @@ void CEffect_Texture_Base::Color(_int iTexID)
 	if (ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags))
 		m_vTextureColors[iTexID] = vSelectColor;
 
-	static _float fAlpha = 1.f;
-	fAlpha = m_fHDRIntensity;
-	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
-		m_fHDRIntensity = fAlpha;
 
 }
 
-CEffect_Texture_Base * CEffect_Texture_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Texture_Base* CEffect_Texture_Base::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CEffect_Texture_Base * pInstance = new CEffect_Texture_Base(pDevice, pContext);
+	CEffect_Texture_Base* pInstance = new CEffect_Texture_Base(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -457,9 +459,9 @@ CEffect_Texture_Base * CEffect_Texture_Base::Create(ID3D11Device * pDevice, ID3D
 	return pInstance;
 }
 
-CGameObject * CEffect_Texture_Base::Clone(void * pArg)
+CGameObject* CEffect_Texture_Base::Clone(void* pArg)
 {
-	CEffect_Texture_Base * pInstance = new CEffect_Texture_Base(*this);
+	CEffect_Texture_Base* pInstance = new CEffect_Texture_Base(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

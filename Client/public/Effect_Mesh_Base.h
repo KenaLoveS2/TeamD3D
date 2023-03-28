@@ -13,7 +13,7 @@ BEGIN(Client)
 class CEffect_Mesh_Base final : public CEffect_Base_S2
 {
 public:
-	enum	TEXTURE { TEXTURE_DIFFUSE, TEXTURE_MASK, TEXTURE_END };
+	enum	TEXTURE { TEXTURE_DIFFUSE, TEXTURE_MASK, TEXTURE_DISSOLVE, TEXTURE_END };
 
 private:
 	CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,17 +30,20 @@ public:
 	virtual void					Imgui_RenderProperty() override;
 
 public:
-	virtual HRESULT					Save_Data() override;
+	virtual HRESULT					Save_Data()					override;
 	virtual HRESULT					Load_Data(_tchar* fileName) override;
+	virtual void					Set_DissolveState()			override;
+	virtual	void					BackToNormal()				override;
 
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();
 	HRESULT							SetUp_TextureInfo();
+	HRESULT							SetUp_Model(_int iModelIndex);
 
 private: /* Tool Function */
 	HRESULT							Set_ModelCom();
-
+	void							ColorCode(_int iTextureType);
 
 private:
 	CShader*						m_pShaderCom;
@@ -56,11 +59,12 @@ private:
 	char*							m_ShaderColorName[TEXTURE_END];
 	_float4							m_vTextureColors[TEXTURE_END];
 
-	_float							m_fTest = 0.f;
+	_float							m_fCutY = 0.f;
+	_int							m_iModelIndex = -1;
 
 public:
-	static CEffect_Mesh_Base*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*				Clone(void* pArg = nullptr) override;
+	static CEffect_Mesh_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void						Free()			override;
 };
 END

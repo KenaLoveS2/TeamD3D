@@ -2,7 +2,7 @@
 #include "..\public\Effect_Base_S2.h"
 #include "GameInstance.h"
 
-CEffect_Base_S2::CEffect_Base_S2(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CGameObject(pDevice, pContext)
 	, m_pTarget(nullptr)
 	, m_iRenderPass(0)
@@ -10,13 +10,15 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
 	, m_bActive(false)
+	, m_fDissolveAlpha(0.f)
+	, m_fDissolveSpeed(0.f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrixOriginal, XMMatrixIdentity());
 }
 
-CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2 & rhs)
+CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	: CGameObject(rhs)
 	, m_pTarget(nullptr)
 	, m_iRenderPass(0)
@@ -24,6 +26,8 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2 & rhs)
 	, m_vColor(1.f, 1.f, 1.f, 1.f)
 	, m_fHDRIntensity(1.f)
 	, m_bActive(false)
+	, m_fDissolveAlpha(0.f)
+	, m_fDissolveSpeed(0.f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -38,7 +42,7 @@ HRESULT CEffect_Base_S2::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEffect_Base_S2::Initialize(void * pArg)
+HRESULT CEffect_Base_S2::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -46,7 +50,7 @@ HRESULT CEffect_Base_S2::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CEffect_Base_S2::Late_Initialize(void * pArg)
+HRESULT CEffect_Base_S2::Late_Initialize(void* pArg)
 {
 	return S_OK;
 }
