@@ -7,7 +7,6 @@
 #define TRIGGER_DUMMY			-1
 
 
-
 BEGIN(Engine)
 #pragma region Struct, Enum, Global Function 
 

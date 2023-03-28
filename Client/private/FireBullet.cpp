@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "Bone.h"
 #include "Effect_Base.h"
-#include "Kena.h"
+#include "Monster.h"
 
 CFireBullet::CFireBullet(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -54,37 +54,66 @@ HRESULT CFireBullet::Initialize(void * pArg)
 
 	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
 	m_eEFfectDesc.bActive = false;
+
+	m_pTransformCom->Set_Position(m_vInvisiblePos);
+	
 	return S_OK;
 }
 
 HRESULT CFireBullet::Late_Initialize(void * pArg)
 {
-	_float3 vPos = _float3(0.f, 0.f, 0.f);
-	_float3 vPivotScale = _float3(0.05f, 0.5f, 1.f);
-	_float3 vPivotPos = _float3(0.f, 0.f, 0.35f);
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.05f, 0.5f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.35f);
 
-	// Capsule X == radius , Y == halfHeight
-	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	PxSphereDesc.eType = SPHERE_DYNAMIC;
-	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
-	PxSphereDesc.fRadius = vPivotScale.x;
-	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxSphereDesc.fDensity = 1.f;
-	PxSphereDesc.fAngularDamping = 0.5f;
-	PxSphereDesc.fMass = 59.f;
-	PxSphereDesc.fLinearDamping = 1.f;
-	PxSphereDesc.bCCD = true;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_WEAPON;
-	PxSphereDesc.fDynamicFriction = 0.5f;
-	PxSphereDesc.fStaticFriction = 0.5f;
-	PxSphereDesc.fRestitution = 0.1f;
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = m_szCloneObjectTag;
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER_ARROW));
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+	}
 
-	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
-	m_pRendererCom->Set_PhysXRender(true);
+	{
+		_float3 vPos = _float3(0.f, 0.f, 0.f);
+		_float3 vPivotScale = _float3(0.05f, 0.5f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.f, 0.35f);
 
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
+		PxSphereDesc.eType = SPHERE_DYNAMIC;
+		PxSphereDesc.pActortag = CUtile::Create_DummyString();
+		PxSphereDesc.vPos = vPos;
+		PxSphereDesc.fRadius = vPivotScale.x;
+		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxSphereDesc.fDensity = 1.f;
+		PxSphereDesc.fAngularDamping = 0.5f;
+		PxSphereDesc.fMass = 59.f;
+		PxSphereDesc.fLinearDamping = 1.f;
+		PxSphereDesc.bCCD = true;
+		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+		PxSphereDesc.fDynamicFriction = 0.5f;
+		PxSphereDesc.fStaticFriction = 0.5f;
+		PxSphereDesc.fRestitution = 0.1f;
+
+		CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(m_pOnwerMonster, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, g_IdentityFloat4x4);
+	}
+		
 	return S_OK;
 }
 
@@ -225,7 +254,8 @@ void CFireBullet::Free()
 
 void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 {
-	m_vTargetPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	m_vTargetPos = CMonster::Get_MonsterUseKenaPos();
+	m_vTargetPos.y += 1.f;
 
 	switch (m_eState)
 	{
@@ -247,18 +277,20 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	}
 	case STATE_CHASE:
 	{	
-		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f);
+		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f, true);
 		
-		if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f))
-			m_bCollision = true;
+		// if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f)) m_bCollision = true;
 
-		if (m_bCollision)
-			m_eState = STATE_EXPLOSION_START;
+		m_eState = m_bCollision ? STATE_EXPLOSION_START : m_eState;
 
 		break;
 	}
 	case STATE_EXPLOSION_START:
 	{	
+		m_vecChild[CHILD_COVER]->Set_Active(false);
+		m_vecChild[CHILD_BACK]->Set_Active(false);
+		
+		m_vecChild[CHILD_EXPLOSION]->Set_InitMatrix(XMMatrixIdentity());
 		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
 		m_vecChild[CHILD_EXPLOSION]->Set_Position(m_vTargetPos);
 
@@ -270,7 +302,9 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 		_bool bActive = m_vecChild[CHILD_EXPLOSION]->Get_Active();
 		
 		if (bActive == false)
+		{
 			m_eState = STATE_RESET;
+		}	
 
 		break;
 	}
@@ -278,6 +312,7 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	{
 		m_eEFfectDesc.bActive = false;
 		m_bCollision = false;
+		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		m_eState = STATE_WAIT;
 		break;
 	}
@@ -288,16 +323,20 @@ void CFireBullet::Execute_Create(_float4 vCreatePos)
 {
 	m_eEFfectDesc.bActive = true;
 	m_pTransformCom->Set_Position(vCreatePos);
+	m_pTransformCom->LookAt(CMonster::Get_MonsterUseKenaPos());
 
-	m_vTargetPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	m_vecChild[CHILD_COVER]->Set_Active(true);
+	m_vecChild[CHILD_BACK]->Set_Active(true);
+	m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
 }
 
 _int CFireBullet::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	if (pTarget && iColliderIndex == COL_PLAYER)
+	if (pTarget && m_eEFfectDesc.bActive)
 	{
 		m_bCollision = true;
-	}
+	}	
 
 	return 0;
 }
+

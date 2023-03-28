@@ -35,7 +35,6 @@ HRESULT CE_P_KenaHeavyAttack_Into::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_eEFfectDesc.bActive = false;
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.1f, 0.3f));
 	return S_OK;
 }
 

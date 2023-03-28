@@ -40,8 +40,8 @@ HRESULT CSapling::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 14.f;
-		m_Desc.WorldMatrix._43 = 5.f;
+		m_Desc.WorldMatrix._41 = -10.f;
+		m_Desc.WorldMatrix._43 = -10.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
@@ -70,9 +70,9 @@ HRESULT CSapling::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 20.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
 		PxCapsuleDesc.bCCD = true;
 		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_BODY;
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
@@ -124,8 +124,8 @@ void CSapling::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
-	if (m_pEffects) m_pEffects->Late_Tick(fTimeDelta);
 
+	if (m_pEffects) m_pEffects->Late_Tick(fTimeDelta);
 }
 
 HRESULT CSapling::Render()
@@ -158,9 +158,7 @@ HRESULT CSapling::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
-
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_DissolveTexture");
-
 			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
 		}
 	}
@@ -425,13 +423,8 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
-	})
-		.AddTransition("to TAKEDAMAGE_OR_PARRIED", "TAKEDAMAGE_OR_PARRIED")
-		.Predicator([this]()
-	{
-		return m_bWeaklyHit || m_bStronglyHit || IsParried();
-	})
+		return m_pMonsterStatusCom->IsDead() || AnimFinishChecker(CHARGEATTACK);
+	})		
 
 		.AddState("DYING")
 		.OnStart([this]()
@@ -446,7 +439,7 @@ HRESULT CSapling::SetUp_State()
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_pModelCom->Get_AnimationFinish();
+		return m_pModelCom->Get_AnimationFinish() && m_pEffects->Get_Active() == false;
 	})
 
 
@@ -479,18 +472,17 @@ HRESULT CSapling::SetUp_Components()
 
 		if (i == 0) // Boom
 		{
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/Noise_cloudsmed.png")), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Deadzone_REAM.png")), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Black_Linear.png")), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_GR_Noise_Smooth_A.png")), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/Noise_cloudsmed.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_SPECULAR, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Deadzone_REAM.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_Black_Linear.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_ALPHA, TEXT("../Bin/Resources/Anim/Enemy/EnemyWisp/Texture/T_GR_Noise_Smooth_A.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
 		}
 
 		if (i == 1 || i == 2 || i == 4) // Body
 		{
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Sapling/stick_02_AO_R_M.png")), E_FAIL);
-
-			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Sapling/stick_02_AO_R_M.png")), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(i, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_105.png")), E_FAIL);
 		}
 	}
 

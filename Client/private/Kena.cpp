@@ -280,9 +280,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 10.f;
+	PxCapsuleDesc.fMass = KENA_MASS;
+	PxCapsuleDesc.fAngularDamping = KENA_ANGULAR_DAMING;
+	PxCapsuleDesc.fLinearDamping = KENA_LINEAR_DAMING;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
@@ -928,6 +928,18 @@ void CKena::Imgui_RenderProperty()
 	_float2	ShieldRecoveryTime{ m_pKenaStatus->Get_CurShieldRecoveryTime(), m_pKenaStatus->Get_InitShieldRecoveryTime() };
 	ImGui::InputFloat2("Shield Recovery Time", (_float*)&ShieldRecoveryTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
+	/*
+	// TEST
+	public: // TEMP
+	_float m_fLinearDamping = 1.f, m_fAngularDamping = 0.5f, m_fMass = 20000.f;
+	ImGui::DragFloat("Linear Damping", &m_fLinearDamping, 0.01f, -100.f, 100.0f);	
+	ImGui::DragFloat("Angular Damping", &m_fAngularDamping, 0.01f, -100.f, 100.0f);
+	ImGui::DragFloat("Mass", &m_fMass, 1.f, 0.f, 500000.f);	
+	PxRigidDynamic* pDynamic = (PxRigidDynamic*)m_pTransformCom->Get_Actor();
+	pDynamic->setLinearDamping(m_fLinearDamping);
+	pDynamic->setAngularDamping(m_fAngularDamping);
+	pDynamic->setMass(m_fMass);
+	*/
 	__super::Imgui_RenderProperty();
 }
 
@@ -1451,13 +1463,12 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
 
-	/* Kena Damage Parry Value */
-	//_bool bHit = false;
-	//if (m_bHeavyHit == true || m_bCommonHit == true)
-	//	bHit = true;
-	//m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
-	//m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
-	//m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
+	_bool bHit = false;
+	if (m_bHeavyHit == true || m_bCommonHit == true)
+		bHit = true;
+	m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
+	m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
 
 	return S_OK;
 }

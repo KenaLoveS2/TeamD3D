@@ -50,7 +50,7 @@ void CGrass::Late_Tick(_float fTimeDelta)
 	
 	const _vector	 vDir = camPos - vPos;
 
-	_bool bRenderCheck =	CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 50.f);
+	_bool bRenderCheck =	CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
 
 	_float f = XMVectorGetX(XMVector4Length(vDir));
 

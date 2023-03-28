@@ -51,7 +51,7 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		PxSphereDesc.bCCD = false;
 		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		pPhysX->Create_Sphere(PxSphereDesc, Create_PxUserData(m_WeaponDesc.pOwnerMonster, false, COL_MONSTER_WEAPON));
+		pPhysX->Create_Sphere(PxSphereDesc, Create_PxUserData(m_WeaponDesc.pOwnerMonster, false, COL_MONSTER_ARROW));
 		
 		XMStoreFloat4x4(&m_ColliderPivotMatrix, XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));		
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);

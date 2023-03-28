@@ -95,11 +95,11 @@ void CE_Warrior_PlaneRoot::Tick(_float fTimeDelta)
 
 void CE_Warrior_PlaneRoot::Late_Tick(_float fTimeDelta)
 {
-   	if (m_eEFfectDesc.bActive == false)
-	{
-		m_fTimeDelta = 0.0f;
-		return;
-	}
+ //  	if (m_eEFfectDesc.bActive == false)
+	//{
+	//	m_fTimeDelta = 0.0f;
+	//	return;
+	//}
 
 	__super::Late_Tick(fTimeDelta);
 

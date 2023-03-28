@@ -41,7 +41,6 @@ HRESULT CE_P_Flower::Initialize(void * pArg)
 	RELEASE_INSTANCE(CGameInstance);
 
 	m_pVIInstancingBufferCom->Set_ShapePosition();
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.5f, 0.5f));
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 2.f);
 	return S_OK;
 }
@@ -59,16 +58,18 @@ void CE_P_Flower::Tick(_float fTimeDelta)
 		m_pKena = (CKena*)	pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 		RELEASE_INSTANCE(CGameInstance);
 	}
-
-	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
-	_float4 vMyPos = m_pTransformCom->Get_Position();
-	 
-	_float vDistance = XMVectorGetX(XMVector3Length(vKenaPos - vMyPos));
-	if(vDistance > 50.f)
+	else 
 	{
-		vKenaPos.y = 1.0f;
-		m_pTransformCom->Set_Position(vKenaPos);
+		_vector vPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		m_pTransformCom->Set_Position(vPos);
+	}
+
+
+	m_fTimeDelta += fTimeDelta;
+	if (m_fTimeDelta > 60.f)
+	{
 		m_pVIInstancingBufferCom->Set_ShapePosition();
+		m_fTimeDelta = 0.0f;
 	}
 }
 

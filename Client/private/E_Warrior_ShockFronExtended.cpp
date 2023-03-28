@@ -108,7 +108,7 @@ void CE_Warrior_ShockFrontExtended::Tick(_float fTimeDelta)
 		vScaled.y += 2.0f + fTimeDelta;
 		vScaled.z += 2.0f + fTimeDelta;
 		m_pTransformCom->Set_Scaled(vScaled);
-		m_vecChild[1]->Get_TransformCom()->Set_Scaled(vScaled * 3.0f);
+		m_vecChild[1]->Get_TransformCom()->Set_Scaled(vScaled * 2.3f);
 	}
 
 	// m_pTransformCom->Tick(fTimeDelta);
