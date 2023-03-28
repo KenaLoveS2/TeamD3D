@@ -1620,6 +1620,22 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 		CEffect_Texture_Base::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+
+	/* Test For Other Category */
+	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+	//	CTerrain::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "VillageCart", true, true, true)))
+		assert(!"VillageCart");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
+		CHatCart::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* ~Test For Other Category */
+
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -1883,7 +1899,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 	/* For.Prototype_Component_Texture_Effect */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 135))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_%d.png"), 136))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_NormalEffect */

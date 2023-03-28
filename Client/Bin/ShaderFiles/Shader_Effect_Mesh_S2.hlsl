@@ -18,6 +18,10 @@ float			g_fHDRItensity;
 
 float			g_fCutY;			 /* For. discard Y Range option */
 
+float			g_fUVSpeedX = 0.f;
+float			g_fUVSpeedY = 0.f;
+
+
 struct VS_IN
 {
 	float3		vPosition	: POSITION;
@@ -159,6 +163,34 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_HunterString(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2	texUV		= In.vTexUV;
+	texUV.x += g_fUVSpeedX;
+	texUV.y += g_fUVSpeedY;
+	float4	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	float4	vMask		= g_MaskTexture.Sample(LinearSampler, texUV);
+
+	float	vDiffuseR = vDiffuse.r;
+	vMask *= g_vMaskColor;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
+
+	Out.vDiffuse *= g_vColor;
+	Out.vDiffuse.rgb *= g_fHDRItensity;
+
+	if (In.vInPosition.y > g_fCutY)
+		discard;
+
+	if (vDiffuseR < g_fDissolveAlpha)
+		discard;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default //0
@@ -211,5 +243,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
+	}
+
+	pass HunterString // 4
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_HunterString();
 	}
 }

@@ -15,6 +15,7 @@
 #include "Imgui_MapEditor.h"
 #include "Imgui_Effect.h"
 #include "CinematicCamera.h"
+#include "Imgui_TerrainEditor.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -240,9 +241,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
+	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
+
 	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
 	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "HatCart.json");
 
 	return S_OK;
 }

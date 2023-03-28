@@ -284,9 +284,9 @@ HRESULT CBossHunter::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(IDLE);
 		m_pModelCom->Set_AnimIndex(IDLE);
 
-		//CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-		//_float fValue = 30.f; /* == BossHunter Name */
-		//m_BossHunterDelegator.broadcast(eBossHP, fValue);
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = 30.f; /* == BossHunter Name */
+		m_BossHunterDelegator.broadcast(eBossHP, fValue);
 	})
 		.OnExit([this]()
 	{
@@ -1088,9 +1088,9 @@ _int CBossHunter::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			
-		/*	CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
-			m_BossHunterDelegator.broadcast(eBossHP, fGauge);*/
+			m_BossHunterDelegator.broadcast(eBossHP, fGauge);
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);

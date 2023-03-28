@@ -52,8 +52,10 @@ private:
 		COLL_END
 	};
 
-private:
+public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
+
+private:
 
 	CBone* m_pBodyBone = nullptr;
 	_float4x4 m_BodyPivotMatrix;

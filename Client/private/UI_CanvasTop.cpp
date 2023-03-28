@@ -10,6 +10,8 @@
 #include "UI_NodeRotArrow.h"
 #include "UI_NodeBossHP.h"
 #include "BossWarrior.h"
+#include "BossShaman.h"
+#include "BossHunter.h"
 
 CUI_CanvasTop::CUI_CanvasTop(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CUI_Canvas(pDevice,pContext)
@@ -111,14 +113,27 @@ HRESULT CUI_CanvasTop::Bind()
 	pKena->Get_Status()->m_StatusDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
 
+	/* Boss Warrior Bind */
 	CBossWarrior* pBossWarrior = dynamic_cast<CBossWarrior*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
 		L"Layer_Monster", L"BossWarrior_0"));
 	if (pBossWarrior == nullptr)
 		return E_FAIL;
 	pBossWarrior->m_BossWarriorDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
+	/* Boss Shaman Bind */
+	CBossShaman* pShaman = dynamic_cast<CBossShaman*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Monster", L"BossShaman_0"));
+	if (pShaman == nullptr)
+		return E_FAIL;
+	pShaman->m_BossShamanDelegator.bind(this, &CUI_CanvasTop::BindFunction);
 
-	RELEASE_INSTANCE(CGameInstance);
+	/* Boss Hunter Bind */
+	CBossHunter* pBossHunter = dynamic_cast<CBossHunter*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,
+		L"Layer_Monster", L"BossHunter_0"));
+	if (pBossHunter == nullptr)
+		return E_FAIL;
+	pBossHunter->m_BossHunterDelegator.bind(this, &CUI_CanvasTop::BindFunction);
+
 
 	m_bBindFinished = true;
 	return S_OK;

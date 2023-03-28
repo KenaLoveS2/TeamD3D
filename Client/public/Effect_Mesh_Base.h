@@ -61,6 +61,8 @@ private:
 
 	_float							m_fCutY = 0.f;
 	_int							m_iModelIndex = -1;
+	_int							m_iMeshIndex = 0;
+	_float							m_fUVSpeeds[2];
 
 public:
 	static CEffect_Mesh_Base* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

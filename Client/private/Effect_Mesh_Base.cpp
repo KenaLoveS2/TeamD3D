@@ -9,6 +9,7 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext*
 	, m_pModelCom(nullptr)
 	, m_pVIBufferCom(nullptr)
 	, m_iModelIndex(-1)
+	, m_iMeshIndex(0)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
@@ -18,6 +19,9 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext*
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
+
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVSpeeds[i] = 0.f;
 }
 
 CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
@@ -27,6 +31,7 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
 	, m_pModelCom(nullptr)
 	, m_pVIBufferCom(nullptr)
 	, m_iModelIndex(-1)
+	, m_iMeshIndex(0)
 {
 	for (_uint i = 0; i < TEXTURE_END; ++i)
 	{
@@ -36,6 +41,9 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
+
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVSpeeds[i] = 0.f;
 }
 
 HRESULT CEffect_Mesh_Base::Initialize_Prototype()
@@ -100,6 +108,25 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 			m_bActive = false;
 		}
 	}
+
+	if (4 == m_iRenderPass) /* Diffuse dissolve Pass */
+	{
+		m_fDissolveAlpha += m_fDissolveSpeed * fTimeDelta;
+
+
+		if (m_fDissolveAlpha > 0.3)
+		{
+			m_fDissolveAlpha = 0.3f;
+			m_fDissolveSpeed *= -1;
+		}
+
+		else if (m_fDissolveAlpha < 0.f)
+		{
+			m_fDissolveAlpha = 0.f;
+			m_fDissolveSpeed *= -1;
+		}
+
+	}
 }
 
 void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
@@ -123,10 +150,15 @@ HRESULT CEffect_Mesh_Base::Render()
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
 	{
-			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-			//m_pModelCom->Bind_Material(m_pShaderCom, 0, m_eTextureType, "g_DiffuseTexture");
-		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_iRenderPass);
+		if (m_iMeshIndex < (_int)iNumMeshes)
+		{
+			m_pModelCom->Render(m_pShaderCom, m_iMeshIndex, nullptr, m_iRenderPass);
+			//m_pModelCom->Bind_Material(m_pShaderCom, m_iMeshIndex, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+			//m_pModelCom->Bind_Material(m_pShaderCom, m_iMeshIndex, WJTextureType_MASK, "g_MaskTexture");
+		}
+		//
 	}
 
 	return S_OK;
@@ -166,17 +198,23 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 		}
 	}
 
+	/* Mesh Index */
+	static _int iMeshIndex;
+	iMeshIndex = m_iMeshIndex;
+	if (ImGui::DragInt("Mesh Index", &iMeshIndex, 1, 0, 50))
+		m_iMeshIndex = iMeshIndex;
+
 	/* RenderPass */
 	static _int iRenderPass;
 	iRenderPass = m_iRenderPass;
-	const char* renderPass[4] = { "Default", "OnlyColor", "DefaultMask", "Dissolve" };
-	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
+	const char* renderPass[5] = { "Default", "OnlyColor", "DefaultMask", "Dissolve", "HunterString"};
+	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
 		m_iRenderPass = iRenderPass;
 
 	/* Dissolve Play */
 	static _float fDissolveSpeed = 0.f;
 	fDissolveSpeed = m_fDissolveSpeed;
-	if (ImGui::DragFloat("DissolveSpeed", &fDissolveSpeed, 0.01f, 0.0f, 10.f))
+	if (ImGui::DragFloat("DissolveSpeed", &fDissolveSpeed, 0.001f, -10.0f, 10.f))
 		m_fDissolveSpeed = fDissolveSpeed;
 	if (ImGui::Button("Dissolve Play"))
 	{
@@ -387,6 +425,17 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveAlpha", &m_fDissolveAlpha, sizeof(_float))))
 		return E_FAIL;
 
+
+	m_fUVSpeeds[0] += 0.01f;
+	m_fUVSpeeds[1] = 0.f;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVSpeeds[0], sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVSpeeds[1], sizeof(_float))))
+		return E_FAIL;
+
+
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -443,6 +492,9 @@ HRESULT CEffect_Mesh_Base::SetUp_Model(_int iModelIndex)
 		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 		break;
+	case 7: 
+		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
 	default:
 		break;
 	}
@@ -460,6 +512,8 @@ HRESULT CEffect_Mesh_Base::Set_ModelCom()
 	ImGui::RadioButton("ShockBall", &iSelected, 4);
 	ImGui::RadioButton("Cylinder", &iSelected, 5); ImGui::SameLine();
 	ImGui::RadioButton("HunterArrow", &iSelected, 6); ImGui::SameLine();
+	ImGui::RadioButton("Hunter", &iSelected, 7); ImGui::SameLine();
+
 
 	if (ImGui::Button("Model Confirm"))
 	{
