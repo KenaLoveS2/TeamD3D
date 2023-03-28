@@ -194,6 +194,13 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	
 	Init_Rendering();
 
+	/*
+	PxControllerManager* pControlllerManager = PxCreateControllerManager(*m_pScene);
+	PxCapsuleControllerDesc PxContollerDesc;
+	PxContollerDesc.
+	pControlllerManager
+	*/
+
 	return S_OK;
 }
 
@@ -1253,3 +1260,4 @@ void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
 	PxGeometryHolder newGeometry = shape->getGeometry();
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, bFlag);
 }
+
