@@ -1,0 +1,26 @@
+Materials[1] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_CherryBlossomLeaf.MI_CherryBlossomLeaf'
+}
+SourceModels[0] = {}
+StaticMaterials[1] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Mochi/MaterialLibrary/GroundCover/MI_CherryBlossomLeaf.MI_CherryBlossomLeaf'
+        MaterialSlotName = Sakura_Flower
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 252.335, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=-0.0235548, Y=0.0656013, Z=1.42997 }
+    BoxExtent = { X=7.78669, Y=7.78669, Z=0.837385 }
+    SphereRadius = 11.0438
+}

@@ -1,0 +1,10 @@
+Diffuse=T_CherryBlossomTreeAlive_Flowers_D
+Normal=T_CherryBlossomTreeAlive_Flowers_N
+Other[0]=T_Trees_Woodland_Msk
+Other[1]=T_CherryBlossomTreeAlive_Flowers_Comp_E_R_AO
+Other[2]=Good64x64TilingNoiseHighFreq
+Other[3]=T_Grass_Msk
+Other[4]=T_Trees_Comp_M_R_Ao
+Other[5]=T_Trees_D
+Other[6]=T_Trees_N
+Other[7]=Noize_Wave_N
