@@ -2,15 +2,15 @@
 #include "..\public\E_Distortion_Plane.h"
 #include "GameInstance.h"
 
-CE_Distortion_Plane::CE_Distortion_Plane(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CE_Distortion_Plane::CE_Distortion_Plane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect_Mesh(pDevice, pContext)
 {
 }
 
-CE_Distortion_Plane::CE_Distortion_Plane(const CE_Distortion_Plane & rhs)
-	:CEffect_Mesh(rhs)
+CE_Distortion_Plane::CE_Distortion_Plane(const CE_Distortion_Plane& rhs)
+	: CEffect_Mesh(rhs)
 {
-	
+
 }
 
 HRESULT CE_Distortion_Plane::Initialize_Prototype(const _tchar* pFilePath)
@@ -23,7 +23,7 @@ HRESULT CE_Distortion_Plane::Initialize_Prototype(const _tchar* pFilePath)
 	return S_OK;
 }
 
-HRESULT CE_Distortion_Plane::Initialize(void * pArg)
+HRESULT CE_Distortion_Plane::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
@@ -35,16 +35,28 @@ HRESULT CE_Distortion_Plane::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.vColor = XMVectorSet(1.0f, 1.0f, 1.0f, 0.05f);
+	m_eEFfectDesc.fFrame[0] = 97.f;
 	return S_OK;
 }
 
-HRESULT CE_Distortion_Plane::Late_Initialize(void * pArg)
-{	
+HRESULT CE_Distortion_Plane::Late_Initialize(void* pArg)
+{
 	return S_OK;
 }
 
 void CE_Distortion_Plane::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("CE_Distortion_Plane");
+
+	if (ImGui::Button("Recompile"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::InputFloat("Diffuse", (_float*)&m_eEFfectDesc.fFrame);
+	ImGui::InputFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
+
+	ImGui::End();
+
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_fTimeDelta = 0.0f;
@@ -53,24 +65,43 @@ void CE_Distortion_Plane::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
 
 	if (m_fTimeDelta > 2.f)
 	{
 		m_eEFfectDesc.bActive = false;
+		m_pTransformCom->Set_Scaled(_float3(0.5f, 0.5f, 0.5f));
 		m_fTimeDelta = 0.0f;
+	}
+	else
+	{
+		vScaled.x += fTimeDelta * 2.f + 0.4f;
+		vScaled.y += fTimeDelta * 2.f + 0.4f;
+		vScaled.z += fTimeDelta * 2.f + 0.4f;
+		m_pTransformCom->Set_Scaled(vScaled);
 	}
 }
 
 void CE_Distortion_Plane::Late_Tick(_float fTimeDelta)
 {
-   	if (m_eEFfectDesc.bActive == false)
-   		return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)
 	{
+		/*  Billboard */
+s		_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
+		_float4 vCamUp = CGameInstance::GetInstance()->Get_CamUp_Float4();
+		_float4 vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float4();
+		_float4 vPos = m_pTransformCom->Get_Position();
 
+		_float4 vDir = XMVector3Normalize(vCamLook - vPos);
+
+		m_pTransformCom->Set_Right(vCamRight * -1.f);
+		m_pTransformCom->Set_Up(vDir);
+		m_pTransformCom->Set_Look(vCamUp);
 	}
 
 	if (nullptr != m_pRendererCom)
@@ -119,9 +150,9 @@ void CE_Distortion_Plane::Imgui_RenderProperty()
 {
 }
 
-CE_Distortion_Plane * CE_Distortion_Plane::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)
+CE_Distortion_Plane* CE_Distortion_Plane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath)
 {
-	CE_Distortion_Plane * pInstance = new CE_Distortion_Plane(pDevice,pContext);
+	CE_Distortion_Plane* pInstance = new CE_Distortion_Plane(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pFilePath)))
 	{
@@ -131,9 +162,9 @@ CE_Distortion_Plane * CE_Distortion_Plane::Create(ID3D11Device * pDevice, ID3D11
 	return pInstance;
 }
 
-CGameObject * CE_Distortion_Plane::Clone(void * pArg)
+CGameObject* CE_Distortion_Plane::Clone(void* pArg)
 {
-	CE_Distortion_Plane * pInstance = new CE_Distortion_Plane(*this);
+	CE_Distortion_Plane* pInstance = new CE_Distortion_Plane(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -144,6 +175,6 @@ CGameObject * CE_Distortion_Plane::Clone(void * pArg)
 }
 
 void CE_Distortion_Plane::Free()
-{  
+{
 	__super::Free();
 }

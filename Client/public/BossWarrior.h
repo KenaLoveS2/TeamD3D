@@ -115,6 +115,7 @@ private:	/* Animation Event Func */
 
 	// EnrageInto
 	void TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnEnrage(_bool bIsInit, _float fTimeDelta);
 	void TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta);
 
 private:
