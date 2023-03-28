@@ -94,7 +94,7 @@
 #include "Effect_Mesh_Base.h"
 #include "Effect_Texture_Base.h"
 
-/* Effects */
+#pragma region Effect_h
 #include "Effect_Point_Instancing.h"
 //Pulse
 #include "E_KenaPulse.h"
@@ -164,7 +164,9 @@
 #include "E_Hieroglyph.h"
 #include "E_P_ShockFrontEntended.h"
 #include "E_Warrior_ShockFronExtended_Plane.h"
-/* ~Effects */
+#include "E_EnrageAttack.h"
+#include "E_P_Enrage.h"
+#pragma endregion Effect_h
 
 /* Components*/
 #include "ControlMove.h"
@@ -182,9 +184,6 @@ unsigned int	g_LEVEL = 0;
 
 #include "Json/json.hpp"
 #include <fstream>
-
-
-
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -2253,6 +2252,16 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_GameObject_EnrageInto */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageInto"),
 		CE_EnrageInto::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageInto.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnrageAttack */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageAttack"),
+		CE_EnrageAttack::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageStatue.json"))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnrageAttack_P */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageAttack_P"),
+		CE_P_Enrage::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_P_Enrage.json"))))
 		return E_FAIL;
 
 #pragma endregion Effect_Object

@@ -118,6 +118,8 @@ private:	/* Animation Event Func */
 	void	TurnOnEnrage(_bool bIsInit, _float fTimeDelta);
 	void TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta);
 
+	void TurnOffEffects(_bool bIsInit, _float fTimeDelta);
+
 private:
 	_float3 m_vWeaPonPivotTrans = {-1.76f, 0.03f, -2.2f};
 	_float3 m_vWeaPonPivotRot= {1.57f, 3.13f, -0.31f};

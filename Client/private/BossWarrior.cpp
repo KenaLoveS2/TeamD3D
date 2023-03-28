@@ -319,6 +319,8 @@ void CBossWarrior::Push_EventFunctions()
 	TurnOnEnrage_Into(true, 0.0f);
 	TurnOnEnrage(true, 0.0f);
 	TurnOnEnrage_Attck(true, 0.0f);
+
+	TurnOffEffects(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -347,7 +349,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-				/* HP Bar Active */
+		/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
@@ -1279,6 +1281,22 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
+}
+
+void CBossWarrior::TurnOffEffects(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOffEffects);
+		return;
+	}
+
+	for (auto& Pair : m_mapEffect)
+	{
+		if (Pair.second->Get_Active() == true)
+			Pair.second->Set_Active(false);
+	}
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

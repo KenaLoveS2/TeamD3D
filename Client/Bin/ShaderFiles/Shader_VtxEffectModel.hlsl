@@ -47,6 +47,7 @@ uint	g_PulseState;
 /* HpRatio */
 
 bool	g_bPulseRecive = false;
+float	g_RazerValue;
 
 struct VS_IN
 {
@@ -802,7 +803,9 @@ PS_OUT PS_ENRAGE(PS_IN In)
 	In.vTexUV.x = In.vTexUV.x / 1.f;
 	In.vTexUV.y = In.vTexUV.y / 4.f;
 
-	In.vTexUV.y = In.vTexUV.y * 10.f;
+	//In.vTexUV.y = In.vTexUV.y * 10.f;
+	float fRazerValue = min(g_RazerValue * 1.1f, 10.f);
+	In.vTexUV.y = In.vTexUV.y * fRazerValue;
 
 	float  time = frac(g_Time * 1.5f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
@@ -810,14 +813,15 @@ PS_OUT PS_ENRAGE(PS_IN In)
 	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuseTexture.a = vDiffuseTexture.r;
 
-	Out.vDiffuse = vDiffuseTexture + g_vColor;
-
-	float fTime = min(g_Time, 1.f);
-	if (0.5f < fTime)
-		vDiffuseTexture.a = vDiffuseTexture.a * (1.f - fTime);
+	float4 vColor = g_vColor;
+	float fTime = min(g_Time, 2.f);
+	if (1.0f < fTime)
+		vColor.a = vColor.a * (2.f - fTime);
 	else
-		vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 1.f);
+		vColor.a = vColor.a * (fTime / 2.f);
 
+	float4 finalcolor = vDiffuseTexture + vColor;
+	Out.vDiffuse = finalcolor;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
 
@@ -862,11 +866,11 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuseTexture.a = vDiffuseTexture.r;
 
-	//float fTime = min(g_Time * 1.2f, 2.f);
-	//if (1.f < fTime)
-	//	vDiffuseTexture.a = vDiffuseTexture.a * (2.f - fTime);
-	//else
-	//	vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 2.f);
+	float fTime = min(g_Time * 1.2f, 2.f);
+	if (1.f < fTime)
+		vDiffuseTexture.a = vDiffuseTexture.a * (2.f - fTime);
+	else
+		vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 2.f);
 
 	float4 finalcolor = lerp(vDiffuseTexture, vMaskTexture, vDiffuseTexture.r);
 	float fAlpha = 1.0f - abs(In.vTexUV.y - 0.5f) * 2.f;
