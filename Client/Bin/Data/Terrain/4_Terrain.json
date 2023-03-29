@@ -23,7 +23,7 @@
       ],
       "1_CloneTag": "Terrain4",
       "2_DiffuseTag": "Prototype_Component_Texture_Terrain",
-      "3_FillterTag": "Prototype_Component_Texture_Filter",
+      "3_FillterTag": "Prototype_Component_Terrain_Five_Filter",
       "4_NormalTag": "",
       "5_Diffuse_TextureNum": 3,
       "6_FillterOne_TextureNum": 0,
