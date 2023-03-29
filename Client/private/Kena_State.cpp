@@ -3863,6 +3863,8 @@ void CKena_State::Start_Attack_1(_float fTimeDelta)
 	m_pAnimationState->State_Animation("ATTACK_1");
 
 	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
@@ -3870,6 +3872,8 @@ void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
 	m_pAnimationState->State_Animation("ATTACK_1_FROM_RUN");
 
 	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_1_Into_Run(_float fTimeDelta)
@@ -3891,6 +3895,8 @@ void CKena_State::Start_Attack_2(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ATTACK_2");
 	Move(0.f, m_eDir);
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f);
 }
 
 void CKena_State::Start_Attack_2_Into_Run(_float fTimeDelta)
@@ -3912,6 +3918,8 @@ void CKena_State::Start_Attack_3(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ATTACK_3");
 	Move(0.f, m_eDir);
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f);
 }
 
 void CKena_State::Start_Attack_3_Into_Run(_float fTimeDelta)
@@ -3928,6 +3936,8 @@ void CKena_State::Start_Attack_4(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ATTACK_4");
 	Move(0.f, m_eDir);
+
+	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f);
 }
 
 void CKena_State::Start_Attack_4_Into_Run(_float fTimeDelta)
