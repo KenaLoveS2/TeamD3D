@@ -19,9 +19,6 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext*
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
-
-	for (_uint i = 0; i < 2; ++i)
-		m_fUVSpeeds[i] = 0.f;
 }
 
 CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
@@ -42,8 +39,6 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
 
-	for (_uint i = 0; i < 2; ++i)
-		m_fUVSpeeds[i] = 0.f;
 }
 
 HRESULT CEffect_Mesh_Base::Initialize_Prototype()
@@ -127,6 +122,9 @@ void CEffect_Mesh_Base::Tick(_float fTimeDelta)
 		}
 
 	}
+
+
+
 }
 
 void CEffect_Mesh_Base::Late_Tick(_float fTimeDelta)
@@ -241,6 +239,19 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 		m_fCutY = fTest;
 	/* ~ Render Info */
 
+	/* UV speed */
+	static _float fUVSpeed[2];
+	fUVSpeed[0] = m_fUVSpeeds[0];
+	fUVSpeed[1] = m_fUVSpeeds[1];
+	if (ImGui::DragFloat2("UVSpeed", fUVSpeed, 0.001f, -10.f, 10.f))
+	{
+		m_fUVSpeeds[0] = fUVSpeed[0];
+		m_fUVSpeeds[1] = fUVSpeed[1];
+	}
+
+
+
+
 	ImGui::Separator();
 	Save_Data();
 
@@ -285,6 +296,12 @@ HRESULT CEffect_Mesh_Base::Save_Data()
 			json["03. HDR Intensity"] = m_fHDRIntensity;
 			json["04. Model Index"] = m_iModelIndex;
 			json["05. CutY"] = m_fCutY;
+			for (_uint i = 0; i < 2; ++i)
+			{
+				_float fElement = m_fUVSpeeds[i];
+				json["06. UVSpeeds"].push_back(fElement);
+			}
+
 
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
 			json["11. MaskTextureIndex"] = m_iTextureIndices[TEXTURE_MASK];
@@ -334,6 +351,14 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 	jLoad["04. Model Index"].get_to<_int>(m_iModelIndex);
 
 	jLoad["05. CutY"].get_to<_float>(m_fCutY);
+
+	if (jLoad.contains("06. UVSpeeds"))
+	{
+		i = 0;
+		for (auto fElement : jLoad["06. UVSpeeds"])
+			fElement.get_to<_float>(m_fUVSpeeds[i++]);
+
+	}
 
 	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
 	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
@@ -425,13 +450,10 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveAlpha", &m_fDissolveAlpha, sizeof(_float))))
 		return E_FAIL;
 
-
-	m_fUVSpeeds[0] += 0.01f;
-	m_fUVSpeeds[1] = 0.f;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVSpeeds[0], sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVSpeeds[1], sizeof(_float))))
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
 		return E_FAIL;
 
 

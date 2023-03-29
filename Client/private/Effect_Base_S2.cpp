@@ -12,10 +12,25 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_bActive(false)
 	, m_fDissolveAlpha(0.f)
 	, m_fDissolveSpeed(0.f)
+	, m_fFrameSpeed(0.f)
+	, m_fFrameNow(0.f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrixOriginal, XMMatrixIdentity());
+
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		m_iFrames[i] = 1;		
+		m_iFrameNow[i] = 0;
+		m_fUVSpeeds[i] = 0.f;
+		m_fUVMove[i] = 0.f;
+	}
+
+	for (_uint i = 0; i < OPTION_END; ++i)
+		m_bOptions[i] = false;
+
 }
 
 CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
@@ -28,10 +43,20 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_bActive(false)
 	, m_fDissolveAlpha(0.f)
 	, m_fDissolveSpeed(0.f)
+	, m_fFrameSpeed(0.f)
+	, m_fFrameNow(0.f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrixOriginal, XMMatrixIdentity());
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		m_iFrames[i] = 1;		/* -1 means the effect is not sprite animation */
+		m_iFrameNow[i] = 0;
+		m_fUVSpeeds[i] = 0.f;
+		m_fUVMove[i] = 0.f;
+	}
 }
 
 HRESULT CEffect_Base_S2::Initialize_Prototype()
@@ -64,6 +89,35 @@ void CEffect_Base_S2::Tick(_float fTimeDelta)
 		_float4 vTargetPos = m_pTarget->Get_TransformCom()->Get_Position();
 		m_pTransformCom->Set_Position(vTargetPos);
 	}
+
+	/* UV Animation */
+	if (true == m_bOptions[OPTION_UV])
+	{
+		for (_uint i = 0; i < 2; ++i)
+		{
+			m_fUVMove[i] += m_fUVSpeeds[i] * fTimeDelta;
+			m_fUVMove[i] = fmodf(m_fUVMove[i], 1);
+
+		}
+	}
+
+	/* Sprite Animation */
+	if (true == m_bOptions[OPTION_SPRITE])
+	{
+		m_fFrameNow += m_fFrameSpeed * fTimeDelta;
+		_float fFrameLast = _float(m_iFrames[0] * m_iFrames[1] - 1);
+		if (m_fFrameNow > fFrameLast)
+		{
+			if (true == m_bOptions[OPTION_SPRITE_REPEAT])
+				m_fFrameNow = 0.f;
+			else
+				m_fFrameNow = fFrameLast;
+		}
+
+		m_iFrameNow[0] = (_int)m_fFrameNow % m_iFrames[0];
+		m_iFrameNow[1] = (_int)m_fFrameNow / m_iFrames[0];
+	}
+
 }
 
 void CEffect_Base_S2::Late_Tick(_float fTimeDelta)

@@ -99,6 +99,7 @@ void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
 	_matrix worldMatrix = XMMatrixIdentity();
 	if (m_pTarget != nullptr)
 	{
+		worldMatrix = m_pTarget->Get_WorldMatrix();
 		worldMatrix = _smatrix::CreateBillboard(
 			XMLoadFloat4(&m_pTarget->Get_TransformCom()->Get_Position()),
 			CGameInstance::GetInstance()->Get_CamPosition_Float3(),
@@ -116,6 +117,8 @@ void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
 
 	_smatrix matLocal = m_LocalMatrix;
 	worldMatrix = matLocal * worldMatrix;
+
+	//worldMatrix = m_pTransformCom->Get_WorldMatrix() * worldMatrix;
 	m_pTransformCom->Set_WorldMatrix(worldMatrix);
 
 	if (nullptr != m_pRendererCom)
@@ -141,6 +144,7 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 	if (ImGui::Button("Reset LocalMatrix"))
 		m_LocalMatrix = m_LocalMatrixOriginal;
 
+	//m_pTransformCom->Imgui_RenderProperty();
 	/* Transform */
 	{
 		/* Local Position */
@@ -211,27 +215,82 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 				}
 			}
 
-			/* RenderPass */
-			static _int iRenderPass;
-			iRenderPass = m_iRenderPass;
-			const char* renderPass[2] = { "Default", "MaskDefault" };
-			if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
-				m_iRenderPass = iRenderPass;
-
 			/* Color */
 			ColorCode(texID);
 
-			/* HDR Intensity (Diffuse) */
-			static _float fAlpha = 1.f;
-			fAlpha = m_fHDRIntensity;
-			if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
-				m_fHDRIntensity = fAlpha;
 		}
 	}
 
+	/* RenderPass */
+	static _int iRenderPass;
+	iRenderPass = m_iRenderPass;
+	const char* renderPass[2] = { "Default", "MaskDefault" };
+	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 2, 5))
+		m_iRenderPass = iRenderPass;
+
+	/* HDR Intensity (Diffuse) */
+	static _float fAlpha = 1.f;
+	fAlpha = m_fHDRIntensity;
+	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+		m_fHDRIntensity = fAlpha;
+
+	/* UV / Sprite Select */
+	static _bool bUV;
+	bUV = m_bOptions[OPTION_UV];
+	if (ImGui::Checkbox("IsUVAnim", &bUV))
+		m_bOptions[OPTION_UV] = bUV;
+	ImGui::SameLine();
+	static _bool bSprite;
+	bSprite = m_bOptions[OPTION_SPRITE];
+	if (ImGui::Checkbox("IsSpriteAnim", &bSprite))
+		m_bOptions[OPTION_SPRITE] = bSprite;
+
+	/* UV speed */
+	static _float fUVSpeed[2];
+	fUVSpeed[0] = m_fUVSpeeds[0];
+	fUVSpeed[1] = m_fUVSpeeds[1];
+	if (ImGui::DragFloat2("UVSpeed", fUVSpeed, 0.001f, -10.f, 10.f))
+	{
+		m_fUVSpeeds[0] = fUVSpeed[0];
+		m_fUVSpeeds[1] = fUVSpeed[1];
+	}
+
+	/* Sprite Animation */
+	static _int iFrames[2];
+	iFrames[0] = m_iFrames[0];
+	iFrames[1] = m_iFrames[1];
+	if (ImGui::DragInt2("Frames", iFrames, 1, 1, 10))
+	{
+		m_iFrames[0] = iFrames[0];
+		m_iFrames[1] = iFrames[1];
+	}
+
+	static _float fFrameSpeed;
+	fFrameSpeed = m_fFrameSpeed;
+	if (ImGui::DragFloat("FrameSpeed", &fFrameSpeed, 0.001f, 0.f, 10.f))
+		m_fFrameSpeed = fFrameSpeed;
+	/* ~ Sprite Animation */
+
+	if (ImGui::Button("Replay"))
+		m_fFrameNow = 0.f;
+	ImGui::SameLine();
+
+	if (ImGui::Button("No UV, Sprite Anim"))
+	{
+		for (_uint i = 0; i < 2; ++i)
+		{
+			m_fUVSpeeds[i] = 0.0f;
+			m_fUVMove[i] = 0.0f;
+			m_fFrameSpeed = 0.f;
+			m_iFrameNow[i] = 0;
+			m_iFrames[i] = 1;
+			m_fFrameNow = 0.f;
+		}
+	}
+
+
 	ImGui::Separator();
 	Save_Data();
-
 
 }
 
@@ -241,6 +300,10 @@ HRESULT CEffect_Texture_Base::Save_Data()
 	ImGui::SetNextItemWidth(200);
 	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
 	ImGui::SameLine();
+	if (ImGui::Button("Reset FileName"))
+		strcpy_s(szSaveFileName, MAX_PATH, m_strEffectTag.c_str());
+	ImGui::SameLine();
+
 	if (ImGui::Button("Save"))
 		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
 
@@ -273,6 +336,17 @@ HRESULT CEffect_Texture_Base::Save_Data()
 				_float fElement = *((float*)&m_vTextureColors[TEXTURE_MASK] + i);
 				json["04. MaskColor"].push_back(fElement);
 			}
+			for (_uint i = 0; i < OPTION_END; ++i)
+				json["05. Options"].push_back(m_bOptions[i]);
+
+			for (_uint i = 0; i < 2; ++i)
+			{
+				json["06. UVSpeed"].push_back(m_fUVSpeeds[i]);
+				json["07. SpriteFrames"].push_back(m_iFrames[i]);
+			}
+			json["08. SpriteSpeed"] = m_fFrameSpeed;
+
+
 
 
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
@@ -333,6 +407,30 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 		for (auto fElement : jLoad["04. MaskColor"])
 			fElement.get_to<_float>(*((_float*)&m_vTextureColors[TEXTURE_MASK] + i++));
 	}
+
+	i = 0;
+	if (jLoad.contains("05. Options"))
+	{
+		for (auto bOption : jLoad["05. Options"])
+			bOption.get_to<_bool>(m_bOptions[i++]);
+	}
+
+	i = 0;
+	if (jLoad.contains("06. UVSpeed"))
+	{
+		for (auto fElement : jLoad["06. UVSpeed"])
+			fElement.get_to<_float>(m_fUVSpeeds[i++]);
+	}
+
+	i = 0;
+	if (jLoad.contains("07. SpriteFrames"))
+	{
+		for (auto fElement : jLoad["07. SpriteFrames"])
+			fElement.get_to<_int>(m_iFrames[i++]);
+	}
+
+	if (jLoad.contains("08. SpriteSpeed"))
+		jLoad["08. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
 
 
 	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
@@ -403,6 +501,35 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
+		return E_FAIL;
+
+	if (m_bOptions[OPTION_UV])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
+			return E_FAIL;
+
+	}
+
+	if (m_bOptions[OPTION_SPRITE])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
+			return E_FAIL;
+	}
+
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
