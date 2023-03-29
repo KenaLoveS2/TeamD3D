@@ -234,60 +234,8 @@ void CEffect_Texture_Base::Imgui_RenderProperty()
 	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
 		m_fHDRIntensity = fAlpha;
 
-	/* UV / Sprite Select */
-	static _bool bUV;
-	bUV = m_bOptions[OPTION_UV];
-	if (ImGui::Checkbox("IsUVAnim", &bUV))
-		m_bOptions[OPTION_UV] = bUV;
-	ImGui::SameLine();
-	static _bool bSprite;
-	bSprite = m_bOptions[OPTION_SPRITE];
-	if (ImGui::Checkbox("IsSpriteAnim", &bSprite))
-		m_bOptions[OPTION_SPRITE] = bSprite;
-
-	/* UV speed */
-	static _float fUVSpeed[2];
-	fUVSpeed[0] = m_fUVSpeeds[0];
-	fUVSpeed[1] = m_fUVSpeeds[1];
-	if (ImGui::DragFloat2("UVSpeed", fUVSpeed, 0.001f, -10.f, 10.f))
-	{
-		m_fUVSpeeds[0] = fUVSpeed[0];
-		m_fUVSpeeds[1] = fUVSpeed[1];
-	}
-
-	/* Sprite Animation */
-	static _int iFrames[2];
-	iFrames[0] = m_iFrames[0];
-	iFrames[1] = m_iFrames[1];
-	if (ImGui::DragInt2("Frames", iFrames, 1, 1, 10))
-	{
-		m_iFrames[0] = iFrames[0];
-		m_iFrames[1] = iFrames[1];
-	}
-
-	static _float fFrameSpeed;
-	fFrameSpeed = m_fFrameSpeed;
-	if (ImGui::DragFloat("FrameSpeed", &fFrameSpeed, 0.001f, 0.f, 10.f))
-		m_fFrameSpeed = fFrameSpeed;
-	/* ~ Sprite Animation */
-
-	if (ImGui::Button("Replay"))
-		m_fFrameNow = 0.f;
-	ImGui::SameLine();
-
-	if (ImGui::Button("No UV, Sprite Anim"))
-	{
-		for (_uint i = 0; i < 2; ++i)
-		{
-			m_fUVSpeeds[i] = 0.0f;
-			m_fUVMove[i] = 0.0f;
-			m_fFrameSpeed = 0.f;
-			m_iFrameNow[i] = 0;
-			m_iFrames[i] = 1;
-			m_fFrameNow = 0.f;
-		}
-	}
-
+	/* Options(UV Animation, Sprite Animation, etc...) */
+	Options();
 
 	ImGui::Separator();
 	Save_Data();
@@ -336,21 +284,20 @@ HRESULT CEffect_Texture_Base::Save_Data()
 				_float fElement = *((float*)&m_vTextureColors[TEXTURE_MASK] + i);
 				json["04. MaskColor"].push_back(fElement);
 			}
-			for (_uint i = 0; i < OPTION_END; ++i)
-				json["05. Options"].push_back(m_bOptions[i]);
-
-			for (_uint i = 0; i < 2; ++i)
-			{
-				json["06. UVSpeed"].push_back(m_fUVSpeeds[i]);
-				json["07. SpriteFrames"].push_back(m_iFrames[i]);
-			}
-			json["08. SpriteSpeed"] = m_fFrameSpeed;
-
-
-
 
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
 			json["11. MaskTextureIndex"] = m_iTextureIndices[TEXTURE_MASK];
+
+			for (_uint i = 0; i < OPTION_END; ++i)
+				json["20. Options"].push_back(m_bOptions[i]);
+
+			for (_uint i = 0; i < 2; ++i)
+			{
+				json["21. UVSpeed"].push_back(m_fUVSpeeds[i]);
+				json["22. SpriteFrames"].push_back(m_iFrames[i]);
+			}
+			json["23. SpriteSpeed"] = m_fFrameSpeed;
+
 
 
 			ofstream file(strSaveDirectory.c_str());
@@ -408,33 +355,32 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 			fElement.get_to<_float>(*((_float*)&m_vTextureColors[TEXTURE_MASK] + i++));
 	}
 
+	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
+	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
+
 	i = 0;
-	if (jLoad.contains("05. Options"))
+	if (jLoad.contains("20. Options"))
 	{
-		for (auto bOption : jLoad["05. Options"])
+		for (auto bOption : jLoad["20. Options"])
 			bOption.get_to<_bool>(m_bOptions[i++]);
 	}
 
 	i = 0;
-	if (jLoad.contains("06. UVSpeed"))
+	if (jLoad.contains("21. UVSpeed"))
 	{
-		for (auto fElement : jLoad["06. UVSpeed"])
+		for (auto fElement : jLoad["21. UVSpeed"])
 			fElement.get_to<_float>(m_fUVSpeeds[i++]);
 	}
 
 	i = 0;
-	if (jLoad.contains("07. SpriteFrames"))
+	if (jLoad.contains("22. SpriteFrames"))
 	{
-		for (auto fElement : jLoad["07. SpriteFrames"])
+		for (auto fElement : jLoad["22. SpriteFrames"])
 			fElement.get_to<_int>(m_iFrames[i++]);
 	}
 
-	if (jLoad.contains("08. SpriteSpeed"))
-		jLoad["08. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
-
-
-	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
-	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
+	if (jLoad.contains("23. SpriteSpeed"))
+		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
 
 	return S_OK;
 }
@@ -496,7 +442,6 @@ HRESULT CEffect_Texture_Base::SetUp_ShaderResources()
 		}
 
 	}
-
 
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))

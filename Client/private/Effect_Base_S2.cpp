@@ -57,6 +57,9 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 		m_fUVSpeeds[i] = 0.f;
 		m_fUVMove[i] = 0.f;
 	}
+
+	for (_uint i = 0; i < OPTION_END; ++i)
+		m_bOptions[i] = false;
 }
 
 HRESULT CEffect_Base_S2::Initialize_Prototype()
@@ -160,6 +163,72 @@ _float4 CEffect_Base_S2::ColorCode()
 		m_fHDRIntensity = fAlpha;
 
 	return vSelectColor;
+}
+
+void CEffect_Base_S2::Options()
+{
+	/* Options 1: UV */
+	static _bool bUV;
+	bUV = m_bOptions[OPTION_UV];
+	if (ImGui::Checkbox("IsUVAnim", &bUV))
+		m_bOptions[OPTION_UV] = bUV;
+	ImGui::SameLine();
+
+	/* Options 2 : Sprite */
+	static _bool bSprite;
+	bSprite = m_bOptions[OPTION_SPRITE];
+	if (ImGui::Checkbox("IsSpriteAnim", &bSprite))
+		m_bOptions[OPTION_SPRITE] = bSprite;
+	ImGui::SameLine();
+
+	/* Options 3 : Sprite_Repeat */
+	static _bool bRepeat;
+	bRepeat = m_bOptions[OPTION_SPRITE_REPEAT];
+	if (ImGui::Checkbox("IsSpriteRepeat", &bRepeat))
+		m_bOptions[OPTION_SPRITE_REPEAT] = bRepeat;
+
+	/* UV speed */
+	static _float fUVSpeed[2];
+	fUVSpeed[0] = m_fUVSpeeds[0];
+	fUVSpeed[1] = m_fUVSpeeds[1];
+	if (ImGui::DragFloat2("UVSpeed", fUVSpeed, 0.001f, -10.f, 10.f))
+	{
+		m_fUVSpeeds[0] = fUVSpeed[0];
+		m_fUVSpeeds[1] = fUVSpeed[1];
+	}
+
+	/* Sprite Animation */
+	static _int iFrames[2];
+	iFrames[0] = m_iFrames[0];
+	iFrames[1] = m_iFrames[1];
+	if (ImGui::DragInt2("Frames", iFrames, 1, 1, 10))
+	{
+		m_iFrames[0] = iFrames[0];
+		m_iFrames[1] = iFrames[1];
+	}
+
+	static _float fFrameSpeed;
+	fFrameSpeed = m_fFrameSpeed;
+	if (ImGui::DragFloat("FrameSpeed", &fFrameSpeed, 0.001f, 0.f, 100.f))
+		m_fFrameSpeed = fFrameSpeed;
+	/* ~ Sprite Animation */
+
+	if (ImGui::Button("Replay"))
+		m_fFrameNow = 0.f;
+	ImGui::SameLine();
+
+	if (ImGui::Button("No UV, Sprite Anim"))
+	{
+		for (_uint i = 0; i < 2; ++i)
+		{
+			m_fUVSpeeds[i] = 0.0f;
+			m_fUVMove[i] = 0.0f;
+			m_fFrameSpeed = 0.f;
+			m_iFrameNow[i] = 0;
+			m_iFrames[i] = 1;
+			m_fFrameNow = 0.f;
+		}
+	}
 }
 
 void CEffect_Base_S2::Free()

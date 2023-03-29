@@ -36,6 +36,7 @@ public:
 
 protected:	/* Tool Function */
 	_float4		ColorCode();
+	void		Options();
 
 protected:
 	CGameObject* m_pTarget;

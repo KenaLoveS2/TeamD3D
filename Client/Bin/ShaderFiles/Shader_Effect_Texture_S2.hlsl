@@ -115,6 +115,8 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
 	if (g_IsSpriteAnim)
 	{
 		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
@@ -130,7 +132,6 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 		In.vTexUV.y += g_fUVSpeedY;
 	}
 
-	float4	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	float4	vMask		= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 	vMask *= g_vMaskColor;
 

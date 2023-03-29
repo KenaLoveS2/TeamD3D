@@ -19,6 +19,9 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(ID3D11Device* pDevice, ID3D11DeviceContext*
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
+
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVScale[i] = 1.f;
 }
 
 CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
@@ -38,6 +41,9 @@ CEffect_Mesh_Base::CEffect_Mesh_Base(const CEffect_Mesh_Base& rhs)
 		m_TextureComName[i] = nullptr;
 		m_vTextureColors[i] = { 1.f, 1.f, 1.f, 1.f };
 	}
+
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVScale[i] = 1.f;
 
 }
 
@@ -205,8 +211,9 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 	/* RenderPass */
 	static _int iRenderPass;
 	iRenderPass = m_iRenderPass;
-	const char* renderPass[5] = { "Default", "OnlyColor", "DefaultMask", "Dissolve", "HunterString"};
-	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 5, 5))
+	const char* renderPass[6] = { "Default", "OnlyColor", "DefaultMask", "Dissolve", 
+		"HunterString", "Mask_DiffuseMove"};
+	if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 6, 5))
 		m_iRenderPass = iRenderPass;
 
 	/* Dissolve Play */
@@ -237,20 +244,20 @@ void CEffect_Mesh_Base::Imgui_RenderProperty()
 	fTest = m_fCutY;
 	if (ImGui::DragFloat("test", &fTest, 0.01f, -10.f, 10.f))
 		m_fCutY = fTest;
-	/* ~ Render Info */
 
-	/* UV speed */
-	static _float fUVSpeed[2];
-	fUVSpeed[0] = m_fUVSpeeds[0];
-	fUVSpeed[1] = m_fUVSpeeds[1];
-	if (ImGui::DragFloat2("UVSpeed", fUVSpeed, 0.001f, -10.f, 10.f))
+	static _float UVScale[2];
+	UVScale[0] = m_fUVScale[0];
+	UVScale[1] = m_fUVScale[1];
+	if (ImGui::DragFloat2("UVScale", UVScale, 0.10f, 0.0f, 100.0f))
 	{
-		m_fUVSpeeds[0] = fUVSpeed[0];
-		m_fUVSpeeds[1] = fUVSpeed[1];
+		m_fUVScale[0] = UVScale[0];
+		m_fUVScale[1] = UVScale[1];
 	}
 
+	/* ~ Render Info */
 
-
+	/* Options(UV Animation, Sprite Animation, etc...) */
+	Options();
 
 	ImGui::Separator();
 	Save_Data();
@@ -296,16 +303,23 @@ HRESULT CEffect_Mesh_Base::Save_Data()
 			json["03. HDR Intensity"] = m_fHDRIntensity;
 			json["04. Model Index"] = m_iModelIndex;
 			json["05. CutY"] = m_fCutY;
-			for (_uint i = 0; i < 2; ++i)
-			{
-				_float fElement = m_fUVSpeeds[i];
-				json["06. UVSpeeds"].push_back(fElement);
-			}
 
+			for (_uint i = 0; i < 2; ++i)
+				json["06. UVScale"].push_back(m_fUVScale[i]);
 
 			json["10. DiffuseTextureIndex"] = m_iTextureIndices[TEXTURE_DIFFUSE];
 			json["11. MaskTextureIndex"] = m_iTextureIndices[TEXTURE_MASK];
 			json["12. DissolveTextureIndex"] = m_iTextureIndices[TEXTURE_DISSOLVE];
+
+			for (_uint i = 0; i < OPTION_END; ++i)
+				json["20. Options"].push_back(m_bOptions[i]);
+
+			for (_uint i = 0; i < 2; ++i)
+			{
+				json["21. UVSpeed"].push_back(m_fUVSpeeds[i]);
+				json["22. SpriteFrames"].push_back(m_iFrames[i]);
+			}
+			json["23. SpriteSpeed"] = m_fFrameSpeed;
 
 
 			ofstream file(strSaveDirectory.c_str());
@@ -352,18 +366,45 @@ HRESULT CEffect_Mesh_Base::Load_Data(_tchar* fileName)
 
 	jLoad["05. CutY"].get_to<_float>(m_fCutY);
 
-	if (jLoad.contains("06. UVSpeeds"))
+	if (jLoad.contains("06. UVScale"))
 	{
 		i = 0;
-		for (auto fElement : jLoad["06. UVSpeeds"])
-			fElement.get_to<_float>(m_fUVSpeeds[i++]);
-
+		for (auto bOption : jLoad["06. UVScale"])
+			bOption.get_to<_float>(m_fUVScale[i++]);
 	}
+	
 
 	jLoad["10. DiffuseTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DIFFUSE]);
 	jLoad["11. MaskTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_MASK]);
 	if (jLoad.contains("12. DissolveTextureIndex"))
 		jLoad["12. DissolveTextureIndex"].get_to<_int>(m_iTextureIndices[TEXTURE_DISSOLVE]);
+
+	
+	if (jLoad.contains("20. Options"))
+	{
+		i = 0;
+		for (auto bOption : jLoad["20. Options"])
+			bOption.get_to<_bool>(m_bOptions[i++]);
+	}
+
+	if (jLoad.contains("21. UVSpeed"))
+	{
+		i = 0;
+		for (auto fElement : jLoad["21. UVSpeed"])
+			fElement.get_to<_float>(m_fUVSpeeds[i++]);
+	}
+
+	i = 0;
+	if (jLoad.contains("22. SpriteFrames"))
+	{
+		for (auto fElement : jLoad["22. SpriteFrames"])
+			fElement.get_to<_int>(m_iFrames[i++]);
+	}
+
+	if (jLoad.contains("23. SpriteSpeed"))
+		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
+
+
 	return S_OK;
 }
 
@@ -450,11 +491,37 @@ HRESULT CEffect_Mesh_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveAlpha", &m_fDissolveAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
-		return E_FAIL;
+	if (m_bOptions[OPTION_UV])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_UVScaleX", &m_fUVScale[0], sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_UVScaleY", &m_fUVScale[1], sizeof(_float))))
+			return E_FAIL;
+
+	}
+
+	if (m_bOptions[OPTION_SPRITE])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
+			return E_FAIL;
+	}
+
 
 
 

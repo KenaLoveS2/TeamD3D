@@ -18,9 +18,19 @@ float			g_fHDRItensity;
 
 float			g_fCutY;			 /* For. discard Y Range option */
 
-float			g_fUVSpeedX = 0.f;
-float			g_fUVSpeedY = 0.f;
+/* Option */
+bool			g_IsSpriteAnim = false, g_IsUVAnim = false;
 
+/* UV Animation */
+float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
+
+/* Sprite Animation */
+int				g_XFrames = 1, g_YFrames = 1;
+int				g_XFrameNow = 0, g_YFrameNow = 0;
+
+/* UV Scale */
+float		g_UVScaleX = 1.f;
+float		g_UVScaleY = 1.f;
 
 struct VS_IN
 {
@@ -92,6 +102,21 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x += g_fUVSpeedX;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+
 	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	Out.vNormal.rgb = In.vNormal.rgb;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
@@ -99,8 +124,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse *= g_vColor;
 	Out.vDiffuse.rgb *= g_fHDRItensity;
 
-	if (In.vInPosition.y > g_fCutY)
-		discard;
+	Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y));
+
+	//if (In.vInPosition.y > g_fCutY)
+	//	discard;
 
 	return Out;
 }
@@ -125,6 +152,26 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x *= g_UVScaleX;
+		In.vTexUV.x += g_fUVSpeedX;
+
+		In.vTexUV.y *= g_UVScaleY;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+
+
 	float4	vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 	vMask *= g_vMaskColor;
 
@@ -134,8 +181,13 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
 	Out.vDiffuse *= g_vColor;
 	Out.vDiffuse.rgb *= g_fHDRItensity;
 
-	if (In.vInPosition.y > g_fCutY)
-		discard;
+	Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y)) / g_fCutY;
+
+	//float fDist = sqrt(In.vInPosition.x * In.vInPosition.x + In.vInPosition.z * In.vInPosition.z);
+	//Out.vDiffuse.a *= abs(g_fCutY - fDist) / g_fCutY;
+
+	//if (In.vInPosition.y > g_fCutY)
+	//	discard;
 
 	return Out;
 }
@@ -145,6 +197,22 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x += g_fUVSpeedX;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+
 	float4	vMask = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
 	vMask *= g_vMaskColor;
 
@@ -187,6 +255,47 @@ PS_OUT PS_MAIN_HunterString(PS_IN In)
 
 	if (vDiffuseR < g_fDissolveAlpha)
 		discard;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_MASK_DiffuseMove(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 texUV = In.vTexUV;
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x += g_fUVSpeedX;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	float4	vMask = g_MaskTexture.Sample(LinearSampler, texUV);
+	vMask *= g_vMaskColor;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
+
+	Out.vDiffuse *= g_vColor;
+	Out.vDiffuse.rgb *= g_fHDRItensity;
+
+	Out.vDiffuse.a *= abs(g_fCutY - abs(In.vInPosition.y)) / g_fCutY;
+
+	//float fDist = sqrt(In.vInPosition.x * In.vInPosition.x + In.vInPosition.z * In.vInPosition.z);
+	//Out.vDiffuse.a *= abs(g_fCutY - fDist) / g_fCutY;
+
+	//if (In.vInPosition.y > g_fCutY)
+	//	discard;
 
 	return Out;
 }
@@ -256,5 +365,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_HunterString();
+	}
+
+	pass DefaultMask_DiffuseMove // 5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASK_DiffuseMove();
 	}
 }
