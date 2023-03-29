@@ -164,6 +164,11 @@ HRESULT CE_Warrior_FireSwipe::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	if (g_bDayOrNight == false)
+		m_fHDRValue = 0.5f;
+	else
+		m_fHDRValue = 0.0f;
+
 	return S_OK;
 }
 

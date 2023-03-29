@@ -141,20 +141,6 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
-	Update_Collider(fTimeDelta);
-	Update_Trail("Halberd_Jnt6");
-	m_pHat->Tick(fTimeDelta);
-
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
-
-	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
-
-	return;
-
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -448,17 +434,20 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -479,7 +468,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
@@ -489,7 +479,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(UPPER_CUT);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(UPPER_CUT);
 	})
 		
 
@@ -505,17 +496,20 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("COMBO_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(COMBO_ATTACK);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(COMBO_ATTACK);
 	})
 
 
@@ -532,17 +526,20 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("SWEEP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(SWEEP_ATTACK);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(SWEEP_ATTACK);
 	})
 
 
@@ -576,6 +573,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
@@ -694,23 +692,25 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		m_mapEffect["W_FireSwipe"]->Set_Active(false);
 		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(TRIP_UPPERCUT);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(TRIP_UPPERCUT);
 	})
 
 

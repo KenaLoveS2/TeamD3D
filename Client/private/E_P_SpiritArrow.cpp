@@ -14,11 +14,8 @@ CE_P_SpiritArrow::CE_P_SpiritArrow(const CE_P_SpiritArrow & rhs)
 
 HRESULT CE_P_SpiritArrow::Initialize_Prototype(const _tchar * pFilePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
-
-	if (FAILED(Load_E_Desc(pFilePath)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
+	FAILED_CHECK_RETURN(Load_E_Desc(pFilePath), E_FAIL);
 
 	return S_OK;
 }
@@ -31,12 +28,12 @@ HRESULT CE_P_SpiritArrow::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	// m_pVIInstancingBufferCom->Set_RandomSpeeds(1.0f, 2.0f);
-	m_eEFfectDesc.bActive = true;
+	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.7f, 1.0f);
+	m_eEFfectDesc.bActive = false;
+
 	return S_OK;
 }
 
@@ -48,18 +45,56 @@ void CE_P_SpiritArrow::Tick(_float fTimeDelta)
 
 void CE_P_SpiritArrow::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
-
-	__super::Late_Tick(fTimeDelta);
-
 	if (m_pParent != nullptr)
 		Set_Matrix();
+
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_P_SpiritArrow::Render()
 {
-	if (FAILED(__super::Render()))
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
+
+	return S_OK;
+}
+
+void CE_P_SpiritArrow::Imgui_RenderProperty()
+{
+	CVIBuffer_Point_Instancing::POINTDESC* ePointDesc = m_pVIInstancingBufferCom->Get_PointDesc();
+	CVIBuffer_Point_Instancing::INSTANCEDATA* eInstanceData = m_pVIInstancingBufferCom->Get_InstanceData();
+
+	ImGui::InputDouble("Speed", &eInstanceData->pSpeeds);
+
+	ImGui::InputFloat("fLife", &m_fLife);
+	ImGui::InputFloat("CreateRange", &ePointDesc->fCreateRange);
+	ImGui::InputFloat("fTimeDelta", &ePointDesc->fTimeDelta);
+	ImGui::InputFloat4("OriginPos", (_float*)&ePointDesc->vOriginPos);
+	ImGui::InputFloat4("MyPos", (_float*)&m_pTransformCom->Get_Position());
+
+	ImGui::InputFloat4("Diffuse", (_float*)&m_eEFfectDesc.fFrame);
+	ImGui::InputFloat4("vColor", (_float*)&m_eEFfectDesc.vColor);
+
+	_int iType = (_int)m_eEFfectDesc.eTextureRenderType;
+	ImGui::InputInt("iPass", &m_eEFfectDesc.iPassCnt);
+	ImGui::InputInt("Type", &iType);
+
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::Checkbox("Spread", &ePointDesc->bSpread);
+
+	if (ImGui::Button("RefLife"))
+		m_fLife = 0.0f;
+
+	if (ImGui::Button("Re Shape"))
+		Set_ShapePosition();
+}
+
+HRESULT CE_P_SpiritArrow::SetUp_ShaderResources()
+{
+	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
 	return S_OK;

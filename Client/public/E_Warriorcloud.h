@@ -26,7 +26,7 @@ private:
 	HRESULT					SetUp_ShaderResources();
 
 private:
-	HRESULT			SetUp_Child();
+	HRESULT					SetUp_Child();
 	class CBossWarrior*		m_pWarrior = nullptr;
 
 public:

@@ -17,6 +17,10 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void	Imgui_RenderProperty() override;
+
+public:
+	HRESULT SetUp_ShaderResources();
 
 public:
 	static  CE_P_SpiritArrow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

@@ -1315,6 +1315,9 @@
     <ClInclude Include="..\public\E_P_Enrage.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\E_P_Sakura.h">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2099,6 +2102,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Enrage.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\EnrageAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Sakura.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

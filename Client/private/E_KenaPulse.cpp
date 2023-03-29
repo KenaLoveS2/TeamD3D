@@ -145,8 +145,6 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
@@ -214,11 +212,10 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		if (vScaled.x > 5.f)
+		if (vScaled.x > 3.f)
 		{
 			m_eEFfectDesc.bActive = false;
 			m_eEFfectDesc.iPassCnt = 1;
-
 			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_SaveInitWorldMatrix);
 		}
@@ -265,10 +262,10 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulse::Render()
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
@@ -362,6 +359,11 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
 	}
+
+	if (g_bDayOrNight == false)
+		m_fHDRValue = 2.f;
+	else
+		m_fHDRValue = 1.0f;
 
 	return S_OK;
 }

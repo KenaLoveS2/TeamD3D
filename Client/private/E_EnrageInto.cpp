@@ -98,6 +98,8 @@ HRESULT CE_EnrageInto::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	if (g_bDayOrNight)	m_fHDRValue = 1.2f;
+
 	return S_OK;
 }
 

@@ -402,7 +402,6 @@ HRESULT CLoader::Loading_ForMapTool()
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	
-	/* ��ȣ�� ��*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_TeleportFlowerAnim",
 		CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/TeleportFlower/TeleportFlower.model", PivotMatrix))))
@@ -417,11 +416,9 @@ HRESULT CLoader::Loading_ForMapTool()
 	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
 
 
-	/*������ ��*/
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
 	// Prototype_GameObject_CRope_RotRock
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CRope_RotRock"), CRope_RotRock::Create(m_pDevice, m_pContext)))) return E_FAIL;
-	/*~������ ��*/
 #endif 
 
 #pragma region Map_Four
@@ -1492,7 +1489,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading WJ..."));
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
 		return E_FAIL;
@@ -1518,7 +1515,7 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 재호 ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading JH ..."));
 
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -1587,7 +1584,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 소영..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	
@@ -1625,7 +1622,7 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 병주..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading BJ..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	_matrix PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1872,7 +1869,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HO..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2281,7 +2278,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 현욱..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HW..."));
 
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 
