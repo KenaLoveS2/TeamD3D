@@ -82,7 +82,6 @@ Engine/Bin/vc142.idb
 Engine/Bin/vc142.pdb
 Engine/Bin/Engine.dll.recipe
 
-.vs/Framework/v16/Browse.VC.db-shm
-.vs/Framework/v16/Solution.VC.db-shm
-.vs/Framework/v16/Solution.VC.db-wal
+.vs/
+.idea/
 
