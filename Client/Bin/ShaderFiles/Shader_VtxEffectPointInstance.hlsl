@@ -91,8 +91,10 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	vector		vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
 
-	Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
-	Out.vCenterPosition = matrix_postion(g_WorldMatrix);
+	//Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
+	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
+	//Out.vCenterPosition = matrix_postion(g_WorldMatrix);
+	Out.vCenterPosition = mul(float4(0.f, 0.f, 0.f, 1.f), g_WorldMatrix).xyz;
 	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
 

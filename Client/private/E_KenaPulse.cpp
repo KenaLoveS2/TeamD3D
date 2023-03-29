@@ -167,6 +167,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	switch (m_ePulseType)
 	{
 	case Client::CE_KenaPulse::PULSE_DEFAULT:
+		
+		m_eEFfectDesc.iPassCnt = 1;
 
 		if (m_bNoActive == true) // Pulse ³¡
 		{

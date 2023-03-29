@@ -60,8 +60,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
-// 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
-// 		return E_FAIL;
+ 	if (FAILED(Ready_Layer_Rot(TEXT("Layer_Rot"))))
+ 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -494,12 +494,14 @@ void CLevel_GamePlay::Free()
 
 HRESULT CLevel_GamePlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 {
-	CImGui_Rot::Load_RotObjects(g_LEVEL, "Test_Chap1.json");
+	//CImGui_Rot::Load_RotObjects(g_LEVEL, "Test_Chap1.json");
 	
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master"))))
+	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), TEXT("Rot_JH"))))
 		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master"))))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

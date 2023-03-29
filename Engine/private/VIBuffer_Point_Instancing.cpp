@@ -511,7 +511,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_float fTimeDelta)
 					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(vMoveDir) * 1.2f/*_float(m_InstanceData->pSpeeds)*/ * m_ePointDesc->fTimeDelta;
 				}
 				else
-					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(m_ePointDesc[i].vDir) * 1.2f/*_float(m_InstanceData->pSpeeds)*/ * m_ePointDesc->fTimeDelta * 2.5f;
+					vMovePos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVector3Normalize(m_ePointDesc[i].vDir) /*_float(m_InstanceData->pSpeeds)*/ * m_ePointDesc->fTimeDelta;
 
 				fDistance = XMVectorGetX(XMVector3Length(vMovePos - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 				fDistance < 0.05f ? XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition,

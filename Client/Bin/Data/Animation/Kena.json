@@ -2659,6 +2659,334 @@
         ]
     },
     {
+        "0. State Name": "BOW_INJECT_WALK_FORWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_BACKWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkLeft",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkLeft",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_WALK_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkRight",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkRight",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_Inject",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
         "0. State Name": "BOW_INJECT_LOOP",
         "1. Looping": false,
         "2. Root Bone Rotation": true,
@@ -2668,6 +2996,334 @@
         "6. Blend Animation": "N/A",
         "7. Joint Index": "N/A",
         "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_FORWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_BACKWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkLeft",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkLeft",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Bow_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectLoop",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_LOOP_WALK_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkRight",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkRight",
+                "6. Additive Animation": "A_Kena_Bow_Neutral",
+                "7. Joint Index": [
+                    {
+                        "0. Bone Name": "kena_hip_jnt",
+                        "1. Lock To": "Lock Child"
+                    },
+                    {
+                        "0. Bone Name": "kena_spine_mid_jnt",
+                        "1. Lock To": "Lock Alone"
+                    }
+                ]
+            },
             {
                 "0. Blend Type": "ADDITIVE",
                 "1. Ratio Control": "MAX",
@@ -2697,6 +3353,182 @@
                 "3. Root Bone Rotation": true,
                 "4. Root Bone Translation": true,
                 "5. Reference Animation": "A_Kena_Aim_RefPose",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_FORWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_FORWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_FORWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkForward",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkForward",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_BACKWARD",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_BACKWARD_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkLeft",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_BACKWARD_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkBack",
+        "6. Blend Animation": "A_Kena_Aim_WalkRight",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkBack",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_LEFT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkLeft",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkLeft",
+                "6. Additive Animation": "A_Kena_Bow_InjectRelease",
+                "7. Joint Index": "N/A"
+            }
+        ]
+    },
+    {
+        "0. State Name": "BOW_INJECT_RELEASE_WALK_RIGHT",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Aim_WalkRight",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": [
+            {
+                "0. Blend Type": "ADDITIVE",
+                "1. Ratio Control": "MAX",
+                "2. Max Additive Ratio": 1.0,
+                "3. Root Bone Rotation": true,
+                "4. Root Bone Translation": true,
+                "5. Reference Animation": "A_Kena_Aim_WalkRight",
                 "6. Additive Animation": "A_Kena_Bow_InjectRelease",
                 "7. Joint Index": "N/A"
             }

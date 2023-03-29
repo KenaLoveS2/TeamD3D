@@ -935,6 +935,8 @@ void CKena::ImGui_AnimationProperty()
 {
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
+	m_vecArrow[0]->Imgui_RenderProperty();
+
 	ImGui::BeginTabBar("Kena Animation & State");
 
 	if (ImGui::BeginTabItem("Animation"))
@@ -1962,7 +1964,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pAttackObject = pTarget;
 		}
 
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
 		{
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
