@@ -88,3 +88,7 @@ Engine/Bin/Engine.dll.recipe
 .vs/
 .idea/
 
+Engine/Bin/Engine.exp
+Engine/Bin/vc142.pdb
+Engine/Bin/vc142.idb
+Engine/Bin/Engine.lib
