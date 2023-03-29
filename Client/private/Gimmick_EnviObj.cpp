@@ -73,7 +73,8 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 	if(m_EnviromentDesc.iRoomIndex == 4)
 	{
 		/*
-			if ==  Boss Dead
+		 if ==  Boss Dead
+		
 			m_bGimmick_Active =true;
 			Gimmik_Start(m_bGimmick_Active);
 		*/

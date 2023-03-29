@@ -358,7 +358,7 @@ HRESULT CLoader::Loading_ForMapTool()
 	/* For.Prototype_Component_Model_DeadZoneTree */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_DeadZoneTree",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.model"), PivotMatrix))))
 		return E_FAIL;
 	/* For.Prototype_Component_Model_PulsePlateAnim*/
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -2353,7 +2353,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	/* For.Prototype_Component_Model_DeadZoneTree */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_DeadZoneTree",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.mdat"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/DeadZoneTree_Anim/DeadzoneTree.model"), PivotMatrix))))
 		return E_FAIL;
 	
 	/* For.Prototype_Component_Model_PulsePlateAnim*/
