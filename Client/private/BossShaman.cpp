@@ -51,7 +51,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("sword_root_jnt");
 
 	Create_Minions();
-
+	
 	return S_OK;
 }
 
@@ -75,9 +75,11 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
+		
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
@@ -145,11 +147,10 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 }
 
 void CBossShaman::Tick(_float fTimeDelta)
-{
-	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//Update_Collider(fTimeDelta);
-	//return;
+{	
+	/*m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	return;*/
 
 	if (m_bDeath) return;
 
@@ -307,7 +308,9 @@ HRESULT CBossShaman::Call_EventFunction(const string& strFuncName)
 
 void CBossShaman::Push_EventFunctions()
 {
-	CMonster::Push_EventFunctions();
+	// CMonster::Push_EventFunctions();
+	
+	LookAt_Kena(true, 0.0f);
 }
 
 HRESULT CBossShaman::SetUp_State()
@@ -335,9 +338,9 @@ HRESULT CBossShaman::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-		//CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-		//_float fValue = 20.f; /* == BossWarrior Name */
-		//m_BossShamanDelegator.broadcast(eBossHP, fValue);
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		_float fValue = 20.f; /* == BossWarrior Name */
+		m_BossShamanDelegator.broadcast(eBossHP, fValue);
 	})
 		.OnExit([this]()
 	{
@@ -866,9 +869,9 @@ HRESULT CBossShaman::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{	
-		/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
-		m_BossShamanDelegator.broadcast(eBossHP, fValue);*/
+		m_BossShamanDelegator.broadcast(eBossHP, fValue);
 		
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
@@ -1104,7 +1107,7 @@ void CBossShaman::Attack_End(_bool bSwordRender, _uint iAnimIndex)
 	CMonster::Attack_End(iAnimIndex);
 }
 
-_int CBossShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+_int CBossShaman::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (pTarget && m_bSpawn)
 	{
@@ -1114,48 +1117,66 @@ _int CBossShaman::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos
 			return 0;
 		}
 
-		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON && m_pKena->Get_State(CKena::STATE_ATTACK)))
 		{
-			if (m_bNoDamage == false)			
+			if (m_bNoDamage == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
-						
-			/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
-			m_BossShamanDelegator.broadcast(eBossHP, fGauge);*/
-			
-			m_bWeaklyHit = true;
-			m_bStronglyHit = true;
+
+				CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+				_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+				m_BossShamanDelegator.broadcast(eBossHP, fGauge);
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
 				m_pKena->Add_HitStopTime(0.15f);
 				m_fHitStopTime += 0.15f;
-				//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
+				m_bWeaklyHit = false;
+				m_bStronglyHit = true;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
 				m_pKena->Add_HitStopTime(0.25f);
 				m_fHitStopTime += 0.25f;
-				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
 
-				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				vector<_float4>* vecWeaponPos = m_pKena->Get_WeaponPositions();
 				if (vecWeaponPos->size() == 2)
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians/(30.f));
+					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
 				}
 			}
+		}
+
+		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
+		{
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
+			//m_bWeaklyHit = !m_bStronglyHit;
+
+			m_bStronglyHit = true;
+			m_bWeaklyHit = false;
+
+			m_pKenaHit->Set_Active(true);
+			m_pKenaHit->Set_Position(vCollisionPos);
 		}
 	}
 
 	return 0;
 }
+
 
 void CBossShaman::Create_Minions()
 {
@@ -1192,3 +1213,14 @@ void CBossShaman::Summon()
 	}
 }
 
+void CBossShaman::LookAt_Kena(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::LookAt_Kena);
+		return;
+	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+}

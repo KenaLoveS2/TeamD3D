@@ -39,7 +39,6 @@ HRESULT CCliff_Rock::Late_Initialize(void * pArg)
 {
 
 	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_01"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_02"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_04"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterRing_A_0"
 		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterRing_C_0"

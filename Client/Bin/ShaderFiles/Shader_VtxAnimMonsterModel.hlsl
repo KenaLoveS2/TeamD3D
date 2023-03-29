@@ -362,7 +362,7 @@ PS_OUT PS_MAIN_AO_R_M_O(PS_IN In)
 	{
 		float fDissolveAmount = g_fDissolveTime * 5.f;
 
-		// sample noise textures
+		// sample noise texture
 		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
 		float  _ColorThreshold1 = 1.0f;

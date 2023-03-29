@@ -51,7 +51,7 @@ HRESULT CMonster_Status::Save()
 }
 
 HRESULT CMonster_Status::Load(const string & strJsonFilePath)
-{
+{	
 	Json jMonsterStatus;
 
 	ifstream file(strJsonFilePath.c_str());
