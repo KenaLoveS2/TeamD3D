@@ -421,13 +421,13 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_TeleportFlower", CTelePort_Flower::Create(m_pDevice, m_pContext)), E_FAIL);
 
-
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim", CModel::Create(m_pDevice, m_pContext, L"../Bin/Resources/Anim/Chest_Anim/Chest.model", PivotMatrix)), E_FAIL);
-
-	/* Prototype_GameObject_Chest */
-	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-
+	/* For.Prototype_Component_Model_ChestAnim*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_ChestAnim",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
+		return E_FAIL;
+	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
+	/* ~��ȣ�� ��*/
 
 	/*������ ��*/
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
@@ -770,7 +770,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_BridgeShort", true, true, true)))
 		assert(!"Issue");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true,false,true)))
+	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true)))
 		assert(!"Issue");
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinsKit_ToriGate", true, true, true)))
 		assert(!"Issue");
@@ -992,7 +992,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinKit_Rubble", true, true, true)))
 			return E_FAIL;
 		
-		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true, false, true)))
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "RuinKit/RuinStaris", true, true, true)))
 			return E_FAIL;
 		
 		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Statue/Owl_WrapShrine", false, true, true)))
@@ -1735,7 +1735,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 	/**********************************/
 	// Prototype_Component_Model_Boss_Shaman
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Boss_Shaman",
-		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Boss_Shaman.mdat"), PivotMatrix)))) return E_FAIL;
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Enemy/Boss_Shaman/Boss_Shaman.model"), PivotMatrix)))) return E_FAIL;
 
 	_matrix ShamanTrapPivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -2485,7 +2485,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinKit_Rubble", true, true, true)))
 		return E_FAIL;
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true, false, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "RuinKit/RuinStaris", true, true, true)))
 		return E_FAIL;
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Statue/Owl_WrapShrine", false, true, true)))

@@ -115,6 +115,8 @@ private:
 
 	_int	m_iIdletoDash = 0;
 
+	CBone* m_pMageHaneBonePtr = nullptr;
+
 private:
 	vector<wstring> m_vecColliderName;
 	vector<_float3> m_vecPivot;

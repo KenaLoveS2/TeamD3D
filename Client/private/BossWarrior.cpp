@@ -82,9 +82,9 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.isGravity = true;
 		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
@@ -143,19 +143,24 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
+	/*m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
-	Update_Trail("Halberd_Jnt6");
 	m_pHat->Tick(fTimeDelta);
+	return;*/
 
-	for (auto& pEffect : m_mapEffect)
-		pEffect.second->Tick(fTimeDelta);
+	//__super::Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
-	AdditiveAnim(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+	//Update_Trail("Halberd_Jnt6");
+	//m_pHat->Tick(fTimeDelta);
 
-	return;
+	//for (auto& pEffect : m_mapEffect)
+	//	pEffect.second->Tick(fTimeDelta);
+
+	//m_pModelCom->Play_Animation(fTimeDelta);
+	//AdditiveAnim(fTimeDelta);
+
+	//return;
 
 	if (m_bDeath) return;
 
@@ -1148,6 +1153,9 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe);
 		return;
 	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	CBone*  pUpBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt6"); // UP
 	CBone*  pCenterBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt7"); // DOWN == center
 
@@ -1177,6 +1185,9 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe_End);
 		return;
 	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt8");
 	_matrix matrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
@@ -1312,48 +1323,63 @@ void CBossWarrior::Free()
 }
 
 _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
-{
+{	
 	if (pTarget && m_bSpawn)
 	{
-		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON && m_pKena->Get_State(CKena::STATE_ATTACK)))
 		{
-			if(m_bBlock == false)
+			if (m_bBlock == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
-			/* HP Guage */
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
 			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
-			/* ~HP Guage */
-
-			m_bWeaklyHit = true;
-			m_bStronglyHit = true;
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
 				m_pKena->Add_HitStopTime(0.15f);
 				m_fHitStopTime += 0.15f;
-				//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
+				m_bWeaklyHit = false;
+				m_bStronglyHit = true;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
 				m_pKena->Add_HitStopTime(0.25f);
 				m_fHitStopTime += 0.25f;
-				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
 
-				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				vector<_float4>* vecWeaponPos = m_pKena->Get_WeaponPositions();
 				if (vecWeaponPos->size() == 2)
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians/(30.f));
+					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
 				}
 			}
+		}
+
+		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
+		{
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
+			//m_bWeaklyHit = !m_bStronglyHit;
+
+			m_bStronglyHit = true;
+			m_bWeaklyHit = false;
+
+			m_pKenaHit->Set_Active(true);
+			m_pKenaHit->Set_Position(vCollisionPos);
 		}
 	}
 
