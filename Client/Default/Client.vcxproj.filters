@@ -764,7 +764,6 @@
     <ClInclude Include="..\public\UI_CanvasQuest.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot.h" />
     <ClInclude Include="..\public\Bridge.h">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClInclude>
@@ -1182,7 +1181,6 @@
     <ClInclude Include="..\public\E_RectTrail.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ShamanTrapPlane.h" />
     <ClInclude Include="..\public\E_Warrior_PlaneRoot.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
@@ -1213,9 +1211,6 @@
     <ClInclude Include="..\public\E_EnrageInto.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_Swipes_Charged.h" />
-    <ClInclude Include="..\public\E_WarriorTrail.h" />
-    <ClInclude Include="..\public\E_Warrior_FireSwipe.h" />
     <ClInclude Include="..\public\UI_NodeRotSkill.h">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClInclude>
@@ -1317,6 +1312,21 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_Sakura.h">
       <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapPlane.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>1004.알아서해라</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1551,7 +1561,6 @@
     <ClCompile Include="..\private\UI_CanvasQuest.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\03. Quest</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp" />
     <ClCompile Include="..\Private\Wall.cpp">
       <Filter>02.GameObjects\Envrioment\NonAnim</Filter>
     </ClCompile>
@@ -1970,7 +1979,6 @@
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp" />
-    <ClCompile Include="..\private\ShamanTrapPlane.cpp" />
     <ClCompile Include="..\private\E_Warrior_PlaneRoot.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClCompile>
@@ -2001,9 +2009,6 @@
     <ClCompile Include="..\private\E_EnrageInto.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_Swipes_Charged.cpp" />
-    <ClCompile Include="..\private\E_WarriorTrail.cpp" />
-    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp" />
     <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
@@ -2106,6 +2111,21 @@
     <ClCompile Include="..\private\E_P_Sakura.cpp">
       <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapPlane.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2184,7 +2204,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimNPCModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
       <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
@@ -2199,6 +2218,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
