@@ -16,8 +16,10 @@
 #include "Imgui_UIEditor.h"
 #include "ImGui_PhysX.h"
 
+#include "CinematicCamera.h"
 #include "UI_ClientManager.h"
 #include "UI.h"
+
 
 CLevel_MapTool::CLevel_MapTool(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -53,6 +55,13 @@ HRESULT CLevel_MapTool::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
+#ifdef FOR_MAP_GIMMICK
+	if (FAILED(Ready_Layer_CineCamera(TEXT("CinemaCam"))))
+	{
+		MSG_BOX("CinemaCam");
+		return E_FAIL;
+	}
+#endif
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
@@ -122,7 +131,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	//CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
@@ -135,14 +144,15 @@ HRESULT CLevel_MapTool::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_AnimObj.json");
+	
 
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+
 #ifdef FOR_MAP_GIMMICK
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
@@ -212,6 +222,27 @@ HRESULT CLevel_MapTool::Ready_Layer_Camera(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"PLAYER_CAM", pCamera), E_FAIL);
 #endif
 	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
+HRESULT CLevel_MapTool::Ready_Layer_CineCamera(const _tchar* pLayerTag)
+{
+	/* If the Name Of Layer is Changed, Please Change the CUI_CanvasBottom > Bind as well. */
+	{
+		vector<CCinematicCamera::CAMERAKEYFRAME> v;
+		string chatFileName;
+		CCinematicCamera::Clone_Load_Data("Test.json", v, chatFileName);
+		CGameObject* p_game_object = nullptr;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_TESTPLAY, pLayerTag, TEXT("Prototype_GameObject_CinematicCamera"), L"CINE_CAM0", &v, &p_game_object))) return E_FAIL;
+		CCamera* pCamera = dynamic_cast<CCamera*>(p_game_object);
+		NULL_CHECK_RETURN(pCamera, E_FAIL);
+		FAILED_CHECK_RETURN(pGameInstance->Add_Camera(L"CINE_CAM0", pCamera), E_FAIL);
+		static_cast<CCinematicCamera*>(pCamera)->Load_ChatData(chatFileName);
+		RELEASE_INSTANCE(CGameInstance)
+			v.clear();
+	}
+
 	return S_OK;
 }
 
