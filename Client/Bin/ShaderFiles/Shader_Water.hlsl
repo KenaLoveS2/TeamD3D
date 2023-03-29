@@ -4,9 +4,9 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
 //matrix			g_ReflectedViewMatrix;
-float				g_fFar = 300.f;
+float			g_fFar = 500.f;
 float4			g_vCamPosition;
-float				g_fTime;
+float			g_fTime;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;

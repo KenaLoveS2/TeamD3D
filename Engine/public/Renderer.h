@@ -35,12 +35,14 @@ public:
 	void			ShootStaticShadow() { m_bStaticShadow = true; };
 	void			Imgui_Render();
 
-	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
+
 	void			EraseStaticShadowObject(class CGameObject* pObject);
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }
+	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
+	void			Set_Fog(bool bFog) { m_bFog = bFog; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
@@ -112,6 +114,13 @@ private:
 	_bool		m_bMotionBlur = false;
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
+	HRESULT PostProcess_Fog();
+	_bool		m_bFog = false;
+	_float4		m_vFogColor;
+	_float		m_fFogStart = 0.f;
+	_float		m_fFogRange = 50.f;
+
+public:
 
 private:
 	HRESULT Render_DebugObject();
