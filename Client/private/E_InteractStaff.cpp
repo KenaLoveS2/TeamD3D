@@ -71,13 +71,13 @@ void CE_InteractStaff::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
+		m_eEFfectDesc.vScale *= 1.0f + fTimeDelta;
 		m_pTransformCom->Set_Scaled(m_eEFfectDesc.vScale);
 
-		if (m_fDurationTime > 0.3f)
+		if (m_fDurationTime > 0.5f)
 		{
 			ResetSprite();			
-			m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 0.5f);
+			m_eEFfectDesc.vScale = _float3(0.3f, 0.3f, 0.3f);
 			m_fDurationTime = 0.0f;
 		}
 	}

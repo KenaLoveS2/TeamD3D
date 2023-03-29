@@ -25,7 +25,14 @@ void CTool_Settings::Imgui_RenderWindow()
 	FAILED_CHECK_RETURN(FrameRate(), );
 	ImGui::Separator();
 	FAILED_CHECK_RETURN(Camera_Setting(), );
-	ImGui::Separator();
+
+	ImGui::BulletText("Day r Night"); 
+	string strDayrNight = "";
+	if (g_bDayOrNight)
+		strDayrNight = "Day";
+	else
+		strDayrNight = "Night";
+	ImGui::Checkbox(strDayrNight.c_str(), &g_bDayOrNight);
 }
 
 HRESULT CTool_Settings::FrameRate()

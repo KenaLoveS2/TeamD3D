@@ -1714,7 +1714,10 @@ void CKena::TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta)
 				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
-				matWalk.r[3] = matWorldSocket.r[3];
+
+				_float4 vFootPos = matWorldSocket.r[3];
+				vFootPos.y = vFootPos.y + 0.3f;
+				matWalk.r[3] = vFootPos;
 				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
 				/* ToeDust Update */
 
@@ -1745,7 +1748,9 @@ void CKena::TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta)
 				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
-				matWalk.r[3] = matWorldSocket.r[3];
+				_float4 vFootPos = matWorldSocket.r[3];
+				vFootPos.y = vFootPos.y + 0.3f;
+				matWalk.r[3] = vFootPos;
 				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
 				/* ToeDust Update */
 

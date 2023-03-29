@@ -4,6 +4,7 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4			g_WorldCamPosition;
+float			g_fHDRValue;
 /**********************************/
 
 /**********Common Texture*********/
@@ -263,7 +264,7 @@ PS_OUT PS_MAIN_E_PULSECLOUD(PS_IN In)
 		finalcolor = finalcolor + vColor;
 	}
 
-	Out.vColor = finalcolor;
+	Out.vColor = finalcolor * g_fHDRValue;
 	return Out;
 }
 
@@ -376,7 +377,7 @@ PS_OUT PS_MAIN_E_JUMP(PS_IN In)
 	vector albedo = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 //	float3 vColor = g_vColor.rgb;
 //	albedo.rgb = vColor * 1.2f;
-	Out.vColor = albedo * g_vColor * 1.2f;
+	Out.vColor = albedo * g_vColor * 1.5f;
 	return Out;
 }
 
@@ -522,7 +523,7 @@ technique11 DefaultTechnique
 	pass Effect_ChargingCenterLight // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

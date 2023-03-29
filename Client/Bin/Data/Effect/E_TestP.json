@@ -1,6 +1,6 @@
 {
     "0.Save Level": 5,
-    "1.Save2Load Level": 5,
+    "1.Save2Load Level": 0,
     "2.Layer Tag": "Layer_Effect",
     "Object": [
         {
@@ -10,12 +10,12 @@
                     "CloneObject Component InstnaceData PSizeX": 0.20000000298023224,
                     "CloneObject Component InstnaceData PSizeY": 0.20000000298023224,
                     "CloneObject Component InstnaceData Position": [
-                        0.29776737093925476,
+                        0.0,
                         0.0,
                         0.0,
                         1.0
                     ],
-                    "CloneObject Component InstnaceData Speed": 0.3,
+                    "CloneObject Component InstnaceData Speed": 1.5757299661636353,
                     "CloneObject Component InstnaceData SpeedMinMax": 0.0,
                     "CloneObject Component InstnaceData SpeedMinMin": 0.0,
                     "CloneObject Component PointDesc CirclePos": [
@@ -28,12 +28,12 @@
                         0.0,
                         0.0
                     ],
-                    "CloneObject Component PointDesc CreateInstance": 20,
+                    "CloneObject Component PointDesc CreateInstance": 50,
                     "CloneObject Component PointDesc CreateRange": 1.0,
                     "CloneObject Component PointDesc Dir": [
-                        0.7,
+                        -0.034899353981018066,
                         0.0,
-                        0.0,
+                        -0.9993908405303955,
                         0.0
                     ],
                     "CloneObject Component PointDesc DurationTime": 0.0,
@@ -58,12 +58,12 @@
                     ],
                     "CloneObject Component PointDesc MoveY": 0.0,
                     "CloneObject Component PointDesc OriginPos": [
-                        0.699999988079071,
+                        0.0,
                         0.0,
                         0.0,
                         1.0
                     ],
-                    "CloneObject Component PointDesc Range": 1.0,
+                    "CloneObject Component PointDesc Range": 0.0,
                     "CloneObject Component PointDesc RangeOffset": 0.0,
                     "CloneObject Component PointDesc RangeY": 0.0,
                     "CloneObject Component PointDesc RotXYZ": 0,
@@ -71,7 +71,7 @@
                     "CloneObject Component PointDesc ShapeType": 2,
                     "CloneObject Component PointDesc Spread": false,
                     "CloneObject Component PointDesc bMoveY": false,
-                    "CloneObject Component ProtoTag": "Prototype_Component_E_P_SpiritArrowSpot",
+                    "CloneObject Component ProtoTag": "Prototype_Component_www",
                     "Desc": [
                         {
                             "Alpha": 0.0,
@@ -79,9 +79,9 @@
                             "Billboard": false,
                             "Blend Type": 0,
                             "Color": [
-                                0.465423583984375,
-                                0.7663066387176514,
-                                0.7890625,
+                                0.7479338645935059,
+                                1.0,
+                                0.9875008463859558,
                                 1.0
                             ],
                             "CreateRange": 0.0,
@@ -148,20 +148,20 @@
                     ],
                     "Have DTextureCnt": 1,
                     "Have MTextureCnt": 1,
-                    "Instance DataCnt": 20,
+                    "Instance DataCnt": 50,
                     "Point Data": "PointDesc Data",
                     "WorldMatrix": [
                         1.0,
                         0.0,
                         0.0,
                         0.0,
-                        0.0,
-                        0.0,
                         -1.0,
+                        1.0,
+                        0.0,
+                        0.0,
                         0.0,
                         0.0,
                         1.0,
-                        0.0,
                         0.0,
                         0.0,
                         0.0,
