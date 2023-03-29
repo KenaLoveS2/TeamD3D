@@ -17,6 +17,9 @@ private:
 
 	_bool m_bCollision = false;
 
+	class CMonster* m_pOnwerMonster = nullptr;
+	_float4 m_vInvisiblePos = { -1000.f, -1000.f, -1000.f , 1.f };
+
 private:
 	CFireBullet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFireBullet(const CFireBullet& rhs);
@@ -40,17 +43,16 @@ private:
 	HRESULT					SetUp_Components();
 	HRESULT					SetUp_ShaderResources();
 	HRESULT					Set_ChildEffects();
-
+	
 public:
 	static CFireBullet*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*	Clone(void* pArg = nullptr)  override;
 	virtual void			Free() override;
 
 	void FireBullet_Proc(_float fTimeDelta);
-
 	void Execute_Create(_float4 vCreatePos);
-
 	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	void Set_OwnerMonsterPtr(class CMonster* pMonster) { m_pOnwerMonster = pMonster; }
 };
 
 END

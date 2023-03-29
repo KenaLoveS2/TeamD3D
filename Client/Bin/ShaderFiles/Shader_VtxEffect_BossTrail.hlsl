@@ -5,6 +5,7 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DepthTexture;
 vector			g_vCamPosition;
+float			g_fHDRValue;
 /**********************************/
 
 /**********Trail Option_1*********/

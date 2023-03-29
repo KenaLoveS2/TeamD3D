@@ -4,6 +4,7 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4			g_WorldCamPosition;
 float			g_fFar = 500.f;
+float			g_fHDRValue;
 /**********************************/
 
 /* For. Parts */
@@ -47,7 +48,6 @@ uint	g_PulseState;
 /* HpRatio */
 
 bool	g_bPulseRecive = false;
-float	g_RazerValue;
 
 struct VS_IN
 {
@@ -176,9 +176,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	float4 normalmap = g_NormalTexture.Sample(LinearSampler, float2(OffsetUV.x, OffsetUV.y - 0.5f * time));
 
 	float4 fresnelColor = float4(0.5, 0.5, 0.5, 0.1f);
-	float4 fresnel_color = g_DTexture_2.Sample(LinearSampler, float2(OffsetUV.x * 2.5f, OffsetUV.y * 1.5f));
+	float4 fresnel_color = g_DTexture_2.Sample(LinearSampler, float2(OffsetUV.x * 2.5f, OffsetUV.y* 1.5f));
 
-	// fresnel_glow(????(????? ????), )
 	float4 fresnel = float4(fresnel_glow(3, 3.5, fresnel_color.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
 	float4 BackPulseColor = g_vColor;
@@ -216,10 +215,10 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 
 	float4 fresnelColor = (float4)1.0f;
 	float4 fresnel = float4(fresnel_glow(8.f, 3.5f, fresnelColor.rgb, In.vNormal.rgb, -In.vViewDir), fresnelColor.a);
-
+	
 	/* Base Color */
 	float4 vBaseColor = float4(20.f, 44.f, 90.f, 15.f) / 255.f;
-	vBaseColor.rgb = fresnel_glow(0.5f, 2.5f, vBase.rgb, In.vNormal.rgb, In.vViewDir) * vBaseColor.rgb + fresnel.rgb * float3(1.0f, 1.0f, 1.0f);
+	vBaseColor.rgb = fresnel_glow(0.5f, 2.5f, vBase.rgb, In.vNormal.rgb, In.vViewDir) * vBaseColor.rgb + fresnel.rgb * float3(1.0f, 1.0f, 1.0f) ;
 
 	float4 vGreencolor = float4(25.f, 283.f, 189.f, 255.f) / 255.f;
 	vBaseColor.rgb = vBaseColor.rgb * vGreencolor.rgb;
@@ -255,9 +254,9 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		vector vColor = float4(255.f, 0.f, 255.f, 0.0f) / 255.f;
 		float fTime = min(g_DamageDurationTime, 2.f);
 
-		if (1.f < fTime)   // 1.0 ??? ?¡À????? ??????????
+		if (1.f < fTime)  
 			vColor = vColor * (2.f - fTime);
-		else // 1.0 ???? ?¡À????? ???????
+		else 
 			vColor = vColor * fTime;
 
 		finalcolor = finalcolor + vColor;
@@ -280,15 +279,15 @@ PS_OUT PS_EFFECT_PULSE_MAIN(PS_IN In)
 		}
 		else
 		{
-			finalcolor = finalcolor + useDissolve * (1 - useDissolve);
+			finalcolor = finalcolor + useDissolve*(1 - useDissolve);
 			float threshold = fDissolveAmount * 0.7f;
 			clip(threshold - vDissolve);
 		}
 	}
 
-	Out.vDiffuse = finalcolor;
+	Out.vDiffuse = finalcolor * g_fHDRValue;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 	return Out;
 }
 
@@ -300,10 +299,12 @@ PS_OUT PS_EFFECT_HIT(PS_IN In)
 	float4 fresnel = float4(fresnel_glow(4, 4.5, PulseColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vDiffuse.rgb = vDiffuse.rgb * 4.f;
+	vDiffuse.rgb = vDiffuse.rgb *4.f;
 
 	Out.vDiffuse = vDiffuse * fresnel + PulseColor;
 	Out.vDiffuse.a = (PulseColor.r * 5.f + 0.5f) * 0.05f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -317,7 +318,7 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 	float4 outglow = float4(fresnel_glow(8, 3.5, g_vColor.rgb, In.vNormal.rgb, -In.vViewDir), 1.f);
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	//	vDiffuse.rgb = vDiffuse.rgb *4.f;
+//	vDiffuse.rgb = vDiffuse.rgb *4.f;
 
 	Out.vDiffuse = vDiffuse * outglow * 4.f;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 6.f;
@@ -326,6 +327,8 @@ PS_OUT PS_EFFECT_PULSEOBJECT(PS_IN In)
 		Out.vDiffuse.b *= 10.f;
 
 	Out.vDiffuse.a = (outglowcolor.r * 5.f + 0.5f) * 0.05f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -335,7 +338,7 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 0.35f);
+	float  time     = frac(g_Time * 0.35f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(time, 0.0f));
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, float2(In.vTexUV.x - time, In.vTexUV.y));
@@ -353,9 +356,9 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 	float4 finalcolor = saturate(vDiffuse * LeapMask);
 
 	if (vDiffuse.a < 0.4f)
-		finalcolor.rgb = finalcolor.rgb + float3(200.f, 21.f, 0.0f) / 255.f * 4.f;
+		finalcolor.rgb = finalcolor.rgb + float3(200.f, 21.f, 0.0f) / 255.f  * 4.f;
 	else
-		finalcolor.rgb = finalcolor.rgb + float3(255.f, 54.f, 0.0f) / 255.f * 4.f;
+		finalcolor.rgb = finalcolor.rgb + float3(255.f,54.f, 0.0f) / 255.f * 4.f;
 
 	finalcolor.rgb = finalcolor.rgb + fresnel.rgb;
 	Out.vDiffuse = finalcolor * float4(255.f, 192.f, 163.f, 255.f) / 255.f;
@@ -376,6 +379,8 @@ PS_OUT PS_EFFECT_DEADZONE(PS_IN In)
 				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -398,6 +403,8 @@ PS_OUT PS_SPRITARROW(PS_IN In)
 	Out.vDiffuse.a = (outglowcolor.b * 5.f) * 0.2f;
 	if (Out.vDiffuse.a < 0.2f)
 		discard;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 	return Out;
 }
 
@@ -406,7 +413,7 @@ PS_OUT PS_WIND(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 0.1f);
+	float  time = frac(g_Time  * 0.1f);
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV) * 2.f;
 
 	float fTIme = min(time, 1.f);
@@ -414,6 +421,8 @@ PS_OUT PS_WIND(PS_IN In)
 		vDiffuse.a *= (1.f - fTIme);
 
 	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 	return Out;
 }
 
@@ -429,9 +438,11 @@ PS_OUT PS_SPRITARROW_GRAB(PS_IN In)
 	float4 outglow = float4(fresnel_glow(8, 3.5, outglowcolor.rgb, In.vNormal.rgb, In.vViewDir), 1.f);
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
-
+	
 	Out.vDiffuse = vDiffuse * outglow;
 	Out.vDiffuse.a = outglowcolor.r * 0.05f;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 	return Out;
 }
 
@@ -449,14 +460,14 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	float4 vblendColor = lerp(vSmooth, vColor, 0.4f);
 	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
 
-	// fresnel_glow(????(????? ????), )
+	// fresnel_glow(ï¿½ï¿½ï¿½ï¿½(Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½), )
 	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;
 	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
 
 	float4 vfinalblendColor = lerp(finalcolor, fresnel, finalcolor.r);
 	Out.vDiffuse = vfinalblendColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -482,7 +493,7 @@ PS_OUT PS_MAGEBULLETCOVER(PS_IN In)
 	float4 vColor = float4(255.f, 136.f, 98.f, 255.f) / 255.f;
 	Out.vDiffuse = vDissolve * vColor * 3.f;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -522,7 +533,7 @@ PS_OUT PS_PULSECOVER(PS_IN In)
 	}
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -533,7 +544,7 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float  time = frac(g_Time * 1.8f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV * 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
+	float2 OffsetUV = TilingAndOffset(In.vTexUV* 5.f, float2(1.0f, 1.0f), float2(0.0f, -time));
 
 	float4 vDiffuse = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuse.a = vDiffuse.r;
@@ -566,6 +577,8 @@ PS_OUT PS_PULSEINNER(PS_IN In)
 				Out.vDiffuse = float4(float3(1.0f, 0.0f, 0.0f) * step(dissolve_value + fDissolveAmount, 0.2f), Out.vDiffuse.a);
 		}
 	}
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -597,9 +610,8 @@ PS_OUT PS_SWIPES_CHARGED(PS_IN In)
 	vSwipe05.a = vSwipe05.r * 0.1f;
 
 	Out.vDiffuse = texturefresnel + fresnel + vSwipe05 * (swipes_charged_color * 3.f);
-
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 	return Out;
 }
 
@@ -614,6 +626,8 @@ PS_OUT PS_MAIN_EFFECTSHAMAN(PS_IN In)
 	Out.vDiffuse = vFinalColor * 100.f;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 6.f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -632,7 +646,7 @@ PS_OUT PS_FIRE_SWIPES(PS_IN In)
 	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.7f));
 	vector SmokeTiled3 = g_DTexture_4.Sample(LinearSampler, OffsetUV);
 
-	float4 finalcolor = lerp(t_fur_noise, customNoise, 0.2f) + swipes_charged_color;
+	float4 finalcolor = lerp(t_fur_noise, customNoise,0.2f) + swipes_charged_color;
 	SmokeTiled3.a = SmokeTiled3.r * 0.1f;
 
 	float4 lerpalpha = lerp(SmokeTiled3, T_ramp04, T_ramp04.r);
@@ -645,7 +659,7 @@ PS_OUT PS_FIRE_SWIPES(PS_IN In)
 	Out.vDiffuse = finalcolor * float4(255.f, 126.f, 126.f, 255.f) / 255.f * 1.5f;
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -677,7 +691,7 @@ PS_OUT PS_FIRE_SWIPES_INNER(PS_IN In)
 	Out.vDiffuse = T_swipe05;
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -703,7 +717,7 @@ PS_OUT PS_ROOT(PS_IN In)
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
 
 	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.2f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -729,13 +743,13 @@ PS_OUT PS_PLANEROOT(PS_IN In)
 	Out.vDiffuse = float4(finalcolor, vPlaneRoot.a);
 
 	float fTime = min(time, 1.f);
-	if (0.5f < fTime)
+	if (0.5f < fTime)  
 		Out.vDiffuse = Out.vDiffuse * (1.f - fTime);
-	else
+	else 
 		Out.vDiffuse = Out.vDiffuse * fTime;
 
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -758,11 +772,11 @@ PS_OUT PS_GRONDSHOCK(PS_IN In)
 
 	float fTime = min(g_Time * 1.2f, 2.f);
 
-	if (1.f < fTime)   // ??????????
+	if (1.f < fTime) 
 		Out.vDiffuse.a = Out.vDiffuse.a * (2.f - fTime);
 
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -782,11 +796,11 @@ PS_OUT PS_GRONDPLANE(PS_IN In)
 
 	float fTime = min(g_Time * 1.2f, 2.f);
 
-	if (1.f < fTime)   // ??????????
+	if (1.f < fTime)   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		Out.vDiffuse.a = Out.vDiffuse.a * (2.f - fTime);
 
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -803,27 +817,26 @@ PS_OUT PS_ENRAGE(PS_IN In)
 	In.vTexUV.x = In.vTexUV.x / 1.f;
 	In.vTexUV.y = In.vTexUV.y / 4.f;
 
-	//In.vTexUV.y = In.vTexUV.y * 10.f;
-	float fRazerValue = min(g_RazerValue * 1.1f, 10.f);
-	In.vTexUV.y = In.vTexUV.y * fRazerValue;
+	In.vTexUV.y = In.vTexUV.y * 10.f;
 
 	float  time = frac(g_Time * 1.5f);
 	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
-
+	
 	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuseTexture.a = vDiffuseTexture.r;
+	
+	Out.vDiffuse = vDiffuseTexture + g_vColor;
 
-	float4 vColor = g_vColor;
-	float fTime = min(g_Time, 2.f);
-	if (1.0f < fTime)
-		vColor.a = vColor.a * (2.f - fTime);
+	float fTime = min(g_Time, 1.f);
+	if (0.5f < fTime)
+		vDiffuseTexture.a = vDiffuseTexture.a * (1.f - fTime);
 	else
-		vColor.a = vColor.a * (fTime / 2.f);
+		vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 1.f);
 
-	float4 finalcolor = vDiffuseTexture + vColor;
+	float4 finalcolor = vDiffuseTexture + g_vColor;
 	Out.vDiffuse = finalcolor;
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -839,8 +852,8 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	Out.vDiffuse = vDiffuseTexture * g_vColor;
 	Out.vDiffuse.rgb = Out.vDiffuse.rgb * 3.f;
 
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }
@@ -861,16 +874,16 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 	In.vTexUV.y = In.vTexUV.y / 4.f;
 
 	float  time = frac(g_Time * 0.3f);
-	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x, In.vTexUV.y / 3.f), float2(1.0f, 1.0f), float2(0.0f, time));
+	float2 OffsetUV = TilingAndOffset(float2(In.vTexUV.x , In.vTexUV.y / 3.f), float2(1.0f, 1.0f), float2(0.0f, time));
 
 	vector vDiffuseTexture = g_DTexture_0.Sample(LinearSampler, OffsetUV);
 	vDiffuseTexture.a = vDiffuseTexture.r;
 
-	float fTime = min(g_Time * 1.2f, 2.f);
-	if (1.f < fTime)
-		vDiffuseTexture.a = vDiffuseTexture.a * (2.f - fTime);
-	else
-		vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 2.f);
+	//float fTime = min(g_Time * 1.2f, 2.f);
+	//if (1.f < fTime)
+	//	vDiffuseTexture.a = vDiffuseTexture.a * (2.f - fTime);
+	//else
+	//	vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 2.f);
 
 	float4 finalcolor = lerp(vDiffuseTexture, vMaskTexture, vDiffuseTexture.r);
 	float fAlpha = 1.0f - abs(In.vTexUV.y - 0.5f) * 2.f;
@@ -878,8 +891,8 @@ PS_OUT PS_DISTORTION_INTO(PS_IN In)
 	Out.vDiffuse = finalcolor * g_vColor * 2.f;
 	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
 
-	Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
 
 	return Out;
 }

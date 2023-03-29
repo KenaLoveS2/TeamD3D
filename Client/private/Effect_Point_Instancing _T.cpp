@@ -172,10 +172,11 @@ void CEffect_Point_Instancing_T::Set_RandomPSize(_float2 PSizeMinMax)
 
 HRESULT CEffect_Point_Instancing_T::Initialize_Prototype(_tchar* pProtoTag, const _tchar* pFilePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
 
-	Set_VIBufferProtoTag(pProtoTag);
+	if (pProtoTag != nullptr)
+		Set_VIBufferProtoTag(pProtoTag);
+
 	return S_OK;
 }
 
@@ -190,11 +191,8 @@ HRESULT CEffect_Point_Instancing_T::Initialize(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&m_eEFfectDesc, pArg, sizeof(CEffect_Base::EFFECTDESC));
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Components()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.eEffectType = CEffect_Base::tagEffectDesc::EFFECT_PARTICLE;
 	return S_OK;
@@ -204,10 +202,11 @@ void CEffect_Point_Instancing_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
+
 	if (m_eEFfectDesc.bStart == true)
 	{
 		m_eEFfectDesc.fPlayBbackTime += fTimeDelta;
-		m_pVIInstancingBufferCom->Get_PointDesc()->fTimeDelta = fTimeDelta;
 
 		if (m_eEFfectDesc.bStart == false)
 			m_eEFfectDesc.fPlayBbackTime = 0.0f;
@@ -287,11 +286,8 @@ void CEffect_Point_Instancing_T::Late_Tick(_float fTimeDelta)
 
 HRESULT CEffect_Point_Instancing_T::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
 	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVIInstancingBufferCom->Render();
@@ -302,19 +298,16 @@ HRESULT CEffect_Point_Instancing_T::Render()
 HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
+		(CComponent**)&m_pRendererCom), E_FAIL);
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxEffectPointInstance"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom), E_FAIL);
 
-	/* For.Com_VIBuffer => 버퍼마다 갯수가 다르기 때문에 이름지정함 ~~ */ 
-	if (FAILED(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVIInstancingBufferCom)))
-		return E_FAIL;
+	/* For.Com_VIBuffer => 버퍼마다 갯수가 다르기 때문에 이름지정함 ~~ */
+	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, m_szVIBufferProtoTag, TEXT("Com_VIBuffer"),
+		(CComponent**)&m_pVIInstancingBufferCom), E_FAIL);
 
 	/***********
 	*  TEXTURE *
@@ -331,8 +324,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szDTextureComTag = CUtile::Create_String(szDTexture);
 		CGameInstance::GetInstance()->Add_String(szDTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this)))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szDTextureComTag, (CComponent**)&m_pDTextureCom[i], this), E_FAIL);
 	}
 
 	/* For.MaskTexture */
@@ -344,8 +336,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_Components()
 		_tchar* szMTextureComTag = CUtile::Create_String(szMTexture);
 		CGameInstance::GetInstance()->Add_String(szMTextureComTag);
 
-		if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this)))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Texture_Effect"), szMTextureComTag, (CComponent**)&m_pMTextureCom[i], this), E_FAIL);
 	}
 
 	return S_OK;
@@ -356,51 +347,32 @@ HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV()), E_FAIL);
 
 	/* Texture Total Cnt */
-	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof _uint)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof _uint)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iTotalDTextureComCnt", &m_iTotalDTextureComCnt, sizeof(_uint)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_iTotalMTextureComCnt", &m_iTotalMTextureComCnt, sizeof(_uint)), E_FAIL);
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(bool))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_TextureRenderType", &m_eEFfectDesc.eTextureRenderType, sizeof(_int)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_IsUseMask", &m_eEFfectDesc.IsMask, sizeof(_bool)), E_FAIL);
 
 	/* TEX_SPRITE */
 	if (m_eEFfectDesc.eTextureRenderType == EFFECTDESC::TEXTURERENDERTYPE::TEX_SPRITE)
 	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int))))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_WidthFrame", &m_eEFfectDesc.fWidthFrame, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_HeightFrame", &m_eEFfectDesc.fHeightFrame, sizeof(_float)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth, sizeof(_int)), E_FAIL);
+		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight, sizeof(_int)), E_FAIL);
 	}
-	if (FAILED(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4))))
-		return E_FAIL;
-
-	// MaxCnt == 10
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof(_int)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_Time", &m_fLife, sizeof(_float)), E_FAIL);
 
 	for (_uint i = 0; i < m_iTotalDTextureComCnt; ++i)
 	{
@@ -410,8 +382,7 @@ HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 		char szDTexture[64] = "";
 		CUtile::WideCharToChar(strBindDTexture.c_str(), szDTexture);
 
-		if (FAILED(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i])))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pDTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szDTexture, (_uint)m_eEFfectDesc.fFrame[i]), E_FAIL);
 	}
 
 	for (_uint i = 0; i < m_iTotalMTextureComCnt; ++i)
@@ -422,12 +393,10 @@ HRESULT CEffect_Point_Instancing_T::SetUp_ShaderResources()
 		char szMTexture[64] = "";
 		CUtile::WideCharToChar(strBindMTexture.c_str(), szMTexture);
 
-		if (FAILED(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i])))
-			return E_FAIL;
+		FAILED_CHECK_RETURN(m_pMTextureCom[i]->Bind_ShaderResource(m_pShaderCom, szMTexture, (_uint)m_eEFfectDesc.fMaskFrame[i]), E_FAIL);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 	return S_OK;
 }
 

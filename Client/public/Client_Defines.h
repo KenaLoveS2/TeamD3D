@@ -7,13 +7,17 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-//#define FOR_MAP_GIMMICK
+#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL
 
 #define LIFT_ROT_COUNT		6
 #define FIRST_ROT			0
+
+#define MONSTER_LINEAR_DAMING		1.f
+#define MONSTER_ANGULAR_DAMING		0.5f
+#define MONSTER_MASS				25000.f
 
 namespace Client
 {
@@ -42,7 +46,7 @@ namespace Client
 
 		COL_ROT,
 
-		COL_MONSTER, COL_MONSTER_WEAPON,
+		COL_MONSTER, COL_MONSTER_WEAPON, COL_MONSTER_ARROW,
 		COL_ELETE_MONSTER, COL_ELETE_MONSTER_WEAPON,
 		COL_BOSS_MONSTER, COL_BOSS_MONSTER_WEAPON,
 		

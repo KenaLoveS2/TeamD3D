@@ -62,9 +62,9 @@ HRESULT CRotEater::Late_Initialize(void * pArg)
 		PxBoxDesc.vSize = _float3(0.6f, 0.5f, 1.2f);
 		PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxBoxDesc.fDensity = 1.f;
-		PxBoxDesc.fAngularDamping = 0.5f;
-		PxBoxDesc.fMass = 30.f;
-		PxBoxDesc.fLinearDamping = 10.f;
+		PxBoxDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxBoxDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxBoxDesc.fMass = MONSTER_MASS;
 		PxBoxDesc.fDynamicFriction = 0.5f;
 		PxBoxDesc.fStaticFriction = 0.5f;
 		PxBoxDesc.fRestitution = 0.1f;
@@ -132,8 +132,7 @@ void CRotEater::Tick(_float fTimeDelta)
 
 	Update_Collider(fTimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM)	m_pFSM->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 

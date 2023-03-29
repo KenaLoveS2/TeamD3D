@@ -227,7 +227,6 @@
     <ClInclude Include="..\public\Enviroment_Interaction.h" />
     <ClInclude Include="..\public\E_BombTrail.h" />
     <ClInclude Include="..\public\E_Distortion_Plane.h" />
-    <ClInclude Include="..\public\E_EnrageAttack.h" />
     <ClInclude Include="..\public\E_EnrageInto.h" />
     <ClInclude Include="..\public\E_FireBulletCloud.h" />
     <ClInclude Include="..\public\E_FireBulletCover.h" />
@@ -242,7 +241,6 @@
     <ClInclude Include="..\public\E_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_KenaParry.h" />
     <ClInclude Include="..\public\E_KenaParryHand.h" />
-    <ClInclude Include="..\public\E_P_Enrage.h" />
     <ClInclude Include="..\public\E_P_Explosion.h" />
     <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
@@ -259,6 +257,7 @@
     <ClInclude Include="..\public\E_P_InteractStaff.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_P_KenaHit.h" />
+    <ClInclude Include="..\public\E_P_Sakura.h" />
     <ClInclude Include="..\public\E_P_Sapling.h" />
     <ClInclude Include="..\public\E_P_ShockFrontEntended.h" />
     <ClInclude Include="..\public\E_P_SpiritArrow.h" />
@@ -483,7 +482,6 @@
     <ClCompile Include="..\private\Enviroment_Interaction.cpp" />
     <ClCompile Include="..\private\E_BombTrail.cpp" />
     <ClCompile Include="..\private\E_Distortion_Plane.cpp" />
-    <ClCompile Include="..\private\E_EnrageAttack.cpp" />
     <ClCompile Include="..\private\E_EnrageInto.cpp" />
     <ClCompile Include="..\private\E_FireBulletCloud.cpp" />
     <ClCompile Include="..\private\E_FireBulletCover.cpp" />
@@ -497,7 +495,6 @@
     <ClCompile Include="..\private\E_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_KenaParry.cpp" />
     <ClCompile Include="..\private\E_KenaParryHand.cpp" />
-    <ClCompile Include="..\private\E_P_Enrage.cpp" />
     <ClCompile Include="..\private\E_P_Explosion.cpp" />
     <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
@@ -515,6 +512,7 @@
     <ClCompile Include="..\private\E_P_InteractStaff.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_P_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_P_Sakura.cpp" />
     <ClCompile Include="..\private\E_P_Sapling.cpp" />
     <ClCompile Include="..\private\E_P_ShockFrontEntended.cpp" />
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />

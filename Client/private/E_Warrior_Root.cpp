@@ -78,6 +78,13 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 
 void CE_Warrior_Root::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("Root");
+
+	if (ImGui::Button("re"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::End();
+
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
@@ -103,9 +110,9 @@ void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
    	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	
 	__super::Late_Tick(fTimeDelta);
 
+	/* NonAlpha => alpha test */
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }

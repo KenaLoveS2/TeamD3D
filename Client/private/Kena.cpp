@@ -258,7 +258,7 @@ HRESULT CKena::Initialize(void * pArg)
 	m_fInitJumpSpeed = 0.35f;
 
 	m_iObjectProperty = OP_PLAYER;
-
+	m_pKenaStatus->Set_Attack(30);
 	return S_OK;
 }
 
@@ -280,9 +280,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
-	PxCapsuleDesc.fAngularDamping = 0.5f;
-	PxCapsuleDesc.fMass = 59.f;
-	PxCapsuleDesc.fLinearDamping = 10.f;
+	PxCapsuleDesc.fMass = KENA_MASS;
+	PxCapsuleDesc.fAngularDamping = KENA_ANGULAR_DAMING;
+	PxCapsuleDesc.fLinearDamping = KENA_LINEAR_DAMING;
 	PxCapsuleDesc.bCCD = true;
 	PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
 	PxCapsuleDesc.fDynamicFriction = 0.5f;
@@ -434,17 +434,6 @@ void CKena::Tick(_float fTimeDelta)
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
 	
-	if (m_bCommonHit || m_bHeavyHit || m_bParryLaunch)
-		m_fChangeColorTime += fTimeDelta;
-
-	if (m_fChangeColorTime > 1.f)
-	{
-		m_bCommonHit = false;
-		m_bHeavyHit = false;
-		m_bParryLaunch = false;
-		m_fChangeColorTime = 0.0f;
-	}
-	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
 	else
@@ -469,6 +458,8 @@ void CKena::Tick(_float fTimeDelta)
  		{
  			m_bCommonHit = true;
  			//m_bHeavyHit = true;
+			m_bHitRim = true;
+			m_fHitRimIntensity = 1.f;
  			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
 
 			if (m_bPulse == false)
@@ -674,11 +665,11 @@ void CKena::Late_Tick(_float fTimeDelta)
 	//CUI_ClientManager::UI_FUNCTION funcSwitch = CUI_ClientManager::FUNC_SWITCH;
 	//CUI_ClientManager::UI_FUNCTION funcCheck = CUI_ClientManager::FUNC_CHECK;
 
-	if (CGameInstance::GetInstance()->Key_Down(DIK_M))
-	{
-		CKena* pPlayer = this;
-		m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
-	}
+	//if (CGameInstance::GetInstance()->Key_Down(DIK_M))
+	//{
+	//	CKena* pPlayer = this;
+	//	m_PlayerPtrDelegator.broadcast(eInv, funcDefault, pPlayer);
+	//}
 
 	if(CGameInstance::GetInstance()->Key_Down(DIK_P))
 	{
@@ -928,6 +919,18 @@ void CKena::Imgui_RenderProperty()
 	_float2	ShieldRecoveryTime{ m_pKenaStatus->Get_CurShieldRecoveryTime(), m_pKenaStatus->Get_InitShieldRecoveryTime() };
 	ImGui::InputFloat2("Shield Recovery Time", (_float*)&ShieldRecoveryTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
+	/*
+	// TEST
+	public: // TEMP
+	_float m_fLinearDamping = 1.f, m_fAngularDamping = 0.5f, m_fMass = 20000.f;
+	ImGui::DragFloat("Linear Damping", &m_fLinearDamping, 0.01f, -100.f, 100.0f);	
+	ImGui::DragFloat("Angular Damping", &m_fAngularDamping, 0.01f, -100.f, 100.0f);
+	ImGui::DragFloat("Mass", &m_fMass, 1.f, 0.f, 500000.f);	
+	PxRigidDynamic* pDynamic = (PxRigidDynamic*)m_pTransformCom->Get_Actor();
+	pDynamic->setLinearDamping(m_fLinearDamping);
+	pDynamic->setAngularDamping(m_fAngularDamping);
+	pDynamic->setMass(m_fMass);
+	*/
 	__super::Imgui_RenderProperty();
 }
 
@@ -1249,6 +1252,42 @@ void CKena::Dead_FocusRotIcon(CGameObject* pTarget)
 	m_pUI_FocusRot->Off_Focus(pTarget);
 }
 
+void CKena::RimColorValue()
+{
+	// Set rim lighting variables based on attack type
+	if (m_bParryLaunch)
+	{
+		m_bParryRim = true;
+		m_fParryRimIntensity = 1.f;
+	}
+
+	// Update rim lighting variables and send them to the shader
+	{
+		if (m_fParryRimIntensity > 0.f)
+			m_fParryRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fParryRimIntensity = 0.f;
+			m_bParryRim = false;
+		}
+			
+		m_pShaderCom->Set_RawValue("g_Parry", &m_bParryRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_ParryRimIntensity", &m_fParryRimIntensity, sizeof(_float));
+	}
+
+	{
+		if (m_fHitRimIntensity > 0.f)
+			m_fHitRimIntensity -= TIMEDELTA;
+		else
+		{
+			m_fHitRimIntensity = 0.f;
+			m_bHitRim = false;
+		}
+		m_pShaderCom->Set_RawValue("g_Hit", &m_bHitRim, sizeof(_bool));
+		m_pShaderCom->Set_RawValue("g_HitRimIntensity", &m_fHitRimIntensity, sizeof(_float));
+	}
+}
+
 HRESULT CKena::Ready_Parts()
 {
 	CKena_Parts*	pPart = nullptr;
@@ -1453,13 +1492,7 @@ HRESULT CKena::SetUp_ShaderResources()
 	m_pShaderCom->Set_RawValue("g_fLashWidth", &m_fLashWidth, sizeof(float));
 	m_pShaderCom->Set_RawValue("g_fLashIntensity", &m_fLashIntensity, sizeof(float));
 
-	/* Kena Damage Parry Value */
-	//_bool bHit = false;
-	//if (m_bHeavyHit == true || m_bCommonHit == true)
-	//	bHit = true;
-	//m_pShaderCom->Set_RawValue("g_Hit", &bHit, sizeof(_bool));
-	//m_pShaderCom->Set_RawValue("g_Parry", &m_bParryLaunch, sizeof(_bool));
-	//m_pShaderCom->Set_RawValue("g_Time", &m_fChangeColorTime, sizeof(_float));
+	RimColorValue();
 
 	return S_OK;
 }
@@ -1684,7 +1717,10 @@ void CKena::TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta)
 				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
-				matWalk.r[3] = matWorldSocket.r[3];
+
+				_float4 vFootPos = matWorldSocket.r[3];
+				vFootPos.y = vFootPos.y + 0.3f;
+				matWalk.r[3] = vFootPos;
 				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
 				/* ToeDust Update */
 
@@ -1715,7 +1751,9 @@ void CKena::TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta)
 				_matrix SocketMatrix = pToeBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 				_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
 				_matrix matWalk = Pair.second->Get_TransformCom()->Get_WorldMatrix();
-				matWalk.r[3] = matWorldSocket.r[3];
+				_float4 vFootPos = matWorldSocket.r[3];
+				vFootPos.y = vFootPos.y + 0.3f;
+				matWalk.r[3] = vFootPos;
 				Pair.second->Get_TransformCom()->Set_WorldMatrix(matWalk);
 				/* ToeDust Update */
 

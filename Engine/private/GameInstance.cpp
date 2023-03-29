@@ -849,7 +849,7 @@ _tchar* CGameInstance::Find_String(_uint iLevelIndex, _tchar * pStr)
 	return m_pString_Manager->Find_String(iLevelIndex, pStr);
 }
 
-void CGameInstance::Add_UIString(_uint iKey, string str)
+void CGameInstance::Add_UIString(_uint iKey, const string& str)
 {
 	if (m_pString_Manager == nullptr) return;
 	return m_pString_Manager->Add_UIString(iKey, str);

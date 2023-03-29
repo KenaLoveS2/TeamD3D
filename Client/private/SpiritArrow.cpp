@@ -264,6 +264,8 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
 	{
+		dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+
 		if (iKenaState == (_uint)CKena_State::BOW_CHARGE_FULL_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_LOOP_ADD)
@@ -289,9 +291,9 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			for (auto pChild : *pChilds)
 				pChild->Set_Active(false);
 
-			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
+			m_vecChild[EFFECT_POSITION]->Set_Active(false);
+			//	m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		}
-		dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_CHARGE)
 	{
@@ -335,11 +337,13 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			for (auto pChild : *pChilds)
 				pChild->Set_Active(false);
 
+			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_FIRE)
 	{
+		m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		if (m_bHit == true)
 		{
 			eState = CSpiritArrow::ARROW_HIT;

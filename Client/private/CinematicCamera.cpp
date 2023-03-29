@@ -140,11 +140,11 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	ImGui::Begin("CinematicCam");
-	Imgui_RenderProperty();
-	ImGui::End();
-#endif
+//#ifdef _DEBUG
+//	ImGui::Begin("CinematicCam");
+//	Imgui_RenderProperty();
+//	ImGui::End();
+//#endif
 
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
@@ -190,7 +190,25 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		}
 
 		if (m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
+		{
 			m_fDeltaTime += fTimeDelta;
+			if(m_fDeltaTime >= m_keyframes.back().fTime * 0.5f)
+			{
+				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				_bool bVal = true;
+
+				if (m_iChatIndex >= (int)m_vecChat.size())
+				{
+					bVal = false;
+					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
+				}
+				else
+				{
+					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
+					m_iChatIndex++;
+				}
+			}
+		}		
 		else
 		{
 			m_bPlay = false;
@@ -315,6 +333,7 @@ void CCinematicCamera::Imgui_RenderProperty()
 		}
 
 
+		// �ó׸�ƽ���� ����� �÷������� �����Ұ�.
 		if (ImGui::Button("CinematicPlay"))
 		{
 			m_fDeltaTime = 0.f;
@@ -436,13 +455,13 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		if (ImGuiFileDialog::Instance()->Display("CineCam Save Folder"))
 		{
-			if (ImGuiFileDialog::Instance()->IsOk())        
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
 			{
 				Save_Data();
 				ImGuiFileDialog::Instance()->Close();
 			}
 
-			if (!ImGuiFileDialog::Instance()->IsOk())    
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
 				ImGuiFileDialog::Instance()->Close();
 		}
 
@@ -451,12 +470,12 @@ void CCinematicCamera::Imgui_RenderProperty()
 
 		if (ImGuiFileDialog::Instance()->Display("CineCam Load Folder"))
 		{
-			if (ImGuiFileDialog::Instance()->IsOk())       
+			if (ImGuiFileDialog::Instance()->IsOk())        // OK ������ ��
 			{
 				Load_Data();
 				ImGuiFileDialog::Instance()->Close();
 			}
-			if (!ImGuiFileDialog::Instance()->IsOk())    
+			if (!ImGuiFileDialog::Instance()->IsOk())       // Cancel ������ ��
 				ImGuiFileDialog::Instance()->Close();
 		}
 	}
@@ -596,7 +615,7 @@ void CCinematicCamera::Load_Data()
 {
 	list<CGameObject*> gameobjectList;
 
-	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();  
+	string      strLoadDirectory = ImGuiFileDialog::Instance()->GetCurrentPath();   // GetCurrentPath F12�� �鰡�� ����� �ٸ� �Լ� �� ����.
 	string      strLoadFileName = ImGuiFileDialog::Instance()->GetCurrentFileName();
 	char   szDash[128] = "\\";
 	strcat_s(szDash, strLoadFileName.c_str());

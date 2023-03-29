@@ -150,8 +150,8 @@ void CEffect_T::Tick(_float fTimeDelta)
 
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
-	//if (m_eEFfectDesc.bActive == false)
-	//	return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	if (m_pParent != nullptr)
 		Set_Matrix();
