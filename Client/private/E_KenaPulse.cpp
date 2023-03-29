@@ -167,6 +167,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	switch (m_ePulseType)
 	{
 	case Client::CE_KenaPulse::PULSE_DEFAULT:
+		
+		m_eEFfectDesc.iPassCnt = 1;
 
 		if (m_bNoActive == true) // Pulse 끝
 		{
@@ -292,48 +294,57 @@ void CE_KenaPulse::Reset()
 _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	_bool bRealAttack = false;
-	if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+
+	if (pTarget == nullptr)
 	{
-		if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
-			return 0;
 
-		// KenaPulse 공격력 깎기
-		CStatus*	pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
-
-		if (pStatus->Get_Attack() > 10)
-			m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
-		else
-			m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
-
-		m_pKena->Set_AttackObject(pTarget);
-		//
-		CKena:: DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
-		CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
-		_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vDir.Normalize();
-
-		_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
-
-		if (fFrontBackAngle >= 0.f)
-			eDir = CKena::DAMAGED_FRONT;
-		else
-			eDir = CKena::DAMAGED_BACK;
-
-		m_pKena->Set_DamagedDir(eDir);
-		//
-		m_pStatus->Under_Shield(pStatus);
-
-		m_eStatus.fCurHp = m_pStatus->Get_Shield();
-		m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
-
-		if (m_eStatus.fCurHp <= 0.0f)
-		{
-			m_bDesolve = true;
-			m_fDissolveTime = 0.0f;
-		}
-		else
-			m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
+	else
+	{
+		if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		{
+			if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
+				return 0;
+
+			// KenaPulse 공격력 깎기
+			CStatus* pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+			if (pStatus->Get_Attack() > 10)
+				m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+			else
+				m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+			m_pKena->Set_AttackObject(pTarget);
+			//
+			CKena::DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
+			CTransform* pTargetTransCom = pTarget->Get_TransformCom();
+			_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			vDir.Normalize();
+
+			_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+			if (fFrontBackAngle >= 0.f)
+				eDir = CKena::DAMAGED_FRONT;
+			else
+				eDir = CKena::DAMAGED_BACK;
+
+			m_pKena->Set_DamagedDir(eDir);
+			//
+			m_pStatus->Under_Shield(pStatus);
+
+			m_eStatus.fCurHp = m_pStatus->Get_Shield();
+			m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+			if (m_eStatus.fCurHp <= 0.0f)
+			{
+				m_bDesolve = true;
+				m_fDissolveTime = 0.0f;
+			}
+			else
+				m_eStatus.eState = STATUS::STATE_DAMAGE;
+		}
+	}
+
 	return 0;
 }
 

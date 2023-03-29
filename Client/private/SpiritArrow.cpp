@@ -162,14 +162,18 @@ void CSpiritArrow::Imgui_RenderProperty()
 	if (ImGui::Button("Reset"))
 		Reset();
 
-	char	szState[16];
+	char	szState[32];
 
 	if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
 		strcpy_s(szState, "CHARGE");
+	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_CHARGE)
+		strcpy_s(szState, "INJECT CHARGE");
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
 		strcpy_s(szState, "READY");
 	else if (m_eCurState == CSpiritArrow::ARROW_FIRE)
 		strcpy_s(szState, "FIRE");
+	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_FIRE)
+		strcpy_s(szState, "INJECT FIRE");
 	else if (m_eCurState == CSpiritArrow::ARROW_HIT)
 		strcpy_s(szState, "HIT");
 	else
@@ -252,6 +256,11 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vecChild[EFFECT_POSITION]->Set_Active(true);
 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
 		}
+// 		else if (iKenaState == (_uint)CKena_State::BOW_INJECT_ADD)
+// 		{
+// 			eState = CSpiritArrow::ARROW_INJECT_CHARGE;
+// 			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+// 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_CHARGE)
 	{
@@ -261,6 +270,12 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			iKenaState == (_uint)CKena_State::BOW_CHARGE_LOOP_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_CHARGE_LOOP_ADD)
 			eState = CSpiritArrow::ARROW_READY;
+
+		else if (iKenaState == (_uint)CKena_State::BOW_INJECT_ADD)
+		{
+			eState = CSpiritArrow::ARROW_INJECT_CHARGE;
+			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+		}
 
 		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_RELEASE_ADD)
@@ -280,9 +295,35 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			//	m_vecChild[EFFECT_TRAIL]->Set_Active(true);
 		}
 	}
+	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_CHARGE)
+	{
+		if (iKenaState == (_uint)CKena_State::BOW_INJECT_RELEASE_ADD)
+		{
+			eState = CSpiritArrow::ARROW_INJECT_FIRE;
+			m_fScale = m_fMaxScale;
+			m_fInjectScale = m_fMaxInjectScale;
+			m_bReachToAim = false;
+			m_fInjectFireTime = 0.f;
+			m_vFirePosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_vFireCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float4());
+			m_vFireCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+
+			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
+			for (auto pChild : *pChilds)
+				pChild->Set_Active(false);
+
+			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+			m_vecChild[EFFECT_TRAIL]->Set_Active(true);
+		}
+	}
 	else if (m_eCurState == CSpiritArrow::ARROW_READY)
 	{
-		if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
+		if (iKenaState == (_uint)CKena_State::BOW_INJECT_ADD)
+		{
+			eState = CSpiritArrow::ARROW_INJECT_CHARGE;
+			dynamic_cast<CE_SpiritArrowTrail*>(m_vecChild[EFFECT_TRAIL])->ResetInfo();
+		}
+		else if (iKenaState == (_uint)CKena_State::BOW_RELEASE_ADD ||
 			iKenaState == (_uint)CKena_State::BOW_AIR_RELEASE_ADD)
 		{
 			eState = CSpiritArrow::ARROW_FIRE;
@@ -311,6 +352,24 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
 		}
 	}
+	else if (m_eCurState == CSpiritArrow::ARROW_INJECT_FIRE)
+	{
+		if (m_bHit == true)
+		{
+			eState = CSpiritArrow::ARROW_HIT;
+			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
+			m_vecChild[EFFECT_POSITION]->Set_Active(false);
+			m_vecChild[EFFECT_HIT]->Set_Active(true);
+		}
+		if (m_fInjectFireTime > 5.f)
+		{
+			Reset();
+		}
+	}
+	else if (m_eCurState == CSpiritArrow::ARROW_HIT)
+	{
+		Reset();
+	}
 
 	return eState;
 }
@@ -325,8 +384,10 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 
 	CUtile::Saturate<_float>(m_fScale, 1.f, m_fMaxScale);
 	CUtile::Saturate<_float>(m_fScalePosRate, 0.188f, 0.35f);
+	CUtile::Saturate<_float>(m_fInjectScale, 1.f, m_fMaxInjectScale);
 	CUtile::Saturate<_float>(m_fDistance, m_fMinDistance, m_fMaxDistance);
 	m_pTransformCom->Set_Scaled(CTransform::STATE_LOOK, m_fScale);
+	m_pTransformCom->Set_Scaled(CTransform::STATE_UP, m_fInjectScale);
 
 	switch (m_eCurState)
 	{
@@ -341,6 +402,35 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 			m_fScale += fTimeDelta;
 			m_fScalePosRate -= fTimeDelta * 0.162f;
 			m_fDistance = m_fScale * 10.f;
+
+			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+
+ 			_smatrix	matPivot = pActorData->PivotMatrix;
+ 			_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
+ 			vColliderPos.w = 1.f;
+
+			/* Effects */
+			m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
+
+			_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
+			matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
+
+			break;
+		}
+	case CSpiritArrow::ARROW_INJECT_CHARGE:
+		{
+			matSocket = pStaffBone->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, matSocket.r[3]);
+
+			matSocket = pStaffHead->Get_CombindMatrix() * pModel->Get_PivotMatrix() * m_pKena->Get_WorldMatrix();
+			m_pTransformCom->LookAt(matSocket.r[3]);
+
+			m_fScale += fTimeDelta;
+			m_fScalePosRate -= fTimeDelta * 0.162f;
+			m_fDistance = m_fScale * 10.f;
+
+			m_fInjectScale += fTimeDelta;
 
 			CTransform::ActorData*	pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
 
@@ -396,6 +486,30 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 			m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
 			break;
 		}
+	case CSpiritArrow::ARROW_INJECT_FIRE:
+		{
+			m_fInjectFireTime += fTimeDelta;
+
+			_float4	vTargetPos = m_vFireCamPos + m_vFireCamLook * m_fDistance;
+			m_pTransformCom->LookAt(vTargetPos);
+
+			m_pTransformCom->Go_Straight(fTimeDelta);
+
+			CTransform::ActorData* pActorData = m_pTransformCom->FindActorData(m_szCloneObjectTag);
+
+			_smatrix	matPivot = pActorData->PivotMatrix;
+			_float4	vColliderPos = (matPivot * m_pTransformCom->Get_WorldMatrix()).Translation();
+			vColliderPos.w = 1.f;
+
+			/* Effects */
+			m_vecChild[EFFECT_POSITION]->Set_Position(vColliderPos);
+
+			_matrix matrWorld = m_vecChild[EFFECT_TRAIL]->Get_WorldMatrix();
+			matrWorld.r[3] = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			m_vecChild[EFFECT_TRAIL]->Get_TransformCom()->Set_WorldMatrix(matrWorld);
+
+			break;
+		}
 	case CSpiritArrow::ARROW_HIT:
 		{
 			Reset();
@@ -415,7 +529,6 @@ _int CSpiritArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 
 		_vector	vPos = m_pKena->Get_WorldMatrix().r[3];
 		_float	fDistance = XMVectorGetX(XMVector3Length(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) - vPos));
-		int a = 0;
 	}
 
 	/* Collision Test */
@@ -435,9 +548,11 @@ void CSpiritArrow::Reset()
 	m_bReachToAim = false;
 	m_fScale = 1.f;
 	m_fScalePosRate = 0.35f;
+	m_fInjectScale = 1.f;
+	m_fInjectFireTime = 0.f;
 	m_eCurState = CSpiritArrow::ARROWSTATE_END;
 	m_ePreState = CSpiritArrow::ARROWSTATE_END;
-
+	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, -3.f, 0.f, 1.f));
 
 	for (auto pEffect : m_vecChild)

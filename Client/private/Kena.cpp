@@ -938,6 +938,8 @@ void CKena::ImGui_AnimationProperty()
 {
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
 
+	m_vecArrow[0]->Imgui_RenderProperty();
+
 	ImGui::BeginTabBar("Kena Animation & State");
 
 	if (ImGui::BeginTabItem("Animation"))
@@ -1520,6 +1522,7 @@ HRESULT CKena::SetUp_State()
 	m_pModelCom->Set_RootBone("kena_RIG");
 	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
+	m_pAnimation->Set_RootAnimation("IDLE");
 
 	return S_OK;
 }
@@ -1963,7 +1966,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	/* Terrain */
 	if (m_bJump)
 	{
-		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
+		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_GROUND || iColliderIndex == (_int)COL_ENVIROMENT)
 		{
 			m_bOnGround = true;
 			m_bJump = false;
@@ -1973,12 +1976,12 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	}
 	else
 	{
-		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
+		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY) return 0;
 
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
 		{
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
@@ -1999,7 +2002,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pAttackObject = pTarget;
 		}
 
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
 		{
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
