@@ -1273,6 +1273,8 @@ void CRenderer::Free()
 	Safe_Release(*m_pDistortionTexture);
 	Safe_Delete(m_pDistortionTexture);
 
+	Safe_Release(m_pVideoRenderTargetTexture);
+
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pLevel_Manager);
