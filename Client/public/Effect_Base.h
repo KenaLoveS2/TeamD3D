@@ -237,6 +237,7 @@ protected:
 
 	_bool  m_bFinishSprite = false;
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
+	_float  m_fHDRValue = 0.0f;
 
 public:
 	virtual void          Free() override;

@@ -91,6 +91,13 @@ public:
 	void			Set_ResetOriginPos();
 
 public:
+	HRESULT			Tick_Box(_float fTimeDelta);
+	HRESULT			Tick_Stright(_float fTimeDelta);
+	HRESULT			Tick_PlaneCircle(_float fTimeDelta);
+	HRESULT			Tick_Cone(_float fTimeDelta);
+	HRESULT			Tick_Explosion(_float fTimeDelta);
+
+public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
 	virtual HRESULT Tick(_float fTimeDelta) override;

@@ -116,6 +116,38 @@ public:
 		}
 
 	} PX_CAPSULE_DESC;
+
+	typedef struct tagPhysxControllerCapsuleDesc
+	{	
+		const _tchar* pTag;
+		_float3 vPos, vUpDirection;
+		_float fDensity;		
+		_float fRadius, fHeight;
+		_float fStaticFriction, fDynamicFriction, fRestitution;
+
+		_float fContactOffset;
+		_float fStepOffset;		
+		_float fSlopeLimit;
+
+		PX_FILTER_TYPE eFilterType;
+
+		tagPhysxControllerCapsuleDesc()
+		{
+			vPos = { 0.f, 0.f, 0.f };
+			vUpDirection = { 0.f, 1.f, 0.f };
+			fDensity = 1.f;
+			fRadius = 0.5f;
+			fHeight = 1.f;
+			fStaticFriction = 0.5f;
+			fDynamicFriction = 0.5f;
+			fRestitution = 0.1f;
+			fContactOffset = 0.1f;
+			fStepOffset = 0.1f;
+			fSlopeLimit = 0.707f;
+		}
+
+	} PX_CONTROLLER_CAPSULE_DESC;
+
 private:
 	PxDefaultAllocator m_PxDefaultAllocatorCallback;
 	PxDefaultErrorCallback m_PxDefaultErrorCallback;
@@ -129,10 +161,12 @@ private:
 	PxMaterial*						m_pMaterial = nullptr;
 	PxPvd*								m_pPvd = nullptr;
 	PxCooking*						m_pCooking = nullptr;
-	
+	PxControllerManager* m_pControlllerManager = nullptr;
+
 	CustomSimulationEventCallback m_EventCallback;
 	
 private:
+	map<const _tchar*, PxController*> m_Controllers;
 	map<const _tchar*, PxRigidActor*> m_StaticActors;
 	map<const _tchar*, PxRigidActor*> m_DynamicActors;
 	map<const _tchar*, PxRigidActor*> m_DynamicColliders;
@@ -244,5 +278,9 @@ public:
 	void Delete_DynamicActor(PxRigidActor* pActor);
 
 	void Set_Visualization(PxRigidActor *pActor, _bool bFlag);
+	_bool IsFalling(PxRigidDynamic* pActor);
+	void Create_Controller(PX_CONTROLLER_CAPSULE_DESC& ControllerCapsuleDesc, PX_USER_DATA* pUserData);
+	void Move_Controller(PxController* pController, _float3 vDist);
+	PxController* Find_Controller(const _tchar* pTag);
 };
 END

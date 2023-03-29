@@ -1,0 +1,32 @@
+{
+    "DiffuseTextureIndex": 25,
+    "AnimType": 1,
+    "Duration": 0.0010000000474974513,
+    "FramesX": [
+        8
+    ],
+    "FramesY": [
+        4
+    ],
+    "Loop": false,
+    "MaskTextureIndex": -1,
+    "localMatrix": [
+        250.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        250.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -120.0,
+        -105.0,
+        0.0,
+        1.0
+    ],
+    "renderPass": 4
+}
