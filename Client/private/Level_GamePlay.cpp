@@ -550,3 +550,4 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _tchar * pLayerTag)
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
+
