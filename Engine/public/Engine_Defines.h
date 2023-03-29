@@ -52,8 +52,11 @@ using namespace std;
 using Json = nlohmann::json;
 using namespace nlohmann;
 
-#include <PhysX/PxPhysics.h>
-#include <PhysX/PxPhysicsAPI.h>
+#define PX_PHYSX_CHARACTER_STATIC_LIB
+#include "PhysX/PxPhysics.h"
+#include "PhysX/PxPhysicsAPI.h"
+
+
 using namespace physx;
 
 #include "Engine_Macro.h"
