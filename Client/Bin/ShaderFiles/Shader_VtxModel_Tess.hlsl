@@ -3,8 +3,8 @@
 /**********Constant Buffer*********/
 matrix         g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix         g_SocketMatrix;
-float            g_fFar = 300.f;
-float            g_fStonePulseIntensity = 0.f;
+float          g_fFar = 500.f;
+float          g_fStonePulseIntensity = 0.f;
 /**********************************/
 
 Texture2D<float4>      g_DiffuseTexture;

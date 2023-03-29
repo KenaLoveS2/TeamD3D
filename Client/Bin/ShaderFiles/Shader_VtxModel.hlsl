@@ -3,7 +3,7 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
-float				g_fFar = 300.f;
+float			g_fFar = 500.f;
 float4			g_vCamPosition;
 /**********************************/
 

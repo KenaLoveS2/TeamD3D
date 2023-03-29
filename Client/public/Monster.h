@@ -142,14 +142,13 @@ protected:
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
 	
-	_bool m_bRealAttack = false;
+	_bool   m_bRealAttack = false;
 
-	_bool m_bIsFightReady = false;
+	_bool   m_bIsFightReady = false;
 
 	_float	m_fHitStopTime = 0.f;
-	_float m_fDissolveTime = 0.0f;
-	_float m_fSpawnRange = 8.f;
-
+	_float  m_fDissolveTime = 0.0f;
+	_float  m_fSpawnRange   = 8.f;
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;
