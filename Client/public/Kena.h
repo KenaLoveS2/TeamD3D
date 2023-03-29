@@ -5,6 +5,11 @@
 #include "delegator.h"
 #include "Model.h"
 
+#define KENA_LINEAR_DAMING		1.f
+#define KENA_ANGULAR_DAMING		0.5f
+#define KENA_MASS				25000.f
+
+
 BEGIN(Engine)
 class CRenderer;
 class CShader;

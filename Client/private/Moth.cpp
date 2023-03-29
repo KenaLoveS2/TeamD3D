@@ -56,7 +56,7 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
 		PxSphereDesc.pActortag = TEXT("Moth_Collider_0");
 		PxSphereDesc.vPos = {0.f, 0.f, 0.f};
-		PxSphereDesc.fRadius = 0.3f;		
+		PxSphereDesc.fRadius = 0.5f;		
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;
@@ -76,7 +76,7 @@ HRESULT CMoth::Late_Initialize(void * pArg)
 		PxSphereDesc.eType = SPHERE_DYNAMIC;
 		PxSphereDesc.pActortag = TEXT("Moth_Collider_1");
 		PxSphereDesc.vPos = { 0.f, 0.f, 0.f };
-		PxSphereDesc.fRadius = 0.2f;
+		PxSphereDesc.fRadius = 0.3f;
 		PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxSphereDesc.fDensity = 1.f;
 		PxSphereDesc.fAngularDamping = 0.5f;

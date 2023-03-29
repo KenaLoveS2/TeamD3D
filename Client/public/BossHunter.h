@@ -3,6 +3,7 @@
 #include "HunterArrow.h"
 
 #define TEXT_COL_HUNTER_BODY		TEXT("BossHunter_Body_Collider")
+#define TEXT_COL_HUNTER_WEAPON		TEXT("BossHunter_Weapon_Collider")
 #define ARROW_COUNT					10
 #define FLY_POS_COUNT				8
 

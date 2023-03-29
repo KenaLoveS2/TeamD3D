@@ -62,7 +62,7 @@ void CE_WarriorTrail::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
-	/*
+
 	ImGui::Begin("Warrior Trail");
 
 	if (ImGui::Button("Recompile"))
@@ -92,7 +92,6 @@ void CE_WarriorTrail::Tick(_float fTimeDelta)
 	m_eEFfectDesc.vColor = vSelectColor;
 
 	ImGui::End();
-	*/
 }
 
 void CE_WarriorTrail::Late_Tick(_float fTimeDelta)

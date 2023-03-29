@@ -68,6 +68,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 HRESULT CBossWarrior::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
+	// 몸통
 	{	
 		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f);
 		_float3 vPivotPos = _float3(0.f, 2.f, 0.f);
@@ -81,9 +82,9 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.isGravity = true;
 		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
@@ -91,6 +92,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
+		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 2.f, 0.f));
 	}
 	
@@ -303,10 +305,7 @@ void CBossWarrior::Push_EventFunctions()
 	TurnOnPlaneRoot(true, 0.0f);
 
 	TurnOnEnrage_Into(true, 0.0f);
-	TurnOnEnrage(true, 0.0f);
 	TurnOnEnrage_Attck(true, 0.0f);
-
-	TurnOffEffects(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -325,6 +324,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("SLEEP to READY_SPAWN", "READY_SPAWN")
 		.Predicator([this]()
 	{	
+		// 대기 종결 조건 수정 필요
 		m_fSpawnRange = 10.f;
 		return DistanceTrigger(m_fSpawnRange);				
 	})
@@ -332,10 +332,11 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("READY_SPAWN")
 		.OnStart([this]()
 	{
+		// 등장 연출 필요
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-		/* HP Bar Active */
+				/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
@@ -375,7 +376,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return IsParried();
 	})	
-		.AddTransition("IDLE to ENRAGE", "ENRAGE")
+		.AddTransition("IDLE to ENRAGE", "ENRAGE") // 기모아서 가오잡음
 		.Predicator([this]()
 	{
 		return m_bEnRageReady && m_pMonsterStatusCom->Get_PercentHP() < 0.5f;
@@ -390,32 +391,32 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fJumpBackRange);
 	})
-		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK")
+		.AddTransition("IDLE to CHARGE_ATTACK", "CHARGE_ATTACK") // 내려찍기
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 0;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT")
+		.AddTransition("IDLE to COMBO_ATTACK", "UPPER_CUT") // 내려찍기 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 1;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "COMBO_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 2;
 	})
-		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK")
+		.AddTransition("IDLE to COMBO_ATTACK", "SWEEP_ATTACK") // 트레일 돌리면 될듯
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fCloseAttackRange) && m_iCloseAttackIndex == 3;
 	})		
-		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK")
+		.AddTransition("IDLE to JUMP_ATTACK", "JUMP_ATTACK") // 점프해서 바닥을 찍는다
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 0;
 	})		
-		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT")
+		.AddTransition("IDLE to TRIP_UPPERCUT", "TRIP_UPPERCUT") // 3단 공격 1,2번째 공격에 검기가 날라가고 3번째에 터지는 듯한 느낌
 		.Predicator([this]()
 	{
 		return TimeTrigger(m_fIdleTimeCheck, m_fIdleTime) && DistanceTrigger(m_fFarAttackRange) && m_iFarAttackIndex == 1;
@@ -551,6 +552,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pMonsterStatusCom->Add_CurrentHP(100);
 		Attack_Start(ENRAGE);
 		
+		// 광역 공격 이펙트(레인지)
 		
 	})
 		.OnExit([this]()
@@ -570,6 +572,7 @@ HRESULT CBossWarrior::SetUp_State()
 		m_bBellCall = true;
 		m_pModelCom->ResetAnimIdx_PlayTime(BELL_CALL);
 		m_pModelCom->Set_AnimIndex(BELL_CALL);
+		// 몬스터 소환
 	})
 		.OnExit([this]()
 	{
@@ -796,6 +799,7 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("DEATH_SCENE")
 		.OnStart([this]()
 	{
+		// 죽은 애니메이션 후 죽음 연출 State
 	})
 		.AddTransition("DEATH_SCENE to DEATH", "DEATH")
 		.Predicator([this]()
@@ -1089,22 +1093,22 @@ void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
 				_float4 WarriorPos = m_pTransformCom->Get_WorldMatrix().r[3];
 				_float4 vPos;
 				_float	fRange = 1.0f;
-				if (Pair.first == "W_Hieroglyph0")
+				if (Pair.first == "W_Hieroglyph0") // 왼쪽아래
 				{
 					vPos = _float4(WarriorPos.x + 0.7f, WarriorPos.y + fRange, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(0);
 				}
-				if (Pair.first == "W_Hieroglyph1")
+				if (Pair.first == "W_Hieroglyph1") // 왼쪽 위
 				{
 					vPos = _float4(WarriorPos.x + fRange, WarriorPos.y + fRange * 2.f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(1);
 				}
-				if (Pair.first == "W_Hieroglyph2") 
+				if (Pair.first == "W_Hieroglyph2") // 오른쪽 아래
 				{
 					vPos = _float4(WarriorPos.x - 0.4f, WarriorPos.y + fRange + 0.2f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(2);
 				}
-				if (Pair.first == "W_Hieroglyph3")
+				if (Pair.first == "W_Hieroglyph3") // 오른쪽 위
 				{
 					vPos = _float4(WarriorPos.x - 0.7f, WarriorPos.y + fRange * 2.5f, WarriorPos.z + fRange, 1.f);
 					dynamic_cast<CE_Hieroglyph*>(Pair.second)->Set_TexRandomPrint(3);
@@ -1144,6 +1148,9 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe);
 		return;
 	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	CBone*  pUpBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt6"); // UP
 	CBone*  pCenterBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt7"); // DOWN == center
 
@@ -1173,6 +1180,9 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnFireSwipe_End);
 		return;
 	}
+
+	m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
+
 	CBone*  pBonePtr = m_pModelCom->Get_BonePtr("Halberd_Jnt8");
 	_matrix matrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
 	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
@@ -1250,26 +1260,12 @@ void CBossWarrior::TurnOnEnrage_Into(_bool bIsInit, _float fTimeDelta)
 	_float3 vEffectScale = m_mapEffect["W_Enrageinto"]->Get_TransformCom()->Get_Scaled();
 	_float4 vWarriorPos = m_pTransformCom->Get_Position();
 	vWarriorPos.y = vWarriorPos.y + (vEffectScale.y * 0.5f);
-	vWarriorPos.z = vWarriorPos.z + 1.0f;
 
 	m_mapEffect["W_Enrageinto"]->Set_Position(vWarriorPos);
 	m_mapEffect["W_Enrageinto"]->Set_Active(true);
 
-}
-
-void CBossWarrior::TurnOnEnrage(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnEnrage);
-		return;
-	}
-	_float4 vWarriorPos = m_pTransformCom->Get_Position();
-	vWarriorPos.y = vWarriorPos.y + 3.0f;
-
-	m_mapEffect["W_DistortionPlane"]->Set_Position(vWarriorPos);
-	m_mapEffect["W_DistortionPlane"]->Set_Active(true);
+	if (m_mapEffect["W_Enrageinto"]->Get_Active() == false)
+		m_mapEffect["W_DistortionPlane"]->Set_Active(true);
 }
 
 void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
@@ -1281,22 +1277,7 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 
-}
-
-void CBossWarrior::TurnOffEffects(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOffEffects);
-		return;
-	}
-
-	for (auto& Pair : m_mapEffect)
-	{
-		if (Pair.second->Get_Active() == true)
-			Pair.second->Set_Active(false);
-	}
+	// 기둥이랑 먼지가 전역적으로 나와야 함 
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1337,48 +1318,63 @@ void CBossWarrior::Free()
 }
 
 _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
-{
+{	
 	if (pTarget && m_bSpawn)
 	{
-		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON || iColliderIndex == (_int)COL_PLAYER_ARROW) && m_pKena->Get_State(CKena::STATE_ATTACK))
+		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON && m_pKena->Get_State(CKena::STATE_ATTACK)))
 		{
-			if(m_bBlock == false)
+			if (m_bBlock == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
-			/* HP Guage */
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
 			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
-			/* ~HP Guage */
-
-			m_bWeaklyHit = true;
-			m_bStronglyHit = true;
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
 
 			if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == false)
 			{
+				m_bWeaklyHit = true;
+				m_bStronglyHit = false;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.15f);
 				m_pKena->Add_HitStopTime(0.15f);
 				m_fHitStopTime += 0.15f;
-				//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.003f, 5);
 			}
 			else
 			{
+				m_bWeaklyHit = false;
+				m_bStronglyHit = true;
+
 				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->TimeSleep(0.3f);
 				m_pKena->Add_HitStopTime(0.25f);
 				m_fHitStopTime += 0.25f;
-				//dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
+				dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(0.005f, 5);
 
-				vector<_float4>*		vecWeaponPos = m_pKena->Get_WeaponPositions();
+				vector<_float4>* vecWeaponPos = m_pKena->Get_WeaponPositions();
 				if (vecWeaponPos->size() == 2)
 				{
 					_vector	vDir = vecWeaponPos->back() - vecWeaponPos->front();
 					vDir = XMVectorSetZ(vDir, 0.f);
-					//	dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians/(30.f));
+					dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Camera_Shake(vDir, XMConvertToRadians(30.f));
 				}
 			}
+		}
+
+		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
+		{
+			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
+			//m_bWeaklyHit = !m_bStronglyHit;
+
+			m_bStronglyHit = true;
+			m_bWeaklyHit = false;
+
+			m_pKenaHit->Set_Active(true);
+			m_pKenaHit->Set_Position(vCollisionPos);
 		}
 	}
 
