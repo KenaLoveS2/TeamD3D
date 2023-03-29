@@ -2311,7 +2311,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_Component_Terrain_Four_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_Four_Filter"),
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Terrain_Four_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain4_Filter_%d.dds"), 3))))
 		return E_FAIL;
 

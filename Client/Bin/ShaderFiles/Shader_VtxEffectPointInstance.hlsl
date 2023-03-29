@@ -812,9 +812,12 @@ PS_OUT PS_DOT(PS_IN In)
 		finalcolor.rgb = finalcolor.rgb * 2.f;
 
 	float fTIme = min(g_fLife, 1.f);
-	if (In.vTexUV.y < fTIme)
-		finalcolor.a *= (1.f - fTIme);
+
+	if (0.5f < fTIme)
+		finalcolor.a = finalcolor.a * (1.f - fTIme);
+
 	Out.vColor = finalcolor;
+
 	return Out;
 }
 

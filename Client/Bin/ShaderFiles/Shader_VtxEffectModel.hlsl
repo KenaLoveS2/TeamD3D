@@ -833,7 +833,7 @@ PS_OUT PS_ENRAGE(PS_IN In)
 	else
 		vDiffuseTexture.a = vDiffuseTexture.a * (fTime / 1.f);
 
-	float4 finalcolor = vDiffuseTexture + vColor;
+	float4 finalcolor = vDiffuseTexture + g_vColor;
 	Out.vDiffuse = finalcolor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);

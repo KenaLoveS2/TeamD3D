@@ -148,6 +148,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
+	__super::Tick(fTimeDelta);
+
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
 	{
