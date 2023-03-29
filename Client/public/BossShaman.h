@@ -165,6 +165,9 @@ public:
 
 	void Create_Minions();
 	void Summon();
+
+public:	
+	void LookAt_Kena(_bool bIsInit, _float fTimeDelta);
 };
 
 END

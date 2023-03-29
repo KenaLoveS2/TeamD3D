@@ -50,8 +50,7 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pBodyBone = m_pModelCom->Get_BonePtr("char_spine_mid_jnt");
 	
 	Create_Arrow();
-	Push_EventFunctions();
-
+	
 	return S_OK;
 }
 
@@ -71,10 +70,10 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 		PxCapsuleDesc.fRadius = vPivotScale.x;
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fDensity = 1.f;		
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;		
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
@@ -82,6 +81,32 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER));
 		m_pTransformCom->Add_Collider(TEXT_COL_HUNTER_BODY, g_IdentityFloat4x4);
+	}
+
+	// ¸öÅë
+	{
+		_float3 vPivotScale = _float3(0.4f, 0.4f, 1.f);
+		_float3 vPivotPos = _float3(0.f, 0.5f, 0.f);
+
+		// Capsule X == radius , Y == halfHeight
+		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
+		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
+		PxCapsuleDesc.pActortag = TEXT_COL_HUNTER_WEAPON;
+		PxCapsuleDesc.vPos = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fRadius = vPivotScale.x;
+		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
+		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		PxCapsuleDesc.fDensity = 1.f;
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
+		PxCapsuleDesc.fDynamicFriction = 0.5f;
+		PxCapsuleDesc.fStaticFriction = 0.5f;
+		PxCapsuleDesc.fRestitution = 0.1f;
+		PxCapsuleDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+
+		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+		m_pTransformCom->Add_Collider(TEXT_COL_HUNTER_WEAPON, g_IdentityFloat4x4);
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
@@ -92,10 +117,11 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 void CBossHunter::Tick(_float fTimeDelta)
 {
 	/*m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);	
+	Update_Collider(fTimeDelta);
 	for (auto& pArrow : m_pArrows) 
 		pArrow->Tick(fTimeDelta);	
 	return;*/
+	
 
 	if (m_bDeath) return;
 
@@ -431,8 +457,13 @@ HRESULT CBossHunter::SetUp_State()
 		.AddState("ATTACK_KNIFE")
 		.OnStart([this]()
 	{	
+		m_bRealAttack = true;
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		ResetAndSet_Animation(KNIFE_ATTACK);
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
@@ -485,7 +516,12 @@ HRESULT CBossHunter::SetUp_State()
 		m_pTransformCom->Set_Position(vTeleportPos);
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		ResetAndSet_Animation(KNIFE_SLAM_ATTACK);
+		m_bRealAttack = true;
 	})	
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
@@ -595,9 +631,14 @@ HRESULT CBossHunter::SetUp_State()
 		.AddState("SWOOP_ATTACK")
 		.OnStart([this]()
 	{		
+		m_bRealAttack = true;
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
 		ResetAndSet_Animation(SWOOP_ATTACK);
 	})		
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
@@ -912,9 +953,9 @@ HRESULT CBossHunter::SetUp_State()
 		.AddState("DYING")
 		.OnStart([this]()
 	{
-		/*CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = -1.f;
-		m_BossHunterDelegator.broadcast(eBossHP, fValue);*/
+		m_BossHunterDelegator.broadcast(eBossHP, fValue);
 	
 		m_pModelCom->ResetAnimIdx_PlayTime(DEATH);
 		m_pModelCom->Set_AnimIndex(DEATH);
@@ -1014,7 +1055,7 @@ void CBossHunter::Update_Collider(_float fTimeDelta)
 
 		_float4x4 mat;
 		XMStoreFloat4x4(&mat, SocketMatrix);
-		m_pTransformCom->Update_Collider(TEXT_COL_HUNTER_BODY, mat);
+		m_pTransformCom->Update_AllCollider(mat);
 	}
 	
 	m_pTransformCom->Tick(fTimeDelta);

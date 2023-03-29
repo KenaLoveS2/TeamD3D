@@ -71,6 +71,8 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 	//_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 	//m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
+	int i = 0;
+
 	return S_OK;
 }
 

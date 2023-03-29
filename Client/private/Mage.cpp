@@ -46,6 +46,7 @@ HRESULT CMage::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
+	m_pMageHaneBonePtr = m_pModelCom->Get_BonePtr("char_lf_index_a_jnt");
 
 	Create_Sticks();
 
@@ -72,9 +73,9 @@ HRESULT CMage::Late_Initialize(void * pArg)
 		PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 		PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 		PxCapsuleDesc.fDensity = 1.f;
-		PxCapsuleDesc.fAngularDamping = 0.5f;
-		PxCapsuleDesc.fMass = 10.f;
-		PxCapsuleDesc.fLinearDamping = 10.f;
+		PxCapsuleDesc.fLinearDamping = MONSTER_LINEAR_DAMING;
+		PxCapsuleDesc.fAngularDamping = MONSTER_ANGULAR_DAMING;
+		PxCapsuleDesc.fMass = MONSTER_MASS;
 		PxCapsuleDesc.fDynamicFriction = 0.5f;
 		PxCapsuleDesc.fStaticFriction = 0.5f;
 		PxCapsuleDesc.fRestitution = 0.1f;
@@ -145,6 +146,7 @@ HRESULT CMage::Late_Initialize(void * pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	m_pFireBullet = (CFireBullet*)pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_FireBullet"), CUtile::Create_DummyString());
 	assert(m_pFireBullet != nullptr && "CMage::Initialize()");
+	m_pFireBullet->Set_OwnerMonsterPtr(this);
 	m_pFireBullet->Late_Initialize(nullptr);
 
 	return S_OK;
@@ -948,24 +950,9 @@ void CMage::TurnOnFireBullet(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CMage::TurnOnFireBullet);
 		return;
 	}
-
-	/* Set Position */
-	CBone*	pMageHaneBonePtr = m_pModelCom->Get_BonePtr("char_lf_index_a_jnt");
-	_matrix SocketMatrix = pMageHaneBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
-	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
-	/* Set Position */
-
-	_matrix matIntoAttack = m_pFireBullet->Get_TransformCom()->Get_WorldMatrix();
-	matIntoAttack.r[3] = matWorldSocket.r[3];
-	m_pFireBullet->Get_TransformCom()->Set_WorldMatrix(matIntoAttack);
-	m_pFireBullet->Get_TransformCom()->LookAt(m_pKena->Get_WorldMatrix().r[3]);
-	m_pFireBullet->Set_Active(true);
 	
-	vector<CEffect_Base*>* pvecChild = m_pFireBullet->Get_vecChild();
-	for (auto& pChild : *pvecChild)
-		pChild->Set_Active(true);
-
-	pvecChild->back()->Set_Active(false);
+	_matrix SocketMatrix = m_pMageHaneBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix() * m_pTransformCom->Get_WorldMatrix();		
+	m_pFireBullet->Execute_Create(SocketMatrix.r[3]);
 }
 
 CMage* CMage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

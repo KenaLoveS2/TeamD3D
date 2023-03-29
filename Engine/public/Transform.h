@@ -196,6 +196,11 @@ public:
 	void Set_Position(_fvector vPos);
 	void Clear_Actor();
 	void Update_AllCollider(_float4x4 PivotMatrix);
+
+	// TEST
+	PxRigidActor* Get_Actor() {
+		return m_pPxActor;
+	}
 };
 
 END
