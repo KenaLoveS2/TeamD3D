@@ -28,6 +28,7 @@ private:
 	virtual HRESULT		SetUp_Components() override;
 	virtual HRESULT		SetUp_ShaderResource() override;
 	virtual HRESULT		SetUp_ShadowShaderResources() override;
+	void				RimColorValue();
 
 private:
 	_float					m_fHairLength = 1.f;

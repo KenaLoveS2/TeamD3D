@@ -1508,16 +1508,14 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
 	lstrcpy(m_szLoadingText, TEXT("Loading 원준..."));
 
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
-		return E_FAIL;
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water"))) return E_FAIL;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 
 	// Prototype_Component_Model_CineCam
-	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CineCam",
-			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/CineCam.mdat"), PivotMatrix)))) return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CineCam", CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/CineCam.mdat"), PivotMatrix)))) return E_FAIL;
 
 	// Prototype_GameObject_WaterPlane
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterPlane"), CWaterPlane::Create(m_pDevice, m_pContext)))) return E_FAIL;
@@ -1886,7 +1884,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading 혜원..."));
+	lstrcpyW(m_szLoadingText, TEXT("Loading 혜원..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2314,7 +2312,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		return E_FAIL;
 
 	/* For.Prototype_Component_Terrain_Four_Filter */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, TEXT("Prototype_Component_Terrain_Four_Filter"),
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Terrain_Four_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Filter/Terrain4_Filter_%d.dds"), 3))))
 		return E_FAIL;
 

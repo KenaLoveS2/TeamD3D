@@ -61,7 +61,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 		* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
 		
 	XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
-	
+
 	return S_OK;
 }
 
@@ -355,7 +355,9 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-				/* HP Bar Active */
+		g_bDayOrNight = false;
+
+		/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
@@ -793,7 +795,9 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->Set_AnimIndex(DEATH);
 
 		m_pKena->Dead_FocusRotIcon(this);
-		m_bDying = true;		
+		m_bDying = true;
+
+		g_bDayOrNight = true;
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
