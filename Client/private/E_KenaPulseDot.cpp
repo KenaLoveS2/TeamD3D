@@ -45,20 +45,20 @@ void CE_KenaPulseDot::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == true)
-		m_fLife += fTimeDelta * 0.8f;
+		m_fLife += fTimeDelta;
 	else
 		m_fLife = 0.0f;
 }
 
 void CE_KenaPulseDot::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
-
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
 	if (m_pParent != nullptr)
 		Set_Matrix();
+
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_KenaPulseDot::Render()

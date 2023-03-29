@@ -145,10 +145,10 @@ HRESULT CE_KenaPulse::Late_Initialize(void * pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	if (m_eEFfectDesc.bActive == false)
    		return;
+
+	__super::Tick(fTimeDelta);
 
 	m_fTimeDelta += fTimeDelta;
 	if (m_bDesolve)
@@ -167,6 +167,8 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 	switch (m_ePulseType)
 	{
 	case Client::CE_KenaPulse::PULSE_DEFAULT:
+		
+		m_eEFfectDesc.iPassCnt = 1;
 
 		if (m_bNoActive == true) // Pulse 끝
 		{
@@ -214,11 +216,10 @@ void CE_KenaPulse::Tick(_float fTimeDelta)
 		for (auto& pChild : m_vecChild)
 			pChild->Set_Active(false);
 
-		if (vScaled.x > 5.f)
+		if (vScaled.x > 3.f)
 		{
 			m_eEFfectDesc.bActive = false;
 			m_eEFfectDesc.iPassCnt = 1;
-
 			m_ePulseType = CE_KenaPulse::PULSE_DEFAULT;
 			m_pTransformCom->Set_WorldMatrix_float4x4(m_SaveInitWorldMatrix);
 		}
@@ -265,10 +266,10 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_KenaPulse::Render()
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
@@ -293,48 +294,57 @@ void CE_KenaPulse::Reset()
 _int CE_KenaPulse::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	_bool bRealAttack = false;
-	if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+
+	if (pTarget == nullptr)
 	{
-		if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
-			return 0;
 
-		// KenaPulse 공격력 깎기
-		CStatus*	pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
-
-		if (pStatus->Get_Attack() > 10)
-			m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
-		else
-			m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
-
-		m_pKena->Set_AttackObject(pTarget);
-		//
-		CKena:: DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
-		CTransform*	pTargetTransCom = pTarget->Get_TransformCom();
-		_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		vDir.Normalize();
-
-		_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
-
-		if (fFrontBackAngle >= 0.f)
-			eDir = CKena::DAMAGED_FRONT;
-		else
-			eDir = CKena::DAMAGED_BACK;
-
-		m_pKena->Set_DamagedDir(eDir);
-		//
-		m_pStatus->Under_Shield(pStatus);
-
-		m_eStatus.fCurHp = m_pStatus->Get_Shield();
-		m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
-
-		if (m_eStatus.fCurHp <= 0.0f)
-		{
-			m_bDesolve = true;
-			m_fDissolveTime = 0.0f;
-		}
-		else
-			m_eStatus.eState = STATUS::STATE_DAMAGE;
 	}
+	else
+	{
+		if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		{
+			if (m_pKena->Get_State(CKena::STATE_PULSE) == false)
+				return 0;
+
+			// KenaPulse 공격력 깎기
+			CStatus* pStatus = dynamic_cast<CMonster*>(pTarget)->Get_MonsterStatusPtr();
+
+			if (pStatus->Get_Attack() > 10)
+				m_pKena->Set_State(CKena::STATE_HEAVYHIT, true);
+			else
+				m_pKena->Set_State(CKena::STATE_COMMONHIT, true);
+
+			m_pKena->Set_AttackObject(pTarget);
+			//
+			CKena::DAMAGED_FROM		eDir = CKena::DAMAGED_FROM_END;
+			CTransform* pTargetTransCom = pTarget->Get_TransformCom();
+			_float4		vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			vDir.Normalize();
+
+			_float			fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
+
+			if (fFrontBackAngle >= 0.f)
+				eDir = CKena::DAMAGED_FRONT;
+			else
+				eDir = CKena::DAMAGED_BACK;
+
+			m_pKena->Set_DamagedDir(eDir);
+			//
+			m_pStatus->Under_Shield(pStatus);
+
+			m_eStatus.fCurHp = m_pStatus->Get_Shield();
+			m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+
+			if (m_eStatus.fCurHp <= 0.0f)
+			{
+				m_bDesolve = true;
+				m_fDissolveTime = 0.0f;
+			}
+			else
+				m_eStatus.eState = STATUS::STATE_DAMAGE;
+		}
+	}
+
 	return 0;
 }
 
@@ -362,6 +372,11 @@ HRESULT CE_KenaPulse::SetUp_ShaderResources()
 		FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)), E_FAIL);
 		FAILED_CHECK_RETURN(m_pDissolveTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 3), E_FAIL);
 	}
+
+	if (g_bDayOrNight == false)
+		m_fHDRValue = 2.f;
+	else
+		m_fHDRValue = 1.0f;
 
 	return S_OK;
 }

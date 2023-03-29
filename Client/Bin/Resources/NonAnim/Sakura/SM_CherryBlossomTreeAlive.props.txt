@@ -1,0 +1,38 @@
+Materials[2] =
+{
+    Materials[0] = MaterialInstanceConstant'/Game/Virtuos/Environment/CherryBlossomTreeAlive/MI_CherryBlossomTreeAlive.MI_CherryBlossomTreeAlive'
+    Materials[1] = MaterialInstanceConstant'/Game/Virtuos/Environment/CherryBlossomTreeAlive/MI_CherryBlossomTreeAlive_Flower.MI_CherryBlossomTreeAlive_Flower'
+}
+SourceModels[0] = {}
+StaticMaterials[2] =
+{
+    StaticMaterials[0] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Virtuos/Environment/CherryBlossomTreeAlive/MI_CherryBlossomTreeAlive.MI_CherryBlossomTreeAlive'
+        MaterialSlotName = MI_CherryBlossomTreeAlive
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 2038.08, 0, 0, 0 }
+        }
+    }
+    StaticMaterials[1] =
+    {
+        MaterialInterface = MaterialInstanceConstant'/Game/Virtuos/Environment/CherryBlossomTreeAlive/MI_CherryBlossomTreeAlive_Flower.MI_CherryBlossomTreeAlive_Flower'
+        MaterialSlotName = MI_CherryBlossomTreeAlive_Flower
+        UVChannelData =
+        {
+            bInitialized = true
+            bOverrideDensities = false
+            LocalUVDensities[4] = { 418.696, 0, 0, 0 }
+        }
+    }
+}
+Sockets[0] = {}
+ExtendedBounds =
+{
+    Origin = { X=287.356, Y=84.6467, Z=367.685 }
+    BoxExtent = { X=1361.61, Y=1159.97, Z=1049.53 }
+    SphereRadius = 1391.88
+}

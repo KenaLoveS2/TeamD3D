@@ -257,6 +257,7 @@
     <ClInclude Include="..\public\E_P_InteractStaff.h" />
     <ClInclude Include="..\public\E_P_KenaHeavyAttack_Into.h" />
     <ClInclude Include="..\public\E_P_KenaHit.h" />
+    <ClInclude Include="..\public\E_P_Sakura.h" />
     <ClInclude Include="..\public\E_P_Sapling.h" />
     <ClInclude Include="..\public\E_P_ShockFrontEntended.h" />
     <ClInclude Include="..\public\E_P_SpiritArrow.h" />
@@ -511,6 +512,7 @@
     <ClCompile Include="..\private\E_P_InteractStaff.cpp" />
     <ClCompile Include="..\private\E_P_KenaHeavyAttack_Into.cpp" />
     <ClCompile Include="..\private\E_P_KenaHit.cpp" />
+    <ClCompile Include="..\private\E_P_Sakura.cpp" />
     <ClCompile Include="..\private\E_P_Sapling.cpp" />
     <ClCompile Include="..\private\E_P_ShockFrontEntended.cpp" />
     <ClCompile Include="..\private\E_P_SpiritArrow.cpp" />

@@ -42,43 +42,49 @@ HRESULT CE_Warrior_Root::Initialize(void * pArg)
 
 HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 {	
-	//_float4 vPos;
-	//XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float3	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3	vPivotScale = _float3(6.42f, 1.07f, 1.66f);
+	_float3	vPivotPos = _float3(4.72f, 1.55f, 0.f);
 
-	//m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
-	//CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 
-	//_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
-	//_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
-	//_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
+	PxBoxDesc.pActortag = m_szCloneObjectTag;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.vPos = vPos;
+	PxBoxDesc.vSize = vPivotScale;
+	PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDegree = 0.f;
+	PxBoxDesc.isGravity = false;
+	PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 0.2f;
+	PxBoxDesc.fMass = 150.f;
+	PxBoxDesc.fLinearDamping = 10.f;
+	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.bCCD = false;
+	PxBoxDesc.fDynamicFriction = 0.5f;
+	PxBoxDesc.fStaticFriction = 0.5f;
+	PxBoxDesc.fRestitution = 0.1f;
 
-	//// Capsule X == radius , Y == halfHeight
-	//CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	//PxSphereDesc.eType = SPHERE_DYNAMIC;
-	//PxSphereDesc.pActortag = m_szCloneObjectTag;
-	//PxSphereDesc.vPos = vOriginPos;
-	//PxSphereDesc.fRadius = vPivotScale.x;
-	//PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	//PxSphereDesc.fDensity = 1.f;
-	//PxSphereDesc.fAngularDamping = 0.5f;
-	//PxSphereDesc.fMass = 59.f;
-	//PxSphereDesc.fLinearDamping = 1.f;
-	//PxSphereDesc.bCCD = true;
-	//PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
-	//PxSphereDesc.fDynamicFriction = 0.5f;
-	//PxSphereDesc.fStaticFriction = 0.5f;
-	//PxSphereDesc.fRestitution = 0.1f;
-
-	//CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER));
-
-	//_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
-	//m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
+	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
+	m_pTransformCom->Set_PxPivotScale(vPivotScale);
+	m_pTransformCom->Set_PxPivot(vPivotPos);
 
 	return S_OK;
 }
 
 void CE_Warrior_Root::Tick(_float fTimeDelta)
 {
+	ImGui::Begin("Root");
+
+	if (ImGui::Button("re"))
+		m_pShaderCom->ReCompile();
+
+	ImGui::End();
+
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
@@ -96,7 +102,7 @@ void CE_Warrior_Root::Tick(_float fTimeDelta)
 		m_fDurationTime = 0.0f;
 	}
 
-	// m_pTransformCom->Tick(fTimeDelta);
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
@@ -104,9 +110,9 @@ void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
    	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	
 	__super::Late_Tick(fTimeDelta);
 
+	/* NonAlpha => alpha test */
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -174,7 +180,8 @@ HRESULT CE_Warrior_Root::SetUp_Child()
 
 void CE_Warrior_Root::Imgui_RenderProperty()
 {
-	__super::Imgui_RenderProperty();
+	//__super::Imgui_RenderProperty();
+	ImGui_PhysXValueProperty();
 }
 
 CE_Warrior_Root * CE_Warrior_Root::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)
