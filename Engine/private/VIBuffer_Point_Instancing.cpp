@@ -17,9 +17,6 @@ CVIBuffer_Point_Instancing::CVIBuffer_Point_Instancing(const CVIBuffer_Point_Ins
 	{
 		memcpy(&m_ePointDesc[i], &rhs.m_ePointDesc[i], sizeof(POINTDESC));
 		memcpy(&m_InstanceData[i], &rhs.m_InstanceData[i], sizeof(INSTANCEDATA));
-
-		//m_ePointDesc[i] = rhs.m_ePointDesc[i];
-		//m_InstanceData[i] = rhs.m_InstanceData[i];
 	}
 }
 
@@ -35,7 +32,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
 	switch (m_ePointDesc->eShapeType)
 	{
@@ -76,7 +73,7 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 			((VTXMATRIX*)SubResource.pData)[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition = _float4(0.0f, 0.f, 0.f, 1.f);
 
-			m_ePointDesc[i].vDir = XMVector3Normalize(XMVectorSet(1.0f, 0.f, 0.0f, 0.0f)) * m_ePointDesc->fCreateRange * CUtile::Get_RandomFloat(0.5f, 1.f);
+			m_ePointDesc[i].vDir = XMVectorSet(1.0f, 0.f, 0.0f, 0.0f) * m_ePointDesc->fCreateRange * CUtile::Get_RandomFloat(0.5f, 1.f);
 			m_ePointDesc[i].vDir = XMVector3TransformNormal(m_ePointDesc[i].vDir, XMMatrixRotationY(XMConvertToRadians(_float(rand() % 360))));
 
 			if (m_ePointDesc->bMoveY)
@@ -150,7 +147,6 @@ HRESULT CVIBuffer_Point_Instancing::Set_ShapePosition()
 
 				m_ePointDesc[i].vExplosionDir = XMVector3Normalize(XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) - XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)) * m_ePointDesc->fCreateRange;
 			}
-
 			m_ePointDesc[i].vOriginPos = XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition);
 			m_ePointDesc[i].fRange = (m_ePointDesc->fRange - m_ePointDesc[i].fRangeOffset) < 0 ? m_ePointDesc->fRange : (m_ePointDesc->fRange - m_ePointDesc[i].fRangeOffset);
 		}
@@ -576,17 +572,16 @@ HRESULT CVIBuffer_Point_Instancing::Initialize_Prototype(_uint iNumInstance)
 
 	m_InstanceData = new INSTANCEDATA[iNumInstance];
 	ZeroMemory(m_InstanceData, sizeof(INSTANCEDATA) * iNumInstance);
+
 	for (_uint i = 0; i < iNumInstance; ++i)
 	{
+		m_InstanceData[i].pSpeeds = CUtile::Get_RandomFloat(0.1f, 1.f);
 		m_ePointDesc[i].iCreateInstance = iNumInstance;
 
 		m_InstanceData[i].fPos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-		m_InstanceData[i].SpeedMinMax = _float2((_float)m_InstanceData->pSpeeds, (_float)m_InstanceData->pSpeeds);
+		m_InstanceData[i].SpeedMinMax = _float2((_float)m_InstanceData[i].pSpeeds, (_float)m_InstanceData[i].pSpeeds);
 		m_InstanceData[i].fPSize = _float2(0.2f, 0.2f);
 	}
-
-	for (_uint i = 0; i < m_iNumInstance; i++)
-		m_InstanceData[i].pSpeeds = rand() % 2;
 
 	m_iNumInstance = iNumInstance;
 

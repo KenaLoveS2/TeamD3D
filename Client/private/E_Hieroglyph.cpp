@@ -119,7 +119,15 @@ HRESULT CE_Hieroglyph::SetUp_Components()
 
 void CE_Hieroglyph::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
 
+	/* 이거 바꾸면 됨 */
+	ImGui::InputFloat("g_WidthFrame", &m_eEFfectDesc.fWidthFrame);
+	ImGui::InputFloat("g_HeightFrame", &m_eEFfectDesc.fHeightFrame);
+	/* 이거 바꾸면 됨 */
+
+	ImGui::InputInt("g_SeparateWidth", &m_eEFfectDesc.iSeparateWidth);
+	ImGui::InputInt("g_SeparateHeight", &m_eEFfectDesc.iSeparateHeight);
 }
 
 CE_Hieroglyph * CE_Hieroglyph::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pFilePath)

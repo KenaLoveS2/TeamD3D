@@ -147,6 +147,12 @@ HRESULT CE_KenaPulseCloud::Render()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_eEFfectDesc.vColor, sizeof _float4), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_BlendType", &m_eEFfectDesc.eBlendType, sizeof _int), E_FAIL);
 
+	if (g_bDayOrNight == false)
+		m_fHDRValue = 2.f;
+	else
+		m_fHDRValue = 1.f;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRValue", &m_fHDRValue, sizeof _float), E_FAIL);
+	
 	/* Pulse Hp가져와서 컬러 바꿔줌 */
 	if(dynamic_cast<CE_KenaPulse*>(m_pParent))
 	{

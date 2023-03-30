@@ -7,6 +7,7 @@ matrix g_ViewMatrix;
 matrix g_ProjMatrix;
 float  g_fFar = 500.f;
 float4 g_WorldCamPosition;
+float  g_fHDRValue;
 /**********************************/
 
 texture2D		g_DepthTexture, g_NormalTexture;

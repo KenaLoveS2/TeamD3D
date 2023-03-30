@@ -32,7 +32,6 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	// FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 	// FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -53,7 +52,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("sword_root_jnt");
 
 	Create_Minions();
-
+	
 	return S_OK;
 }
 
@@ -145,18 +144,15 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	m_pShamanTapHex = (CShamanTrapHex*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("ShamanTrapHex_0"));
 	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
 
-	for (auto& Pair : m_mapEffect)
-		Pair.second->Late_Initialize(nullptr);
-
 	return S_OK;
 }
 
 void CBossShaman::Tick(_float fTimeDelta)
 {	
-	///*m_pModelCom->Play_Animation(fTimeDelta);
-	//Update_Collider(fTimeDelta);
-	//return;*/
-	
+	/*m_pModelCom->Play_Animation(fTimeDelta);
+	Update_Collider(fTimeDelta);
+	return;*/
+
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -180,6 +176,7 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 	if (m_bDeath) return;
 
 	CMonster::Late_Tick(fTimeDelta);
+	
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Tick(fTimeDelta);
 
@@ -205,11 +202,10 @@ HRESULT CBossShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M), E_FAIL);
 		}
 		else if(i == 3) // °Ë ·»´õ
-		{				
-
+		{	
 			if (m_eSwordRenderState == NO_RENDER) continue;
 			else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
 				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
@@ -972,9 +968,11 @@ HRESULT CBossShaman::SetUp_ShaderResources()
 	float fHDRIntensity = 0.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
 	
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
+
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)))) return E_FAIL;
+	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
 
 	return S_OK;
 }
@@ -1273,10 +1271,6 @@ CGameObject* CBossShaman::Clone(void* pArg)
 void CBossShaman::Free()
 {
 	CMonster::Free();
-
-	for (auto& Pair : m_mapEffect)
-		Safe_Release(Pair.second);
-	m_mapEffect.clear();
 }
 
 void CBossShaman::SwordRenderProc(_float fTimeDelta)
@@ -1424,9 +1418,9 @@ void CBossShaman::Summon()
 {
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vOffset[MINION_COUNT] = {
-		_float4(1.f, 0.f, 2.f, 0.f),
-		_float4(1.f, 0.f, -2.f, 0.f),
-		_float4(-1.5f, 0.f, 0.f, 0.f),
+		_float4(0.f, 0.f, 3.f, 0.f),
+		_float4(3.f, 0.f, 0.f, 0.f),
+		_float4(-3.f, 0.f, 0.f, 0.f),
 	};
 
 	for (_uint i = 0; i < MINION_COUNT; i++)

@@ -105,6 +105,15 @@ vector<KEYFRAME>* CAnimationState::Get_KeyFrames(const string & strBoneName)
 	return pChannel->Get_KeyFrames();
 }
 
+void CAnimationState::Set_RootAnimation(const string& strStateName)
+{
+	CAnimState* pAnimState = m_mapAnimState[strStateName];
+	assert(pAnimState != nullptr);
+
+	m_pCurAnim = pAnimState;
+	State_Animation(strStateName, 0.f);
+}
+
 HRESULT CAnimationState::Initialize(CGameObject * pOwner, CModel * pModelCom, const string & strRootBone, const string & strFilePath)
 {
 	NULL_CHECK_RETURN(pOwner, E_FAIL);

@@ -113,7 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;fmod_vc.lib;DSH_SimulationController_static_64.lib;DSH_SceneQuery_static_64.lib;DSH_PhysXVehicle_static_64.lib;DSH_PhysXTask_static_64.lib;DSH_PhysXPvdSDK_static_64.lib;DSH_PhysXFoundation_64.lib;DSH_PhysXExtensions_static_64.lib;DSH_PhysXCooking_64.lib;DSH_PhysXCommon_64.lib;DSH_PhysXCharacterKinematic_static_64.lib;DSH_PhysX_64.lib;DSH_LowLevelDynamics_static_64.lib;DSH_LowLevelAABB_static_64.lib;DSH_LowLevel_static_64.lib;DSH_FastXml_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;fmod_vc.lib;DSH_SimulationController_static_64.lib;DSH_SceneQuery_static_64.lib;DSH_PhysXVehicle_static_64.lib;DSH_PhysXTask_static_64.lib;DSH_PhysXPvdSDK_static_64.lib;DSH_PhysXFoundation_64.lib;DSH_PhysXExtensions_static_64.lib;DSH_PhysXCooking_64.lib;DSH_PhysXCommon_64.lib;DSH_PhysXCharacterKinematic_static_64.lib;DSH_PhysX_64.lib;DSH_LowLevelDynamics_static_64.lib;DSH_LowLevelAABB_static_64.lib;DSH_LowLevel_static_64.lib;DSH_FastXml_static_64.lib;DSH_SampleBase_static_64.lib;DSH_SampleFramework_static_64.lib;DSH_SamplePlatform_static_64.lib;DSH_SampleRenderer_static_64.lib;DSH_Samples_64.lib;DSH_SamplesToolkit_static_64.lib;DSH_SnippetRender_static_64.lib;DSH_SnippetUtils_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysXLib_D/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
@@ -163,7 +163,7 @@ call Copy.bat</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;fmodL_vc.lib;RST_SimulationController_static_64.lib;RST_SceneQuery_static_64.lib;RST_PhysXVehicle_static_64.lib;RST_PhysXTask_static_64.lib;RST_PhysXPvdSDK_static_64.lib;RST_PhysXFoundation_64.lib;RST_PhysXExtensions_static_64.lib;RST_PhysXCooking_64.lib;RST_PhysXCommon_64.lib;RST_PhysXCharacterKinematic_static_64.lib;RST_PhysX_64.lib;RST_LowLevelDynamics_static_64.lib;RST_LowLevelAABB_static_64.lib;RST_LowLevel_static_64.lib;RST_FastXml_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;fmodL_vc.lib;RST_SimulationController_static_64.lib;RST_SceneQuery_static_64.lib;RST_PhysXVehicle_static_64.lib;RST_PhysXTask_static_64.lib;RST_PhysXPvdSDK_static_64.lib;RST_PhysXFoundation_64.lib;RST_PhysXExtensions_static_64.lib;RST_PhysXCooking_64.lib;RST_PhysXCommon_64.lib;RST_PhysXCharacterKinematic_static_64.lib;RST_PhysX_64.lib;RST_LowLevelDynamics_static_64.lib;RST_LowLevelAABB_static_64.lib;RST_LowLevel_static_64.lib;RST_FastXml_static_64.lib;RST_SampleBase_static_64.lib;RST_SampleFramework_static_64.lib;RST_SamplePlatform_static_64.lib;RST_SampleRenderer_static_64.lib;RST_Samples_64.lib;RST_SamplesToolkit_static_64.lib;RST_SnippetRender_static_64.lib;RST_SnippetUtils_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysXLib_R/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>

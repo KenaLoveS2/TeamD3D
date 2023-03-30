@@ -245,11 +245,11 @@ HRESULT CE_BombTrail::SetUp_ShaderResources()
 	/* Instance Buffer */
 
 	/* Flow */
-	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaFlowTexture", m_iTrailFlowTexture)))
+	if (FAILED(m_pTrailflowTexture->Bind_ShaderResource(m_pShaderCom, "g_FlowTexture", m_iTrailFlowTexture)))
 		return E_FAIL;
 
 	/* Type */
-	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_KenaTypeTexture", m_iTrailTypeTexture)))
+	if (FAILED(m_pTrailTypeTexture->Bind_ShaderResource(m_pShaderCom, "g_TypeTexture", m_iTrailTypeTexture)))
 		return E_FAIL;
 
 // 	/* Trail */

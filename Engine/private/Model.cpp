@@ -111,6 +111,11 @@ const _float CModel::Get_AnimationProgress() const
 	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationProgress();
 }
 
+const _double CModel::Get_AnimationDuration() const
+{
+	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationDuration();
+}
+
 const _bool & CModel::Get_AnimationFinish() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->IsFinished();
@@ -1803,6 +1808,28 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 		m_Materials.push_back(ModelMatrial);
 	}
 	
+}
+
+void CModel::Set_InstanceEffect_Info(CTransform* pParentTransform, _int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for(auto &pInstmesh : m_InstancingMeshes)
+	{
+		pInstmesh->Set_InstanceMeshEffect(pParentTransform,iInstanceNum, fMinSpeed, fMaxSpeed);
+	}
+
+}
+
+void CModel::Instaincing_mesh_Effect_tick(_float yLimitPos, _float fTimeDelta)
+{
+	if (m_bIsInstancing == false)
+		return;
+	for (auto& pInstmesh : m_InstancingMeshes)
+	{
+		pInstmesh->InstaincingMesh_EffectTick(yLimitPos, fTimeDelta);
+	}
 }
 
 void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)

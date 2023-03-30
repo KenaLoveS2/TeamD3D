@@ -5,7 +5,7 @@ matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float  g_fFar = 300.f;
+float  g_fFar = 500.f;
 float4 g_vCamPosition;
 /**************************************/
 
@@ -27,21 +27,25 @@ Texture2D<float4>		g_DetailNormal;
 Texture2D		g_NoiseTexture;
 Texture2D		g_SwipeTexture;
 Texture2D		g_GradientTexture;
-
 float			g_BowDurationTime;
 /* Kena Bow_String Texture */
 
-float								g_fHairLength = 1.f;
-float								g_fHairThickness = 1.f;
+float					g_fHairLength = 1.f;
+float					g_fHairThickness = 1.f;
 
-float								g_fLashDensity = 0.5f;
-float								g_fLashWidth = 0.5f;
-float								g_fLashIntensity = 0.5f;
+float					g_fLashDensity = 0.5f;
+float					g_fLashWidth = 0.5f;
+float					g_fLashIntensity = 0.5f;
 
-float4							g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
-float4							g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
-float4							g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
-float								g_fSSSAmount = 1.f;
+float4					g_vAmbientEyeColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vAmbientColor = float4(1.f, 1.f, 1.f, 1.f);
+float4					g_vSSSColor = float4(1.f, 0.f, 0.f, 1.f);
+float					g_fSSSAmount = 1.f;
+
+bool					g_Hit = false;
+float					g_HitRimIntensity = 0.f;
+bool					g_Parry = false;
+float					g_ParryRimIntensity = 0.f;
 
 float g_Time;
 
@@ -130,8 +134,8 @@ struct PS_IN
 struct PS_OUT
 {
 	float4		vDiffuse : SV_TARGET0;
-	float4		vNormal : SV_TARGET1;
-	float4		vDepth : SV_TARGET2;
+	float4		vNormal  : SV_TARGET1;
+	float4		vDepth	 : SV_TARGET2;
 	float4		vAmbient : SV_TARGET3;
 };
 
@@ -175,7 +179,24 @@ PS_OUT PS_MAIN_KENA_EYE(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = vDiffuse;
+	float4		FinalColor = float4(0, 0, 0, 1);
+
+	if (g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor = (vDiffuse) + (vRimColor * g_HitRimIntensity);
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor = (vDiffuse)+(vRimColor * g_ParryRimIntensity);
+	}
+	else
+	{
+		FinalColor = (vDiffuse);
+	}
+
+	Out.vDiffuse = FinalColor;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
@@ -198,7 +219,20 @@ PS_OUT PS_MAIN_KENA_BODY(PS_IN In)
 
 	float4		FinalColor = float4(0, 0, 0, 1);
 
-	FinalColor = vDiffuse + vEmissive;
+	if(g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_HitRimIntensity;
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor = (vDiffuse + vEmissive) + vRimColor * g_ParryRimIntensity;
+	}
+	else
+	{
+		FinalColor = (vDiffuse + vEmissive);
+	}
 
 	if (0.1f > vDiffuse.a)
 		discard;
@@ -231,11 +265,27 @@ PS_OUT PS_MAIN_KENA_MAINOUTFIT(PS_IN In)
 
 	float4		FinalColor = float4(1, 1, 1, 1);
 
-	FinalColor = vDiffuse + vEmissive * vEmissiveMask.r;
+	if (g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_HitRimIntensity;
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r) + vRimColor * g_ParryRimIntensity;
+	}
+	else
+	{
+		FinalColor = (vDiffuse + vEmissive * vEmissiveMask.r);
+	}
+
+	if (0.1f > vDiffuse.a)
+		discard;
 
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal  = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth     = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
+	Out.vDepth   = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	return Out;
@@ -253,8 +303,22 @@ PS_OUT PS_MAIN_FACE(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float4		FinalColor = float4(0, 0, 0, 1);
-	FinalColor = vDiffuse;
+	float4		FinalColor = float4(0.f, 0.f, 0.f, 1.f);
+
+	if (g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor = (vDiffuse) + vRimColor * g_HitRimIntensity;
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor = (vDiffuse) + vRimColor * g_ParryRimIntensity;
+	}
+	else
+	{
+		FinalColor = (vDiffuse);
+	}
 
 	Out.vDiffuse = vector(FinalColor.rgb, 1.f);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -276,7 +340,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	float4		FinalColor = float4(0, 0, 0,1);
+	float4		FinalColor = float4(0, 0, 0, 1);
 	FinalColor = vDiffuse + vEmissive;
 
 	Out.vDiffuse = vector(FinalColor.rgb, vDiffuse.a);
@@ -289,7 +353,7 @@ PS_OUT PS_MAIN_STAFF(PS_IN In)
 
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
+	PS_OUT		Out = (PS_OUT)0;
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAlpha = g_HairAlphaTexture.Sample(LinearSampler, In.vTexUV);
@@ -322,7 +386,24 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 	float fFinalAlpha = fAlpha * saturate((fDepth - rootPosition.z)/(1.f - rootPosition.z));
 	fFinalAlpha = 1.f - fFinalAlpha;
 
-	Out.vDiffuse = float4(vDiffuse.rgb, fFinalAlpha);
+	float4		FinalColor = float4(0, 0, 0, 1);
+
+	if (g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor = (vDiffuse) + vRimColor * g_HitRimIntensity;
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor = (vDiffuse) + vRimColor * g_ParryRimIntensity;
+	}
+	else
+	{
+		FinalColor = (vDiffuse);
+	}
+
+	Out.vDiffuse = float4(FinalColor.rgb, fFinalAlpha);
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f , 0.f);
 	Out.vAmbient = (vector)1.f;
@@ -347,9 +428,20 @@ PS_OUT PS_MAIN_EYELASH(PS_IN In)
 		distance = min(distance, lashAlpha);
 	}
 
-	float4 finalColor = float4(lerp(vAlbedo, vLashColor, distance * g_fLashIntensity));
+	float4 FinalColor = float4(lerp(vAlbedo, vLashColor, distance * g_fLashIntensity));
 
-	Out.vDiffuse = finalColor;
+	if (g_Hit)
+	{
+		vector		vRimColor = float4(1.f, 0.f, 0.f, 0.f);
+		FinalColor += vRimColor * g_HitRimIntensity;
+	}
+	else if (g_Parry)
+	{
+		vector		vRimColor = float4(0.f, 0.f, 1.f, 0.f);
+		FinalColor += vRimColor * g_ParryRimIntensity;
+	}
+
+	Out.vDiffuse = FinalColor;
 	Out.vNormal = (vector)1.f;
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 1.f, 0.f);
 	Out.vAmbient = (vector)1.f;
@@ -670,4 +762,8 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_CINE();
 	} //12
+
+
+
+
  }

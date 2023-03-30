@@ -952,8 +952,8 @@ void CUI_ClientManager::Save_TextureComStrings(CGameInstance* pGameInstance, con
 	size_t length = tag.length();
 	length = tag.length() - headLength;
 
-	string str;
-	str = str.assign(tag.begin(), tag.end()).substr(headLength, length);
+	string str = string(tag.begin() + headLength, tag.begin() + headLength + length);
+
 	pGameInstance->Add_UIString(CUI_Manager::STRKEY_TEXTURE_NAME, str);
 }
 

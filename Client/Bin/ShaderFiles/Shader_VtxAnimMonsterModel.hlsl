@@ -5,7 +5,7 @@ matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float      g_fFar = 300.f;
+float  g_fFar = 500.f;
 float4 g_vCamPosition;
 /**************************************/
 Texture2D<float4>      g_DiffuseTexture;
@@ -21,8 +21,8 @@ Texture2D<float4>      g_AOTexture;
 Texture2D<float4>      g_RoughnessTexture;
 Texture2D<float4>      g_MaskTexture;
 
-float4					g_EmissiveColor = (float4)1.f;
-float					g_fHDRIntensity = 0.f;
+float4			g_EmissiveColor = (float4)1.f;
+float				g_fHDRIntensity = 0.f;
 
 /* EnemyWisp Texture */
 texture2D      g_NoiseTexture;
@@ -34,21 +34,13 @@ float4         g_vColor;
 /* ~EnemyWisp Texture */
 
 /* Dissolve */
-texture2D		g_DissolveTexture;
-bool			g_bDissolve;
-float			g_fDissolveTime;
-float			_DissolveSpeed = 0.2f;
-float			_FadeSpeed = 1.5f;
+texture2D      g_DissolveTexture;
+bool         g_bDissolve;
+float         g_fDissolveTime;
+float _DissolveSpeed = 0.2f;
+float _FadeSpeed = 1.5f;
 /* ~Dissolve */
 
-/* Options */
-float			g_fUVSpeedX = 0.f;
-float			g_fUVSpeedY = 0.f;
-/* ~Options */
-
-/* For. EnemyHunter */
-float			g_fStringDissolve;
-float			g_fStringHDR;
 
 struct VS_IN
 {
@@ -594,7 +586,7 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 
 	float4 vLine = g_LineTexture.Sample(LinearSampler, In.vTexUV);
 
-	// fresnel_glow(ï¿½ï¿½ï¿½ï¿½(Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½), )
+	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
 	float  base = dot(In.vNormal.rgb, -In.vViewDir.rgb);
 	float  exponential = /*vMask * */pow(base, 2.f);
 	float4 fresnelcolor = float4(197.f, 57.f, 57.f, 13.f) / 255.f;
@@ -714,147 +706,6 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN In)
 
 	return Out;
 }// 10
-
-PS_OUT PS_MAIN_BOSS_AO_R_M(PS_IN In)
-{
-	PS_OUT         Out = (PS_OUT)0;
-
-	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
-
-	if (0.1f > vDiffuse.a)
-		discard;
-
-	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
-
-	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
-	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-	vNormal = normalize(mul(vNormal, WorldMatrix));
-
-	FinalColor = vDiffuse;
-
-	if (g_bDissolve)
-	{
-		float fDissolveAmount = g_fDissolveTime * 5.f;
-
-		// sample noise texture
-		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
-
-		float  _ColorThreshold1 = 1.0f;
-		float4 _DissolveColor1 = float4(255.f, 255.f, 255.f, 255.f) / 255.f;  
-
-		float  _ColorThreshold2 = 0.4f;
-		float4 _DissolveColor2 = float4(255.f, 127.f, 255.f, 255.f) / 255.f;
-
-		 // add edge colors0
-		float thresh1 = fDissolveAmount * _ColorThreshold1;
-		float useDissolve1 = noiseSample - thresh1 < 0;
-		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
-
-		// add edge colors1
-		float thresh2 = fDissolveAmount * _ColorThreshold2;
-		float useDissolve2 = noiseSample - thresh2 < 0;
-		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
-
-		// determine deletion threshold
-		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
-		clip(noiseSample - threshold);
-	}
-
-	Out.vDiffuse = FinalColor;
-	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
-	Out.vAmbient = vAO_R_MDesc;
-
-	return Out;
-}// 11
-
-PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
-{
-	PS_OUT         Out = (PS_OUT)0;
-
-	vector      vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector      vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	vector      vAO_R_MDesc = g_AO_R_MTexture.Sample(LinearSampler, In.vTexUV);
-	vector      vEmissiveDesc = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
-
-	if (0.1f > vDiffuse.a)
-		discard;
-
-	float4 FinalColor = float4(0.f, 0.f, 0.f, 1.f);
-
-	float3      vNormal = vNormalDesc.xyz * 2.f - 1.f;
-	float3x3   WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
-	vNormal = normalize(mul(vNormal, WorldMatrix));
-
-	FinalColor = vDiffuse + (vDiffuse * vEmissiveDesc * g_EmissiveColor);
-
-	if (g_bDissolve)
-	{
-		float fDissolveAmount = g_fDissolveTime * 5.f;
-
-		// sample noise texture
-		float noiseSample = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
-
-		float  _ColorThreshold1 = 1.0f;
-		float4 _DissolveColor1 = float4(255.f, 255.f, 255.f, 255.f) / 255.f; 
-
-		float  _ColorThreshold2 = 0.4f;
-		float4 _DissolveColor2 = float4(255.f, 127.f, 255.f, 255.f) / 255.f; 
-
-		 // add edge colors0
-		float thresh1 = fDissolveAmount * _ColorThreshold1;
-		float useDissolve1 = noiseSample - thresh1 < 0;
-		FinalColor = (1 - useDissolve1) * FinalColor + useDissolve1 * _DissolveColor1;
-
-		// add edge colors1
-		float thresh2 = fDissolveAmount * _ColorThreshold2;
-		float useDissolve2 = noiseSample - thresh2 < 0;
-		FinalColor = (1 - useDissolve2) * FinalColor + useDissolve2 * _DissolveColor2;
-
-		// determine deletion threshold
-		float threshold = fDissolveAmount * _DissolveSpeed * _FadeSpeed;
-		clip(noiseSample - threshold);
-	}
-
-	Out.vDiffuse = FinalColor;
-	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, length(vEmissiveDesc) + g_fHDRIntensity, 0.f);
-	Out.vAmbient = vAO_R_MDesc;
-
-	return Out;
-}// 12
-
-PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
-
-	float2	texUV = In.vTexUV;
-	texUV.x += g_fUVSpeedX;
-	//texUV.y += g_fUVSpeedY;
-	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	float4	vMask = g_MaskTexture.Sample(LinearSampler, texUV);
-
-	float	vDiffuseR = vDiffuse.r;
-
-	Out.vDiffuse = vDiffuse;
-	Out.vDiffuse.a = vMask.r;
-	if (0.1f > Out.vDiffuse.a)
-		discard;
-	vector      vAO_R_M = (vector)1.f;
-	Out.vDiffuse.rgb *= g_vColor.rgb;
-
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f,
-							g_fStringHDR, 0.f);
-	Out.vAmbient = vAO_R_M;
-
-	if (vDiffuseR < g_fStringDissolve)
-		discard;
-
-	return Out;
-} // 13
 
 technique11 DefaultTechnique
 {
@@ -1003,42 +854,4 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
-	//11
-	pass BOSS_AO_R_M
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_BOSS_AO_R_M();
-	}
-	//12
-	pass BOSS_AO_R_M_E
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_BOSS_AO_R_M_E();
-	}
-	// 13
-	pass HUNTER_STRING
-	{
-		SetRasterizerState(RS_CULLNONE);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader	= compile vs_5_0 VS_MAIN();
-		GeometryShader	= NULL;
-		HullShader		= NULL;
-		DomainShader	= NULL;
-		PixelShader		= compile ps_5_0 PS_MAIN_HUNTER_STRING();
-	}
-
 }

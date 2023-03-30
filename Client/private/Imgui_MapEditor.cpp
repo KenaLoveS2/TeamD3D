@@ -14,7 +14,9 @@
 #include "Imgui_TerrainEditor.h"
 #include "Gimmick_EnviObj.h"
 #include "Pulse_Plate_Anim.h"
-#include "Crystal.h"
+#include "ControlRoom.h"
+#include "DeadZoneObj.h"
+
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -56,6 +58,7 @@ void CImgui_MapEditor::Imgui_FreeRender()
 		imgui_ObjectList_Clear();
 
 		Imgui_Instance_Edit_Collider();
+		Imgui_DZ_objClear();
 	}
 
 	ImGui::End();
@@ -762,7 +765,8 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain4"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain3"));
+
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -881,7 +885,27 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 	ImGui::End();
 
 }
+
+void CImgui_MapEditor::Imgui_DZ_objClear()
+{
+	if(ImGui::Button("DZ_Obj Clear"))
+	{
+		CControlRoom* pCtrlRoom =static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom",L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+	}
+
+	if (ImGui::Button("DZ_Obj Revert"))
+	{
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(false);
+	}
+}
+
+
+
 #endif
+
+
 
 
 void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, vector<_float4x4> vecMatrixVec, vector<_float3> vecColiderSize, CEnviromentObj::CHAPTER eChapterGimmcik)
@@ -959,6 +983,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 	int				iLoadRoomIndex = 0;
 	int				iLoadChapterType = 0;
 	int				iShaderPass = 0;
+	int				iDeadZone_ID = -1;
 	vector<string> StrComTagVec;
 	array<string, (_int)WJTextureType_UNKNOWN> strFilePaths_arr;
 	strFilePaths_arr.fill("");
@@ -976,6 +1001,7 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		jLoadChild["4_RoomIndex"].get_to<int>(iLoadRoomIndex);
 		jLoadChild["5_ChapterType"].get_to <int>(iLoadChapterType);
 
+	
 		for (string strTag : jLoadChild["6_AddComTag"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
 			StrComTagVec.push_back(strTag);
 
@@ -1043,11 +1069,20 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize, EnviromentDesc.eChapterType);
 
+		for (_int iModelId : jLoadChild["8_DeadZoneModel_ID"])
+		{
+			memcpy((&iDeadZone_ID) , &iModelId, sizeof(_int));
+			static_cast<CDeadZoneObj*>(pLoadObject)->Set_DeadZoneModel_ChangeID(iDeadZone_ID);
+
+		}
+
+
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
 		iLoadChapterType = 0;		pLoadObject = nullptr;		iShaderPass = 0;
 		StrComTagVec.clear();
 		strFilePaths_arr.fill("");
+		iDeadZone_ID = -1;
 	}
 
 

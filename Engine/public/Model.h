@@ -24,6 +24,7 @@ public:
 	const _double&				Get_PlayTime() const;
 	const _double&				Get_LastPlayTime() const;
 	const _float					Get_AnimationProgress() const;
+	const _double					Get_AnimationDuration() const;
 	const _bool&					Get_PausePlay() const { return m_bPausePlay; }
 	const _bool&					Get_Preview() const { return m_bPreview; }
 	const _uint&					Get_AnimIndex() const { return m_iCurrentAnimIndex; }
@@ -92,7 +93,12 @@ public:
 
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
-	
+
+
+public:
+	void						Set_InstanceEffect_Info(CTransform* pParentTransform,_int iInstanceNum,_float fMinSpeed, _float fMaxSpeed);
+	void						Instaincing_mesh_Effect_tick(_float yLimitPos, _float fTimeDelta);
+
 private:
 	TYPE									m_eType = TYPE_END;
 	wstring									m_wstrModelFilePath = L"";

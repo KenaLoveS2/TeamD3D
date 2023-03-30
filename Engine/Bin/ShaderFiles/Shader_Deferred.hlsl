@@ -8,8 +8,8 @@ matrix			g_DynamicLightViewMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
-float				g_fLightRange;
-float				g_fFar = 300.f; // 카메라의 FAR
+float			g_fLightRange;
+float			g_fFar = 500.f; // 카메라의 FAR
 vector			g_vLightDiffuse;
 vector			g_vLightAmbient;
 vector			g_vLightSpecular;
@@ -201,7 +201,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vDepthDesc     = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vAmbientDesc = g_MtrlAmbientTexture.Sample(LinearSampler, In.vTexUV);
 
-	float			fViewZ = vDepthDesc.y * g_fFar;
+	float		fViewZ = vDepthDesc.y * g_fFar;
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 	vector		vWorldPos;
 
