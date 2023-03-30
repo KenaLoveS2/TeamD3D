@@ -265,6 +265,12 @@
     <ClInclude Include="..\public\E_RotBombExplosion.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_Sapling.h" />
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h" />
+    <ClInclude Include="..\public\E_ShamanBossPlate.h" />
+    <ClInclude Include="..\public\E_ShamanSmoke.h" />
+    <ClInclude Include="..\public\E_ShamanSummons.h" />
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h" />
+    <ClInclude Include="..\public\E_ShamanTrail.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
@@ -519,6 +525,12 @@
     <ClCompile Include="..\private\E_RotBombExplosion.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_Sapling.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp" />
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp" />
+    <ClCompile Include="..\private\E_ShamanSummons.cpp" />
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp" />
+    <ClCompile Include="..\private\E_ShamanTrail.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
@@ -711,6 +723,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimRotWispModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnim_Instance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffectModel.hlsl" />

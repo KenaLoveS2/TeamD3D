@@ -43,7 +43,8 @@ protected:
 		SAPLING_BOMBUP,
 		ALPHA_AO_R_M,
 		SHADOW,
-		/* More Passes Exists, but they're not for commons, so check the shader file. */
+		BOSS_AO_R_M,
+		BOSS_AO_R_M_E,
 		PASS_END
 	};
 

@@ -360,6 +360,7 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 }
 void CEffect_T::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
 	ImGui::InputFloat("Width", (_float*)&m_eEFfectDesc.fWidthFrame);
 	ImGui::InputFloat("Height", (_float*)&m_eEFfectDesc.fHeightFrame);
 }

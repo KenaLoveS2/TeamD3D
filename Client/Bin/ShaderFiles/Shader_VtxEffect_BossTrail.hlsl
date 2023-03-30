@@ -201,6 +201,23 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+//PS_SHAMAN_TRAIL
+PS_OUT PS_SHAMAN_TRAIL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	 Flow = g_FlowTexture.Sample(LinearSampler, In.vTexUV);
+	vector   Type = g_TypeTexture.Sample(LinearSampler, In.vTexUV);
+	// R = 1, G = 0.2, B = 1, A = 1
+	vector   vTrailColor = vector(225.f, 236.f, 255.f, 255.f) / 255.f;
+
+	float4 finalcolor = Flow ;
+	finalcolor.rgb = finalcolor.rgb + vTrailColor.rgb;
+	Out.vColor = finalcolor * Type;
+	Out.vColor.a = Out.vColor.r * In.fLife;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Warrior_Trail // 0
@@ -214,5 +231,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Shaman_Trail // 1
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMAN_TRAIL();
 	}
 }

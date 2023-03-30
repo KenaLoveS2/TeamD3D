@@ -142,7 +142,6 @@ private:
 	_bool m_bBlock = false;
 	_bool m_bBlockHit = false;
 
-
 	_float m_fBlockRange = 2.5f;
 	_float m_fJumpBackRange = 2.5;
 	_float m_fCloseAttackRange = 5.f;

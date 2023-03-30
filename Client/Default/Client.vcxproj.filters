@@ -508,6 +508,39 @@
     <Filter Include="97.ShaderFiles\Effect_S2">
       <UniqueIdentifier>{ddb96b9e-0d9f-46d2-b0a2-9713e31ed199}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman">
+      <UniqueIdentifier>{e7bc09aa-cfb4-4084-82df-d2330af95d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage">
+      <UniqueIdentifier>{70ae4a2d-2a8a-41e8-b533-92a71f92b72f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\Trail">
+      <UniqueIdentifier>{34e5227b-306f-4a7a-9f6f-92af3f9dffbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront">
+      <UniqueIdentifier>{544b1510-dc70-4481-a452-c384e386282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack">
+      <UniqueIdentifier>{9ac31cd0-b50e-455a-8b90-4e765763511c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons">
+      <UniqueIdentifier>{8b722887-673d-43f4-9bb4-89a8ed061e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane">
+      <UniqueIdentifier>{554ed3c5-ae54-484a-beb9-845ab1f525c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane">
+      <UniqueIdentifier>{45e47963-8074-42ea-be5d-a023ff5bb141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder">
+      <UniqueIdentifier>{3ce6b188-0f24-4e07-862a-422d4b6b37f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail">
+      <UniqueIdentifier>{a99b14fe-cad8-4662-b5d4-a062cacf1534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke">
+      <UniqueIdentifier>{ac036bdd-26ba-47cf-9e9f-7d98dd494687}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1195,17 +1228,8 @@
     <ClInclude Include="..\public\E_P_Warrior.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_Warrior_ShockFronExtended.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_Hieroglyph.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_P_ShockFrontEntended.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_Warrior_ShockFronExtended_Plane.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClInclude>
     <ClInclude Include="..\public\E_Distortion_Plane.h">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
@@ -1308,6 +1332,63 @@
     </ClInclude>
     <ClInclude Include="..\public\Effect_Texture_Base.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Swipes_Charged.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_Sakura.h">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ShamanTrapPlane.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_EnrageInto.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_WarriorTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ShockFrontEntended.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_ShockFronExtended.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_ShockFronExtended_Plane.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_FireSwipe.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_PlaneRoot.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warrior_Root.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_Warriorcloud.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSummons.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossPlate.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSmoke.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1974,17 +2055,8 @@
     <ClCompile Include="..\private\E_P_Warrior.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_Warrior_ShockFronExtended.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\E_Hieroglyph.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_P_ShockFrontEntended.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_Warrior_ShockFronExtended_Plane.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior</Filter>
     </ClCompile>
     <ClCompile Include="..\private\E_Distortion_Plane.cpp">
       <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
@@ -2088,6 +2160,66 @@
     <ClCompile Include="..\private\Effect_Texture_Base.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\E_Swipes_Charged.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_Sakura.cpp">
+      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShamanTrapPlane.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_EnrageInto.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Enrage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_WarriorTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ShockFrontEntended.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_ShockFronExtended.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_ShockFronExtended_Plane.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\ShockFront</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_FireSwipe.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_PlaneRoot.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warrior_Root.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_Warriorcloud.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSummons.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2181,6 +2313,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
       <Filter>97.ShaderFiles\Effect_S2</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl">
+      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
