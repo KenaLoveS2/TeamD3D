@@ -40,8 +40,6 @@ public:
 	virtual void			Common_Function(_bool bResult)	override;
 	virtual void			Set_Caller(CGameObject* pObj)   override;
 
-
-
 private:
 	virtual HRESULT			Bind()							override;
 	virtual HRESULT			Ready_Nodes()					override;

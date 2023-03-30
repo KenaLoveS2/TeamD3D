@@ -6,7 +6,7 @@ BEGIN(Client)
 class CSpiritArrow final : public CEffect_Mesh
 {
 public:
-	enum ARROWSTATE { ARROW_CHARGE, ARROW_READY, ARROW_FIRE, ARROW_HIT, ARROWSTATE_END };
+	enum ARROWSTATE { ARROW_CHARGE, ARROW_INJECT_CHARGE, ARROW_READY, ARROW_FIRE, ARROW_INJECT_FIRE, ARROW_HIT, ARROWSTATE_END };
 	enum EFFECTS { EFFECT_POSITION, EFFECT_HIT, EFFECT_TRAIL, EFFECT_END };
 
 private:
@@ -49,6 +49,9 @@ private:
 	_float						m_fScale = 1.f;
 	_float						m_fMaxScale = 2.f;
 	_float						m_fScalePosRate = 0.35f;
+	_float						m_fInjectScale = 1.f;
+	_float						m_fMaxInjectScale = 3.f;
+	_float						m_fInjectFireTime = 0.f;
 
 	_float						m_fMinDistance = 10.f;
 	_float						m_fMaxDistance = 30.f;

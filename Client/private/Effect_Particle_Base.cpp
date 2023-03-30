@@ -124,18 +124,13 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "AlphaBlendHaze"};
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
+		const char* renderPass[3] = { "DefaultHaze", "BlackHaze", "BlackGather" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 3, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
 		ColorCode();
 	}
-
-	
-	/* Options(UV Animation, Sprite Animation, etc...) */
-	if(ImGui::CollapsingHeader("Options"))
-		Options();
 
 	/* Buffer Update */
 	if (ImGui::CollapsingHeader(" > Update Buffer"))
@@ -150,8 +145,8 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[4] = { "Haze", "Gather", "Parabola", "Spread"};
-		ImGui::ListBox("Type", &iType, list, 4, 5);
+		const char* list[3] = { "Haze", "Gather", "Parabola" };
+		ImGui::ListBox("Type", &iType, list, 3, 5);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -217,9 +212,6 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		{
 			if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
 				MSG_BOX("The Update Process ended unexpectedly. Please Check the Code.");
-
-			if (m_bOptions[OPTION_SPRITE])
-				m_fFrameNow = 0.f;
 		}
 	}
 
@@ -243,11 +235,6 @@ HRESULT CEffect_Particle_Base::Save_Data()
 	ImGui::SetNextItemWidth(200);
 	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
 	ImGui::SameLine();
-
-	if (ImGui::Button("Reset FileName"))
-		strcpy_s(szSaveFileName, MAX_PATH, m_strEffectTag.c_str());
-	ImGui::SameLine();
-
 	if (ImGui::Button("Save"))
 		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
 
@@ -316,18 +303,6 @@ HRESULT CEffect_Particle_Base::Save_Data()
 			}
 
 			json["18. fPlaySpeed"] = tInfo.fPlaySpeed;
-
-
-			for (_uint i = 0; i < OPTION_END; ++i)
-				json["20. Options"].push_back(m_bOptions[i]);
-
-			for (_uint i = 0; i < 2; ++i)
-			{
-				json["21. UVSpeed"].push_back(m_fUVSpeeds[i]);
-				json["22. SpriteFrames"].push_back(m_iFrames[i]);
-			}
-			json["23. SpriteSpeed"] = m_fFrameSpeed;
-
 
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
@@ -411,33 +386,6 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
-
-	i = 0;
-	if (jLoad.contains("20. Options"))
-	{
-		for (auto bOption : jLoad["20. Options"])
-			bOption.get_to<_bool>(m_bOptions[i++]);
-	}
-
-	i = 0;
-	if (jLoad.contains("21. UVSpeed"))
-	{
-		for (auto fElement : jLoad["21. UVSpeed"])
-			fElement.get_to<_float>(m_fUVSpeeds[i++]);
-	}
-
-	i = 0;
-	if (jLoad.contains("22. SpriteFrames"))
-	{
-		for (auto fElement : jLoad["22. SpriteFrames"])
-			fElement.get_to<_int>(m_iFrames[i++]);
-	}
-
-	if (jLoad.contains("23. SpriteSpeed"))
-		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
-
-
-
 	return S_OK;
 }
 
@@ -490,32 +438,6 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
-		return E_FAIL;
-
-	if (m_bOptions[OPTION_UV])
-	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
-			return E_FAIL;
-
-	}
-
-	if (m_bOptions[OPTION_SPRITE])
-	{
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
-			return E_FAIL;
-	}
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

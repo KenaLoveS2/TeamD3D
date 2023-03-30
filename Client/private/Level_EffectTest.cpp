@@ -192,6 +192,10 @@ HRESULT CLevel_EffectTest::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EffectFlower"), L"flower")))
 		return E_FAIL;
 
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_DistortionSphere"), L"Distortion", nullptr, &pGameObject)))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }

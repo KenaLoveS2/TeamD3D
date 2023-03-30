@@ -55,21 +55,19 @@ void CE_KenaDust::Tick(_float fTimeDelta)
 		m_eEFfectDesc.bActive = false;
 		m_fDurationTime = 0.0f;
 	}
+
 }
 
 void CE_KenaDust::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
-		return ;
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_KenaDust::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

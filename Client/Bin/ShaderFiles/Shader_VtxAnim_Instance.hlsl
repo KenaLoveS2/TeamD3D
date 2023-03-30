@@ -6,7 +6,7 @@ matrix g_WorldMatrix;
 matrix g_WorldMatrixInv;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float	   g_fFar = 300.f;
+float  g_fFar = 500.f;
 float4 g_vCamPosition;
 /**************************************/
 Texture2D<float4>		g_DiffuseTexture;
