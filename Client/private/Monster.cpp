@@ -7,7 +7,6 @@
 #include "UI_MonsterHP.h"
 #include "E_RectTrail.h"
 
-
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

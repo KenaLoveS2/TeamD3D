@@ -81,14 +81,6 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 
 void CE_Swipes_Charged::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("CE_Swipes_Charged");
-
-	ImGui::InputInt("PassCnt", &m_eEFfectDesc.iPassCnt);
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)

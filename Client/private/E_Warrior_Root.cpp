@@ -78,13 +78,6 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 
 void CE_Warrior_Root::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("Root");
-
-	if (ImGui::Button("re"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 

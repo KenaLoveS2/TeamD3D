@@ -164,6 +164,11 @@
 #include "E_Hieroglyph.h"
 #include "E_P_ShockFrontEntended.h"
 #include "E_Warrior_ShockFronExtended_Plane.h"
+#include "E_ShamanBossPlate.h"
+#include "E_ShamanBossHandPlane.h"
+#include "E_ShamanThunderCylinder.h"
+#include "E_ShamanSummons.h"
+#include "E_ShamanTrail.h"
 /* ~Effects */
 
 /* Components*/
@@ -426,7 +431,6 @@ HRESULT CLoader::Loading_ForMapTool()
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Chest_Anim/Chest.mdat"), PivotMatrix))))
 		return E_FAIL;
 	FAILED_CHECK_RETURN(pGameInstance->Add_Prototype(L"Prototype_GameObject_Chest", CChest_Anim::Create(m_pDevice, m_pContext)), E_FAIL);
-	/* ~��ȣ�� ��*/
 
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Rope_RotRock", true, false, true))) return E_FAIL;
 	// Prototype_GameObject_CRope_RotRock
@@ -1914,6 +1918,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Trail/shapetype/E_Type_%d.png"), 11))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_EffectShaman */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_Texture_EffectShaman"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Boss/Shaman/E_Shaman_%d.png"), 50))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_VIBuffer_Point_Instancing */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_Trail"),
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
@@ -1982,6 +1991,29 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	/* For.Prototype_Component_Model_ShockFront_Extended */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ShockFront_Extended",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ShockFront_Extended.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/**************************/
+	/*       S H A M A N      */
+	/**************************/
+	/* For.Prototype_Component_Model_BossHandPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossHandPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/BossHandPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_BossPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_BossPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/BossPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_MonsterPlate */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_MonsterPlate",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/MonsterPlate.mdat"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_ThunderCylinder */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_ThunderCylinder",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/ThunderCylinder.mdat"), PivotMatrix))))
 		return E_FAIL;
 
 #pragma endregion EFFECT_COMPONENT
@@ -2262,6 +2294,33 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnrageInto"),
 		CE_EnrageInto::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_EnrageInto.json"))))
 		return E_FAIL;
+
+	/* Shaman */
+	/* For.Prototype_GameObject_EnrageInto */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanBossPlate"),
+		CE_ShamanBossPlate::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanBossHandPlane */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanBossHandPlane"),
+		CE_ShamanBossHandPlane::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanThunderCylinder */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanThunderCylinder"),
+		CE_ShamanThunderCylinder::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanSummons */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSummons"),
+		CE_ShamanSummons::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanTrail */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrail"),
+		CE_ShamanTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* Shaman */
 
 #pragma endregion Effect_Object
 
