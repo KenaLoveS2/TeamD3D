@@ -7,7 +7,7 @@ class ENGINE_DLL CVIBuffer_Point_Instancing_S2 final : public CVIBuffer_Instanci
 public:
 	typedef struct tagPtInfo
 	{
-		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA ,TYPE_END };
+		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA , TYPE_SPREAD, TYPE_END };
 
 		TYPE	eType = TYPE_HAZE;
 
@@ -45,6 +45,7 @@ private: /* Tick Function By Type */
 	HRESULT		Tick_Haze(_float TimeDelta);
 	HRESULT		Tick_Gather(_float TimeDelta);
 	HRESULT		Tick_Parabola(_float TimeDelta);
+	HRESULT		Tick_Spread(_float TimeDelta);
 private:
 	void		Safe_Delete_Arrays();
 	void		Reset();

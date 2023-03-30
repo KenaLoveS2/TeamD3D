@@ -37,6 +37,7 @@ HRESULT CE_KenaDust::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
+
 	return S_OK;
 }
 
@@ -48,25 +49,27 @@ void CE_KenaDust::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 0.3f)
+	if (m_fDurationTime > 1.6f)
 	{
 		ResetSprite();
 		m_eEFfectDesc.bActive = false;
 		m_fDurationTime = 0.0f;
 	}
-
 }
 
 void CE_KenaDust::Late_Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
-		return;
+		return ;
 
 	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_KenaDust::Render()
 {
+	if (m_eEFfectDesc.bActive == false)
+		return E_FAIL;
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

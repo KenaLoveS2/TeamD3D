@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 #include "Gimmick_EnviObj.h"
 #include "Crystal.h"
-#include "DZ_FallenTree_Anim.h"
 
 CControlRoom::CControlRoom(ID3D11Device* pDevice, ID3D11DeviceContext* p_context)
 	:CGameObject(pDevice, p_context)
@@ -58,7 +57,6 @@ HRESULT CControlRoom::Late_Initialize(void* pArg)
 		return S_OK;
 
 	m_pPlayerTransformPtr = pPlayerPtr->Get_TransformCom();
-
 
 	return S_OK;
 }
@@ -150,22 +148,6 @@ void CControlRoom::Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpat
 	{
 		static_cast<CGimmick_EnviObj*>(pGimmickObj.second)->Set_Gimmick_Active(iRoomIndex,IsTrigger);
 	}
-}
-
-void CControlRoom::DeadZoneObject_Change(_bool bChnage)
-{
-	/*Test .*/
-
-	if (bChnage != true)
-		return;
-
-	_int iDissovleTimer = 0;
-	m_DeadZoneChangeDelegator.broadcast(iDissovleTimer);
-
-	CGameObject* pObj = Get_Find_TriggerObj(L"3_DeadzoneAnim_Tree");
-	assert(pObj != nullptr && "CControlRoom::DeadZoneObject_Change(_bool bChnage) ");
-	
-	static_cast<CDZ_FallenTree_Anim*>(pObj)->Set_BossClear(true);
 }
 
 HRESULT CControlRoom::SetUp_Components()

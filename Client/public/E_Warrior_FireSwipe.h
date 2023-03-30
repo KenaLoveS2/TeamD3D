@@ -22,7 +22,6 @@ public:
 
 public:
 	virtual _int	Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
-	virtual void	Imgui_RenderProperty() override;
 	virtual void	ImGui_PhysXValueProperty()override;
 
 public:
@@ -31,6 +30,7 @@ public:
 private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
+	void	Imgui_RenderProperty() override;
 
 private:
 	_float	m_fDurationTime = 0.0f;

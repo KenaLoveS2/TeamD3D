@@ -35,14 +35,12 @@ public:
 	void			ShootStaticShadow() { m_bStaticShadow = true; };
 	void			Imgui_Render();
 
-
+	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
 	void			EraseStaticShadowObject(class CGameObject* pObject);
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }
-	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
-	void			Set_Fog(bool bFog) { m_bFog = bFog; }
 
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
@@ -62,28 +60,26 @@ private:
 #endif
 private:
 	class CTarget_Manager*			m_pTarget_Manager = nullptr;
-	class CLight_Manager*			m_pLight_Manager = nullptr;
+	class CLight_Manager*				m_pLight_Manager = nullptr;
 	class CLevel_Manager*			m_pLevel_Manager = nullptr;
-	class CVIBuffer_Rect*			m_pVIBuffer = nullptr;
-	class CShader*					m_pShader = nullptr;
-	class CShader*					m_pShader_PostProcess = nullptr;
-	class CShader*					m_pShader_SSAO = nullptr;
-	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
+	class CShader*							m_pShader = nullptr;
+	class CShader*							m_pShader_PostProcess = nullptr;
+	class CShader*							m_pShader_SSAO = nullptr;
+	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 	ID3D11DepthStencilView*			m_pShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pStaticShadowDepthStencilView = nullptr;
 	ID3D11DepthStencilView*			m_pCineDepthStencilView = nullptr;
 
-	_uint							m_iShadowWidth = 0, m_iShadowHeight = 0;
-	_bool							m_bPhysXRenderFlag = false;
-	_bool							m_bStaticShadow = false;
-	_bool							m_bDynamicShadow = false;
-	_bool							m_bSSAO = true;
-	_float							m_fDistortTime = 0.f;
-	_float							m_fPrevCaptureTime = 0.f;
-	_bool							m_bCine = false;
-
-	ID3D11Texture2D* m_pVideoRenderTargetTexture = nullptr;
+	_uint											m_iShadowWidth = 0, m_iShadowHeight = 0;
+	_bool										m_bPhysXRenderFlag = false;
+	_bool										m_bStaticShadow = false;
+	_bool										m_bDynamicShadow = false;
+	_bool										m_bSSAO = true;
+	_float										m_fDistortTime = 0.f;
+	_float										m_fPrevCaptureTime = 0.f;
+	_bool										m_bCine = false;
 
 private:
 	void Increase_Time();
@@ -114,13 +110,6 @@ private:
 	_bool		m_bMotionBlur = false;
 	HRESULT PostProcess_Flare();
 	_bool		m_bFlare = false;
-	HRESULT PostProcess_Fog();
-	_bool		m_bFog = false;
-	_float4		m_vFogColor;
-	_float		m_fFogStart = 0.f;
-	_float		m_fFogRange = 50.f;
-
-public:
 
 private:
 	HRESULT Render_DebugObject();

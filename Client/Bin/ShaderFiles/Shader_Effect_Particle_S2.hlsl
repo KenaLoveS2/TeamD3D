@@ -11,6 +11,16 @@ float4			g_vColor;
 float			g_fAlpha;
 float			g_fHDRItensity;
 
+/* Option */
+bool			g_IsSpriteAnim = false, g_IsUVAnim = false;
+
+/* UV Animation */
+float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
+
+/* Sprite Animation */
+int				g_XFrames = 1, g_YFrames = 1;
+int				g_XFrameNow = 0, g_YFrameNow = 0;
+
 struct VS_IN
 {
 	float3		vPosition		: POSITION;
@@ -185,6 +195,15 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
 	Out.vColor		= g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
 
 	Out.vColor		*= g_vColor;
@@ -202,6 +221,15 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
 	Out.vColor = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
 
 	Out.vColor.a = Out.vColor.r;
@@ -212,6 +240,32 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 		discard;
 
 	Out.vColor.rgb *= g_fHDRItensity;
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_SPREAD(PS_IN In)
+{
+	PS_OUT		Out = (PS_OUT)0;
+
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	Out.vColor = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+
+	Out.vColor *= g_vColor;
+	if (Out.vColor.a < 0.01f)
+		discard;
+
+	Out.vColor.rgb *= g_fHDRItensity;
+
+
 
 	return Out;
 }
@@ -255,5 +309,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_BLACK();
+	}
+
+	pass DefaultSpread // 3
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_MAIN_GATHER();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_SPREAD();
 	}
 }
