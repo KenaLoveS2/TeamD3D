@@ -1073,6 +1073,27 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 	return Out;
 }
 
+//PS_SHAMANSNOWRECTTRAIL
+PS_OUT PS_SHAMANSNOWRECTTRAIL(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / 2;
+	In.vTexUV.y = In.vTexUV.y / 2;
+
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	if (vDiffuse.a < 0.1f)
+		discard;
+
+	Out.vColor = vDiffuse + g_vColor;
+	Out.vColor.a = Out.vColor.a * In.fLife;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -1242,5 +1263,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FRONTVIEWBLINK();
+	}
+
+	pass ShamanRectTrail // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMANSNOWRECTTRAIL();
 	}
 }

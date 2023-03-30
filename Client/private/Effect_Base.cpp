@@ -601,6 +601,8 @@ HRESULT CEffect_Base::Render()
 
 void CEffect_Base::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+
 	CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
 	if (ImGui::CollapsingHeader("Transform : "))
 	{

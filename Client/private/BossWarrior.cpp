@@ -192,7 +192,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E);
 		}
 		else if(i == 1)
 		{
@@ -200,7 +200,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			//m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M);
 		}
 	}
 	return S_OK;

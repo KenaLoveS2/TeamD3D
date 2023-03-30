@@ -4,6 +4,7 @@
 #include "Bone.h"
 #include "Sticks01.h"
 #include "ShamanTrapHex.h"
+#include "E_RectTrail.h"
 
 CBossShaman::CBossShaman(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -31,6 +32,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	// FAILED_CHECK_RETURN(__super::Ready_EnemyWisp(CUtile::Create_DummyString()), E_FAIL);
 	// FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Effects(), E_FAIL);
 
 	ZeroMemory(&m_Desc, sizeof(CMonster::DESC));
 
@@ -51,7 +53,7 @@ HRESULT CBossShaman::Initialize(void* pArg)
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("sword_root_jnt");
 
 	Create_Minions();
-	
+
 	return S_OK;
 }
 
@@ -143,23 +145,30 @@ HRESULT CBossShaman::Late_Initialize(void* pArg)
 	m_pShamanTapHex = (CShamanTrapHex*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Monster"), TEXT("ShamanTrapHex_0"));
 	assert(m_pShamanTapHex && "FAILED!! -> CBossShaman::Late_Initialize()");
 
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
 void CBossShaman::Tick(_float fTimeDelta)
 {	
-	/*m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);
-	return;*/
-
+	///*m_pModelCom->Play_Animation(fTimeDelta);
+	//Update_Collider(fTimeDelta);
+	//return;*/
+	
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
 	
 	SwordRenderProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
+	Update_Trail("sword_jnt_6");
+	Update_MovementTrail("char_spine_low_jnt");
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Tick(fTimeDelta);
 
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -169,6 +178,9 @@ void CBossShaman::Tick(_float fTimeDelta)
 void CBossShaman::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
+
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Late_Tick(fTimeDelta);
 
 	CMonster::Late_Tick(fTimeDelta);
 	if (m_pRendererCom /*&& m_bSpawn*/)
@@ -193,32 +205,41 @@ HRESULT CBossShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture"),E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M), E_FAIL);
 		}
 		else if(i == 3) // °Ë ·»´õ
-		{	
-			if (m_eSwordRenderState == NO_RENDER) continue;
-			else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
-				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
-				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fSwordDissolveTime, sizeof(_float)), E_FAIL);
-				FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
+		{				
 
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 
-				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-				m_bDying && Bind_Dissolove(m_pShaderCom);
-			}
-			else if (m_eSwordRenderState == RENDER) {
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
-			}
+			FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
+
+			//if (m_eSwordRenderState == NO_RENDER) continue;
+			//else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
+			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fSwordDissolveTime, sizeof(_float)), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
+
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
+
+			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+			//	m_bDying && Bind_Dissolove(m_pShaderCom);
+			//}
+			//else if (m_eSwordRenderState == RENDER) {
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+			//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
+			//}
 		}
 		else 
 		{
@@ -226,7 +247,7 @@ HRESULT CBossShaman::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 		}
 	}
 	return S_OK;
@@ -311,6 +332,16 @@ void CBossShaman::Push_EventFunctions()
 	// CMonster::Push_EventFunctions();
 	
 	LookAt_Kena(true, 0.0f);
+
+	TurnOnTrail(true, 0.0f);
+	TurnOffTrail(true, 0.0f);
+	TurnOnMoveMentTrail(true, 0.0f);
+	TurnOffMoveMentTrail(true, 0.0f);
+	TurnOnHandSummons(true, 0.0f);
+	TurnOffHandSummons(true, 0.0f);
+	TurnOnSwipeChareged(true, 0.0f);
+	TurnOnSummons(true, 0.0f);
+	TurnOffSummons(true, 0.0f);
 }
 
 HRESULT CBossShaman::SetUp_State()
@@ -948,11 +979,9 @@ HRESULT CBossShaman::SetUp_ShaderResources()
 	float fHDRIntensity = 0.f;
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
 	
-
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)))) return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)))) return E_FAIL;
-	if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bTeleportDissolve, sizeof(_bool)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fTeleportDissolveTime, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
 
 	return S_OK;
 }
@@ -967,6 +996,69 @@ HRESULT CBossShaman::SetUp_ShadowShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
 	return S_OK;
+}
+
+HRESULT CBossShaman::Ready_Effects()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	CEffect_Base* pEffectBase = nullptr;
+
+	/* Trail */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanTrail", L"S_Trail"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("S_Trail", pEffectBase);
+	
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pMovementTrail = dynamic_cast<CE_RectTrail*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", pDummyString));
+	NULL_CHECK_RETURN(m_pMovementTrail, E_FAIL);
+	m_pMovementTrail->SetUp_Option(CE_RectTrail::OBJ_BODY_SHAMAN);
+	m_pMovementTrail->Set_Parent(this);
+	/* Trail */
+
+	/* Plate */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanBossPlate", L"S_Plate"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("S_Plate", pEffectBase);
+
+	/* Hand */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanBossHandPlane", L"S_Hand"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("S_Hand", pEffectBase);
+
+	/* Summons */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanSummons", L"S_Summons"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("S_Summons", pEffectBase);
+
+	/* Shaman_Charged */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_Swipes_Charged", L"Shaman_Charged"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("Shaman_Charged", pEffectBase);
+
+	return S_OK;
+}
+
+void CBossShaman::Update_Trail(const char* pBoneTag)
+{
+	CBone* pBonePtr = m_pModelCom->Get_BonePtr(pBoneTag);
+	_matrix SocketMatrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix matWorldSocket = SocketMatrix * m_pTransformCom->Get_WorldMatrix();
+
+	m_mapEffect["S_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	m_pMovementTrail->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
+	dynamic_cast<CEffect_Trail*>(m_mapEffect["S_Trail"])->Trail_InputPos(matWorldSocket.r[3]);
+	
+	if (m_mapEffect["S_Trail"]->Get_Active() == true)
+	{
+		_float4 vPos = m_pTransformCom->Get_Position();
+		vPos.y = vPos.y + 1.f;
+		m_pMovementTrail->Trail_InputRandomPos(vPos);
+	}
 }
 
 void CBossShaman::Update_Collider(_float fTimeDelta)
@@ -1026,6 +1118,127 @@ void CBossShaman::Reset_AF()
 {
 }
 
+void CBossShaman::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnTrail);
+		return;
+	}
+	m_mapEffect["S_Trail"]->Set_Active(true);
+}
+
+void CBossShaman::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOffTrail);
+		return;
+	}
+	m_mapEffect["S_Trail"]->Set_Active(false);
+	dynamic_cast<CEffect_Trail*>(m_mapEffect["S_Trail"])->ResetInfo();
+}
+
+void CBossShaman::TurnOnMoveMentTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnMoveMentTrail);
+		return;
+	}
+	m_mapEffect["S_BodyParticle"]->Set_Active(true);
+}
+
+void CBossShaman::TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOffMoveMentTrail);
+		return;
+	}
+	m_mapEffect["S_BodyParticle"]->Set_Active(false);
+}
+
+void CBossShaman::TurnOnHandSummons(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnHandSummons);
+		return;
+	}
+
+	CBone* pBonePtr = m_pModelCom->Get_BonePtr("char_lf_ring_d_jnt");
+	_matrix matrix = pBonePtr->Get_CombindMatrix() * m_pModelCom->Get_PivotMatrix();
+	_matrix Shamanmatrix = m_pTransformCom->Get_WorldMatrix();
+
+	_matrix matSocket = matrix * Shamanmatrix;
+	_float4 vHandPos = matSocket.r[3];
+
+	m_mapEffect["S_Hand"]->Set_Position(vHandPos);
+	m_mapEffect["S_Hand"]->Set_Active(true);
+}
+
+void CBossShaman::TurnOffHandSummons(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOffHandSummons);
+		return;
+	}
+	m_mapEffect["S_Hand"]->Set_Active(false);
+}
+
+void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnSwipeChareged);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["Shaman_Charged"]->Set_Position(vPos);
+	m_mapEffect["Shaman_Charged"]->Set_Active(true);
+}
+
+void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnSummons);
+		return;
+	}
+
+	_float4 vPos = m_pTransformCom->Get_Position();
+
+	m_mapEffect["S_Plate"]->Set_Position(vPos);
+	m_mapEffect["S_Plate"]->Set_Active(true);
+
+	m_mapEffect["S_Summons"]->Set_Position(vPos);
+	m_mapEffect["S_Summons"]->Set_Active(true);
+
+}
+
+void CBossShaman::TurnOffSummons(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOffSummons);
+		return;
+	}
+
+	m_mapEffect["S_Plate"]->Set_Active(false);
+	m_mapEffect["S_Summons"]->Set_Active(false);
+}
+
 CBossShaman* CBossShaman::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBossShaman*	pInstance = new CBossShaman(pDevice, pContext);
@@ -1055,6 +1268,10 @@ CGameObject* CBossShaman::Clone(void* pArg)
 void CBossShaman::Free()
 {
 	CMonster::Free();
+
+	for (auto& Pair : m_mapEffect)
+		Safe_Release(Pair.second);
+	m_mapEffect.clear();
 }
 
 void CBossShaman::SwordRenderProc(_float fTimeDelta)
@@ -1202,9 +1419,9 @@ void CBossShaman::Summon()
 {
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vOffset[MINION_COUNT] = {
-		_float4(0.f, 0.f, 3.f, 0.f),
-		_float4(3.f, 0.f, 0.f, 0.f),
-		_float4(-3.f, 0.f, 0.f, 0.f),
+		_float4(1.f, 0.f, 2.f, 0.f),
+		_float4(1.f, 0.f, -2.f, 0.f),
+		_float4(-1.5f, 0.f, 0.f, 0.f),
 	};
 
 	for (_uint i = 0; i < MINION_COUNT; i++)
