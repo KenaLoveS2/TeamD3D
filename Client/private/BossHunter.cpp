@@ -150,9 +150,9 @@ void CBossHunter::Tick(_float fTimeDelta)
 	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
 
 	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
-	if (m_fStringDissolve > 0.3)
+	if (m_fStringDissolve > 0.5)
 	{
-		m_fStringDissolve = 0.3f;
+		m_fStringDissolve = 0.5f;
 		m_fStringDissolveSpeed *= -1;
 		m_fStringDissolveSpeed = -0.9f;
 
