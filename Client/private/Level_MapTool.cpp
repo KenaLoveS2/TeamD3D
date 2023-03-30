@@ -135,6 +135,7 @@ HRESULT CLevel_MapTool::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
 	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
