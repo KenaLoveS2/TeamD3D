@@ -2070,9 +2070,6 @@
     <ClCompile Include="..\private\UI_NodeRotSkill.cpp">
       <Filter>02.GameObjects\UI\02. Canvas-Node\05 Upgrade\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CinematicCamera.cpp">
-      <Filter>02.GameObjects\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Taro_Mask.cpp">
       <Filter>02.GameObjects\Player\Mask</Filter>
     </ClCompile>
@@ -2219,6 +2216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_ShamanSmoke.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
