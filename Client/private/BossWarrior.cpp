@@ -6,7 +6,7 @@
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
-
+#include "ControlRoom.h"
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -377,6 +377,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
+
+
 		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
@@ -798,7 +800,12 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
 
-		g_bDayOrNight = true;
+		/*
+		HW.For.MapGimmick
+		  Map Change  03_30 TestøÎ¿” */
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()

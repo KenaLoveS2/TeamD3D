@@ -7,7 +7,7 @@
 
 #define KENA_LINEAR_DAMING		1.f
 #define KENA_ANGULAR_DAMING		0.5f
-#define KENA_MASS				25000.f
+#define KENA_MASS				100000.f * 1.1f
 
 
 BEGIN(Engine)
@@ -251,6 +251,9 @@ public:
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*	Get_KenaStatusPtr() { return m_pKenaStatus; }
+
+	public: // TEMP
+		_float m_fLinearDamping = 1.f, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = 100000.f;
 };
 
 END
