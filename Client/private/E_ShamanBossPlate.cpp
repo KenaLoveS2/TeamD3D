@@ -48,16 +48,16 @@ HRESULT CE_ShamanBossPlate::Late_Initialize(void* pArg)
 
 void CE_ShamanBossPlate::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("CE_ShamanBossPlate");
-	if (ImGui::Button("RE"))
-		m_pShaderCom->ReCompile(); ImGui::SameLine();
-	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
-	if (ImGui::Button("Reset"))
-		m_fTimeDelta = 0.0f;
-	_float fTime = m_fTimeDelta;
+	//ImGui::Begin("CE_ShamanBossPlate");
+	//if (ImGui::Button("RE"))
+	//	m_pShaderCom->ReCompile(); ImGui::SameLine();
+	//ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	//if (ImGui::Button("Reset"))
+	//	m_fTimeDelta = 0.0f;
+	//_float fTime = m_fTimeDelta;
 
-	ImGui::InputFloat("fTimeDelta", &fTime);
-	ImGui::End();
+	//ImGui::InputFloat("fTimeDelta", &fTime);
+	//ImGui::End();
 
 	if (m_eEFfectDesc.bActive == false)
 	{

@@ -166,7 +166,7 @@ void CBossShaman::Tick(_float fTimeDelta)
 	Update_Trail("sword_jnt_6");
 	Update_MovementTrail("char_spine_low_jnt");
 
-	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
 
