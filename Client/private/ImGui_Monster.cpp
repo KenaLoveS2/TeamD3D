@@ -121,13 +121,16 @@ void CImGui_Monster::MonsterList()
 		else
 			iSize = (_int)pLayer->GetGameObjects().size();
 
-		_tchar szCloneRotTag[32] = { 0, };
-		swprintf_s(szCloneRotTag, L"Monster_%d", iSize);
-
 		if (ImGui::Button("CLONE_MONSTER"))
 		{
+			_tchar szCloneMonsterTag[MAX_PATH] = { 0, };
+			swprintf_s(szCloneMonsterTag, L"Monster_%d", iSize);
+
+			_tchar wszProtoTag[MAX_PATH] = { 0, };
+			swprintf_s(wszProtoTag, m_wstrSelectedProtoName.c_str());
+
 			CGameObject* p_game_object = nullptr;
-			m_pGameInstance->Clone_AnimObject(g_LEVEL, L"Layer_Monster", m_wstrSelectedProtoName.c_str(), CUtile::Create_StringAuto(szCloneRotTag), nullptr, &p_game_object);
+			m_pGameInstance->Clone_GameObject(g_LEVEL, L"Layer_Monster", CUtile::Create_StringAuto(wszProtoTag), CUtile::Create_StringAuto(szCloneMonsterTag), nullptr, &p_game_object);
 			p_game_object->Late_Initialize();
 		}
 	}
@@ -180,21 +183,21 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 
 	_float4x4	fWroldMatrix;
 	_tchar*		wszLayerTag = L"";
-	string		szLayerTag = "Layer_Monster";
-	string		szProtoObjTag = "";
-	string		szCloneTag = "";
+	string		strLayerTag = "Layer_Monster";
+	string		strProtoObjTag = "";
+	string		strCloneTag = "";
 	int			iLoadRoomIndex = 0;
 
-	jLoadMonsterObjList["0_LayerTag"].get_to<string>(szLayerTag);
-	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
+	jLoadMonsterObjList["0_LayerTag"].get_to<string>(strLayerTag);
+	wszLayerTag = CUtile::StringToWideChar(strLayerTag);
 	pGameInstance->Add_String(wszLayerTag);
 		
 
 	for (auto jLoadChild : jLoadMonsterObjList["1_Data"])
 	{
 		jLoadChild["2_Room Index"].get_to<int>(iLoadRoomIndex);
-		jLoadChild["3_ProtoObjTag"].get_to<string>(szProtoObjTag);
-		jLoadChild["4_CloneObjTag"].get_to<string>(szCloneTag);
+		jLoadChild["3_ProtoObjTag"].get_to<string>(strProtoObjTag);
+		jLoadChild["4_CloneObjTag"].get_to<string>(strCloneTag);
 
 		int k = 0;
 		for (float fElement : jLoadChild["1_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
@@ -205,14 +208,17 @@ void CImGui_Monster::Load_MonsterObjects(_uint iLevel, string JsonFileName, _boo
 		MonsterDesc.iRoomIndex = iLoadRoomIndex;
 
 		_tchar*		wszProtoObjTag = L"";
-		wszProtoObjTag = CUtile::StringToWideChar(szProtoObjTag);
+		wszProtoObjTag = CUtile::StringToWideChar(strProtoObjTag);
 		pGameInstance->Add_String(wszProtoObjTag);
 
 		_tchar*		wszCloneTag = L"";
-		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
+		wszCloneTag = CUtile::StringToWideChar(strCloneTag);
 		pGameInstance->Add_String(wszCloneTag);
 
 		pGameInstance->Clone_AnimObject(g_LEVEL, wszLayerTag, wszProtoObjTag, wszCloneTag, &MonsterDesc, &pLoadObject);
+
+		strProtoObjTag = "";
+		strCloneTag = "";
 
 		if (isDynamic)
 			gameobjectList.push_back(pLoadObject);
@@ -254,8 +260,10 @@ void CImGui_Monster::Save()
 	_float4x4	fWroldMatrix;
 	_float		fElement = 0.f;
 	string		szLayerTag = "Layer_Monster";
-	char*		pProtoObjTag;
-	char*		pCloneObjTag;
+	wstring		wstrProtoObjTag;
+	wstring		wstrCloneObjTag;
+	string		strProtoObjTag;
+	string		strCloneObjTag;
 
 	jMonsterObjList["0_LayerTag"] = szLayerTag;
 
@@ -276,29 +284,30 @@ void CImGui_Monster::Save()
 		{
 			fElement = 0.f;
 			memcpy(&fElement, (float*)&fWroldMatrix + i, sizeof(float));
-			jChild["1_Transform State"].push_back(fElement);		// 배열 저장. 컨테이너의 구조랑 비슷합니다. 이렇게 하면 Transform State에는 16개의 float 값이 저장됩니다.
+			jChild["1_Transform State"].push_back(fElement);		
 		}
 
-		jChild["2_Room Index"] = pMonster->Get_Desc().iRoomIndex;
+ 		jChild["2_Room Index"] = pMonster->Get_Desc().iRoomIndex;
 
-		pProtoObjTag = CUtile::WideCharToChar(const_cast<_tchar*>(pMonster->Get_ProtoObjectName()));
+		wstrProtoObjTag = pObject.second->Get_ProtoObjectName();
+		strProtoObjTag = CUtile::WstringToString(wstrProtoObjTag);
+		jChild["3_ProtoObjTag"] = strProtoObjTag;
 
-		jChild["3_ProtoObjTag"] = pProtoObjTag;
-
-		pCloneObjTag = CUtile::WideCharToChar(const_cast<_tchar*>(pMonster->Get_ObjectCloneName()));
-
-		jChild["4_CloneObjTag"] = pCloneObjTag;
+		wstrCloneObjTag = pObject.second->Get_ObjectCloneName();
+		strCloneObjTag = CUtile::WstringToString(wstrCloneObjTag);
+		jChild["4_CloneObjTag"] = strCloneObjTag;
 
 		jMonsterObjList["1_Data"].push_back(jChild);
 
-		pProtoObjTag = "";
-		pCloneObjTag = "";
-		Safe_Delete_Array(pProtoObjTag);
-		Safe_Delete_Array(pCloneObjTag);
+		wstrProtoObjTag = L"";
+		wstrCloneObjTag = L"";
+		strProtoObjTag = "";
+		strCloneObjTag = "";
 	}
 
 	file << jMonsterObjList;
 	file.close();
+
 	MSG_BOX("Save_jMonsterObjList");
 }
 
@@ -323,20 +332,20 @@ HRESULT CImGui_Monster::Load()
 
 	_float4x4	fWroldMatrix;
 	_tchar*		wszLayerTag = L"";
-	string		szLayerTag = "Layer_Monster";
-	string		szProtoObjTag = "";
-	string		szCloneTag = "";
+	string		strLayerTag = "Layer_Monster";
+	string		strProtoObjTag = "";
+	string		strCloneTag = "";
 	int			iLoadRoomIndex = 0;
 
-	jLoadMonsterObjList["0_LayerTag"].get_to<string>(szLayerTag);
-	wszLayerTag = CUtile::StringToWideChar(szLayerTag);
+	jLoadMonsterObjList["0_LayerTag"].get_to<string>(strLayerTag);
+	wszLayerTag = CUtile::StringToWideChar(strLayerTag);
 	m_pGameInstance->Add_String(wszLayerTag);
 
 	for (auto jLoadChild : jLoadMonsterObjList["1_Data"])
 	{
 		jLoadChild["2_Room Index"].get_to<int>(iLoadRoomIndex);
-		jLoadChild["3_ProtoObjTag"].get_to<string>(szProtoObjTag);
-		jLoadChild["4_CloneObjTag"].get_to<string>(szCloneTag);
+		jLoadChild["3_ProtoObjTag"].get_to<string>(strProtoObjTag);
+		jLoadChild["4_CloneObjTag"].get_to<string>(strCloneTag);
 
 		int k = 0;
 		for (float fElement : jLoadChild["1_Transform State"])	// Json 객체는 범위기반 for문 사용이 가능합니다.
@@ -347,15 +356,18 @@ HRESULT CImGui_Monster::Load()
 		monster_desc.iRoomIndex = iLoadRoomIndex;
 
 		_tchar*		wszProtoObjTag = L"";
-		wszProtoObjTag = CUtile::StringToWideChar(szProtoObjTag);
+		wszProtoObjTag = CUtile::StringToWideChar(strProtoObjTag);
 		m_pGameInstance->Add_String(wszProtoObjTag);
 
 		_tchar*		wszCloneTag = L"";
-		wszCloneTag = CUtile::StringToWideChar(szCloneTag);
+		wszCloneTag = CUtile::StringToWideChar(strCloneTag);
 		m_pGameInstance->Add_String(wszCloneTag);
 
 		m_pGameInstance->Clone_AnimObject(g_LEVEL, wszLayerTag, wszProtoObjTag, wszCloneTag, &monster_desc, &pLoadObject);
 		gameobjectList.push_back(pLoadObject);
+
+		strProtoObjTag = "";
+		strCloneTag = "";
 	}
 
 	for (auto& iter : gameobjectList)

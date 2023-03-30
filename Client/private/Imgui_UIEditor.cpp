@@ -19,12 +19,12 @@
 
 using namespace ImGui;
 
-CImgui_UIEditor::CImgui_UIEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CImgui_UIEditor::CImgui_UIEditor(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CImguiObject(pDevice, pContext)
 {
 }
 
-HRESULT CImgui_UIEditor::Initialize(void* pArg)
+HRESULT CImgui_UIEditor::Initialize(void * pArg)
 {
 	m_pCanvas = nullptr;
 	m_pUI = nullptr;
@@ -43,7 +43,7 @@ HRESULT CImgui_UIEditor::Initialize(void* pArg)
 
 bool	Editor_Getter(void* data, int index, const char** output)
 {
-	vector<string>* pVec = (vector<string>*)data;
+	vector<string>*	 pVec = (vector<string>*)data;
 	*output = (*pVec)[index].c_str();
 	return true;
 }
@@ -56,10 +56,10 @@ void CImgui_UIEditor::Imgui_FreeRender()
 	{
 		static int selected_canvasType = 0;
 
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		vector<wstring>* pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
-		vector<wstring>* pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
-		vector<string>* pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
+		CGameInstance*	pGameInstance = GET_INSTANCE(CGameInstance);
+		vector<wstring>*	pCanvasProtoTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_PROTOTAG);
+		vector<wstring>*	pCanvasCloneTags = pGameInstance->Get_UIWString(CUI_Manager::WSTRKEY_CANVAS_CLONETAG);
+		vector<string>*		pCanvasNames = pGameInstance->Get_UIString(CUI_Manager::STRKEY_CANVAS_NAME);
 
 		RELEASE_INSTANCE(CGameInstance);
 
@@ -164,7 +164,7 @@ void CImgui_UIEditor::EventList()
 
 void CImgui_UIEditor::Effect_Tool()
 {
-	Load_List(); AND;
+	Load_List(); AND; 
 	Save_List();
 
 
@@ -175,7 +175,7 @@ void CImgui_UIEditor::Effect_Tool()
 	if (Button("Create New Effect"))
 	{
 		string str = szSaveFileName;
-		strcpy_s(szSaveFileName, MAX_PATH, "");
+		strcpy_s(szSaveFileName, MAX_PATH,"");
 		Create_Effect(str);
 
 		if (m_pEffect != nullptr)
@@ -193,7 +193,6 @@ void CImgui_UIEditor::Effect_Tool()
 	{
 		m_pEffect = m_vecEffects[iSelectedEffect];
 		m_pEffect->Set_ActiveFlip();
-		m_pEffect->Set_EffectTag(m_vecEffectTag[iSelectedEffect]);
 	}
 
 	LINE;
@@ -226,7 +225,7 @@ void CImgui_UIEditor::Load_List()
 		ImGuiFileDialog::Instance()->OpenDialog("Load File", "Select Json", ".json", "../Bin/Data/Effect_UI", ".", 0, nullptr, ImGuiFileDialogFlags_Modal);
 
 	/* Load Type Data */
-
+	
 	if (ImGuiFileDialog::Instance()->Display("Load File"))
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())
@@ -332,17 +331,17 @@ void CImgui_UIEditor::Create_Effect(string strEffect)
 	if (type == "Particle")
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
-	else if (type == "Mesh")
+	else if(type == "Mesh")
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
-	else if (type == "Texture")
+	else if(type == "Texture")
 		CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
 			L"Prototype_GameObject_Effect_Texture_Base", cloneTag, cloneTag, (CGameObject**)&m_pEffect);
 }
 
-CImgui_UIEditor* CImgui_UIEditor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
+CImgui_UIEditor * CImgui_UIEditor::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg)
 {
-	CImgui_UIEditor* pInstance = new CImgui_UIEditor(pDevice, pContext);
+	CImgui_UIEditor*	pInstance = new CImgui_UIEditor(pDevice, pContext);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed To Create : CImgui_UIEditor");

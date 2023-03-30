@@ -92,7 +92,6 @@ void CE_Warriorcloud::Late_Tick(_float fTimeDelta)
 
 	if (m_eEFfectDesc.bActive == false)
 		return;
-
 }
 
 HRESULT CE_Warriorcloud::Render()

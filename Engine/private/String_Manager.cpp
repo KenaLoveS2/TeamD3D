@@ -81,7 +81,7 @@ _tchar* CString_Manager::Find_String(_uint iLevelIndex, _tchar * pStr)
 	return *iter;
 }
 
-void CString_Manager::Add_UIString(_uint iKey, string str)
+void CString_Manager::Add_UIString(_uint iKey,const  string& str)
 {
 	auto iter = m_mapUIString.find(iKey);
 	if (iter == m_mapUIString.end())

@@ -69,29 +69,27 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	}
 
 
-	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)		||
-		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
+	if ((filterData0.word0 == (PxU32)PLAYER_BODY && filterData1.word0 == (PxU32)PLAYER_WEAPON)			||
+		(filterData0.word0 == (PxU32)PLAYER_WEAPON && filterData1.word0 == (PxU32)PLAYER_BODY)			||
 
-		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON)		||
-		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY)		||
+		(filterData0.word0 == (PxU32)MONSTER_BODY && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||
+		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)MONSTER_BODY)		||
 
-		(filterData0.word0 == MONSTER_WEAPON  &&  filterData1.word0 == MONSTER_WEAPON) ||
+		(filterData0.word0 == (PxU32)MONSTER_WEAPON  &&  filterData1.word0 == (PxU32)MONSTER_WEAPON)	||
 		
-		(filterData0.word0 == PLAYER_BODY &&  filterData1.word0 == PLAYER_BODY) ||
+		(filterData0.word0 == (PxU32)PLAYER_BODY &&  filterData1.word0 == (PxU32)PLAYER_BODY)			||
 				
-		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == MONSTER_WEAPON)			||
-		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)	||
+		(filterData0.word0 == (PxU32)PLAYER_WEAPON && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||
+		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)PLAYER_WEAPON)		||
 
+		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_PARTS)		||
+		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_BODY)			||
+		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||		
+		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)PLAYER_BODY)			||
 
-		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_PARTS) ||
-		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_BODY) ||
-		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_WEAPON) ||		
-		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == PLAYER_BODY) ||
-
-		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_PARTS ) ||
-		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_PARTS ) ||		
-		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == MONSTER_PARTS)
-		)
+		(filterData0.word0 == (PxU32)MONSTER_BODY && filterData1.word0 == (PxU32)MONSTER_PARTS )		||
+		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)MONSTER_PARTS )		||		
+		(filterData0.word0 == (PxU32)PLAYER_BODY && filterData1.word0 == (PxU32)MONSTER_PARTS)			)
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}
@@ -192,15 +190,10 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
+	m_pControlllerManager = PxCreateControllerManager(*m_pScene);
+
 	Init_Rendering();
-
-	/*
-	PxControllerManager* pControlllerManager = PxCreateControllerManager(*m_pScene);
-	PxCapsuleControllerDesc PxContollerDesc;
-	PxContollerDesc.
-	pControlllerManager
-	*/
-
+		
 	return S_OK;
 }
 
@@ -283,24 +276,26 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 {
 	PX_USER_DATA* pUserData = nullptr;
 	PxRigidDynamic* pActor = nullptr;
+	PxController* pController = nullptr;
 	/*
-	_float4x4 WorldMatrix;
-	for (auto Pair : m_DynamicActors)
+	for (auto Pair : m_Controllers)
 	{
-		pActor = (PxRigidDynamic*)Pair.second;
-		pUserData = (PX_USER_DATA*)pActor->userData;
+		pController = (PxController*)Pair.second;
+		pUserData = (PX_USER_DATA*)pController->getUserData();
 
-		WorldMatrix = Get_ActorMatrix(pActor);
-		pUserData->pOwner->Set_WorldMatrix(WorldMatrix);
+		if (pUserData)
+		{	
+			_float3 vPos = CUtile::ConvertPosition_PxToD3D(pController->getActor()->getGlobalPose().p);			
+			pUserData->pOwner->Set_Position(vPos);
+		}
 	}
-	*/
-	
+	*/	
 	for (auto Pair : m_DynamicActors)
 	{
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		if(pUserData && pUserData->isGravity == true)
+		if(pUserData && pUserData->isGravity)
 		{
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
@@ -319,12 +314,13 @@ void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geome
 }
 
 void CPhysX_Manager::Clear()
-{		
+{	
+	Px_Safe_Release(m_pControlllerManager);
 	Px_Safe_Release(m_pCooking);	
 	Px_Safe_Release(m_pScene);
 	Px_Safe_Release(m_pDispatcher);
 	Px_Safe_Release(m_pPhysics);
-	
+		
 	PxPvdTransport* pTransport = m_pPvd->getTransport();
 	Px_Safe_Release(m_pPvd);
 	Px_Safe_Release(pTransport);	

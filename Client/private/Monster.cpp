@@ -7,6 +7,7 @@
 #include "UI_MonsterHP.h"
 #include "E_RectTrail.h"
 
+
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -83,7 +84,6 @@ HRESULT CMonster::Initialize(void* pArg)
 
 HRESULT CMonster::Late_Initialize(void * pArg)
 {
-
 	/* Is In Camera? */
 	return S_OK;
 }
@@ -96,7 +96,7 @@ void CMonster::Tick(_float fTimeDelta)
 	{
 		m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 	}
-	
+
 	m_fKenaDistance = m_pTransformCom->Calc_Distance_XZ(m_vKenaPos);
 
 	m_fDissolveTime += fTimeDelta * 0.2f * m_bDying;
@@ -134,21 +134,19 @@ void CMonster::Imgui_RenderProperty()
 
 	ImGui::Text("Distance to Player :	%f", DistanceBetweenPlayer());
 
-	if(ImGui::Button("AddShaderValue"))
-	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
-			pGameInstance->Add_ShaderValueObject(g_LEVEL, this);
-			RELEASE_INSTANCE(CGameInstance)
-	}
-
-	if (ImGui::Button("BIND"))
-		m_bBind = true;
-
-	if (ImGui::Button("STRONGLYDMG"))
-		m_bStronglyHit = true;
-
-	if (ImGui::Button("WEALKYDMG"))
-		m_bWeaklyHit = true;
+	//if(ImGui::Button("AddShaderValue"))
+	//{
+	//	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+	//		pGameInstance->Add_ShaderValueObject(g_LEVEL, this);
+	//		RELEASE_INSTANCE(CGameInstance)
+	//}
+	//if (ImGui::Button("BIND"))
+	//	m_bBind = true;
+	//if (ImGui::Button("STRONGLYDMG"))
+	//	m_bStronglyHit = true;
+	//if (ImGui::Button("WEALKYDMG"))
+	//	m_bWeaklyHit = true;
+	ImGui::InputInt("RoomIndex", &m_Desc.iRoomIndex);
 }
 
 void CMonster::ImGui_AnimationProperty()
