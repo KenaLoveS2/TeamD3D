@@ -41,13 +41,18 @@ HRESULT CTree::Late_Initialize(void * pArg)
 	vSize = _float3(0.25f, 1.f, 0.25f);
 	vPos = _float3(0.0f, 0.f, 0.0f);
 	
-	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_FirstTear_fallenTree")
-		return S_OK;
-
-	if (m_pModelCom->Get_IStancingModel() == true)
-		m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+	if (m_pModelCom->Get_UseTriangleMeshActor())
+	{
+		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+	}
 	else
-		m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	{
+		if (m_pModelCom->Get_IStancingModel() == true)
+			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos); //(0~1)
+		else
+			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
+	}
+
 	return S_OK;
 }
 

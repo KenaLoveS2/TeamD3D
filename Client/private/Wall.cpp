@@ -36,6 +36,7 @@ HRESULT CWall::Initialize(void * pArg)
 
 HRESULT CWall::Late_Initialize(void * pArg)
 {
+
 	if (m_pModelCom->Get_UseTriangleMeshActor())
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	else

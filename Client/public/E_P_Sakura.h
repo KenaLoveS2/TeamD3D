@@ -30,11 +30,8 @@ public:
 
 private:
 	CModel* m_pModelCom = nullptr;
-	_bool	m_bTestOnce = false;
-	_vector     m_vLook;
 
-	_matrix		BillBoardMat;
-
+	_bool	m_bStart_InstMove = false;
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

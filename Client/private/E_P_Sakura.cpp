@@ -57,21 +57,19 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 	//}
 	__super::Tick(fTimeDelta);	
 
-	/*m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);*/
+	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	m_bStart_InstMove = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
+
+	if(!m_bStart_InstMove)
+		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
 }
 
 void CE_P_Sakura::Late_Tick(_float fTimeDelta)
 {
-	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
-	_bool b = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
 
-	if(b== false)
-	{
-		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
-	}
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bRenderActive &&false == b)
+	if (m_pRendererCom && m_bRenderActive &&false == m_bStart_InstMove) 
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
@@ -120,12 +118,6 @@ HRESULT CE_P_Sakura::SetUp_Components()
 HRESULT CE_P_Sakura::SetUp_ShaderResources()
 {
 	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
-
-	_float4x4 BillBoardWorldMatrix;
-	XMStoreFloat4x4(&BillBoardWorldMatrix, BillBoardMat *m_pTransformCom->Get_WorldMatrix());
-	// 
-	//XMStoreFloat4x4(&BillBoardWorldMatrix, BillBoardMat);
-	//FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_WorldMatrix", &BillBoardWorldMatrix),E_FAIL);
 
 	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
 
