@@ -36,12 +36,19 @@ HRESULT CE_P_Flower::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_eEFfectDesc.bActive = true;
+
+	return S_OK;
+}
+
+HRESULT CE_P_Flower::Late_Initialize(void* pArg)
+{
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 	RELEASE_INSTANCE(CGameInstance);
 
 	m_pVIInstancingBufferCom->Set_ShapePosition();
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 2.f);
+
 	return S_OK;
 }
 
@@ -64,9 +71,8 @@ void CE_P_Flower::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Position(vPos);
 	}
 
-
-	m_fTimeDelta += fTimeDelta;
-	if (m_fTimeDelta > 60.f)
+	m_fLife += fTimeDelta * 0.7f;
+	if (m_bTurn)
 	{
 		m_pVIInstancingBufferCom->Set_ShapePosition();
 		m_fTimeDelta = 0.0f;

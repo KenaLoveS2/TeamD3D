@@ -160,13 +160,14 @@ private:
 private:	/* Animation Event Func */
 	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void TurnOnMoveMentTrail(_bool bIsInit, _float fTimeDelta);
 	void TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta);
 
 	void TurnOnHandSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffHandSummons(_bool bIsInit, _float fTimeDelta);
 
 	void TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnTeleport(_bool bIsInit, _float fTimeDelta);
 
 	void TurnOnSummons(_bool bIsInit, _float fTimeDelta);
 	void TurnOffSummons(_bool bIsInit, _float fTimeDelta);

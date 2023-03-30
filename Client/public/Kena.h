@@ -201,21 +201,21 @@ private:
 	DAMAGED_FROM			Calc_DirToMonster(const _float3& vCollisionPos);
 
 private:	/* Animation Event Func */
-	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffAttack(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnCharge(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffCharge(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
 
-	void						TurnOnPulseParry(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParry(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

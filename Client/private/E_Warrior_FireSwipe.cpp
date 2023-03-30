@@ -25,7 +25,7 @@ HRESULT CE_Warrior_FireSwipe::Initialize(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 15.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -71,28 +71,24 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 	//_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
 	//m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
-	int i = 0;
-
 	return S_OK;
 }
 
 void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	m_fTimeDelta += fTimeDelta;
+	m_pTransformCom->Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 1.f)
-	{
-		m_fDurationTime = 0.0f;
-	}
-	else
-		m_pTransformCom->Go_Backward(fTimeDelta * 15.f);
+	m_fTimeDelta += fTimeDelta;
 
-	// m_pTransformCom->Tick(fTimeDelta);
+ 	m_fDurationTime += fTimeDelta;
+ 	if (m_fDurationTime > 1.f)
+ 		m_fDurationTime = 0.0f;
+ 	else
+ 		m_pTransformCom->Go_Backward(fTimeDelta);
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)

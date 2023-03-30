@@ -37,7 +37,7 @@ HRESULT CE_KenaDust::Initialize(void * pArg)
 
 	m_eEFfectDesc.bActive = false;
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-
+	m_eEFfectDesc.vColor = XMVectorSet(1.0f, 0.6f, 0.2f, 1.0f);
 	return S_OK;
 }
 
@@ -49,7 +49,7 @@ void CE_KenaDust::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 1.6f)
+	if (m_fDurationTime > 0.5f)
 	{
 		ResetSprite();
 		m_eEFfectDesc.bActive = false;

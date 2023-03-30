@@ -50,27 +50,6 @@ HRESULT CE_RectTrail::Late_Initialize(void * pArg)
 
 void CE_RectTrail::Tick(_float fTimeDelta)
 {
-	//if (m_eType == CE_RectTrail::OBJ_B_SHAMAN)
-	//{
-	//	ImGui::Begin("RectTrail");
-	//	if (ImGui::Button("Recompile"))
-	//		m_pShaderCom->ReCompile();
-
-	//	ImGui::InputFloat("DiffuseTexture", &m_eEFfectDesc.fFrame[0]);
-	//	ImGui::InputFloat("MaskTexture", &m_eEFfectDesc.fMaskFrame[0]);
-	//	ImGui::InputFloat("Life", &m_eEFfectDesc.fLife);
-	//	ImGui::InputFloat("Width", &m_eEFfectDesc.fWidth);
-
-	//	ImGui::InputFloat("fWidthFrame", &m_eEFfectDesc.fWidthFrame);
-	//	ImGui::InputFloat("iSeparafHeightFrameteHeight", &m_eEFfectDesc.fHeightFrame);
-
-	//	ImGui::InputInt("iSeparateWidth", &m_eEFfectDesc.iSeparateWidth);
-	//	ImGui::InputInt("iSeparateHeight", &m_eEFfectDesc.iSeparateHeight);
-	//	ImGui::End();
-
-	//	Tick_Split(fTimeDelta);
-	//}
-
 #pragma region Test
 	//if( dynamic_cast<CKena_Staff*>(m_pParent))
 	//{
@@ -110,6 +89,16 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
+
+	if (m_eType == CE_RectTrail::OBJ_BODY_SHAMAN)
+	{
+		m_fDurationTime += fTimeDelta;
+		if (m_fDurationTime > 2.f)
+		{
+			m_eEFfectDesc.bActive = false;
+			m_fDurationTime = 0.0f;
+		}
+	}
 
 	if (dynamic_cast<CKena_Staff*>(m_pParent))
 	{
@@ -207,7 +196,7 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fFrame[0] = 31.f;
 		m_eEFfectDesc.iPassCnt = 13;
 		m_eEFfectDesc.fLife = 0.5f;
-		m_eEFfectDesc.fWidth = 1.f;
+		m_eEFfectDesc.fWidth = 2.f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
 		break;
 

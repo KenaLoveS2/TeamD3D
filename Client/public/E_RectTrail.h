@@ -37,6 +37,7 @@ private:
 	RECTTRAILTYPE m_eType = OBJ_DEFAULT;
 
 	_float		m_fSplitDurationTime = 0.0f;
+	_float		m_fDurationTime = 0.0f;
 
 public:
 	static  CE_RectTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

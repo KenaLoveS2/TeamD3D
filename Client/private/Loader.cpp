@@ -169,6 +169,7 @@
 #include "E_ShamanThunderCylinder.h"
 #include "E_ShamanSummons.h"
 #include "E_ShamanTrail.h"
+#include "E_ShamanSmoke.h"
 /* ~Effects */
 
 /* Components*/
@@ -1499,7 +1500,7 @@ HRESULT CLoader::LoadNonAnimFolderModel(_uint iLevelIndex, string strFolderName,
 
 HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ì›ì¤€..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ?›ì¤?..."));
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Water")))
 		return E_FAIL;
@@ -1525,7 +1526,7 @@ HRESULT CLoader::Loading_ForWJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ìž¬í˜¸ ..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ?ž¬?˜¸ ..."));
 
 	_matrix	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -1594,7 +1595,7 @@ HRESULT CLoader::Loading_ForJH(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ì†Œì˜..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ?†Œ?˜..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	
@@ -1895,7 +1896,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading í˜œì›..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ?˜œ?›..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2330,6 +2331,12 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrail"),
 		CE_ShamanTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanSmoke */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSmoke"),
+		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBodyCloud.json"))))
+		return E_FAIL;
+	
 	/* Shaman */
 
 #pragma endregion Effect_Object
@@ -2349,7 +2356,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading í˜„ìš±..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading ?˜„?š±..."));
 
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 
@@ -2606,7 +2613,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Bridge", true, true, true, false, true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true)))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true, false, true)))
 		assert(!"Issue");
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Giant", true, true, true)))

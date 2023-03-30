@@ -41,7 +41,17 @@ HRESULT CE_ShamanSmoke::Initialize(void * pArg)
 
 void CE_ShamanSmoke::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
+
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 2.f)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_fDurationTime = 0.0f;
+	}
 }
 
 void CE_ShamanSmoke::Late_Tick(_float fTimeDelta)

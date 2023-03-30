@@ -164,9 +164,9 @@ void CBossShaman::Tick(_float fTimeDelta)
 	SwordRenderProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
 	Update_Trail("sword_jnt_6");
-	Update_MovementTrail("char_spine_low_jnt");
+	// Update_MovementTrail("char_spine_low_jnt");
 
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	// if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Tick(fTimeDelta);
 
@@ -179,10 +179,10 @@ void CBossShaman::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDeath) return;
 
+	CMonster::Late_Tick(fTimeDelta);
 	for (auto& Pair : m_mapEffect)
 		Pair.second->Late_Tick(fTimeDelta);
 
-	CMonster::Late_Tick(fTimeDelta);
 	if (m_pRendererCom /*&& m_bSpawn*/)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -210,36 +210,28 @@ HRESULT CBossShaman::Render()
 		else if(i == 3) // °Ë ·»´õ
 		{				
 
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
+			if (m_eSwordRenderState == NO_RENDER) continue;
+			else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
+				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
+				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fSwordDissolveTime, sizeof(_float)), E_FAIL);
+				FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
 
-			FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 
-			//if (m_eSwordRenderState == NO_RENDER) continue;
-			//else if (m_eSwordRenderState == CREATE || m_eSwordRenderState == DISSOLVE) {
-			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bTrue, sizeof(_bool)), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fSwordDissolveTime, sizeof(_float)), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"), E_FAIL);
-
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
-
-			//	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-			//	m_bDying && Bind_Dissolove(m_pShaderCom);
-			//}
-			//else if (m_eSwordRenderState == RENDER) {
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			//	FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
-			//}
+				FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
+				m_bDying && Bind_Dissolove(m_pShaderCom);
+			}
+			else if (m_eSwordRenderState == RENDER) {
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 1, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
+				FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
+			}
 		}
 		else 
 		{
@@ -335,11 +327,12 @@ void CBossShaman::Push_EventFunctions()
 
 	TurnOnTrail(true, 0.0f);
 	TurnOffTrail(true, 0.0f);
-	TurnOnMoveMentTrail(true, 0.0f);
 	TurnOffMoveMentTrail(true, 0.0f);
 	TurnOnHandSummons(true, 0.0f);
 	TurnOffHandSummons(true, 0.0f);
 	TurnOnSwipeChareged(true, 0.0f);
+	TurnOnTeleport(true, 0.0f);
+
 	TurnOnSummons(true, 0.0f);
 	TurnOffSummons(true, 0.0f);
 }
@@ -1040,6 +1033,12 @@ HRESULT CBossShaman::Ready_Effects()
 	pEffectBase->Set_Parent(this);
 	m_mapEffect.emplace("Shaman_Charged", pEffectBase);
 
+	/* Shaman_Smoke */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ShamanSmoke", L"Shaman_Smoke"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	pEffectBase->Set_Parent(this);
+	m_mapEffect.emplace("Shaman_Smoke", pEffectBase);
+	
 	return S_OK;
 }
 
@@ -1141,17 +1140,6 @@ void CBossShaman::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
 	dynamic_cast<CEffect_Trail*>(m_mapEffect["S_Trail"])->ResetInfo();
 }
 
-void CBossShaman::TurnOnMoveMentTrail(_bool bIsInit, _float fTimeDelta)
-{
-	if (bIsInit == true)
-	{
-		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnMoveMentTrail);
-		return;
-	}
-	m_mapEffect["S_BodyParticle"]->Set_Active(true);
-}
-
 void CBossShaman::TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1160,7 +1148,7 @@ void CBossShaman::TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta)
 		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOffMoveMentTrail);
 		return;
 	}
-	m_mapEffect["S_BodyParticle"]->Set_Active(false);
+	m_pMovementTrail->Set_Active(false);
 }
 
 void CBossShaman::TurnOnHandSummons(_bool bIsInit, _float fTimeDelta)
@@ -1207,6 +1195,22 @@ void CBossShaman::TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["Shaman_Charged"]->Set_Active(true);
 }
 
+void CBossShaman::TurnOnTeleport(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossShaman::TurnOnTeleport);
+		return;
+	}
+	_float4 vPos = m_pTransformCom->Get_Position();
+	m_mapEffect["Shaman_Smoke"]->Set_Position(vPos);
+	m_mapEffect["Shaman_Smoke"]->Set_Active(true);
+
+	Update_MovementTrail("char_spine_low_jnt");
+	m_pMovementTrail->Set_Active(true);
+}
+
 void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
@@ -1217,6 +1221,7 @@ void CBossShaman::TurnOnSummons(_bool bIsInit, _float fTimeDelta)
 	}
 
 	_float4 vPos = m_pTransformCom->Get_Position();
+	vPos.y = vPos.y + 0.1f;
 
 	m_mapEffect["S_Plate"]->Set_Position(vPos);
 	m_mapEffect["S_Plate"]->Set_Active(true);
