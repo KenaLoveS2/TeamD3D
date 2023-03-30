@@ -169,6 +169,7 @@
 #include "E_ShamanThunderCylinder.h"
 #include "E_ShamanSummons.h"
 #include "E_ShamanTrail.h"
+#include "E_ShamanSmoke.h"
 /* ~Effects */
 
 /* Components*/
@@ -2320,6 +2321,12 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanTrail"),
 		CE_ShamanTrail::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_ShamanSmoke */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSmoke"),
+		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBodyCloud.json"))))
+		return E_FAIL;
+	
 	/* Shaman */
 
 #pragma endregion Effect_Object
@@ -2609,7 +2616,7 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Bridge", true, true, true, false, true)))
 		assert(!"Issue");
 	
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true),false,true))
+	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Stone/Stone_Stairs", true, true, true, false, true)))
 		assert(!"Issue");
 	
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Trees/Giant", true, true, true)))

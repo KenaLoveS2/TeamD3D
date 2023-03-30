@@ -14,6 +14,7 @@ private:
 public:
 	virtual HRESULT       Initialize_Prototype(const _tchar* pFilePath = nullptr);
 	virtual HRESULT       Initialize(void* pArg) override;
+	virtual HRESULT		  Late_Initialize(void* pArg = nullptr)override;
 	virtual void          Tick(_float fTimeDelta) override;
 	virtual void          Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT       Render() override;
