@@ -2,7 +2,9 @@
 #include "..\public\DeadZoneObj.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
+#include "ControlRoom.h"
 #include "Interaction_Com.h"
+#include "Delegator.h"
 
 CDeadZoneObj::CDeadZoneObj(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -34,8 +36,23 @@ HRESULT CDeadZoneObj::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CDeadZoneObj::Late_Initialize(void* pArg)
+{
+	
+	CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+
+	pCtrlRoom->m_DeadZoneChangeDelegator.bind(this, &CDeadZoneObj::Change_Model);
+
+	return S_OK;
+}
+
 void CDeadZoneObj::Tick(_float fTimeDelta)
 {
+	if (!m_bOnlyTest) /*Test*/
+	{
+		Late_Initialize();
+		m_bOnlyTest = true;
+	}
 	__super::Tick(fTimeDelta);
 }
 
@@ -128,6 +145,39 @@ HRESULT CDeadZoneObj::RenderShadow()
 	}
 
 	return S_OK;
+}
+
+void CDeadZoneObj::Change_Model(_int iDissolveTimer)
+{
+	 _tchar pModelName[6][64] =
+	{
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_01"},
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_02"},
+		{ L"Prototype_Component_Model_Giant_GodTreeSmall_03"},
+		{ L"Prototype_Component_Model_CadarTree_03"},
+		{ L"Prototype_Component_Model_BigBushes_04"},
+		{ L"Prototype_Component_Model_BigTreeLog"}
+	};
+
+
+	 vector<_float4x4> New_Matrix;
+
+	 for(auto pMatrix :  *m_pModelCom->Get_InstancePos())
+	 {
+		 New_Matrix.push_back(*pMatrix);
+	 }
+
+	 /* 인스턴싱된 애들 매트릭스 가져온다음에 다시 대입해야되네 */
+
+	CGameObject::Delete_Component(TEXT("Com_Model"));
+	Safe_Release(m_pModelCom);
+
+	 if (FAILED(__super::Add_Component(g_LEVEL, pModelName[m_iDeadZoneModelID], TEXT("Com_Model"),
+		 (CComponent**)&m_pModelCom)))
+		 assert(!"CDeadZoneObj::Change_Model(_int iDissolveTimer)");
+
+
+	 m_pModelCom->Set_InstancePos(New_Matrix);
 }
 
 HRESULT CDeadZoneObj::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
