@@ -138,6 +138,10 @@ private:
 	void	Update_Collider(_float fTimeDelta) override;
 	void	AdditiveAnim(_float fTimeDelta) override;
 
+	public:
+		HRESULT Ready_Effects();
+		void	Update_Trail(const char* pBoneTag);
+
 private:
 	void Set_AttackType();
 	void Reset_Attack();
