@@ -170,6 +170,7 @@
 #include "E_ShamanSummons.h"
 #include "E_ShamanTrail.h"
 #include "E_ShamanSmoke.h"
+#include "E_P_ExplosionGravity.h"
 /* ~Effects */
 
 /* Components*/
@@ -1896,7 +1897,7 @@ HRESULT CLoader::Loading_ForBJ(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ?˜œ?›..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HO..."));
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -2336,8 +2337,13 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShamanSmoke"),
 		CE_ShamanSmoke::Create(m_pDevice, m_pContext, L"../Bin/Data/Effect/E_ShamanBodyCloud.json"))))
 		return E_FAIL;
-	
 	/* Shaman */
+
+	/* For.Prototype_GameObject_ExplosionGravity */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionGravity"),
+		CE_P_ExplosionGravity::Create(m_pDevice, m_pContext))))
+	return E_FAIL;
+
 
 #pragma endregion Effect_Object
 
@@ -2356,7 +2362,7 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 
 HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 {
-	lstrcpy(m_szLoadingText, TEXT("Loading ?˜„?š±..."));
+	lstrcpy(m_szLoadingText, TEXT("Loading HW..."));
 
 	CGameInstance *pGameInstance = CGameInstance::GetInstance();
 

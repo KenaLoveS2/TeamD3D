@@ -109,7 +109,7 @@ private:
 	POINTDESC*		m_ePointDesc;
 	INSTANCEDATA*   m_InstanceData;
 
-	_float			m_fGravity = 9.8f;
+	_float			m_fGravity = 0.0f;
 	_float			m_fAngle = 0.0f;
 
 public:

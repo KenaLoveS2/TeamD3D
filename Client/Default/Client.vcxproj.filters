@@ -1336,9 +1336,6 @@
     <ClInclude Include="..\public\E_Swipes_Charged.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_P_Sakura.h">
-      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Rot.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1389,6 +1386,9 @@
     </ClInclude>
     <ClInclude Include="..\public\E_ShamanSmoke.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ExplosionGravity.h">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2160,9 +2160,6 @@
     <ClCompile Include="..\private\E_Swipes_Charged.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_P_Sakura.cpp">
-      <Filter>02.GameObjects\Effect\Environment\Flower</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>1004.알아서해라</Filter>
     </ClCompile>
@@ -2219,6 +2216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp">
+      <Filter>02.GameObjects\Effect\Object\Etc..</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
