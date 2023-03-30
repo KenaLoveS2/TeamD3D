@@ -36,7 +36,7 @@ HRESULT CLightCamera::Initialize(void * pArg)
 		CameraDesc.fFovy = XMConvertToRadians(90.0f);
 		CameraDesc.fAspect = (_float)g_iWinSizeX / (_float)g_iWinSizeY;
 		CameraDesc.fNear = 0.1f;
-		CameraDesc.fFar = 500.f;
+		CameraDesc.fFar = 1000.f;
 		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	}

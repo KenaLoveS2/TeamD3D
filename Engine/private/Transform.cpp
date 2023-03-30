@@ -901,7 +901,7 @@ void CTransform::Set_WorldMatrix(_fmatrix WorldMatrix)
 void CTransform::Tick(_float fTimeDelta)
 {
 	_matrix World = XMLoadFloat4x4(&m_WorldMatrix);
-	_float4x4 RetMatrix;
+	_float4x4 RetMatrix, Pivot;
 	_matrix m;
 
 	if (m_pPxActor && m_bIsStaticPxActor == false)
@@ -925,8 +925,6 @@ void CTransform::Tick(_float fTimeDelta)
 		XMStoreFloat4x4(&RetMatrix, m);
 		m_pPhysX_Manager->Set_ActorMatrix(iter.pActor, RetMatrix);
 	}
-
-
 }
 
 _bool CTransform::IsClosed_XYZ(_float4 & vTargetPos, _float fDIstance)
@@ -993,11 +991,4 @@ void CTransform::Update_AllCollider(_float4x4 PivotMatrix)
 	{
 		memcpy(&(iter.PivotMatrix), &PivotMatrix, sizeof(_float4x4));
 	}
-}
-
-_bool CTransform::IsFalling()
-{
-	if (m_pPxActor == nullptr || m_bIsStaticPxActor) return false;
-
-	return m_pPhysX_Manager->IsFalling((PxRigidDynamic*)m_pPxActor);
 }

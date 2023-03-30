@@ -29,7 +29,7 @@
                         0.0
                     ],
                     "CloneObject Component PointDesc CreateInstance": 20,
-                    "CloneObject Component PointDesc CreateRange": 1.0,
+                    "CloneObject Component PointDesc CreateRange": 0.7,
                     "CloneObject Component PointDesc Dir": [
                         0.7,
                         0.0,

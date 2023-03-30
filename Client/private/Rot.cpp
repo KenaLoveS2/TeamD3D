@@ -215,16 +215,14 @@ void CRot::Imgui_RenderProperty()
 
 void CRot::ImGui_AnimationProperty()
 {
-	//m_pRotWisp->ImGui_AnimationProperty();
+	ImGui::BeginTabBar("Rot Animation & State");
 
- 	ImGui::BeginTabBar("Rot Animation & State");
- 
- 	if (ImGui::BeginTabItem("Animation"))
- 	{
- 		m_pModelCom->Imgui_RenderProperty();
- 		ImGui::EndTabItem();
- 	}
- 	ImGui::EndTabBar();
+	if (ImGui::BeginTabItem("Animation"))
+	{
+		m_pModelCom->Imgui_RenderProperty();
+		ImGui::EndTabItem();
+	}
+	ImGui::EndTabBar();
 }
 
 void CRot::ImGui_ShaderValueProperty()

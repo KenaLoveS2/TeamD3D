@@ -187,7 +187,7 @@ public: /* For.PipeLine */
 		HRESULT Add_String(_tchar* pStr);
 		_tchar* Find_String(_uint iLevelIndex, _tchar* pStr);
 		/* Only For UI */
-		void				Add_UIString(_uint iKey, const string& str);
+		void				Add_UIString(_uint iKey, string str);
 		vector<string>*		Get_UIString(_uint iKey);
 		void				Add_UIWString(_uint iKey, const wstring& str);
 		vector<wstring>*	Get_UIWString(_uint iKey);

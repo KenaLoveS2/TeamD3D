@@ -81,14 +81,6 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 
 void CE_Swipes_Charged::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("CE_Swipes_Charged");
-
-	ImGui::InputInt("PassCnt", &m_eEFfectDesc.iPassCnt);
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)
@@ -112,7 +104,7 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		vScaled.y += fTimeDelta * 4.f + 0.2f;
 		vScaled.z += fTimeDelta * 4.f + 0.2f;
 		m_pTransformCom->Set_Scaled(vScaled);
-		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 5.f);
+		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 2.3f);
 	}
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -137,8 +129,11 @@ void CE_Swipes_Charged::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_Swipes_Charged::Render()
 {
-	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
 
 	if (m_pModelCom != nullptr && m_pShaderCom != nullptr)
 		m_pModelCom->Render(m_pShaderCom, 0, nullptr, m_eEFfectDesc.iPassCnt);
@@ -165,8 +160,7 @@ HRESULT CE_Swipes_Charged::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-	
-	m_fHDRValue = 0.0f;
+
 	return S_OK;
 }
 

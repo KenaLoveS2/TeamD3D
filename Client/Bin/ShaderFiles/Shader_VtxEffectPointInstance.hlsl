@@ -7,13 +7,15 @@ vector			g_vCamPosition;
 texture2D		g_DepthTexture;
 texture2D		g_DTexture_0, g_DTexture_1, g_DTexture_2, g_DTexture_3, g_DTexture_4;
 texture2D		g_MTexture_0, g_MTexture_1, g_MTexture_2, g_MTexture_3, g_MTexture_4;
-float			g_fHDRValue;
 
 // Type
 int		g_TextureRenderType, g_BlendType;
+
 bool    g_IsUseMask;
+
 int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
+
 float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
 
@@ -47,10 +49,6 @@ float g_fDissolveTime;
 float _DissolveSpeed = 0.2f;
 float _FadeSpeed = 1.5f;
 /* Dissolve */
-
-/* Option */
-bool  g_bTurn;
-/* Option */
 
 struct VS_IN
 {
@@ -91,12 +89,10 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-	vector      vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
+	vector		vPosition = mul(float4(In.vPosition, 1.f), In.Matrix);
 
-	//Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
-	Out.vPosition = mul(float4(matrix_postion(In.Matrix), 1.f), g_WorldMatrix).xyz;
-	//Out.vCenterPosition = matrix_postion(g_WorldMatrix);
-	Out.vCenterPosition = mul(float4(0.f, 0.f, 0.f, 1.f), g_WorldMatrix).xyz;
+	Out.vPosition = mul(vPosition, g_WorldMatrix).xyz;
+	Out.vCenterPosition = matrix_postion(g_WorldMatrix);
 	Out.vRightScale = matrix_right(In.Matrix);
 	Out.vPSize = In.vPSize;
 
@@ -162,15 +158,16 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 {
 	GS_OUT		Out[4];
 
-	float3      vLook = g_vCamPosition.xyz - In[0].vPosition;
-	float3      vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
-	float3      vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
-	float3      vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
+	float3		vLook = g_vCamPosition.xyz - In[0].vPosition;
+	float3		vDir = normalize(In[0].vPosition - In[0].vCenterPosition);
+	float3		vRight = normalize(cross(vDir, vLook)) * In[0].vPSize.x * 0.5f;
+	float3		vUp = normalize(cross(vLook, vRight)) * In[0].vPSize.y * 0.5f * In[0].vRightScale.x;
 
-	matrix      matVP = mul(g_ViewMatrix, g_ProjMatrix);
-	float3      vPosition;
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+	float3		vPosition;
 
 	vPosition = In[0].vPosition + vRight + vUp;
+
 	Out[0].vPosition = mul(vector(vPosition, 1.f), matVP);
 	Out[0].vTexUV = float2(0.f, 0.f);
 
@@ -812,12 +809,9 @@ PS_OUT PS_DOT(PS_IN In)
 		finalcolor.rgb = finalcolor.rgb * 2.f;
 
 	float fTIme = min(g_fLife, 1.f);
-
-	if (0.5f < fTIme)
-		finalcolor.a = finalcolor.a * (1.f - fTIme);
-
+	if (In.vTexUV.y < fTIme)
+		finalcolor.a *= (1.f - fTIme);
 	Out.vColor = finalcolor;
-
 	return Out;
 }
 
@@ -980,40 +974,17 @@ PS_OUT PS_FLOWERPARTICLE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	if (g_TextureRenderType == 1)
-	{
-		In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
-		In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
-
-		In.vTexUV.x = In.vTexUV.x / g_SeparateWidth;
-		In.vTexUV.y = In.vTexUV.y / g_SeparateHeight;
-
-	}
-
 	vector	 flower = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
 	flower.a = flower.r;
 	flower.rgb = flower.rgb + 1.f;
 
 	float3 flowetcolor = float3(98.f, 98.f, 98.f) / 255.f;
-	vector vColor = vector(0.2f, 0.2f, 0.2f, 1.0f);
 
 	if (flower.a < 0.5f)
 		flower.rgb = flower.rgb + g_vColor.rgb + float3(1.f, 0.0f, 0.0f);
 	else
 		flower.rgb = (float3)1.f;
 	Out.vColor = flower;
-	if (Out.vColor.a < 0.1f)
-		discard;
-	
-	float fTime = min(g_Time, 1.f);
-	if (0.5f > fTime)
-		Out.vColor.a = Out.vColor.a * (fTime / 1.f);
-
-	if (g_bTurn)
-	{
-		if (0.5f < fTime)
-			Out.vColor.a = Out.vColor.a * (1.f - fTime);
-	}
 
 	return Out;
 }
@@ -1041,9 +1012,10 @@ PS_OUT PS_FRONTVIEWBLINK(PS_IN In)
 
 	Out.vColor = vDiffuse * 1.5f;
 
-	float fTime = min(g_Time, 2.f);
-	if (1.f < fTime)
-		Out.vColor.a = Out.vColor.a * (2.f - fTime);
+	//float fTime = min(g_Time, 2.f);
+
+	//if (1.f < fTime)   // 내려가야함
+	//	Out.vColor.a = Out.vColor.a * (2.f - fTime);
 
 	return Out;
 }
@@ -1068,6 +1040,27 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 	vDiffuse.a = vDiffuse.r;
 	if (vDiffuse.a < 0.1f)
 		discard;
+	Out.vColor = vDiffuse + g_vColor;
+	Out.vColor.a = Out.vColor.a * In.fLife;
+	return Out;
+}
+
+//PS_SHAMANSNOWRECTTRAIL
+PS_OUT PS_SHAMANSNOWRECTTRAIL(PS_TRAILIN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x = In.vTexUV.x + g_WidthFrame;
+	In.vTexUV.y = In.vTexUV.y + g_HeightFrame;
+
+	In.vTexUV.x = In.vTexUV.x / 2;
+	In.vTexUV.y = In.vTexUV.y / 2;
+
+	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	vDiffuse.a = vDiffuse.r;
+	if (vDiffuse.a < 0.1f)
+		discard;
+
 	Out.vColor = vDiffuse + g_vColor;
 	Out.vColor.a = Out.vColor.a * In.fLife;
 	return Out;
@@ -1242,5 +1235,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FRONTVIEWBLINK();
+	}
+
+	pass ShamanRectTrail // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_TRAILMAIN();
+		GeometryShader = compile gs_5_0 GS_RECTTRAIL();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_SHAMANSNOWRECTTRAIL();
 	}
 }

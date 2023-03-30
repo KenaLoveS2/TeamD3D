@@ -139,7 +139,7 @@ private:
 
 	class CPhysX_Manager* m_pPhysX_Manager = nullptr;
 	_bool							   m_bIsStaticPxActor = false;
-	PxRigidActor* m_pPxActor = nullptr;	
+	PxRigidActor*				   m_pPxActor = nullptr;
 
 	_float3 m_vPxPivot = { 0.f, 0.f, 0.f };
 	_float3 m_vPxPivotScale = { 1.f,1.f,1.f };
@@ -174,7 +174,7 @@ public:
 	_float	Calc_Pitch();
 
 	void Connect_PxActor_Static(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
-	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));	
+	void Connect_PxActor_Gravity(const _tchar * pActorTag, _float3 vPivotDist = _float3(0.f, 0.f, 0.f));
 	void Add_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
 	void Update_Collider(const _tchar * pActorTag, _float4x4 PivotMatrix);
 
@@ -201,8 +201,6 @@ public:
 	PxRigidActor* Get_Actor() {
 		return m_pPxActor;
 	}
-
-	_bool IsFalling();
 };
 
 END

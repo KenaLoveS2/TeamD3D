@@ -3,12 +3,13 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
-float			g_fFar = 500.f;
+float				g_fFar = 300.f;
 float4			g_vCamPosition;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
+texture2D<float4>		g_MaskTexture;
 Texture2D<float4>		g_MasterBlendDiffuseTexture;
 
 Texture2D<float4> g_AO_R_MTexture;
@@ -17,12 +18,15 @@ Texture2D<float4> g_EmissiveTexture;
 
 float4			g_EmissiveColor = (float4)1.f;
 float				g_fHDRIntensity = 0.f;
+float4				g_vColor = 1.f;
+
 
 texture2D		g_DissolveTexture;
 bool				g_bDissolve;
 float				g_fDissolveTime;
 float				g_DissolveSpeed = 0.2f;
 float				g_FadeSpeed = 1.5f;
+float				g_fDissolveAlpha = 0.f;
 
 struct VS_IN
 {
@@ -345,6 +349,39 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 	return Out;
 }
 
+/* HunterArrow (13) */
+PS_OUT PS_MAIN_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector	vMask		= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
+	Out.vDiffuse *= g_vColor;
+
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	///* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRIntensity, 0.f);
+	Out.vAmbient = (float4)1.f;
+
+	if (g_bDissolve)
+	{
+		if (Out.vDiffuse.a < g_fDissolveAlpha)
+			discard;
+	}
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default		//0
@@ -512,5 +549,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_CINECAM();
+	}
+
+	pass HUNTERARROW // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASK();
 	}
 }

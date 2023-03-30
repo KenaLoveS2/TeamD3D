@@ -19,9 +19,6 @@ private:
 	virtual ~CDZ_FallenTree_Anim() = default;
 
 public:
-	void				Set_BossClear(_bool IsBossClear) { m_bBossClear = IsBossClear; }
-
-public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 	virtual HRESULT		Late_Initialize(void* pArg = nullptr)override;
@@ -29,10 +26,6 @@ public:
 	virtual void		Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT		Render() override;
 
-	void	Create_Colider();
-
-
-public:
 	virtual void					ImGui_AnimationProperty()override;
 	virtual void					ImGui_PhysXValueProperty() override;
 private:
@@ -40,11 +33,6 @@ private:
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;
 	_bool							m_bRenderCheck = false;
-	_bool							m_bBossClear = false;
-	_bool							m_bColiderOn = false;
-
-	_bool							m_bOnlyTest = false; // Test
-
 public:
 	virtual HRESULT		Add_AdditionalComponent(_uint iLevelIndex, const _tchar* pComTag, COMPONENTS_OPTION eComponentOption)override;
 
