@@ -46,6 +46,7 @@ public:
 	_bool	Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta);
 	void	InstaincingMesh_GimmkicInit(CEnviromentObj::CHAPTER eChapterGimmcik);
 	void	InstaincingMesh_yPosControl(_float yPos);
+	void	InstaincingMesh_EffectTick(_float yLimitPos,_float fTimeDelta);
 
 	void	Create_PxTriangle_InstMeshActor(CTransform* pParentTransform, vector<_float4x4*> VecInstancingMatrix);
 
@@ -53,6 +54,10 @@ public:
 	HRESULT SetUp_BonePtr(CModel* pModel);
 	HRESULT SetUp_BonePtr(HANDLE& hFile, DWORD& dwByte, class CModel* pModel);
 	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _fmatrix PivotMatrix);
+
+public:
+	void Set_InstanceMeshEffect(CTransform* pParentTransform,_int iInstanceNum, _float fMinSpeed, _float fMaxSpeed);
+
 
 private:				/*For.OriginMeshData*/
 	CModel::TYPE						m_eType;
@@ -78,6 +83,9 @@ private:		/*For.Instancing*/
 	_float								m_fIncreaseYPos = 0.f;
 
 	_vector								m_corners[8];
+
+	_float* m_fInstancingEffect_Speed = nullptr;
+
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(HANDLE hFile, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(HANDLE hFile, class CModel* pModel);
@@ -96,3 +104,5 @@ public:
 };
 
 END
+
+

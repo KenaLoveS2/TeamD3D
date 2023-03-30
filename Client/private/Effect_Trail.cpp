@@ -183,7 +183,11 @@ void CEffect_Trail::Trail_InputRandomPos(_float4 vPosition)
 	
 	_float4 vRandomPos = CUtile::Get_RandomVector(vmin, vmax);
 	vRandomPos.w = 1.f;
-	m_vecProPos.push_back(vRandomPos);
+	if (!m_vecProPos.empty() && m_vecProPos.back() != vRandomPos)
+		m_vecProPos.push_back(vRandomPos);
+
+	if(m_vecProPos.empty())
+		m_vecProPos.push_back(vRandomPos);
 }
 
 void CEffect_Trail::Trail_InputPos(_float4 vPosition)

@@ -151,6 +151,24 @@ private:
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 
+private:	/* Animation Event Func */
+	void TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void TurnOffMoveMentTrail(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnHandSummons(_bool bIsInit, _float fTimeDelta);
+	void TurnOffHandSummons(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnSwipeChareged(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnTeleport(_bool bIsInit, _float fTimeDelta);
+
+	void TurnOnSummons(_bool bIsInit, _float fTimeDelta);
+	void TurnOffSummons(_bool bIsInit, _float fTimeDelta);
+
+private:
+	map<const string, class CEffect_Base*>	m_mapEffect;
+
 public:
 	static CBossShaman* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr)  override;
