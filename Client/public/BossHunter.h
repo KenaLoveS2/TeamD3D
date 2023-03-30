@@ -86,6 +86,13 @@ private:
 
 	_bool m_bDodge = false;
 
+private: /* For. Shader & Effect */
+	_float							m_fUVSpeeds[2];
+	_float							m_fStringDissolve;
+	_float							m_fStringDissolveSpeed;
+	_float							m_fStringHDRIntensity;
+	_float4							m_vStringDiffuseColor;
+
 private:
 	CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBossHunter(const CBossHunter& rhs);
