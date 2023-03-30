@@ -38,16 +38,7 @@ HRESULT CCliff_Rock::Initialize(void * pArg)
 HRESULT CCliff_Rock::Late_Initialize(void * pArg)
 {
 
-	if (m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_01"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W2_04"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterRing_A_0"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterRing_C_0"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterSpike01"
-		|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_Cliff_W3_CraterRing_B_0")
-	{
-		return S_OK;
-	}
-
+	
 	if(m_pModelCom->Get_UseTriangleMeshActor())
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	else

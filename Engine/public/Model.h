@@ -92,7 +92,12 @@ public:
 
 private:
 	void						MODELMATERIAL_Create_Model(const char* jSonPath);
-	
+
+
+public:
+	void						Set_InstanceEffect_Info(CTransform* pParentTransform,_int iInstanceNum,_float fMinSpeed, _float fMaxSpeed);
+	void						Instaincing_mesh_Effect_tick(_float yLimitPos, _float fTimeDelta);
+
 private:
 	TYPE									m_eType = TYPE_END;
 	wstring									m_wstrModelFilePath = L"";

@@ -670,4 +670,8 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_CINE();
 	} //12
+
+
+
+
  }

@@ -1805,6 +1805,28 @@ void CModel::MODELMATERIAL_Create_Model(const char * jSonPath)
 	
 }
 
+void CModel::Set_InstanceEffect_Info(CTransform* pParentTransform, _int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
+{
+	if (m_bIsInstancing == false)
+		return;
+
+	for(auto &pInstmesh : m_InstancingMeshes)
+	{
+		pInstmesh->Set_InstanceMeshEffect(pParentTransform,iInstanceNum, fMinSpeed, fMaxSpeed);
+	}
+
+}
+
+void CModel::Instaincing_mesh_Effect_tick(_float yLimitPos, _float fTimeDelta)
+{
+	if (m_bIsInstancing == false)
+		return;
+	for (auto& pInstmesh : m_InstancingMeshes)
+	{
+		pInstmesh->InstaincingMesh_EffectTick(yLimitPos, fTimeDelta);
+	}
+}
+
 void CModel::Calc_MinMax(_float *pMinX, _float *pMaxX, _float *pMinY, _float *pMaxY, _float *pMinZ, _float *pMaxZ)
 {
 	_float Xmin = (_float)INT_MAX, Xmax = (_float)INT_MIN, Ymin = (_float)INT_MAX, Ymax = (_float)INT_MIN, Zmin = (_float)INT_MAX, Zmax = (_float)INT_MIN;

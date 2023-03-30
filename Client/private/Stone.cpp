@@ -44,18 +44,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 
 	if (m_pModelCom->Get_UseTriangleMeshActor())
 	{
-
-		if (m_EnviromentDesc.iRoomIndex == 1 && m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02"
-			|| m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_01")
-		{
-			if(m_EnviromentDesc.szModelTag == L"Prototype_Component_Model_GodRock_02")
-				vSize = _float3(0.63f, 1.f, 0.85f);
-
-			m_pModelCom->Create_InstModelPxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT, vSize, vPos, true); //(0~1)
-		}
-		
-		else
-			m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
+		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	}
 	else
 	{
@@ -64,7 +53,6 @@ HRESULT CStone::Late_Initialize(void * pArg)
 		else
 			m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom, COL_ENVIROMENT);
 	}
-
 	
 	return S_OK;
 }
