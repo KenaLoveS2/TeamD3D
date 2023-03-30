@@ -12,7 +12,7 @@
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
 
-//#define USE_QUADTREE
+#define USE_QUADTREE
 
 #include <d3d11.h>
 #include <Effects11/d3dx11effect.h>
@@ -30,10 +30,6 @@
 #include <d3dcompiler.h>
 #include <typeinfo>
 #include <DirectXCollision.h>
-
-#include <mfidl.h>
-#pragma comment(lib, "Mfplat.lib")
-#pragma comment(lib, "Mfuuid.lib")
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -56,11 +52,8 @@ using namespace std;
 using Json = nlohmann::json;
 using namespace nlohmann;
 
-#define PX_PHYSX_CHARACTER_STATIC_LIB
-#include "PhysX/PxPhysics.h"
-#include "PhysX/PxPhysicsAPI.h"
-
-
+#include <PhysX/PxPhysics.h>
+#include <PhysX/PxPhysicsAPI.h>
 using namespace physx;
 
 #include "Engine_Macro.h"

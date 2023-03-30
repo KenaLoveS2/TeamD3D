@@ -3,8 +3,6 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "EnviromentObj.h"
-#include "Delegator.h"
-
 BEGIN(Engine)
 class CRenderer;
 END
@@ -32,10 +30,10 @@ public:
 	virtual void Imgui_RenderProperty() override;
 	virtual void ImGui_PhysXValueProperty() override;
 
-public:  /*For.Gimmick*/
+public:
 	void				PulsePlate_Down_Active(_int iRoomIndex,_bool IsTrigger);
 	void				Trigger_Active(_int iRoomIndex,CEnviromentObj::CHAPTER eChpater, _bool IsTrigger);
-	void				DeadZoneObject_Change(_bool bChange);
+
 private:
 	HRESULT SetUp_Components();
 	
@@ -46,10 +44,7 @@ private:
 	map< const _tchar * ,CGameObject*>							  m_Gimmcik_Trigger_map;
 
 	array<bool, 4>												 m_MapShadowArray;		// ÀüÃ¼¸Ê -1(Ã³À½¸Ê)
-	CTransform*													m_pPlayerTransformPtr = nullptr;
-
-
-
+	class		CTransform*				m_pPlayerTransformPtr = nullptr;
 private:
 	list<_float4x4>		  m_RoomControlPos_List;
 	_bool		m_bInitRender = false;
@@ -57,8 +52,6 @@ private:
 private:
 	CGameObject*		Get_GimmickObj(_int iRoomIndex, CGameObject * pGameObj);
 
-public:
-	Delegator<_int>						m_DeadZoneChangeDelegator;
 
 public:
 	static CControlRoom*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

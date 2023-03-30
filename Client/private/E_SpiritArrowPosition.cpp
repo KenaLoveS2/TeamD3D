@@ -62,17 +62,18 @@ HRESULT CE_SpiritArrowPosition::Late_Initialize(void * pArg)
 
 void CE_SpiritArrowPosition::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
 	{
 		m_bChildActive = false;
 		m_vecChild[EFFECT_PARTICLE]->Set_Active(false);
-		m_fDurationTime = 0.f;
-		return;
+		m_fTimeDelta = 0.f;
 	}
 	else
 	{
 		/* 자식 지우기 위한 용도 */
-		m_fDurationTime += fTimeDelta;
+		m_fTimeDelta += fTimeDelta;
 		if (m_bChildActive == false)
 		{
 			for (auto& pChild : m_vecChild)
@@ -81,21 +82,19 @@ void CE_SpiritArrowPosition::Tick(_float fTimeDelta)
 			dynamic_cast<CEffect_Point_Instancing*>(m_vecChild[EFFECT_PARTICLE])->Set_ShapePosition();
 			m_bChildActive = true;
 		}
-		if (m_fDurationTime > 1.5f)
+		if (m_fTimeDelta > 1.5f)
 		{
-			ResetSprite();
+			m_eEFfectDesc.fWidthFrame = 0.0;
+			m_eEFfectDesc.fHeightFrame = 0.0;
 			m_vecChild[EFFECT_SPRITEPOSITION]->ResetSprite();
 			m_vecChild[EFFECT_SPRITEPOSITION]->Set_Active(false);
-			m_fDurationTime = 0.0f;
+			m_fTimeDelta = 0.0f;
 		}
 	}
-	__super::Tick(fTimeDelta);
 }
 
 void CE_SpiritArrowPosition::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
 	__super::Late_Tick(fTimeDelta);
 }
 

@@ -2,7 +2,6 @@
 #include "DZ_FallenTree_Anim.h"
 #include "GameInstance.h"
 #include "ControlMove.h"
-#include "ControlRoom.h"
 #include "Interaction_Com.h"
 
 CDZ_FallenTree_Anim::CDZ_FallenTree_Anim(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -34,53 +33,145 @@ HRESULT CDZ_FallenTree_Anim::Initialize(void * pArg)
 	m_bRenderActive = true;
 	
 
-	m_pModelCom->Set_AnimIndex(1);
+	m_pModelCom->Set_AnimIndex(2);
 	return S_OK;
 }
 
 HRESULT CDZ_FallenTree_Anim::Late_Initialize(void * pArg)
 {
-	CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+	_float4 vPos;
+	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	pCtrlRoom->Add_Gimmick_TrggerObj(m_szCloneObjectTag, this);
+	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
+	
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	// 0번
+	{
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 0);
+		BoxDesc.eType = BOX_STATIC;
+		BoxDesc.vPos = CUtile::Float_4to3(vPos);
+		BoxDesc.vSize = _float3(2.1f, 5.85f, 2.1f);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDensity = 0.2f;
+		BoxDesc.fMass = 150.f;
+		BoxDesc.fLinearDamping = 10.f;
+		BoxDesc.fAngularDamping = 5.f;
+		BoxDesc.bCCD = false;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.bKinematic = true;
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
+	}
+
+	// 1번
+	{
+		_float4 vPos2 = vPos;
+		vPos2.x += 3.35f;
+		vPos2.y += 6.84f;
+		vPos2.z -= 0.2f;
+		
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 1);
+		BoxDesc.eType = BOX_STATIC;
+		BoxDesc.vPos = CUtile::Float_4to3(vPos2);
+		BoxDesc.vSize = _float3(1.06f, 2.1f, 1.61f);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDensity = 0.2f;
+		BoxDesc.fMass = 150.f;
+		BoxDesc.fLinearDamping = 10.f;
+		BoxDesc.fAngularDamping = 5.f;
+		BoxDesc.bCCD = false;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.bKinematic = true;
+
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
+		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
+		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
+	}
+
+	// 2번
+	{
+		_float4 vPos3 = vPos;
+		vPos3.x += 9.31f;
+		vPos3.y += 8.3f;
+		vPos3.z -= 0.06f;
+	
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 2);
+		BoxDesc.eType = BOX_STATIC;
+		BoxDesc.vPos = CUtile::Float_4to3(vPos3);
+		BoxDesc.vSize = _float3(0.92f, 4.03f, 1.61f);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDensity = 0.2f;
+		BoxDesc.fMass = 150.f;
+		BoxDesc.fLinearDamping = 10.f;
+		BoxDesc.fAngularDamping = 5.f;
+		BoxDesc.bCCD = false;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.bKinematic = true;
+
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
+		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
+		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
+	}
+
+	// 3번
+	{
+		_float4 vPos4 = vPos;
+		vPos4.x += 19.11f;
+		vPos4.y += 11.76f;
+		vPos4.z -= 0.43f;
+		
+		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
+		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 3);
+		BoxDesc.eType = BOX_STATIC;
+		BoxDesc.vPos = CUtile::Float_4to3(vPos4);
+		BoxDesc.vSize = _float3(1.f, 7.02f, 1.2f);
+		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDegree = 0.f;
+		BoxDesc.isGravity = false;
+		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
+		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+		BoxDesc.fDensity = 0.2f;
+		BoxDesc.fMass = 150.f;
+		BoxDesc.fLinearDamping = 10.f;
+		BoxDesc.fAngularDamping = 5.f;
+		BoxDesc.bCCD = false;
+		BoxDesc.fDynamicFriction = 0.5f;
+		BoxDesc.fStaticFriction = 0.5f;
+		BoxDesc.fRestitution = 0.1f;
+		BoxDesc.bKinematic = true;
+
+		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
+		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
+		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 68.f, _float3(0.f, 0.f, 1.f));
+	}
 
 	return S_OK;
 }
 
 void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 {
-
-
-	if (!m_bOnlyTest) /*Test*/
-	{
-		Late_Initialize();
-		m_bOnlyTest = true;
-		CGameInstance::GetInstance()->Add_AnimObject(g_LEVEL, this);
-	}
-
 	__super::Tick(fTimeDelta);
 
-	if(m_bBossClear)
-	{
-		m_pModelCom->Set_AnimIndex(0);
-		m_bBossClear = false;
-		
-	}
-
-	if((false==m_bColiderOn && m_pModelCom->Get_AnimIndex() == 0 && m_pModelCom->Get_AnimationFinish()))
-	{
-		m_pModelCom->Set_AnimIndex(2);
-		
-		Create_Colider();
-		
-		m_bColiderOn = true;
-	}
-
-	if(ImGui::Button("TEmp"))
-	{
-		m_bBossClear = true;
-		m_bColiderOn = false;
-	}
 
 	/*Culling*/
 	//_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -126,136 +217,6 @@ HRESULT CDZ_FallenTree_Anim::Render()
 	}
 
 	return S_OK;
-}
-
-void CDZ_FallenTree_Anim::Create_Colider()
-{
-	_float4 vPos;
-	XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
-	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
-
-	CPhysX_Manager::PX_BOX_DESC BoxDesc;
-	// 0번
-	{
-		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
-		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 0);
-		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.vPos = CUtile::Float_4to3(vPos);
-		BoxDesc.vSize = _float3(2.1f, 5.85f, 2.1f);
-		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDegree = 0.f;
-		BoxDesc.isGravity = false;
-		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDensity = 0.2f;
-		BoxDesc.fMass = 150.f;
-		BoxDesc.fLinearDamping = 10.f;
-		BoxDesc.fAngularDamping = 5.f;
-		BoxDesc.bCCD = false;
-		BoxDesc.fDynamicFriction = 0.5f;
-		BoxDesc.fStaticFriction = 0.5f;
-		BoxDesc.fRestitution = 0.1f;
-		BoxDesc.bKinematic = true;
-		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
-	}
-
-	// 1번
-	{
-		_float4 vPos2 = vPos;
-		vPos2.x += 3.35f;
-		vPos2.y += 6.84f;
-		vPos2.z -= 0.2f;
-
-		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
-		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 1);
-		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.vPos = CUtile::Float_4to3(vPos2);
-		BoxDesc.vSize = _float3(1.06f, 2.1f, 1.61f);
-		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDegree = 0.f;
-		BoxDesc.isGravity = false;
-		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDensity = 0.2f;
-		BoxDesc.fMass = 150.f;
-		BoxDesc.fLinearDamping = 10.f;
-		BoxDesc.fAngularDamping = 5.f;
-		BoxDesc.bCCD = false;
-		BoxDesc.fDynamicFriction = 0.5f;
-		BoxDesc.fStaticFriction = 0.5f;
-		BoxDesc.fRestitution = 0.1f;
-		BoxDesc.bKinematic = true;
-
-		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
-		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
-		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
-	}
-
-	// 2번
-	{
-		_float4 vPos3 = vPos;
-		vPos3.x += 9.31f;
-		vPos3.y += 8.3f;
-		vPos3.z -= 0.06f;
-
-		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
-		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 2);
-		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.vPos = CUtile::Float_4to3(vPos3);
-		BoxDesc.vSize = _float3(0.92f, 4.03f, 1.61f);
-		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDegree = 0.f;
-		BoxDesc.isGravity = false;
-		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDensity = 0.2f;
-		BoxDesc.fMass = 150.f;
-		BoxDesc.fLinearDamping = 10.f;
-		BoxDesc.fAngularDamping = 5.f;
-		BoxDesc.bCCD = false;
-		BoxDesc.fDynamicFriction = 0.5f;
-		BoxDesc.fStaticFriction = 0.5f;
-		BoxDesc.fRestitution = 0.1f;
-		BoxDesc.bKinematic = true;
-
-		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
-		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
-		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 72.f, _float3(0.f, 0.f, 1.f));
-	}
-
-	// 3번
-	{
-		_float4 vPos4 = vPos;
-		vPos4.x += 19.11f;
-		vPos4.y += 11.76f;
-		vPos4.z -= 0.43f;
-
-		ZeroMemory(&BoxDesc, sizeof(BoxDesc));
-		BoxDesc.pActortag = CUtile::Create_DummyString(m_szCloneObjectTag, 3);
-		BoxDesc.eType = BOX_STATIC;
-		BoxDesc.vPos = CUtile::Float_4to3(vPos4);
-		BoxDesc.vSize = _float3(1.f, 7.02f, 1.2f);
-		BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDegree = 0.f;
-		BoxDesc.isGravity = false;
-		BoxDesc.eFilterType = PX_FILTER_TYPE::FITLER_ENVIROMNT;
-		BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-		BoxDesc.fDensity = 0.2f;
-		BoxDesc.fMass = 150.f;
-		BoxDesc.fLinearDamping = 10.f;
-		BoxDesc.fAngularDamping = 5.f;
-		BoxDesc.bCCD = false;
-		BoxDesc.fDynamicFriction = 0.5f;
-		BoxDesc.fStaticFriction = 0.5f;
-		BoxDesc.fRestitution = 0.1f;
-		BoxDesc.bKinematic = true;
-
-		pPhysX->Create_Box(BoxDesc, Create_PxUserData(nullptr, false, COL_ENVIROMENT));
-		PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_Actor(BoxDesc.pActortag);
-		CPhysX_Manager::GetInstance()->Set_ActorRotation(pActor, 68.f, _float3(0.f, 0.f, 1.f));
-	}
-
 }
 
 void CDZ_FallenTree_Anim::ImGui_AnimationProperty()

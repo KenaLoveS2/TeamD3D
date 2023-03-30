@@ -32,26 +32,9 @@ void CRenderer::Imgui_Render()
 	ImGui::Checkbox("FILMTONEMAPPING", &m_bGrayScale);
 	ImGui::Checkbox("MOTIONBLUR", &m_bMotionBlur);
 	ImGui::Checkbox("FLARE", &m_bFlare);
+
 	ImGui::Checkbox("CINE", &m_bCine);
-	ImGui::Checkbox("FOG", &m_bFog);
-	if (m_bFog)
-	{
-		ImGui::DragFloat("FogStart", &m_fFogStart, 0.1f, 0.f, 1000.f);
-		ImGui::DragFloat("FogRange", &m_fFogRange, 0.1f, 0.f, 1000.f);
-		static bool alpha_preview = true;
-		static bool alpha_half_preview = false;
-		static bool drag_and_drop = true;
-		static bool options_menu = true;
-		static bool hdr = false;
-		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
-		static bool   ref_color = false;
-		static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
-		static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		vSelectColor = m_vFogColor;
-		ImGui::ColorPicker4("CurColor##6", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
-		ImGui::ColorEdit4("Diffuse##5f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
-		m_vFogColor = vSelectColor;
-	}
+
 	if(ImGui::Button("ReCompile"))
 		ReCompile();
 }
@@ -938,6 +921,7 @@ HRESULT CRenderer::Render_PostProcess()
 	ID3D11ShaderResourceView* pLDRSour_SRV = pLDRSour->Get_SRV();
 	ID3D11RenderTargetView* pLDRDest_RTV = pLDRDest->Get_RTV();
 
+	// Test
 	/***1***/
 	if(m_bDistort)
 	{
@@ -963,7 +947,6 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_GrayScale();
 	}
 
-	/***3***/
 	if(m_bMotionBlur)
 	{
 		pLDRSour_SRV = pLDRSour->Get_SRV();
@@ -977,7 +960,6 @@ HRESULT CRenderer::Render_PostProcess()
 		PostProcess_MotionBlur();
 	}
 
-	/***4***/
 	if (m_bFlare)
 	{
 		pLDRSour_SRV = pLDRSour->Get_SRV();
@@ -990,21 +972,6 @@ HRESULT CRenderer::Render_PostProcess()
 		pLDRDest = pLDRTmp;
 		PostProcess_Flare();
 	}
-
-	/***5***/
-	if (m_bFog)
-	{
-		pLDRSour_SRV = pLDRSour->Get_SRV();
-		pLDRDest_RTV = pLDRDest->Get_RTV();
-		if (FAILED(m_pShader_PostProcess->Set_ShaderResourceView("g_LDRTexture", pLDRSour_SRV)))
-			return E_FAIL;
-		m_pContext->OMSetRenderTargets(1, &pLDRDest_RTV, pDepthStencilView);
-		pLDRTmp = pLDRSour;
-		pLDRSour = pLDRDest;
-		pLDRDest = pLDRTmp;
-		PostProcess_Fog();
-	}
-
 
 	m_pContext->OMSetRenderTargets(1, &pBackBufferView, pDepthStencilView);
 	Safe_Release(pBackBufferView);
@@ -1171,27 +1138,6 @@ HRESULT CRenderer::PostProcess_Flare()
 	return S_OK;
 }
 
-HRESULT CRenderer::PostProcess_Fog()
-{
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogColor", &m_vFogColor, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogStart", &m_fFogStart, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_FogRange", &m_fFogRange, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_fFar", CGameInstance::GetInstance()->Get_CameraFar(), sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ViewMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_Matrix("g_ProjMatrixInv", &CGameInstance::GetInstance()->Get_TransformFloat4x4_Inverse(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShader_PostProcess->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-	m_pShader_PostProcess->Begin(6);
-	m_pVIBuffer->Render();
-	return S_OK;
-}
-
 #ifdef _DEBUG
 HRESULT CRenderer::Render_DebugObject()
 {
@@ -1326,8 +1272,6 @@ void CRenderer::Free()
 
 	Safe_Release(*m_pDistortionTexture);
 	Safe_Delete(m_pDistortionTexture);
-
-	Safe_Release(m_pVideoRenderTargetTexture);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
