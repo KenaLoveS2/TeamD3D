@@ -1,14 +1,19 @@
 #include "stdafx.h"
 #include "..\public\HunterArrow.h"
 #include "BossHunter.h"
+#include "Effect_Base_S2.h"
 
 CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
+	, m_fTrailTime(0.f)
+	, m_fTrailTimeAcc(0.f)
 {
 }
 
 CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	: CMonsterWeapon(rhs)
+	, m_fTrailTime(0.f)
+	, m_fTrailTimeAcc(0.f)
 {	
 }
 
@@ -34,6 +39,10 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
+
+	m_fDissolveTime = 0.f;
+	m_fTrailTime = 0.1f;
+	m_fTrailTimeAcc = 0.f;
 
 	return S_OK;
 }
@@ -103,6 +112,7 @@ HRESULT CHunterArrow::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 		m_pModelCom->Render(m_pShaderCom, i, nullptr, 13);
 	}
 
@@ -211,7 +221,27 @@ HRESULT CHunterArrow::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)))) return E_FAIL;
-		
+
+	_float4 vColor = { 1.0f, 0.05f, 0.46f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4)))) return E_FAIL;
+
+	_float fHDR = 4.f;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDR, sizeof(_float)))) return E_FAIL;
+
+	_bool bDissolve;
+	if (m_fDissolveTime > 0.f)
+	{
+		bDissolve = true;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)))) return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveAlpha", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	}
+	else
+	{
+		bDissolve = false;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)))) return E_FAIL;
+	}
+
+
 	return S_OK;
 }
 
@@ -277,6 +307,17 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	case FIRE:
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
+
+		m_fTrailTimeAcc += fTimeDelta;
+		if (m_fTrailTimeAcc > m_fTrailTime)
+		{
+			CEffect_Base_S2* pEffect = nullptr;
+			CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
+				L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString(), L"Particle_ArrowTrail.json", (CGameObject**)&pEffect);
+			if (pEffect != nullptr)
+				pEffect->Set_Target(this);
+		}
+
 		break;
 	}	
 	case FINISH:

@@ -350,34 +350,33 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 }
 
 /* HunterArrow (13) */
-PS_OUT PS_MAIN_MASK(PS_IN In)
+PS_OUT PS_MAIN_HUNTER_ARROW(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	vector	vMask		= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	vector	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector	vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 
 	Out.vDiffuse = vDiffuse;
-	Out.vDiffuse.a = vMask.r;
-	Out.vDiffuse *= g_vColor;
+	Out.vDiffuse.rgb *= g_vColor.rgb;
 
+	if (g_bDissolve)
+	{
+		Out.vDiffuse.a = vMask.r;
+
+		if (Out.vDiffuse.a < g_fDissolveAlpha)
+			discard;
+	}
+
+	/* tangent space */
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-
-	///* ÅºÁ¨Æ®½ºÆäÀÌ½º */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
 
-	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRIntensity, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, g_fHDRIntensity, 0.f);
 	Out.vAmbient = (float4)1.f;
-
-	if (g_bDissolve)
-	{
-		if (Out.vDiffuse.a < g_fDissolveAlpha)
-			discard;
-	}
 
 	return Out;
 }
@@ -561,6 +560,6 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_MASK();
+		PixelShader = compile ps_5_0 PS_MAIN_HUNTER_ARROW();
 	}
 }

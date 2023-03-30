@@ -30,6 +30,10 @@ private:
 
 	CBone* m_pBowBone = nullptr;
 
+private:
+	_float		m_fTrailTime;
+	_float		m_fTrailTimeAcc;
+
 public:
 	CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CHunterArrow(const CHunterArrow& rhs);

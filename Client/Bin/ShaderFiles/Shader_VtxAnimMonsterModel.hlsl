@@ -833,7 +833,9 @@ PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
 	float2	texUV = In.vTexUV;
 	texUV.x += g_fUVSpeedX;
 	//texUV.y += g_fUVSpeedY;
-	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	float2	texUV2 = In.vTexUV;
+	texUV2 -= g_fUVSpeedX;
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, texUV2);
 	float4	vMask = g_MaskTexture.Sample(LinearSampler, texUV);
 
 	float	vDiffuseR = vDiffuse.r;
@@ -847,7 +849,7 @@ PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f,
-							g_fStringHDR, 0.f);
+		g_fStringHDR, 0.f);
 	Out.vAmbient = vAO_R_M;
 
 	if (vDiffuseR < g_fStringDissolve)
