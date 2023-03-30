@@ -460,7 +460,6 @@ PS_OUT PS_MAGEBULLET(PS_IN In)
 	float4 vblendColor = lerp(vSmooth, vColor, 0.4f);
 	float4 finalcolor = lerp(vblendColor, vNoise, vNoise.r) * float4(81.f, 12.f, 0.f, 255.f) / 255.f;
 
-	// fresnel_glow(����(Ŭ���� ����), )
 	float4 fresnelcolor = float4(255.f, 37.f, 0.f, 255.f) / 255.f;
 	float4 fresnel = float4(fresnel_glow(3.5, 2.5, fresnelcolor.rgb, In.vNormal.rgb, In.vViewDir.rgb), fresnelcolor.a);
 
@@ -796,7 +795,7 @@ PS_OUT PS_GRONDPLANE(PS_IN In)
 
 	float fTime = min(g_Time * 1.2f, 2.f);
 
-	if (1.f < fTime)   // ����������
+	if (1.f < fTime)  
 		Out.vDiffuse.a = Out.vDiffuse.a * (2.f - fTime);
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);

@@ -1,0 +1,28 @@
+{
+  "0_LayerTag": "Layer_Enviroment",
+  "1_Data": [
+    {
+      
+      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "10_Instancing_ColiderSize": [ 10.994999885559082, 13.711999893188477, 11.699000358581543 ],
+      "1_ModelTag": "Prototype_Component_Model_Cliff_Ledge_04",
+      "25_Instancing_Transform_matrix": [ 5.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, -8.0, 26.209430694580078, 1.0 ],
+      "2_ShaderOption": 0,
+      "3_CloneTag": "1_Cliff_Ledge_04",
+      "4_RoomIndex": 1,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 36.0, 0.0, 7.0, 1.0 ]
+    },
+    {
+      "0_ProtoTag": "Prototype_GameObject_Cliff_Rock",
+      "10_Instancing_ColiderSize": [ 14.859999656677246, 9.630000114440918, 14.559000015258789 ],
+      "1_ModelTag": "Prototype_Component_Model_Cliff_Ledge_03",
+      "25_Instancing_Transform_matrix": [ 5.392770290374756, 0.0, 2.630214214324951, 0.0, 0.0, 4.0, 0.0, 0.0, -2.630216121673584, 0.0, 5.3927741050720215, 0.0, 0.0, -8.0, 21.219593048095703, 1.0 ],
+      "2_ShaderOption": 0,
+      "3_CloneTag": "1_Cliff_Ledge_03",
+      "4_RoomIndex": 1,
+      "5_ChapterType": 0,
+      "7_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 3.0, 16.0, 1.0 ]
+    }
+  ]
+}

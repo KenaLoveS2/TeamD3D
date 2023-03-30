@@ -24,7 +24,6 @@ public:
 	const _double&				Get_PlayTime() const;
 	const _double&				Get_LastPlayTime() const;
 	const _float					Get_AnimationProgress() const;
-	const _double					Get_AnimationDuration() const;
 	const _bool&					Get_PausePlay() const { return m_bPausePlay; }
 	const _bool&					Get_Preview() const { return m_bPreview; }
 	const _uint&					Get_AnimIndex() const { return m_iCurrentAnimIndex; }

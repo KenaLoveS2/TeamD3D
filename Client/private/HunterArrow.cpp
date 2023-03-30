@@ -66,14 +66,6 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		PxSphereDesc.bCCD = false;
 		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
-		PxSphereDesc.fStaticFriction = 0.5f;
-		PxSphereDesc.fDynamicFriction = 0.5f;
-		PxSphereDesc.fRestitution = 0.1f;
-		PxSphereDesc.fDensity = 0.1f;
-		PxSphereDesc.fAngularDamping = 0.1f;
-		PxSphereDesc.fMass = 1.f;
-		PxSphereDesc.fLinearDamping = 0.1f;
-
 		pPhysX->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);
 	}
@@ -111,7 +103,7 @@ HRESULT CHunterArrow::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 13);
 	}
 
 	return S_OK;
@@ -196,7 +188,9 @@ HRESULT CHunterArrow::SetUp_Components()
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed_Normal.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/E_Effect_20.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_NORMALS, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed_Normal.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_MASK, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed.png"));
 
 	return S_OK;
 }

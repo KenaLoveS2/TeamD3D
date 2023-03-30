@@ -392,7 +392,7 @@ void CAnimation::Update_Bones_ReturnMat(_float fTimeDelta, _smatrix * matBonesTr
 	if (m_PlayTime >= m_Duration)
 		m_isFinished = true;
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 1; i < m_iNumChannels; ++i)
 	{
 		if (pBlendAnim == nullptr)
 		{

@@ -15,8 +15,11 @@ CE_P_Flower::CE_P_Flower(const CE_P_Flower & rhs)
 
 HRESULT CE_P_Flower::Initialize_Prototype(const _tchar * pFilePath)
 {
-	FAILED_CHECK_RETURN(__super::Initialize_Prototype(), E_FAIL);
-	FAILED_CHECK_RETURN(Load_E_Desc(pFilePath), E_FAIL);
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	if (FAILED(Load_E_Desc(pFilePath)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -29,15 +32,23 @@ HRESULT CE_P_Flower::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
+	if (FAILED(__super::Initialize(&GameObjectDesc)))
+		return E_FAIL;
 
 	m_eEFfectDesc.bActive = true;
+
+	return S_OK;
+}
+
+HRESULT CE_P_Flower::Late_Initialize(void* pArg)
+{
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 	RELEASE_INSTANCE(CGameInstance);
 
-	m_pVIInstancingBufferCom->Set_PSize(_float2(0.5f, 0.5f)); //fix
+	m_pVIInstancingBufferCom->Set_ShapePosition();
 	m_pVIInstancingBufferCom->Set_RandomSpeeds(0.5f, 2.f);
+
 	return S_OK;
 }
 
@@ -54,27 +65,17 @@ void CE_P_Flower::Tick(_float fTimeDelta)
 		m_pKena = (CKena*)	pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 		RELEASE_INSTANCE(CGameInstance);
 	}
-
-	_float4 vKenaPos = m_pKena->Get_TransformCom()->Get_Position();
-	_float4 vMyPos = m_pTransformCom->Get_Position();
-	 
-	_float vDistance = XMVectorGetX(XMVector3Length(vKenaPos - vMyPos));
-	if(vDistance > 20.f)
+	else 
 	{
-		vKenaPos.y = 1.0f;
-		m_pTransformCom->Set_Position(vKenaPos);
-		m_fLife = 0.0f;
-		m_bTurn = true;
+		_vector vPos = m_pKena->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		m_pTransformCom->Set_Position(vPos);
 	}
 
-	m_fLife += fTimeDelta * 0.2f;
+	m_fLife += fTimeDelta * 0.7f;
 	if (m_bTurn)
 	{
-		if (m_fLife > 2.f)
-		{
-			m_bTurn = false;
-			m_fLife = 0.0f;
-		}
+		m_pVIInstancingBufferCom->Set_ShapePosition();
+		m_fTimeDelta = 0.0f;
 	}
 }
 
@@ -88,18 +89,11 @@ void CE_P_Flower::Late_Tick(_float fTimeDelta)
 
 HRESULT CE_P_Flower::Render()
 {
-	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
-	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
-
-	return S_OK;
-}
-
-HRESULT CE_P_Flower::SetUp_ShaderResources()
-{
-	if (m_pShaderCom == nullptr)
+	if (m_eEFfectDesc.bActive == false)
 		return E_FAIL;
 
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bTurn", &m_bTurn, sizeof(_bool)), E_FAIL);
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	return S_OK;
 }

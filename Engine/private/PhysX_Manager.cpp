@@ -69,27 +69,29 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	}
 
 
-	if ((filterData0.word0 == (PxU32)PLAYER_BODY && filterData1.word0 == (PxU32)PLAYER_WEAPON)			||
-		(filterData0.word0 == (PxU32)PLAYER_WEAPON && filterData1.word0 == (PxU32)PLAYER_BODY)			||
+	if ( (filterData0.word0 == PLAYER_BODY && filterData1.word0 == PLAYER_WEAPON)		||
+		 (filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == PLAYER_BODY)		||
 
-		(filterData0.word0 == (PxU32)MONSTER_BODY && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||
-		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)MONSTER_BODY)		||
+		 (filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_WEAPON)		||
+		 (filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_BODY)		||
 
-		(filterData0.word0 == (PxU32)MONSTER_WEAPON  &&  filterData1.word0 == (PxU32)MONSTER_WEAPON)	||
+		(filterData0.word0 == MONSTER_WEAPON  &&  filterData1.word0 == MONSTER_WEAPON) ||
 		
-		(filterData0.word0 == (PxU32)PLAYER_BODY &&  filterData1.word0 == (PxU32)PLAYER_BODY)			||
+		(filterData0.word0 == PLAYER_BODY &&  filterData1.word0 == PLAYER_BODY) ||
 				
-		(filterData0.word0 == (PxU32)PLAYER_WEAPON && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||
-		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)PLAYER_WEAPON)		||
+		(filterData0.word0 == PLAYER_WEAPON && filterData1.word0 == MONSTER_WEAPON)			||
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == PLAYER_WEAPON)	||
 
-		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_PARTS)		||
-		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_BODY)			||
-		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)MONSTER_WEAPON)		||		
-		(filterData0.word0 == (PxU32)MONSTER_PARTS && filterData1.word0 == (PxU32)PLAYER_BODY)			||
 
-		(filterData0.word0 == (PxU32)MONSTER_BODY && filterData1.word0 == (PxU32)MONSTER_PARTS )		||
-		(filterData0.word0 == (PxU32)MONSTER_WEAPON && filterData1.word0 == (PxU32)MONSTER_PARTS )		||		
-		(filterData0.word0 == (PxU32)PLAYER_BODY && filterData1.word0 == (PxU32)MONSTER_PARTS)			)
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_PARTS) ||
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_BODY) ||
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == MONSTER_WEAPON) ||		
+		(filterData0.word0 == MONSTER_PARTS && filterData1.word0 == PLAYER_BODY) ||
+
+		(filterData0.word0 == MONSTER_BODY && filterData1.word0 == MONSTER_PARTS ) ||
+		(filterData0.word0 == MONSTER_WEAPON && filterData1.word0 == MONSTER_PARTS ) ||		
+		(filterData0.word0 == PLAYER_BODY && filterData1.word0 == MONSTER_PARTS)
+		)
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}
@@ -190,10 +192,15 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	PxRigidStatic* pGroundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 1), *m_pMaterial);		
 	m_pScene->addActor(*pGroundPlane);
 	
-	m_pControlllerManager = PxCreateControllerManager(*m_pScene);
-
 	Init_Rendering();
-		
+
+	/*
+	PxControllerManager* pControlllerManager = PxCreateControllerManager(*m_pScene);
+	PxCapsuleControllerDesc PxContollerDesc;
+	PxContollerDesc.
+	pControlllerManager
+	*/
+
 	return S_OK;
 }
 
@@ -276,26 +283,24 @@ void CPhysX_Manager::Update_Trasnform(_float fTimeDelta)
 {
 	PX_USER_DATA* pUserData = nullptr;
 	PxRigidDynamic* pActor = nullptr;
-	PxController* pController = nullptr;
 	/*
-	for (auto Pair : m_Controllers)
-	{
-		pController = (PxController*)Pair.second;
-		pUserData = (PX_USER_DATA*)pController->getUserData();
-
-		if (pUserData)
-		{	
-			_float3 vPos = CUtile::ConvertPosition_PxToD3D(pController->getActor()->getGlobalPose().p);			
-			pUserData->pOwner->Set_Position(vPos);
-		}
-	}
-	*/	
+	_float4x4 WorldMatrix;
 	for (auto Pair : m_DynamicActors)
 	{
 		pActor = (PxRigidDynamic*)Pair.second;
 		pUserData = (PX_USER_DATA*)pActor->userData;
 
-		if(pUserData && pUserData->isGravity)
+		WorldMatrix = Get_ActorMatrix(pActor);
+		pUserData->pOwner->Set_WorldMatrix(WorldMatrix);
+	}
+	*/
+	
+	for (auto Pair : m_DynamicActors)
+	{
+		pActor = (PxRigidDynamic*)Pair.second;
+		pUserData = (PX_USER_DATA*)pActor->userData;
+
+		if(pUserData && pUserData->isGravity == true)
 		{
 			PxTransform ActorTrasnform = pActor->getGlobalPose();
 			_float3 vObjectPos = CUtile::ConvertPosition_PxToD3D(ActorTrasnform.p);
@@ -314,13 +319,12 @@ void CPhysX_Manager::createDynamic(const PxTransform& t, const PxGeometry& geome
 }
 
 void CPhysX_Manager::Clear()
-{	
-	Px_Safe_Release(m_pControlllerManager);
+{		
 	Px_Safe_Release(m_pCooking);	
 	Px_Safe_Release(m_pScene);
 	Px_Safe_Release(m_pDispatcher);
 	Px_Safe_Release(m_pPhysics);
-		
+	
 	PxPvdTransport* pTransport = m_pPvd->getTransport();
 	Px_Safe_Release(m_pPvd);
 	Px_Safe_Release(pTransport);	
@@ -1257,49 +1261,3 @@ void CPhysX_Manager::Set_Visualization(PxRigidActor *pActor, _bool bFlag)
 	shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, bFlag);
 }
 
-_bool CPhysX_Manager::IsFalling(PxRigidDynamic* pActor)
-{	
-	const PxVec3& velocity = pActor->getLinearVelocity();
-
-	return velocity.y < -0.5f;
-}
-
-void CPhysX_Manager::Create_Controller(PX_CONTROLLER_CAPSULE_DESC& ControllerCapsuleDesc, PX_USER_DATA* pUserData)
-{
-	if (pUserData)
-		m_UserDataes.push_back(pUserData);
-
-	PxCapsuleControllerDesc PxContollerDesc;	
-
-	PxContollerDesc.position = PxExtendedVec3(ControllerCapsuleDesc.vPos.x, ControllerCapsuleDesc.vPos.y, ControllerCapsuleDesc.vPos.z);
-	PxContollerDesc.density = ControllerCapsuleDesc.fDensity;
-	PxContollerDesc.radius = ControllerCapsuleDesc.fRadius;
-	PxContollerDesc.height = ControllerCapsuleDesc.fHeight;
-	PxContollerDesc.upDirection = PxVec3(ControllerCapsuleDesc.vUpDirection.x, ControllerCapsuleDesc.vUpDirection.y, ControllerCapsuleDesc.vUpDirection.z);
-	PxContollerDesc.material = m_pPhysics->createMaterial(ControllerCapsuleDesc.fStaticFriction, ControllerCapsuleDesc.fDynamicFriction, ControllerCapsuleDesc.fRestitution);
-	PxContollerDesc.userData = pUserData;
-	PxContollerDesc.contactOffset = ControllerCapsuleDesc.fContactOffset;
-	PxContollerDesc.stepOffset = ControllerCapsuleDesc.fStepOffset;	
-	PxContollerDesc.slopeLimit = ControllerCapsuleDesc.fSlopeLimit;
-	
-	PxController* pController = m_pControlllerManager->createController(PxContollerDesc);
-	pController->getActor()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
-	
-	m_Controllers.emplace(CUtile::Create_StringAuto(ControllerCapsuleDesc.pTag), pController);
-}
-
-void CPhysX_Manager::Move_Controller(PxController* pController, _float3 vDist)
-{	
-	PxVec3 vPxDist = CUtile::ConvertPosition_D3DToPx(vDist);
-
-	PxControllerFilters filters;
-	pController->move(vPxDist, 0.01f, 1.0f / 60.0f, filters);
-}
-
-PxController* CPhysX_Manager::Find_Controller(const _tchar* pTag)
-{
-	auto Pair = find_if(m_Controllers.begin(), m_Controllers.end(), CTag_Finder(pTag));
-	if (Pair == m_Controllers.end()) return nullptr;
-
-	return Pair->second;	
-}

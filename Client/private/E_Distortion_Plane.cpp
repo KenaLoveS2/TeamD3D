@@ -50,27 +50,46 @@ void CE_Distortion_Plane::Tick(_float fTimeDelta)
 		m_fTimeDelta = 0.0f;
 		return;
 	}
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
 
-	if (m_fTimeDelta > 2.f)
+	if (vScaled.x > 50.f)
 	{
 		m_eEFfectDesc.bActive = false;
+		m_pTransformCom->Set_Scaled(_float3(1.0f, 1.0f, 1.0f));
 		m_fTimeDelta = 0.0f;
+	}
+	else
+	{
+		vScaled.x += fTimeDelta * 4.f + 2.0f;
+		vScaled.y += fTimeDelta * 4.f + 2.0f;
+		vScaled.z += fTimeDelta * 4.f + 2.0f;
+		m_pTransformCom->Set_Scaled(vScaled);
 	}
 }
 
 void CE_Distortion_Plane::Late_Tick(_float fTimeDelta)
 {
-   	if (m_eEFfectDesc.bActive == false)
-   		return;
+	if (m_eEFfectDesc.bActive == false)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 
 	if (m_pParent != nullptr)
 	{
+		/*  Billboard */
+		_float4 vCamLook = CGameInstance::GetInstance()->Get_CamLook_Float4();
+		_float4 vCamUp = CGameInstance::GetInstance()->Get_CamUp_Float4();
+		_float4 vCamRight = CGameInstance::GetInstance()->Get_CamRight_Float4();
+		_float4 vPos = m_pTransformCom->Get_Position();
 
+		_float4 vDir = XMVector3Normalize(vCamLook - vPos);
+		_float3 vScaled = m_pTransformCom->Get_Scaled();
+
+		m_pTransformCom->Set_Right(vCamRight * -1.f * vScaled.x);
+		m_pTransformCom->Set_Up(vDir * vScaled.y);
+		m_pTransformCom->Set_Look(vCamUp * vScaled.x);
 	}
 
 	if (nullptr != m_pRendererCom)

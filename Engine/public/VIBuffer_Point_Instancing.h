@@ -9,7 +9,8 @@ class ENGINE_DLL CVIBuffer_Point_Instancing final : public CVIBuffer_Instancing
 public:
 	typedef struct tagPointDesc
 	{
-		enum  SHAPETYPE { VIBUFFER_BOX, VIBUFFER_STRIGHT, VIBUFFER_PLANECIRCLE, VIBUFFER_CONE, VIBUFFER_EXPLOSION, VIBUFFER_END };
+		enum  SHAPETYPE { VIBUFFER_BOX, VIBUFFER_STRIGHT, VIBUFFER_PLANECIRCLE, 
+			VIBUFFER_CONE, VIBUFFER_EXPLOSION, VIBUFFER_EXPLOSION_GRAVITY, VIBUFFER_END };
 		enum  DIRXYZ { DIR_X, DIR_Y, DIR_Z, DIR_END };
 
 		SHAPETYPE	eShapeType = VIBUFFER_BOX;
@@ -96,6 +97,7 @@ public:
 	HRESULT			Tick_PlaneCircle(_float fTimeDelta);
 	HRESULT			Tick_Cone(_float fTimeDelta);
 	HRESULT			Tick_Explosion(_float fTimeDelta);
+	HRESULT			Tick_ExplosionGravity(_float fTimeDelta);
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iNumInstance);

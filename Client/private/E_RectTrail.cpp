@@ -85,7 +85,20 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 	//}
 #pragma endregion Test
 
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
+
+	if (m_eType == CE_RectTrail::OBJ_BODY_SHAMAN)
+	{
+		m_fDurationTime += fTimeDelta;
+		if (m_fDurationTime > 2.f)
+		{
+			m_eEFfectDesc.bActive = false;
+			m_fDurationTime = 0.0f;
+		}
+	}
 
 	if (dynamic_cast<CKena_Staff*>(m_pParent))
 	{
@@ -110,6 +123,9 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 
 void CE_RectTrail::Late_Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
  	__super::Trail_LateTick(fTimeDelta);
 }
 
@@ -121,7 +137,7 @@ HRESULT CE_RectTrail::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(11);
+	m_pShaderCom->Begin(m_eEFfectDesc.iPassCnt);
 	m_pVITrailBufferCom->Render();
 
 	return S_OK;
@@ -148,7 +164,7 @@ HRESULT CE_RectTrail::SetUp_ShaderResources()
 void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 {
 	m_eEFfectDesc.IsTrail = true;
-	m_eEFfectDesc.fWidth = 1.f;
+	m_eType = eType;
 
 	switch (eType)
 	{
@@ -156,6 +172,7 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fFrame[0] = 126.f;
 		m_eEFfectDesc.iPassCnt = 11;
 		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.f;
 		m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
 		break;
 
@@ -163,6 +180,7 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fFrame[0] = 126.f;
 		m_eEFfectDesc.iPassCnt = 11;
 		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 120.f, 120.f, 255.f) / 255.f;
 		break;
 
@@ -174,10 +192,27 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
 		break;
 
+	case Client::CE_RectTrail::OBJ_B_SHAMAN: // snow
+		m_eEFfectDesc.fFrame[0] = 31.f;
+		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 2.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
+		break;
+
+	case Client::CE_RectTrail::OBJ_BODY_SHAMAN:
+		m_eEFfectDesc.fFrame[0] = 126.f;
+		m_eEFfectDesc.iPassCnt = 13;
+		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.f;
+		m_eEFfectDesc.vColor = XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f;
+		break;
+
 	case Client::CE_RectTrail::OBJ_ROTWISP:
 		m_eEFfectDesc.fFrame[0] = 126.f;
 		m_eEFfectDesc.iPassCnt = 11;
 		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.f;
 		m_eEFfectDesc.vColor = XMVectorSet(0.3f, 0.3f, 0.8f, 1.f);
 		break;
 
@@ -185,8 +220,46 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 		m_eEFfectDesc.fFrame[0] = 126.f;
 		m_eEFfectDesc.iPassCnt = 11;
 		m_eEFfectDesc.fLife = 0.5f;
+		m_eEFfectDesc.fWidth = 1.f;
 		m_eEFfectDesc.vColor = XMVectorSet(255.f, 255.f, 255.f, 255.f) / 255.f;
 		break;
+	}
+}
+
+void CE_RectTrail::Set_TexRandomPrint()
+{
+	m_eEFfectDesc.fWidthFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateWidth * 1.0f));
+	m_eEFfectDesc.fHeightFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateHeight * 1.0f));
+}
+
+void CE_RectTrail::Tick_Split(_float fTimeDelta)
+{
+	m_fSplitDurationTime += fTimeDelta;
+	if (m_fSplitDurationTime > 1.f / m_eEFfectDesc.fTimeDelta * fTimeDelta)
+	{
+		if (m_eEFfectDesc.fTimeDelta < 1.f)
+			m_eEFfectDesc.fWidthFrame++;
+		else
+			m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+		m_fSplitDurationTime = 0.0;
+
+		if (m_eEFfectDesc.fWidthFrame >= m_eEFfectDesc.iWidthCnt)
+		{
+			if (m_eEFfectDesc.fTimeDelta < 1.f)
+				m_eEFfectDesc.fHeightFrame++;
+			else
+				m_eEFfectDesc.fWidthFrame += floor(m_eEFfectDesc.fTimeDelta);
+
+			m_eEFfectDesc.fWidthFrame = m_fInitSpriteCnt.x;
+
+			if (m_eEFfectDesc.fHeightFrame >= m_eEFfectDesc.iHeightCnt)
+			{
+				m_eEFfectDesc.fHeightFrame = m_fInitSpriteCnt.y;
+				m_bFinishSprite = true;
+			}
+		}
+
 	}
 }
 

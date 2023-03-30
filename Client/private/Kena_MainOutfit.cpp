@@ -78,7 +78,7 @@ HRESULT CKena_MainOutfit::Render()
 			// Shoes & Bag
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",2);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices",5);
 		}
 		else if(i == 3 || i == 4)
 		{
@@ -250,14 +250,12 @@ HRESULT CKena_MainOutfit::SetUp_ShaderResource()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	 
+	
 	m_pShaderCom->Set_RawValue("g_fSSSAmount", &m_fSSSAmount, sizeof(_float));
 	m_pShaderCom->Set_RawValue("g_vSSSColor", &m_vSSSColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_vAmbientColor", &m_vMulAmbientColor, sizeof(_float4));
 	m_pShaderCom->Set_RawValue("g_fHairLength", &m_fHairLength, sizeof(_float));
 	m_pShaderCom->Set_RawValue("g_fHairThickness", &m_fHairThickness, sizeof(_float));
-
-	RimColorValue();
 
 	return S_OK;
 }
@@ -277,14 +275,6 @@ HRESULT CKena_MainOutfit::SetUp_ShadowShaderResources()
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
-}
-
-void CKena_MainOutfit::RimColorValue()
-{
-	m_pShaderCom->Set_RawValue("g_Parry", &m_pPlayer->Get_ParryRim(), sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_ParryRimIntensity", &m_pPlayer->Get_ParryRimIntensity(), sizeof(_float));
-	m_pShaderCom->Set_RawValue("g_Hit", &m_pPlayer->Get_HitRim(), sizeof(_bool));
-	m_pShaderCom->Set_RawValue("g_HitRimIntensity", &m_pPlayer->Get_HitRimIntensity(), sizeof(_float));
 }
 
 CKena_MainOutfit * CKena_MainOutfit::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

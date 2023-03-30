@@ -150,8 +150,8 @@ void CEffect_T::Tick(_float fTimeDelta)
 
 void CEffect_T::Late_Tick(_float fTimeDelta)
 {
-	if (m_eEFfectDesc.bActive == false)
-		return;
+	//if (m_eEFfectDesc.bActive == false)
+	//	return;
 
 	if (m_pParent != nullptr)
 		Set_Matrix();
@@ -360,6 +360,7 @@ HRESULT CEffect_T::SetUp_ShaderResources()
 }
 void CEffect_T::Imgui_RenderProperty()
 {
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
 	ImGui::InputFloat("Width", (_float*)&m_eEFfectDesc.fWidthFrame);
 	ImGui::InputFloat("Height", (_float*)&m_eEFfectDesc.fHeightFrame);
 }

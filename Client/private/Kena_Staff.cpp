@@ -112,6 +112,9 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 
 	if (m_mapEffect["KenaTrail"]->Get_Active() == true)
 	{
+		m_mapEffect["KenaRectTrail"]->Set_Active(true);
+		dynamic_cast<CE_RectTrail*>(m_mapEffect["KenaRectTrail"])->Trail_InputRandomPos(matWorldSocket.r[3]);
+
 // 		CAnimationState*	pAnimation = m_pPlayer->Get_AnimationStateMachine();
 // 
 // 		_float		fCurPlayTime = pAnimation->Get_AnimationPlayTime();
@@ -162,8 +165,8 @@ void CKena_Staff::Late_Tick(_float fTimeDelta)
 // 			//m_mapEffect["KenaTrail"]->Late_Tick(fTimeDelta);
 // 		}
 
-		dynamic_cast<CE_RectTrail*>(m_mapEffect["KenaRectTrail"])->Trail_InputRandomPos(matWorldSocket.r[3]);
 	}
+
 //	else
 //		dynamic_cast<CE_KenaTrail*>(m_mapEffect["KenaTrail"])->ResetInfo();
 

@@ -540,15 +540,6 @@ private:
 	void						Start_Bomb_Cancel_Run_Left(_float fTimeDelta);
 	void						Start_Bomb_Cancel_Run_Right(_float fTimeDelta);
 	void						Start_Bomb_Inject(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Forward(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Backward(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Left(_float fTimeDelta);
-	void						Start_Bomb_Inject_Run_Right(_float fTimeDelta);
 	/* BOMB AIR */
 	void						Start_Bomb_Air_Into(_float fTimeDelta);
 	void						Start_Bomb_Air_Loop(_float fTimeDelta);
@@ -612,34 +603,8 @@ private:
 	void						Start_Bow_Return_Run_Right(_float fTimeDelta);
 	/* BOW INJECT */
 	void						Start_Bow_Inject(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Forward(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Forward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Forward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Backward(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Backward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Backward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Walk_Right(_float fTimeDelta);
 	void						Start_Bow_Inject_Loop(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Forward(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Forward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Forward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Backward(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Backward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Backward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Loop_Walk_Right(_float fTimeDelta);
 	void						Start_Bow_Inject_Release(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Forward(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Forward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Forward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Backward(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Backward_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Backward_Right(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Left(_float fTimeDelta);
-	void						Start_Bow_Inject_Release_Walk_Right(_float fTimeDelta);
 	/* BOW AIR */
 	void						Start_Bow_Air_Charge(_float fTimeDelta);
 	void						Start_Bow_Air_Charge_Loop(_float fTimeDelta);
@@ -819,7 +784,6 @@ private:
 	void						Tick_Bomb_Cancel(_float fTimeDelta);
 	void						Tick_Bomb_Cancel_Run(_float fTimeDelta);
 	void						Tick_Bomb_Inject(_float fTimeDelta);
-	void						Tick_Bomb_Inject_Run(_float fTimeDelta);
 	/* BOMB AIR */
 	void						Tick_Bomb_Air_Into(_float fTimeDelta);
 	void						Tick_Bomb_Air_Loop(_float fTimeDelta);
@@ -840,7 +804,6 @@ private:
 	void						Tick_Bow_Return_Run(_float fTimeDelta);
 	/* BOW INJECT */
 	void						Tick_Bow_Inject(_float fTimeDelta);
-	void						Tick_Bow_Inject_Walk(_float fTimeDelta);
 	void						Tick_Bow_Inject_Loop(_float fTimeDelta);
 	void						Tick_Bow_Inject_Release(_float fTimeDelta);
 	/* BOW AIR */
@@ -1014,7 +977,6 @@ private:
 	void						End_Bomb_Cancel(_float fTimeDelta);
 	void						End_Bomb_Cancel_Run(_float fTimeDelta);
 	void						End_Bomb_Inject(_float fTimeDelta);
-	void						End_Bomb_Inject_Run(_float fTimeDelta);
 	/* BOMB AIR */
 	void						End_Bomb_Air_Into(_float fTimeDelta);
 	void						End_Bomb_Air_Loop(_float fTimeDelta);
@@ -1035,7 +997,6 @@ private:
 	void						End_Bow_Return_Run(_float fTimeDelta);
 	/* BOW INJECT */
 	void						End_Bow_Inject(_float fTimeDelta);
-	void						End_Bow_Inject_Walk(_float fTimeDelta);
 	void						End_Bow_Inject_Loop(_float fTimeDelta);
 	void						End_Bow_Inject_Release(_float fTimeDelta);
 	/* BOW AIR */

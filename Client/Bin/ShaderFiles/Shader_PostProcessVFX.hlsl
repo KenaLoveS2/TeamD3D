@@ -261,41 +261,6 @@ PS_OUT PS_FLARE(PS_IN In)
 	return Out;
 }
 
-float4 g_FogColor = (float4)1.f;
-float4 g_vCamPosition;
-float  g_FogStart = 0.f;
-float  g_FogRange = 50.f;
-float  g_fFar = 500.f;
-matrix g_ProjMatrixInv;
-matrix g_ViewMatrixInv;
-
-PS_OUT PS_FOG(PS_IN In)
-{
-	PS_OUT Out = (PS_OUT)0;
-
-	float4 FinalColor = g_LDRTexture.Sample(LinearSampler, In.vTexUV);
-	float4 vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-
-	float fViewZ = vDepthDesc.y * g_fFar;
-	vector vWorldPos;
-
-	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
-	vWorldPos.z = vDepthDesc.x;
-	vWorldPos.w = 1.f;
-	vWorldPos *= fViewZ;
-
-	vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-	// 투영좌표까지 올라와 있는거 월드 좌표까지 내려야함
-	float fDist = length(vWorldPos.xyz - g_vCamPosition.xyz);
-	float fogFactor = saturate((fDist - g_FogStart) / g_FogRange);
-
-	Out.vColor = lerp(FinalColor, g_FogColor, fogFactor);
-
-	return Out;
-}
-
 technique11 DefaultTechnique
 {
 	pass Default
@@ -374,18 +339,5 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FLARE();
-	} //5
-
-	pass Fog
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
-		SetBlendState(BS_Default, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_FOG();
 	} //5
 }

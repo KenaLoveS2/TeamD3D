@@ -4,12 +4,24 @@
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
+	, m_fStringDissolve(0.f)
+	, m_fStringDissolveSpeed(0.f)
+	, m_fStringHDRIntensity(0.f)
+	, m_vStringDiffuseColor(1.f, 1.f, 1.f, 1.f)
 {
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVSpeeds[i] = 0.f;
 }
 
 CBossHunter::CBossHunter(const CBossHunter& rhs)
 	: CMonster(rhs)
+	, m_fStringDissolve(0.f)
+	, m_fStringDissolveSpeed(0.f)
+	, m_fStringHDRIntensity(0.f)
+	, m_vStringDiffuseColor(1.f, 1.f, 1.f, 1.f)
 {
+	for (_uint i = 0; i < 2; ++i)
+		m_fUVSpeeds[i] = 0.f;
 }
 
 HRESULT CBossHunter::Initialize_Prototype()
@@ -50,7 +62,13 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pBodyBone = m_pModelCom->Get_BonePtr("char_spine_mid_jnt");
 	
 	Create_Arrow();
-	
+
+	/* For. String */
+	m_fStringDissolveSpeed = 10.f;
+	m_fStringHDRIntensity = 5.0f;
+	m_vStringDiffuseColor = { 1.0f, 0.05f, 0.46f, 1.f };
+
+
 	return S_OK;
 }
 
@@ -116,11 +134,41 @@ HRESULT CBossHunter::Late_Initialize(void* pArg)
 
 void CBossHunter::Tick(_float fTimeDelta)
 {
-	/*m_pModelCom->Play_Animation(fTimeDelta);
+	ImGui::Begin("HunterTest");
+	if (ImGui::Button("ReCompile"))
+	{
+		m_pShaderCom->ReCompile();
+		m_pRendererCom->ReCompile();
+	}
+	ImGui::End();
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 	Update_Collider(fTimeDelta);
+
+	/* For. String */
+	m_fUVSpeeds[0] += 0.245f * fTimeDelta;
+	m_fUVSpeeds[0] = fmodf(m_fUVSpeeds[0], 1);
+
+	m_fStringDissolve += m_fStringDissolveSpeed * fTimeDelta;
+	if (m_fStringDissolve > 0.5)
+	{
+		m_fStringDissolve = 0.5f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = -0.9f;
+
+	}
+	else if (m_fStringDissolve < 0.f)
+	{
+		m_fStringDissolve = 0.f;
+		m_fStringDissolveSpeed *= -1;
+		m_fStringDissolveSpeed = 0.9f;
+
+	}
+	/* ~ For. String */
+
 	for (auto& pArrow : m_pArrows) 
 		pArrow->Tick(fTimeDelta);	
-	return;*/
+	return;
 	
 
 	if (m_bDeath) return;
@@ -164,9 +212,9 @@ HRESULT CBossHunter::Render()
 		if(i==0) // ArrowString
 		{
 			// ArrowString (Have to another Texture) Pause render until then
-			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-			//FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", DEFAULT), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 13), E_FAIL);
 		}
 		else if (i == 3) //Hair
 		{
@@ -181,7 +229,7 @@ HRESULT CBossHunter::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, 2, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 		}
 		else
 		{
@@ -189,7 +237,7 @@ HRESULT CBossHunter::Render()
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture"), E_FAIL);
 			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture"), E_FAIL);
-			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E), E_FAIL);
 		}
 	}
 	return S_OK;
@@ -217,6 +265,33 @@ void CBossHunter::Imgui_RenderProperty()
 	float fRot[3] = { m_vBodyPivotRot.x, m_vBodyPivotRot.y, m_vBodyPivotRot.z };
 	ImGui::DragFloat3("Weapon Rot", fRot, 0.01f, -100.f, 100.0f);
 	memcpy(&m_vBodyPivotRot, fRot, sizeof(_float3));
+
+	ImGui::Separator();
+	/* HDR Intensity (Diffuse) */
+	static _float fAlpha = 1.f;
+	fAlpha = m_fStringHDRIntensity;
+	if (ImGui::DragFloat("HDR Intensity", &fAlpha, 0.1f, 0.f, 50.f))
+		m_fStringHDRIntensity = fAlpha;
+
+	/* Diffuse Color */
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_vStringDiffuseColor;
+
+	if (ImGui::ColorPicker4("CurColor##4", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL))
+		m_vStringDiffuseColor = vSelectColor;
+	if (ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags))
+		m_vStringDiffuseColor = vSelectColor;
 }
 
 void CBossHunter::ImGui_AnimationProperty()
@@ -997,6 +1072,10 @@ HRESULT CBossHunter::SetUp_Components()
 	__super::SetUp_Components();
 
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Boss_Hunter", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
+
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_DIFFUSE, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_64.png")), E_FAIL);
+	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_MASK, TEXT("../Bin/Resources/Textures/Effect/DiffuseTexture/E_Effect_135.png")), E_FAIL);
+
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(1, WJTextureType_EMISSIVE, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv01_EMISSIVE.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/Enemy/Boss_Hunter/VillageHunter_Uv02_AO_R_M.png")), E_FAIL);
@@ -1023,6 +1102,13 @@ HRESULT CBossHunter::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDRIntensity, sizeof(_float)), E_FAIL);
 	
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &g_bFalse, sizeof(_bool)), E_FAIL);
+
+	/* For. String */
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fStringHDR", &m_fStringHDRIntensity, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVSpeeds[0], sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fStringDissolve", &m_fStringDissolve, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vColor", &m_vStringDiffuseColor, sizeof(_float4)), E_FAIL);
+
 
 	return S_OK;
 }
@@ -1220,11 +1306,13 @@ void CBossHunter::Create_Arrow()
 	}
 }
 
+/* 장전 */
 void CBossHunter::Ready_Arrow(CHunterArrow::FIRE_TYPE eFireType)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Ready(eFireType);
 }
 
+/* 실제 쏠때 */
 void CBossHunter::Fire_Arrow(_bool bArrowIndexUpdate)
 {
 	m_pArrows[m_iArrowIndex]->Execute_Fire();

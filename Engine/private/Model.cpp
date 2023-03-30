@@ -111,11 +111,6 @@ const _float CModel::Get_AnimationProgress() const
 	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationProgress();
 }
 
-const _double CModel::Get_AnimationDuration() const
-{
-	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationDuration();
-}
-
 const _bool & CModel::Get_AnimationFinish() const
 {
 	return m_Animations[m_iCurrentAnimIndex]->IsFinished();

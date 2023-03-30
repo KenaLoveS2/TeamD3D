@@ -65,7 +65,6 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
-	/**/
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
