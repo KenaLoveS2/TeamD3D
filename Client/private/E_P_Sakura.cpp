@@ -57,14 +57,21 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 	//}
 	__super::Tick(fTimeDelta);	
 
-	m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
+	/*m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);*/
 }
 
 void CE_P_Sakura::Late_Tick(_float fTimeDelta)
 {
+	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
+	_bool b = m_pModelCom->Culling_InstancingMeshs(100.f, WolrdMat);
+
+	if(b== false)
+	{
+		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
+	}
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bRenderActive)
+	if (m_pRendererCom && m_bRenderActive &&false == b)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	}
