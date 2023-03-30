@@ -29,37 +29,11 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 
-
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(55.741f, 15.093f, 1066.333f, 1.f));
-
 	return S_OK;
 }
 
 HRESULT CRope_RotRock::Late_Initialize(void* pArg)
-{
-	/*
-	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
-	
-	m_pModelCom->Create_PxBox(m_szCloneObjectTag, m_pTransformCom);
-
-	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-	m_pKena = (CKena*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-	if (m_pKena == nullptr) return E_FAIL;
-
-	m_pLiftRotMaster = (CLiftRot_Master*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Rot"), TEXT("LiftRot_Master"));
-	if (m_pLiftRotMaster == nullptr) return E_FAIL;
-
-	CLiftRot::DESC CutRotDesc;
-	CutRotDesc.eType = CLiftRot::CUTE;
-	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
-
-	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
-	if (m_pCuteLiftRot == nullptr) return E_FAIL;
-
-	return S_OK;
-	*/
-	
+{	
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
 	CPhysX_Manager *pPhysX = CPhysX_Manager::GetInstance();
@@ -100,6 +74,8 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 	CutRotDesc.eType = CLiftRot::CUTE;
 	CutRotDesc.vInitPos = _float4(-70.f, 0.f, -70.f, 1.f);
 	
+	// m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(55.741f, 15.093f, 1066.333f, 1.f));
+
 	m_pCuteLiftRot = (CLiftRot*)m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_DummyString(), &CutRotDesc);
 	if (m_pCuteLiftRot == nullptr) return E_FAIL;
 	
