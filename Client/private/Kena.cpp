@@ -338,7 +338,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	CModel*			pStaffModel = dynamic_cast<CModel*>(pStaff->Find_Component(L"Com_Model"));
 	CBone*			pStaffRootJnt = pStaffModel->Get_BonePtr("staff_root_jnt");
 	_matrix			matSocket = pStaffRootJnt->Get_OffsetMatrix() * pStaffRootJnt->Get_CombindMatrix() * pStaffModel->Get_PivotMatrix();
-
+	
 	matSocket.r[0] = XMVector3Normalize(matSocket.r[0]);
 	matSocket.r[1] = XMVector3Normalize(matSocket.r[1]);
 	matSocket.r[2] = XMVector3Normalize(matSocket.r[2]);

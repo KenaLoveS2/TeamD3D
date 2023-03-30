@@ -79,6 +79,14 @@ void CKena_State::Tick(_double dTimeDelta)
 {
 	m_eDir = DetectDirectionInput();
 
+	/* Into Fall from Ground States */
+	if (m_pKena->m_bJump == false && m_pTransform->IsFalling() == true)
+	{
+		m_pKena->m_bJump = true;
+		m_pKena->m_fCurJumpSpeed = 0.f;
+	}
+
+	/* Run Speed */
 	if (m_pKena->m_bSprint == true)
 		m_pTransform->Set_Speed(7.f);
 	else if (m_pKena->m_bAim == true)
@@ -188,6 +196,7 @@ HRESULT CKena_State::SetUp_State_Idle()
 		.Init_Start(this, &CKena_State::Start_Idle)
 		.Init_Tick(this, &CKena_State::Tick_Idle)
 		.Init_End(this, &CKena_State::End_Idle)
+		.Init_Changer(L"FALL", this, &CKena_State::Falling)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"TAKE_DAMAGE", this, &CKena_State::CommonHit)
@@ -215,6 +224,7 @@ HRESULT CKena_State::SetUp_State_Run()
 		.Init_Start(this, &CKena_State::Start_Run)
 		.Init_Tick(this, &CKena_State::Tick_Run)
 		.Init_End(this, &CKena_State::End_Run)
+		.Init_Changer(L"FALL", this, &CKena_State::Falling)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"TAKE_DAMAGE", this, &CKena_State::CommonHit)
@@ -3004,6 +3014,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Start(this, &CKena_State::Start_Into_Sprint)
 		.Init_Tick(this, &CKena_State::Tick_Into_Sprint)
 		.Init_End(this, &CKena_State::End_Into_Sprint)
+		.Init_Changer(L"FALL", this, &CKena_State::Falling)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q, &CKena_State::Interactable)
@@ -3020,6 +3031,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Start(this, &CKena_State::Start_Sprint)
 		.Init_Tick(this, &CKena_State::Tick_Sprint)
 		.Init_End(this, &CKena_State::End_Sprint)
+		.Init_Changer(L"FALL", this, &CKena_State::Falling)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"PULSE_PARRY", this, &CKena_State::Parry, &CKena_State::KeyDown_E)
 		.Init_Changer(L"INTERACT_STAFF", this, &CKena_State::KeyDown_Q, &CKena_State::Interactable)
@@ -7662,6 +7674,11 @@ _bool CKena_State::Shield_Break_Front()
 _bool CKena_State::Shield_Break_Back()
 {
 	return m_pStatus->Is_ShieldBreak() && m_pKena->m_eDamagedDir == CKena::DAMAGED_BACK && (m_pKena->m_bCommonHit || m_pKena->m_bHeavyHit);
+}
+
+_bool CKena_State::Falling()
+{
+	return m_pKena->m_bJump && m_pKena->m_fCurJumpSpeed == 0.f;
 }
 
 _bool CKena_State::Pulse_Jump()

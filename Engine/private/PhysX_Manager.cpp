@@ -1261,7 +1261,7 @@ _bool CPhysX_Manager::IsFalling(PxRigidDynamic* pActor)
 {	
 	const PxVec3& velocity = pActor->getLinearVelocity();
 
-	return velocity.y < -0.5f;
+	return velocity.y < -1.5f;
 }
 
 void CPhysX_Manager::Create_Controller(PX_CONTROLLER_CAPSULE_DESC& ControllerCapsuleDesc, PX_USER_DATA* pUserData)

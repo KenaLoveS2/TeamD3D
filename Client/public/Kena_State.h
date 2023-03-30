@@ -1163,6 +1163,7 @@ private:	/* Changer */
 	_bool	Shield_Big();
 	_bool	Shield_Break_Front();
 	_bool	Shield_Break_Back();
+	_bool	Falling();
 	_bool	Pulse_Jump();
 	_bool	Parry();
 	_bool	Teleport_Flower();
