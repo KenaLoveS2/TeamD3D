@@ -3,14 +3,17 @@
 #include "GameInstance.h"
 #include "ControlMove.h"
 #include "Interaction_Com.h"
+#include "Kena.h"
 
 CHatCart::CHatCart(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEnviromentObj(pDevice, pContext)
+	, m_pPlayer(nullptr)
 {
 }
 
 CHatCart::CHatCart(const CHatCart & rhs)
 	: CEnviromentObj(rhs)
+	, m_pPlayer(nullptr)
 {
 }
 
@@ -39,7 +42,11 @@ HRESULT CHatCart::Initialize(void * pArg)
 HRESULT CHatCart::Late_Initialize(void * pArg)
 {
 	/*Player_Need*/
-	
+	m_pPlayer = dynamic_cast<CKena*>(CGameInstance::GetInstance()->
+		Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+
+	if (m_pPlayer == nullptr)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -70,6 +77,24 @@ void CHatCart::Late_Tick(_float fTimeDelta)
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
 
+
+	/* compare distance */
+	if (m_pPlayer != nullptr)
+	{
+		_float4 vPlayerPos	= m_pPlayer->Get_TransformCom()->Get_Position();
+		_float4 vPos		= m_pTransformCom->Get_Position();
+		_float	fDist		= (vPlayerPos - vPos).Length();
+
+		if (fDist <= 5.f)
+		{
+			if (CGameInstance::GetInstance()->Key_Down(DIK_Q))
+			{
+				CUI_ClientManager::UI_PRESENT eCart = CUI_ClientManager::HATCART_;
+				m_CartDelegator.broadcast(eCart, m_pPlayer);
+			}
+		}
+		
+	}
 
 	if (m_pRendererCom) //&& m_bRenderActive && m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);

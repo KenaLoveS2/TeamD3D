@@ -18,8 +18,6 @@
 #include <fstream>
 #include "Effect_Point_Instancing_T.h"
 #include "Effect_Trail_T.h"
-#include <Effect.h>
-#include <Effect_Mesh.h>
 // ~Json
 
 #define TOOL
@@ -91,20 +89,20 @@ void CImgui_Effect::Imgui_RenderWindow()
 	ImGui::BulletText("EffectType : ");
 	if (ImGui::RadioButton("EFFECT_PLANE", &iSelectEffectType, 1))
 	{
-	//	iPreSelectEffectType = iSelectEffectType = EFFECT_PLANE;
+		iPreSelectEffectType = iSelectEffectType = EFFECT_PLANE;
 		bIsCreate = true;
 		m_bIsRectLayer = true;
 
 	}ImGui::SameLine();
 	if (ImGui::RadioButton("EFFECT_PARTICLE", &iSelectEffectType, 2))
 	{
-	//	iPreSelectEffectType = iSelectEffectType = 2;
+		iPreSelectEffectType = iSelectEffectType = 2;
 		bIsCreate = true;
 		m_bIsParticleLayer = true;
 	}ImGui::SameLine();
 	if (ImGui::RadioButton("EFFECT_MESH", &iSelectEffectType, 3))
 	{
-	//	iPreSelectEffectType = iSelectEffectType = EFFECT_MESH;
+		iPreSelectEffectType = iSelectEffectType = EFFECT_MESH;
 		bIsCreate = true;
 		m_bIsMeshLayer = true;
 	}
@@ -257,11 +255,7 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 		}
 		ImGui::Separator();
-
 		if (iSelectObj != -1 && bIsCreate == true && m_bIsRectLayer == true)
-			CreateEffect_Plane(iCurSelect, iSelectObj);
-		
-		if(dynamic_cast<CEffect*>(pGameObject))
 			CreateEffect_Plane(iCurSelect, iSelectObj);
 
 		break;
@@ -327,10 +321,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 		if (iSelectObj != -1 && bIsCreate == true && m_bIsParticleLayer == true)
 			CreateEffect_Particle(iCreateCnt, iCurSelect, iSelectObj);
-
-		if (dynamic_cast<CEffect_Point_Instancing*>(pGameObject))
-			CreateEffect_Particle(iCreateCnt, iCurSelect, iSelectObj);
-
 		break;
 
 	case EFFECT_MESH:
@@ -393,11 +383,6 @@ void CImgui_Effect::Imgui_RenderWindow()
 
 		if (iSelectObj != -1 && bIsCreate == true && m_bIsMeshLayer == true)
 			CreateEffect_Mesh(iSelectObj);
-
-		if (dynamic_cast<CEffect_Mesh*>(pGameObject))
-			CreateEffect_Mesh(iSelectObj);
-
-
 		break;
 	}
 
@@ -2289,6 +2274,8 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 	{
 		if (ImGui::CollapsingHeader("VIBuffer_PlaneCircle Option"))
 		{
+			CCamera*       pCamera = pGameInstance->Find_Camera(L"DEBUG_CAM_1");
+			CTransform*    pTargetTransform = dynamic_cast<CGameObject*>(pCamera)->Get_TransformCom();
 			static _bool   bSpread = true;
 			static _int    iSpread = 0;
 			static _float    fDurationTime = 0.0f;
@@ -2326,8 +2313,11 @@ void CImgui_Effect::Set_OptionWindow_Particle(_int& iCreateCnt, CEffect_Base * p
 			ImGui::SameLine();
 			if (ImGui::Button("Set PlaneCircle"))
 			{
+				ePointDesc->fMin = fPosMin;
+				ePointDesc->fMax = fPosMax;
 				ePointDesc->bSpread = bSpread;
 				ePointDesc->fCreateRange = fCreateRange;
+				ePointDesc->fMaxTime = fDurationTime;
 				ePointDesc->vOriginPos = vPosition;
 
 				if (bMoveTornado)

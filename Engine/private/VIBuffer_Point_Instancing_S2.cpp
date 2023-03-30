@@ -168,6 +168,8 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick(_float TimeDelta)
 		return Tick_Gather(TimeDelta);
 	case POINTINFO::TYPE_PARABOLA:
 		return Tick_Parabola(TimeDelta);
+	case POINTINFO::TYPE_SPREAD:
+		return Tick_Spread(TimeDelta);
 	default:
 		MSG_BOX("Invalid Type : Instancing S2");
 		break;
@@ -330,6 +332,39 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - m_tInfo.fTermAcc / m_tInfo.fTerm;
 		}
 
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing_S2::Tick_Spread(_float TimeDelta)
+{
+	if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+		return S_OK;
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_tInfo.fTermAcc += TimeDelta;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float fDownSpeedY = m_tInfo.fPlaySpeed * m_tInfo.fTermAcc * m_tInfo.fTermAcc;
+
+		_float4 vDir = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+		vDir.Normalize();
+		_float4 vMove = m_pXSpeeds[i] * TimeDelta * vDir;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y += vMove.y - fDownSpeedY;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x += vMove.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z += vMove.z;
+
+		/* Life */
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = m_tInfo.fTermAcc / m_tInfo.fTerm;
+		
 	}
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);

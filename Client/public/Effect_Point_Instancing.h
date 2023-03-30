@@ -52,7 +52,6 @@ public:
 	virtual void    Tick(_float fTimeDelta) override;
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	virtual void	Imgui_RenderProperty()override;
 
 private:
 	HRESULT         SetUp_Components();
@@ -61,9 +60,10 @@ private:
 protected:
 	const _tchar*                m_szVIBufferProtoTag = L"";
 	_float		                 m_fTimeDelta = 0.0f;
+	_float		                 m_fVIBufferTime = 0.0f;
 	vector<class CEffect_Trail*> m_vecTrailEffect;
 
-	_float					     m_fLife = 0.0f;
+	_float						m_fLife = 0.0f;
 
 public:
 	virtual void Free() override;

@@ -5,7 +5,7 @@ matrix g_BoneMatrices[800];
 matrix g_WorldMatrix;
 matrix g_ViewMatrix;
 matrix g_ProjMatrix;
-float  g_fFar = 500.f;
+float      g_fFar = 300.f;
 float4 g_vCamPosition;
 /**************************************/
 Texture2D<float4>      g_DiffuseTexture;
@@ -21,8 +21,8 @@ Texture2D<float4>      g_AOTexture;
 Texture2D<float4>      g_RoughnessTexture;
 Texture2D<float4>      g_MaskTexture;
 
-float4			g_EmissiveColor = (float4)1.f;
-float				g_fHDRIntensity = 0.f;
+float4					g_EmissiveColor = (float4)1.f;
+float					g_fHDRIntensity = 0.f;
 
 /* EnemyWisp Texture */
 texture2D      g_NoiseTexture;
@@ -34,13 +34,21 @@ float4         g_vColor;
 /* ~EnemyWisp Texture */
 
 /* Dissolve */
-texture2D      g_DissolveTexture;
-bool         g_bDissolve;
-float         g_fDissolveTime;
-float _DissolveSpeed = 0.2f;
-float _FadeSpeed = 1.5f;
+texture2D		g_DissolveTexture;
+bool			g_bDissolve;
+float			g_fDissolveTime;
+float			_DissolveSpeed = 0.2f;
+float			_FadeSpeed = 1.5f;
 /* ~Dissolve */
 
+/* Options */
+float			g_fUVSpeedX = 0.f;
+float			g_fUVSpeedY = 0.f;
+/* ~Options */
+
+/* For. EnemyHunter */
+float			g_fStringDissolve;
+float			g_fStringHDR;
 
 struct VS_IN
 {
@@ -586,7 +594,7 @@ PS_OUT PS_MAIN_BOMBCHARGEUP(PS_IN In)
 
 	float4 vLine = g_LineTexture.Sample(LinearSampler, In.vTexUV);
 
-	// fresnel_glow(±½±â(Å¬¼ö·Ï ¾ãÀ½), )
+	// fresnel_glow(ï¿½ï¿½ï¿½ï¿½(Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½), )
 	float  base = dot(In.vNormal.rgb, -In.vViewDir.rgb);
 	float  exponential = /*vMask * */pow(base, 2.f);
 	float4 fresnelcolor = float4(197.f, 57.f, 57.f, 13.f) / 255.f;
@@ -818,6 +826,36 @@ PS_OUT PS_MAIN_BOSS_AO_R_M_E(PS_IN In)
 	return Out;
 }// 12
 
+PS_OUT PS_MAIN_HUNTER_STRING(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2	texUV = In.vTexUV;
+	texUV.x += g_fUVSpeedX;
+	//texUV.y += g_fUVSpeedY;
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	float4	vMask = g_MaskTexture.Sample(LinearSampler, texUV);
+
+	float	vDiffuseR = vDiffuse.r;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.a = vMask.r;
+	if (0.1f > Out.vDiffuse.a)
+		discard;
+	vector      vAO_R_M = (vector)1.f;
+	Out.vDiffuse.rgb *= g_vColor.rgb;
+
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f,
+							g_fStringHDR, 0.f);
+	Out.vAmbient = vAO_R_M;
+
+	if (vDiffuseR < g_fStringDissolve)
+		discard;
+
+	return Out;
+} // 13
+
 technique11 DefaultTechnique
 {
 	// 0
@@ -965,7 +1003,6 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
 	}
-
 	//11
 	pass BOSS_AO_R_M
 	{
@@ -989,6 +1026,19 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_BOSS_AO_R_M_E();
+	}
+	// 13
+	pass HUNTER_STRING
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader	= compile vs_5_0 VS_MAIN();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN_HUNTER_STRING();
 	}
 
 }

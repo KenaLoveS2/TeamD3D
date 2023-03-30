@@ -82,11 +82,6 @@ void CRotWisp::Calc_RootBoneDisplacement(_fvector vDisplacement)
 	m_pTransformCom->Set_Translation(vPos, vDisplacement);
 }
 
-void CRotWisp::ImGui_AnimationProperty()
-{
-	m_pModelCom->Imgui_RenderProperty();
-}
-
 HRESULT CRotWisp::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimRotWispModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
@@ -186,9 +181,6 @@ HRESULT CRotWisp::SetUp_State()
 	{
 		m_pModelCom->ResetAnimIdx_PlayTime(ROTWISP_COLLECT);
 		m_pModelCom->Set_AnimIndex(ROTWISP_COLLECT);
-
-		_double		dDuration = m_pModelCom->Get_AnimationDuration();
-		m_pModelCom->Set_PlayTime(0.645 * dDuration);
 	})
 		.OnExit([this]()
 	{

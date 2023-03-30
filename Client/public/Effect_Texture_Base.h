@@ -37,7 +37,7 @@ private:
 	HRESULT							SetUp_TextureInfo();
 
 private: /* Tool Function */
-	void							Color(_int iTextureType);
+	void							ColorCode(_int iTextureType);
 
 private:
 	CShader*						m_pShaderCom;
@@ -54,8 +54,8 @@ private:
 
 
 public:
-	static CEffect_Texture_Base*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject*				Clone(void* pArg = nullptr) override;
-	virtual void						Free()			override;
+	static CEffect_Texture_Base*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*			Clone(void* pArg = nullptr) override;
+	virtual void					Free()			override;
 };
 END

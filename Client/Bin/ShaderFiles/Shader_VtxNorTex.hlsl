@@ -3,8 +3,8 @@
 /**********Constant Buffer***********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vBrushPos;
-float			g_fBrushRange = 5.f;
-float			g_fFar = 500.f;
+float				g_fBrushRange = 5.f;
+float				g_fFar = 300.f;
 /*************************************/
 /* 재질정보 */
 

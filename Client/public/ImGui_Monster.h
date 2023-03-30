@@ -32,7 +32,7 @@ private:
 	_bool						m_bSaveWrite = false;
 	string						m_strFileName;
 	wstring						m_wstrSelectedProtoName;
-	_int						m_iRoomIndex = 0;
+
 
 public:
 	static	CImGui_Monster*		Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext, void* pArg = nullptr);

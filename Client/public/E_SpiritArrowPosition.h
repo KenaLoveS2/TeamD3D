@@ -27,7 +27,6 @@ public:
 
 private:
 	_bool	m_bChildActive = false;
-	_float  m_fDurationTime = 0.0f;
 
 public:
 	static  CE_SpiritArrowPosition* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
