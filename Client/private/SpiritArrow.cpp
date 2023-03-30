@@ -308,6 +308,9 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vFireCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float4());
 			m_vFireCamPos = CGameInstance::GetInstance()->Get_CamPosition();
 
+			_float4	vTargetPos = m_vFireCamPos + m_vFireCamLook * m_fDistance;
+			m_pTransformCom->LookAt(vTargetPos);
+
 			vector<CEffect_Base*>* pChilds = m_vecChild[EFFECT_POSITION]->Get_vecChild();
 			for (auto pChild : *pChilds)
 				pChild->Set_Active(false);
@@ -361,9 +364,12 @@ CSpiritArrow::ARROWSTATE CSpiritArrow::Check_State()
 			m_vecChild[EFFECT_POSITION]->Set_Active(false);
 			m_vecChild[EFFECT_HIT]->Set_Active(true);
 		}
-		if (m_fInjectFireTime > 5.f)
+		if (m_fInjectFireTime > 10.f)
 		{
-			Reset();
+			eState = CSpiritArrow::ARROW_HIT;
+			m_vecChild[EFFECT_TRAIL]->Set_Active(false);
+			m_vecChild[EFFECT_POSITION]->Set_Active(false);
+			m_vecChild[EFFECT_HIT]->Set_Active(false);
 		}
 	}
 	else if (m_eCurState == CSpiritArrow::ARROW_HIT)
@@ -489,9 +495,6 @@ void CSpiritArrow::Update_State(_float fTimeDelta)
 	case CSpiritArrow::ARROW_INJECT_FIRE:
 		{
 			m_fInjectFireTime += fTimeDelta;
-
-			_float4	vTargetPos = m_vFireCamPos + m_vFireCamLook * m_fDistance;
-			m_pTransformCom->LookAt(vTargetPos);
 
 			m_pTransformCom->Go_Straight(fTimeDelta);
 

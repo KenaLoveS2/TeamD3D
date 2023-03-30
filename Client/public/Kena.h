@@ -35,7 +35,8 @@ public:
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
 		STATE_PULSE, STATE_PARRY,
-		STATE_JUMP, STATERETURN_END };
+		STATE_JUMP,
+		STATE_BOSSBATTLE, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -147,6 +148,7 @@ private:
 	_bool						m_bAim = false;
 	_bool						m_bBow = false;
 	_bool						m_bInjectBow = false;
+	_bool						m_bFindArrow = false;
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
@@ -160,6 +162,8 @@ private:
 	_float						m_fGravity = 9.81f;
 	_float						m_fInitJumpSpeed;
 	_float						m_fCurJumpSpeed;
+
+	_bool						m_bBossBattle = false;
 
 	_bool						m_bRotWispInteractable = false;
 	_bool						m_bChestInteractable = false;

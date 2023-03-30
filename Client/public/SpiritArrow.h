@@ -50,7 +50,7 @@ private:
 	_float						m_fMaxScale = 2.f;
 	_float						m_fScalePosRate = 0.35f;
 	_float						m_fInjectScale = 1.f;
-	_float						m_fMaxInjectScale = 1.3f;
+	_float						m_fMaxInjectScale = 3.f;
 	_float						m_fInjectFireTime = 0.f;
 
 	_float						m_fMinDistance = 10.f;

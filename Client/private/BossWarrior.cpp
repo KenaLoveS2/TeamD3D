@@ -354,6 +354,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
 		m_bSpawn = true;
+		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, true);
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
@@ -829,6 +830,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
+		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, false);
 	})
 
 
@@ -1383,6 +1385,10 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;

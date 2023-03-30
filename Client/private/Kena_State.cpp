@@ -107,11 +107,11 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 	m_ePreDir = m_eDir;
 
 	/* Arrow */
-	if (m_pKena->m_bBow == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurArrowCount() > 0)
+	if (m_pKena->m_bFindArrow == true && m_pKena->m_pCurArrow == nullptr && m_pStatus->Get_CurArrowCount() > 0)
 	{
 		for (auto pArrow : m_pKena->m_vecArrow)
 		{
-			if (pArrow->IsActive() == false)
+			if (pArrow->IsActive() == false && pArrow->Get_CurrentState() == CSpiritArrow::ARROWSTATE_END)
 			{
 				m_pKena->m_pCurArrow = pArrow;
 				m_pKena->m_pCurArrow->Reset();
@@ -120,10 +120,10 @@ void CKena_State::Late_Tick(_double dTimeDelta)
 			}
 		}
 	}
-
+	
 	if (m_pKena->m_bBow == false && m_pKena->m_pCurArrow != nullptr)
 	{
-		if (m_pKena->m_pCurArrow->Get_CurrentState() >= CSpiritArrow::ARROW_FIRE)
+		if (m_pKena->m_pCurArrow->Get_CurrentState() >= CSpiritArrow::ARROW_FIRE && m_pKena->m_pCurArrow->Get_CurrentState() != CSpiritArrow::ARROWSTATE_END)
 		{
 			m_pStatus->Set_CurArrowCount(m_pStatus->Get_CurArrowCount() - 1);
 			m_pKena->m_pCurArrow = nullptr;
@@ -4419,6 +4419,7 @@ void CKena_State::Start_Bow_Charge(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4432,6 +4433,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4445,6 +4447,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4458,6 +4461,7 @@ void CKena_State::Start_Bow_Charge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4471,6 +4475,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4484,6 +4489,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4497,6 +4503,7 @@ void CKena_State::Start_Bow_Charge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4510,6 +4517,7 @@ void CKena_State::Start_Bow_Charge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4523,6 +4531,7 @@ void CKena_State::Start_Bow_Charge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4800,6 +4809,7 @@ void CKena_State::Start_Bow_Recharge(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4813,6 +4823,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4826,6 +4837,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4839,6 +4851,7 @@ void CKena_State::Start_Bow_Recharge_Run_Forward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4852,6 +4865,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4865,6 +4879,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4878,6 +4893,7 @@ void CKena_State::Start_Bow_Recharge_Run_Backward_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4891,6 +4907,7 @@ void CKena_State::Start_Bow_Recharge_Run_Left(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -4904,6 +4921,7 @@ void CKena_State::Start_Bow_Recharge_Run_Right(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 
 	CUI_ClientManager::UI_PRESENT eAim = CUI_ClientManager::AIM_;
 	CUI_ClientManager::UI_FUNCTION eFunc = CUI_ClientManager::FUNC_DEFAULT;
@@ -5266,6 +5284,7 @@ void CKena_State::Start_Bow_Air_Charge(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 }
 
 void CKena_State::Start_Bow_Air_Charge_Loop(_float fTimeDelta)
@@ -5286,6 +5305,7 @@ void CKena_State::Start_Bow_Air_Recharge(_float fTimeDelta)
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
+	m_pKena->m_bFindArrow = true;
 }
 
 void CKena_State::Start_Bow_Air_Release(_float fTimeDelta)
@@ -7093,11 +7113,13 @@ void CKena_State::End_Bomb_Air_Cancel(_float fTimeDelta)
 void CKena_State::End_Bow_Charge(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Charge_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Charge_Full(_float fTimeDelta)
@@ -7140,11 +7162,13 @@ void CKena_State::End_Bow_Release_Run(_float fTimeDelta)
 void CKena_State::End_Bow_Recharge(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Recharge_Run(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Return(_float fTimeDelta)
@@ -7195,6 +7219,7 @@ void CKena_State::End_Bow_Air_Charge(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Air_Charge_Loop(_float fTimeDelta)
@@ -7207,6 +7232,7 @@ void CKena_State::End_Bow_Air_Recharge(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;
+	m_pKena->m_bFindArrow = false;
 }
 
 void CKena_State::End_Bow_Air_Release(_float fTimeDelta)

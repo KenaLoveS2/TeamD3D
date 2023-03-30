@@ -137,6 +137,10 @@ const _bool CKena::Get_State(STATERETURN eState) const
 		return m_bJump;
 		break;
 
+	case STATE_BOSSBATTLE:
+		return m_bBossBattle;
+		break;
+
 	default:
 		return false;
 	}
@@ -207,6 +211,10 @@ void CKena::Set_State(STATERETURN eState, _bool bValue)
 
 	case STATE_JUMP:
 		m_bJump = bValue;
+		break;
+
+	case STATE_BOSSBATTLE:
+		m_bBossBattle = bValue;
 		break;
 
 	default:
