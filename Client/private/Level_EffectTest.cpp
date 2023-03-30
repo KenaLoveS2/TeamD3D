@@ -201,16 +201,28 @@ HRESULT CLevel_EffectTest::Ready_Layer_Effect(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pGameObject = nullptr;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_ShamanBossPlate"), L"ShamanBossPlate")))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_EnrageAttack"), L"TestEffect", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_ShamanBossHandPlane"), L"ShamanBossHandPlane")))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Hieroglyph"), L"Warrior_Hieroglyph", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_ShamanThunderCylinder"), L"ShamanThunderCylinder")))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Distortion_Plane"), L"Distortion_Plane", nullptr, &pGameObject)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_ShamanSummons"), L"ShamanSummons")))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"Warrior_ShockFrontExtended", nullptr, &pGameObject)))
+		return E_FAIL;
+
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_Root"), L"Warrior_Root", nullptr, &pGameObject)))
+		return E_FAIL;*/
+		
+	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Warrior_FireSwipe"), L"Warrior_FireSwipe", nullptr, &pGameObject)))
+		return E_FAIL;*/
+		
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Swipes_Charged", nullptr, &pGameObject)))
+		return E_FAIL;
+		
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_RotBombExplosion"), L"RotBombExplosion", nullptr, &pGameObject)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

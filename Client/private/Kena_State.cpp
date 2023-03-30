@@ -82,7 +82,12 @@ void CKena_State::Tick(_double dTimeDelta)
 	if (m_pKena->m_bSprint == true)
 		m_pTransform->Set_Speed(7.f);
 	else if (m_pKena->m_bAim == true)
-		m_pTransform->Set_Speed(3.5f);
+	{
+		if (m_pKena->m_bInjectBow == true)
+			m_pTransform->Set_Speed(1.5f);
+		else
+			m_pTransform->Set_Speed(3.5f);
+	}
 	else if (m_pKena->m_bPulse == true)
 		m_pTransform->Set_Speed(2.f);
 	else
@@ -778,6 +783,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -791,6 +797,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -804,6 +811,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -817,6 +825,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -830,6 +839,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -843,6 +853,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -856,6 +867,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -869,6 +881,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_INTO", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -907,6 +920,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -919,6 +933,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -931,6 +946,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -943,6 +959,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -955,6 +972,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -967,6 +985,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -979,6 +998,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -991,6 +1011,7 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyDown_R, &CKena_State::Check_PipCount)
 		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
@@ -1213,8 +1234,124 @@ HRESULT CKena_State::SetUp_State_Bomb()
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"BOMB_CANCEL", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"BOMB_RELEASE", this, &CKena_State::MouseUp_Right)
-		.Init_Changer(L"BOMB_INTO_RUN", this, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOMB_LOOP", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN")
+		.Init_Start(this, &CKena_State::Start_Bomb_Run)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOMB_INJECT_RUN_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOMB_INJECT_RUN_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOMB_INJECT_RUN_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOMB_INJECT_RUN_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOMB_INJECT_RUN_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bomb_Inject_Run_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bomb_Inject_Run)
+		.Init_End(this, &CKena_State::End_Bomb_Inject_Run)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"RUNNING_JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOMB_INJECT_RUN", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOMB_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOMB_CANCEL_RUN", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"BOMB_RELEASE_RUN", this, &CKena_State::MouseUp_Right)
+		.Init_Changer(L"BOMB_LOOP_RUN", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -1303,6 +1440,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1314,6 +1452,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1325,6 +1464,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1336,6 +1476,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1347,6 +1488,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1358,6 +1500,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1369,6 +1512,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1380,6 +1524,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1417,6 +1562,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1428,6 +1574,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1439,6 +1586,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1450,6 +1598,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1461,6 +1610,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1472,6 +1622,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1483,6 +1634,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1493,6 +1645,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_Tick(this, &CKena_State::Tick_Bow_Charge_Full_Run)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
 		.Init_End(this, &CKena_State::End_Bow_Charge_Full_Run)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"BOW_CHARGE_FULL_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_FULL", this, &CKena_State::KeyInput_None)
@@ -1530,6 +1683,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1540,6 +1694,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1550,6 +1705,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1560,6 +1716,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1570,6 +1727,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1580,6 +1738,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1590,6 +1749,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1600,6 +1760,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Charge_Loop_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_CHARGE_LOOP_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_CHARGE_LOOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1749,6 +1910,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1760,6 +1922,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1771,6 +1934,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1782,6 +1946,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1793,6 +1958,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1804,6 +1970,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1815,6 +1982,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1826,6 +1994,7 @@ HRESULT CKena_State::SetUp_State_Bow()
 		.Init_End(this, &CKena_State::End_Bow_Recharge_Run)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
 		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Check_PipCount, &CKena_State::KeyDown_R)
 		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"BOW_RECHARGE", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"BOW_RELEASE_RUN", this, &CKena_State::MouseUp_Left)
@@ -1956,22 +2125,321 @@ HRESULT CKena_State::SetUp_State_Bow_Inject()
 		.Init_Tick(this, &CKena_State::Tick_Bow_Inject)
 		.Init_End(this, &CKena_State::End_Bow_Inject)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
+		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
+		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::MouseUp_Left)
 		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk)
+		.Init_Changer(L"BOW_INJECT_WALK_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOW_INJECT_WALK_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOW_INJECT_WALK_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOW_INJECT_WALK_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOW_INJECT_WALK_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOW_INJECT_WALK_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOW_INJECT_WALK_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOW_INJECT_WALK_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		
+		.Add_State(L"BOW_INJECT_WALK_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
+		
+		.Add_State(L"BOW_INJECT_WALK_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Walk_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"BOW_INJECT_LOOP")
 		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop)
 		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Loop)
 		.Init_End(this, &CKena_State::End_Bow_Inject_Loop)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
+
+		.Add_State(L"BOW_INJECT_LOOP_WALK_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Walk)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_LOOP_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_LOOP", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::MouseUp_Left)
 
 		.Add_State(L"BOW_INJECT_RELEASE")
 		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release)
 		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Release)
 		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
 		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"BOW_RETURN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Loop_Walk)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_FORWARD_LEFT", this, &CKena_State::KeyInput_WA)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_FORWARD_RIGHT", this, &CKena_State::KeyInput_WD)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_BACKWARD_LEFT", this, &CKena_State::KeyInput_SA)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_BACKWARD_RIGHT", this, &CKena_State::KeyInput_SD)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_FORWARD", this, &CKena_State::KeyInput_W)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_BACKWARD", this, &CKena_State::KeyInput_S)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_LEFT", this, &CKena_State::KeyInput_A)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK_RIGHT", this, &CKena_State::KeyInput_D)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_FORWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Forward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_FORWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Forward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_FORWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Forward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_BACKWARD")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Backward)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_BACKWARD_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Backward_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_BACKWARD_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Backward_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_LEFT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Left)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"BOW_INJECT_RELEASE_WALK_RIGHT")
+		.Init_Start(this, &CKena_State::Start_Bow_Inject_Release_Walk_Right)
+		.Init_Tick(this, &CKena_State::Tick_Bow_Inject_Walk)
+		.Init_End(this, &CKena_State::End_Bow_Inject_Release)
+		.Init_Changer(L"TELEPORT_FLOWER", this, &CKena_State::Teleport_Flower)
+		.Init_Changer(L"AIM_RETURN", this, &CKena_State::KeyUp_LShift)
+		.Init_Changer(L"BOW_INJECT_RELEASE_WALK", this, &CKena_State::Direction_Change)
+		.Init_Changer(L"BOW_INJECT_RELEASE", this, &CKena_State::KeyInput_None)
+		.Init_Changer(L"BOW_RECHARGE_RUN", this, &CKena_State::MouseInput_Left, &CKena_State::Check_ArrowCount)
+		.Init_Changer(L"BOW_RETURN_RUN", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -2575,6 +3043,7 @@ HRESULT CKena_State::SetUp_State_Sprint()
 		.Init_Changer(L"JUMP_SQUAT", this, &CKena_State::KeyDown_Space)
 		.Init_Changer(L"INTO_PULSE", this, &CKena_State::KeyInput_E, &CKena_State::Check_Shield)
 		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"RUN", this, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"SPRINT_LEAN_LEFT")
@@ -3786,6 +4255,104 @@ void CKena_State::Start_Bomb_Inject(_float fTimeDelta)
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
 }
 
+void CKena_State::Start_Bomb_Inject_Run(_float fTimeDelta)
+{
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+	m_pKena->m_bJump = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Forward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_FORWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Backward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_BACKWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bomb_Inject_Run_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOMB_INJECT_RUN_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBomb = true;
+	m_pKena->m_bInjectBomb = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
 void CKena_State::Start_Bomb_Air_Into(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOMB_AIR_INTO");
@@ -4405,9 +4972,185 @@ void CKena_State::Start_Bow_Inject(_float fTimeDelta)
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
 }
 
+void CKena_State::Start_Bow_Inject_Walk(_float fTimeDelta)
+{
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_FORWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Forward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_FORWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Forward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_FORWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_BACKWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Backward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_BACKWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Backward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_BACKWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
+void CKena_State::Start_Bow_Inject_Walk_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_WALK_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.5f);
+}
+
 void CKena_State::Start_Bow_Inject_Loop(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BOW_INJECT_LOOP");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk(_float fTimeDelta)
+{
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_FORWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Forward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_FORWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Forward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_FORWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_BACKWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Backward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_BACKWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Backward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_BACKWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = true;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Loop_Walk_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_LOOP_WALK_RIGHT");
 
 	m_pKena->m_bAim = true;
 	m_pKena->m_bBow = true;
@@ -4419,7 +5162,79 @@ void CKena_State::Start_Bow_Inject_Release(_float fTimeDelta)
 	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE");
 
 	m_pKena->m_bAim = true;
-	m_pKena->m_bBow = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Forward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_FORWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Forward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_FORWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Forward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_FORWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Backward(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_BACKWARD");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Backward_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_BACKWARD_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Backward_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_BACKWARD_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Left(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_LEFT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = true;
+}
+
+void CKena_State::Start_Bow_Inject_Release_Walk_Right(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("BOW_INJECT_RELEASE_WALK_RIGHT");
+
+	m_pKena->m_bAim = true;
+	m_pKena->m_bBow = false;
 	m_pKena->m_bInjectBow = true;
 }
 
@@ -4861,6 +5676,7 @@ void CKena_State::Start_Into_Pulse(_float fTimeDelta)
 	m_pKena->m_bPulse = true;
 
 	CE_KenaPulse*	pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Type(CE_KenaPulse::PULSE_DEFAULT);
 	pPulse->Set_Active(true);
 	pPulse->Reset();
 }
@@ -4872,6 +5688,7 @@ void CKena_State::Start_Into_Pulse_From_Run(_float fTimeDelta)
 	m_pKena->m_bPulse = true;
 
 	CE_KenaPulse*	pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Type(CE_KenaPulse::PULSE_DEFAULT);
 	pPulse->Set_Active(true);
 	pPulse->Reset();
 }
@@ -5380,6 +6197,11 @@ void CKena_State::Tick_Bomb_Inject(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Bomb_Inject_Run(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
+}
+
 void CKena_State::Tick_Bomb_Air_Into(_float fTimeDelta)
 {
 	_float		fTimeRate = CGameInstance::GetInstance()->Get_TimeRate(L"Timer_60");
@@ -5484,6 +6306,11 @@ void CKena_State::Tick_Bow_Return_Run(_float fTimeDelta)
 
 void CKena_State::Tick_Bow_Inject(_float fTimeDelta)
 {
+}
+
+void CKena_State::Tick_Bow_Inject_Walk(_float fTimeDelta)
+{
+	Move(fTimeDelta, CTransform::DIR_LOOK);
 }
 
 void CKena_State::Tick_Bow_Inject_Loop(_float fTimeDelta)
@@ -6208,6 +7035,15 @@ void CKena_State::End_Bomb_Inject(_float fTimeDelta)
 	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
 }
 
+void CKena_State::End_Bomb_Inject_Run(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBomb = false;
+	m_pKena->m_bInjectBomb = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+}
+
 void CKena_State::End_Bomb_Air_Into(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
@@ -6302,6 +7138,15 @@ void CKena_State::End_Bow_Return_Run(_float fTimeDelta)
 }
 
 void CKena_State::End_Bow_Inject(_float fTimeDelta)
+{
+	m_pKena->m_bAim = false;
+	m_pKena->m_bBow = false;
+	m_pKena->m_bInjectBow = false;
+
+	CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 1.f);
+}
+
+void CKena_State::End_Bow_Inject_Walk(_float fTimeDelta)
 {
 	m_pKena->m_bAim = false;
 	m_pKena->m_bBow = false;

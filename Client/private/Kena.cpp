@@ -280,6 +280,9 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
+
+	m_fLinearDamping = 1.5f;
+	m_fAngularDamping = KENA_ANGULAR_DAMING;	
 	PxCapsuleDesc.fMass = KENA_MASS;
 	PxCapsuleDesc.fAngularDamping = KENA_ANGULAR_DAMING;
 	PxCapsuleDesc.fLinearDamping = KENA_LINEAR_DAMING;
@@ -290,7 +293,6 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fRestitution = 0.1f;
 
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_PLAYER));
-
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	m_pRendererCom->Set_PhysXRender(true);
 	m_pTransformCom->Set_PxPivotScale(vPivotScale);
@@ -433,6 +435,11 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
+
+	/*if (m_pTransformCom->IsFalling())
+	{
+		int i = 0;
+	}*/
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
@@ -912,31 +919,35 @@ void CKena::Imgui_RenderProperty()
 
 	_float2	Shield{ m_pKenaStatus->Get_Shield(), m_pKenaStatus->Get_MaxShield() };
 	ImGui::InputFloat2("Shield", (_float*)&Shield, "%.3f", ImGuiInputTextFlags_ReadOnly);
-
+	
 	_float2	ShieldCoolTime{ m_pKenaStatus->Get_CurShieldCoolTime(), m_pKenaStatus->Get_InitShieldCoolTime() };
 	ImGui::InputFloat2("Shield CoolTime", (_float*)&ShieldCoolTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	_float2	ShieldRecoveryTime{ m_pKenaStatus->Get_CurShieldRecoveryTime(), m_pKenaStatus->Get_InitShieldRecoveryTime() };
 	ImGui::InputFloat2("Shield Recovery Time", (_float*)&ShieldRecoveryTime, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	/*
-	// TEST
-	public: // TEMP
-	_float m_fLinearDamping = 1.f, m_fAngularDamping = 0.5f, m_fMass = 20000.f;
+	// TEST	
 	ImGui::DragFloat("Linear Damping", &m_fLinearDamping, 0.01f, -100.f, 100.0f);	
 	ImGui::DragFloat("Angular Damping", &m_fAngularDamping, 0.01f, -100.f, 100.0f);
-	ImGui::DragFloat("Mass", &m_fMass, 1.f, 0.f, 500000.f);	
-	PxRigidDynamic* pDynamic = (PxRigidDynamic*)m_pTransformCom->Get_Actor();
-	pDynamic->setLinearDamping(m_fLinearDamping);
-	pDynamic->setAngularDamping(m_fAngularDamping);
-	pDynamic->setMass(m_fMass);
-	*/
+	ImGui::DragFloat("Mass", &m_fMass, 10.f, 0.f, FLT_MAX);
+	
+	if (GetKeyState(VK_RETURN) & 0x8000)
+	{
+		PxRigidDynamic* pDynamic = (PxRigidDynamic*)m_pTransformCom->Get_Actor();
+		pDynamic->setLinearDamping(m_fLinearDamping);
+		pDynamic->setAngularDamping(m_fAngularDamping);
+		pDynamic->setMass(m_fMass);
+
+	}
+	
 	__super::Imgui_RenderProperty();
 }
 
 void CKena::ImGui_AnimationProperty()
 {
 	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
+	m_vecArrow[0]->Imgui_RenderProperty();
 
 	ImGui::BeginTabBar("Kena Animation & State");
 
@@ -1520,6 +1531,7 @@ HRESULT CKena::SetUp_State()
 	m_pModelCom->Set_RootBone("kena_RIG");
 	m_pModelCom->Set_BoneIndex(L"../Bin/Data/Animation/Kena BoneInfo.json");
 	m_pAnimation = CAnimationState::Create(this, m_pModelCom, "kena_RIG", "../Bin/Data/Animation/Kena.json");
+	m_pAnimation->Set_RootAnimation("IDLE");
 
 	return S_OK;
 }
@@ -1963,7 +1975,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	/* Terrain */
 	if (m_bJump)
 	{
-		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY || iColliderIndex == COL_GROUND || iColliderIndex == COL_ENVIROMENT)
+		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY || iColliderIndex == (_int)COL_GROUND || iColliderIndex == (_int)COL_ENVIROMENT)
 		{
 			m_bOnGround = true;
 			m_bJump = false;
@@ -1973,12 +1985,12 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 	}
 	else
 	{
-		if (pTarget == nullptr || iColliderIndex == COLLISON_DUMMY) return 0;
+		if (pTarget == nullptr || iColliderIndex == (_int)COLLISON_DUMMY) return 0;
 
 		CGameObject* pGameObject = nullptr;
 
 		_bool bRealAttack = false;
-		if (iColliderIndex == COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
 		{
 			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
 			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
@@ -1999,7 +2011,7 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_pAttackObject = pTarget;
 		}
 
-		if (iColliderIndex == COL_PLAYER_WEAPON)
+		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
 		{
 			/* Increase Pip Guage */
 			m_pKenaStatus->Plus_CurPIPGuage(0.2f);

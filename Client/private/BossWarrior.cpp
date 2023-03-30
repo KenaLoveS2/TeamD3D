@@ -6,7 +6,7 @@
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
-
+#include "ControlRoom.h"
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -138,6 +138,10 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
@@ -241,6 +245,8 @@ void CBossWarrior::Imgui_RenderProperty()
 
 void CBossWarrior::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	if (ImGui::CollapsingHeader("BossWarrior"))
 	{
 		ImGui::BeginTabBar("BossWarrior Animation & State");
@@ -371,6 +377,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
+
+
 		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
@@ -792,7 +800,12 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pKena->Dead_FocusRotIcon(this);
 		m_bDying = true;
 
-		g_bDayOrNight = true;
+		/*
+		HW.For.MapGimmick
+		  Map Change  03_30 TestøÎ¿” */
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -1166,7 +1179,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	_matrix matUpSocket = UpMatrix * matWorld;
 	_matrix matCenterSocket = CenterMatrix * matWorld;
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matCenterSocket.r[3];
 	_vector vRight = XMVector3Normalize(matUpSocket.r[3] - vPosition);
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
@@ -1192,7 +1205,7 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matSocket.r[3];
 	_vector vRight = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); 
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));

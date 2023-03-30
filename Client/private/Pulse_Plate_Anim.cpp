@@ -238,9 +238,9 @@ void CPulse_Plate_Anim::Pulse_Plate_AnimControl(_float fTimeDelta)
 
 		if (m_EnviromentDesc.iRoomIndex == 2 && !m_bSecondCinema)
 		{
-			CGameInstance::GetInstance()->Work_Camera(TEXT("CINE_CAM1"));
+	/*		CGameInstance::GetInstance()->Work_Camera(TEXT("CINE_CAM1"));
 			dynamic_cast<CCinematicCamera*>(CGameInstance::GetInstance()->Get_WorkCameraPtr())->Play();
-			m_bSecondCinema = true;
+			m_bSecondCinema = true;*/
 		}
 	}
 
