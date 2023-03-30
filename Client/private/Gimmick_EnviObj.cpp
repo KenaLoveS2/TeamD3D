@@ -68,6 +68,18 @@ void CGimmick_EnviObj::Tick(_float fTimeDelta)
 		m_bColliderOn = true;
 	}
 
+	/* To do */
+
+	if(m_EnviromentDesc.iRoomIndex == 4)
+	{
+		/*
+		 if ==  Boss Dead
+		
+			m_bGimmick_Active =true;
+			Gimmik_Start(m_bGimmick_Active);
+		*/
+	
+	}
 }
 
 void CGimmick_EnviObj::Late_Tick(_float fTimeDelta)
@@ -201,8 +213,6 @@ _bool CGimmick_EnviObj::Gimmik_Start(_float fTimeDelta)
 	if (m_bGimmick_Active == false)
 		return false;
 
-	if (m_EnviromentDesc.iRoomIndex == 2)
-		_bool b = false;
 	_bool bResult = false;
 
 	switch (m_EnviromentDesc.eChapterType)

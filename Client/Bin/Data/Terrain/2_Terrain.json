@@ -3,8 +3,24 @@
   "Terrain_Data": [
     {
 
-      "10_Transform State": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 
-                              -29.5, 1.186, 485.107, 1.0 ],
+      "10_Transform State": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -29.5,
+        1.186,
+        485.107,
+        1.0
+      ],
       "1_CloneTag": "Terrain2",
       "2_DiffuseTag": "Prototype_Component_Texture_Terrain",
       "3_FillterTag": "Prototype_Component_Terrain_Three_Filter",
@@ -14,7 +30,7 @@
       "7_FillterTwo_TextureNum": 2,
       "8_FillterThree_TextureNum": 4,
       "9_Height_TextureNum": 2,
-      "11_iRoomIndex" : 3
+      "11_iRoomIndex": 3
     }
   ]
 }

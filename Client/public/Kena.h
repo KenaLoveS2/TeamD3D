@@ -5,9 +5,9 @@
 #include "delegator.h"
 #include "Model.h"
 
-#define KENA_LINEAR_DAMING		1.f
+#define KENA_LINEAR_DAMING		0.5f
 #define KENA_ANGULAR_DAMING		0.5f
-#define KENA_MASS				25000.f
+#define KENA_MASS				100000.f * 1.1f
 
 
 BEGIN(Engine)
@@ -35,7 +35,8 @@ public:
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
 		STATE_PULSE, STATE_PARRY,
-		STATE_JUMP, STATERETURN_END };
+		STATE_JUMP,
+		STATE_BOSSBATTLE, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -116,12 +117,12 @@ private:
 	class CMonster* m_pTargetMonster = nullptr;
 
 private:
-	vector<class CKena_Parts*>				m_vecPart;
-	vector<class CSpiritArrow*>				m_vecArrow;
+	vector<class CKena_Parts*>					m_vecPart;
+	vector<class CSpiritArrow*>					m_vecArrow;
 	class CSpiritArrow*							m_pCurArrow = nullptr;
-	vector<class CRotBomb*>					m_vecBomb;
+	vector<class CRotBomb*>						m_vecBomb;
 	class CRotBomb*								m_pCurBomb = nullptr;
-	map<const string, class CEffect_Base*>	m_mapEffect;
+	map<const string, class CEffect_Base*>		m_mapEffect;
 	vector<_float4>								m_vecWeaposPos;
 
 private:
@@ -133,13 +134,13 @@ private:
 	_bool						m_bParryLaunch = false;
 	_uint						m_iCurParryFrame = 12;
 	_uint						m_iParryFrameCount = 12;
-	CGameObject*			m_pAttackObject = nullptr;
+	CGameObject*				m_pAttackObject = nullptr;
 	_float						m_fHitStopTime = 0.f;
 	_bool						m_bLocalMoveLock = false;
 	_bool						m_bCommonHit = false;
 	_bool						m_bHeavyHit = false;
-	_float4					m_vDamagedDir;
-	DAMAGED_FROM			m_eDamagedDir;
+	_float4						m_vDamagedDir;
+	DAMAGED_FROM				m_eDamagedDir;
 
 	_bool						m_bSprint = false;
 	_bool						m_bTeleportFlower = false;
@@ -147,6 +148,7 @@ private:
 	_bool						m_bAim = false;
 	_bool						m_bBow = false;
 	_bool						m_bInjectBow = false;
+	_bool						m_bFindArrow = false;
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
@@ -161,6 +163,8 @@ private:
 	_float						m_fInitJumpSpeed;
 	_float						m_fCurJumpSpeed;
 
+	_bool						m_bBossBattle = false;
+
 	_bool						m_bRotWispInteractable = false;
 	_bool						m_bChestInteractable = false;
 
@@ -170,18 +174,29 @@ private:
 
 	/* Shader */
 	_float						m_fSSSAmount = 0.01f;
-	_float4					m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
-	_float4					m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
-	_float4					m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4						m_vSSSColor = _float4(0.8f, 0.7f, 0.6f, 1.f);
+	_float4						m_vMulAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4						m_vEyeAmbientColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float						m_fLashWidth = 10.f;
 	_float						m_fLashDensity = 10.f;
 	_float						m_fLashIntensity = 10.f;
 
-	_float m_fChangeColorTime = 0.f;
+	void                        RimColorValue();
+	_bool						m_bHitRim = false;
+	_bool						m_bParryRim = false;
+	_float						m_fHitRimIntensity = 0.f;
+	_float						m_fParryRimIntensity = 0.f;
 
+public:
+	const  _bool&					Get_HitRim() const { return m_bHitRim; }
+	const  _float&					Get_HitRimIntensity() const { return m_fHitRimIntensity; }
+	const  _bool&					Get_ParryRim() const { return m_bParryRim; }
+	const  _float&					Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
+
+private:
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
-	CUI_FocusMonster*		m_pUI_FocusMonster;
+	CUI_FocusMonster*			m_pUI_FocusMonster;
 
 private:
 	HRESULT					Ready_Parts();
@@ -194,7 +209,7 @@ private:
 
 	HRESULT					SetUp_State();
 	HRESULT					SetUp_UI();
-	void						Update_Collider(_float fTimeDelta);
+	void					Update_Collider(_float fTimeDelta);
 
 private:
 	DAMAGED_FROM			Calc_DirToMonster(CGameObject* pTarget);
@@ -240,6 +255,9 @@ public:
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*	Get_KenaStatusPtr() { return m_pKenaStatus; }
+
+	public: // TEMP
+		_float m_fLinearDamping = 1.f, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = 100000.f;
 };
 
 END

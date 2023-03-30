@@ -6,7 +6,7 @@
 #include "E_WarriorTrail.h"
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
-
+#include "ControlRoom.h"
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -61,7 +61,7 @@ HRESULT CBossWarrior::Initialize(void* pArg)
 		* XMMatrixTranslation(m_vWeaPonPivotTrans.x, m_vWeaPonPivotTrans.y, m_vWeaPonPivotTrans.z));
 		
 	XMStoreFloat4x4(&m_RightLegPivotMatrix, XMMatrixTranslation(m_vRightLegPivotTrans.x, m_vRightLegPivotTrans.y, m_vRightLegPivotTrans.z));
-	
+
 	return S_OK;
 }
 
@@ -138,30 +138,15 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	}
 
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
+
+	for (auto& Pair : m_mapEffect)
+		Pair.second->Late_Initialize(nullptr);
+
 	return S_OK;
 }
 
 void CBossWarrior::Tick(_float fTimeDelta)
 {
-	/*m_pModelCom->Play_Animation(fTimeDelta);
-	Update_Collider(fTimeDelta);
-	m_pHat->Tick(fTimeDelta);
-	return;*/
-
-	//__super::Tick(fTimeDelta);
-
-	//Update_Collider(fTimeDelta);
-	//Update_Trail("Halberd_Jnt6");
-	//m_pHat->Tick(fTimeDelta);
-
-	//for (auto& pEffect : m_mapEffect)
-	//	pEffect.second->Tick(fTimeDelta);
-
-	//m_pModelCom->Play_Animation(fTimeDelta);
-	//AdditiveAnim(fTimeDelta);
-
-	//return;
-
 	if (m_bDeath) return;
 
 	__super::Tick(fTimeDelta);
@@ -211,7 +196,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_EMISSIVE, "g_EmissiveTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M_E);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M_E);
 		}
 		else if(i == 1)
 		{
@@ -219,7 +204,7 @@ HRESULT CBossWarrior::Render()
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 			m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_AO_R_MTexture");
 			//m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ALPHA, "g_OpacityTexture");
-			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", BOSS_AO_R_M);
+			m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", AO_R_M);
 		}
 	}
 	return S_OK;
@@ -260,6 +245,8 @@ void CBossWarrior::Imgui_RenderProperty()
 
 void CBossWarrior::ImGui_AnimationProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	if (ImGui::CollapsingHeader("BossWarrior"))
 	{
 		ImGui::BeginTabBar("BossWarrior Animation & State");
@@ -355,7 +342,9 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->ResetAnimIdx_PlayTime(AWAKE);
 		m_pModelCom->Set_AnimIndex(AWAKE);
 
-				/* HP Bar Active */
+		g_bDayOrNight = false;
+
+		/* HP Bar Active */
 		CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 		_float fValue = 10.f; /* == BossWarrior Name */
 		m_BossWarriorDelegator.broadcast(eBossHP, fValue);
@@ -365,6 +354,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);		
 		m_bSpawn = true;
+		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, true);
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
@@ -388,6 +378,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
+
+
 		return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
@@ -454,17 +446,20 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		Attack_End(&m_iCloseAttackIndex, WARRIR_CLOSE_ATTACK_COUNT, IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
@@ -485,7 +480,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
@@ -495,7 +491,8 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("CHARGE_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(UPPER_CUT);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(UPPER_CUT);
 	})
 		
 
@@ -511,17 +508,20 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("COMBO_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(COMBO_ATTACK);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(COMBO_ATTACK);
 	})
 
 
@@ -538,17 +538,20 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("SWEEP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(SWEEP_ATTACK);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(SWEEP_ATTACK);
 	})
 
 
@@ -584,6 +587,7 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
+		m_mapEffect["W_Trail"]->Set_Active(false);
 		m_bRealAttack = false;
 		m_pModelCom->Set_AnimIndex(IDLE_LOOP);
 	})
@@ -702,23 +706,25 @@ HRESULT CBossWarrior::SetUp_State()
 	})
 		.OnExit([this]()
 	{
-		m_mapEffect["W_FireSwipe"]->Set_Active(false);
 		Attack_End(&m_iFarAttackIndex, WARRIR_FAR_ATTACK_COUNT, IDLE_LOOP);
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
-		return m_pMonsterStatusCom->IsDead();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return m_pMonsterStatusCom->IsDead();
 	})
 		.AddTransition("To PARRIED", "PARRIED")
 		.Predicator([this]()
 	{
-		return IsParried();
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return IsParried();
 	})
 		.AddTransition("JUMP_ATTACK to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(TRIP_UPPERCUT);
+				m_mapEffect["W_Trail"]->Set_Active(false);
+				return AnimFinishChecker(TRIP_UPPERCUT);
 	})
 
 
@@ -793,7 +799,14 @@ HRESULT CBossWarrior::SetUp_State()
 		m_pModelCom->Set_AnimIndex(DEATH);
 
 		m_pKena->Dead_FocusRotIcon(this);
-		m_bDying = true;		
+		m_bDying = true;
+
+		/*
+		HW.For.MapGimmick
+		  Map Change  03_30 TestøÎ¿” */
+		CControlRoom* pCtrlRoom = static_cast<CControlRoom*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_ControlRoom", L"ControlRoom"));
+		pCtrlRoom->DeadZoneObject_Change(true);
+
 	})
 		.AddTransition("DYING to DEATH_SCENE", "DEATH_SCENE")
 		.Predicator([this]()
@@ -817,6 +830,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		m_pTransformCom->Clear_Actor();
 		Clear_Death();
+		m_pKena->Set_State(CKena::STATE_BOSSBATTLE, false);
 	})
 
 
@@ -1167,7 +1181,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	_matrix matUpSocket = UpMatrix * matWorld;
 	_matrix matCenterSocket = CenterMatrix * matWorld;
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matCenterSocket.r[3];
 	_vector vRight = XMVector3Normalize(matUpSocket.r[3] - vPosition);
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
@@ -1193,7 +1207,7 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 	_matrix matSocket = matrix * m_pTransformCom->Get_WorldMatrix();
 	_matrix matWorld = m_pTransformCom->Get_WorldMatrix();
 
-	_vector vLook = matWorld.r[2] * -1.f;
+	_vector vLook = XMVector3Normalize(matWorld.r[2] * -1.f);
 	_vector vPosition = matSocket.r[3];
 	_vector vRight = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); 
 	_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
@@ -1371,6 +1385,10 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
+
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);
 			//m_bWeaklyHit = !m_bStronglyHit;

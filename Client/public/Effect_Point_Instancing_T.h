@@ -60,8 +60,8 @@ private:
 private:
 	const _tchar*                m_szVIBufferProtoTag = L"";
 	_float		                 m_fTimeDelta = 0.0f;
-	_float		                 m_fVIBufferTime = 0.0f;
 	vector<class CEffect_Trail*> m_vecTrailEffect;
+	_float					     m_fLife = 0.0f;
 
 public:
 	static CEffect_Point_Instancing_T* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* pProtoTag);

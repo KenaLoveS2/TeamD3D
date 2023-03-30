@@ -206,10 +206,10 @@ HRESULT CLevel_TestPlay::Ready_Layer_BackGround(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	CImgui_TerrainEditor::LoadFilterData("0_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
-	CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("1_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("2_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("3_Terrain.json");
+	//CImgui_TerrainEditor::LoadFilterData("4_Terrain.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -220,11 +220,11 @@ HRESULT CLevel_TestPlay::Ready_Layer_Enviroment(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Test_Parkour.json");C
 	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_0.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
-	CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_1.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_2.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_3.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_4.json");
+	//CImgui_MapEditor::Load_MapObjects(g_LEVEL, "Instancing_Forest_map_5.json");
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -430,7 +430,7 @@ HRESULT CLevel_TestPlay::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CLevel_TestPlay::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
 	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain1_2_Monster.json");
-	CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
+	//CImGui_Monster::Load_MonsterObjects(g_LEVEL, "Terrain3_Monster.json");
 	return S_OK;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);

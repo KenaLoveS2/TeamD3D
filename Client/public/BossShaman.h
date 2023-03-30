@@ -66,13 +66,11 @@ private:
 		SWORD_RENDER_END,
 	};
 
-public:
-	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossShamanDelegator;
-
 private:
 	SWORD_RENDER m_eSwordRenderState = NO_RENDER;
 	_float m_fSwordDissolveTime = 0.f;
 
+	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossShamanDelegator;
 
 
 	_float m_fIdleTimeCheck = 0.f;
@@ -119,30 +117,30 @@ public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
 	virtual HRESULT			Late_Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
-	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
-	virtual void			Imgui_RenderProperty() override;
-	virtual void			ImGui_AnimationProperty() override;
-	virtual void			ImGui_ShaderValueProperty() override;
-	virtual void			ImGui_PhysXValueProperty() override;
+	virtual void					Imgui_RenderProperty() override;
+	virtual void					ImGui_AnimationProperty() override;
+	virtual void					ImGui_ShaderValueProperty() override;
+	virtual void					ImGui_PhysXValueProperty() override;
 	virtual HRESULT			Call_EventFunction(const string& strFuncName) override;
-	virtual void			Push_EventFunctions() override;
+	virtual void					Push_EventFunctions() override;
 
 protected:
-	virtual  HRESULT		SetUp_State() override;
+	virtual  HRESULT			SetUp_State() override;
 	virtual	HRESULT			SetUp_Components() override;
 	virtual	HRESULT			SetUp_ShaderResources() override;
-	virtual  HRESULT		SetUp_ShadowShaderResources() override;
-
-public:
-	HRESULT Ready_Effects();
-	void	Update_Trail(const char* pBoneTag);
+	virtual  HRESULT			SetUp_ShadowShaderResources() override;
 
 private:
 	void	Update_Collider(_float fTimeDelta) override;
 	void	AdditiveAnim(_float fTimeDelta) override;
+
+	public:
+		HRESULT Ready_Effects();
+		void	Update_Trail(const char* pBoneTag);
 
 private:
 	void Set_AttackType();

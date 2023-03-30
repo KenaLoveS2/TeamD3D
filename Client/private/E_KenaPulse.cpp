@@ -145,28 +145,28 @@ HRESULT CE_KenaPulse::Late_Initialize(void* pArg)
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
-    if (m_eEFfectDesc.bActive == false)
-        return;
+	if (m_eEFfectDesc.bActive == false)
+   		return;
 
-    __super::Tick(fTimeDelta);
+	__super::Tick(fTimeDelta);
 
-    m_fTimeDelta += fTimeDelta;
-    if (m_bDesolve)
-    {
-        m_fDissolveTime += fTimeDelta;
-        if (m_fDissolveTime > 3.f)
-        {
-            m_bDesolve = false;
-            m_fDissolveTime = 0.0f;
-        }
-    }
-    else
-        m_fDissolveTime = 0.0f;
+	m_fTimeDelta += fTimeDelta;
+	if (m_bDesolve)
+	{
+		m_fDissolveTime += fTimeDelta;
+		if (m_fDissolveTime > 3.f)
+		{
+			m_bDesolve = false;
+			m_fDissolveTime = 0.0f;
+		}
+	}
+	else
+		m_fDissolveTime = 0.0f;
 
-    _float3 vScaled = m_pTransformCom->Get_Scaled();
-    switch (m_ePulseType)
-    {
-    case Client::CE_KenaPulse::PULSE_DEFAULT:
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+	switch (m_ePulseType)
+	{
+	case Client::CE_KenaPulse::PULSE_DEFAULT:
 
         m_eEFfectDesc.iPassCnt = 1;
 

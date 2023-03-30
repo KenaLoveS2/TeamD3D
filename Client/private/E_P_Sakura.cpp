@@ -2,7 +2,6 @@
 #include "..\public\E_P_Sakura.h"
 #include "GameInstance.h"
 
-
 CE_P_Sakura::CE_P_Sakura(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEnviromentObj(pDevice, pContext)
 {
@@ -28,10 +27,6 @@ HRESULT CE_P_Sakura::Initialize(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
-
-
-	
-
 
 	return S_OK;
 }
@@ -157,6 +152,7 @@ CGameObject * CE_P_Sakura::Clone(void * pArg)
 void CE_P_Sakura::Free()
 {
 	__super::Free();
+	
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

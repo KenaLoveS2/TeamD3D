@@ -140,11 +140,11 @@ HRESULT CCinematicCamera::Initialize(void* pArg)
 
 void CCinematicCamera::Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	ImGui::Begin("CinematicCam");
-	Imgui_RenderProperty();
-	ImGui::End();
-#endif
+//#ifdef _DEBUG
+//	ImGui::Begin("CinematicCam");
+//	Imgui_RenderProperty();
+//	ImGui::End();
+//#endif
 
 	m_iNumKeyFrames = (_uint)m_keyframes.size();
 
@@ -190,7 +190,25 @@ void CCinematicCamera::Tick(_float fTimeDelta)
 		}
 
 		if (m_fDeltaTime <= m_keyframes.back().fTime && !m_bPausePlay)
+		{
 			m_fDeltaTime += fTimeDelta;
+			if(m_fDeltaTime >= m_keyframes.back().fTime * 0.5f)
+			{
+				CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
+				_bool bVal = true;
+
+				if (m_iChatIndex >= (int)m_vecChat.size())
+				{
+					bVal = false;
+					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[0]);
+				}
+				else
+				{
+					m_CinemaDelegator.broadcast(eChat, bVal, fTemp, m_vecChat[m_iChatIndex]);
+					m_iChatIndex++;
+				}
+			}
+		}		
 		else
 		{
 			m_bPlay = false;
