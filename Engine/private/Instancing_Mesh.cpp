@@ -9,7 +9,7 @@ CInstancing_Mesh::CInstancing_Mesh(ID3D11Device * pDevice, ID3D11DeviceContext *
 {
 }
 
-CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
+CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh& rhs)
 	: CVIBuffer_Instancing(rhs)
 	, m_eType(rhs.m_eType)
 	, m_iMaterialIndex(rhs.m_iMaterialIndex)
@@ -22,9 +22,9 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh & rhs)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
 	, m_iNumInstance_Origin(rhs.m_iNumInstance_Origin)
+	, m_fInstancingEffect_Speed(rhs.m_fInstancingEffect_Speed)
 	
 {
-
 	m_Bones.reserve(rhs.m_Bones.size());
 
 	if (rhs.m_Bones.size() || m_eType == CModel::TYPE_NONANIM)
@@ -270,6 +270,30 @@ void CInstancing_Mesh::InstBufferSize_Update(_int iSize)
 
 void CInstancing_Mesh::Set_PxTriangle(vector<_float4x4*> VecInstancingMatrix)
 {
+
+}
+
+void CInstancing_Mesh::InstaincingMesh_EffectTick(_float yLimitPos, _float fTimeDelta)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y <= yLimitPos)
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pInstancingPositions[i].y;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pInstancingPositions[i].x;
+		}
+		else
+		{
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.x -= m_fInstancingEffect_Speed[i] * fTimeDelta;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= m_fInstancingEffect_Speed[i] * fTimeDelta;
+		}
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
 
 }
 
@@ -645,6 +669,101 @@ void CInstancing_Mesh::SetUp_BoneMatrices(_float4x4 * pBoneMatrices, _fmatrix Pi
 	}
 }
 
+void CInstancing_Mesh::Set_InstanceMeshEffect(CTransform* pParentTransform,_int iInstanceNum, _float fMinSpeed, _float fMaxSpeed)
+{
+	m_pInstancingPositions.clear();
+	if (m_fInstancingEffect_Speed != nullptr)
+		Safe_Delete_Array(m_fInstancingEffect_Speed);
+
+	m_iNumInstance = m_iNumInstance_Origin = iInstanceNum;
+	m_iNumPrimitive = m_iOriginNumPrimitive * m_iNumInstance;
+	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_BufferDesc.StructureByteStride = 0;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	m_BufferDesc.MiscFlags = 0;
+
+	/*Instancing_ Mesh*/
+	FACEINDICES32* pIndices = new FACEINDICES32[m_iNumPrimitive];
+	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
+
+	_uint		iNumFaces = 0;
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		for (_uint j = 0; j < m_iOriginNumPrimitive; ++j)
+		{
+			pIndices[iNumFaces]._0 = m_pIndices[j]._0;
+			pIndices[iNumFaces]._1 = m_pIndices[j]._1;
+			pIndices[iNumFaces]._2 = m_pIndices[j]._2;
+			++iNumFaces;
+		}
+	}
+
+	Safe_Release(m_pIB);
+	m_pIB = nullptr;
+
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pIndices;
+
+	if (FAILED(__super::Create_IndexBuffer()))
+		assert(!"Instancing Create Issue");
+
+	Safe_Delete_Array(pIndices);
+
+#pragma endregion
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;					//Rock UnLock을 하겠다.
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.StructureByteStride = m_iInstanceStride;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//Rock UnLock을 하겠다.
+	m_BufferDesc.MiscFlags = 0;
+
+	_float4x4 Parentmat = pParentTransform->Get_WorldMatrixFloat4x4();
+
+	VTXMATRIX* pInstanceVertices = new VTXMATRIX[m_iNumInstance];
+	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX) * m_iNumInstance);
+
+	_float4 vParentPos;
+	memcpy(&vParentPos, &Parentmat.m[3], sizeof(_float4));
+
+	m_fInstancingEffect_Speed = new float[m_iNumInstance];
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float4 vRandomPos = _float4(0.f, 0.f, 0.f, 1.f);
+		vRandomPos.x  += CUtile::Get_RandomFloat(-35.f, 35.f);
+		vRandomPos.y += CUtile::Get_RandomFloat(0.f, 10.f);
+		vRandomPos.z += CUtile::Get_RandomFloat(-25.f, 25.f);
+
+
+		memcpy(&pInstanceVertices[i].vRight, &Parentmat.m[0], sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vUp, &Parentmat.m[1], sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vLook, &Parentmat.m[2], sizeof(_float4));
+		memcpy(&pInstanceVertices[i].vPosition, &vRandomPos, sizeof(_float4));
+
+		m_pInstancingPositions.push_back(vRandomPos);
+
+		m_fInstancingEffect_Speed[i] = CUtile::Get_RandomFloat(fMinSpeed, fMaxSpeed);
+	}
+	Safe_Release(m_pInstanceBuffer);
+	m_pInstanceBuffer = nullptr;
+	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
+	m_SubResourceData.pSysMem = pInstanceVertices;
+
+	m_pDevice->CreateBuffer(&m_BufferDesc, &m_SubResourceData, &m_pInstanceBuffer);
+
+
+	Safe_Delete_Array(pInstanceVertices);
+
+
+}
+
 _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapterGimmcik,_float fTimeDelta)
 {
 	if (eChapterGimmcik == CEnviromentObj::CHAPTER::Gimmick_TYPE_GO_UP)
@@ -1011,7 +1130,10 @@ void CInstancing_Mesh::Free()
 	{
 		Safe_Delete_Array(m_pAnimVertices);
 		Safe_Delete_Array(m_pNonAnimVertices);
+
 		Safe_Delete_Array(m_pIndices);
+		Safe_Delete_Array(m_fInstancingEffect_Speed);
+
 	}
 
 	m_pInstancingPositions.clear();

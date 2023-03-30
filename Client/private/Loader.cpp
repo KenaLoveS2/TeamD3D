@@ -88,6 +88,7 @@
 #include "DZ_FallenTree_Anim.h"
 #include "Chest_Anim.h"
 #include "HatCart.h"
+#include "E_P_Sakura.h"
 /* UI */
 #include "BackGround.h"
 #include "Effect_Particle_Base.h"
@@ -388,14 +389,28 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 
 	_bool bRealObject = true;
-	_bool bFlowerCheck = true;
+	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
 
 #else
 #pragma region Test_Gimmick_OBJ
-	if (bRealObject == false)
+	if (bFlowerCheck == true)
 	{
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Sakura_Flower",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/Sakura_Flower.mdat"),
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/Sakura_Flower.json", false))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_CherryBlossomTreeAlive",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.mdat"), 
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.json", false))))
+			return E_FAIL;
+
+	
+
 	}
 #pragma endregion
 
@@ -409,8 +424,16 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForHO((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
-		return E_FAIL;
+	// Prototype_GameObject_RotForMonster
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RotForMonster"), CRotForMonster::Create(m_pDevice, m_pContext)))) return E_FAIL;
+
+	// Prototype_Component_Model_Rot
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Rot",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Anim/Rot/Rot.mdat"), PivotMatrix)))) return E_FAIL;
+
+	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
+		return E_FAIL;*/
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	
@@ -434,46 +457,58 @@ HRESULT CLoader::Loading_ForMapTool()
 #endif 
 
 #pragma region Map_Four
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Sakura", true, true, true)))
-		assert(!"Sakura");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Bell", true, true, true)))
-		assert(!"Map4/Bell");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Beam", true, true, true)))
-		assert(!"Map4/FarmEntranceStructure/Beam");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Pillar", true, true, true)))
-		assert(!"Map4/FarmEntranceStructure/Pillar");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Root", true, true, true)))
-		assert(!"Map4/FarmEntranceStructure/Root");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Structure", true, true, true)))
-		assert(!"Map4/FarmEntranceStructure/Structure");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Tree_Rock", true, true, true)))
-		assert(!"Map4/FarmEntranceStructure/Tree_Rock");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Forge", true, true, true)))
-		assert(!"Map4/Forge");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/BirdHouse", true, true, true)))
-		assert(!"Map4/HouseKit/BirdHouse");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainGate", true, true, true)))
-		assert(!"Map4/HouseKit/MainGate");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainHouse", true, true, true)))
-		assert(!"Map4/HouseKit/MainHouse");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/Rock", true, true, true)))
-		assert(!"Map4/HouseKit/Rock");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Arena", true, true, true)))
-		assert(!"Map4/LightHouse/Arena");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/BigRoots", true, true, true)))
-		assert(!"Map4/HouseKit/BigRoots");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/LightHouse", true, true, true, false, true)))
-		assert(!"Map4/LightHouse/LightHouse");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Roots", true, true, true)))
-		assert(!"Map4/LightHouse/Roots");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Structure", true, true, true)))
-		assert(!"Map4/LightHouse/Structure");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/RusuHut", true, true, true)))
-		assert(!"Map4/RusuHut");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true,false,true)))
-		assert(!"Map4/SummoningRoom");
-	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true)))
-		assert(!"VillageCart");
+	if(bRealObject==true)
+	{
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Sakura_Flower",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/Sakura_Flower.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/Sakura_Flower.json", false))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_CherryBlossomTreeAlive",
+			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.json", false))))
+			return E_FAIL;
+
+
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Bell", true, true, true)))
+			assert(!"Map4/Bell");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Beam", true, true, true)))
+			assert(!"Map4/FarmEntranceStructure/Beam");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Pillar", true, true, true)))
+			assert(!"Map4/FarmEntranceStructure/Pillar");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Root", true, true, true)))
+			assert(!"Map4/FarmEntranceStructure/Root");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Structure", true, true, true)))
+			assert(!"Map4/FarmEntranceStructure/Structure");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/FarmEntranceStructure/Tree_Rock", true, true, true)))
+			assert(!"Map4/FarmEntranceStructure/Tree_Rock");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/Forge", true, true, true)))
+			assert(!"Map4/Forge");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/BirdHouse", true, true, true)))
+			assert(!"Map4/HouseKit/BirdHouse");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainGate", true, true, true)))
+			assert(!"Map4/HouseKit/MainGate");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/MainHouse", true, true, true)))
+			assert(!"Map4/HouseKit/MainHouse");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/HouseKit/Rock", true, true, true)))
+			assert(!"Map4/HouseKit/Rock");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Arena", true, true, true)))
+			assert(!"Map4/LightHouse/Arena");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/BigRoots", true, true, true)))
+			assert(!"Map4/HouseKit/BigRoots");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/LightHouse", true, true, true, false, true)))
+			assert(!"Map4/LightHouse/LightHouse");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Roots", true, true, true)))
+			assert(!"Map4/LightHouse/Roots");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/LightHouse/Structure", true, true, true)))
+			assert(!"Map4/LightHouse/Structure");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/RusuHut", true, true, true)))
+			assert(!"Map4/RusuHut");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map4/SummoningRoom", true, true, true, false, true)))
+			assert(!"Map4/SummoningRoom");
+		if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "VillageCart", true, true, true)))
+			assert(!"VillageCart");
+	}
 #pragma endregion Map_Four
 
 
@@ -1304,6 +1339,11 @@ HRESULT CLoader::Loading_ForMapTool()
 		return E_FAIL;
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
 		CHatCart::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_Sakura */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sakura"),
+		CE_P_Sakura::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("Loading End."));
 
@@ -2366,8 +2406,15 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 
 #pragma region Map_Four
-	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Sakura", true, true, true)))
-		assert(!"Sakura");
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Sakura_Flower",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/Sakura_Flower.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/Sakura_Flower.json", false))))
+		return E_FAIL;
+
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_CherryBlossomTreeAlive",
+		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.mdat"), PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/CherryBlossomTreeAlive.json", false))))
+		return E_FAIL;
 
 	if (FAILED(LoadNonAnimFolderModel(iLevelIndex, "Map4/Bell", true, true, true)))
 		assert(!"Map4/Bell");
@@ -2897,6 +2944,11 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HatCart"),
 		CHatCart::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sakura */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sakura"),
+		CE_P_Sakura::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion HHW_OBJ
 
