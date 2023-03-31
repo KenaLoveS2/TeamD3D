@@ -201,6 +201,7 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
+    <ClInclude Include="..\public\CPortalPlane.h" />
     <ClInclude Include="..\Public\Crystal.h" />
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
@@ -457,6 +458,7 @@
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
+    <ClCompile Include="..\private\CPortalPlane.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
@@ -702,6 +704,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Bokeh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\BokehCS.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
@@ -727,6 +731,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\SSAO.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

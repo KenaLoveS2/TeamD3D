@@ -541,6 +541,9 @@
     <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke">
       <UniqueIdentifier>{ac036bdd-26ba-47cf-9e9f-7d98dd494687}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Portal">
+      <UniqueIdentifier>{1cda863c-f2e2-4196-88d3-5aafc8355def}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1364,24 +1367,6 @@
     <ClInclude Include="..\public\E_Warriorcloud.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSummons.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossPlate.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSmoke.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_Swipes_Charged.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1399,6 +1384,9 @@
     </ClInclude>
     <ClInclude Include="..\public\E_P_Sakura.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CPortalPlane.h">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2200,24 +2188,6 @@
     <ClCompile Include="..\private\E_Warriorcloud.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSummons.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
@@ -2241,6 +2211,9 @@
     </ClCompile>
     <ClCompile Include="..\private\E_P_Sakura.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CPortalPlane.cpp">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2335,10 +2308,19 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
       <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl">
-      <Filter>97.ShaderFiles\Effect</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Bokeh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\BokehCS.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSAO.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
