@@ -3,8 +3,8 @@
 #include "GameInstance.h"
 
 
-CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: CEffect_Base_S2(pDevice,pContext)
+CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CEffect_Base_S2(pDevice, pContext)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
 	, m_pTextureCom(nullptr)
@@ -12,7 +12,7 @@ CEffect_Particle_Base::CEffect_Particle_Base(ID3D11Device * pDevice, ID3D11Devic
 {
 }
 
-CEffect_Particle_Base::CEffect_Particle_Base(const CEffect_Particle_Base & rhs)
+CEffect_Particle_Base::CEffect_Particle_Base(const CEffect_Particle_Base& rhs)
 	: CEffect_Base_S2(rhs)
 	, m_pRendererCom(nullptr)
 	, m_pShaderCom(nullptr)
@@ -29,7 +29,7 @@ HRESULT CEffect_Particle_Base::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEffect_Particle_Base::Initialize(void * pArg)
+HRESULT CEffect_Particle_Base::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -55,7 +55,7 @@ HRESULT CEffect_Particle_Base::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CEffect_Particle_Base::Late_Initialize(void * pArg)
+HRESULT CEffect_Particle_Base::Late_Initialize(void* pArg)
 {
 	//CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	//CKena* pKena = dynamic_cast<CKena*>(pGameInstance->Get_GameObjectPtr(
@@ -71,6 +71,15 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 {
 	if (!m_bActive)
 		return;
+
+	if (m_pVIBufferCom != nullptr)
+	{
+		if (m_pVIBufferCom->Is_Finished())
+		{
+			m_bActive = false;
+			return;
+		}
+	}
 
 	__super::Tick(fTimeDelta);
 
@@ -124,13 +133,18 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		/* RenderPass */
 		static _int iRenderPass;
 		iRenderPass = m_iRenderPass;
-		const char* renderPass[3] = { "DefaultHaze", "BlackHaze", "BlackGather" };
-		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 3, 5))
+		const char* renderPass[4] = { "DefaultHaze", "BlackHaze", "BlackGather", "AlphaBlendHaze" };
+		if (ImGui::ListBox("RenderPass", &iRenderPass, renderPass, 4, 5))
 			m_iRenderPass = iRenderPass;
 
 		/* Color */
 		ColorCode();
 	}
+
+
+	/* Options(UV Animation, Sprite Animation, etc...) */
+	if (ImGui::CollapsingHeader("Options"))
+		Options();
 
 	/* Buffer Update */
 	if (ImGui::CollapsingHeader(" > Update Buffer"))
@@ -140,13 +154,13 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 
 		CVIBuffer_Point_Instancing_S2::POINTINFO tInfo;
 		using pointType = CVIBuffer_Point_Instancing_S2::POINTINFO::TYPE;
-		ZeroMemory(&tInfo, sizeof(tInfo)); 
+		ZeroMemory(&tInfo, sizeof(tInfo));
 		tInfo = m_pVIBufferCom->Get_Info();
 
 		/* Type */
 		static _int iType = tInfo.eType;
-		const char* list[3] = { "Haze", "Gather", "Parabola" };
-		ImGui::ListBox("Type", &iType, list, 3, 5);
+		const char* list[4] = { "Haze", "Gather", "Parabola", "Spread" };
+		ImGui::ListBox("Type", &iType, list, 4, 5);
 		tInfo.eType = (pointType)iType;
 
 		/* NumInstance */
@@ -205,13 +219,16 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 			vMinPos = tInfo.vMinPos;
 			vMaxPos = tInfo.vMaxPos;
 			fPlaySpeed = tInfo.fPlaySpeed;
-		} 
+		}
 		ImGui::SameLine(); ImGui::PushItemWidth(5);
-		
+
 		if (ImGui::Button("Update Confirm"))
 		{
 			if (FAILED(m_pVIBufferCom->Update_Buffer(&tInfo)))
 				MSG_BOX("The Update Process ended unexpectedly. Please Check the Code.");
+
+			if (m_bOptions[OPTION_SPRITE])
+				m_fFrameNow = 0.f;
 		}
 	}
 
@@ -235,6 +252,11 @@ HRESULT CEffect_Particle_Base::Save_Data()
 	ImGui::SetNextItemWidth(200);
 	ImGui::InputTextWithHint("##SaveData", "File Name", szSaveFileName, MAX_PATH);
 	ImGui::SameLine();
+
+	if (ImGui::Button("Reset FileName"))
+		strcpy_s(szSaveFileName, MAX_PATH, m_strEffectTag.c_str());
+	ImGui::SameLine();
+
 	if (ImGui::Button("Save"))
 		ImGuiFileDialog::Instance()->OpenDialog("Select File", "Select", ".json", "../Bin/Data/Effect_UI/", szSaveFileName, 0, nullptr, ImGuiFileDialogFlags_Modal);
 
@@ -304,6 +326,18 @@ HRESULT CEffect_Particle_Base::Save_Data()
 
 			json["18. fPlaySpeed"] = tInfo.fPlaySpeed;
 
+
+			for (_uint i = 0; i < OPTION_END; ++i)
+				json["20. Options"].push_back(m_bOptions[i]);
+
+			for (_uint i = 0; i < 2; ++i)
+			{
+				json["21. UVSpeed"].push_back(m_fUVSpeeds[i]);
+				json["22. SpriteFrames"].push_back(m_iFrames[i]);
+			}
+			json["23. SpriteSpeed"] = m_fFrameSpeed;
+
+
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
 			file.close();
@@ -341,7 +375,7 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 
 	jLoad["01. TextureIndex"].get_to<_int>(m_iTextureIndex);
 	jLoad["02. RenderPass"].get_to<_int>(m_iRenderPass);
-	
+
 	i = 0;
 	for (auto fElement : jLoad["03. Color"])
 		fElement.get_to<_float>(*((_float*)&m_vColor + i++));
@@ -386,7 +420,51 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
+
+	i = 0;
+	if (jLoad.contains("20. Options"))
+	{
+		for (auto bOption : jLoad["20. Options"])
+			bOption.get_to<_bool>(m_bOptions[i++]);
+	}
+
+	i = 0;
+	if (jLoad.contains("21. UVSpeed"))
+	{
+		for (auto fElement : jLoad["21. UVSpeed"])
+			fElement.get_to<_float>(m_fUVSpeeds[i++]);
+	}
+
+	i = 0;
+	if (jLoad.contains("22. SpriteFrames"))
+	{
+		for (auto fElement : jLoad["22. SpriteFrames"])
+			fElement.get_to<_int>(m_iFrames[i++]);
+	}
+
+	if (jLoad.contains("23. SpriteSpeed"))
+		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
+
+
+
 	return S_OK;
+}
+
+void CEffect_Particle_Base::Activate(_float4 vPos)
+{
+	m_bActive = true;
+	m_pTransformCom->Set_Position(vPos);
+}
+
+void CEffect_Particle_Base::Activate(CGameObject* pTarget)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+}
+
+void CEffect_Particle_Base::DeActivate()
+{
+	m_bActive = false;
 }
 
 HRESULT CEffect_Particle_Base::SetUp_Components()
@@ -417,7 +495,7 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -439,6 +517,32 @@ HRESULT CEffect_Particle_Base::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRItensity", &m_fHDRIntensity, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsSpriteAnim", &m_bOptions[OPTION_SPRITE], sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_IsUVAnim", &m_bOptions[OPTION_UV], sizeof(_bool))))
+		return E_FAIL;
+
+	if (m_bOptions[OPTION_UV])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedX", &m_fUVMove[0], sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fUVSpeedY", &m_fUVMove[1], sizeof(_float))))
+			return E_FAIL;
+
+	}
+
+	if (m_bOptions[OPTION_SPRITE])
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrames", &m_iFrames[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrames", &m_iFrames[1], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_XFrameNow", &m_iFrameNow[0], sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_YFrameNow", &m_iFrameNow[1], sizeof(_int))))
+			return E_FAIL;
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -452,22 +556,22 @@ HRESULT CEffect_Particle_Base::SetUp_Buffer()
 	tInfo.fTerm = 10.0f;
 	tInfo.fTermAcc = 0.0f;
 	tInfo.iNumInstance = 50;
-	tInfo.vPSize = {0.10f, 0.10f};
+	tInfo.vPSize = { 0.10f, 0.10f };
 	tInfo.vSpeedMin = { -0.10f, 0.10f, -0.10f };
 	tInfo.vSpeedMax = { 0.10f, 0.50f, 0.10f };
 	tInfo.vMinPos = { -3.0f, 0.0f, -3.0f };
 	tInfo.vMaxPos = { 3.0f, 0.0f, 3.0f };
 
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_VIBuffer_PtInstancing_S2"), TEXT("Com_VIBuffer")
-		,(CComponent**)&m_pVIBufferCom, &tInfo)))
+		, (CComponent**)&m_pVIBufferCom, &tInfo)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CEffect_Particle_Base * CEffect_Particle_Base::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CEffect_Particle_Base* CEffect_Particle_Base::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CEffect_Particle_Base * pInstance = new CEffect_Particle_Base(pDevice, pContext);
+	CEffect_Particle_Base* pInstance = new CEffect_Particle_Base(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -477,9 +581,9 @@ CEffect_Particle_Base * CEffect_Particle_Base::Create(ID3D11Device * pDevice, ID
 	return pInstance;
 }
 
-CGameObject * CEffect_Particle_Base::Clone(void * pArg)
+CGameObject* CEffect_Particle_Base::Clone(void* pArg)
 {
-	CEffect_Particle_Base * pInstance = new CEffect_Particle_Base(*this);
+	CEffect_Particle_Base* pInstance = new CEffect_Particle_Base(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
