@@ -26,6 +26,13 @@ HRESULT CStatus::Initialize(void* pArg, CGameObject * pOwner)
 
 void CStatus::Tick(_float fTimeDelta)
 {
+	if (m_iHealAmount > 0)
+	{
+		m_iHP++;
+		m_iHealAmount--;
+
+		CUtile::Saturate<_int>(m_iHP, 0, m_iMaxHP);
+	}
 }
 
 void CStatus::Imgui_RenderProperty()

@@ -2951,6 +2951,23 @@ HRESULT CKena_State::SetUp_State_Pulse()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_RotAction()
+{
+	m_pStateMachine->Add_State(L"ROT_ACTION")
+		.Init_Start(this, &CKena_State::Start_Rot_Action)
+		.Init_Tick(this, &CKena_State::Tick_Rot_Action)
+		.Init_End(this, &CKena_State::End_Rot_Action)
+
+		.Add_State(L"ROT_ACTION_AIM")
+		.Init_Start(this, &CKena_State::Start_Rot_Action_Aim)
+		.Init_Tick(this, &CKena_State::Tick_Rot_Action_Aim)
+		.Init_End(this, &CKena_State::End_Rot_Action_Aim)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_Shield()
 {
 	m_pStateMachine->Add_State(L"SHIELD_IMPACT")
@@ -5865,6 +5882,24 @@ void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
 	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
 }
 
+void CKena_State::Start_Rot_Action(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ROT_ACTION");
+}
+
+void CKena_State::Start_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Start_Rot_Action_Aim(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ROT_ACTION_AIM");
+}
+
+void CKena_State::Start_Rot_Action_Aim_Run(_float fTimeDelta)
+{
+}
+
 void CKena_State::Start_Shield_Impact(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("SHIELD_IMPACT");
@@ -6768,6 +6803,22 @@ void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
 	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 }
 
+void CKena_State::Tick_Rot_Action(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Aim(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Aim_Run(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Shield_Impact(_float fTimeDelta)
 {
 }
@@ -7584,6 +7635,22 @@ void CKena_State::End_Pulse_Walk(_float fTimeDelta)
 void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	m_pKena->m_bSprint = false;
+}
+
+void CKena_State::End_Rot_Action(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Aim(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Aim_Run(_float fTimeDelta)
+{
 }
 
 void CKena_State::End_Shield_Impact(_float fTimeDelta)

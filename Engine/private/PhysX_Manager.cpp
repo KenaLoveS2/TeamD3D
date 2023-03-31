@@ -770,7 +770,12 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 		PxShapeFlags Flags = pShape->getFlags();
 
 		if (Flags.isSet(PxShapeFlag::eTRIGGER_SHAPE))
+		{
+// 			PxVec3	vDir = hit.block.position - origin;
+// 			_float	fDistance = distance - );
+// 			m_pScene->raycast(hit.block.position, direction, distance - )
 			return false;
+		}
 
 		if(pPositionOut)
 			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);

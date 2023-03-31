@@ -49,8 +49,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
@@ -251,9 +251,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
 
 	return S_OK;
 }
@@ -348,8 +350,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"Warrior_ShockFrontExtended", nullptr, &pGameObject)))
 		return E_FAIL;*/
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Boss_Swiped_Charged", nullptr, &pGameObject)))
-		return E_FAIL;
+	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Boss_Swiped_Charged", nullptr, &pGameObject)))
+		return E_FAIL;*/
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;

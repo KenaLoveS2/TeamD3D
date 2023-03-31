@@ -440,11 +440,6 @@ void CKena::Tick(_float fTimeDelta)
 	// if (CGameInstance::GetInstance()->IsWorkCamera(TEXT("DEBUG_CAM_1"))) return;	
 	//m_pKenaStatus->Set_Attack(20);
 #endif	
-
-	/*if (m_pTransformCom->IsFalling())
-	{
-		int i = 0;
-	}*/
 	
 	if (m_bAim && m_bJump)
 		CGameInstance::GetInstance()->Set_TimeRate(L"Timer_60", 0.3f);
@@ -481,6 +476,11 @@ void CKena::Tick(_float fTimeDelta)
  			m_pAttackObject = nullptr;
  		}
  	}
+
+	CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+	CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+	_float fGuage = m_pKenaStatus->Get_PercentHP();
+	m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
 
 	if (m_pAnimation->Get_Preview() == false)
 	{
@@ -1997,11 +1997,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		_bool bRealAttack = false;
 		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
 		{
-			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
-			_float fGuage = m_pKenaStatus->Get_PercentHP();
-			m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
-
 			for (auto& Effect : m_mapEffect)
 			{
 				if (Effect.first == "KenaDamage")

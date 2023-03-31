@@ -449,6 +449,7 @@ private:
 	HRESULT					SetUp_State_Mask();
 	HRESULT					SetUp_State_Meditate();
 	HRESULT					SetUp_State_Pulse();
+	HRESULT					SetUp_State_RotAction();
 	HRESULT					SetUp_State_Shield();
 	HRESULT					SetUp_State_Spin_Attack();
 	HRESULT					SetUp_State_Sprint();
@@ -743,6 +744,11 @@ private:
 	void						Start_Pulse_Walk_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Right(_float fTimeDelta);
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						Start_Rot_Action(_float fTimeDelta);
+	void						Start_Rot_Action_Run(_float fTimeDelta);
+	void						Start_Rot_Action_Aim(_float fTimeDelta);
+	void						Start_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						Start_Shield_Impact(_float fTimeDelta);
 	void						Start_Shield_Impact_Medium(_float fTimeDelta);
@@ -938,6 +944,11 @@ private:
 	void						Tick_Pulse_Parry(_float fTimeDelta);
 	void						Tick_Pulse_Walk(_float fTimeDelta);
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						Tick_Rot_Action(_float fTimeDelta);
+	void						Tick_Rot_Action_Run(_float fTimeDelta);
+	void						Tick_Rot_Action_Aim(_float fTimeDelta);
+	void						Tick_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						Tick_Shield_Impact(_float fTimeDelta);
 	void						Tick_Shield_Impact_Medium(_float fTimeDelta);
@@ -1133,6 +1144,11 @@ private:
 	void						End_Pulse_Parry(_float fTimeDelta);
 	void						End_Pulse_Walk(_float fTimeDelta);
 	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						End_Rot_Action(_float fTimeDelta);
+	void						End_Rot_Action_Run(_float fTimeDelta);
+	void						End_Rot_Action_Aim(_float fTimeDelta);
+	void						End_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						End_Shield_Impact(_float fTimeDelta);
 	void						End_Shield_Impact_Medium(_float fTimeDelta);

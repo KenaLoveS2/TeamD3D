@@ -13,6 +13,7 @@ protected:
 	_int m_iMaxHP = 0;
 	_int m_iHP = 0;
 	_int m_iAttack = 0;
+	_int m_iHealAmount = 0;
 
 protected:
 	CStatus(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -43,6 +44,7 @@ public:
 	inline _int Get_Attack() { return m_iAttack; }
 	inline _float Get_PercentHP() { return (_float)m_iHP / (_float)m_iMaxHP; }
 	void Add_CurrentHP(_int iValue);
+	void Add_HealAmount(_int iValue) { m_iHealAmount += iValue; }
 
 public:
 	inline void Set_MaxHP(_int iValue) { m_iMaxHP = iValue; }
