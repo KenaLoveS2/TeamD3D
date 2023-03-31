@@ -29,7 +29,9 @@ private:
 	CFSMComponent* m_pWorkFSM = nullptr;
 	CFSMComponent* m_pLiftFSM = nullptr;
 	CFSMComponent* m_pCuteFSM = nullptr;
-
+	class CE_TeleportRot* m_pTeleportRot = nullptr;
+	class CLiftRot_Master* m_pLiftRotMaster = nullptr;
+	
 private:
 	_bool m_bWakeUp = false;
 	_bool m_bCreateStart = false;		
@@ -87,8 +89,7 @@ public:
 	void Execute_LiftStart();
 	void Execute_LiftMoveStart();
 	void Execute_LiftMoveEnd();
-	void Execute_LiftDownEnd();
-	
+		
 	void Set_Type(TYPE eType) { m_pWorkFSM = eType == CUTE ? m_pCuteFSM : m_pLiftFSM; }
 
 	void Execute_StartCute(_float4& vCreatePos);
@@ -97,8 +98,10 @@ public:
 public:
 	_bool Get_LiftReady() { return m_bLiftReady;}	
 	_bool Get_LiftEnd() { return m_bLiftEnd; }
+	_bool Get_LiftDownEnd() { return m_bLiftDownEnd; }	
 	
-	void Set_NewPosition(_float4 vNewPos);
+	void Set_NewPosition(_float4 vNewPos, _float4 vLookPos);
+	void Set_OwnerLiftRotMasterPtr(class CLiftRot_Master* pLiftRotMaster) { m_pLiftRotMaster = pLiftRotMaster; }
 };
 
 END

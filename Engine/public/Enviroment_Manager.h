@@ -34,5 +34,7 @@ public:
 	void Tick(_float fTimeDelta);
 	
 	HRESULT Reserve_Manager(_uint iStartRoomIndex =0);
+
+	_uint Get_CurrentPlayerRoomIndex() { return m_iCurPlayer_RoomIndex; }	
 };
 END

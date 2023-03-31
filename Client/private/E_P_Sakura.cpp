@@ -34,7 +34,7 @@ HRESULT CE_P_Sakura::Initialize(void * pArg)
 HRESULT CE_P_Sakura::Late_Initialize(void* pArg)
 {
 
-	_int iInstanceNum = 600;
+	_int iInstanceNum = 450;
 	_float  fMinSpeed = 0.5f;
 	_float  fmaxSpeed = 2.0f;
 
@@ -46,10 +46,15 @@ HRESULT CE_P_Sakura::Late_Initialize(void* pArg)
 
 void CE_P_Sakura::Tick(_float fTimeDelta)
 {
-	//if(ImGui::Button("Late_init"))
-	//{
-	//	Late_Initialize();
-	//}
+#ifdef FOR_MAP_GIMMICK
+
+#else
+	if(m_bStart_InstMove == false)
+	{
+		Late_Initialize();
+		m_bStart_InstMove = true;
+	}
+#endif
 	__super::Tick(fTimeDelta);	
 
 	_matrix  WolrdMat = m_pTransformCom->Get_WorldMatrix();
@@ -57,6 +62,7 @@ void CE_P_Sakura::Tick(_float fTimeDelta)
 
 	if(!m_bStart_InstMove)
 		m_pModelCom->Instaincing_mesh_Effect_tick(0.f, fTimeDelta);
+
 }
 
 void CE_P_Sakura::Late_Tick(_float fTimeDelta)

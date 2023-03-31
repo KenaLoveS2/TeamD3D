@@ -16,9 +16,14 @@ private:
 	_float3 m_vInitPosition;
 	_float4 m_vMoveTargetPosition;
 	
+	_float fOffsetY = 0.1f;
+	_float3 m_vInitPivot = { 0.f, 1.2f, 0.f };	
+	_float3 m_vUpPivot = { m_vInitPivot.x, m_vInitPivot.y - fOffsetY, m_vInitPivot.z };
+	_float3 m_vNewPivot;
 
 	_bool m_bChoiceFlag = false;
 	_bool m_bMoveFlag = false;
+	_bool m_bLiftDownEndFlag = false;
 
 	class CKena *m_pKena = nullptr;
 	
@@ -34,13 +39,14 @@ private:
 		_float3(-2.f, 0.f, 2.f ),
 	};
 	
+	_float fTemp = 0.7f;
 	_float3 m_vRotLiftPosOffset[LIFT_ROT_COUNT] = {
-		_float3(1.2f, 0.f, 0.f), 
-		_float3(1.2f, 0.f, -1.2f),
-		_float3(1.2f, 0.f, 1.2f),
-		_float3(-1.2f, 0.f, 0.f),
-		_float3(-1.2f, 0.f, -1.2f),
-		_float3(-1.2f, 0.f, 1.2f),
+		_float3(1.f, 0.f, 0.f),
+		_float3(fTemp, 0.f, -fTemp),
+		_float3(1.f, 0.f, fTemp),
+		_float3(-1.f, 0.f, 0.f),
+		_float3(-fTemp, 0.f, -fTemp),
+		_float3(-1.f, 0.f, fTemp),
 	};
 
 	_float3 m_vPxPivotDist;

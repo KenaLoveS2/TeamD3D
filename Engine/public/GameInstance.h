@@ -221,6 +221,8 @@ public: /* For.PipeLine */
 		void	Set_PlayerPtr(class CGameObject* pPlayer);
 		_bool	Is_RenderIndex(_uint iObjRoomIndex);
 		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
+		_uint Get_CurrentPlayerRoomIndex();
+
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;

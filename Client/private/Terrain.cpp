@@ -65,7 +65,6 @@ HRESULT CTerrain::Late_Initialize(void * pArg)
 	m_pVIBufferCom->initialize_World(m_pTransformCom);
 
 	CGameInstance* pGameInst = CGameInstance::GetInstance();
-	/**/
 	m_pGroundMark = (CGroundMark*)pGameInst->Clone_GameObject(L"Prototype_GameObject_GroundMark");
 	if (m_pGroundMark == nullptr) return E_FAIL;
 
@@ -92,9 +91,11 @@ void CTerrain::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	return;
-	m_pGroundMark->Set_Position(m_vBrushPos + _float4(0.f, 1.f, 0.f, 0.f));
-	m_pGroundMark->Tick(fTimeDelta);
+	if (m_pGroundMark)
+	{
+		m_pGroundMark->Set_Position(m_vBrushPos + _float4(0.f, 1.f, 0.f, 0.f));
+		m_pGroundMark->Tick(fTimeDelta);
+	}
 }
 
 void CTerrain::Late_Tick(_float fTimeDelta)
@@ -104,18 +105,18 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	//CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
     
 #ifdef _DEBUG
-	//m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	//m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 
-	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
+
+	//CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	//CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #else
 	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	CGameInstance::GetInstance()->Is_Render_TerrainIndex(m_TerrainDesc.iRoomIndex) && m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 #endif
-	return;
-	m_pGroundMark->Late_Tick(fTimeDelta);
-	return;
+	if (m_pGroundMark)
+		m_pGroundMark->Late_Tick(fTimeDelta);
 }
 
 HRESULT CTerrain::Render()
@@ -320,11 +321,6 @@ CGameObject * CTerrain::Clone(void * pArg)
 void CTerrain::Free()
 {
 	__super::Free();
-
-	if (m_isCloned)
-	{
-		int i = 0;
-	}
 
 	Safe_Release(m_pGroundMark);
 
