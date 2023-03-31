@@ -175,8 +175,20 @@ HRESULT CLevel_TestPlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = _float4(0.0f, 0.0f, 0.0f, 1.f);
-	LightDesc.vPosition = _float4(100.f, 100.f, 100.f, 1.f);
+	LightDesc.vPosition = _float4(-100.f, 100.f, -100.f, 1.f);
 	LightDesc.szLightName = "DIRECTIONAL";
+
+	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
+
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	LightDesc.vPosition = _float4(13.f, 5.f, 9.f, 1.f);
+	LightDesc.fRange = 20.0f;
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
