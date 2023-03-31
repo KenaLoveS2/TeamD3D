@@ -1329,6 +1329,7 @@ _int CBossShaman::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 	{
 		if (m_bTraptLoop && iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_bTraptBreak = true;
 			return 0;
 		}
@@ -1338,9 +1339,10 @@ _int CBossShaman::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 			if (m_bNoDamage == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
-				CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
-				_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
-				m_BossShamanDelegator.broadcast(eBossHP, fGauge);
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
+			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
+			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
+			m_BossShamanDelegator.broadcast(eBossHP, fGauge);
 
 			m_pKenaHit->Set_Active(true);
 			m_pKenaHit->Set_Position(vCollisionPos);
@@ -1377,6 +1379,7 @@ _int CBossShaman::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);

@@ -32,7 +32,6 @@ private:
 	void			Imgui_RenderProperty() override;
 
 private:
-	PX_TRIGGER_DATA*		m_pTriggerData = nullptr;
 	_float4x4				m_SaveInitWorldMatrix;
 	
 public:

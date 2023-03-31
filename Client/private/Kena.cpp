@@ -276,8 +276,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	FAILED_CHECK_RETURN(Ready_Bombs(), E_FAIL);
 
 	_float3 vPos = _float3(0.f, 3.f, 0.f);
-	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f);
-	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);
+	_float3 vPivotScale = _float3(0.2f, 0.5f, 1.f); // _float3(0.2f, 3.f, 1.f);
+	_float3 vPivotPos = _float3(0.f, 0.7f, 0.f);  // _float3(0.f, 3.2f, 0.f);
 
 	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
@@ -475,7 +475,13 @@ void CKena::Tick(_float fTimeDelta)
  			m_eDamagedDir = Calc_DirToMonster(m_pAttackObject);
 
 			if (m_bPulse == false)
- 				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+			{
+				m_pKenaStatus->UnderAttack(((CMonster*)m_pAttackObject)->Get_MonsterStatusPtr());
+				CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
+				CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
+				_float fGuage = m_pKenaStatus->Get_PercentHP();
+				m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
+			} 				
  
  			m_bParry = false;
  			m_pAttackObject = nullptr;
@@ -1997,11 +2003,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 		_bool bRealAttack = false;
 		if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
 		{
-			CUI_ClientManager::UI_PRESENT eHP = CUI_ClientManager::HUD_HP;
-			CUI_ClientManager::UI_FUNCTION funcDefault = CUI_ClientManager::FUNC_DEFAULT;
-			_float fGuage = m_pKenaStatus->Get_PercentHP();
-			m_PlayerDelegator.broadcast(eHP, funcDefault, fGuage);
-
 			for (auto& Effect : m_mapEffect)
 			{
 				if (Effect.first == "KenaDamage")
@@ -2015,27 +2016,6 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_iCurParryFrame = 0;
 			m_pAttackObject = pTarget;
 		}
-
-		if (iColliderIndex == (_int)COL_PLAYER_WEAPON)
-		{
-			/* Increase Pip Guage */
-			m_pKenaStatus->Plus_CurPIPGuage(0.2f);
-				//for (auto& Effect : m_mapEffect)
-				//{
-				//	if (Effect.first == "KenaHit")
-				//	{
-				//		Effect.second->Set_Active(true);
-				//		Effect.second->Set_Position(vCollisionPos);
-				//	}
-				//}
-			
-			pGameObject->Set_Position(vCollisionPos);
-
-			// m_bCommonHit = true;
-			// m_bHeavyHit = true;
-		}
-
-		int temp = 0;
 	}
 
 	return 0;
@@ -2043,6 +2023,16 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 
 _int CKena::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	if (iColliderIndex == TRIGGER_DUMMY) return 0;
+
+	_bool bRealAttack = false;
+	if (iColliderIndex == (_int)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()) && m_bPulse == false)
+	{
+		m_bParry = true;
+		m_iCurParryFrame = 0;
+		m_pAttackObject = pTarget;
+	}
+
 	return 0;
 }
 

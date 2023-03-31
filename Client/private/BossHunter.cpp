@@ -1247,6 +1247,7 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 	{
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON && m_pKena->Get_State(CKena::STATE_ATTACK)))
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
@@ -1288,6 +1289,7 @@ _int CBossHunter::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos,
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			//m_bStronglyHit = m_pKena->Get_State(CKena::STATE_INJECTBOW);

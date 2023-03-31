@@ -53,8 +53,7 @@ private:
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;
-	PX_TRIGGER_DATA* m_pTriggerData = nullptr;
-
+	
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);

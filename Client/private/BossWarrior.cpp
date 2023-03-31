@@ -7,6 +7,8 @@
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
+#include "E_Warrior_FireSwipe.h"
+
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -70,8 +72,8 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 	// 몸통
 	{	
-		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f);
-		_float3 vPivotPos = _float3(0.f, 2.f, 0.f);
+		_float3 vPivotScale = _float3(0.8f, 1.f, 1.f); // _float3(0.8f, 3.f, 1.f); 
+		_float3 vPivotPos = _float3(0.f, 1.8f, 0.f);    // _float3(0.f, 3.8f, 0.f)
 
 		CPhysX_Manager::PX_CAPSULE_DESC PxCapsuleDesc;
 		PxCapsuleDesc.eType = CAPSULE_DYNAMIC;
@@ -93,7 +95,7 @@ HRESULT CBossWarrior::Late_Initialize(void* pArg)
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
 		// 여기 뒤에 세팅한 vPivotPos를 넣어주면된다.
-		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, _float3(0.f, 2.f, 0.f));
+		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 	}
 	
 	{	
@@ -1188,7 +1190,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 
 	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
 	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
-	m_mapEffect["W_FireSwipe"]->Set_Active(true);
+	m_mapEffect["W_FireSwipe"]->Set_Active(true);		
 }
 
 void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
@@ -1345,6 +1347,8 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			if (m_bBlock == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
+
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
 			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
@@ -1384,6 +1388,7 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
