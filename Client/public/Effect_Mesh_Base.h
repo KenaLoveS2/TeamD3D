@@ -35,6 +35,11 @@ public:
 	virtual void					Set_DissolveState()			override;
 	virtual	void					BackToNormal()				override;
 
+public:
+	virtual	void					Activate(_float4 vPos)			override;
+	virtual	void					Activate(CGameObject* pTarget)	override;
+	virtual void					DeActivate()					override;
+
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();

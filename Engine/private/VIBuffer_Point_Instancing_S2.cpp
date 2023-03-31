@@ -8,6 +8,7 @@ CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(ID3D11Device * pDev
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
 	, m_pPositions(nullptr)
+	, m_bFinished(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(m_tInfo));
 }
@@ -18,6 +19,7 @@ CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(const CVIBuffer_Poi
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
 	, m_pPositions(nullptr)
+	, m_bFinished(false)
 {
 }
 
@@ -299,6 +301,12 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Gather(_float TimeDelta)
 
 HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 {
+	if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+	{
+		m_bFinished = true;
+		return S_OK;
+	}
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
@@ -310,19 +318,19 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 	{
 		_float fDownSpeedY = m_tInfo.fPlaySpeed * m_tInfo.fTermAcc * m_tInfo.fTermAcc;
 
-		/* Reset Condition */
-		if (m_tInfo.fTermAcc > m_tInfo.fTerm)
-		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+		///* Reset Condition */
+		//if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+		//{
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
 
-			if(i == m_iNumInstance -1)
-				m_tInfo.fTermAcc = 0.0f;
-		}
-		/* Normal Tick Action */
-		else
+		//	if(i == m_iNumInstance -1)
+		//		m_tInfo.fTermAcc = 0.0f;
+		//}
+		///* Normal Tick Action */
+		//else
 		{
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pYSpeeds[i] * TimeDelta) - fDownSpeedY;
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.x += _float(m_pXSpeeds[i] * TimeDelta);
@@ -342,7 +350,10 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 HRESULT CVIBuffer_Point_Instancing_S2::Tick_Spread(_float TimeDelta)
 {
 	if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+	{
+		m_bFinished = true;
 		return S_OK;
+	}
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -388,6 +399,8 @@ void CVIBuffer_Point_Instancing_S2::Reset()
 	Safe_Release(m_pInstanceBuffer);
 
 	Safe_Delete_Arrays();
+
+	m_bFinished = false;
 }
 
 CVIBuffer_Point_Instancing_S2 * CVIBuffer_Point_Instancing_S2::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

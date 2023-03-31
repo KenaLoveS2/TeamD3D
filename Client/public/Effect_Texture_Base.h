@@ -30,6 +30,14 @@ public:
 public:
 	virtual HRESULT					Save_Data() override;
 	virtual HRESULT					Load_Data(_tchar* fileName) override;
+	virtual	void					BackToNormal() override;
+public:
+	virtual	void					Activate(_float4 vPos)									override;
+	virtual	void					Activate(CGameObject* pTarget)							override;
+	virtual void					Activate(CGameObject* pTarget, _float2 vScaleSpeed)		override;
+	virtual void					Activate(_float4 vPos, _float2 vScaleSpeed)				override;
+
+	virtual void					DeActivate()					override;
 
 private:
 	HRESULT							SetUp_Components();
@@ -51,7 +59,6 @@ private:
 	_int							m_iTextureIndices[TEXTURE_END];
 	char*							m_ShaderColorName[TEXTURE_END];
 	_float4							m_vTextureColors[TEXTURE_END];
-
 
 public:
 	static CEffect_Texture_Base*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

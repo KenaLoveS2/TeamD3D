@@ -31,6 +31,7 @@ private:
 
 public:
 	POINTINFO		Get_Info() { return m_tInfo; }
+	_bool			Is_Finished() { return m_bFinished; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -56,6 +57,8 @@ private:
 	_float*			m_pYSpeeds		= nullptr;
 	_float*			m_pZSpeeds		= nullptr;
 	_float3*		m_pPositions	= nullptr;
+
+	_bool			m_bFinished		= false;
 
 public:
 	static CVIBuffer_Point_Instancing_S2* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

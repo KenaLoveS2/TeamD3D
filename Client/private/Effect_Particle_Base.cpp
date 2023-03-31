@@ -72,6 +72,15 @@ void CEffect_Particle_Base::Tick(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	if (m_pVIBufferCom != nullptr)
+	{
+		if (m_pVIBufferCom->Is_Finished())
+		{
+			m_bActive = false;
+			return;
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 
 	m_pVIBufferCom->Tick(fTimeDelta);
@@ -439,6 +448,23 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 
 
 	return S_OK;
+}
+
+void CEffect_Particle_Base::Activate(_float4 vPos)
+{
+	m_bActive = true;
+	m_pTransformCom->Set_Position(vPos);
+}
+
+void CEffect_Particle_Base::Activate(CGameObject* pTarget)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+}
+
+void CEffect_Particle_Base::DeActivate()
+{
+	m_bActive = false;
 }
 
 HRESULT CEffect_Particle_Base::SetUp_Components()

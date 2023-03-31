@@ -29,6 +29,11 @@ public:
 	virtual HRESULT					Save_Data() override;
 	virtual HRESULT					Load_Data(_tchar* fileName) override;
 
+public:
+	virtual	void					Activate(_float4 vPos)			override;
+	virtual	void					Activate(CGameObject* pTarget)	override;
+	virtual void					DeActivate()					override;
+
 private:
 	HRESULT							SetUp_Components();
 	HRESULT							SetUp_ShaderResources();

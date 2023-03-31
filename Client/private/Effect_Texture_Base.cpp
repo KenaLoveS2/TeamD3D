@@ -87,6 +87,18 @@ void CEffect_Texture_Base::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
+
+	if (0.0f != m_vScaleSpeed.Length())
+	{
+		_smatrix matLocal	= m_LocalMatrix;
+		_float fScaleRight	= 
+			(matLocal.Right().Length() + (m_vScaleSpeed.x * fTimeDelta)) / (matLocal.Right().Length());
+		_float fScaleUp		= 
+			(matLocal.Up().Length() + (m_vScaleSpeed.y * fTimeDelta)) / (matLocal.Up().Length());
+		matLocal.Right(fScaleRight * matLocal.Right());
+		matLocal.Up(fScaleUp * matLocal.Up());
+		m_LocalMatrix = matLocal;
+	}
 }
 
 void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
@@ -96,7 +108,9 @@ void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	_matrix worldMatrix = XMMatrixIdentity();
+ 	_matrix worldMatrix = XMMatrixIdentity();
+	_smatrix matLocal = m_LocalMatrix;
+
 	if (m_pTarget != nullptr)
 	{
 		worldMatrix = m_pTarget->Get_WorldMatrix();
@@ -108,14 +122,17 @@ void CEffect_Texture_Base::Late_Tick(_float fTimeDelta)
 	}
 	else
 	{
+		
 		worldMatrix = _smatrix::CreateBillboard(
-			XMVectorSet(0.f, 0.f, 0.f, 1.f),
+			//XMVectorSet(0.f, 0.f, 0.f, 1.f),
+			//matLocal.Translation(),
+			XMLoadFloat4(&m_ParentPosition),
 			CGameInstance::GetInstance()->Get_CamPosition_Float3(),
 			CGameInstance::GetInstance()->Get_CamUp_Float3(),
 			&CGameInstance::GetInstance()->Get_CamLook_Float3());
+		//matLocal.Translation({ 0.f, 0.f, 0.f });
 	}
 
-	_smatrix matLocal = m_LocalMatrix;
 	worldMatrix = matLocal * worldMatrix;
 
 	//worldMatrix = m_pTransformCom->Get_WorldMatrix() * worldMatrix;
@@ -383,6 +400,45 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
 
 	return S_OK;
+}
+
+void CEffect_Texture_Base::BackToNormal()
+{
+	m_LocalMatrix = m_LocalMatrixOriginal;
+}
+
+void CEffect_Texture_Base::Activate(_float4 vPos)
+{
+	m_bActive = true;
+	m_ParentPosition = vPos;
+
+}
+
+void CEffect_Texture_Base::Activate(CGameObject* pTarget)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+}
+
+void CEffect_Texture_Base::Activate(CGameObject* pTarget, _float2 vScaleSpeed)
+{
+	m_bActive = true;
+	m_pTarget = pTarget;
+	m_vScaleSpeed = vScaleSpeed;
+}
+
+void CEffect_Texture_Base::Activate(_float4 vPos, _float2 vScaleSpeed)
+{
+	m_bActive = true;
+	m_ParentPosition = vPos;
+	m_vScaleSpeed = vScaleSpeed;
+}
+
+void CEffect_Texture_Base::DeActivate()
+{
+	m_LocalMatrix = m_LocalMatrixOriginal;
+	m_vScaleSpeed = { 0.0f, 0.0f };
+	m_bActive = false;
 }
 
 HRESULT CEffect_Texture_Base::SetUp_Components()

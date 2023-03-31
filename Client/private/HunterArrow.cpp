@@ -7,6 +7,7 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
 	, m_fTrailTime(0.f)
 	, m_fTrailTimeAcc(0.f)
+	, m_bTrailOn(false)
 {
 }
 
@@ -14,6 +15,7 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	: CMonsterWeapon(rhs)
 	, m_fTrailTime(0.f)
 	, m_fTrailTimeAcc(0.f)
+	, m_bTrailOn(false)
 {	
 }
 
@@ -303,26 +305,41 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 		_matrix BowSocketMatrix = m_pBowBone->Get_OffsetMatrix() * m_pBowBone->Get_CombindMatrix() * XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
 		BowSocketMatrix = XMMatrixTranslation(m_vBowPivotPos[m_eFireType].x, m_vBowPivotPos[m_eFireType].y, m_vBowPivotPos[m_eFireType].z) * BowSocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 		m_pTransformCom->LookAt(BowSocketMatrix.r[3]);
+
+		m_bTrailOn = false;
 	}	
 	case FIRE:
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
-		m_fTrailTimeAcc += fTimeDelta;
-		if (m_fTrailTimeAcc > m_fTrailTime)
+		if (m_bTrailOn)
 		{
-			CEffect_Base_S2* pEffect = nullptr;
-			CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
-				L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString(), L"Particle_ArrowTrail.json", (CGameObject**)&pEffect);
-			if (pEffect != nullptr)
-				pEffect->Set_Target(this);
+			m_fTrailTimeAcc += fTimeDelta;
+			m_fTrailTime = 0.01f;
+			if (m_fTrailTimeAcc > m_fTrailTime)
+			{
+				CEffect_Base_S2* pEffect = nullptr;
+				CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
+					L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString(), L"Particle_ArrowTrail", (CGameObject**)&pEffect);
+				if (pEffect != nullptr)
+				{
+					pEffect->Activate(m_pTransformCom->Get_Position());
+					//pEffect->Set_Target(this);
+					//pEffect->Set_Position();
+					//pEffect->Set_Active(true);
+				}
+
+				m_fTrailTimeAcc = 0.f;
+			}
 		}
+
 
 		break;
 	}	
 	case FINISH:
 	{
 		// 이펙트 처리
+		m_bTrailOn = false;
 
 		// 이펙트 처리 완료 후
 		m_eArrowState = STATE_END;
@@ -346,11 +363,17 @@ void CHunterArrow::Execute_Ready(FIRE_TYPE eFireType)
 void CHunterArrow::Execute_Fire()
 {
 	m_eArrowState = FIRE;
+	m_bTrailOn = true;
 }
 
 void CHunterArrow::Execute_Finish()
 {
 	m_eArrowState = FINISH;
+}
+
+_float4 CHunterArrow::Get_ArrowHeadPos()
+{
+	return  XMVectorSetW(XMVector3TransformCoord(m_vColliderPivotPos, m_pTransformCom->Get_WorldMatrix()), 1.f);
 }
 
 _int CHunterArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)

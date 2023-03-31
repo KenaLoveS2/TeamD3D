@@ -8,6 +8,7 @@
 #define FLY_POS_COUNT				8
 
 BEGIN(Client)
+class CEffect_Base_S2;
 class CBossHunter : public CMonster
 {
 private:
@@ -53,6 +54,15 @@ private:
 		COLL_END
 	};
 
+	enum EFFECT {
+		EFFECT_CHARGE_TEXTURE_CIRCLE,
+		EFFECT_CHARGE_PARTICLE_GATHER,
+		EFFECT_CHARGE_TEXTURE_CENTER,
+		EFFECT_CHARGE_TEXTURE_SHINE,
+		EFFECT_CHARGE_TEXTURE_LINE1,
+		EFFECT_CHARGE_TEXTURE_LINE2,
+	};
+
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
 
@@ -85,13 +95,6 @@ private:
 	_bool m_bFlyEnd = false;
 
 	_bool m_bDodge = false;
-
-private: /* For. Shader & Effect */
-	_float							m_fUVSpeeds[2];
-	_float							m_fStringDissolve;
-	_float							m_fStringDissolveSpeed;
-	_float							m_fStringHDRIntensity;
-	_float4							m_vStringDiffuseColor;
 
 private:
 	CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -151,7 +154,6 @@ public:
 	void Fire_Arrow(_bool bArrowIndexUpdate);
 	void Update_ArrowIndex();
 
-
 public:
 	// Animation CallBack Function
 	void LookAt_Knife(_bool bIsInit, _float fTimeDelta);
@@ -168,6 +170,40 @@ public:
 	void FireArrow_Shock(_bool bIsInit, _float fTimeDelta);	
 
 	void Reset_HitFlag();
+
+	void Test1	(_bool bIsInit, _float fTimeDelta);
+	void Test2	(_bool bIsInit, _float fTimeDelta);
+	void Test3	(_bool bIsInit, _float fTimeDelta);
+	void Test4	(_bool bIsInit, _float fTimeDelta);
+
+
+
+
+
+
+/********************************************/
+/*			For. Shader & Effect			*/
+/********************************************/
+private:
+	HRESULT Create_Effects();
+
+private:
+	vector<CEffect_Base_S2*>		m_vecEffects;
+
+private: /* For. String */
+	_float							m_fUVSpeeds[2];
+	_float							m_fStringDissolve;
+	_float							m_fStringDissolveSpeed;
+	_float							m_fStringHDRIntensity;
+	_float4							m_vStringDiffuseColor;
+
+private: /* For. Tool */
+	void							ImGui_EffectProperty();
+private:
+	CEffect_Base_S2*				m_pSelectedEffect;
+
+
+
 };
 
 END

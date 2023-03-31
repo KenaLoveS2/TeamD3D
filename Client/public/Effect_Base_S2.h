@@ -18,7 +18,6 @@ public:
 	inline  void					Set_ActiveFlip() { m_bActive = !m_bActive; }
 	inline	void					Set_EffectTag(string str) { m_strEffectTag = str; }
 
-
 public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg) override;
@@ -33,6 +32,15 @@ public:
 	virtual	HRESULT					Load_Data(_tchar* fileName) = 0;
 	virtual void					Set_DissolveState() {};
 	virtual	void					BackToNormal() {};
+
+public: /* Activation Function */
+	virtual	void					Activate(_float4 vPos) {};
+	virtual	void					Activate(CGameObject* pTarget) {};
+	virtual void					Activate(CGameObject* pTarget, _float2 vScaleSpeed) {};
+	virtual void					Activate(_float4 vPos, _float2 vScaleSpeed) {};
+	virtual void					DeActivate() {};
+
+
 
 protected:	/* Tool Function */
 	_float4		ColorCode();
@@ -71,6 +79,10 @@ protected:
 	_float4x4						m_WorldOriginal;
 	_float4x4						m_LocalMatrix;
 	_float4x4						m_LocalMatrixOriginal;
+	_float4							m_ParentPosition;
+
+protected: /* For. Activation */
+	_float2							m_vScaleSpeed;
 
 public:
 	virtual void					Free()			override;

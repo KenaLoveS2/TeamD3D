@@ -31,6 +31,7 @@ private:
 	CBone* m_pBowBone = nullptr;
 
 private:
+	_bool		m_bTrailOn;
 	_float		m_fTrailTime;
 	_float		m_fTrailTimeAcc;
 
@@ -72,5 +73,10 @@ public:
 	_bool IsEnd() { 
 		return m_eArrowState == STATE_END;
 	}
+
+public:
+	void		Set_TrailActive(_bool bActive) { m_bTrailOn = bActive; }
+	_float4		Get_ArrowHeadPos();
+
 };
 END

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\public\BossHunter.h"
 #include "GameInstance.h"
+#include "Effect_Base_S2.h"
 
 CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
@@ -8,6 +9,7 @@ CBossHunter::CBossHunter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fStringDissolveSpeed(0.f)
 	, m_fStringHDRIntensity(0.f)
 	, m_vStringDiffuseColor(1.f, 1.f, 1.f, 1.f)
+	, m_pSelectedEffect(nullptr)
 {
 	for (_uint i = 0; i < 2; ++i)
 		m_fUVSpeeds[i] = 0.f;
@@ -19,6 +21,7 @@ CBossHunter::CBossHunter(const CBossHunter& rhs)
 	, m_fStringDissolveSpeed(0.f)
 	, m_fStringHDRIntensity(0.f)
 	, m_vStringDiffuseColor(1.f, 1.f, 1.f, 1.f)
+	, m_pSelectedEffect(nullptr)
 {
 	for (_uint i = 0; i < 2; ++i)
 		m_fUVSpeeds[i] = 0.f;
@@ -62,7 +65,16 @@ HRESULT CBossHunter::Initialize(void* pArg)
 	m_pBodyBone = m_pModelCom->Get_BonePtr("char_spine_mid_jnt");
 	
 	Create_Arrow();
+	
 
+	/********************************************/
+	/*			For. Shader & Effect			*/
+	/********************************************/
+	if (FAILED(Create_Effects()))
+	{
+		MSG_BOX("Failed To Create Effects : CBossHunter");
+		return E_FAIL;
+	}
 	/* For. String */
 	m_fStringDissolveSpeed = 10.f;
 	m_fStringHDRIntensity = 5.0f;
@@ -168,6 +180,10 @@ void CBossHunter::Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_pArrows) 
 		pArrow->Tick(fTimeDelta);	
+
+	for (auto& pEffect : m_vecEffects)
+		pEffect->Tick(fTimeDelta);
+
 	return;
 	
 
@@ -199,6 +215,9 @@ void CBossHunter::Late_Tick(_float fTimeDelta)
 
 	for (auto& pArrow : m_pArrows)
 		pArrow->Late_Tick(fTimeDelta);
+
+	for (auto& pEffect : m_vecEffects)
+		pEffect->Late_Tick(fTimeDelta);
 }
 
 HRESULT CBossHunter::Render()
@@ -296,6 +315,12 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
+	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
+
+	if (ImGui::CollapsingHeader("Effect"))
+		ImGui_EffectProperty();
+
 	if (ImGui::CollapsingHeader("BossHunter"))
 	{
 		ImGui::BeginTabBar("BossHunter Animation & State");
@@ -358,6 +383,12 @@ void CBossHunter::Push_EventFunctions()
 	FireArrow_Charge(true, 0.f);
 	FireArrow_Rapid(true, 0.f);
 	FireArrow_Shock(true, 0.f);
+
+	Test1(true, 0.f);
+	Test2(true, 0.f);
+	Test3(true, 0.f);
+	Test4(true, 0.f);
+
 }
 
 HRESULT CBossHunter::SetUp_State()
@@ -1202,6 +1233,9 @@ void CBossHunter::Free()
 {
 	CMonster::Free();
 
+	for (auto& pEffect : m_vecEffects)
+		Safe_Release(pEffect);
+
 	for(auto& pArrow : m_pArrows)
 		Safe_Release(pArrow);
 }
@@ -1454,3 +1488,181 @@ void CBossHunter::Reset_HitFlag()
 	m_bStronglyHit = false;
 	m_bWeaklyHit = false;
 }
+
+void CBossHunter::Test1(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test1);
+		return;
+	}
+
+	_float4 vPos = m_pArrows[m_iArrowIndex]->Get_ArrowHeadPos();
+	CGameObject* pArrow = m_pArrows[m_iArrowIndex];
+
+	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->Activate(vPos);
+	
+	
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate(nullptr);
+
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->Activate(vPos, {-3.f, -3.f});
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_SHINE]->Activate(vPos);
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CENTER]->Activate(vPos);
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE1]->Activate(vPos);
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE2]->Activate(vPos);
+}
+
+void CBossHunter::Test2(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test2);
+		return;
+	}
+
+	m_vecEffects[EFFECT_CHARGE_PARTICLE_GATHER]->DeActivate();
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CIRCLE]->DeActivate();
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_SHINE]->DeActivate();
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_CENTER]->DeActivate();
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE1]->DeActivate();
+	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE2]->DeActivate();
+
+}
+
+void CBossHunter::Test3(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test3);
+		return;
+	}
+}
+
+void CBossHunter::Test4(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test4);
+		return;
+	}
+}
+
+HRESULT CBossHunter::Create_Effects()
+{
+	string strFilePath = "../Bin/Data/Effect_UI/EffectList_Hunter.json";
+
+	Json jLoad;
+
+	ifstream file(strFilePath);
+	if (file.fail())
+		return E_FAIL;
+	file >> jLoad;
+	file.close();
+
+	_int iNumEffects;
+	jLoad["01. NumEffects"].get_to<_int>(iNumEffects);
+
+	for (auto jSub : jLoad["02. FileName"])
+	{
+		string strEffect;
+		jSub.get_to<string>(strEffect);
+		wstring wstr;
+		wstr.assign(strEffect.begin(), strEffect.end());
+		_tchar* cloneTag = CUtile::Create_StringAuto(wstr.c_str());
+
+		string type;
+		for (auto c : strEffect)
+		{
+			if (c == '_')
+				break;
+			type += c;
+		}
+
+		CEffect_Base_S2* pEffect = nullptr;
+
+		if (type == "Particle")
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base", cloneTag, cloneTag));
+		else if (type == "Mesh")
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Mesh_Base", cloneTag, cloneTag));
+		else if (type == "Texture")
+			pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Texture_Base", cloneTag, cloneTag));
+
+		if (pEffect != nullptr)
+		{
+			//pEffect->Set_Target(this);
+			m_vecEffects.push_back(pEffect);
+		}
+	}
+
+
+	return S_OK;
+}
+
+bool	EffectList_Getter(void* data, int index, const char** output)
+{
+	vector<string>* pVec = (vector<string>*)data;
+	*output = (*pVec)[index].c_str();
+	return true;
+}
+
+void CBossHunter::ImGui_EffectProperty()
+{
+	static vector<string> tags;
+	if (ImGui::Button("Refresh"))
+	{
+		if (!tags.empty())
+			tags.clear();
+
+		for (auto pEffect : m_vecEffects)
+		{
+			wstring wstr = pEffect->Get_ObjectCloneName();
+			string str;
+			str.assign(wstr.begin(), wstr.end());
+			tags.push_back(str);
+		}
+	}
+
+	static _int iSelectedEffect;
+	_int iSelectedBefore = iSelectedEffect;
+	if (ImGui::ListBox("Effect List", &iSelectedEffect, EffectList_Getter, &tags, (_int)tags.size(), 5))
+	{
+		m_pSelectedEffect = m_vecEffects[iSelectedEffect];
+		m_pSelectedEffect->Set_ActiveFlip();
+		m_pSelectedEffect->Set_EffectTag(tags[iSelectedEffect]);
+	}
+
+	if (nullptr == m_pSelectedEffect)
+		return;
+
+	if (ImGui::Button("All off"))
+	{
+		for (auto eff : m_vecEffects)
+			eff->Set_Active(false);
+	} ImGui::SameLine();
+	if (ImGui::Button("All On"))
+	{
+		for (auto eff : m_vecEffects)
+			eff->Set_Active(true);
+	};
+
+	m_pSelectedEffect->Imgui_RenderProperty();
+
+	// Set_Target(m_pArrows[m_iArrowIndex]);
+}
+											
+//void CBossHunter::Test(_bool bIsInit, _float fTimeDelta)
+//{
+//	if (bIsInit == true)
+//	{
+//		const _tchar* pFuncName = __FUNCTIONW__;
+//		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test);
+//		return;
+//	}
+//
+//	MSG_BOX("Test");
+//
+//}
