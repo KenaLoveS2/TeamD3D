@@ -13,7 +13,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos, vSize, vRotationAxis;
 		_float fDegree;
-		_bool isGravity;
+		_bool isGravity, isTrigger;		
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -32,6 +32,9 @@ public:
 			fDynamicFriction = 0.5f; 
 			fRestitution = 0.1f;
 						
+			isGravity = true;
+			isTrigger = false;
+
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;
 			fAngularDamping = 0.1f;
@@ -50,7 +53,7 @@ public:
 		const _tchar* pActortag;
 		_float3 vPos;
 		_float fRadius;
-		_bool isGravity;
+		_bool isGravity, isTrigger;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 		PX_FILTER_TYPE eFilterType;
@@ -66,6 +69,9 @@ public:
 			fStaticFriction = 0.5f;
 			fDynamicFriction = 0.5f;
 			fRestitution = 0.1f;
+
+			isGravity = true;
+			isTrigger = false;
 
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;
@@ -85,7 +91,7 @@ public:
 		_float3 vPos, vRotationAxis;
 		_float fRadius, fHalfHeight;
 		_float fDegree;
-		_bool isGravity;
+		_bool isGravity, isTrigger;
 		_float fStaticFriction, fDynamicFriction, fRestitution;
 
 
@@ -104,6 +110,9 @@ public:
 			fStaticFriction = 0.5f;
 			fDynamicFriction = 0.5f;
 			fRestitution = 0.1f;
+
+			isGravity = true;
+			isTrigger = false;
 
 			vVelocity = { 0.f, 0.f, 0.f };
 			fDensity = 0.1f;

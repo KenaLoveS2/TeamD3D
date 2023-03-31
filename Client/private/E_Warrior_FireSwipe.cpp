@@ -56,14 +56,15 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 	PxBoxDesc.isGravity = false;
 	PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	PxBoxDesc.fDensity = 0.2f;
-	PxBoxDesc.fMass = 150.f;
+	PxBoxDesc.fDensity = 1.f;
+	PxBoxDesc.fAngularDamping = 0.5f;
+	PxBoxDesc.fMass = 10.f;
 	PxBoxDesc.fLinearDamping = 10.f;
-	PxBoxDesc.fAngularDamping = 5.f;
 	PxBoxDesc.bCCD = false;
 	PxBoxDesc.fDynamicFriction = 0.5f;
 	PxBoxDesc.fStaticFriction = 0.5f;
 	PxBoxDesc.fRestitution = 0.1f;
+	PxBoxDesc.isTrigger = true;
 	
 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
 	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
@@ -80,9 +81,7 @@ void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
-
-	m_pTransformCom->Tick(fTimeDelta);
-	
+		
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
@@ -91,8 +90,11 @@ void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
  	m_fDurationTime += fTimeDelta;
  	if (m_fDurationTime > 1.f)
  		m_fDurationTime = 0.0f;
- 	else
- 		m_pTransformCom->Go_Backward(fTimeDelta);
+	else
+	{
+		m_pTransformCom->Go_Backward(fTimeDelta);
+	}
+ 		
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
@@ -125,7 +127,7 @@ HRESULT CE_Warrior_FireSwipe::Render()
 		{
 			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 14);
 		}
-		if (i == 1) // 내부
+		else if (i == 1) // 내부
 		{
 			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 15);
 		}

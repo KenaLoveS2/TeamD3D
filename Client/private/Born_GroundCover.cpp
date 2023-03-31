@@ -36,21 +36,29 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CBorn_GroundCover::Late_Initialize(void* pArg)
+{
+	m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_GO_UP);
+
+	return S_OK;
+}
+
 void CBorn_GroundCover::Tick(_float fTimeDelta)
 {
+	if(!m_bOnceTest)
+	{
+		Late_Initialize();
+		m_bOnceTest = true;
+	}
+
 	__super::Tick(fTimeDelta);
 
-	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
-	_vector camPos = XMLoadFloat4(&vCamPos);
+	Culling();
 
-	const _vector	 vDir = camPos - vPos;
-	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
-
-	_float f = XMVectorGetX(XMVector4Length(vDir));
-
-	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
-		m_bRenderCheck = false;
+	if(ImGui::Button("Uprise"))
+	{
+		//m_pModelCom->Instaincing_MoveControl()
+	}
 
 	if(m_bRenderCheck)
 		m_pModelCom->Play_Animation(fTimeDelta);
@@ -148,6 +156,21 @@ HRESULT CBorn_GroundCover::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_fFar", pGameInstance->Get_CameraFar(), sizeof(float)), E_FAIL);
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
+}
+
+void CBorn_GroundCover::Culling()
+{
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+
+	const _vector	 vDir = camPos - vPos;
+	m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 20.f);
+
+	_float f = XMVectorGetX(XMVector4Length(vDir));
+
+	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
+		m_bRenderCheck = false;
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
