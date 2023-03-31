@@ -110,7 +110,7 @@ private:
 	class CKena_Status*		m_pKenaStatus = nullptr;
 
 	class CCamera_Player*	m_pCamera = nullptr;
-	class CTerrain*			m_pTerrain = nullptr;
+	class CTerrain* m_pTerrain[TERRAIN_COUNT] = { nullptr, };
 	class CRope_RotRock*	m_pRopeRotRock = nullptr;
 	class CRot*				m_pFirstRot = nullptr;
 	class CRotForMonster*	m_pRotForMonster[8] = { nullptr, };
@@ -187,6 +187,9 @@ private:
 	_float						m_fHitRimIntensity = 0.f;
 	_float						m_fParryRimIntensity = 0.f;
 
+	_bool						m_bRotRockChoiceFlag = false;
+	_bool						m_bRotRockMoveFlag = false;
+
 public:
 	const  _bool&					Get_HitRim() const { return m_bHitRim; }
 	const  _float&					Get_HitRimIntensity() const { return m_fHitRimIntensity; }
@@ -238,8 +241,10 @@ public:
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
 
+	// 테스트용 임시 변수 인듯
 	_float m_fTest = 0.f;
 	_bool  m_bStateLock;
+	_float m_fLinearDamping = KENA_LINEAR_DAMING, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = KENA_MASS;
 
 public:
 	static CKena*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -250,14 +255,14 @@ public:
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 	virtual _int Execute_TriggerTouchLost(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
-	void Test_Raycast();
+	void LiftRotRockProc();
 	void Set_RopeRotRockPtr(class CRope_RotRock* pObject) { m_pRopeRotRock = pObject; }
 	void Set_FirstRotPtr(class CRot* pFirstRot) { m_pFirstRot = pFirstRot; }
 	
 	class CKena_Status*	Get_KenaStatusPtr() { return m_pKenaStatus; }
 
-	public: // TEMP
-		_float m_fLinearDamping = 1.f, m_fAngularDamping = KENA_ANGULAR_DAMING, m_fMass = 100000.f;
+	void Setup_TerrainPtr();
+	void End_LiftRotRock();
 };
 
 END
