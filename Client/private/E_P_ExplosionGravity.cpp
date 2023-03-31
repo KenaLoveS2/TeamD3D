@@ -17,8 +17,11 @@ HRESULT CE_P_ExplosionGravity::Initialize_Prototype(const _tchar * pFilePath)
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	if (FAILED(Load_E_Desc(pFilePath)))
-		return E_FAIL;
+	if(pFilePath != nullptr)
+	{
+		if (FAILED(Load_E_Desc(pFilePath)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

@@ -216,6 +216,12 @@ void CE_RectTrail::SetUp_Option(RECTTRAILTYPE eType)
 	}
 }
 
+void CE_RectTrail::Set_TexRandomPrint()
+{
+	m_eEFfectDesc.fWidthFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateWidth * 1.0f));
+	m_eEFfectDesc.fHeightFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateHeight * 1.0f));
+}
+
 CE_RectTrail * CE_RectTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
 {
 	CE_RectTrail * pInstance = new CE_RectTrail(pDevice, pContext);
