@@ -29,8 +29,7 @@ private:
 	HRESULT			SetUp_Child();
 	void			Imgui_RenderProperty() override;
 
-private:
-	PX_TRIGGER_DATA*		m_pTriggerData = nullptr;
+private:	
 	_float4x4 m_SaveInitWorldMatrix;
 
 public:
