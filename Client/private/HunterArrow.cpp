@@ -1,15 +1,22 @@
 #include "stdafx.h"
 #include "..\public\HunterArrow.h"
 #include "BossHunter.h"
+#include "Effect_Base_S2.h"
 
 CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonsterWeapon(pDevice, pContext)
+	, m_fTrailTime(0.f)
+	, m_fTrailTimeAcc(0.f)
+	, m_bTrailOn(false)
 {
 }
 
 CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	: CMonsterWeapon(rhs)
-{	
+	, m_fTrailTime(0.f)
+	, m_fTrailTimeAcc(0.f)
+	, m_bTrailOn(false)
+{
 }
 
 HRESULT CHunterArrow::Initialize_Prototype()
@@ -28,12 +35,16 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 	CGameObject::GAMEOBJECTDESC GameObjDesc;
 	ZeroMemory(&GameObjDesc, sizeof(CGameObject::GAMEOBJECTDESC));
 	GameObjDesc.TransformDesc.fSpeedPerSec = 17.f;
-	
+
 	if (FAILED(__super::Initialize(&GameObjDesc)))
 		return E_FAIL;
 
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
+
+	m_fDissolveTime = 0.f;
+	m_fTrailTime = 0.1f;
+	m_fTrailTimeAcc = 0.f;
 
 	return S_OK;
 }
@@ -52,8 +63,8 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 
 		pPhysX->Create_Sphere(PxSphereDesc, Create_PxUserData(m_WeaponDesc.pOwnerMonster, false, COL_MONSTER_ARROW));
-		
-		XMStoreFloat4x4(&m_ColliderPivotMatrix, XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));		
+
+		XMStoreFloat4x4(&m_ColliderPivotMatrix, XMMatrixTranslation(m_vColliderPivotPos.x, m_vColliderPivotPos.y, m_vColliderPivotPos.z));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);
 	}
 
@@ -65,14 +76,6 @@ HRESULT CHunterArrow::Late_Initialize(void* pArg)
 		PxSphereDesc.isGravity = false;
 		PxSphereDesc.bCCD = false;
 		PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
-
-		PxSphereDesc.fStaticFriction = 0.5f;
-		PxSphereDesc.fDynamicFriction = 0.5f;
-		PxSphereDesc.fRestitution = 0.1f;
-		PxSphereDesc.fDensity = 0.1f;
-		PxSphereDesc.fAngularDamping = 0.1f;
-		PxSphereDesc.fMass = 1.f;
-		PxSphereDesc.fLinearDamping = 0.1f;
 
 		pPhysX->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
 		m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, m_ColliderPivotMatrix);
@@ -86,7 +89,7 @@ void CHunterArrow::Tick(_float fTimeDelta)
 	if (m_eArrowState == STATE_END) return;
 
 	__super::Tick(fTimeDelta);
-		
+
 	// CHunterArrow::Imgui_RenderProperty();
 
 	ArrowProc(fTimeDelta);
@@ -94,12 +97,12 @@ void CHunterArrow::Tick(_float fTimeDelta)
 }
 
 void CHunterArrow::Late_Tick(_float fTimeDelta)
-{	
+{
 	if (m_eArrowState == STATE_END) return;
 
 	__super::Late_Tick(fTimeDelta);
-	
-	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	m_pRendererCom&& m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CHunterArrow::Render()
@@ -111,7 +114,8 @@ HRESULT CHunterArrow::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 0);
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 13);
 	}
 
 	return S_OK;
@@ -139,7 +143,7 @@ void CHunterArrow::Imgui_RenderProperty()
 	m_vHandPivotPos.x = fPos[0];
 	m_vHandPivotPos.y = fPos[1];
 	m_vHandPivotPos.z = fPos[2];
-	
+
 	static char szTable[FIRE_TYPE_END][32] = {
 		"Bow PivotPos - CHARGE",
 		"Bow PivotPos - RAPID",
@@ -196,7 +200,9 @@ HRESULT CHunterArrow::SetUp_Components()
 	if (FAILED(__super::Add_Component(g_LEVEL, TEXT("Prototype_Component_Model_Boss_Hunter_Arrow"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed_Normal.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_DIFFUSE, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/E_Effect_20.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_NORMALS, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed_Normal.png"));
+	m_pModelCom->SetUp_Material(0, aiTextureType::WJTextureType_MASK, TEXT("../Bin/Resources/NonAnim/Boss_HunterArrow/Noise_cloudsmed.png"));
 
 	return S_OK;
 }
@@ -207,7 +213,7 @@ HRESULT CHunterArrow::SetUp_ShaderResources()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
-	
+
 	/*_float4x4 SocketWorldMatrix;
 	_float4x4 OriginWorld = m_pTransformCom->Get_WorldMatrixFloat4x4();
 	XMStoreFloat4x4(&SocketWorldMatrix, m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(&m_SocketMatrix));
@@ -217,7 +223,27 @@ HRESULT CHunterArrow::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix))) return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)))) return E_FAIL;
-		
+
+	_float4 vColor = { 1.0f, 0.05f, 0.46f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4)))) return E_FAIL;
+
+	_float fHDR = 4.f;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fHDRIntensity", &fHDR, sizeof(_float)))) return E_FAIL;
+
+	_bool bDissolve;
+	if (m_fDissolveTime > 0.f)
+	{
+		bDissolve = true;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)))) return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveAlpha", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+	}
+	else
+	{
+		bDissolve = false;
+		if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bDissolve, sizeof(_bool)))) return E_FAIL;
+	}
+
+
 	return S_OK;
 }
 
@@ -238,7 +264,7 @@ HRESULT CHunterArrow::SetUp_ShadowShaderResources()
 CHunterArrow* CHunterArrow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CHunterArrow* pInstance = new CHunterArrow(pDevice, pContext);
-	
+
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed to Created : CHunterArrow");
@@ -275,27 +301,53 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 		_matrix HandSocketMatrix = m_WeaponDesc.pSocket->Get_OffsetMatrix() * m_WeaponDesc.pSocket->Get_CombindMatrix() * XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
 		HandSocketMatrix = XMMatrixTranslation(m_vHandPivotPos.x, m_vHandPivotPos.y, m_vHandPivotPos.z) * HandSocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 		m_pTransformCom->Set_Position(HandSocketMatrix.r[3]);
-		
+
 		_matrix BowSocketMatrix = m_pBowBone->Get_OffsetMatrix() * m_pBowBone->Get_CombindMatrix() * XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
 		BowSocketMatrix = XMMatrixTranslation(m_vBowPivotPos[m_eFireType].x, m_vBowPivotPos[m_eFireType].y, m_vBowPivotPos[m_eFireType].z) * BowSocketMatrix * m_WeaponDesc.pTargetTransform->Get_WorldMatrix();
 		m_pTransformCom->LookAt(BowSocketMatrix.r[3]);
-	}	
+
+		m_bTrailOn = false;
+	}
 	case FIRE:
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
+
+		if (m_bTrailOn)
+		{
+			m_fTrailTimeAcc += fTimeDelta;
+			m_fTrailTime = 0.01f;
+			if (m_fTrailTimeAcc > m_fTrailTime)
+			{
+				CEffect_Base_S2* pEffect = nullptr;
+				CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
+					L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString(), L"Particle_ArrowTrail", (CGameObject**)&pEffect);
+				if (pEffect != nullptr)
+				{
+					pEffect->Activate(m_pTransformCom->Get_Position());
+					//pEffect->Set_Target(this);
+					//pEffect->Set_Position();
+					//pEffect->Set_Active(true);
+				}
+
+				m_fTrailTimeAcc = 0.f;
+			}
+		}
+
+
 		break;
-	}	
+	}
 	case FINISH:
 	{
 		// 이펙트 처리
+		m_bTrailOn = false;
 
 		// 이펙트 처리 완료 후
 		m_eArrowState = STATE_END;
 		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		break;
-	}	
+	}
 	case STATE_END:
-	{	
+	{
 		// 대기 상태다
 		break;
 	}
@@ -311,6 +363,7 @@ void CHunterArrow::Execute_Ready(FIRE_TYPE eFireType)
 void CHunterArrow::Execute_Fire()
 {
 	m_eArrowState = FIRE;
+	m_bTrailOn = true;
 }
 
 void CHunterArrow::Execute_Finish()
@@ -318,7 +371,12 @@ void CHunterArrow::Execute_Finish()
 	m_eArrowState = FINISH;
 }
 
-_int CHunterArrow::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
+_float4 CHunterArrow::Get_ArrowHeadPos()
+{
+	return  XMVectorSetW(XMVector3TransformCoord(m_vColliderPivotPos, m_pTransformCom->Get_WorldMatrix()), 1.f);
+}
+
+_int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
 	if (m_eArrowState == FIRE)
 	{

@@ -1,0 +1,1 @@
+{"00. RenderPass":0,"01. Color":[1.0,1.0,1.0,1.0],"02. HDR Intensity":1.0,"03. LocalMatrix":[5.0,0.0,0.0,0.0,0.0,5.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,5.900000095367432,0.0,1.0],"04. MaskColor":[1.0,1.0,1.0,1.0],"10. DiffuseTextureIndex":1,"11. MaskTextureIndex":-1,"20. Options":[false,true,true],"21. UVSpeed":[0.0,0.0],"22. SpriteFrames":[8,4],"23. SpriteSpeed":20.0}
