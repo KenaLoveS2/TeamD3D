@@ -488,10 +488,15 @@ HRESULT CRockGolem::SetUp_State()
 		{	
 			Set_Dying(DEPTH);
 		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_fDissolveTime += fTimeDelta * 0.2f;
+			m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
+		})
 			.AddTransition("DYING to DEATH", "DEATH")
 			.Predicator([this]()
 		{
-			return m_pModelCom->Get_AnimationFinish();
+			return AnimFinishChecker(DEPTH) && m_fDissolveTime >= 1.f;
 		})
 
 			.AddState("DEATH")
@@ -536,8 +541,8 @@ HRESULT CRockGolem::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	m_bDissolve && Bind_Dissolove(m_pShaderCom);
 
 
 	return S_OK;

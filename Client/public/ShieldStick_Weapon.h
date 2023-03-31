@@ -5,6 +5,10 @@ BEGIN(Client)
 class CShieldStick_Weapon final : public CMonsterWeapon
 {
 private:
+	_bool m_bShowDissolve = false;
+	_uint m_iShaderPass = 2;
+
+private:
 	CShieldStick_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CShieldStick_Weapon(const CShieldStick_Weapon& rhs);
 	virtual ~CShieldStick_Weapon() = default;
@@ -31,5 +35,7 @@ public:
 	static CShieldStick_Weapon*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+
+	void Show_Dissolve();
 };
 END

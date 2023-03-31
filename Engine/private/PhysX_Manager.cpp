@@ -122,6 +122,27 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 }
 
 
+PxFilterFlags RayCastFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+									PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+									PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+	// Check if either object is a trigger
+	bool isTrigger0 = (attributes0 & physx::PxFilterObjectFlag::eTRIGGER) != 0;
+	bool isTrigger1 = (attributes1 & physx::PxFilterObjectFlag::eTRIGGER) != 0;
+
+	if (isTrigger0 || isTrigger1)
+	{
+		// If either object is a trigger, skip collision checks
+		pairFlags = physx::PxPairFlag::eSUPPRESS_EITHER;
+		return physx::PxFilterFlag::eSUPPRESS;
+	}
+
+	// Otherwise, perform default collision checks
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+	return physx::PxFilterFlag::eDEFAULT;
+}
+
+
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
 CPhysX_Manager::CPhysX_Manager()
@@ -407,7 +428,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setLocalPose(relativePose);
 		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-
+		
 		PxFilterData FilterData;
 		FilterData.word0 = Desc.eFilterType;
 		pShape->setSimulationFilterData(FilterData);
@@ -753,6 +774,15 @@ PxRigidActor * CPhysX_Manager::Find_DynamicCollider(const _tchar * pActorTag)
 	return Pair->second;
 }
 
+PxQueryHitType::Enum MyFilterCallback(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags)
+{	
+	if (filterData.word0 == (PxU32)FITLER_TRIGGER) {
+		return PxQueryHitType::eNONE;
+	}
+
+	return PxQueryHitType::eBLOCK;
+}
+
 _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject** pObjectOut)
 {
 	PxRaycastBuffer hit;
@@ -760,7 +790,7 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 	PxVec3 origin = CUtile::ConvertPosition_D3DToPx(vRayPos);
 	PxVec3 direction = CUtile::ConvertPosition_D3DToPx(vRayDir);
 	direction.normalize();	
-	
+
 	_bool hitResult = m_pScene->raycast(origin, direction, distance, hit);
 	if (hitResult)
 	{
