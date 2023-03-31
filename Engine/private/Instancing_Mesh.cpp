@@ -789,10 +789,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 	
 		if (iFinishCnt == 0)
 			return true;
-		
 	}
-
-
 
 	return false;
 

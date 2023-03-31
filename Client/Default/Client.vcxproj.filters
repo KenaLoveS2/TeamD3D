@@ -541,6 +541,15 @@
     <Filter Include="02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke">
       <UniqueIdentifier>{ac036bdd-26ba-47cf-9e9f-7d98dd494687}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Portal">
+      <UniqueIdentifier>{6a90fdcf-c3b4-4918-9277-4610dbc2f268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\Gimmick">
+      <UniqueIdentifier>{1662a002-a54b-4398-ba8b-208f596da21b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Envrioment\ControlRoom">
+      <UniqueIdentifier>{cdc58b59-40df-4e45-9aba-7290005222c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1301,24 +1310,6 @@
     <ClInclude Include="..\public\ImGui_Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Chest_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ControlRoom.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\FieldBecon_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Base_S2.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClInclude>
@@ -1364,24 +1355,6 @@
     <ClInclude Include="..\public\E_Warriorcloud.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSummons.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossPlate.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanTrail.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\E_ShamanSmoke.h">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\E_Swipes_Charged.h">
       <Filter>1004.알아서해라</Filter>
     </ClInclude>
@@ -1400,6 +1373,28 @@
     <ClInclude Include="..\public\E_P_Sakura.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Portal.h">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Chest_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FieldBecon_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
+      <Filter>02.GameObjects\Envrioment\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h">
+      <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HealthFlower_Anim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2134,24 +2129,6 @@
     <ClCompile Include="..\private\ImGui_Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Chest_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ControlRoom.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Base_S2.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClCompile>
@@ -2163,9 +2140,6 @@
     </ClCompile>
     <ClCompile Include="..\private\E_Swipes_Charged.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CinematicCamera.cpp">
-      <Filter>1004.알아서해라</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>1004.알아서해라</Filter>
@@ -2200,24 +2174,6 @@
     <ClCompile Include="..\private\E_Warriorcloud.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Warrior\TripleAttack</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSummons.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanTrail.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
-      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CinematicCamera.cpp">
       <Filter>02.GameObjects\Camera</Filter>
     </ClCompile>
@@ -2242,6 +2198,31 @@
     <ClCompile Include="..\private\E_P_Sakura.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Portal.cpp">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Chest_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>02.GameObjects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
+      <Filter>02.GameObjects\Envrioment\Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
+      <Filter>02.GameObjects\Envrioment\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp">
+      <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2334,9 +2315,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Texture_S2.hlsl">
       <Filter>97.ShaderFiles\Effect_S2</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxBossModel.hlsl">
-      <Filter>97.ShaderFiles\Effect</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
       <Filter>97.ShaderFiles</Filter>
