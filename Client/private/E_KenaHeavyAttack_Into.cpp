@@ -61,18 +61,14 @@ void CE_KenaHeavyAttack_Into::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == true)
 	{
 		m_fTimeDelta += fTimeDelta;
-	//	m_eEFfectDesc.vScale *= 1.2f + fTimeDelta;
 		for (auto& pChild : m_vecChild)
-			pChild->Set_AddScale(fTimeDelta + 1.1f);
+			pChild->Set_AddScale(fTimeDelta + 1.0f);
 
-		if (m_fTimeDelta > 0.2f)
+		if (m_fTimeDelta > 0.1f)
 		{
-			m_eEFfectDesc.fWidthFrame = 0.0;
-			m_eEFfectDesc.fHeightFrame = 0.0;
-	//		m_eEFfectDesc.vScale = _float3(0.5f, 0.5f, 1.f);
-
+			ResetSprite();
 			for (auto& pChild : m_vecChild)
-				pChild->Set_Scale(_float3(1.f, 1.f, 1.f));
+				pChild->Set_Scale(_float3(0.7f, 0.7f, 0.7f));
 
 			m_eEFfectDesc.bActive = false;
 			m_fTimeDelta = 0.0f;

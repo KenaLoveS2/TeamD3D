@@ -6,7 +6,8 @@ BEGIN(Client)
 class CE_RectTrail final : public CEffect_Trail
 {
 public:
-	enum RECTTRAILTYPE { OBJ_KENA, OBJ_MONSTER, OBJ_BOSS, OBJ_ROTWISP, OBJ_DEFAULT, OBJ_END };
+	enum RECTTRAILTYPE { OBJ_KENA, OBJ_MONSTER, OBJ_BOSS, OBJ_ROTWISP, OBJ_B_SHAMAN,
+		OBJ_BODY_SHAMAN, OBJ_DEFAULT, OBJ_END };
 
 private:
 	CE_RectTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -32,6 +33,9 @@ public:
 private:
 	class CKena* m_pKena = nullptr;
 	RECTTRAILTYPE m_eType = OBJ_DEFAULT;
+
+	_float		m_fSplitDurationTime = 0.0f;
+	_float		m_fDurationTime = 0.0f;
 
 public:
 	static  CE_RectTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

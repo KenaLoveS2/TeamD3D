@@ -5,7 +5,7 @@
 #include "delegator.h"
 #include "Model.h"
 
-#define KENA_LINEAR_DAMING		1.f
+#define KENA_LINEAR_DAMING		0.5f
 #define KENA_ANGULAR_DAMING		0.5f
 #define KENA_MASS				100000.f * 1.1f
 
@@ -35,7 +35,8 @@ public:
 		STATE_AIM, STATE_BOW, STATE_INJECTBOW,
 		STATE_BOMB, STATE_INJECTBOMB, 
 		STATE_PULSE, STATE_PARRY,
-		STATE_JUMP, STATERETURN_END };
+		STATE_JUMP,
+		STATE_BOSSBATTLE, STATERETURN_END };
 
 private:
 	CKena(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -147,6 +148,7 @@ private:
 	_bool						m_bAim = false;
 	_bool						m_bBow = false;
 	_bool						m_bInjectBow = false;
+	_bool						m_bFindArrow = false;
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
@@ -160,6 +162,8 @@ private:
 	_float						m_fGravity = 9.81f;
 	_float						m_fInitJumpSpeed;
 	_float						m_fCurJumpSpeed;
+
+	_bool						m_bBossBattle = false;
 
 	_bool						m_bRotWispInteractable = false;
 	_bool						m_bChestInteractable = false;
@@ -215,21 +219,21 @@ private:
 	DAMAGED_FROM			Calc_DirToMonster(const _float3& vCollisionPos);
 
 private:	/* Animation Event Func */
-	void						TurnOnAttack(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffAttack(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffTrail(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnCharge(_bool bIsInit, _float fTimeDelta);
-	void						TurnOffCharge(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnAttack(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffAttack(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnTrail(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffTrail(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnFootStep_Left(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnFootStep_Right(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnCharge(_bool bIsInit, _float fTimeDelta);
+	void	TurnOffCharge(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseJump(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnHeavyAttack_Into(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnInteractStaff(_bool bIsInit, _float fTimeDelta);
 
-	void						TurnOnPulseParry(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
-	void						TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParry(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParryHand(_bool bIsInit, _float fTimeDelta);
+	void	TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
 
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;

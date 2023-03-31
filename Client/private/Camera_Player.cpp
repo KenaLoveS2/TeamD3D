@@ -67,13 +67,14 @@ HRESULT CCamera_Player::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(__super::Initialize(&CameraDesc), E_FAIL);
 
 	m_mapCamOffset.emplace(CAMOFFSET_DEFAULT		, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, false));
+	m_mapCamOffset.emplace(CAMOFFSET_BOSSBATTLE		, new CCamOffset(1.9f, 3.2f, 0.f, 0.4f, false));
 	m_mapCamOffset.emplace(CAMOFFSET_MASK			, new CCamOffset(1.2f, 2.f, 0.f, 0.4f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_AIM				, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_AIM			, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_AIR_AIM		, new CCamOffset(1.2f, 0.85f, 0.5f, 0.3f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW	, new CCamOffset(1.25f, 0.55f, 0.55f, 0.7f, true));
+	m_mapCamOffset.emplace(CAMOFFSET_INJECTBOW		, new CCamOffset(1.25f, 0.55f, 0.55f, 0.7f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_PULSE			, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, true));
 	m_mapCamOffset.emplace(CAMOFFSET_PARRY			, new CCamOffset(1.2f, 0.85f, 0.5f, 0.6f, true));
-	m_mapCamOffset.emplace(CAMOFFSET_HEAVYATTACK, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, false));
+	m_mapCamOffset.emplace(CAMOFFSET_HEAVYATTACK	, new CCamOffset(1.2f, 1.7f, 0.f, 0.15f, false));
 
 	m_pCurOffset = m_mapCamOffset[CAMOFFSET_DEFAULT];
 	m_pPreOffset = m_pCurOffset;
@@ -105,7 +106,12 @@ void CCamera_Player::Tick(_float fTimeDelta)
 	if (m_pKena->Get_State(CKena::STATE_HEAVYATTACK) == true)
 		Set_CamOffset(CCamera_Player::CAMOFFSET_HEAVYATTACK);
 	if (m_pKena->Get_State(CKena::STATERETURN_END) == true)
-		Set_CamOffset(CCamera_Player::CAMOFFSET_DEFAULT);
+	{
+		if (m_pKena->Get_State(CKena::STATE_BOSSBATTLE) == true)
+			Set_CamOffset(CCamera_Player::CAMOFFSET_BOSSBATTLE);
+		else
+			Set_CamOffset(CCamera_Player::CAMOFFSET_DEFAULT);
+	}
 	
 	if (m_pKena == nullptr || m_pKenaTransform == nullptr)
 	{
@@ -467,6 +473,10 @@ void CCamera_Player::Imgui_RenderProperty()
 		strcpy_s(szOffset, "DEFAULT");
 		break;
 
+	case CCamera_Player::CAMOFFSET_BOSSBATTLE:
+		strcpy_s(szOffset, "BOSSBATTLE");
+		break;
+
 	case CCamera_Player::CAMOFFSET_MASK:
 		strcpy_s(szOffset, "MASK");
 		break;
@@ -510,7 +520,7 @@ void CCamera_Player::Imgui_RenderProperty()
 		m_pCurOffset->bPlayerControl = false;
 	ImGui::InputFloat4("Last Position", (_float*)&m_pCurOffset->vLastPos, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "MASK", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
+	char*	pOffsetTag[CAMOFFSET_END] = { "DEFAULT", "BOSS_BATTLE", "MASK", "AIM", "AIR_AIM", "INJECT_BOW", "PULSE", "PARRY", "HEAVY_ATTACK" };
 	static _int	iSelectOffset = -1;
 	ImGui::ListBox("Offset", &iSelectOffset, pOffsetTag, (_int)CAMOFFSET_END);
 
