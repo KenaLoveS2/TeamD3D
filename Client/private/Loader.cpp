@@ -400,7 +400,7 @@ HRESULT CLoader::Loading_ForMapTool()
 		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAPTOOL, L"Prototype_Component_Model_Sakura_Flower",
 			CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/NonAnim/Sakura/Sakura_Flower.mdat"),
-				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/Sakura_Flower.json", false))))
+				PivotMatrix, nullptr, false, true, "../Bin/Resources/NonAnim/Sakura/Sakura_Flower.json",false))))
 			return E_FAIL;
 
 		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
@@ -1160,7 +1160,7 @@ HRESULT CLoader::Loading_ForMapTool()
 			assert(!"Issue");
 		
 #pragma endregion ~Start_Forest_Room
-	}
+		}
 	if (FAILED(LoadNonAnimFolderModel(LEVEL_MAPTOOL, "Map_Base")))
 		assert(!"Issue");
 	
