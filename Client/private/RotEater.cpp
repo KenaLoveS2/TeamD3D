@@ -38,8 +38,8 @@ HRESULT CRotEater::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 16.f;
-		m_Desc.WorldMatrix._43 = 5.f;
+		m_Desc.WorldMatrix._41 = -13.f;
+		m_Desc.WorldMatrix._43 = -13.f;
 	}
 		
 	m_pModelCom->Set_AllAnimCommonType();
@@ -153,7 +153,7 @@ void CRotEater::Late_Tick(_float fTimeDelta)
 
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bSpawn)
+	if (m_pRendererCom && m_bReadySpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -324,20 +324,22 @@ HRESULT CRotEater::SetUp_State()
 		
 
 		.AddState("READY_SPAWN")
+		.OnStart([this]()
+	{
+		Start_Spawn();
+	})
 		.Tick([this](_float fTimeDelta)
 	{
-
+		Tick_Spawn(fTimeDelta);
 	})
 		.OnExit([this]()
 	{
-		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-		m_pUIHPBar->Set_Active(true);
-		m_bSpawn = true;
+		End_Spawn();
 	})
 		.AddTransition("READY_SPAWN to AWAKE", "AWAKE")
 		.Predicator([this]()
 	{
-		return m_pEnemyWisp->IsActiveState();
+		return m_bWispEnd && m_fDissolveTime <= 0.f;
 	})
 		
 
@@ -640,10 +642,15 @@ HRESULT CRotEater::SetUp_State()
 		
 		Set_Dying(iAnimIndex);
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fDissolveTime += fTimeDelta * 0.2f;
+		m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
+	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_pModelCom->Get_AnimationFinish();
+		return m_pModelCom->Get_AnimationFinish() && m_fDissolveTime >= 1.f;
 	})
 		
 		.AddState("DEATH")
@@ -684,8 +691,8 @@ HRESULT CRotEater::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	m_bDissolve && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

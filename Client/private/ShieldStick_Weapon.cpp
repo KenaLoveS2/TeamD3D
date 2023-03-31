@@ -43,6 +43,18 @@ HRESULT CShieldStick_Weapon::Late_Initialize(void* pArg)
 void CShieldStick_Weapon::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bShowDissolve)
+	{
+		m_fDissolveTime -= fTimeDelta * 0.45f;
+		if (m_fDissolveTime <= 0.f)
+		{
+			m_fDissolveTime = 0.f;
+			m_iShaderPass = 1;
+			m_bShowDissolve = false;
+		}
+	}
+		
 }
 
 void CShieldStick_Weapon::Late_Tick(_float fTimeDelta)
@@ -89,7 +101,7 @@ HRESULT CShieldStick_Weapon::Render()
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
-		m_pModelCom->Render(m_pShaderCom, i, nullptr, 1);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, m_iShaderPass);  // 1, 5
 	}
 
 	return S_OK;
@@ -167,24 +179,21 @@ HRESULT CShieldStick_Weapon::SetUp_Components()
 
 HRESULT CShieldStick_Weapon::SetUp_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	if (nullptr == m_pShaderCom) return E_FAIL;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix))) return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4)))) return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bShowDissolve, sizeof(_bool)))) return E_FAIL;
+	if (m_bShowDissolve)
+	{
+		if (FAILED(m_pShaderCom->Set_RawValue("g_fDissolveTime", &m_fDissolveTime, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pDissolveTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture"))) return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -238,4 +247,11 @@ CGameObject* CShieldStick_Weapon::Clone(void* pArg)
 void CShieldStick_Weapon::Free()
 {
 	__super::Free();
+}
+
+void CShieldStick_Weapon::Show_Dissolve()
+{
+	m_fDissolveTime = 1.f;
+	m_bShowDissolve = true;
+	m_iShaderPass = 9;
 }
