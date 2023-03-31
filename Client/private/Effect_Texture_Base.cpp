@@ -91,12 +91,15 @@ void CEffect_Texture_Base::Tick(_float fTimeDelta)
 	if (0.0f != m_vScaleSpeed.Length())
 	{
 		_smatrix matLocal = m_LocalMatrix;
-		_float fScaleRight =
-			(matLocal.Right().Length() + (m_vScaleSpeed.x * fTimeDelta)) / (matLocal.Right().Length());
-		_float fScaleUp =
-			(matLocal.Up().Length() + (m_vScaleSpeed.y * fTimeDelta)) / (matLocal.Up().Length());
-		matLocal.Right(fScaleRight * matLocal.Right());
-		matLocal.Up(fScaleUp * matLocal.Up());
+
+		_float fScaleRight	= matLocal.Right().Length() + (m_vScaleSpeed.x * fTimeDelta);
+		_float fScaleUp		= matLocal.Up().Length() + (m_vScaleSpeed.y * fTimeDelta);
+
+		_float3 vRight = XMVector3Normalize(matLocal.Right());
+		_float3 vUp = XMVector3Normalize(matLocal.Up());
+
+		matLocal.Right(fScaleRight * vRight);
+		matLocal.Up(fScaleUp * vUp);
 		m_LocalMatrix = matLocal;
 	}
 }
@@ -420,18 +423,38 @@ void CEffect_Texture_Base::Activate(CGameObject* pTarget)
 	m_pTarget = pTarget;
 }
 
-void CEffect_Texture_Base::Activate(CGameObject* pTarget, _float2 vScaleSpeed)
+void CEffect_Texture_Base::Activate_Scaling(CGameObject* pTarget, _float2 vScaleSpeed)
 {
 	m_bActive = true;
 	m_pTarget = pTarget;
 	m_vScaleSpeed = vScaleSpeed;
 }
 
-void CEffect_Texture_Base::Activate(_float4 vPos, _float2 vScaleSpeed)
+void CEffect_Texture_Base::Activate_Scaling(_float4 vPos, _float2 vScaleSpeed)
 {
 	m_bActive = true;
 	m_ParentPosition = vPos;
 	m_vScaleSpeed = vScaleSpeed;
+}
+
+void CEffect_Texture_Base::Activate_Spread(_float4 vPos, _float2 vScaleSpeed)
+{
+	m_bActive = true;
+	m_ParentPosition = vPos;
+	m_vScaleSpeed = vScaleSpeed;
+
+	/* Shrink At First */
+	_smatrix matLocal = m_LocalMatrix;
+
+	_float3 vRight = matLocal.Right();
+	vRight.Normalize();
+	matLocal.Right(0.01f * vRight);
+
+	_float3 vUp = matLocal.Up();
+	vUp.Normalize();
+	matLocal.Up(0.1f * vUp);
+
+	m_LocalMatrix = matLocal;
 }
 
 void CEffect_Texture_Base::DeActivate()
