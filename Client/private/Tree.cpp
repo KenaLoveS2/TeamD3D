@@ -37,17 +37,16 @@ HRESULT CTree::Initialize(void * pArg)
 
 HRESULT CTree::Late_Initialize(void * pArg)
 {
-	_float3 vPos, vSize;
-	vSize = _float3(0.25f, 1.f, 0.25f);
-	vPos = _float3(0.0f, 0.f, 0.0f);
-
-
-
-	if (m_pModelCom->Get_UseTriangleMeshActor())
+	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
 	}
-
+	else if (m_pModelCom->Get_IStancingModel() == false && m_pModelCom->Get_UseTriangleMeshActor())
+	{
+		m_pModelCom->Create_PxTriangle(Create_PxUserData(this, false, COL_ENVIROMENT));
+	}
+	else
+		return S_OK;
 
 	return S_OK;
 }
