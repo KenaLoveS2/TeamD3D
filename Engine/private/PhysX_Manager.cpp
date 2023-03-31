@@ -121,28 +121,6 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	return PxFilterFlag::eDEFAULT;
 }
 
-
-PxFilterFlags RayCastFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-									PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-									PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-	// Check if either object is a trigger
-	bool isTrigger0 = (attributes0 & physx::PxFilterObjectFlag::eTRIGGER) != 0;
-	bool isTrigger1 = (attributes1 & physx::PxFilterObjectFlag::eTRIGGER) != 0;
-
-	if (isTrigger0 || isTrigger1)
-	{
-		// If either object is a trigger, skip collision checks
-		pairFlags = physx::PxPairFlag::eSUPPRESS_EITHER;
-		return physx::PxFilterFlag::eSUPPRESS;
-	}
-
-	// Otherwise, perform default collision checks
-	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-	return physx::PxFilterFlag::eDEFAULT;
-}
-
-
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
 CPhysX_Manager::CPhysX_Manager()
