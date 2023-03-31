@@ -108,8 +108,21 @@ void CPulse_Plate_Anim::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	/*Culling*/
+	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
+	_vector camPos = XMLoadFloat4(&vCamPos);
+	const _vector	 vDir = camPos - vPos;
 
-	if (m_pRendererCom && m_bRenderActive)
+	_float f = XMVectorGetX(XMVector4Length(vDir));
+	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
+		m_bRenderCheck = false;
+	if (m_bRenderCheck == true)
+		m_bRenderCheck = CGameInstance::GetInstance()->isInFrustum_WorldSpace(vPos, 100.f);
+
+	/*~Culling*/
+
+	if (m_pRendererCom && m_bRenderActive && false == m_bRenderCheck)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 

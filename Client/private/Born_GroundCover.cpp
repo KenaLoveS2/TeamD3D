@@ -38,27 +38,34 @@ HRESULT CBorn_GroundCover::Initialize(void * pArg)
 
 HRESULT CBorn_GroundCover::Late_Initialize(void* pArg)
 {
-	m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_GO_UP);
-
+	m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_FLOWER);
 	return S_OK;
 }
 
 void CBorn_GroundCover::Tick(_float fTimeDelta)
 {
-	if(!m_bOnceTest)
+	//if(!m_bOnceTest)
+	//{
+	//	Late_Initialize();
+	//	m_bOnceTest = true;
+	//}
+	/*if (ImGui::Button("Uprise"))
 	{
-		Late_Initialize();
-		m_bOnceTest = true;
+		m_bUprise = true;
+
 	}
+
+	if (ImGui::Button("Reset"))
+	{
+		m_bUprise = false;
+		m_pModelCom->Instaincing_GimmkicInit(Gimmick_TYPE_FLOWER);
+	}*/
+
 
 	__super::Tick(fTimeDelta);
 
-	Culling();
+	Culling(fTimeDelta);
 
-	if(ImGui::Button("Uprise"))
-	{
-		//m_pModelCom->Instaincing_MoveControl()
-	}
 
 	if(m_bRenderCheck)
 		m_pModelCom->Play_Animation(fTimeDelta);
@@ -158,7 +165,7 @@ HRESULT CBorn_GroundCover::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CBorn_GroundCover::Culling()
+void CBorn_GroundCover::Culling(_float fTimeDelta)
 {
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float4 vCamPos = CGameInstance::GetInstance()->Get_CamPosition();
@@ -171,6 +178,17 @@ void CBorn_GroundCover::Culling()
 
 	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
 		m_bRenderCheck = false;
+
+
+	_float fDist = XMVectorGetX(XMVector4Length(vDir));
+
+	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
+		m_bUprise = true;
+
+	if (m_bUprise)
+		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
+
+
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

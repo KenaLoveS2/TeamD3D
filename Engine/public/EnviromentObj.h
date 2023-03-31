@@ -13,6 +13,7 @@ public:
 
 	enum  CHAPTER {
 		Gimmick_TYPE_NONE, Gimmick_TYPE_GO_UP, Gimmick_TYPE_DISSOLVE, Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE,
+		Gimmick_TYPE_FLOWER,
 		Gimmick_TYPE_END};
 
 	typedef struct tagEnviromnetObjectDesc

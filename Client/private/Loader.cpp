@@ -390,8 +390,8 @@ HRESULT CLoader::Loading_ForMapTool()
 	if (FAILED(Loading_ForWJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;
 
-	_bool bRealObject = false;
-	_bool bFlowerCheck = true;
+	_bool bRealObject = true;
+	_bool bFlowerCheck = false;
 
 #ifdef FOR_MAPTOOL   
 
@@ -474,6 +474,7 @@ HRESULT CLoader::Loading_ForMapTool()
 
 	/*if (FAILED(Loading_ForBJ((_uint)LEVEL_MAPTOOL)))
 		return E_FAIL;*/
+
 #else
 	/* Prototype_Component_Model_TeleportFlower */
 	
