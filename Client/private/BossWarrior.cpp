@@ -1347,6 +1347,8 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 			if (m_bBlock == false)
 				m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
+
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
 			_float fGauge = m_pMonsterStatusCom->Get_PercentHP();
 			m_BossWarriorDelegator.broadcast(eBossHP, fGauge);
@@ -1386,6 +1388,7 @@ _int CBossWarrior::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPo
 
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			CUI_ClientManager::UI_PRESENT eBossHP = CUI_ClientManager::TOP_BOSS;
