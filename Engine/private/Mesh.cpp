@@ -576,9 +576,6 @@ CComponent * CMesh::Clone(void * pArg, CGameObject * pOwner)
 
 void CMesh::Free()
 {
-	Safe_Delete_Array(m_pPxVertices);
-	Safe_Delete_Array(m_pPxIndicies);
-
 	__super::Free();
 
 	for (auto& pBone : m_Bones)

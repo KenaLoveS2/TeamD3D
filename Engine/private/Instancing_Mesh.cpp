@@ -22,8 +22,6 @@ CInstancing_Mesh::CInstancing_Mesh(const CInstancing_Mesh& rhs)
 	, m_iIncreaseInstancingNumber(rhs.m_iIncreaseInstancingNumber)
 	, m_pInstancingPositions(rhs.m_pInstancingPositions)
 	, m_iNumInstance_Origin(rhs.m_iNumInstance_Origin)
-	, m_fInstancingEffect_Speed(rhs.m_fInstancingEffect_Speed)
-	
 {
 	m_Bones.reserve(rhs.m_Bones.size());
 
@@ -791,10 +789,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 	
 		if (iFinishCnt == 0)
 			return true;
-		
 	}
-
-
 
 	return false;
 
@@ -1126,14 +1121,14 @@ void CInstancing_Mesh::Free()
 		Safe_Release(pBone);
 	m_Bones.clear();
 
+	Safe_Delete_Array(m_fInstancingEffect_Speed);
+
 	if (m_isCloned == false)
 	{
 		Safe_Delete_Array(m_pAnimVertices);
 		Safe_Delete_Array(m_pNonAnimVertices);
 
 		Safe_Delete_Array(m_pIndices);
-		Safe_Delete_Array(m_fInstancingEffect_Speed);
-
 	}
 
 	m_pInstancingPositions.clear();

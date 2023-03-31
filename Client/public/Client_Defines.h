@@ -8,7 +8,8 @@ extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
 #define TERRAIN_COUNT		5
-#define FOR_MAP_GIMMICK
+
+//#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL

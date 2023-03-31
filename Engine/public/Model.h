@@ -48,9 +48,9 @@ public:
 	vector<_float3>*				Get_ColiderSize() { return	&m_VecInstancingColiderSize; }
 
 
-	CModel::TYPE			Get_Type()const { return m_eType; }
-	CAnimation*				Find_Animation(const string& strAnimName);
-	CAnimation*				Find_Animation(_uint iAnimIndex);
+	CModel::TYPE					Get_Type()const { return m_eType; }
+	CAnimation*						Find_Animation(const string& strAnimName);
+	CAnimation*						Find_Animation(_uint iAnimIndex);
 
 	/*for.Instancing*/
 	const	_bool			Get_IStancingModel() const { return m_bIsInstancing; }
