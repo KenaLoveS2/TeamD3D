@@ -288,9 +288,7 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	PxCapsuleDesc.fHalfHeight = vPivotScale.y;
 	PxCapsuleDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxCapsuleDesc.fDensity = 1.f;
-
-	m_fLinearDamping = 1.5f;
-	m_fAngularDamping = KENA_ANGULAR_DAMING;	
+		
 	PxCapsuleDesc.fMass = KENA_MASS;
 	PxCapsuleDesc.fAngularDamping = KENA_ANGULAR_DAMING;
 	PxCapsuleDesc.fLinearDamping = KENA_LINEAR_DAMING;
@@ -379,9 +377,8 @@ HRESULT CKena::Late_Initialize(void * pArg)
 	CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, false, COL_PLAYER_WEAPON));
 	m_pTransformCom->Add_Collider(pStaff->Get_ObjectCloneName(), matPivot);
 
-	CGameInstance* pGameInst = CGameInstance::GetInstance();
-	m_pTerrain = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain");
-
+	Setup_TerrainPtr();
+	
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
@@ -465,7 +462,7 @@ void CKena::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	Test_Raycast();
+	LiftRotRockProc();
 
  	if (m_bParry == true)
  	{
@@ -2054,37 +2051,37 @@ _int CKena::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex,
 	return 0;
 }
 
-void CKena::Test_Raycast()
-{
-	//if (GetKeyState(VK_LCONTROL) & 0x8000 && GetKeyState('S') & 0x8000)
-	//	m_pKenaStatus->Save();
-
-	if (m_pTerrain == nullptr)
+void CKena::LiftRotRockProc()
+{	
+	CTerrain* pCurTerrain = m_pTerrain[CGameInstance::GetInstance()->Get_CurrentPlayerRoomIndex()];
+	if (pCurTerrain == nullptr)
 		return;
 
-	if (GetKeyState('T') & 0x8000)
+	if (m_bRotRockChoiceFlag == false && GetKeyState('R') & 0x8000)
 	{
 		if (m_pRopeRotRock)
 		{
+			m_bRotRockChoiceFlag = true;
 			m_pRopeRotRock->Set_ChoiceFlag(true);
 		}
+		else
+			m_bRotRockChoiceFlag = false;
 	}
 
-	if (GetKeyState(VK_LSHIFT) & 0x0800)
-	{
-		CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	if (m_bRotRockChoiceFlag && m_bAim && m_pAnimation->Get_CurrentAnimIndex() != (_uint)CKena_State::AIM_INTO)
+	{	
 		CGameInstance* pGameInst = CGameInstance::GetInstance();
-
 		_vector vCamPos = pGameInst->Get_CamPosition();
 		_vector vCamLook = pGameInst->Get_CamLook_Float4();
 		_float3 vOut;
 
-		if (pPhysX->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
+		if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 10.f, &vOut))
 		{
-			m_pTerrain->Set_BrushPosition(vOut);
+			pCurTerrain->Set_BrushPosition(vOut);
 
 			if (GetKeyState('R') & 0x8000)
 			{
+				m_bRotRockMoveFlag = true;
 				if (m_pRopeRotRock && m_pRopeRotRock->Get_MoveFlag() == false)
 				{
 					m_pRopeRotRock->Set_MoveFlag(true);
@@ -2095,6 +2092,29 @@ void CKena::Test_Raycast()
 	}
 	else
 	{
-		m_pTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
+		if (pCurTerrain && m_bRotRockMoveFlag == false)
+		{
+			pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
+		}	
 	}
+}
+
+void CKena::Setup_TerrainPtr()
+{
+	CGameInstance* pGameInst = CGameInstance::GetInstance();
+	
+	_tchar szCloneTag[64] = TEXT("");
+	for (_uint i = 0; i < TERRAIN_COUNT; i++)
+	{
+		swprintf_s(szCloneTag, TEXT("Terrain%d"), i);
+		m_pTerrain[i] = (CTerrain*)pGameInst->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", szCloneTag);
+	}
+}
+
+void CKena::End_LiftRotRock()
+{	
+	m_bRotRockChoiceFlag = m_bRotRockMoveFlag = false;
+	CTerrain* pCurTerrain = m_pTerrain[CGameInstance::GetInstance()->Get_CurrentPlayerRoomIndex()];
+	if (pCurTerrain)		
+		pCurTerrain->Set_BrushPosition(_float3(-1000.f, 0.f, 0.f));
 }
