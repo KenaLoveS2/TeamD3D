@@ -1001,3 +1001,13 @@ _bool CTransform::IsFalling()
 
 	return m_pPhysX_Manager->IsFalling((PxRigidDynamic*)m_pPxActor);
 }
+
+_bool CTransform::IsLook(_fvector vTargetPos, _float fCheckDegree)
+{
+	_vector vLook = XMVector3Normalize(Get_State(STATE_LOOK));
+	_vector vTargetDir = XMVector3Normalize(vTargetPos - Get_State(STATE_TRANSLATION));
+
+	_float fTargetRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, vTargetDir)));
+
+	return fTargetRadian <= XMConvertToRadians(fCheckDegree);
+}

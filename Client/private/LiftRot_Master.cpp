@@ -42,6 +42,7 @@ HRESULT CLiftRot_Master::Late_Initialize(void * pArg)
 		swprintf_s(szCloneRotTag, L"LiftRot_%d", i);
 		m_pLiftRotArr[i] = (CLiftRot*)m_pGameInstacne->Clone_GameObject(TEXT("Prototype_GameObject_LiftRot"), CUtile::Create_StringAuto(szCloneRotTag), &Desc);
 		assert(m_pLiftRotArr[i] != nullptr && "CLiftRot_Master::Late_Initialize");		
+		m_pLiftRotArr[i]->Set_OwnerLiftRotMasterPtr(this);
 	}
 
 	return S_OK;
@@ -51,6 +52,11 @@ void CLiftRot_Master::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_pRopeRotRock)
+	{
+		m_vRopeRotRockPos = m_pRopeRotRock->Get_TransformCom()->Get_Position();		
+	}
+	
 	for (auto &pLiftRot : m_pLiftRotArr)
 	{
 		pLiftRot->Tick(fTimeDelta);
@@ -110,6 +116,17 @@ void CLiftRot_Master::Execute_WakeUp(_float4 vCenterPos, _float3* pCreatePosOffs
 	}		
 }
 
+void CLiftRot_Master::Execute_WakeUp(_fmatrix ParentMatrix, _float3* pCreateLocalPos, _float3* pLiftLocalPos)
+{
+	_float4 vCreate, vLift;
+	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
+	{
+		vCreate = XMVectorSetW(XMVector3TransformCoord(pCreateLocalPos[i], ParentMatrix), 1.f);
+		vLift = XMVectorSetW(XMVector3TransformCoord(pLiftLocalPos[i], ParentMatrix), 1.f);		
+		m_pLiftRotArr[i]->Execute_WakeUp(vCreate, vLift);
+	}
+}
+
 void CLiftRot_Master::Execute_LiftStart()
 {
 	for (auto& pLiftRot : m_pLiftRotArr)
@@ -126,20 +143,24 @@ void CLiftRot_Master::Execute_Move(_float4 vCenterPos, _float3 *pOffsetPosArr)
 {
 	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
 	{
-		m_pLiftRotArr[i]->Set_NewPosition(vCenterPos + pOffsetPosArr[i]);
+		m_pLiftRotArr[i]->Set_NewPosition(vCenterPos + pOffsetPosArr[i], vCenterPos);
 	}	
+}
+
+void CLiftRot_Master::Execute_Move(_fmatrix ParentMatrix, _float3* pLocalPosArr)
+{
+	_float4 vNewPos;
+	for (_uint i = 0; i < LIFT_ROT_COUNT; i++)
+	{
+		vNewPos = XMVectorSetW(XMVector3TransformCoord(pLocalPosArr[i], ParentMatrix), 1.f);		
+		m_pLiftRotArr[i]->Set_NewPosition(vNewPos, ParentMatrix.r[3]);
+	}
 }
 
 void CLiftRot_Master::Execute_LiftMoveEnd()
 {
 	for (auto& pLiftRot : m_pLiftRotArr)
 		pLiftRot->Execute_LiftMoveEnd();
-}
-
-void CLiftRot_Master::Execute_LiftDownEnd()
-{
-	for (auto& pLiftRot : m_pLiftRotArr)
-		pLiftRot->Execute_LiftDownEnd();
 }
 
 _bool CLiftRot_Master::Is_LiftReady()
@@ -165,4 +186,3 @@ _bool CLiftRot_Master::Is_LiftEnd()
 
 	return bRet;
 }
-

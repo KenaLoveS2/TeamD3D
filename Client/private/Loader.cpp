@@ -274,7 +274,7 @@ HRESULT CLoader::Loading_ForGamePlay()
 
 	FAILED_CHECK_RETURN(Loading_ForJH((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
-	// FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
+	FAILED_CHECK_RETURN(Loading_ForHW((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
 	FAILED_CHECK_RETURN(Loading_ForHO((_uint)LEVEL_GAMEPLAY), E_FAIL);
 
@@ -2343,6 +2343,18 @@ HRESULT CLoader::Loading_ForHW(_uint iLevelIndex)
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Terrain_Texture/Real_Height/Terrain_Height_3.bmp")))))
 		assert(!"Issue");
 	
+	// 임시
+	/* For.Prototype_GameObject_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+		/* For.Prototype_GameObject_GroundMark */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GroundMark"),
+		CGroundMark::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	return S_OK; 
+
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_DeadZoneTree */

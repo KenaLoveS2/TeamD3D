@@ -969,8 +969,14 @@ _bool CGameInstance::Is_RenderIndex(_uint iObjRoomIndex)
 
 _bool CGameInstance::Is_Render_TerrainIndex(_uint iTerrainRoomIndex)
 {
-	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Is_Render_TerrainIndex()");
 	return m_pEnviroment_Manager->Is_Render_TerrainIndex(iTerrainRoomIndex);
+}
+
+_uint CGameInstance::Get_CurrentPlayerRoomIndex()
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	return m_pEnviroment_Manager->Get_CurrentPlayerRoomIndex();
 }
 
 void CGameInstance::Release_Engine()

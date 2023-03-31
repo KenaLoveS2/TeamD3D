@@ -29,6 +29,9 @@ HRESULT CRope_RotRock::Initialize(void* pArg)
 
 	m_pModelCom->Set_AllAnimCommonType();
 
+	m_pTransformCom->Set_Speed(1.f);
+	m_pTransformCom->Set_RotatePerSecond(0.5f);
+
 	return S_OK;
 }
 
@@ -59,7 +62,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, true, COL_ENVIROMENT));
 	m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag);
-	m_pTransformCom->Set_PxPivot(_float3(0.f, 1.2f, 0.f));
+	m_pTransformCom->Set_PxPivot(m_vInitPivot);
 	m_pTransformCom->Set_Position(_float4(5.f, 0.f, 5.f, 1.f));
 	
 	m_vInitPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -69,6 +72,7 @@ HRESULT CRope_RotRock::Late_Initialize(void* pArg)
 
 	m_pLiftRotMaster = (CLiftRot_Master*)m_pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Rot"), TEXT("LiftRot_Master"));
 	if (m_pLiftRotMaster == nullptr) return E_FAIL;
+	m_pLiftRotMaster->Set_OwnerRopeRotRokPtr(this);
 
 	CLiftRot::DESC CutRotDesc;
 	CutRotDesc.eType = CLiftRot::CUTE;
@@ -181,14 +185,15 @@ HRESULT CRope_RotRock::SetUp_State()
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
 			m_pKena->Set_RopeRotRockPtr(this);
 	})
+	.OnExit([this]()
+	{
+	})
 		.AddTransition("IDLE to CHOICE", "CHOICE")
 		.Predicator([this]()
 	{
 		return m_bChoiceFlag;
 	})		
-		.OnExit([this]()
-	{
-	})
+	
 		
 		.AddState("CHOICE")
 		.OnStart([this]()
@@ -205,101 +210,133 @@ HRESULT CRope_RotRock::SetUp_State()
 		if (m_pTransformCom->IsClosed_XZ(vPlayerPos, 5.f))
 			m_pKena->Set_RopeRotRockPtr(this);
 	})
+		.OnExit([this]()
+	{
+		m_bMoveFlag = true;
+		m_pCuteLiftRot->Execute_StartCute(m_vMoveTargetPosition);
+		m_pLiftRotMaster->Execute_WakeUp(m_pTransformCom->Get_WorldMatrix(), m_vRotCreatePosOffset, m_vRotLiftPosOffset);
+	})
 		.AddTransition("CHOICE to UP_WAIT", "UP_WAIT")
 		.Predicator([this]()
 	{
 		return m_bMoveFlag;
 	})
-		.OnExit([this]()
-	{
-		m_bMoveFlag = true;
-		m_pCuteLiftRot->Execute_StartCute(m_vMoveTargetPosition);
-		m_pLiftRotMaster->Execute_WakeUp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_vRotCreatePosOffset, m_vRotLiftPosOffset);
-	})
+		
 		
 		.AddState("UP_WAIT")
 		.OnStart([this]()
 	{	
 	})
 		.Tick([this](_float fTimeDelta)
+	{	
+	})
+		.OnExit([this]()
 	{
-	
 	})
 		.AddTransition("UP_WAIT to UP", "UP")
 		.Predicator([this]()
 	{
 		return m_pLiftRotMaster->Is_LiftReady();
 	})
-		.OnExit([this]()
-	{
-	})
+		
 		
 		.AddState("UP")
 		.OnStart([this]()
 	{
 		m_pLiftRotMaster->Execute_LiftStart();
 		m_vPxPivotDist = m_pTransformCom->Get_vPxPivot();
+		m_vNewPivot = m_vInitPivot;
 	})
 		.Tick([this](_float fTimeDelta)
 	{	
-		// ¾÷
+		m_vNewPivot.y -= fOffsetY * fTimeDelta;
+		if (m_vNewPivot.y <= m_vUpPivot.y)
+			m_vNewPivot.y = m_vUpPivot.y;
+
+		m_pTransformCom->Set_PxPivot(m_vNewPivot);
 	})
-		.AddTransition("UP to MOVE", "MOVE")
+		.OnExit([this]()
+	{
+		
+	})
+		.AddTransition("UP to TURN", "TURN")
 		.Predicator([this]()
 	{
 		return m_pLiftRotMaster->Is_LiftEnd();
 	})
-		.OnExit([this]()
-	{
-	})
-
-
-		.AddState("MOVE")
+		
+		.AddState("TURN")
 		.OnStart([this]()
 	{
 		m_pLiftRotMaster->Execute_LiftMoveStart();
 	})
 		.Tick([this](_float fTimeDelta)
 	{
+		m_pLiftRotMaster->Execute_Move(m_pTransformCom->Get_WorldMatrix(), m_vRotLiftPosOffset);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+
+	})
+		.AddTransition("TURN to MOVE", "MOVE")
+		.Predicator([this]()
+	{
+		return m_pTransformCom->IsLook(m_vMoveTargetPosition, 5.f);
+	})
+
+
+		.AddState("MOVE")
+		.OnStart([this]()
+	{
+		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
 		m_pTransformCom->Chase(m_vMoveTargetPosition, fTimeDelta);
-		m_pLiftRotMaster->Execute_Move(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_vRotLiftPosOffset);
+		m_pLiftRotMaster->Execute_Move(m_pTransformCom->Get_WorldMatrix(), m_vRotLiftPosOffset);
 
 		if (m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 5.f))
 			m_pCuteLiftRot->Execute_EndCute();
-	})		
+	})	
+		.OnExit([this]()
+	{
+		m_pLiftRotMaster->Execute_LiftMoveEnd();		
+	})
 		.AddTransition("MOVE to DOWN ", "DOWN")
 		.Predicator([this]()
 	{	
 		_bool bClosed = m_pTransformCom->IsClosed_XZ(m_vMoveTargetPosition, 0.1f);
 		return bClosed;
 	})
-		.OnExit([this]()
-	{
-		m_pLiftRotMaster->Execute_LiftMoveEnd();
-		m_pCuteLiftRot->Execute_EndCute();
-	})
+		
 
 		.AddState("DOWN")
 		.OnStart([this]()
 	{
-
+		m_vNewPivot = m_vUpPivot;
+		m_bLiftDownEndFlag = false;		
 	})
 		.Tick([this](_float fTimeDelta)
 	{
-		// ´Ù¿î
+		
+		m_vNewPivot.y += fOffsetY * fTimeDelta;
+		if (m_vNewPivot.y >= m_vInitPivot.y)
+		{
+			m_vNewPivot.y = m_vInitPivot.y;
+			m_bLiftDownEndFlag = true;
+		}	
+
+		m_pTransformCom->Set_PxPivot(m_vNewPivot);
+	})
+	.OnExit([this]()
+	{	
+		m_bChoiceFlag = false;
+		m_bMoveFlag = false;		
+		m_pKena->End_LiftRotRock();
 	})
 		.AddTransition("DOWN to IDLE ", "IDLE")
 		.Predicator([this]()
 	{		
-		return true;
-	})
-		.OnExit([this]()
-	{
-		m_bChoiceFlag = false;
-		m_bMoveFlag = false;
-
-		m_pLiftRotMaster->Execute_LiftDownEnd();
-	})
+		return m_bLiftDownEndFlag;
+	})		
 		.Build();
 
 

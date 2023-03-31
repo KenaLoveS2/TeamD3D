@@ -62,6 +62,8 @@ HRESULT CRot::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 2.f;
+		m_Desc.WorldMatrix._43 = 2.f;
 	}
 
 	return S_OK;
@@ -119,6 +121,10 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	return;
+
 	m_fTeleportDistance = 5.f;
 
 	__super::Tick(fTimeDelta);
@@ -127,6 +133,7 @@ void CRot::Tick(_float fTimeDelta)
 	{
 		if (m_pFSM)
 			m_pFSM->Tick(fTimeDelta);
+
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 		m_pModelCom->Play_Animation(fTimeDelta);
 	}
@@ -144,6 +151,12 @@ void CRot::Tick(_float fTimeDelta)
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	return;
+
 	if(m_pRotWisp->Get_Collect())
 	{
 		__super::Late_Tick(fTimeDelta);
