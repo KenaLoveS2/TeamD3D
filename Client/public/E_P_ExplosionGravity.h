@@ -13,6 +13,7 @@ public:
 		TYPE_DEAD_MONSTER, 
 		TYPE_BOSS_WEAPON,
 		TYPE_BOSS_ATTACK,
+		TYPE_BOSS_PARRY,
 		/* Kena */
 		TYPE_DAMAGE_PULSE,
 		TYPE_KENA_ATTACK,
@@ -41,6 +42,10 @@ public:
 	TYPE	Get_Type() { return m_eType; }
 	void	Set_Option(TYPE eType, _vector vSetDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 	void	Set_Dir(_vector vSetDir) { m_pVIInstancingBufferCom->Set_Dir(vSetDir); }
+
+public:
+	void	ParticleOption_Parabola(CVIBuffer_Point_Instancing::POINTDESC* ePointDesc, _float fDiffuseIndx, _fvector vColor,
+		_float pSpeed, _float2 pSize, _bool bSetDir, _fvector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 
 public:
 	void	UpdateParticle(_float4 vPos, _vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));

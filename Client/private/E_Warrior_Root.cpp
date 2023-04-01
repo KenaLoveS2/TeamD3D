@@ -28,18 +28,17 @@ HRESULT CE_Warrior_Root::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
+	m_iTotalDTextureComCnt = 2;
+
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
-	m_eEFfectDesc.iPassCnt = 16;
-
-	Edit_TextureComponent(2.0f, 0.0f);
 	m_eEFfectDesc.fFrame[0] = 16.f;
-	m_eEFfectDesc.fFrame[1] = 107.f;
+	m_eEFfectDesc.fFrame[1] = 4.f;
 
-	m_eEFfectDesc.bActive = false;
+	Set_ShaderOption(16, 3.f, _float2(0.0f, 0.0f), false);
 	return S_OK;
 }
 
@@ -103,7 +102,6 @@ void CE_Warrior_Root::Tick(_float fTimeDelta)
 
 void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
 {
-
 	if (m_eEFfectDesc.bActive == false)
    		return;
 

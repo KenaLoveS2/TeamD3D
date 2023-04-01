@@ -21,6 +21,7 @@ uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
 float   g_Time;
+float2  g_fUV;
 /**********************************/
 
 /* HpRatio */

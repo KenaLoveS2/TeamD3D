@@ -16,6 +16,7 @@ int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame;
 float4  g_vColor;
+float2  g_fUV;
 
 /* Trail  */
 bool	  g_IsTrail;

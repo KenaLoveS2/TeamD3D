@@ -37,7 +37,7 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
-	m_eEFfectDesc.bActive = false;
+	m_eEFfectDesc.bActive = true;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
@@ -80,18 +80,12 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 
 void CE_Swipes_Charged::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("CE_Swipes_Charged");
-
-	ImGui::InputInt("PassCnt", &m_eEFfectDesc.iPassCnt);
-	if (ImGui::Button("ReCompile"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
+	if (m_pParent == nullptr)
+		ToolOption("CE_Swipes_Charged");
 
 	__super::Tick(fTimeDelta);
 
-	if (m_eEFfectDesc.bActive == false)
-		return;
+	if (m_eEFfectDesc.bActive == false)	return;
 
 	m_fTimeDelta += fTimeDelta;
 	m_vecChild[0]->Set_Active(true);
@@ -122,9 +116,6 @@ void CE_Swipes_Charged::Late_Tick(_float fTimeDelta)
   	if (m_eEFfectDesc.bActive == false)
   		return;
 
-	//if (m_pParent != nullptr)
-	//	Set_Matrix();
-	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)

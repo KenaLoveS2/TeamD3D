@@ -26,6 +26,7 @@ int		g_SeparateWidth, g_SeparateHeight;
 uint	g_iTotalDTextureComCnt, g_iTotalMTextureComCnt;
 float   g_WidthFrame, g_HeightFrame, g_Time;
 float4  g_vColor;
+float2  g_fUV;
 /**********************************/
 
 /**********Dissolve*********/
@@ -643,70 +644,19 @@ PS_OUT PS_FIRE_SWIPES(PS_IN In)
 	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.5f, 1.0f), float2(0.0f, time));
 	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
 
-	vector customNoise = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vector t_fur_noise = g_DTexture_1.Sample(LinearSampler, float2(In.vTexUV.x / 1.5f, In.vTexUV.y));
-	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.7f));
+	vector customNoise = g_DTexture_0.Sample(LinearSampler, OffsetUV);
+	vector t_fur_noise = g_DTexture_1.Sample(LinearSampler, OffsetUV);
+	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x + time, In.vTexUV.y + g_fUV.y));
 	vector SmokeTiled3 = g_DTexture_4.Sample(LinearSampler, OffsetUV);
 
-	float4 finalcolor = lerp(t_fur_noise, customNoise,0.2f) + swipes_charged_color;
-	SmokeTiled3.a = SmokeTiled3.r * 0.1f;
+	float4 finalcolor = (customNoise + t_fur_noise + SmokeTiled3);
+	finalcolor = saturate(finalcolor + swipes_charged_color);
+	//finalcolor.a = T_ramp04 * In.vTexUV.y;
+	finalcolor.a = T_ramp04.r * In.vTexUV.y;
 
-	float4 lerpalpha = lerp(SmokeTiled3, T_ramp04, T_ramp04.r);
-	float  fAlpha = 1.0f - lerpalpha.r;
-
-	finalcolor = SmokeTiled3 + swipes_charged_color;
-	finalcolor.a = SmokeTiled3.a * fAlpha * 20.f;
-	finalcolor.rgb = finalcolor.rgb * 10.f;
-
-	Out.vDiffuse = finalcolor * float4(255.f, 126.f, 126.f, 255.f) / 255.f * 1.5f;
-	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
-	//Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
-
+	Out.vDiffuse = CalcHDRColor(finalcolor, 1.5f);
 	return Out;
 }
-
-//PS_FIRE_SWIPES
-PS_OUT PS_FIRE_SWIPES_TEST(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
-
-	float  time = frac(g_Time * 0.4f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.5f, 1.0f), float2(0.0f, time));
-	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
-
-	vector customNoise = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	vector t_fur_noise = g_DTexture_1.Sample(LinearSampler, float2(In.vTexUV.x / 1.5f, In.vTexUV.y));
-	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.7f));
-	vector SmokeTiled3 = g_DTexture_4.Sample(LinearSampler, OffsetUV);
-
-	float4 finalcolor = lerp(t_fur_noise, customNoise, 0.2f) + swipes_charged_color;
-	SmokeTiled3.a = SmokeTiled3.r * 0.1f;
-
-	float4 lerpalpha = lerp(SmokeTiled3, T_ramp04, T_ramp04.r);
-	float  fAlpha = 1.0f - lerpalpha.r;
-
-	finalcolor = SmokeTiled3 * float4(255.f, 126.f, 126.f, 255.f) / 255.f * 1.5f * 2.0f;
-	float4 RealFinal = saturate(finalcolor);
-	RealFinal.a = SmokeTiled3.a * fAlpha * 20.f;
-	/*finalcolor.rgb = finalcolor.rgb * 10.f;*/
-
-	Out.vDiffuse = CalcHDRColor(RealFinal, 2.f);
-	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
-
-	/*
-	* tex_0 
-	* tex_1
-	* tex_2 
-	* 
-	* Out.vColor.a = tex_0 * tex_1 * tex_2 
-	* 
-	* 
-	*/
-
-	return Out;
-}
-
 
 // PS_FIRE_SWIPES_INNER
 PS_OUT PS_FIRE_SWIPES_INNER(PS_IN In)
@@ -714,52 +664,42 @@ PS_OUT PS_FIRE_SWIPES_INNER(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	float  time = frac(g_Time * 0.4f);
-	float2 OffsetUV = TilingAndOffset(In.vTexUV * 1.5f, float2(0.5f, 1.0f), float2(0.0f, time));
+	float2 OffsetUV = TilingAndOffset(In.vTexUV, float2(1.0f, 1.0f), float2(0.0f, time));
 
 	/* main color */
 	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
 
 	/* alpha */
-	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y - 0.7f));
-	vector SmokeTiled3 = g_DTexture_4.Sample(LinearSampler, OffsetUV);
-	SmokeTiled3.a = SmokeTiled3.r * 0.1f;
-
-	float4 lerpalpha = lerp(SmokeTiled3, T_ramp04, T_ramp04.r);
-	float  fAlpha = 1.0f - lerpalpha.r;
-	/* alpha */
-
 	vector T_swipe05 = g_DTexture_3.Sample(LinearSampler, OffsetUV);
+	vector T_ramp04 = g_DTexture_2.Sample(LinearSampler, float2(In.vTexUV.x + g_fUV.x, In.vTexUV.y + 0.36f));
 	T_swipe05.a = T_swipe05.r;
-	T_swipe05.rgb = T_swipe05.rgb * (swipes_charged_color.rgb * 30.f);
 
-	Out.vDiffuse = T_swipe05;
-	Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;
-	//Out.vNormal = vector(In.vNormal.rgb * 0.5f + 0.5f, 0.f);
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_fHDRValue, 0.f);
+	float4 finalcolor = T_swipe05;
+	finalcolor = saturate(finalcolor + swipes_charged_color);
+	finalcolor.a = T_ramp04.r * In.vTexUV.y;
 
+	Out.vDiffuse = CalcHDRColor(finalcolor, 1.f);
 	return Out;
 }
-
+ 
 // PS_ROOT
 PS_OUT PS_ROOT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float  time = frac(g_Time * 0.6f);
+	float  time = frac(g_Time * 0.3f);
 
 	/* main color */
 	float4 swipes_charged_color = float4(1.f, 0.166602f, 0.419517f, 0.514f);
 
 	/* alpha */
 	vector vDiffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
-	// float4 Gradient = g_DTexture_1.Sample(LinearSampler, float2(In.vTexUV.x, In.vTexUV.y));
-	float4 finalcolor = saturate(vDiffuse + swipes_charged_color);
-	//finalcolor.a = Gradient.r; //* 20.f;
+	vector Gradient = g_DTexture_1.Sample(LinearSampler, float2(In.vTexUV.x , In.vTexUV.y + g_Time));
 
-	float  fAlpha = 1.0f - finalcolor.r * time * 2.f;
+	float4 finalcolor = vDiffuse + Gradient;
+	float4 Realfinal = saturate(finalcolor * swipes_charged_color) ;
 
-	Out.vDiffuse = CalcHDRColor(finalcolor, 2.f);
-	/*Out.vDiffuse.a = Out.vDiffuse.a * fAlpha;*/
+	Out.vDiffuse = CalcHDRColor(Realfinal, g_fHDRValue);
 	return Out;
 }
 
@@ -837,7 +777,7 @@ PS_OUT PS_GRONDPLANE(PS_IN In)
 
 	float fTime = min(g_Time * 1.2f, 2.f);
 
-	if (1.f < fTime)   // ����������
+	if (1.f < fTime)  
 		Out.vDiffuse.a = Out.vDiffuse.a * (2.f - fTime);
 
 	//Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -1244,16 +1184,4 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISTORTION_INTO();
 	}
 
-	pass Fire_Swipes_EX // 23
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
-
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_FIRE_SWIPES_TEST();
-	}
 }

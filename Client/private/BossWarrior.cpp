@@ -7,7 +7,6 @@
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
-#include "E_P_ExplosionGravity.h"
 #include "E_Warrior_FireSwipe.h"
 
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -315,6 +314,8 @@ void CBossWarrior::Push_EventFunctions()
 
 	TurnOnEnrage_Into(true, 0.0f);
 	TurnOnEnrage_Attck(true, 0.0f);
+
+	TurnOnCamShake(true, 0.0f);
 }
 
 HRESULT CBossWarrior::SetUp_State()
@@ -390,7 +391,7 @@ HRESULT CBossWarrior::SetUp_State()
 	{
 		return IsParried();
 	})	
-		.AddTransition("IDLE to ENRAGE", "ENRAGE") // 기모아서 가오잡음
+		.AddTransition("IDLE to ENRAGE", "ENRAGE") 
 		.Predicator([this]()
 	{
 		return m_bEnRageReady && m_pMonsterStatusCom->Get_PercentHP() < 0.5f;
@@ -767,6 +768,9 @@ HRESULT CBossWarrior::SetUp_State()
 		.AddState("PARRIED")
 		.OnStart([this]()
 	{
+				/* 이상태에서 맞는게 필요할거같음 */
+		Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_PARRY, m_pTransformCom->Get_Position(),false);
+
 		m_pModelCom->ResetAnimIdx_PlayTime(PARRIED);
 		m_pModelCom->Set_AnimIndex(PARRIED);
 	})
@@ -936,6 +940,16 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 	}
 }
 
+void CBossWarrior::Update_ParticleType(CE_P_ExplosionGravity::TYPE eType, _float4 vCreatePos,_bool bSetDir, _fvector vDir)
+{	
+	if(bSetDir)
+		m_pExplsionGravity->Set_Option(eType, vDir);
+	else
+		m_pExplsionGravity->Set_Option(eType);
+
+	m_pExplsionGravity->UpdateParticle(vCreatePos);
+}
+
 HRESULT CBossWarrior::SetUp_Components()
 {
 	__super::SetUp_Components();
@@ -1070,10 +1084,7 @@ void CBossWarrior::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_mapEffect["W_Trail"]->Set_Active(true);
-
-	// ReSetting
-	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON);
-	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
+	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(),false);
 }
 
 void CBossWarrior::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
@@ -1099,9 +1110,7 @@ void CBossWarrior::TurnOnSwipesCharged(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["Warrior_Charged"]->Set_Position(vPos);
 	m_mapEffect["Warrior_Charged"]->Set_Active(true);
 
-	// ReSetting
-	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON);
-	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
+	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(),false);
 }
 
 void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
@@ -1200,9 +1209,7 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
 	m_mapEffect["W_FireSwipe"]->Set_Active(true);
 
-	// ReSetting
-	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_ATTACK, matWorld.r[2]);
-	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
+	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_ATTACK, m_pTransformCom->Get_Position(), true, matWorld.r[2]);
 }
 
 void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
@@ -1229,6 +1236,12 @@ void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)
 	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
 	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
 	m_mapEffect["W_FireSwipe"]->Set_Active(true);
+
+	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	m_mapEffect["Warrior_Charged"]->Set_Position(vPos);
+	m_mapEffect["Warrior_Charged"]->Set_Active(true);
+
+	Update_ParticleType(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON, m_pTransformCom->Get_Position(), false);
 }
 
 void CBossWarrior::TurnOnRoot(_bool bIsInit, _float fTimeDelta)
@@ -1311,6 +1324,19 @@ void CBossWarrior::TurnOnEnrage_Attck(_bool bIsInit, _float fTimeDelta)
 	}
 
 	// 기둥이랑 먼지가 전역적으로 나와야 함 
+}
+
+void CBossWarrior::TurnOnCamShake(_bool bIsInit, _float fTimeDelta)
+{
+	if (bIsInit == true)
+	{
+		const _tchar* pFuncName = __FUNCTIONW__;
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossWarrior::TurnOnCamShake);
+		return;
+	}
+	CCamera_Player* pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+	if (pCamera != nullptr)
+		pCamera->Camera_Shake(0.003f, 5);
 }
 
 CBossWarrior* CBossWarrior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -1398,6 +1398,27 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\HealthFlower_Anim.h" />
+    <ClInclude Include="..\public\E_ShamanTrail.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSummons.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanSmoke.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossPlate.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\E_P_ExplosionGravity.h">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2229,6 +2250,27 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
+    <ClCompile Include="..\private\E_ShamanTrail.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\ThunderCylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSummons.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Summons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Smoke</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossPlane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\BossHandPlane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp">
+      <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

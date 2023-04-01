@@ -480,6 +480,18 @@ void CEffect_Base::TurnOffSystem(_float fDurationTime, _float fTimeDelta)
 	}
 }
 
+_bool CEffect_Base::TurnOffSystem(_float fTurnoffTime, _float fDurationTime, _float fTimeDelta)
+{ 
+	fTurnoffTime += fTimeDelta;
+	if (fTurnoffTime > fDurationTime)
+	{
+		return true;
+		m_eEFfectDesc.bActive = false;
+		fTurnoffTime = 0.0f;
+	}
+	return false;
+}
+
 void CEffect_Base::Set_TrailDesc()
 {
 	if (m_pParent == nullptr || dynamic_cast<CEffect_Base*>(m_pParent) == false)
@@ -556,6 +568,14 @@ void CEffect_Base::BillBoardSetting(_float3 vScale)
 
 	_matrix worldmatrix = _smatrix::CreateBillboard(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), cameraPosition, cameraUp, &cameraForward);
 	m_pTransformCom->Set_WorldMatrix(m_pTransformCom->Get_WorldMatrix() * worldmatrix);
+}
+
+void CEffect_Base::Set_ShaderOption(_int iPassCnt, _float fHDRValue, _float2 fUV, _bool bActive)
+{
+	m_eEFfectDesc.iPassCnt = iPassCnt;
+	m_fHDRValue = fHDRValue;
+	m_fUV = fUV;
+	m_eEFfectDesc.bActive = bActive;
 }
 
 HRESULT CEffect_Base::Initialize_Prototype(const _tchar* pFilePath)
@@ -833,6 +853,262 @@ HRESULT CEffect_Base::Edit_TextureComponent(_uint iDTextureComCnt, _uint iMTextu
 		}
 	}
 	return S_OK;
+}
+
+void CEffect_Base::ToolOption(const char* pToolTag)
+{
+	ImGui::Begin(pToolTag);
+	static _float fHDRValue = this->m_fHDRValue;
+	static _float2 fUV = this->m_fUV;
+
+	TransformView();
+
+	if (ImGui::Button("Recompile")) m_pShaderCom->ReCompile(); ImGui::SameLine();
+	ImGui::Checkbox("Active", &m_eEFfectDesc.bActive);
+	ImGui::InputFloat4("DiffuseTexture", (_float*)&m_eEFfectDesc.fFrame);
+	ImGui::InputFloat4("MaskTexture", (_float*)&m_eEFfectDesc.fMaskFrame);
+	ImGui::InputInt("iPassCnt", &m_eEFfectDesc.iPassCnt);
+	ImGui::InputFloat("HDRValue", &fHDRValue);
+	m_fHDRValue = fHDRValue;
+	ImGui::DragFloat2("UV", (_float*)&fUV, 0.01f, -1.0f, 1.0f);
+	m_fUV = fUV;
+
+	ImGui::Separator();
+
+	if (ImGui::CollapsingHeader("Set Item Texture"))
+	{
+		static _int iCreateCnt = 1;
+		static _int iSelectDTexture = 0;
+		static _int iSelectMTexture = 0;
+		static _int iSelectNTexture = 0;
+		static _int iSelectTextureType = 0;
+
+		const _int  iTotalDTextureCnt = this->Get_TotalDTextureCnt();
+		const _int  iTotalMTextureCnt = this->Get_TotalMTextureCnt();
+
+		ImGui::BulletText("Texture Type : ");
+		ImGui::RadioButton("DiffuseTexture", &iSelectTextureType, 0); ImGui::SameLine();
+		ImGui::RadioButton("MaskTexture", &iSelectTextureType, 1); ImGui::SameLine();
+		ImGui::RadioButton("NormalTexture", &iSelectTextureType, 2);
+
+		ImGui::Separator();
+		if (iSelectTextureType == 0)
+		{
+			ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
+
+			ImGui::PushItemWidth(100);
+			ImGui::InputInt("##EditDTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
+
+			if (iCreateCnt <= 1)
+				iCreateCnt = 1;
+			else if (iCreateCnt >= 5)
+				iCreateCnt = 5;
+
+			if (ImGui::Button("Edit Texture Confirm"))
+				this->Edit_TextureComponent(iCreateCnt, 0);
+
+			char** szDTextureType = new char* [iTotalDTextureCnt];
+			for (_int i = 0; i < iTotalDTextureCnt; ++i)
+			{
+				szDTextureType[i] = new char[64];
+
+				_tchar   szDefault[64] = L"";
+				wsprintf(szDefault, L"Com_DTexture_%d", i);
+
+				CUtile::WideCharToChar(szDefault, szDTextureType[i]);
+			}
+			ImGui::BulletText("DTexture : "); ImGui::SameLine();
+			ImGui::PushItemWidth(-FLT_MIN);
+			ImGui::Combo("##DTexture", &iSelectDTexture, szDTextureType, iTotalDTextureCnt);
+
+			_tchar szDTexture[64] = L"";
+			CUtile::CharToWideChar(szDTextureType[iSelectDTexture], szDTexture);
+			CTexture* pDiffuseTexture = (CTexture*)this->Find_Component(szDTexture);
+
+			if (pDiffuseTexture != nullptr)
+			{
+				_float fFrame = this->Get_EffectDesc().fFrame[iSelectDTexture];
+				ImGui::BulletText("DTexture _ %d / %d", (_uint)fFrame, pDiffuseTexture->Get_TextureIdx());
+				ImGui::Separator();
+
+				for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
+				{
+					if (i % 6)
+						ImGui::SameLine();
+
+					if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
+					{
+						m_eEFfectDesc.fFrame[iSelectDTexture] = i * 1.0f;
+						this->Set_EffectDescDTexture(iSelectDTexture, i * 1.0f);
+					}
+				}
+			}
+			for (size_t i = 0; i < iTotalDTextureCnt; ++i)
+				Safe_Delete_Array(szDTextureType[i]);
+			Safe_Delete_Array(szDTextureType);
+		}
+		else if (iSelectTextureType == 1)
+		{
+			ImGui::BulletText("Edit TextureComponent : "); ImGui::SameLine();
+
+			ImGui::PushItemWidth(100);
+			ImGui::InputInt("##EditMTexture", (_int*)&iCreateCnt, 1, 5); ImGui::SameLine();
+
+			if (iCreateCnt <= 1)
+				iCreateCnt = 1;
+			else if (iCreateCnt >= 5)
+				iCreateCnt = 5;
+
+			if (ImGui::Button("Edit Texture Confirm"))
+				this->Edit_TextureComponent(0, iCreateCnt);
+
+			char** szMTextureType = new char* [iTotalMTextureCnt];
+			if (0 != iTotalMTextureCnt)
+			{
+				for (_int i = 0; i < iTotalMTextureCnt; ++i)
+				{
+					szMTextureType[i] = new char[64];
+
+					_tchar   szDefault[64] = L"";
+					wsprintf(szDefault, L"Com_MTexture_%d", i);
+
+					CUtile::WideCharToChar(szDefault, szMTextureType[i]);
+				}
+				ImGui::BulletText("MTexture : "); ImGui::SameLine();
+				ImGui::PushItemWidth(-FLT_MIN);
+				ImGui::Combo("##MTexture", &iSelectMTexture, szMTextureType, iTotalMTextureCnt);
+			}
+
+			_tchar szMTexture[64] = L"";
+			CUtile::CharToWideChar(szMTextureType[iSelectMTexture], szMTexture);
+			CTexture* pDiffuseTexture = (CTexture*)this->Find_Component(szMTexture);
+
+			if (pDiffuseTexture != nullptr)
+			{
+				_float fMaskFrame = this->Get_EffectDesc().fMaskFrame[iSelectMTexture];
+
+				ImGui::BulletText("MTexture _ %d / %d", (_uint)fMaskFrame, pDiffuseTexture->Get_TextureIdx());
+				ImGui::Separator();
+
+				for (_uint i = 0; i < pDiffuseTexture->Get_TextureIdx(); ++i)
+				{
+					if (i % 6)
+						ImGui::SameLine();
+
+					if (ImGui::ImageButton(pDiffuseTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
+					{
+						m_eEFfectDesc.fMaskFrame[iSelectMTexture] = i * 1.0f;
+						this->Set_EffectDescMTexture(iSelectMTexture, i * 1.0f);
+					}
+				}
+			}
+
+			for (size_t i = 0; i < iTotalMTextureCnt; ++i)
+				Safe_Delete_Array(szMTextureType[i]);
+			Safe_Delete_Array(szMTextureType);
+		}
+		else // NTexture
+		{
+			CTexture* pNormalTexture = (CTexture*)this->Find_Component(L"Com_NTexture");
+			if (pNormalTexture != nullptr)
+			{
+				_float fNormalFrame = this->Get_EffectDesc().fNormalFrame;
+
+				ImGui::BulletText("NTexture _ %d / %d", (_uint)fNormalFrame, pNormalTexture->Get_TextureIdx());
+				ImGui::Separator();
+
+				for (_uint i = 0; i < pNormalTexture->Get_TextureIdx(); ++i)
+				{
+					if (i % 6)
+						ImGui::SameLine();
+
+					if (ImGui::ImageButton(pNormalTexture->Get_Texture(i), ImVec2(50.f, 50.f)))
+					{
+						m_eEFfectDesc.fNormalFrame = i * 1.0f;
+						this->Set_EffectDescNTexture(i * 1.0f);
+					}
+				}
+			}
+		}
+	}
+
+	Set_Color();
+
+	ImGui::End();
+}
+
+void CEffect_Base::TransformView()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if (ImGui::CollapsingHeader("Transform : "))
+	{
+		ImGuizmo::BeginFrame();
+		static float snap[3] = { 1.f, 1.f, 1.f };
+		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
+		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+		if (ImGui::RadioButton("MyTranslate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("MyRotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+			mCurrentGizmoOperation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("MyScale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+			mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+		static bool useSnap(false);
+		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+
+		const _matrix& matWorld = this->m_pTransformCom->Get_WorldMatrix();
+
+		ImGuizmo::DecomposeMatrixToComponents((_float*)&matWorld, matrixTranslation, matrixRotation, matrixScale);
+		ImGui::InputFloat3("MyTranslate", matrixTranslation);
+		ImGui::InputFloat3("MyRotate", matrixRotation);
+		ImGui::InputFloat3("MyScale", matrixScale);
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, (_float*)&matWorld);
+
+		ImGuiIO& io = ImGui::GetIO();
+		RECT		rt;
+		GetClientRect(g_hWnd, &rt);
+		POINT		LT{ rt.left, rt.top };
+		ClientToScreen(g_hWnd, &LT);
+		ImGuizmo::SetRect((_float)LT.x, (_float)LT.y, io.DisplaySize.x, io.DisplaySize.y);
+
+		_float4x4		matView, matProj;
+		XMStoreFloat4x4(&matView, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
+		XMStoreFloat4x4(&matProj, pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
+
+		ImGuizmo::Manipulate(
+			reinterpret_cast<_float*>(&matView),
+			reinterpret_cast<_float*>(&matProj),
+			mCurrentGizmoOperation,
+			mCurrentGizmoMode,
+			(_float*)&matWorld,
+			nullptr, useSnap ? &snap[0] : nullptr);
+
+		this->m_pTransformCom->Set_WorldMatrix(matWorld);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CEffect_Base::Set_Color()
+{
+	static bool alpha_preview = true;
+	static bool alpha_half_preview = false;
+	static bool drag_and_drop = true;
+	static bool options_menu = true;
+	static bool hdr = false;
+
+	ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+	static bool   ref_color = false;
+	static ImVec4 ref_color_v(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static _float4 vSelectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	vSelectColor = m_eEFfectDesc.vColor;
+
+	ImGui::ColorPicker4("CurColor##4", (float*)&vSelectColor, ImGuiColorEditFlags_NoInputs | misc_flags, ref_color ? &ref_color_v.x : NULL);
+	ImGui::ColorEdit4("Diffuse##2f", (float*)&vSelectColor, ImGuiColorEditFlags_DisplayRGB | misc_flags);
+	m_eEFfectDesc.vColor = vSelectColor;
 }
 
 void CEffect_Base::Free()

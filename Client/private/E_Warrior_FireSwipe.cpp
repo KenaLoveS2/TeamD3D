@@ -34,6 +34,7 @@ HRESULT CE_Warrior_FireSwipe::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
 	m_eEFfectDesc.bActive = false;
+	Set_ShaderOption(m_eEFfectDesc.iPassCnt, 1.f, _float2(0.0f, 0.39f), false);
 	return S_OK;
 }
 
@@ -79,24 +80,16 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 
 void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 {
-	m_eEFfectDesc.bActive = true;
-
 	__super::Tick(fTimeDelta);
-	m_pTransformCom->Tick(fTimeDelta);
 		
-	if (m_eEFfectDesc.bActive == false)
-   		return;
+	if (m_eEFfectDesc.bActive == false)	return;
 
-	//m_fTimeDelta += fTimeDelta;
+	m_fTimeDelta += fTimeDelta;
+	m_pTransformCom->Tick(fTimeDelta);
 
- 	m_fDurationTime += fTimeDelta;
- 	if (m_fDurationTime > 1.f)
- 		m_fDurationTime = 0.0f;
-	else
-	{
+	_bool bTurnoff = TurnOffSystem(m_fDurationTime, 1.f, fTimeDelta);
+	if(bTurnoff == false)	
 		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
- 		
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
@@ -104,9 +97,6 @@ void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
    	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	//if (m_pParent != nullptr)
-	//	Set_Matrix();
-	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
@@ -125,14 +115,10 @@ HRESULT CE_Warrior_FireSwipe::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i == 0) // 
-		{
-			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 23);
-		}
-		else if (i == 1) // 
-		{
+		if (i == 0)
+			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 14);
+		else if (i == 1)
 			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 15);
-		}
 	}
 
 	return S_OK;
@@ -163,7 +149,7 @@ HRESULT CE_Warrior_FireSwipe::SetUp_SwipeTexture()
 	
 	m_eEFfectDesc.fFrame[0] = 27.f;
 	m_eEFfectDesc.fFrame[1] = 54.f;
-	m_eEFfectDesc.fFrame[2] = 4.f;
+	m_eEFfectDesc.fFrame[2] = 78.f;
 	m_eEFfectDesc.fFrame[3] = 57.f;
 	m_eEFfectDesc.fFrame[4] = 16.f;
 
@@ -174,11 +160,6 @@ HRESULT CE_Warrior_FireSwipe::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	if (g_bDayOrNight == false)
-		m_fHDRValue = 0.5f;
-	else
-		m_fHDRValue = 0.0f;
 
 	return S_OK;
 }
