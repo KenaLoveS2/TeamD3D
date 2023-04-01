@@ -55,6 +55,7 @@ HRESULT CKena_State::Initialize(CKena * pKena, CKena_Status * pStatus, CStateMac
 	FAILED_CHECK_RETURN(SetUp_State_Crouch(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Common(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Damaged_Heavy(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_State_Dash(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Dodge(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Fall(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State_Heavy_Attack1(), E_FAIL);
@@ -2669,6 +2670,42 @@ HRESULT CKena_State::SetUp_State_Damaged_Heavy()
 	return S_OK;
 }
 
+HRESULT CKena_State::SetUp_State_Dash()
+{
+	m_pStateMachine->Add_State(L"DASH")
+		.Init_Start(this, &CKena_State::Start_Dash)
+		.Init_Tick(this, &CKena_State::Tick_Dash)
+		.Init_End(this, &CKena_State::End_Dash)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.65f)
+		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_E)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"DASH_SETTLE")
+		.Init_Start(this, &CKena_State::Start_Dash_Settle)
+		.Init_Tick(this, &CKena_State::Tick_Dash_Settle)
+		.Init_End(this, &CKena_State::End_Dash_Settle)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
+
+		.Add_State(L"DASH_PORTAL")
+		.Init_Start(this, &CKena_State::Start_Dash_Portal)
+		.Init_Tick(this, &CKena_State::Tick_Dash_Portal)
+		.Init_End(this, &CKena_State::End_Dash_Portal)
+
+		.Add_State(L"DASH_COMBAT_ATTACK_1")
+		.Init_Start(this, &CKena_State::Start_Dash_Combat_Attack_1)
+		.Init_Tick(this, &CKena_State::Tick_Dash_Combat_Attack_1)
+		.Init_End(this, &CKena_State::End_Dash_Combat_Attack_1)
+
+		.Add_State(L"DASH_COMBAT_ATTACK_2")
+		.Init_Start(this, &CKena_State::Start_Dash_Combat_Attack_2)
+		.Init_Tick(this, &CKena_State::Tick_Dash_Combat_Attack_2)
+		.Init_End(this, &CKena_State::End_Dash_Combat_Attack_2)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
 HRESULT CKena_State::SetUp_State_Pulse()
 {
 	m_pStateMachine->Add_State(L"INTO_PULSE")
@@ -2730,7 +2767,7 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::KeyInput_Direction)
 
@@ -2945,6 +2982,23 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SPRINT_ATTACK", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"SPRINT_STOP", this, &CKena_State::KeyInput_None)
 		.Init_Changer(L"SPRINT", this, &CKena_State::Animation_Finish)
+
+		.Finish_Setting();
+
+	return S_OK;
+}
+
+HRESULT CKena_State::SetUp_State_RotAction()
+{
+	m_pStateMachine->Add_State(L"ROT_ACTION")
+		.Init_Start(this, &CKena_State::Start_Rot_Action)
+		.Init_Tick(this, &CKena_State::Tick_Rot_Action)
+		.Init_End(this, &CKena_State::End_Rot_Action)
+
+		.Add_State(L"ROT_ACTION_AIM")
+		.Init_Start(this, &CKena_State::Start_Rot_Action_Aim)
+		.Init_Tick(this, &CKena_State::Tick_Rot_Action_Aim)
+		.Init_End(this, &CKena_State::End_Rot_Action_Aim)
 
 		.Finish_Setting();
 
@@ -5404,6 +5458,31 @@ void CKena_State::Start_Take_Damage_Heavy_Air(_float fTimeDelta)
 	m_pAnimationState->State_Animation("TAKE_DAMAGE_HEAVY_AIR");
 }
 
+void CKena_State::Start_Dash(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DASH");
+}
+
+void CKena_State::Start_Dash_Settle(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DASH_SETTLE");
+}
+
+void CKena_State::Start_Dash_Portal(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DASH_PORTAL");
+}
+
+void CKena_State::Start_Dash_Combat_Attack_1(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DASH_ATTACK_1");
+}
+
+void CKena_State::Start_Dash_Combat_Attack_2(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("DASH_ATTACK_2");
+}
+
 void CKena_State::Start_Backflip(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BACKFLIP");
@@ -5863,6 +5942,24 @@ void CKena_State::Start_Pulse_Squat_Sprint(_float fTimeDelta)
 	m_pKena->m_bSprint = true;
 
 	dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"])->Set_NoActive(true);
+}
+
+void CKena_State::Start_Rot_Action(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ROT_ACTION");
+}
+
+void CKena_State::Start_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Start_Rot_Action_Aim(_float fTimeDelta)
+{
+	m_pAnimationState->State_Animation("ROT_ACTION_AIM");
+}
+
+void CKena_State::Start_Rot_Action_Aim_Run(_float fTimeDelta)
+{
 }
 
 void CKena_State::Start_Shield_Impact(_float fTimeDelta)
@@ -6482,6 +6579,26 @@ void CKena_State::Tick_Take_Damage_Heavy_Air(_float fTimeDelta)
 {
 }
 
+void CKena_State::Tick_Dash(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Dash_Settle(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Dash_Portal(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Dash_Combat_Attack_1(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Dash_Combat_Attack_2(_float fTimeDelta)
+{
+}
+
 void CKena_State::Tick_Backflip(_float fTimeDelta)
 {
 }
@@ -6766,6 +6883,22 @@ void CKena_State::Tick_Pulse_Walk(_float fTimeDelta)
 void CKena_State::Tick_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	Move(fTimeDelta, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
+}
+
+void CKena_State::Tick_Rot_Action(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Aim(_float fTimeDelta)
+{
+}
+
+void CKena_State::Tick_Rot_Action_Aim_Run(_float fTimeDelta)
+{
 }
 
 void CKena_State::Tick_Shield_Impact(_float fTimeDelta)
@@ -7303,6 +7436,26 @@ void CKena_State::End_Take_Damage_Heavy_Air(_float fTimeDelta)
 {
 }
 
+void CKena_State::End_Dash(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Dash_Settle(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Dash_Portal(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Dash_Combat_Attack_1(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Dash_Combat_Attack_2(_float fTimeDelta)
+{
+}
+
 void CKena_State::End_Backflip(_float fTimeDelta)
 {
 }
@@ -7584,6 +7737,22 @@ void CKena_State::End_Pulse_Walk(_float fTimeDelta)
 void CKena_State::End_Pulse_Squat_Sprint(_float fTimeDelta)
 {
 	m_pKena->m_bSprint = false;
+}
+
+void CKena_State::End_Rot_Action(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Run(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Aim(_float fTimeDelta)
+{
+}
+
+void CKena_State::End_Rot_Action_Aim_Run(_float fTimeDelta)
+{
 }
 
 void CKena_State::End_Shield_Impact(_float fTimeDelta)

@@ -18,6 +18,6 @@
   "16. m_fInitBombCoolTime": 6.0,
   "17. m_fCurBombCoolTime": 0.0,  
   "CStatus::0. m_iMaxHP": 100,
-  "CStatus::1. m_iHP": 100,
+  "CStatus::1. m_iHP": 25,
   "CStatus::2. m_iAttack": 50
 }
