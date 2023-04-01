@@ -5482,5 +5482,60 @@
         "6. Blend Animation": "N/A",
         "7. Joint Index": "N/A",
         "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DASH",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Dash",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DASH_PORTAL",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_Dash_Portal",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DASH_ATTACK_1",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_DashCombat_Attack",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DASH_ATTACK_2",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_DashCombat_Attack3",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "DASH_SETTLE",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_DashSettle",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     }
 ]

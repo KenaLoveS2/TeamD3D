@@ -826,7 +826,10 @@ _bool CPhysX_Manager::Raycast_CollisionTarget(_float3 vRayPos, _float3 vRayDir, 
 			if (pUserData && pUserData->pOwner && pUserData->pOwner == pTarget)
 			{
 				PxVec3 PxColPos = pRaycastHit[i].position;
-				*pPositionOut = CUtile::ConvertPosition_PxToD3D(PxColPos);
+
+				if (pPositionOut != nullptr)
+					*pPositionOut = CUtile::ConvertPosition_PxToD3D(PxColPos);
+
 				return true;
 			}
 		}

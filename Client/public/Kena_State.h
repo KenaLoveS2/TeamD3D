@@ -436,6 +436,7 @@ private:
 	HRESULT					SetUp_State_Crouch();
 	HRESULT					SetUp_State_Damaged_Common();
 	HRESULT					SetUp_State_Damaged_Heavy();
+	HRESULT					SetUp_State_Dash();
 	HRESULT					SetUp_State_Dodge();
 	HRESULT					SetUp_State_Fall();
 	HRESULT					SetUp_State_Heavy_Attack1();
@@ -664,6 +665,12 @@ private:
 	void						Start_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						Start_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						Start_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						Start_Dash(_float fTimeDelta);
+	void						Start_Dash_Settle(_float fTimeDelta);
+	void						Start_Dash_Portal(_float fTimeDelta);
+	void						Start_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						Start_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						Start_Backflip(_float fTimeDelta);
 	void						Start_Roll(_float fTimeDelta);
@@ -872,6 +879,12 @@ private:
 	void						Tick_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						Tick_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						Tick_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						Tick_Dash(_float fTimeDelta);
+	void						Tick_Dash_Settle(_float fTimeDelta);
+	void						Tick_Dash_Portal(_float fTimeDelta);
+	void						Tick_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						Tick_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						Tick_Backflip(_float fTimeDelta);
 	void						Tick_Roll(_float fTimeDelta);
@@ -1072,6 +1085,12 @@ private:
 	void						End_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						End_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						End_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						End_Dash(_float fTimeDelta);
+	void						End_Dash_Settle(_float fTimeDelta);
+	void						End_Dash_Portal(_float fTimeDelta);
+	void						End_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						End_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						End_Backflip(_float fTimeDelta);
 	void						End_Roll(_float fTimeDelta);
