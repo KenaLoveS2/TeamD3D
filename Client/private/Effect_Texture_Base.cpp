@@ -318,7 +318,8 @@ HRESULT CEffect_Texture_Base::Save_Data()
 			}
 			json["23. SpriteSpeed"] = m_fFrameSpeed;
 
-
+			json["24. SelfStop"] = m_bSelfStop;
+			json["25. SelfStopTime"] = m_fSelfStopTime;
 
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
@@ -401,6 +402,12 @@ HRESULT CEffect_Texture_Base::Load_Data(_tchar* fileName)
 
 	if (jLoad.contains("23. SpriteSpeed"))
 		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
+
+	if (jLoad.contains("24. SelfStop"))
+		jLoad["24. SelfStop"].get_to<_bool>(m_bSelfStop);
+
+	if (jLoad.contains("25. SelfStopTime"))
+		jLoad["25. SelfStopTime"].get_to<_float>(m_fSelfStopTime);
 
 	return S_OK;
 }

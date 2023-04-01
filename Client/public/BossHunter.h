@@ -171,8 +171,8 @@ public:
 
 	void Reset_HitFlag();
 
-	void Test1(_bool bIsInit, _float fTimeDelta);
-	void Test2(_bool bIsInit, _float fTimeDelta);
+	void ShockEffect_On(_bool bIsInit, _float fTimeDelta);
+	void ShockEffect_Off(_bool bIsInit, _float fTimeDelta);
 	void Test3(_bool bIsInit, _float fTimeDelta);
 	void Test4(_bool bIsInit, _float fTimeDelta);
 

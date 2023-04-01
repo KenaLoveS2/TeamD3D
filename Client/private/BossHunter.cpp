@@ -315,7 +315,7 @@ void CBossHunter::Imgui_RenderProperty()
 
 void CBossHunter::ImGui_AnimationProperty()
 {
-	//m_pTransformCom->Imgui_RenderProperty_ForJH();
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
 	//m_pArrows[m_iArrowIndex]->Get_TransformCom()->Imgui_RenderProperty_ForJH();
 
 	if (ImGui::CollapsingHeader("Effect"))
@@ -384,8 +384,8 @@ void CBossHunter::Push_EventFunctions()
 	FireArrow_Rapid(true, 0.f);
 	FireArrow_Shock(true, 0.f);
 
-	Test1(true, 0.f);
-	Test2(true, 0.f);
+	ShockEffect_On(true, 0.f);
+	ShockEffect_Off(true, 0.f);
 	Test3(true, 0.f);
 	Test4(true, 0.f);
 
@@ -1491,12 +1491,12 @@ void CBossHunter::Reset_HitFlag()
 	m_bWeaklyHit = false;
 }
 
-void CBossHunter::Test1(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::ShockEffect_On(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test1);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::ShockEffect_On);
 		return;
 	}
 
@@ -1511,12 +1511,12 @@ void CBossHunter::Test1(_bool bIsInit, _float fTimeDelta)
 	m_vecEffects[EFFECT_CHARGE_TEXTURE_LINE2]->Activate_Spread(vPos, { 1.f, 1.f });
 }
 
-void CBossHunter::Test2(_bool bIsInit, _float fTimeDelta)
+void CBossHunter::ShockEffect_Off(_bool bIsInit, _float fTimeDelta)
 {
 	if (bIsInit == true)
 	{
 		const _tchar* pFuncName = __FUNCTIONW__;
-		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::Test2);
+		CGameInstance::GetInstance()->Add_Function(this, pFuncName, &CBossHunter::ShockEffect_Off);
 		return;
 	}
 

@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "MonsterWeapon.h"
 
-#define MAX_TRAIL_EFFECTS		100
+#define MAX_TRAIL_EFFECTS		200
 
 BEGIN(Client)
 class CEffect_Base_S2;
@@ -81,9 +81,6 @@ private:
 	vector<CEffect_Base_S2*>	m_vecTrailEffects;
 	_int						m_iTrailIndex;
 
-private:
-	_float						m_fExistTime;
-	_float						m_fExistTimeAcc;
 
 private:
 	void						Play_TrailEffect(_float fTimedelta);

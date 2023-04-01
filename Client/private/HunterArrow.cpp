@@ -9,8 +9,6 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
-	, m_fExistTime(0.0f)
-	, m_fExistTimeAcc(0.0f)
 {
 }
 
@@ -20,8 +18,6 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
 	, m_iTrailIndex(0)
-	, m_fExistTime(0.0f)
-	, m_fExistTimeAcc(0.0f)
 {
 }
 
@@ -57,7 +53,6 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 	m_fDissolveTime = 0.f;
 	m_fTrailTime = 0.1f;
 	m_fTrailTimeAcc = 0.f;
-	m_fExistTime = 4.0f;
 
 	return S_OK;
 }
@@ -333,13 +328,6 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	}
 	case FIRE:
 	{
-		/* For. Test */
-		m_fExistTimeAcc += fTimeDelta;
-		if (m_fExistTimeAcc > m_fExistTime)
-		{
-			Execute_Finish();
-			break;
-		}
 
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
@@ -349,17 +337,16 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	}
 	case FINISH:
 	{
-		// 이펙트 처리
 		m_bTrailOn = false;
-		m_fExistTimeAcc = 0.0f;
-		for (auto& eff : m_vecTrailEffects)
-			eff->DeActivate();
 
+		m_fDissolveTime += 0.5f * fTimeDelta;
+		if (m_fDissolveTime > 1.f)
+		{
+			m_eArrowState = STATE_END;
+			m_pTransformCom->Set_Position(m_vInvisiblePos);
+			m_fDissolveTime = 0.0f;
+		}
 
-
-		// 이펙트 처리 완료 후
-		m_eArrowState = STATE_END;
-		m_pTransformCom->Set_Position(m_vInvisiblePos);
 		break;
 	}
 	case STATE_END:
@@ -395,7 +382,8 @@ void CHunterArrow::Play_TrailEffect(_float fTimedelta)
 		m_fTrailTime = 0.01f;
 		if (m_fTrailTimeAcc > m_fTrailTime)
 		{
-			m_vecTrailEffects[m_iTrailIndex++]->Activate(m_pTransformCom->Get_Position());
+			m_vecTrailEffects[m_iTrailIndex]->Activate(m_pTransformCom->Get_Position());
+			m_iTrailIndex++;
 			m_iTrailIndex %= MAX_TRAIL_EFFECTS;
 			m_fTrailTimeAcc = 0.f;
 		}

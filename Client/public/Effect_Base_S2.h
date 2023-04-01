@@ -84,6 +84,8 @@ protected:
 
 protected: /* For. Activation */
 	_float2							m_vScaleSpeed;
+
+	_bool							m_bSelfStop;
 	_float							m_fSelfStopTime;
 	_float							m_fSelfStopTimeAcc;
 

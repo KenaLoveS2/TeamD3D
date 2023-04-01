@@ -232,14 +232,18 @@ void CEffect_Particle_Base::Imgui_RenderProperty()
 		}
 	}
 
-	ImGui::Separator();
 	/* Position */
+	ImGui::Separator();
 	{
 		static _float4  vPosition = { 0.f, 0.f,0.f,1.f };
 		vPosition = m_pTransformCom->Get_Position();
 		if (ImGui::DragFloat3("vWorldPosition", (_float*)&vPosition, 0.10f, -1000.0f, 1000.0f, "%.3f"))
 			m_pTransformCom->Set_Position(vPosition);
 	}
+	
+	/* SelfStop */
+	ImGui::Separator();
+	ImGui::Checkbox("IsSelfStop", &m_bSelfStop);
 
 	ImGui::Separator();
 	Save_Data();
@@ -336,7 +340,8 @@ HRESULT CEffect_Particle_Base::Save_Data()
 				json["22. SpriteFrames"].push_back(m_iFrames[i]);
 			}
 			json["23. SpriteSpeed"] = m_fFrameSpeed;
-
+			json["24. SelfStop"] = m_bSelfStop;
+			json["25. SelfStopTime"] = m_fSelfStopTime;
 
 			ofstream file(strSaveDirectory.c_str());
 			file << json;
@@ -445,7 +450,11 @@ HRESULT CEffect_Particle_Base::Load_Data(_tchar* fileName)
 	if (jLoad.contains("23. SpriteSpeed"))
 		jLoad["23. SpriteSpeed"].get_to<_float>(m_fFrameSpeed);
 
+	if(jLoad.contains("24. SelfStop"))
+		jLoad["24. SelfStop"].get_to<_bool>(m_bSelfStop);
 
+	if(jLoad.contains("25. SelfStopTime"))
+		jLoad["25. SelfStopTime"].get_to<_float>(m_fSelfStopTime);
 
 	return S_OK;
 }
@@ -465,6 +474,7 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 void CEffect_Particle_Base::DeActivate()
 {
 	m_bActive = false;
+	m_fSelfStopTimeAcc = 0.0f;
 
 	m_pVIBufferCom->Update_Buffer(nullptr);
 }
