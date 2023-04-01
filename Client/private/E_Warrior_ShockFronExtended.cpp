@@ -43,37 +43,39 @@ HRESULT CE_Warrior_ShockFrontExtended::Initialize(void * pArg)
 
 HRESULT CE_Warrior_ShockFrontExtended::Late_Initialize(void * pArg)
 {	
-	//_float4 vPos;
-	//XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float3	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3	vPivotScale = _float3(4.f, 4.f, 0.15f);
+	_float3	vPivotPos = _float3(0.f, 0.f, 0.f);
 
-	//m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
-	//CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2);
 
-	//_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
-	//_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
-	//_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
+	PxBoxDesc.pActortag = m_szCloneObjectTag;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.vPos = vPos;
+	PxBoxDesc.vSize = vPivotScale;
+	PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDegree = 0.f;
+	PxBoxDesc.isGravity = false;
+	PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 0.2f;
+	PxBoxDesc.fMass = 150.f;
+	PxBoxDesc.fLinearDamping = 10.f;
+	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.bCCD = false;
+	PxBoxDesc.fDynamicFriction = 0.5f;
+	PxBoxDesc.fStaticFriction = 0.5f;
+	PxBoxDesc.fRestitution = 0.1f;
 
-	//// Capsule X == radius , Y == halfHeight
-	//CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
-	//PxSphereDesc.eType = SPHERE_DYNAMIC;
-	//PxSphereDesc.pActortag = m_szCloneObjectTag;
-	//PxSphereDesc.vPos = vOriginPos;
-	//PxSphereDesc.fRadius = vPivotScale.x;
-	//PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
-	//PxSphereDesc.fDensity = 1.f;
-	//PxSphereDesc.fAngularDamping = 0.5f;
-	//PxSphereDesc.fMass = 59.f;
-	//PxSphereDesc.fLinearDamping = 1.f;
-	//PxSphereDesc.bCCD = true;
-	//PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
-	//PxSphereDesc.fDynamicFriction = 0.5f;
-	//PxSphereDesc.fStaticFriction = 0.5f;
-	//PxSphereDesc.fRestitution = 0.1f;
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
+	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
 
-	//CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER));
-
-	//_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
-	//m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
+	// 	_tchar* pDummyTag = CUtile::Create_StringAuto(L"Warrior_FireSwipe_Dummy");
+	// 	PxBoxDesc.pActortag = pDummyTag;
+	// 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
+	// 	m_pTransformCom->Add_Collider(pDummyTag, matPivot);
 
 	return S_OK;
 }
@@ -83,7 +85,21 @@ void CE_Warrior_ShockFrontExtended::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)
-   		return;
+	{
+		PxShape* pShape = nullptr;
+		m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
+
+		PxBoxGeometry	pGeometry;
+		if (pShape->getBoxGeometry(pGeometry))
+		{
+			pGeometry.halfExtents = PxVec3(0.001f, 0.001f, 0.001f);
+			pShape->setGeometry(pGeometry);
+		}
+
+		m_pTransformCom->Tick(fTimeDelta);
+
+		return;
+	}
 
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(true);
@@ -111,7 +127,17 @@ void CE_Warrior_ShockFrontExtended::Tick(_float fTimeDelta)
 		m_vecChild[1]->Get_TransformCom()->Set_Scaled(vScaled * 2.3f);
 	}
 
-	// m_pTransformCom->Tick(fTimeDelta);
+	PxShape* pShape = nullptr;
+	m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
+
+	PxBoxGeometry	pGeometry;
+	if (pShape->getBoxGeometry(pGeometry))
+	{
+		pGeometry.halfExtents = PxVec3(4.f, 4.f, 0.15f);
+		pShape->setGeometry(pGeometry);
+	}
+
+	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_ShockFrontExtended::Late_Tick(_float fTimeDelta)
@@ -208,6 +234,8 @@ HRESULT CE_Warrior_ShockFrontExtended::SetUp_Child()
 
 void CE_Warrior_ShockFrontExtended::Imgui_RenderProperty()
 {
+	__super::ImGui_PhysXValueProperty();
+
 	ImGui::InputFloat4("DiffuseTexture", (_float*)&m_eEFfectDesc.fFrame);
 	ImGui::InputFloat("Pass", (_float*)&m_eEFfectDesc.iPassCnt);
 
