@@ -124,7 +124,7 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
 CPhysX_Manager::CPhysX_Manager()
-{
+{	
 }
 
 void CPhysX_Manager::Free()
@@ -404,11 +404,11 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 	
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pBox->attachShape(*pShape);
@@ -440,7 +440,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 		
 		pBox->attachShape(*pShape);
@@ -488,11 +488,11 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxRigidStatic* pSphere = m_pPhysics->createRigidStatic(Transform);		
 		PxMaterial *pMaterial = m_pPhysics->createMaterial(Desc.fStaticFriction, Desc.fDynamicFriction, Desc.fRestitution);
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, Desc.isTrigger);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 	
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 		
 		pSphere->attachShape(*pShape);
@@ -520,11 +520,11 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(Desc.fRadius), *pMaterial, true);
 		PxTransform relativePose(PxVec3(0, 0, 0));
 		pShape->setLocalPose(relativePose);
-		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, Desc.isTrigger);
-		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pSphere->attachShape(*pShape);
@@ -573,9 +573,11 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pCapsule->attachShape(*pShape);
@@ -603,9 +605,11 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *pMaterial, true);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pCapsule->attachShape(*pShape);
@@ -752,15 +756,6 @@ PxRigidActor * CPhysX_Manager::Find_DynamicCollider(const _tchar * pActorTag)
 	return Pair->second;
 }
 
-PxQueryHitType::Enum MyFilterCallback(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags)
-{	
-	if (filterData.word0 == (PxU32)FITLER_TRIGGER) {
-		return PxQueryHitType::eNONE;
-	}
-
-	return PxQueryHitType::eBLOCK;
-}
-
 _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject** pObjectOut)
 {
 	PxRaycastBuffer hit;
@@ -778,7 +773,12 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 		PxShapeFlags Flags = pShape->getFlags();
 
 		if (Flags.isSet(PxShapeFlag::eTRIGGER_SHAPE))
+		{
+// 			PxVec3	vDir = hit.block.position - origin;
+// 			_float	fDistance = distance - );
+// 			m_pScene->raycast(hit.block.position, direction, distance - )
 			return false;
+		}
 
 		if(pPositionOut)
 			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
@@ -791,6 +791,48 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 	}
 		
 	return hitResult;
+}
+
+_bool CPhysX_Manager::Raycast_CollisionTarget(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject* pTarget)
+{	
+	PxReal distance = fRange;
+	PxVec3 origin = CUtile::ConvertPosition_D3DToPx(vRayPos);
+	PxVec3 direction = CUtile::ConvertPosition_D3DToPx(vRayDir);
+	direction.normalize();
+
+	PxRaycastHit hitBuffer[10];
+	PxRaycastBuffer hit;
+	hit.touches = hitBuffer;
+	hit.nbTouches = 0;
+	hit.maxNbTouches = 10;
+
+	if (m_pScene->raycast(origin, direction, distance, hit))
+	{
+		PxU32 NbTouches = hit.getNbTouches();
+		const PxRaycastHit* pRaycastHit = hit.getTouches();
+
+		for (PxU32 i = 0; i < NbTouches; i++)
+		{	
+			PxRigidActor* pActor = pRaycastHit[i].actor;
+			PxShape* pShape = nullptr;
+
+			pActor->getShapes(&pShape, sizeof(PxShape));
+			PxShapeFlags Flags = pShape->getFlags();
+
+			if (Flags.isSet(PxShapeFlag::eTRIGGER_SHAPE))
+				continue;
+			
+			PX_USER_DATA* pUserData = (PX_USER_DATA*)pActor->userData;
+			if (pUserData && pUserData->pOwner && pUserData->pOwner == pTarget)
+			{
+				PxVec3 PxColPos = pRaycastHit[i].position;
+				*pPositionOut = CUtile::ConvertPosition_PxToD3D(PxColPos);
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 _bool CPhysX_Manager::IsMouseOver(HWND hWnd, CGameObject* pTargetObject, _float fRange,  _float3* pPositionOut)
@@ -1108,7 +1150,7 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
 	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-	
+		
 	pTriggerData->pTriggerStatic->attachShape(*pShape);
 	PX_USER_DATA* pUserData = Create_PxUserData(pTriggerData->pOwner, false, pTriggerData->iTriggerIndex);
 	m_UserDataes.push_back(pUserData);

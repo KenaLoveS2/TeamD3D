@@ -49,8 +49,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
@@ -72,11 +72,40 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
+
+	//{
+	//	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+
+	//	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	//	BoxDesc.eType = BOX_STATIC;
+	//	BoxDesc.pActortag = L"RayTrigger";
+	//	BoxDesc.vSize = _float3(2.f, 1.f, 1.f);
+	//	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	//	BoxDesc.isTrigger = true;
+
+	//	pPhysX->Create_Box(BoxDesc, nullptr);
+	//}
+
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+	//{
+	//	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	//	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+
+	//	_float3 vRayPos = pGameInstance->Get_CamPosition();
+	//	_float3 vRayDir = pGameInstance->Get_CamLook_Float3();
+	//	_float3 vOut;
+	//	CGameObject* pOut = nullptr;
+	//	if (pPhysX->Raycast_CollisionExceptTrigger(vRayPos, vRayDir, 10.f, &vOut, &pOut))
+	//	// if (pPhysX->Raycast_Collision(vRayPos, vRayDir, 10.f, &vOut, &pOut))
+	//	{
+	//		int i = 0;
+	//	}
+	//}
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -240,9 +269,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Environment(const _tchar * pLayerTag)
 {
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Test_TelePortFlower.json");
 
-	CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+	//CImgui_MapEditor::Load_MapObjects(LEVEL_GAMEPLAY, "Chest.json");
+
+	FAILED_CHECK_RETURN(CGameInstance::GetInstance()->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, L"Prototype_GameObject_HealthFlower_Anim", L"HealthFlower", nullptr, nullptr), E_FAIL);
 
 	return S_OK;
 }
@@ -328,6 +359,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_EFFECT, pLayerTag, TEXT("Prototype_GameObject_ExplosionGravity"), L"Test", nullptr, &pGameObject)))
 		return E_FAIL;
+
+	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Warrior_ShockFrontExtended"), L"Warrior_ShockFrontExtended", nullptr, &pGameObject)))
+		return E_FAIL;*/
+
+	/*if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Swipes_Charged"), L"Boss_Swiped_Charged", nullptr, &pGameObject)))
+		return E_FAIL;*/
 
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
@@ -496,8 +533,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Rot(const _tchar* pLayerTag)
 	
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), TEXT("Rot_JH"))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_Rot"), TEXT("Rot_JH"))))
+	//	return E_FAIL;
 	
 	if (FAILED(pGameInstance->Clone_AnimObject(LEVEL_GAMEPLAY, pLayerTag, TEXT("Prototype_GameObject_LiftRot_Master"), TEXT("LiftRot_Master"))))
 		return E_FAIL;

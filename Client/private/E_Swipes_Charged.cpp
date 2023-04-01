@@ -51,13 +51,12 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 
 	_float3 vOriginPos = _float3(0.f, 0.f, 0.f);
 	_float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
-	_float3 vPivotPos = _float3(0.f, 0.f, 0.f);
 
 	// Capsule X == radius , Y == halfHeight
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vOriginPos;
+	PxSphereDesc.vPos = CUtile::Float_4to3(vPos);
 	PxSphereDesc.fRadius = vPivotScale.x;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fDensity = 1.f;
@@ -65,14 +64,14 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	PxSphereDesc.fMass = 59.f;
 	PxSphereDesc.fLinearDamping = 1.f;
 	PxSphereDesc.bCCD = true;
-	PxSphereDesc.eFilterType = PX_FILTER_TYPE::PLAYER_BODY;
+	PxSphereDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
 	PxSphereDesc.fDynamicFriction = 0.5f;
 	PxSphereDesc.fStaticFriction = 0.5f;
 	PxSphereDesc.fRestitution = 0.1f;
 
-	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_PLAYER));
+	CPhysX_Manager::GetInstance()->Create_Sphere(PxSphereDesc, Create_PxUserData(this, false, COL_MONSTER_WEAPON));
 
-	_smatrix	matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
+	_smatrix   matPivot = XMMatrixIdentity();
 	m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
 	return S_OK;
@@ -85,7 +84,22 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if (m_eEFfectDesc.bActive == false)	return;
+	if (m_eEFfectDesc.bActive == false)
+	{
+		PxShape* pShape = nullptr;
+		m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
+
+		PxSphereGeometry	pGeometry;
+		if (pShape->getSphereGeometry(pGeometry))
+		{
+			pGeometry.radius = 0.001f;
+			pShape->setGeometry(pGeometry);
+		}
+
+		m_pTransformCom->Tick(fTimeDelta);
+
+		return;
+	}
 
 	m_fTimeDelta += fTimeDelta;
 	m_vecChild[0]->Set_Active(true);
@@ -106,6 +120,16 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		vScaled.z += fTimeDelta * 4.f + 0.2f;
 		m_pTransformCom->Set_Scaled(vScaled);
 		m_vecChild[0]->Get_TransformCom()->Set_Scaled(vScaled * 5.f);
+	}
+
+	PxShape* pShape = nullptr;
+	m_pTransformCom->Get_ActorList()->back().pActor->getShapes(&pShape, sizeof(PxShape));
+
+	PxSphereGeometry	pGeometry;
+	if (pShape->getSphereGeometry(pGeometry))
+	{
+		pGeometry.radius = vScaled.x * 1.5f;
+		pShape->setGeometry(pGeometry);
 	}
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -138,11 +162,19 @@ HRESULT CE_Swipes_Charged::Render()
 
 _int CE_Swipes_Charged::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
 {
-	_bool bRealAttack = false;
-	if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+	if (pTarget == nullptr)
 	{
 
 	}
+	else
+	{
+		_bool bRealAttack = false;
+		if (iColliderIndex == (_uint)COL_MONSTER_WEAPON && (bRealAttack = ((CMonster*)pTarget)->IsRealAttack()))
+		{
+
+		}
+	}
+
 	return 0;
 }
 
