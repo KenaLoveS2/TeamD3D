@@ -465,6 +465,8 @@ void CEffect_Particle_Base::Activate(CGameObject* pTarget)
 void CEffect_Particle_Base::DeActivate()
 {
 	m_bActive = false;
+
+	m_pVIBufferCom->Update_Buffer(nullptr);
 }
 
 HRESULT CEffect_Particle_Base::SetUp_Components()
