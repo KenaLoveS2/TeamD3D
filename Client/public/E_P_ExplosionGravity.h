@@ -6,7 +6,19 @@ BEGIN(Client)
 class CE_P_ExplosionGravity final : public CEffect_Point_Instancing
 {
 public:
-	enum TYPE { TYPE_DAMAGE_MONSTER, TYPE_END };
+	enum TYPE
+	{ 
+		TYPE_DEFAULT,
+		/* Boss + Monster */
+		TYPE_DEAD_MONSTER, 
+		TYPE_BOSS_WEAPON,
+		TYPE_BOSS_ATTACK,
+		/* Kena */
+		TYPE_DAMAGE_PULSE,
+		TYPE_KENA_ATTACK,
+		TYPE_KENA_ATTACK2,
+		TYPE_END
+	};
 
 private:
 	CE_P_ExplosionGravity(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -21,19 +33,27 @@ public:
 	virtual void    Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	
 public:
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_Components();
 	
 public:
-	void	Set_Type(TYPE eType) { m_eType = eType;}
 	TYPE	Get_Type() { return m_eType; }
+	void	Set_Option(TYPE eType, _vector vSetDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+	void	Set_Dir(_vector vSetDir) { m_pVIInstancingBufferCom->Set_Dir(vSetDir); }
 
-	void	Set_Option();
+public:
+	void	UpdateParticle(_float4 vPos, _vector vDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+	void	UpdateColor(_fvector vColor); /* => Kena State Color Change */
+	HRESULT Reset_Type();
+
+	/* Option Test Tool */
+public:
+	void	Set_OptionTool();
 
 private:
-	TYPE	m_eType = TYPE_END;
+	TYPE	m_eType = TYPE_DEFAULT;
+	_float	m_fDurationTime = 0.0f;
 
 public:
 	static  CE_P_ExplosionGravity* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);

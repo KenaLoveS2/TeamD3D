@@ -1301,24 +1301,6 @@
     <ClInclude Include="..\public\ImGui_Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Chest_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ControlRoom.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\FieldBecon_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
-      <Filter>1004.알아서해라</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Base_S2.h">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClInclude>
@@ -1402,6 +1384,24 @@
     </ClInclude>
     <ClInclude Include="..\public\E_ShamanTrail.h">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse_Plate_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Chest_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ControlRoom.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DZ_FallenTree_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FieldBecon_Anim.h">
+      <Filter>1004.알아서해라</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gimmick_EnviObj.h">
+      <Filter>1004.알아서해라</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2137,24 +2137,6 @@
     <ClCompile Include="..\private\ImGui_Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Chest_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ControlRoom.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
-      <Filter>1004.알아서해라</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Base_S2.cpp">
       <Filter>02.GameObjects\UI\06. 3D UI</Filter>
     </ClCompile>
@@ -2166,9 +2148,6 @@
     </ClCompile>
     <ClCompile Include="..\private\E_Swipes_Charged.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CinematicCamera.cpp">
-      <Filter>1004.알아서해라</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rot.cpp">
       <Filter>1004.알아서해라</Filter>
@@ -2247,6 +2226,27 @@
     </ClCompile>
     <ClCompile Include="..\private\E_ShamanTrail.cpp">
       <Filter>02.GameObjects\Effect\Object\Monster\Boss\Shaman\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Chest_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicCamera.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ControlRoom.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FieldBecon_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gimmick_EnviObj.cpp">
+      <Filter>1004.알아서해라</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse_Plate_Anim.cpp">
+      <Filter>1004.알아서해라</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

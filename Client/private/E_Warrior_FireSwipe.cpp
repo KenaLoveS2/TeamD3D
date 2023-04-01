@@ -78,6 +78,8 @@ HRESULT CE_Warrior_FireSwipe::Late_Initialize(void * pArg)
 
 void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 {
+	m_eEFfectDesc.bActive = true;
+
 	__super::Tick(fTimeDelta);
 	m_pTransformCom->Tick(fTimeDelta);
 
@@ -86,13 +88,13 @@ void CE_Warrior_FireSwipe::Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
-	m_fTimeDelta += fTimeDelta;
+	//m_fTimeDelta += fTimeDelta;
 
- 	m_fDurationTime += fTimeDelta;
- 	if (m_fDurationTime > 1.f)
- 		m_fDurationTime = 0.0f;
- 	else
- 		m_pTransformCom->Go_Backward(fTimeDelta);
+ //	m_fDurationTime += fTimeDelta;
+ //	if (m_fDurationTime > 1.f)
+ //		m_fDurationTime = 0.0f;
+ //	else
+ //		m_pTransformCom->Go_Backward(fTimeDelta);
 }
 
 void CE_Warrior_FireSwipe::Late_Tick(_float fTimeDelta)
@@ -121,11 +123,11 @@ HRESULT CE_Warrior_FireSwipe::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (i == 0) // 외부
+		if (i == 0) // 내부
 		{
-			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 14);
+			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 23);
 		}
-		if (i == 1) // 내부
+		if (i == 1) // 외부 일렁이는 물결
 		{
 			m_pModelCom->Render(m_pShaderCom, 0, nullptr, 15);
 		}

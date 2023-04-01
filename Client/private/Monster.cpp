@@ -6,7 +6,7 @@
 
 #include "UI_MonsterHP.h"
 #include "E_RectTrail.h"
-
+#include "E_P_ExplosionGravity.h"
 
 _float4 CMonster::m_vKenaPos = {0.f, 0.f, 0.f, 1.f};
 
@@ -66,9 +66,9 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_State(), E_FAIL);
-	
-	Push_EventFunctions();
+	FAILED_CHECK_RETURN(SetUp_DamageParticle(), E_FAIL);
 
+	Push_EventFunctions();
 
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 
@@ -104,6 +104,7 @@ void CMonster::Tick(_float fTimeDelta)
 	m_pEnemyWisp ? m_pEnemyWisp->Tick(fTimeDelta) : 0;	
 	m_pKenaHit ? m_pKenaHit->Tick(fTimeDelta) : 0;	
 	m_pMovementTrail ? m_pMovementTrail->Tick(fTimeDelta) : 0;
+	m_pExplsionGravity ? m_pExplsionGravity->Tick(fTimeDelta) : 0;
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -113,6 +114,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	m_pEnemyWisp ? m_pEnemyWisp->Late_Tick(fTimeDelta) : 0;
 	m_pKenaHit ? m_pKenaHit->Late_Tick(fTimeDelta) : 0;
 	m_pMovementTrail ? m_pMovementTrail->Late_Tick(fTimeDelta) : 0;
+	m_pExplsionGravity ? m_pExplsionGravity->Late_Tick(fTimeDelta) : 0;
 
 	Call_RotIcon();
 	Call_MonsterFocusIcon();		
@@ -354,6 +356,22 @@ void CMonster::Update_MovementTrail(const char * pBoneTag)
 		m_pMovementTrail->Trail_InputRandomPos(matWorldSocket.r[3]);
 }
 
+HRESULT CMonster::SetUp_DamageParticle()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	/// <ExplosionGravity / Particle>
+	_tchar* pDummyString = CUtile::Create_DummyString();
+	m_pExplsionGravity = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", pDummyString));
+	NULL_CHECK_RETURN(m_pExplsionGravity, E_FAIL);
+	m_pExplsionGravity->Set_Parent(this);
+	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_DEAD_MONSTER);
+	/// <ExplosionGravity / Particle>
+
+	RELEASE_INSTANCE(CGameInstance);
+	return S_OK;
+}
+
 HRESULT CMonster::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
@@ -398,6 +416,7 @@ void CMonster::Free()
 	Safe_Release(m_pEnemyWisp);
 	Safe_Release(m_pKenaHit);	
 	Safe_Release(m_pMovementTrail);
+	Safe_Release(m_pExplsionGravity);
 }
 
 _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -485,6 +504,8 @@ void CMonster::Set_Dying(_uint iDeathAnimIndex)
 	m_bDying = true;
 	m_pUIHPBar->Set_Active(false);
 	m_pTransformCom->Clear_Actor();
+
+	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 }
 
 void CMonster::Clear_Death()

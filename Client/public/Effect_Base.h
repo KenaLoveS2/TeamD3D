@@ -150,6 +150,7 @@ public:
 	void SetSprite(_float2 InitSprit) {
 		m_fInitSpriteCnt = InitSprit;
 	}
+	void	TurnOffSystem(_float fDurationTime, _float fTimeDelta);
 
 public: // Texture Cnt
 	_int    Get_TotalDTextureCnt() { return m_iTotalDTextureComCnt; }
@@ -177,7 +178,7 @@ public:
 	virtual void				 Tick(_float fTimeDelta) override;
 	virtual void				 Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				 Render() override;
-	virtual void				Imgui_RenderProperty()override;
+	virtual void				 Imgui_RenderProperty()override;
 
 public:
 	virtual HRESULT				 Set_Child(EFFECTDESC eEffectDesc, _int iCreateCnt, char* ProtoTag) { return S_OK; }
@@ -238,6 +239,7 @@ protected:
 	_bool  m_bFinishSprite = false;
 	_float2 m_fInitSpriteCnt = { 0.f,0.f };
 	_float  m_fHDRValue = 0.0f;
+	_float  m_fTurnOffTime = 0.0f;
 
 public:
 	virtual void          Free() override;

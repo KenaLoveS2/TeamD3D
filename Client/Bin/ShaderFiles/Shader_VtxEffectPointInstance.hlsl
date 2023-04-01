@@ -811,13 +811,11 @@ PS_OUT PS_DOT(PS_IN In)
 	else
 		finalcolor.rgb = finalcolor.rgb * 2.f;
 
-	float fTIme = min(g_fLife, 1.f);
-
+	float fTIme = min(g_Time, 1.f);
 	if (0.5f < fTIme)
-		finalcolor.a = finalcolor.a * (1.f - fTIme);
+		finalcolor = finalcolor * (1.f - fTIme);
 
 	Out.vColor = finalcolor;
-
 	return Out;
 }
 
@@ -1073,6 +1071,31 @@ PS_OUT PS_RECTTRAIL(PS_TRAILIN In)
 	return Out;
 }
 
+//PS_EXPLOSIONPARTICLE
+PS_OUT PS_EXPLOSIONPARTICLE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector Diffuse = g_DTexture_0.Sample(LinearSampler, In.vTexUV);
+	Diffuse.a = Diffuse.r;
+
+	float4 finalcolor = Diffuse;
+	if (finalcolor.a < 0.7f)
+		discard;
+	else
+		finalcolor.rgb = finalcolor.rgb * 2.f;
+
+	float fTime = min(g_Time, 1.f);
+	if (0.5f < fTime)
+		finalcolor = finalcolor * (1.f - fTime);
+
+	if (finalcolor.a < 0.1f)
+		discard;
+
+	Out.vColor = finalcolor + g_vColor;
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Effect_Dafalut // 0
@@ -1090,7 +1113,7 @@ technique11 DefaultTechnique
 	pass Effect_Dot // 1
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
@@ -1242,5 +1265,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_FRONTVIEWBLINK();
+	}
+
+	pass ExplosionParticle // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = compile gs_5_0 GS_DEFAULT();
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_EXPLOSIONPARTICLE();
 	}
 }

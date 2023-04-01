@@ -470,6 +470,16 @@ void CEffect_Base::Set_Matrix()
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldWithParentMatrix));
 }
 
+void CEffect_Base::TurnOffSystem(_float fDurationTime, _float fTimeDelta)
+{
+	m_fTurnOffTime += fTimeDelta;
+	if (m_fTurnOffTime > fDurationTime)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_fTurnOffTime = 0.0f;
+	}
+}
+
 void CEffect_Base::Set_TrailDesc()
 {
 	if (m_pParent == nullptr || dynamic_cast<CEffect_Base*>(m_pParent) == false)

@@ -31,6 +31,8 @@ public:
 	void	SetUp_Option(RECTTRAILTYPE eType);
 	void	Set_TexRandomPrint();
 
+	void	Set_KenaStaffOption();
+
 private:
 	class CKena* m_pKena = nullptr;
 	RECTTRAILTYPE m_eType = OBJ_DEFAULT;

@@ -1966,6 +1966,11 @@ HRESULT CLoader::Loading_ForHO(_uint iLevelIndex)
 		CVIBuffer_Trail::Create(m_pDevice, m_pContext, 300))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_PointInstancing */
+	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, TEXT("Prototype_Component_VIBuffer_PointInstancing"),
+		CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 300))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Model_Cube */
 	if (FAILED(pGameInstance->Add_Prototype(iLevelIndex, L"Prototype_Component_Model_Cube",
 		CModel::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Effect/Cube.mdat"), PivotMatrix))))

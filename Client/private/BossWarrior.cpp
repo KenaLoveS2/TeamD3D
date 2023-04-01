@@ -7,6 +7,8 @@
 #include "E_RectTrail.h"
 #include "E_Hieroglyph.h"
 #include "ControlRoom.h"
+#include "E_P_ExplosionGravity.h"
+
 CBossWarrior::CBossWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CMonster(pDevice, pContext)
 {
@@ -926,7 +928,6 @@ void CBossWarrior::Update_Trail(const char * pBoneTag)
 
 	m_mapEffect["W_Trail"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
 	m_mapEffect["W_MovementParticle"]->Get_TransformCom()->Set_WorldMatrix(matWorldSocket);
-
 	if (m_mapEffect["W_Trail"]->Get_Active() == true)
 	{
 		dynamic_cast<CEffect_Trail*>(m_mapEffect["W_Trail"])->Trail_InputPos(matWorldSocket.r[3]);
@@ -1068,6 +1069,10 @@ void CBossWarrior::TurnOnTrail(_bool bIsInit, _float fTimeDelta)
 		return;
 	}
 	m_mapEffect["W_Trail"]->Set_Active(true);
+
+	// ReSetting
+	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON);
+	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 }
 
 void CBossWarrior::TurnOffTrail(_bool bIsInit, _float fTimeDelta)
@@ -1092,6 +1097,10 @@ void CBossWarrior::TurnOnSwipesCharged(_bool bIsInit, _float fTimeDelta)
 	_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	m_mapEffect["Warrior_Charged"]->Set_Position(vPos);
 	m_mapEffect["Warrior_Charged"]->Set_Active(true);
+
+	// ReSetting
+	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_WEAPON);
+	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 }
 
 void CBossWarrior::TurnOnHieroglyph(_bool bIsInit, _float fTimeDelta)
@@ -1189,6 +1198,10 @@ void CBossWarrior::TurnOnFireSwipe(_bool bIsInit, _float fTimeDelta)
 	_smatrix worldmatrix(vRight, vUp, vLook, vPosition);
 	m_mapEffect["W_FireSwipe"]->Get_TransformCom()->Set_WorldMatrix(worldmatrix);
 	m_mapEffect["W_FireSwipe"]->Set_Active(true);
+
+	// ReSetting
+	m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_BOSS_ATTACK, matWorld.r[2]);
+	m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position());
 }
 
 void CBossWarrior::TurnOnFireSwipe_End(_bool bIsInit, _float fTimeDelta)

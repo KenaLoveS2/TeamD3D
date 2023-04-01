@@ -34,7 +34,10 @@ HRESULT CE_Warrior_Root::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
 	m_eEFfectDesc.iPassCnt = 16;
+
+	Edit_TextureComponent(2.0f, 0.0f);
 	m_eEFfectDesc.fFrame[0] = 16.f;
+	m_eEFfectDesc.fFrame[1] = 107.f;
 
 	m_eEFfectDesc.bActive = false;
 	return S_OK;
@@ -78,43 +81,37 @@ HRESULT CE_Warrior_Root::Late_Initialize(void * pArg)
 
 void CE_Warrior_Root::Tick(_float fTimeDelta)
 {
-	ImGui::Begin("Root");
-
-	if (ImGui::Button("re"))
-		m_pShaderCom->ReCompile();
-
-	ImGui::End();
-
 	__super::Tick(fTimeDelta);
 	m_fTimeDelta += fTimeDelta;
 
 	for (auto& pChild : m_vecChild)
-		pChild->Set_Active(m_eEFfectDesc.bActive);
+		pChild->Set_Active(false);
 
-	if (m_eEFfectDesc.bActive == false)
-   		return;
+	//if (m_eEFfectDesc.bActive == false)
+ //  		return;
 
-	m_fDurationTime += fTimeDelta;
-	if (m_fDurationTime > 0.5f)
-	{
-		m_eEFfectDesc.bActive = false;
-		m_fTimeDelta = 0.0f;
-		m_fDurationTime = 0.0f;
-	}
+	//m_fDurationTime += fTimeDelta;
+	//if (m_fDurationTime > 0.5f)
+	//{
+	//	m_eEFfectDesc.bActive = false;
+	//	m_fTimeDelta = 0.0f;
+	//	m_fDurationTime = 0.0f;
+	//}
 
 	m_pTransformCom->Tick(fTimeDelta);
 }
 
 void CE_Warrior_Root::Late_Tick(_float fTimeDelta)
 {
-   	if (m_eEFfectDesc.bActive == false)
+
+	if (m_eEFfectDesc.bActive == false)
    		return;
 
 	__super::Late_Tick(fTimeDelta);
 
 	/* NonAlpha => alpha test */
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT CE_Warrior_Root::Render()

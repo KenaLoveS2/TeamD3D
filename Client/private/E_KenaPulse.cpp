@@ -7,6 +7,7 @@
 #include "Kena.h"
 #include "Kena_Status.h"
 #include "Monster.h"
+#include "E_P_ExplosionGravity.h"
 
 CE_KenaPulse::CE_KenaPulse(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CEffect_Mesh(pDevice, pContext)
@@ -51,6 +52,12 @@ void CE_KenaPulse::Set_Child()
     pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_KenaPulseDot", L"KenaPulseDot"));
     NULL_CHECK_RETURN(pEffectBase, );
     m_vecChild.push_back(pEffectBase);
+
+    /// <ExplosionGravity / Particle>
+    m_pExplsionGravity = dynamic_cast<CE_P_ExplosionGravity*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"PulseDamageParticle"));
+    NULL_CHECK_RETURN(m_pExplsionGravity, );
+    m_pExplsionGravity->Set_Parent(this);
+    /// <ExplosionGravity / Particle>
 
     for (auto* pChild : m_vecChild)
         pChild->Set_Parent(this);
@@ -140,11 +147,16 @@ HRESULT CE_KenaPulse::Late_Initialize(void* pArg)
     _smatrix   matPivot = XMMatrixTranslation(vPivotPos.x, vPivotPos.y, vPivotPos.z);
     m_pTransformCom->Add_Collider(PxSphereDesc.pActortag, matPivot);
 
+    /* Damage_Particle */
+    m_pExplsionGravity->Set_Option(CE_P_ExplosionGravity::TYPE::TYPE_DAMAGE_PULSE);
     return S_OK;
 }
 
 void CE_KenaPulse::Tick(_float fTimeDelta)
 {
+    /* 테스트때문에 위로 잠깐 올림 */
+    if (m_pExplsionGravity) m_pExplsionGravity->Tick(fTimeDelta);
+
 	if (m_eEFfectDesc.bActive == false)
    		return;
 
@@ -244,6 +256,7 @@ void CE_KenaPulse::Late_Tick(_float fTimeDelta)
         Set_Matrix();
 
     __super::Late_Tick(fTimeDelta);
+    if (m_pExplsionGravity) m_pExplsionGravity->Late_Tick(fTimeDelta);
 
     if (nullptr != m_pRendererCom)
     {
@@ -317,9 +330,11 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
             m_pKena->Set_AttackObject(pTarget);
             //
             CKena::DAMAGED_FROM      eDir = CKena::DAMAGED_FROM_END;
-            CTransform* pTargetTransCom = pTarget->Get_TransformCom();
-            _float4      vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+            CTransform*              pTargetTransCom = pTarget->Get_TransformCom();
+            _float4    vDir = pTargetTransCom->Get_State(CTransform::STATE_TRANSLATION) - m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
             vDir.Normalize();
+
+            m_pExplsionGravity->UpdateParticle(m_pTransformCom->Get_Position(), vDir);
 
             _float         fFrontBackAngle = vDir.Dot(XMVector3Normalize(m_pTransformCom->Get_State(CTransform::STATE_LOOK)));
 
@@ -329,11 +344,12 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
                 eDir = CKena::DAMAGED_BACK;
 
             m_pKena->Set_DamagedDir(eDir);
-            //
             m_pStatus->Under_Shield(pStatus);
 
+            /* Update */
             m_eStatus.fCurHp = m_pStatus->Get_Shield();
             m_eStatus.fMaxHp = m_pStatus->Get_MaxShield();
+            /* Update */
 
             if (m_eStatus.fCurHp <= 0.0f)
             {
@@ -443,5 +459,5 @@ void CE_KenaPulse::Free()
     __super::Free();
 
     Safe_Release(m_pDissolveTexture);
-
+    Safe_Release(m_pExplsionGravity);
 }

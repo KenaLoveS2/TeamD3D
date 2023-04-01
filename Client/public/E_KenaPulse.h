@@ -41,7 +41,7 @@ public:
     virtual void    Tick(_float fTimeDelta) override;
     virtual void    Late_Tick(_float fTimeDelta) override;
     virtual HRESULT Render() override;
-    void         Reset();
+    void            Reset();
     virtual _int   Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex) override;
     virtual void   ImGui_PhysXValueProperty()override;
 
@@ -58,6 +58,7 @@ private:
     class CTexture* m_pDissolveTexture = nullptr;
     class CKena* m_pKena = nullptr;
     class CKena_Status* m_pStatus = nullptr;
+    class CE_P_ExplosionGravity* m_pExplsionGravity = nullptr;
 
     PX_TRIGGER_DATA* m_pTriggerDAta = nullptr;
     PULSETYPE            m_ePulseType = PULSE_DEFAULT;

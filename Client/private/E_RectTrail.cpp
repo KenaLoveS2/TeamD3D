@@ -97,15 +97,7 @@ void CE_RectTrail::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (dynamic_cast<CKena_Staff*>(m_pParent))
-	{
-		CKena* pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
-
-		if (pKena->Get_State(CKena::STATE_PERFECTATTACK) == true)
-			m_eEFfectDesc.vColor = XMVectorSet(255.f, 89.0f, 0.0f, 255.f) / 255.f;
-		else
-			m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
-	}
+	Set_KenaStaffOption();
 
 	for (auto& vPosition : m_vecProPos)
 		vPosition.w -= fTimeDelta;
@@ -220,6 +212,19 @@ void CE_RectTrail::Set_TexRandomPrint()
 {
 	m_eEFfectDesc.fWidthFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateWidth * 1.0f));
 	m_eEFfectDesc.fHeightFrame = floor(CUtile::Get_RandomFloat(0.0f, m_eEFfectDesc.iSeparateHeight * 1.0f));
+}
+
+void CE_RectTrail::Set_KenaStaffOption()
+{
+	if (dynamic_cast<CKena_Staff*>(m_pParent))
+	{
+		CKena* pKena = (CKena*)CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
+
+		if (pKena->Get_State(CKena::STATE_PERFECTATTACK) == true)
+			m_eEFfectDesc.vColor = XMVectorSet(255.f, 89.0f, 0.0f, 255.f) / 255.f;
+		else
+			m_eEFfectDesc.vColor = XMVectorSet(114.f, 227.f, 255.f, 255.f) / 255.f;
+	}
 }
 
 CE_RectTrail * CE_RectTrail::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pFilePath)
