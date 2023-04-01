@@ -63,6 +63,7 @@ public:
 	void						Set_AttackObject(CGameObject* pObject) { m_pAttackObject = pObject; }
 	void						Set_DamagedDir(DAMAGED_FROM eDir) { m_eDamagedDir = eDir; }
 
+	void						Set_RotActionPossible(_bool bValue) { m_bRotActionPossible = bValue; }
 	void						Set_RotWispInteractable(_bool bInteractable) { m_bRotWispInteractable = bInteractable; }
 	void						Set_ChestInteractable(_bool bInteractable) { m_bChestInteractable = bInteractable; }
 	void						Add_HitStopTime(_float fTime) { m_fHitStopTime += fTime; }
@@ -165,6 +166,7 @@ private:
 
 	_bool						m_bBossBattle = false;
 
+	_bool						m_bRotActionPossible = false;
 	_bool						m_bRotWispInteractable = false;
 	_bool						m_bChestInteractable = false;
 

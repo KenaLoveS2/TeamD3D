@@ -5460,5 +5460,27 @@
         "6. Blend Animation": "N/A",
         "7. Joint Index": "N/A",
         "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "ROT_ACTION",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_RotAction",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
+    },
+    {
+        "0. State Name": "ROT_ACTION_AIM",
+        "1. Looping": false,
+        "2. Root Bone Rotation": true,
+        "3. Root Bone Translation": true,
+        "4. Lerp Duration": 0.20000000298023224,
+        "5. Main Animation": "A_Kena_RotAction_AimState",
+        "6. Blend Animation": "N/A",
+        "7. Joint Index": "N/A",
+        "8. Additive Animation": "N/A"
     }
 ]
