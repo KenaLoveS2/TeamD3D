@@ -55,10 +55,10 @@ void CBorn_GroundCover::Tick(_float fTimeDelta)
 
 	Culling();
 
-	if(ImGui::Button("Uprise"))
-	{
+	//if(ImGui::Button("Uprise"))
+	//{
 		//m_pModelCom->Instaincing_MoveControl()
-	}
+	//}
 
 	if(m_bRenderCheck)
 		m_pModelCom->Play_Animation(fTimeDelta);

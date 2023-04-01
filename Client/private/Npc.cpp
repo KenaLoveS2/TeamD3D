@@ -60,6 +60,9 @@ void CNpc::Tick(_float fTimeDelta)
 void CNpc::Late_Tick(_float fTimeDelta)
 {
 	CGameObject::Late_Tick(fTimeDelta);
+
+	//if (m_pRendererCom)
+	//	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_CINE, this);
 }
 
 HRESULT CNpc::Render()
@@ -72,15 +75,28 @@ HRESULT CNpc::RenderShadow()
 	return S_OK;
 }
 
+HRESULT CNpc::RenderCine()
+{
+	FAILED_CHECK_RETURN(__super::Render(), E_FAIL);
+	FAILED_CHECK_RETURN(SetUp_CineShaderResources(), E_FAIL);
+
+	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		if (i == 7)
+			continue;
+
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
+		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", CINE);
+	}
+	return S_OK;
+}
+
 void CNpc::Imgui_RenderProperty()
 {
 	CGameObject::Imgui_RenderProperty();
-	if(ImGui::Button("Add_ShaderValue"))
-	{
-		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance);
-		p_game_instance->Add_ShaderValueObject(g_LEVEL, this);
-		RELEASE_INSTANCE(CGameInstance)
-	}
 }
 
 void CNpc::ImGui_AnimationProperty()
@@ -142,6 +158,15 @@ HRESULT CNpc::SetUp_Components()
 {
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom), E_FAIL);
 	FAILED_CHECK_RETURN(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), L"Prototype_Component_Shader_VtxAnimNPCModel", L"Com_Shader", (CComponent**)&m_pShaderCom), E_FAIL);
+	return S_OK;
+}
+
+HRESULT CNpc::SetUp_CineShaderResources()
+{
+	NULL_CHECK_RETURN(m_pShaderCom, E_FAIL);
+	FAILED_CHECK_RETURN(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ViewMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_CINEVIEW)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	return S_OK;
 }
 

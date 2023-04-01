@@ -22,6 +22,7 @@ protected:
 		BENI_EYE,
 		AORM,
 		SAIYA_EYE,
+		CINE,
 		PASS_END
 	};
 
@@ -38,6 +39,7 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			RenderShadow() override;
+	virtual HRESULT			RenderCine() override;
 	virtual void					Imgui_RenderProperty() override;
 	virtual void					ImGui_AnimationProperty() override;
 	virtual void					ImGui_ShaderValueProperty() override;
@@ -49,7 +51,7 @@ public:
 	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
 	_bool							DistanceTrigger(_float distance);
 	virtual void					AdditiveAnim(_float fTimeDelta);
-
+	CFSMComponent*		Get_FSM() { return m_pFSM; }
 protected:
 	CRenderer*						m_pRendererCom = nullptr;
 	CShader*							m_pShaderCom = nullptr;
@@ -64,6 +66,7 @@ protected:
 	virtual	HRESULT			SetUp_Components();
 	virtual	HRESULT			SetUp_ShaderResources() PURE;
 	virtual HRESULT			SetUp_ShadowShaderResources() PURE;
+	virtual HRESULT			SetUp_CineShaderResources();
 	virtual HRESULT			SetUp_UI();
 
 public:
