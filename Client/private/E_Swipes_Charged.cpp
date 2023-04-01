@@ -56,7 +56,7 @@ HRESULT CE_Swipes_Charged::Late_Initialize(void * pArg)
 	CPhysX_Manager::PX_SPHERE_DESC PxSphereDesc;
 	PxSphereDesc.eType = SPHERE_DYNAMIC;
 	PxSphereDesc.pActortag = m_szCloneObjectTag;
-	PxSphereDesc.vPos = vPos;
+	PxSphereDesc.vPos = CUtile::Float_4to3(vPos);
 	PxSphereDesc.fRadius = vPivotScale.x;
 	PxSphereDesc.vVelocity = _float3(0.f, 0.f, 0.f);
 	PxSphereDesc.fDensity = 1.f;

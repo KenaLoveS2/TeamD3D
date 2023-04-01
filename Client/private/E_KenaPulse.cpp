@@ -111,8 +111,8 @@ HRESULT CE_KenaPulse::Late_Initialize(void* pArg)
     _float4 vPos;
     XMStoreFloat4(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-    m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
-    CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
+     m_pTriggerDAta = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_PULSE, CUtile::Float_4to3(vPos), 1.f);
+     CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerDAta);
 
     _float3 vOriginPos = _float3(0.f, 0.f, 0.f);
     _float3 vPivotScale = _float3(1.0f, 0.0f, 1.f);
@@ -342,6 +342,23 @@ _int CE_KenaPulse::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
             }
             else
                 m_eStatus.eState = STATUS::STATE_DAMAGE;
+        }
+    }
+
+    return 0;
+}
+
+_int CE_KenaPulse::Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex)
+{
+    if (pTarget == nullptr)
+    {
+
+    }
+    else
+    {
+        if (iColliderIndex == (_int)COL_MONSTER_WEAPON)
+        {
+            int a = 0;
         }
     }
 
