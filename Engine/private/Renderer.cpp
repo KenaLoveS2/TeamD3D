@@ -756,7 +756,7 @@ HRESULT CRenderer::Render_SSAO()
 {
 	if (FAILED(m_pShader_SSAO->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pShader_SSAO->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 
@@ -901,7 +901,7 @@ HRESULT CRenderer::Render_HDR()
 	pLDR1->Clear();
 	pLDR2->Clear();
 
-	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV());
+	CPostFX::GetInstance()->PostProcessing(m_pTarget_Manager->Get_SRV(L"Target_HDR"), pLDR1->Get_RTV(), m_pTarget_Manager->Get_SRV(L"Target_Depth"));
 	return S_OK;
 }
 

@@ -76,6 +76,7 @@ HRESULT CChest_Anim::Late_Initialize(void * pArg)
 	BoxDesc.fRestitution = 0.1f;
 
 	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_CHEST));
+	
 	pPhysX->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_CHEST, vPos, 5.f));
 
 	return S_OK;

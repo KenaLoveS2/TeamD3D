@@ -11,6 +11,17 @@ float			g_fHDRItensity;
 float4			g_vColor = { 1.f, 1.f, 1.f, 1.f };
 float4			g_vMaskColor = { 1.f ,1.f, 1.f, 1.f };
 
+/* Option */
+bool			g_IsSpriteAnim = false, g_IsUVAnim = false;
+
+/* UV Animation */
+float			g_fUVSpeedX = 0.f, g_fUVSpeedY = 0.f;
+
+/* Sprite Animation */
+int				g_XFrames = 1, g_YFrames = 1;
+int				g_XFrameNow = 0, g_YFrameNow = 0;
+
+
 /* Old (remove later) */
 //texture2D		g_Texture;
 //texture2D		g_DepthTexture;
@@ -76,7 +87,22 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x += g_fUVSpeedX;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	Out.vColor = vDiffuse;
 	Out.vColor *= g_vColor;
 
@@ -85,12 +111,28 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_MAIN_DEFAULTMAIN(PS_IN In)
+PS_OUT PS_MAIN_MASK(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float4	vDiffuse	= g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	float4	vMask		= g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+	float4	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (g_IsSpriteAnim)
+	{
+		In.vTexUV.x = In.vTexUV.x + g_XFrameNow;
+		In.vTexUV.y = In.vTexUV.y + g_YFrameNow;
+
+		In.vTexUV.x = In.vTexUV.x / g_XFrames;
+		In.vTexUV.y = In.vTexUV.y / g_YFrames;
+	}
+
+	if (g_IsUVAnim)
+	{
+		In.vTexUV.x += g_fUVSpeedX;
+		In.vTexUV.y += g_fUVSpeedY;
+	}
+
+	float4	vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
 	vMask *= g_vMaskColor;
 
 	Out.vColor = vDiffuse;
@@ -127,7 +169,7 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_DEFAULTMAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_MASK();
 	}
 
 }
@@ -192,7 +234,7 @@ PS_OUT PS_MAIN_AlphaBlend(PS_IN In)
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
 	return Out;
-} 
+}
 PS_OUT PS_MAIN_ALPHATESTCOLOR(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -336,7 +378,7 @@ PS_OUT PS_MAIN_RINGGUAGE(PS_IN In)
 	angle = acos(dot(centerToTop, centerToCurUV));
 	angle = angle * (180.0f / 3.141592654f); // radian to degree
 
-											 // Check the angle is 0 ~ 180 or 180 ~ 360 
+											 // Check the angle is 0 ~ 180 or 180 ~ 360
 	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
 
 	float condition = 360 * g_fAmount;
@@ -361,7 +403,7 @@ PS_OUT PS_MAIN_BARGUAGE(PS_IN In)
 	vColor.b = g_vColor.b * (In.vTexUV.x + g_vMinColor.b); // 0.5f
 	vColor.a = g_vColor.a;
 
-	// Discard pixel depends on original UV.x 
+	// Discard pixel depends on original UV.x
 	if (In.vTexUV.x > g_fAmount)
 		discard;
 
@@ -384,7 +426,7 @@ PS_OUT PS_MAIN_MONSTERBAR(PS_IN In)
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	Out.vColor.a *= g_fAlpha;
 
-	// Discard pixel depends on original UV.x 
+	// Discard pixel depends on original UV.x
 	float4 vWhite = { 1.f, 1.f, 1.f, 1.f };
 	if (In.vTexUV.x > g_fEnd && In.vTexUV.x <= g_fAmount)
 		Out.vColor = vWhite;
@@ -411,7 +453,7 @@ PS_OUT PS_MAIN_NoDiffuseColorGuage(PS_IN In)
 	float4 vColor = g_vColor;
 	float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	// Discard pixel depends on original UV.x 
+	// Discard pixel depends on original UV.x
 	if (In.vTexUV.x > g_fAmount)
 	{
 		vColor.rgb = vDiffuse.rgb;
@@ -477,7 +519,7 @@ PS_OUT PS_MAIN_RINGGUAGE_MASK(PS_IN In)
 	angle = acos(dot(centerToTop, centerToCurUV));
 	angle = angle * (180.0f / 3.141592654f); // radian to degree
 
-											 // Check the angle is 0 ~ 180 or 180 ~ 360 
+											 // Check the angle is 0 ~ 180 or 180 ~ 360
 	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
 
 	float4 vColor = g_vColor;
@@ -505,7 +547,7 @@ PS_OUT PS_MAIN_AimThings(PS_IN In)
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	if (g_iCheck == 0) // empty 
+	if (g_iCheck == 0) // empty
 	{
 		Out.vColor.rgb = 0.5;
 		Out.vColor.a *= 0.3;
@@ -551,7 +593,7 @@ PS_OUT PS_MAIN_PAINTDROP(PS_IN In)
 	//PS_OUT			Out = (PS_OUT)0;
 
 	//float4  vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	//   
+	//
 	//   float fTime = sin(g_Time);
 	//   float2 vDir = float2(0.5, 0.5) - In.vTexUV;
 	//   float fDist = length(vDir);
@@ -601,7 +643,7 @@ PS_OUT PS_MAIN_MASKALPHA(PS_IN In)
 
 	float4 vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 
-	
+
 	if (0 == g_iCheck) // Level0 Blocked
 	{
 		float4 vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);

@@ -22,6 +22,7 @@ enum PX_FILTER_TYPE {
 	PLAYER_BODY, PLAYER_WEAPON,
 	MONSTER_BODY, MONSTER_WEAPON, MONSTER_PARTS,
 	FITLER_ENVIROMNT,
+	FITLER_TRIGGER,
 	FILTER_END,
 };
 
@@ -142,7 +143,7 @@ public:
 			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
 			
-			PX_TRIGGER_DATA* pTriggerData = (PX_TRIGGER_DATA*)tp.triggerActor->userData;
+			PX_USER_DATA* pTriggerData = (PX_USER_DATA*)tp.triggerActor->userData;
 			PX_USER_DATA* pActorUserData = (PX_USER_DATA*)tp.otherActor->userData;
 
 			CGameObject* pTriggerObject = pTriggerData ? pTriggerData->pOwner : nullptr;
@@ -151,12 +152,12 @@ public:
 			if (tp.status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{				
 				pTriggerObject && pTriggerObject->Execute_TriggerTouchFound(pActorObject, ON_TRIGGER_PARAM_TRIGGER, pActorUserData ? pActorUserData->iColliderIndex : TRIGGER_DUMMY);
-				pActorObject && pActorObject->Execute_TriggerTouchFound(pTriggerObject, ON_TRIGGER_PARAM_ACTOR, pTriggerData ? pTriggerData->iTriggerIndex : TRIGGER_DUMMY);
+				pActorObject && pActorObject->Execute_TriggerTouchFound(pTriggerObject, ON_TRIGGER_PARAM_ACTOR, pTriggerData ? pTriggerData->iColliderIndex : TRIGGER_DUMMY);
 			}
 			else if (tp.status & PxPairFlag::eNOTIFY_TOUCH_LOST)
 			{
 				pTriggerObject && pTriggerObject->Execute_TriggerTouchLost(pActorObject, ON_TRIGGER_PARAM_TRIGGER, pActorUserData ? pActorUserData->iColliderIndex : TRIGGER_DUMMY);
-				pActorObject && pActorObject->Execute_TriggerTouchLost(pTriggerObject, ON_TRIGGER_PARAM_ACTOR, pTriggerData ? pTriggerData->iTriggerIndex : TRIGGER_DUMMY);
+				pActorObject && pActorObject->Execute_TriggerTouchLost(pTriggerObject, ON_TRIGGER_PARAM_ACTOR, pTriggerData ? pTriggerData->iColliderIndex : TRIGGER_DUMMY);
 			}
 		}
 	}

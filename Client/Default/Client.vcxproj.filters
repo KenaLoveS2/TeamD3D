@@ -1373,6 +1373,9 @@
     <ClInclude Include="..\public\E_P_Sakura.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CPortalPlane.h">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Portal.h">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClInclude>
@@ -2198,6 +2201,9 @@
     <ClCompile Include="..\private\E_P_Sakura.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CPortalPlane.cpp">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Portal.cpp">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClCompile>
@@ -2317,6 +2323,18 @@
       <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Bokeh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\BokehCS.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSAO.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

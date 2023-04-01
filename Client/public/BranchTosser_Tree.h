@@ -23,6 +23,8 @@ private:
 	_uint m_iNumMeshes = 0; 
 	_uint m_iShaderPass = 0;
 
+	_bool m_bClear = false;
+
 private:
 	CBranchTosser_Tree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBranchTosser_Tree(const CBranchTosser_Tree& rhs);
