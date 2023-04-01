@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "CPortalPlane.h"
 #include "GameInstance.h"
+#include "Utile.h"
+#include "Kena.h"
+#include "Camera_Player.h"
 
 CPortalPlane::CPortalPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CEnviromentObj(pDevice, pContext)
@@ -20,7 +23,6 @@ HRESULT CPortalPlane::Initialize_Prototype()
 
 HRESULT CPortalPlane::Initialize(void* pArg)
 {
-
 	FAILED_CHECK_RETURN(__super::Initialize(pArg), E_FAIL);
 
 	m_EnviromentDesc.ObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
@@ -28,12 +30,46 @@ HRESULT CPortalPlane::Initialize(void* pArg)
 
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	m_pTransformCom->Set_Position(_float4(15.f, 0.f, 15.f, 1.f));
+
 	return S_OK;
 }
 
 HRESULT CPortalPlane::Late_Initialize(void* pArg)
 {
+	m_pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena"));
+	NULL_CHECK_RETURN(m_pKena, E_FAIL);
+
+	m_pCamera = dynamic_cast<CCamera_Player*>(CGameInstance::GetInstance()->Get_WorkCameraPtr());
+	NULL_CHECK_RETURN(m_pCamera, E_FAIL);
+
 	
+
+	_float3 vPos;
+	XMStoreFloat3(&vPos, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	_float3 vSize = _float3(6.f, 6.f, 0.5f);
+
+	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	BoxDesc.pActortag = m_szCloneObjectTag;
+	BoxDesc.eType = BOX_STATIC;
+	BoxDesc.vPos = vPos;
+	BoxDesc.vSize = vSize;
+	BoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDegree = 0.f;
+	BoxDesc.isGravity = false;
+	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	BoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	BoxDesc.fDensity = 0.2f;
+	BoxDesc.fMass = 150.f;
+	BoxDesc.fLinearDamping = 10.f;
+	BoxDesc.fAngularDamping = 5.f;
+	BoxDesc.bCCD = false;
+	BoxDesc.fDynamicFriction = 0.5f;
+	BoxDesc.fStaticFriction = 0.5f;
+	BoxDesc.fRestitution = 0.1f;
+
+	pPhysX->Create_Box(BoxDesc, Create_PxUserData(this, false, COL_PORTAL));
 
 	return S_OK;
 }
@@ -71,7 +107,22 @@ HRESULT CPortalPlane::Render()
 
 void CPortalPlane::Imgui_RenderProperty()
 {
-	CGameObject::Imgui_RenderProperty();
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
+	PxRigidActor* pActor = CPhysX_Manager::GetInstance()->Find_StaticActor(m_szCloneObjectTag);
+
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, sizeof(PxShape));
+	PxBoxGeometry& Geometry = pShape->getGeometry().box();
+	PxVec3& fScale = Geometry.halfExtents;
+
+	/* Scale */
+	ImGui::BulletText("Scale Setting");
+	ImGui::DragFloat("Scale X", &fScale.x, 0.01f);
+	ImGui::DragFloat("Scale Y", &fScale.y, 0.01f);
+	ImGui::DragFloat("Scale Z", &fScale.z, 0.01f);
+
+	pShape->setGeometry(Geometry);
 }
 
 void CPortalPlane::ImGui_ShaderValueProperty()

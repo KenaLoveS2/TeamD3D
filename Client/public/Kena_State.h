@@ -1198,6 +1198,8 @@ private:	/* Changer */
 	_bool	Shield_Big();
 	_bool	Shield_Break_Front();
 	_bool	Shield_Break_Back();
+	_bool	Dash_Attack();
+	_bool	Dash_Portal();
 	_bool	Falling();
 	_bool	Pulse_Jump();
 	_bool	Parry();

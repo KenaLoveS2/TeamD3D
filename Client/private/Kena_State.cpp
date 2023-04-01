@@ -2676,6 +2676,8 @@ HRESULT CKena_State::SetUp_State_Dash()
 		.Init_Start(this, &CKena_State::Start_Dash)
 		.Init_Tick(this, &CKena_State::Tick_Dash)
 		.Init_End(this, &CKena_State::End_Dash)
+		.Init_Changer(L"DASH_PORTAL", this, &CKena_State::Dash_Portal)
+		.Init_Changer(L"DASH_COMBAT_ATTACK_2", this, &CKena_State::Dash_Attack)
 		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left, NULLFUNC, NULLFUNC, &CKena_State::Animation_Progress, 0.65f)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish, &CKena_State::KeyInput_E)
 		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
@@ -2690,6 +2692,7 @@ HRESULT CKena_State::SetUp_State_Dash()
 		.Init_Start(this, &CKena_State::Start_Dash_Portal)
 		.Init_Tick(this, &CKena_State::Tick_Dash_Portal)
 		.Init_End(this, &CKena_State::End_Dash_Portal)
+		.Init_Changer(L"IDLE", this, &CKena_State::Animation_Finish)
 
 		.Add_State(L"DASH_COMBAT_ATTACK_1")
 		.Init_Start(this, &CKena_State::Start_Dash_Combat_Attack_1)
@@ -2700,6 +2703,7 @@ HRESULT CKena_State::SetUp_State_Dash()
 		.Init_Start(this, &CKena_State::Start_Dash_Combat_Attack_2)
 		.Init_Tick(this, &CKena_State::Tick_Dash_Combat_Attack_2)
 		.Init_End(this, &CKena_State::End_Dash_Combat_Attack_2)
+		.Init_Changer(L"DASH_SETTLE", this, &CKena_State::Animation_Finish)
 
 		.Finish_Setting();
 
@@ -2720,7 +2724,7 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -2736,7 +2740,7 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"BACKFLIP", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_None)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::Animation_Finish)
 
@@ -2842,9 +2846,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2859,9 +2862,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2876,9 +2878,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2893,9 +2894,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2910,9 +2910,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2927,9 +2926,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2944,9 +2942,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -2961,9 +2958,8 @@ HRESULT CKena_State::SetUp_State_Pulse()
 		.Init_Changer(L"SHIELD_IMPACT_BIG", this, &CKena_State::Shield_Big)
 		.Init_Changer(L"ROLL", this, &CKena_State::KeyDown_LCtrl, &CKena_State::KeyInput_Direction)
 		.Init_Changer(L"PULSE_SQUAT_SPRINT", this, &CKena_State::KeyUp_E, &CKena_State::MouseDown_Middle, &CKena_State::KeyInput_Direction)
-		.Init_Changer(L"AIM_INTO", this, &CKena_State::KeyInput_LShift)
 		.Init_Changer(L"HEAVY_ATTACK_1_CHARGE", this, &CKena_State::MouseInput_Right)
-		.Init_Changer(L"ATTACK_1", this, &CKena_State::MouseDown_Left)
+		.Init_Changer(L"DASH", this, &CKena_State::MouseDown_Left)
 		.Init_Changer(L"PULSE", this, &CKena_State::KeyUp_E)
 		.Init_Changer(L"PULSE_WALK", this, &CKena_State::Direction_Change)
 		.Init_Changer(L"PULSE_LOOP", this, &CKena_State::KeyInput_None)
@@ -3930,7 +3926,13 @@ void CKena_State::Start_Attack_1(_float fTimeDelta)
 
 	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 
+	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(false);
+	pPulse->Reset();
+
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_1.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_1.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
@@ -3940,6 +3942,8 @@ void CKena_State::Start_Attack_1_From_Run(_float fTimeDelta)
 	Move(0.f, m_eDir, CKena_State::MOVEOPTION_ONLYTURN);
 
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_0.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_1.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_1.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_1_Into_Run(_float fTimeDelta)
@@ -3963,6 +3967,8 @@ void CKena_State::Start_Attack_2(_float fTimeDelta)
 	Move(0.f, m_eDir);
 
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_1.ogg", 1.f);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_2.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_2.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_2_Into_Run(_float fTimeDelta)
@@ -3986,6 +3992,8 @@ void CKena_State::Start_Attack_3(_float fTimeDelta)
 	Move(0.f, m_eDir);
 
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_4.ogg", 1.f);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_3.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_3.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_3_Into_Run(_float fTimeDelta)
@@ -4004,6 +4012,8 @@ void CKena_State::Start_Attack_4(_float fTimeDelta)
 	Move(0.f, m_eDir);
 
 	CGameInstance::GetInstance()->Play_Sound(L"Voice_Kena_Attack_16.ogg", 1.f);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_4.ogg", 1.f, false);
+	CGameInstance::GetInstance()->Play_Sound(L"SFX_Kena_Attack_Tone_4.ogg", 1.f, false);
 }
 
 void CKena_State::Start_Attack_4_Into_Run(_float fTimeDelta)
@@ -5461,6 +5471,14 @@ void CKena_State::Start_Take_Damage_Heavy_Air(_float fTimeDelta)
 void CKena_State::Start_Dash(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("DASH");
+
+	m_pKena->m_bDash = true;
+
+	Move(0.f, m_eDir);
+
+	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(false);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Dash_Settle(_float fTimeDelta)
@@ -5470,7 +5488,7 @@ void CKena_State::Start_Dash_Settle(_float fTimeDelta)
 
 void CKena_State::Start_Dash_Portal(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("DASH_PORTAL");
+	m_pAnimationState->State_Animation("DASH_PORTAL", 0.f);
 }
 
 void CKena_State::Start_Dash_Combat_Attack_1(_float fTimeDelta)
@@ -5480,18 +5498,40 @@ void CKena_State::Start_Dash_Combat_Attack_1(_float fTimeDelta)
 
 void CKena_State::Start_Dash_Combat_Attack_2(_float fTimeDelta)
 {
-	m_pAnimationState->State_Animation("DASH_ATTACK_2");
+	m_pAnimationState->State_Animation("DASH_ATTACK_2", 0.f);
+	m_pAnimationState->Set_AnimationProgress(0.045f);
+
+	_vector		vTargetPos = m_pKena->m_pDashTarget->Get_TransformCom()->Get_Position();
+	_vector		vLook = XMVector3Normalize(m_pTransform->Get_State(CTransform::STATE_LOOK));
+	_vector		vDir = vLook * 1.5f;
+
+	m_pTransform->Set_State(CTransform::STATE_TRANSLATION, vTargetPos - vDir);
+	_vector		vPos = m_pTransform->Get_State(CTransform::STATE_TRANSLATION);
+
+	vPos = vDir * -1.f;
+	
+	m_pTransform->Set_Translation(vPos, vDir * -1.f);
+
+	m_pKena->m_pDashTarget = nullptr;
 }
 
 void CKena_State::Start_Backflip(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("BACKFLIP");
+
+	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(false);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Roll(_float fTimeDelta)
 {
 	m_pAnimationState->State_Animation("ROLL");
 	Move(0.f, m_eDir);
+
+	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(false);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Roll_Left(_float fTimeDelta)
@@ -5540,6 +5580,10 @@ void CKena_State::Start_Heavy_Attack_1_Charge(_float fTimeDelta)
 	m_pAnimationState->State_Animation("HEAVY_ATTACK_1_CHARGE");
 
 	m_pKena->m_bHeavyAttack = true;
+
+	CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+	pPulse->Set_Active(false);
+	pPulse->Reset();
 }
 
 void CKena_State::Start_Heavy_Attack_1_Release(_float fTimeDelta)
@@ -5828,6 +5872,14 @@ void CKena_State::Start_Pulse_Loop(_float fTimeDelta)
 	m_pAnimationState->State_Animation("PULSE_LOOP");
 
 	m_pKena->m_bPulse = true;
+
+	if (m_pAnimationState->Get_PreAnimIndex() == (_uint)CKena_State::DASH)
+	{
+		CE_KenaPulse* pPulse = dynamic_cast<CE_KenaPulse*>(m_pKena->m_mapEffect["KenaPulse"]);
+		pPulse->Set_Type(CE_KenaPulse::PULSE_DEFAULT);
+		pPulse->Set_Active(true);
+		pPulse->Reset();
+	}
 }
 
 void CKena_State::Start_Pulse_Into_Combat_End(_float fTimeDelta)
@@ -7438,6 +7490,7 @@ void CKena_State::End_Take_Damage_Heavy_Air(_float fTimeDelta)
 
 void CKena_State::End_Dash(_float fTimeDelta)
 {
+	m_pKena->m_bDash = false;
 }
 
 void CKena_State::End_Dash_Settle(_float fTimeDelta)
@@ -7446,14 +7499,19 @@ void CKena_State::End_Dash_Settle(_float fTimeDelta)
 
 void CKena_State::End_Dash_Portal(_float fTimeDelta)
 {
+	m_pKena->m_bDash = false;
 }
 
 void CKena_State::End_Dash_Combat_Attack_1(_float fTimeDelta)
 {
+	m_pKena->m_bDash = false;
+	m_pKena->m_bDashAttack = false;
 }
 
 void CKena_State::End_Dash_Combat_Attack_2(_float fTimeDelta)
 {
+	m_pKena->m_bDash = false;
+	m_pKena->m_bDashAttack = false;
 }
 
 void CKena_State::End_Backflip(_float fTimeDelta)
@@ -7869,6 +7927,16 @@ _bool CKena_State::Shield_Break_Front()
 _bool CKena_State::Shield_Break_Back()
 {
 	return m_pStatus->Is_ShieldBreak() && m_pKena->m_eDamagedDir == CKena::DAMAGED_BACK && (m_pKena->m_bCommonHit || m_pKena->m_bHeavyHit);
+}
+
+_bool CKena_State::Dash_Attack()
+{
+	return m_pKena->m_bDashAttack;
+}
+
+_bool CKena_State::Dash_Portal()
+{
+	return m_pKena->m_bDashPortal;
 }
 
 _bool CKena_State::Falling()
