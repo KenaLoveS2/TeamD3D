@@ -2,6 +2,8 @@
 
 #include "Npc.h"
 
+BEGIN(Client)
+
 class CBeni final : public CNpc
 {
 	enum ANIMATION
@@ -110,10 +112,14 @@ protected:
 	virtual HRESULT			SetUp_UI()override;
 
 private:
-	virtual void					AdditiveAnim(_float fTimeDelta);
+	virtual void					AdditiveAnim(_float fTimeDelta) override;
+	void								SaiyaFunc(_float fTimeDelta);
+	void								SaiyaPos();
 
 private:
 	_bool							m_bMeetPlayer = false;
+	class CSaiya*				m_pSaiya = nullptr;
+	string							m_strState;
 
 public:
 	static CBeni*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -121,3 +127,4 @@ public:
 	virtual void						Free() override;
 };
 
+END
