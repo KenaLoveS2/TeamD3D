@@ -511,7 +511,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
 	}
 
-	pass SOCKET_AO_R_M//10
+	pass SOCKET_AO_R_M //10
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
