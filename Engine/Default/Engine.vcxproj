@@ -191,6 +191,8 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\public\Component.h" />
     <ClInclude Include="..\public\Component_Manager.h" />
+    <ClInclude Include="..\public\CSSAO.h" />
+    <ClInclude Include="..\public\CSSLR.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\public\DebugDraw.h" />
     <ClInclude Include="..\public\Delegator.h" />
@@ -293,6 +295,8 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\private\Component.cpp" />
     <ClCompile Include="..\private\Component_Manager.cpp" />
+    <ClCompile Include="..\private\CSSAO.cpp" />
+    <ClCompile Include="..\private\CSSLR.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\private\DebugDraw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
