@@ -5,8 +5,8 @@
 #include "delegator.h"
 #include "Model.h"
 
-#define KENA_LINEAR_DAMING		0.5f
-#define KENA_ANGULAR_DAMING		0.5f
+#define KENA_LINEAR_DAMING		0.7f
+#define KENA_ANGULAR_DAMING		10.f
 #define KENA_MASS				100000.f * 1.1f
 
 

@@ -103,13 +103,12 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	m_vWakeUpPosition = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
-	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
-
+	
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
 	RELEASE_INSTANCE(CGameInstance)
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
+	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);

@@ -78,7 +78,7 @@ private:
 	vector<_float3> m_vecPivotScale;
 	vector<_float3> m_vecPivotRot;
 		
-	class CGameObject* m_pWeapon = nullptr;
+	class CShieldStick_Weapon* m_pWeapon = nullptr;
 
 public:
 	static CShieldStick*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
