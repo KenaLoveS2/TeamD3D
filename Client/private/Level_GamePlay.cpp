@@ -72,11 +72,40 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(p_game_instance->Late_Initialize(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
+
+	//{
+	//	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+
+	//	CPhysX_Manager::PX_BOX_DESC BoxDesc;
+	//	BoxDesc.eType = BOX_STATIC;
+	//	BoxDesc.pActortag = L"RayTrigger";
+	//	BoxDesc.vSize = _float3(2.f, 1.f, 1.f);
+	//	BoxDesc.eFilterType = PX_FILTER_TYPE::FILTER_DEFULAT;
+	//	BoxDesc.isTrigger = true;
+
+	//	pPhysX->Create_Box(BoxDesc, nullptr);
+	//}
+
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+	//{
+	//	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	//	CPhysX_Manager* pPhysX = CPhysX_Manager::GetInstance();
+
+	//	_float3 vRayPos = pGameInstance->Get_CamPosition();
+	//	_float3 vRayDir = pGameInstance->Get_CamLook_Float3();
+	//	_float3 vOut;
+	//	CGameObject* pOut = nullptr;
+	//	if (pPhysX->Raycast_CollisionExceptTrigger(vRayPos, vRayDir, 10.f, &vOut, &pOut))
+	//	// if (pPhysX->Raycast_Collision(vRayPos, vRayDir, 10.f, &vOut, &pOut))
+	//	{
+	//		int i = 0;
+	//	}
+	//}
+
 	__super::Tick(fTimeDelta);
 }
 
