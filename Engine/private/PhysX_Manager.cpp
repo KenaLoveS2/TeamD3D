@@ -121,20 +121,6 @@ PxFilterFlags CustomFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 	return PxFilterFlag::eDEFAULT;
 }
 
-PxFilterFlags RayCastFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-								  PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-								  PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-	if ((filterData0.word0 == (PxU32)FITLER_RAYCAST && filterData1.word1 == (PxU32)FITLER_RAYCAST_TRIGGER) ||
-		(filterData0.word1 == (PxU32)FITLER_RAYCAST_TRIGGER && filterData0.word0 == (PxU32)FITLER_RAYCAST))
-	{	
-		return PxFilterFlag::eSUPPRESS;
-	}
-		
-	return PxFilterFlag::eDEFAULT;
-}
-
-
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
 CPhysX_Manager::CPhysX_Manager()
@@ -422,8 +408,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pBox->attachShape(*pShape);
@@ -455,8 +440,7 @@ void CPhysX_Manager::Create_Box(PX_BOX_DESC& Desc, PX_USER_DATA* pUserData)
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 		
 		pBox->attachShape(*pShape);
@@ -508,8 +492,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
 	
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 		
 		pSphere->attachShape(*pShape);
@@ -541,8 +524,7 @@ void CPhysX_Manager::Create_Sphere(PX_SPHERE_DESC & Desc, PX_USER_DATA * pUserDa
 		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, !Desc.isTrigger);
 
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pSphere->attachShape(*pShape);
@@ -593,8 +575,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pShape->setLocalPose(relativePose);
 		
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pCapsule->attachShape(*pShape);
@@ -624,8 +605,7 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		pShape->setLocalPose(relativePose);
 
 		PxFilterData FilterData;
-		FilterData.word0 = Desc.eFilterType;
-		FilterData.word1 = Desc.isTrigger ? FITLER_RAYCAST_TRIGGER : FITLER_RAYCAST_ACTOR;
+		FilterData.word0 = Desc.eFilterType;		
 		pShape->setSimulationFilterData(FilterData);
 
 		pCapsule->attachShape(*pShape);
@@ -1161,11 +1141,7 @@ void CPhysX_Manager::Create_Trigger(PX_TRIGGER_DATA* pTriggerData)
 	PxShape* pShape = m_pPhysics->createShape(PxSphereGeometry(pTriggerData->fRadius), *m_pMaterial, true);
 	pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-	
-	PxFilterData FilterData;	
-	FilterData.word1 = FITLER_RAYCAST_TRIGGER;
-	pShape->setSimulationFilterData(FilterData);
-
+		
 	pTriggerData->pTriggerStatic->attachShape(*pShape);
 	PX_USER_DATA* pUserData = Create_PxUserData(pTriggerData->pOwner, false, pTriggerData->iTriggerIndex);
 	m_UserDataes.push_back(pUserData);
