@@ -117,7 +117,7 @@ HRESULT CUI_CanvasItemBar::Render()
 
 	if (nullptr != m_szName)
 	{
-		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"), m_szName,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Jangmi0"), m_szName,
 			vNewPos /* position */,
 			0.f, _float2(0.6f, 0.6f)/* size */,
 			XMVectorSet(0.f, 0.f, 0.f, 1.f)/* color */);
@@ -181,7 +181,7 @@ HRESULT CUI_CanvasItemBar::Ready_Nodes()
 		m_vecNodeCloneTag.push_back(strCloneTag);
 		pGameInstance->Add_String(wstrCloneTag);
 		static_cast<CUI_NodeCrystal*>(pUI)->Set_Crystal(m_tItemDesc.iPrice);
-		static_cast<CUI_NodeCrystal*>(pUI)->Set_Font(L"Font_Comic", { 0.f, 0.f, 0.f, 1.f }, { 0.6f, 0.6f }, { 20.f, -10.f });
+		static_cast<CUI_NodeCrystal*>(pUI)->Set_Font(L"Font_Jangmi0", { 0.f, 0.f, 0.f, 1.f }, { 0.6f, 0.6f }, { 20.f, -10.f });
 
 	}
 
