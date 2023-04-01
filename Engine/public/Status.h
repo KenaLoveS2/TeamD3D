@@ -42,7 +42,8 @@ public:
 	inline _int Get_MaxHP() { return m_iMaxHP; }
 	inline _int Get_HP() { return m_iHP; }
 	inline _int Get_Attack() { return m_iAttack; }
-	inline _float Get_PercentHP() { return (_float)m_iHP / (_float)m_iMaxHP; }
+	
+	_float Get_PercentHP();
 	void Add_CurrentHP(_int iValue);
 	void Add_HealAmount(_int iValue) { m_iHealAmount += iValue; }
 

@@ -7,7 +7,7 @@ class ENGINE_DLL CVIBuffer_Point_Instancing_S2 final : public CVIBuffer_Instanci
 public:
 	typedef struct tagPtInfo
 	{
-		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA ,TYPE_END };
+		enum TYPE { TYPE_HAZE, TYPE_GATHER, TYPE_PARABOLA , TYPE_SPREAD, TYPE_END };
 
 		TYPE	eType = TYPE_HAZE;
 
@@ -17,7 +17,7 @@ public:
 		_int	iInstanceIndex = 0;
 		_int	iNumInstance = 0;
 
-		_float2 vPSize	  = { 0.0f, 0.0f };
+		_float2 vPSize = { 0.0f, 0.0f };
 		_float3	vSpeedMin = { 0.0f, 0.0f, 0.0f };
 		_float3 vSpeedMax = { 0.0f, 0.0f, 0.0f };
 		_float3 vMinPos = { 0.0f, 0.0f, 0.0f };
@@ -31,6 +31,7 @@ private:
 
 public:
 	POINTINFO		Get_Info() { return m_tInfo; }
+	_bool			Is_Finished() { return m_bFinished; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -39,25 +40,28 @@ public:
 	virtual HRESULT Render()						override;
 
 public:
-	HRESULT		Update_Buffer(POINTINFO* pInfo);
+	HRESULT		Update_Buffer(POINTINFO * pInfo);
 
 private: /* Tick Function By Type */
 	HRESULT		Tick_Haze(_float TimeDelta);
 	HRESULT		Tick_Gather(_float TimeDelta);
 	HRESULT		Tick_Parabola(_float TimeDelta);
+	HRESULT		Tick_Spread(_float TimeDelta);
 private:
 	void		Safe_Delete_Arrays();
 	void		Reset();
 
 private:
 	POINTINFO		m_tInfo;
-	_float*			m_pXSpeeds		= nullptr;
-	_float*			m_pYSpeeds		= nullptr;
-	_float*			m_pZSpeeds		= nullptr;
-	_float3*		m_pPositions	= nullptr;
+	_float* m_pXSpeeds = nullptr;
+	_float* m_pYSpeeds = nullptr;
+	_float* m_pZSpeeds = nullptr;
+	_float3* m_pPositions = nullptr;
+
+	_bool			m_bFinished = false;
 
 public:
-	static CVIBuffer_Point_Instancing_S2* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CVIBuffer_Point_Instancing_S2* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg = nullptr, class CGameObject* pOwner = nullptr) override;
 	virtual void Free() override;
 };

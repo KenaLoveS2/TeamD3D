@@ -3,12 +3,13 @@
 /**********Constant Buffer*********/
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_SocketMatrix;
-float			g_fFar = 500.f;
+float				g_fFar = 300.f;
 float4			g_vCamPosition;
 /**********************************/
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
+texture2D<float4>		g_MaskTexture;
 Texture2D<float4>		g_MasterBlendDiffuseTexture;
 
 Texture2D<float4> g_AO_R_MTexture;
@@ -17,12 +18,15 @@ Texture2D<float4> g_EmissiveTexture;
 
 float4			g_EmissiveColor = (float4)1.f;
 float				g_fHDRIntensity = 0.f;
+float4				g_vColor = 1.f;
+
 
 texture2D		g_DissolveTexture;
 bool				g_bDissolve;
 float				g_fDissolveTime;
 float				g_DissolveSpeed = 0.2f;
 float				g_FadeSpeed = 1.5f;
+float				g_fDissolveAlpha = 0.f;
 
 struct VS_IN
 {
@@ -49,7 +53,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	matrix		matWV, matWVP;
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
-	
+
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
@@ -75,7 +79,7 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	vector		vTangent = mul(float4(In.vTangent, 0.f), g_WorldMatrix);
 	vTangent = mul(vTangent, g_SocketMatrix);
 
-	Out.vPosition = mul(vPosition, matVP); 
+	Out.vPosition = mul(vPosition, matVP);
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
@@ -170,16 +174,16 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 	float4 vColor = albedo1;			//albedo0 * albedo1 * 2.0f;
 	vColor = saturate(vColor);
 
-	if (0.1f > vColor.a) 
+	if (0.1f > vColor.a)
 		discard;
 
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-	
+
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
 	vNormal = normalize(mul(vNormal, WorldMatrix));
-		
+
 	if (g_bDissolve)
 	{
 		float fDissolveAmount = g_fDissolveTime * 5.f;
@@ -196,15 +200,15 @@ PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
 																		   // add edge colors0
 		float thresh1 = fDissolveAmount * _ColorThreshold1;
 		float useDissolve1 = noiseSample - thresh1 < 0;
-		vColor = (1 - useDissolve1)* vColor + useDissolve1 * _DissolveColor1;
+		vColor = (1 - useDissolve1) * vColor + useDissolve1 * _DissolveColor1;
 
 		// add edge colors1
 		float thresh2 = fDissolveAmount * _ColorThreshold2;
 		float useDissolve2 = noiseSample - thresh2 < 0;
-		vColor = (1 - useDissolve2)* vColor + useDissolve2 * _DissolveColor2;
+		vColor = (1 - useDissolve2) * vColor + useDissolve2 * _DissolveColor2;
 
 		// determine deletion threshold
-		float threshold = fDissolveAmount *g_DissolveSpeed * g_FadeSpeed;
+		float threshold = fDissolveAmount * g_DissolveSpeed * g_FadeSpeed;
 		clip(noiseSample - threshold);
 	}
 
@@ -341,6 +345,38 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 	Out.vLightDepth.r = In.vProjPos.w / g_fFar;
 
 	Out.vLightDepth.a = 1.f;
+
+	return Out;
+}
+
+/* HunterArrow (13) */
+PS_OUT PS_MAIN_HUNTER_ARROW(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector	vMask = g_MaskTexture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vDiffuse = vDiffuse;
+	Out.vDiffuse.rgb *= g_vColor.rgb;
+
+	if (g_bDissolve)
+	{
+		Out.vDiffuse.a = vMask.r;
+
+		if (Out.vDiffuse.a < g_fDissolveAlpha)
+			discard;
+	}
+
+	/* tangent space */
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, g_fHDRIntensity, 0.f);
+	Out.vAmbient = (float4)1.f;
 
 	return Out;
 }
@@ -512,5 +548,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_CINECAM();
+	}
+
+	pass HUNTERARROW // 13
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_HUNTER_ARROW();
 	}
 }

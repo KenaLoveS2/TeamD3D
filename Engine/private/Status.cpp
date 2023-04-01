@@ -81,3 +81,8 @@ void CStatus::Add_CurrentHP(_int iValue)
 	m_iHP = m_iHP < 0 ? 0 :
 		m_iHP > m_iMaxHP ? m_iMaxHP : m_iHP;
 }
+
+_float CStatus::Get_PercentHP()
+{	
+	return m_iHP <= 0.f ? 0.f : (_float)m_iHP / (_float)m_iMaxHP;
+}

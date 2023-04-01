@@ -406,6 +406,7 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 	{
 		if ((iColliderIndex == (_int)COL_PLAYER_WEAPON && m_pKena->Get_State(CKena::STATE_ATTACK)))
 		{	
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(KENA_PLUS_PIP_GUAGE_VALUE);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 			
 			m_pUIHPBar->Set_Active(true);
@@ -449,8 +450,10 @@ _int CMonster::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 				}
 			}
 		}
+
 		if (iColliderIndex == (_int)COL_PLAYER_ARROW)
 		{
+			m_pKena->Get_KenaStatusPtr()->Plus_CurPIPGuage(0.2f);
 			m_pMonsterStatusCom->UnderAttack(m_pKena->Get_KenaStatusPtr());
 
 			m_pUIHPBar->Set_Active(true);

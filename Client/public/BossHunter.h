@@ -8,25 +8,26 @@
 #define FLY_POS_COUNT				8
 
 BEGIN(Client)
+class CEffect_Base_S2;
 class CBossHunter : public CMonster
 {
 private:
 	enum ANIMATION {
 		BOMB_REMOVE,
 		CHARGE_ARROW_EXIT, CHARGE_ARROW_FIRST_SHOT, CHARGE_ARROW_LOOP_SHOT,
-		DASHED, 
-		DEATH, 
+		DASHED,
+		DEATH,
 		DODGE_DOWN, DODGE_L, DODGE_R, DODGE_FAR_RIGHT,
 		FLY_BACK_FAST, FLY_FORWRAD_FAST, FLY_LEFT_FAST, FLY_RIGHT_FAST,
-		IDLE, 
+		IDLE,
 		KNIFE_ATTACK, KNIFE_PARRY, KNIFE_PARRY_EXIT, KNIFE_PARRY_STUN_LOOP, KNIFE_SLAM_ATTACK, KNIFE_SLAM_TELEPORT,
-		MOVE_BACK, MOVE_FRONT, MOVE_LEFT, MOVE_RIGHT, 
-		QUICK_APPROACH, 
-		RAMPAGE, 
+		MOVE_BACK, MOVE_FRONT, MOVE_LEFT, MOVE_RIGHT,
+		QUICK_APPROACH,
+		RAMPAGE,
 		RAPID_SHOOT, RAPID_SHOOT_GROUND,
-		SHOCK_ARROW_ATTACK, SHOCK_ARROW_EXIT, SHOCK_ARROW_LOOP, 
-		SINGLE_SHOT, 
-		STUN_EXIT, STUN_INTO, STUN_INTO_FALL, STUN_LOOP, STUNNED_TAKE_DAMAGE, 
+		SHOCK_ARROW_ATTACK, SHOCK_ARROW_EXIT, SHOCK_ARROW_LOOP,
+		SINGLE_SHOT,
+		STUN_EXIT, STUN_INTO, STUN_INTO_FALL, STUN_LOOP, STUNNED_TAKE_DAMAGE,
 		SWOOP_ATTACK,
 		TAKE_DAMGE_AIR,
 		ANIMATION_END
@@ -41,7 +42,7 @@ private:
 		AT_RAPID_SHOOT,
 		AT_SHOCK_ARROW,
 		AT_CHARGE_ARROW,
-		
+
 		ATTACKTYPE_END
 	};
 
@@ -53,8 +54,19 @@ private:
 		COLL_END
 	};
 
-private:
+	enum EFFECT {
+		EFFECT_CHARGE_TEXTURE_CIRCLE,
+		EFFECT_CHARGE_PARTICLE_GATHER,
+		EFFECT_CHARGE_TEXTURE_CENTER,
+		EFFECT_CHARGE_TEXTURE_SHINE,
+		EFFECT_CHARGE_TEXTURE_LINE1,
+		EFFECT_CHARGE_TEXTURE_LINE2,
+	};
+
+public:
 	Delegator<CUI_ClientManager::UI_PRESENT, _float> m_BossHunterDelegator;
+
+private:
 
 	CBone* m_pBodyBone = nullptr;
 	_float4x4 m_BodyPivotMatrix;
@@ -65,7 +77,7 @@ private:
 	_float m_fStunTimeCheck = 0.f;
 
 	ATTACKTYPE m_eAttackType = (ATTACKTYPE)0;
-		
+
 	const _float m_fIdleTime = 2.f;
 	const _float m_fFlyHeightY = 1.5f;
 	const _float m_fKenaPosOffsetY = 0.5f;
@@ -73,7 +85,7 @@ private:
 
 	class CHunterArrow* m_pArrows[ARROW_COUNT] = { nullptr, };
 	_uint m_iArrowIndex = 0;
-		
+
 	_bool m_bReadyStrongArrow = false;
 
 	_uint m_iDodgeAnimIndex = DODGE_DOWN;
@@ -133,15 +145,14 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr)  override;
 	virtual void Free() override;
 
-	_int Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int iColliderIndex);
+	_int Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex);
 
 	void ResetAndSet_Animation(_uint iAnimIndex);
-	void Set_NextAttack();	
+	void Set_NextAttack();
 	void Create_Arrow();
 	void Ready_Arrow(CHunterArrow::FIRE_TYPE eFireType);
 	void Fire_Arrow(_bool bArrowIndexUpdate);
 	void Update_ArrowIndex();
-
 
 public:
 	// Animation CallBack Function
@@ -152,13 +163,47 @@ public:
 	void ReadyArrow_Charge(_bool bIsInit, _float fTimeDelta);
 	void ReadyArrow_Rapid(_bool bIsInit, _float fTimeDelta);
 	void ReadyArrow_Shock(_bool bIsInit, _float fTimeDelta);
-	
+
 	void FireArrow_Single(_bool bIsInit, _float fTimeDelta);
 	void FireArrow_Charge(_bool bIsInit, _float fTimeDelta);
 	void FireArrow_Rapid(_bool bIsInit, _float fTimeDelta);
-	void FireArrow_Shock(_bool bIsInit, _float fTimeDelta);	
+	void FireArrow_Shock(_bool bIsInit, _float fTimeDelta);
 
 	void Reset_HitFlag();
+
+	void Test1(_bool bIsInit, _float fTimeDelta);
+	void Test2(_bool bIsInit, _float fTimeDelta);
+	void Test3(_bool bIsInit, _float fTimeDelta);
+	void Test4(_bool bIsInit, _float fTimeDelta);
+
+
+
+
+
+
+	/********************************************/
+	/*			For. Shader & Effect			*/
+	/********************************************/
+private:
+	HRESULT Create_Effects();
+
+private:
+	vector<CEffect_Base_S2*>		m_vecEffects;
+
+private: /* For. String */
+	_float							m_fUVSpeeds[2];
+	_float							m_fStringDissolve;
+	_float							m_fStringDissolveSpeed;
+	_float							m_fStringHDRIntensity;
+	_float4							m_vStringDiffuseColor;
+
+private: /* For. Tool */
+	void							ImGui_EffectProperty();
+private:
+	CEffect_Base_S2* m_pSelectedEffect;
+
+
+
 };
 
 END
