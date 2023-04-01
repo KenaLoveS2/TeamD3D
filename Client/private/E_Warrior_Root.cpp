@@ -86,16 +86,16 @@ void CE_Warrior_Root::Tick(_float fTimeDelta)
 	for (auto& pChild : m_vecChild)
 		pChild->Set_Active(false);
 
-	//if (m_eEFfectDesc.bActive == false)
- //  		return;
+	if (m_eEFfectDesc.bActive == false)
+   		return;
 
-	//m_fDurationTime += fTimeDelta;
-	//if (m_fDurationTime > 0.5f)
-	//{
-	//	m_eEFfectDesc.bActive = false;
-	//	m_fTimeDelta = 0.0f;
-	//	m_fDurationTime = 0.0f;
-	//}
+	m_fDurationTime += fTimeDelta;
+	if (m_fDurationTime > 0.5f)
+	{
+		m_eEFfectDesc.bActive = false;
+		m_fTimeDelta = 0.0f;
+		m_fDurationTime = 0.0f;
+	}
 
 	m_pTransformCom->Tick(fTimeDelta);
 }

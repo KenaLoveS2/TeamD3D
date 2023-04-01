@@ -37,7 +37,7 @@ HRESULT CE_Swipes_Charged::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Child(), E_FAIL);
 
-	m_eEFfectDesc.bActive = true;
+	m_eEFfectDesc.bActive = false;
 	memcpy(&m_SaveInitWorldMatrix, &m_InitWorldMatrix, sizeof(_float4x4));
 	return S_OK;
 }
@@ -92,7 +92,7 @@ void CE_Swipes_Charged::Tick(_float fTimeDelta)
 		PxSphereGeometry	pGeometry;
 		if (pShape->getSphereGeometry(pGeometry))
 		{
-			pGeometry.radius = 0.001f;
+			pGeometry.radius = 0.0f;
 			pShape->setGeometry(pGeometry);
 		}
 

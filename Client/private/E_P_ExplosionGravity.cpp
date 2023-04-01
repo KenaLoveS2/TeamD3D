@@ -34,12 +34,11 @@ HRESULT CE_P_ExplosionGravity::Initialize(void * pArg)
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
-	m_pVIInstancingBufferCom = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 100);
+	m_pVIInstancingBufferCom = CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 200);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	
 	m_eEFfectDesc.bActive = false;
-	// m_pVIInstancingBufferCom->Set_PSize(_float2(0.25f, 0.25f));
 	return S_OK;
 }
 
@@ -140,6 +139,7 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		break;
 
 	case CE_P_ExplosionGravity::TYPE_KENA_ATTACK2:
+	{
 		m_eEFfectDesc.fFrame[0] = 28.f;
 		m_eEFfectDesc.iPassCnt = 3;
 		m_eEFfectDesc.vColor = XMVectorSet(1.f, 2.f, 4.f, 1.f);
@@ -158,6 +158,12 @@ void CE_P_ExplosionGravity::Set_Option(TYPE eType, _vector vSetDir)
 		_float3 fMax = _float3(1.f, 1.f, 1.f);
 		m_pVIInstancingBufferCom->Set_Position(fMin, fMax);
 		m_pVIInstancingBufferCom->Set_PSize(_float2(0.2f, 0.2f));
+		break;
+	}
+
+	case CE_P_ExplosionGravity::TYPE_HEALTHFLOWER:
+		ParticleOption_Parabola(ePointDesc, 53.f, XMVectorSet(255.f, 127.f, 255.f, 255.f) / 255.f, 0.2f,
+			_float2(0.3f, 0.3f), false);
 		break;
 
 	}

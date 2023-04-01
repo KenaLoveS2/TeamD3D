@@ -33,7 +33,6 @@ HRESULT CE_Warrior_FireSwipe::Initialize(void * pArg)
 	FAILED_CHECK_RETURN(SetUp_SwipeTexture(), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);
 
-	m_eEFfectDesc.bActive = false;
 	Set_ShaderOption(m_eEFfectDesc.iPassCnt, 1.f, _float2(0.0f, 0.39f), false);
 	return S_OK;
 }

@@ -18,6 +18,9 @@ public:
 		TYPE_DAMAGE_PULSE,
 		TYPE_KENA_ATTACK,
 		TYPE_KENA_ATTACK2,
+		/* Obejct */
+		TYPE_HEALTHFLOWER,
+
 		TYPE_END
 	};
 
