@@ -66,6 +66,8 @@ HRESULT CRot::Initialize(void* pArg)
 		m_Desc.WorldMatrix._43 = 2.f;
 	}
 
+	m_pHatBone = m_pModelCom->Get_BonePtr("hat_socket_jnt");
+	
 	return S_OK;
 }
 

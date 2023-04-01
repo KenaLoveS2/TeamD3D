@@ -1289,9 +1289,6 @@
     <ClInclude Include="..\public\ShamanTrapPlane.h">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -1398,6 +1395,12 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\HealthFlower_Anim.h" />
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotHat.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2111,9 +2114,6 @@
     <ClCompile Include="..\private\ShamanTrapPlane.cpp">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -2229,6 +2229,12 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotHat.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
