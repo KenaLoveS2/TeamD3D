@@ -48,8 +48,8 @@ private:
 	_bool				m_bUsed = false;
 	_bool				m_bInteractable = false;
 
-	ANIMATION			m_eCurState = ANIMATION_END;
-	ANIMATION			m_ePreState = ANIMATION_END;
+	ANIMATION			m_eCurState = OPEN_LOOP;
+	ANIMATION			m_ePreState = OPEN_LOOP;
 
 private:
 	ANIMATION			Check_State();
