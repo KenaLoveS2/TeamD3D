@@ -2016,6 +2016,18 @@ _int CKena::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _int
 			m_iCurParryFrame = 0;
 			m_pAttackObject = pTarget;
 		}
+
+		if (iColliderIndex == (_int)COL_MONSTER && m_bDash == true)
+		{
+			m_bDashAttack = true;
+			m_pDashTarget = pTarget;
+		}
+
+		if (iColliderIndex == (_int)COL_PORTAL && m_bDash == true)
+		{
+			m_bDashPortal = true;
+			m_pDashTarget = pTarget;
+		}
 	}
 
 	return 0;

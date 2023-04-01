@@ -131,6 +131,9 @@ private:
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
 	_bool						m_bPerfectAttack = false;
+	_bool						m_bDashAttack = false;
+	_bool						m_bDashPortal = false;
+	CGameObject*				m_pDashTarget = nullptr;
 	_bool						m_bParry = false;
 	_bool						m_bParryLaunch = false;
 	_uint						m_iCurParryFrame = 12;
@@ -153,6 +156,7 @@ private:
 	_bool						m_bBomb = false;
 	_bool						m_bInjectBomb = false;
 	_bool						m_bPulse = false;
+	_bool						m_bDash = false;
 	_bool						m_bMask = false;
 
 	_float						m_fInertia = 5.f;

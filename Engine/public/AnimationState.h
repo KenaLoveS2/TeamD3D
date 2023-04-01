@@ -77,6 +77,8 @@ public:
 	const _bool&	Get_Preview() const { return m_bPreview; }
 	vector<KEYFRAME>*	Get_KeyFrames(const string& strBoneName);
 	void			Set_RootAnimation(const string& strStateName);
+	void			Set_AnimationPlayTime(_float fPlayTime);
+	void			Set_AnimationProgress(_float fProgress);
 
 public:
 	HRESULT			Initialize(CGameObject* pOwner, CModel* pModelCom, const string& strRootBone, const string& strFilePath);
