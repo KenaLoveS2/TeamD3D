@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\public\Saiya.h"
 #include "GameInstance.h"
 #include "CameraForNpc.h"
@@ -11,7 +11,7 @@
 #include "UI_FocusNPC.h"
 
 /* For. Delegator Default Value (meaningless) */
-_float		fDefaultVal = 400.f; /* Default Chat Value */
+_float		fDefaultVal = 345.f; /* Default Chat Value */
 _bool		bDefaultVal = false;
 wstring		wstrDefault = L"";
 
@@ -41,7 +41,7 @@ HRESULT CSaiya::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -56,7 +56,7 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 {
 	FAILED_CHECK_RETURN(__super::Late_Initialize(pArg), E_FAIL);
 
-	// ¸öÅë
+	// ëª¸í†µ
 	{
 		_float3 vPos = _float3(0.f, 0.f, 0.f);
 		_float3 vPivotScale = _float3(0.2f, 0.1f, 1.f);
@@ -82,15 +82,19 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 
 		CPhysX_Manager::GetInstance()->Create_Capsule(PxCapsuleDesc, Create_PxUserData(this, true, COL_MONSTER));
 
-		// ¿©±â µÚ¿¡ ¼¼ÆÃÇÑ vPivotPos¸¦ ³Ö¾îÁÖ¸éµÈ´Ù.
+		// ì—¬ê¸° ë’¤ì— ì„¸íŒ…í•œ vPivotPosë¥¼ ë„£ì–´ì£¼ë©´ëœë‹¤.
 		m_pTransformCom->Connect_PxActor_Gravity(m_szCloneObjectTag, vPivotPos);
 		m_pRendererCom->Set_PhysXRender(true);
 		m_pTransformCom->Set_PxPivotScale(vPivotScale);
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(79.f, 0.f, 137.f, 1.f));
-	m_pTransformCom->Rotation({0.f, 1.f, 0.f, 0.f}, XMConvertToRadians(180.f));
+	Load_KeyFrame();
+	if(!m_keyframes.empty())
+	{
+		m_pTransformCom->Set_Position(m_keyframes[m_iKeyFrame].vPos);
+		m_pTransformCom->Set_Look(m_keyframes[m_iKeyFrame].vLook);
+	}
 
 	return S_OK;
 }
@@ -98,8 +102,9 @@ HRESULT CSaiya::Late_Initialize(void* pArg)
 void CSaiya::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_iNumKeyFrame = (_uint)m_keyframes.size();
 	Update_Collider(fTimeDelta);
-	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
+	if (m_pFSM && m_iKeyFrame < m_iNumKeyFrame - 2) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	AdditiveAnim(fTimeDelta);
@@ -158,7 +163,55 @@ HRESULT CSaiya::RenderShadow()
 
 void CSaiya::Imgui_RenderProperty()
 {
-	CNpc::Imgui_RenderProperty();
+	//CNpc::Imgui_RenderProperty();
+
+	if (ImGui::Button("Add KeyFrame"))
+	{
+		SAIYAKEYFRAME keyframe;
+		ZeroMemory(&keyframe, sizeof(SAIYAKEYFRAME));
+		keyframe.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		keyframe.vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		m_keyframes.push_back(keyframe);
+	}
+
+	char** ppKeyFrameNum = new char* [m_iNumKeyFrame];
+
+	for (_uint i = 0; i < m_iNumKeyFrame; ++i)
+	{
+		ppKeyFrameNum[i] = new char[16];
+		sprintf_s(ppKeyFrameNum[i], sizeof(char) * 16, "%u", i);
+	}
+
+	static _int iSelectKeyFrame = -1;
+	ImGui::ListBox("KeyFrameList", &iSelectKeyFrame, ppKeyFrameNum, (int)m_iNumKeyFrame);
+
+	if (iSelectKeyFrame != -1)
+	{
+		float fPos[3] = { m_keyframes[iSelectKeyFrame].vPos.x , m_keyframes[iSelectKeyFrame].vPos.y,m_keyframes[iSelectKeyFrame].vPos.z };
+		ImGui::DragFloat3("KFPos", fPos, 0.01f, -1000.f, 1000.f);
+		m_keyframes[iSelectKeyFrame].vPos = _float3(fPos[0], fPos[1], fPos[2]);
+		float fLookAT[3] = { m_keyframes[iSelectKeyFrame].vLook.x , m_keyframes[iSelectKeyFrame].vLook.y,m_keyframes[iSelectKeyFrame].vLook.z };
+		ImGui::DragFloat3("KFLookAT", fLookAT, 0.01f, -1000.f, 1000.f);
+		m_keyframes[iSelectKeyFrame].vLook = _float3(fLookAT[0], fLookAT[1], fLookAT[2]);
+
+		m_pTransformCom->Set_Position(m_keyframes[iSelectKeyFrame].vPos);
+		m_pTransformCom->Set_Look(m_keyframes[iSelectKeyFrame].vLook);
+
+		if (ImGui::Button("Erase"))
+		{
+			m_keyframes.erase(m_keyframes.begin() + iSelectKeyFrame);
+			iSelectKeyFrame = -1;
+		}
+	}
+
+	for (_uint i = 0; i < m_iNumKeyFrame; ++i)
+		Safe_Delete_Array(ppKeyFrameNum[i]);
+	Safe_Delete_Array(ppKeyFrameNum);
+
+	ImGui::DragFloat("DefaultVal", &fDefaultVal, 10.f, -1000.f, 1000.f);
+
+	if (ImGui::Button("Save_KeyFrame"))
+		Save_KeyFrame();
 }
 
 void CSaiya::ImGui_AnimationProperty()
@@ -207,7 +260,31 @@ void CSaiya::Update_Collider(_float fTimeDelta)
 HRESULT CSaiya::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("IDLE")
+		.InitState("PLAY")
+
+		.AddState("PLAY")
+		.Tick([this](_float fTimeDelta)
+	{
+		m_pModelCom->Set_AnimIndex(SAIYA_CHASINGLOOP);
+	})
+
+		.AddTransition("PLAY to PLAYERBACKRUN", "PLAYERBACKRUN")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f);
+	})
+
+		.AddState("PLAYERBACKRUN")
+		.Tick([this](_float fTimeDelta)
+	{
+			m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+			m_pTransformCom->Go_Straight(fTimeDelta);
+	})
+		.AddTransition("PLAYERBACKRUN to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return DistanceTrigger(5.f);
+	})
 
 		/* Idle */
 		.AddState("IDLE")
@@ -218,40 +295,40 @@ HRESULT CSaiya::SetUp_State()
 		.AddTransition("IDLE to CHEER", "CHEER")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f) && !m_bMeetPlayer;
+		return DistanceTrigger(5.f) && !m_bMeetPlayer && CGameInstance::GetInstance()->Key_Down(DIK_Q);
 	})
 	
 		/* Cheer */
 		.AddState("CHEER")
 		.OnStart([this]()
 	{
-		CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
+			CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 			m_pMyCam->Set_Target(this);
-		p_game_instance->Work_Camera(L"NPC_CAM");
-		RELEASE_INSTANCE(CGameInstance)
+			p_game_instance->Work_Camera(L"NPC_CAM");
+			RELEASE_INSTANCE(CGameInstance)
 			m_bMeetPlayer = true;
-		m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
-		m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
-		CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+			m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_CHEER);
+			m_pModelCom->Set_AnimIndex(SAIYA_CHEER);
+			CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
 
+			CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
 
-		CKena* pKena = dynamic_cast<CKena*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL,L"Layer_Player", L"Kena"));
-		if (pKena != nullptr)
-			pKena->Set_StateLock(true);
-	})
-	
-		.OnExit([this]()
-	{
-	})
-		.AddTransition("CHEER to CHAT", "CHAT")
+			if (pKena != nullptr)
+				pKena->Set_StateLock(true);
+		})
+		
+			.OnExit([this]()
+		{
+		})
+			.AddTransition("CHEER to CHAT", "CHAT")
 			.Predicator([this]()
 		{
 			return  AnimFinishChecker(SAIYA_CHEER);
 		})
 
-		/* Chat */
-		.AddState("CHAT")
-		.OnStart([this]()
+			/* Chat */
+			.AddState("CHAT")
+			.OnStart([this]()
 		{
 			CUI_ClientManager::UI_PRESENT eChat = CUI_ClientManager::BOT_CHAT;
 			_bool bVal = true;
@@ -274,9 +351,8 @@ HRESULT CSaiya::SetUp_State()
 				m_SaiyaDelegator.broadcast(eChat, bVal, fDefaultVal, m_vecChat[m_iChatIndex][m_iLineIndex]);
 				m_iLineIndex++;
 			}
-
 		})
-		.OnExit([this]()
+			.OnExit([this]()
 		{
 			CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
 			m_pMyCam->Set_Target(nullptr);
@@ -292,7 +368,6 @@ HRESULT CSaiya::SetUp_State()
 			if (pKena != nullptr)
 				pKena->Set_StateLock(false);
 
-
 			m_iLineIndex = 0;
 			m_iChatIndex++;
 
@@ -303,15 +378,60 @@ HRESULT CSaiya::SetUp_State()
 			m_SaiyaDelegator.broadcast(eQuest, bStart, fDefaultVal, wstrDefault);
 			_float fQuestIdx = 0.f;
 			m_SaiyaDelegator.broadcast(eQuestLine, bDefaultVal, fQuestIdx, wstrDefault);
-
 			CGameInstance::GetInstance()->Play_Sound(L"UI_QuestOccur.ogg", 1.f, false, SOUND_UI);
 		})
-		.AddTransition("CHAT to IDLE", "IDLE")
+			.AddTransition("CHAT to RUN", "RUN")
 			.Predicator([this]()
-			{
-				return IsChatEnd();
-			})
+		{
+			return IsChatEnd();
+		})
 
+			.AddState("RUN")
+			.OnStart([this]()
+		{
+			if (!m_keyframes.empty())
+				m_pTransformCom->Set_Look(m_keyframes[m_iKeyFrame + 1].vLook);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			m_pModelCom->Set_AnimIndex(SAIYA_RUN);
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		})
+			.OnExit([this]()
+		{
+			m_bMeetPlayer = false;
+		})
+			.AddTransition("RUN to DISAPPEAR", "DISAPPEAR")
+			.Predicator([this]()
+		{
+			return !DistanceTrigger(10.f);
+		})
+
+			.AddState("DISAPPEAR")
+			.OnStart([this]()
+		{
+			m_pModelCom->ResetAnimIdx_PlayTime(SAIYA_TELEPORT);
+			m_pModelCom->Set_AnimIndex(SAIYA_TELEPORT);
+		})
+			.Tick([this](_float fTimeDelta)
+		{
+			//ë””ì¡¸ë¸Œ
+		})
+			.OnExit([this]()
+		{
+			if (!m_keyframes.empty())
+			{
+				m_pTransformCom->Set_Position(m_keyframes[m_iKeyFrame + 2].vPos);
+				m_pTransformCom->Set_Look(m_keyframes[m_iKeyFrame + 2].vLook);
+			}
+			m_iKeyFrame+= 2;
+		})
+
+			.AddTransition("DISAPPEAR to IDLE" , "IDLE")
+			.Predicator([this]()
+		{
+			return AnimFinishChecker(SAIYA_TELEPORT);
+		})
 
 			.Build();
 
@@ -322,16 +442,13 @@ HRESULT CSaiya::SetUp_Components()
 {
 	__super::SetUp_Components();
 	FAILED_CHECK_RETURN(__super::Add_Component(g_LEVEL, L"Prototype_Component_Model_Saiya", L"Com_Model", (CComponent**)&m_pModelCom, nullptr, this), E_FAIL);
-
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(0, WJTextureType_NORMALS, TEXT("../Bin/Resources/Anim/NPC/Eyes_NORMAL.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(2, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizokids_mask_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(3, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizogirl_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(4, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizogirl_body_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(5, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizoboy_cloth_AO_R_M.png")), E_FAIL);
 	FAILED_CHECK_RETURN(m_pModelCom->SetUp_Material(6, WJTextureType_AMBIENT_OCCLUSION, TEXT("../Bin/Resources/Anim/NPC/Saiya/jizokids_slingshot_AO_R_M.png")), E_FAIL);
-
 	m_pModelCom->Set_RootBone("jizo_girl_RIG");
-
 	return S_OK;
 }
 
@@ -370,9 +487,6 @@ HRESULT CSaiya::SetUp_UI()
 		return E_FAIL;
 	file >> jLoad;
 	file.close();
-
-	//using convert_type = codecvt_utf8<wchar_t>;
-	//wstring_convert<convert_type> utf8_conv;
 
 	_int iNumChat[10];
 	_uint i = 0;
@@ -426,6 +540,79 @@ _bool CSaiya::IsChatEnd()
 		return true;
 	else
 		return false;
+}
+
+HRESULT CSaiya::Save_KeyFrame()
+{
+	string      strSaveDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+
+	ofstream      file(strSaveDirectory.c_str());
+	Json   jSaiyaKeyFrameList;
+
+	jSaiyaKeyFrameList["0_KeyFrameSize"] = m_iNumKeyFrame;
+
+	_float      fElement = 0.f;
+
+	for (_uint i = 0; i < m_iNumKeyFrame; ++i)
+	{
+		Json jChild;
+		_float3 vPos = m_keyframes[i].vPos;
+		_float3 vLookAt = m_keyframes[i].vLook;
+		for (int i = 0; i < 3; ++i)
+		{
+			fElement = 0.f;
+			memcpy(&fElement, (float*)&vPos + i, sizeof(float));
+			jChild["0_Pos"].push_back(fElement);
+		}
+
+		for (int i = 0; i < 3; ++i)
+		{
+			fElement = 0.f;
+			memcpy(&fElement, (float*)&vLookAt + i, sizeof(float));
+			jChild["1_LookAt"].push_back(fElement);
+		}
+
+		jSaiyaKeyFrameList["1_Data"].push_back(jChild);
+	}
+
+	file << jSaiyaKeyFrameList;
+	file.close();
+
+	return S_OK;
+}
+
+HRESULT CSaiya::Load_KeyFrame()
+{
+	string      strLoadDirectory = "../Bin/Data/NPC/SaiyaKeyFrame.json";
+	ifstream      file(strLoadDirectory.c_str());
+	Json   jLoadCineCamKeyFrameList;
+	file >> jLoadCineCamKeyFrameList;
+	file.close();
+
+	m_keyframes.clear();
+
+	jLoadCineCamKeyFrameList["0_KeyFrameSize"].get_to<_uint>(m_iNumKeyFrame);
+
+	_float3 vPos;
+	_float3 vLookAt;
+
+	for (auto jLoadChild : jLoadCineCamKeyFrameList["1_Data"])
+	{
+		SAIYAKEYFRAME Desc;
+		ZeroMemory(&Desc, sizeof(SAIYAKEYFRAME));
+		int k = 0;
+		for (float fElement : jLoadChild["0_Pos"])
+			memcpy(((float*)&vPos) + (k++), &fElement, sizeof(float));
+		Desc.vPos = vPos;
+		int j = 0;
+		for (float fElement : jLoadChild["1_LookAt"])
+			memcpy(((float*)&vLookAt) + (j++), &fElement, sizeof(float));
+		Desc.vLook = vLookAt;
+
+		m_keyframes.push_back(Desc);
+	}
+
+	return S_OK;
 }
 
 CSaiya* CSaiya::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
