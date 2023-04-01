@@ -112,6 +112,8 @@ HRESULT CEffect_Particle_Base::Render()
 
 void CEffect_Particle_Base::Imgui_RenderProperty()
 {
+	m_pTransformCom->Imgui_RenderProperty_ForJH();
+
 	/* Diffuse Texture Select */
 	if (ImGui::CollapsingHeader(" > DiffuseTexture"))
 	{
