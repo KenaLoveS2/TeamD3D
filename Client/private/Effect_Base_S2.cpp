@@ -16,6 +16,8 @@ CEffect_Base_S2::CEffect_Base_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	, m_fFrameNow(0.f)
 	, m_vScaleSpeed(0.0f, 0.0f)
 	, m_ParentPosition(0.0f, 0.0f, 0.0f, 1.0f)
+	, m_fSelfStopTime(0.0f)
+	, m_fSelfStopTimeAcc(0.0f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());
@@ -49,6 +51,8 @@ CEffect_Base_S2::CEffect_Base_S2(const CEffect_Base_S2& rhs)
 	, m_fFrameNow(0.f)
 	, m_vScaleSpeed(0.0f, 0.0f)
 	, m_ParentPosition(0.0f, 0.0f, 0.0f, 1.0f)
+	, m_fSelfStopTime(0.0f)
+	, m_fSelfStopTimeAcc(0.0f)
 {
 	XMStoreFloat4x4(&m_WorldOriginal, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_LocalMatrix, XMMatrixIdentity());

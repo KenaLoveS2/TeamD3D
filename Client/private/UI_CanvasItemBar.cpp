@@ -119,7 +119,7 @@ HRESULT CUI_CanvasItemBar::Render()
 	{
 		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Jangmi0"), m_szName,
 			vNewPos /* position */,
-			0.f, _float2(0.6f, 0.6f)/* size */,
+			0.f, _float2(1.0f, 1.0f)/* size */,
 			XMVectorSet(0.f, 0.f, 0.f, 1.f)/* color */);
 	}
 

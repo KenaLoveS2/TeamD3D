@@ -8,6 +8,9 @@ CHunterArrow::CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_fTrailTime(0.f)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
+	, m_iTrailIndex(0)
+	, m_fExistTime(0.0f)
+	, m_fExistTimeAcc(0.0f)
 {
 }
 
@@ -16,6 +19,9 @@ CHunterArrow::CHunterArrow(const CHunterArrow& rhs)
 	, m_fTrailTime(0.f)
 	, m_fTrailTimeAcc(0.f)
 	, m_bTrailOn(false)
+	, m_iTrailIndex(0)
+	, m_fExistTime(0.0f)
+	, m_fExistTimeAcc(0.0f)
 {
 }
 
@@ -42,9 +48,16 @@ HRESULT CHunterArrow::Initialize(void* pArg)
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
 
+	if (FAILED(SetUp_Effects()))
+	{
+		MSG_BOX("Failed To Ready Effects : CHunterArrow");
+		return E_FAIL;
+	}
+
 	m_fDissolveTime = 0.f;
 	m_fTrailTime = 0.1f;
 	m_fTrailTimeAcc = 0.f;
+	m_fExistTime = 4.0f;
 
 	return S_OK;
 }
@@ -94,6 +107,9 @@ void CHunterArrow::Tick(_float fTimeDelta)
 
 	ArrowProc(fTimeDelta);
 	Update_Collider(fTimeDelta);
+
+	for (auto& eff : m_vecTrailEffects)
+		eff->Tick(fTimeDelta);
 }
 
 void CHunterArrow::Late_Tick(_float fTimeDelta)
@@ -101,6 +117,10 @@ void CHunterArrow::Late_Tick(_float fTimeDelta)
 	if (m_eArrowState == STATE_END) return;
 
 	__super::Late_Tick(fTimeDelta);
+
+
+	for (auto& eff : m_vecTrailEffects)
+		eff->Late_Tick(fTimeDelta);
 
 	m_pRendererCom&& m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -290,6 +310,9 @@ CGameObject* CHunterArrow::Clone(void* pArg)
 void CHunterArrow::Free()
 {
 	__super::Free();
+
+	for (auto& effect : m_vecTrailEffects)
+		Safe_Release(effect);
 }
 
 void CHunterArrow::ArrowProc(_float fTimeDelta)
@@ -310,29 +333,17 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	}
 	case FIRE:
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-
-		if (m_bTrailOn)
+		/* For. Test */
+		m_fExistTimeAcc += fTimeDelta;
+		if (m_fExistTimeAcc > m_fExistTime)
 		{
-			m_fTrailTimeAcc += fTimeDelta;
-			m_fTrailTime = 0.01f;
-			if (m_fTrailTimeAcc > m_fTrailTime)
-			{
-				CEffect_Base_S2* pEffect = nullptr;
-				CGameInstance::GetInstance()->Clone_GameObject(g_LEVEL, L"Layer_Effect_S2",
-					L"Prototype_GameObject_Effect_Particle_Base", CUtile::Create_DummyString(), L"Particle_ArrowTrail", (CGameObject**)&pEffect);
-				if (pEffect != nullptr)
-				{
-					pEffect->Activate(m_pTransformCom->Get_Position());
-					//pEffect->Set_Target(this);
-					//pEffect->Set_Position();
-					//pEffect->Set_Active(true);
-				}
-
-				m_fTrailTimeAcc = 0.f;
-			}
+			Execute_Finish();
+			break;
 		}
 
+		m_pTransformCom->Go_Straight(fTimeDelta);
+
+		Play_TrailEffect(fTimeDelta);
 
 		break;
 	}
@@ -340,6 +351,11 @@ void CHunterArrow::ArrowProc(_float fTimeDelta)
 	{
 		// 이펙트 처리
 		m_bTrailOn = false;
+		m_fExistTimeAcc = 0.0f;
+		for (auto& eff : m_vecTrailEffects)
+			eff->DeActivate();
+
+
 
 		// 이펙트 처리 완료 후
 		m_eArrowState = STATE_END;
@@ -371,9 +387,42 @@ void CHunterArrow::Execute_Finish()
 	m_eArrowState = FINISH;
 }
 
+void CHunterArrow::Play_TrailEffect(_float fTimedelta)
+{
+	if (m_bTrailOn)
+	{
+		m_fTrailTimeAcc += fTimedelta;
+		m_fTrailTime = 0.01f;
+		if (m_fTrailTimeAcc > m_fTrailTime)
+		{
+			m_vecTrailEffects[m_iTrailIndex++]->Activate(m_pTransformCom->Get_Position());
+			m_iTrailIndex %= MAX_TRAIL_EFFECTS;
+			m_fTrailTimeAcc = 0.f;
+		}
+	}
+}
+
 _float4 CHunterArrow::Get_ArrowHeadPos()
 {
 	return  XMVectorSetW(XMVector3TransformCoord(m_vColliderPivotPos, m_pTransformCom->Get_WorldMatrix()), 1.f);
+}
+
+HRESULT CHunterArrow::SetUp_Effects()
+{
+	for (_uint i = 0; i < MAX_TRAIL_EFFECTS; ++i)
+	{
+		CEffect_Base_S2* pEffect = nullptr;
+
+		pEffect = static_cast<CEffect_Base_S2*>(CGameInstance::GetInstance()->Clone_GameObject(L"Prototype_GameObject_Effect_Particle_Base",
+			CUtile::Create_DummyString(), L"Particle_ArrowTrail"));
+
+		if (pEffect != nullptr)
+			m_vecTrailEffects.push_back(pEffect);
+		else
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos, _int iColliderIndex)
@@ -382,6 +431,5 @@ _int CHunterArrow::Execute_Collision(CGameObject* pTarget, _float3 vCollisionPos
 	{
 		m_eArrowState = FINISH;
 	}
-
 	return 0;
 }

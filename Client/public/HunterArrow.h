@@ -3,7 +3,10 @@
 #include "GameInstance.h"
 #include "MonsterWeapon.h"
 
+#define MAX_TRAIL_EFFECTS		100
+
 BEGIN(Client)
+class CEffect_Base_S2;
 class CHunterArrow : public CMonsterWeapon
 {
 public:
@@ -29,11 +32,6 @@ private:
 	_float4x4 m_ColliderPivotMatrix;
 
 	CBone* m_pBowBone = nullptr;
-
-private:
-	_bool		m_bTrailOn;
-	_float		m_fTrailTime;
-	_float		m_fTrailTimeAcc;
 
 public:
 	CHunterArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -74,9 +72,28 @@ public:
 		return m_eArrowState == STATE_END;
 	}
 
+
+	/* For. Shader & Effects */
+private:
+	_bool						m_bTrailOn;
+	_float						m_fTrailTime;
+	_float						m_fTrailTimeAcc;
+	vector<CEffect_Base_S2*>	m_vecTrailEffects;
+	_int						m_iTrailIndex;
+
+private:
+	_float						m_fExistTime;
+	_float						m_fExistTimeAcc;
+
+private:
+	void						Play_TrailEffect(_float fTimedelta);
+
 public:
 	void		Set_TrailActive(_bool bActive) { m_bTrailOn = bActive; }
 	_float4		Get_ArrowHeadPos();
+	HRESULT		SetUp_Effects();
+
+
 
 };
 END

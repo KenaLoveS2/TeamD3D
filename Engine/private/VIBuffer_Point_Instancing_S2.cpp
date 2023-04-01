@@ -219,7 +219,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Update_Buffer(POINTINFO* pInfo)
 	{
 		POINTINFO tInfo;
 		ZeroMemory(&tInfo, sizeof POINTINFO);
-		memcpy(&tInfo, pInfo, sizeof POINTINFO);
+		memcpy(&tInfo, &m_tInfo, sizeof POINTINFO);
 		Initialize(&tInfo, nullptr);
 	}
 	else
