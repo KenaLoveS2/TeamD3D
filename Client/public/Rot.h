@@ -8,6 +8,7 @@ class CRenderer;
 class CShader;
 class CModel;
 class CFSMComponent;
+class CBone;
 END
 
 BEGIN(Client)
@@ -41,6 +42,7 @@ private:
 	CTransform*				m_pKenaTransform = nullptr;
 	class CRope_RotRock* m_pRopeRotRock = nullptr;
 	_float4 m_vWakeUpPosition;
+	CBone* m_pHatBone = nullptr;
 
 private:
 	_bool m_bWakeUp = false;	

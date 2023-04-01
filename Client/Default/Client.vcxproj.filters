@@ -1289,9 +1289,6 @@
     <ClInclude Include="..\public\ShamanTrapPlane.h">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -1373,6 +1370,9 @@
     <ClInclude Include="..\public\E_P_Sakura.h">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CPortalPlane.h">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Portal.h">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClInclude>
@@ -1395,6 +1395,12 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\HealthFlower_Anim.h" />
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotHat.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2108,9 +2114,6 @@
     <ClCompile Include="..\private\ShamanTrapPlane.cpp">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -2198,6 +2201,9 @@
     <ClCompile Include="..\private\E_P_Sakura.cpp">
       <Filter>02.GameObjects\Effect\Environment</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CPortalPlane.cpp">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Portal.cpp">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClCompile>
@@ -2223,6 +2229,12 @@
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotHat.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2317,6 +2329,18 @@
       <Filter>97.ShaderFiles\Effect_S2</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxEffect_BossTrail.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Bokeh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\BokehCS.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSAO.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

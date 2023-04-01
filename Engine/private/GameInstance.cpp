@@ -732,14 +732,6 @@ ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
 	return m_pTarget_Manager->Get_SRV(TEXT("Target_Depth"));	
 }
 
-ID3D11ShaderResourceView * CGameInstance::Get_ReflectSRV()
-{
-	if (nullptr == m_pTarget_Manager)
-		return nullptr;
-
-	return m_pTarget_Manager->Get_SRV(TEXT("Target_Reflect"));
-}
-
 _int CGameInstance::Play_Sound(const _tchar * pSoundKey, _float fVolume, _bool bIsBGM, _int iManualChannelIndex)
 {
 	if (m_pSound_Manager == nullptr) return -1;
@@ -1025,4 +1017,3 @@ void CGameInstance::Free()
 	Safe_Release(m_pPhysX_Manager); // kbj physx
 	Safe_Release(m_pGraphic_Device);
 }
-

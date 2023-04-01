@@ -258,6 +258,7 @@ public:
 	PxRigidActor* Find_DynamicCollider(const _tchar* pActorTag);
 	
 	_bool Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut = nullptr, CGameObject** pObjectOut = nullptr);
+	_bool Raycast_CollisionTarget(_float3 vRayPos, _float3 vRayDir, _float fRange, _float3* pPositionOut, CGameObject* pTarget);
 	_bool IsMouseOver(HWND hWnd, CGameObject *pTargetObject, _float fRange, _float3* pPositionOut = nullptr);
 
 	void Set_ActorPosition(const _tchar* pActorTag, _float3 vPosition);

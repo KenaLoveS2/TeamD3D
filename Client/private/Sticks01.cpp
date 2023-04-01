@@ -25,7 +25,7 @@ HRESULT CSticks01::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
@@ -42,17 +42,19 @@ HRESULT CSticks01::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = -10.f;
-		m_Desc.WorldMatrix._43 = -10.f;
+		m_Desc.WorldMatrix._41 = -15.f;
+		m_Desc.WorldMatrix._43 = -15.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	m_pWeaponBone = m_pModelCom->Get_BonePtr("staff_skin8_jnt");
+	m_bRotable = true;
 
 	/* Create MovementTrail */
 	SetUp_MovementTrail();
+	
 	return S_OK;
 }
 
@@ -175,7 +177,7 @@ void CSticks01::Late_Tick(_float fTimeDelta)
 
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bSpawn)
+	if (m_pRendererCom && m_bReadySpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -349,16 +351,22 @@ HRESULT CSticks01::SetUp_State()
 
 
 		.AddState("READY_SPAWN")		
+		.OnStart([this]()
+	{
+		Start_Spawn();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		Tick_Spawn(fTimeDelta);
+	})
 		.OnExit([this]()
 	{		
-		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-		m_pUIHPBar->Set_Active(true);
-		m_bSpawn = true;
+		End_Spawn();
 	})
 		.AddTransition("READY_SPAWN to INTOCHARGE", "INTOCHARGE")
 		.Predicator([this]()
 	{
-		return m_pEnemyWisp->IsActiveState();
+		return m_bWispEnd && m_fDissolveTime <= 0.f;
 	})
 
 
@@ -781,7 +789,7 @@ HRESULT CSticks01::SetUp_State()
 
 		.AddState("COMBOATTACK")
 		.OnStart([this]()
-	{
+	{	
 		m_pModelCom->ResetAnimIdx_PlayTime(COMBOATTACK);
 		m_pModelCom->Set_AnimIndex(COMBOATTACK);
 	})
@@ -862,31 +870,23 @@ HRESULT CSticks01::SetUp_State()
 		.AddState("BIND")
 		.OnStart([this]()
 	{
-		m_pModelCom->ResetAnimIdx_PlayTime(BIND);
-		m_pModelCom->Set_AnimIndex(BIND);
-		m_bStronglyHit = false;
-		// 묶인 상태에서 맞았을때는 ADDITIVE 실행 
-	})
-		.Tick([this](_float fTimeDelta)
-	{
-		// Additive Animation		
+		Start_Bind(BIND);
 	})
 		.OnExit([this]()
 	{
-		m_bBind = false;
-		Reset_Attack();
-	})
-
-		.AddTransition("BIND to INTOCHARGE", "INTOCHARGE")
-		.Predicator([this]()
-	{
-		return AnimFinishChecker(BIND);
+		End_Bind();
 	})
 		.AddTransition("To DYING", "DYING")
 		.Predicator([this]()
 	{
 		return m_pMonsterStatusCom->IsDead();
 	})
+		.AddTransition("BIND to INTOCHARGE", "INTOCHARGE")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(BIND);
+	})
+	
 
 		// 어느 타이밍에 패링이 되는지?
 		.AddState("PARRIED")
@@ -980,10 +980,15 @@ HRESULT CSticks01::SetUp_State()
 	{
 		Set_Dying(DEATH);
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fDissolveTime += fTimeDelta * 0.2f;
+		m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
+	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_pModelCom->Get_AnimationFinish();
+		return AnimFinishChecker(DEATH) && m_fDissolveTime >= 1.f;
 	})
 
 
@@ -1036,8 +1041,8 @@ HRESULT CSticks01::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	m_bDissolve && Bind_Dissolove(m_pShaderCom);
 	
 	return S_OK;
 }
@@ -1267,5 +1272,6 @@ void CSticks01::Spawn_ByMaster(CMonster* pMaster, _float4 vPos)
 	m_pMonsterStatusCom->Revive();
 	m_pMaster = pMaster;
 };
+
 
 
