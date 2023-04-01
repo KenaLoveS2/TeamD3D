@@ -52,6 +52,7 @@ HRESULT CWall::Late_Initialize(void * pArg)
 
 void CWall::Tick(_float fTimeDelta)
 {
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -145,6 +146,8 @@ HRESULT CWall::RenderShadow()
 
 	return S_OK;
 }
+
+
 
 HRESULT CWall::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
@@ -257,9 +260,10 @@ CGameObject * CWall::Clone(void * pArg)
 
 void CWall::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

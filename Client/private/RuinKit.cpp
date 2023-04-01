@@ -53,6 +53,7 @@ HRESULT CRuinKit::Late_Initialize(void * pArg)
 
 void CRuinKit::Tick(_float fTimeDelta)
 {
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -155,6 +156,8 @@ void CRuinKit::ImGui_ShaderValueProperty()
 	m_pModelCom->Imgui_MaterialPath();
 	m_pTransformCom->Imgui_RenderProperty();
 }
+
+
 
 HRESULT CRuinKit::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
@@ -265,9 +268,10 @@ CGameObject * CRuinKit::Clone(void * pArg)
 
 void CRuinKit::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

@@ -179,16 +179,26 @@ void CBorn_GroundCover::Culling(_float fTimeDelta)
 	if (100.f <= XMVectorGetX(XMVector4Length(vDir)))
 		m_bRenderCheck = false;
 
+	Dynamic_Moving_ClosePlayer(fTimeDelta,vPos);
 
-	_float fDist = XMVectorGetX(XMVector4Length(vDir));
+}
+
+void CBorn_GroundCover::Dynamic_Moving_ClosePlayer(_float fTimeDelta ,_fvector vPos)
+{
+	CGameObject* pPlayer = CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_Player", L"Kena");
+	
+	if (pPlayer == nullptr)
+		return;
+
+	_vector vPlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+	const _vector	 vDir = vPlayerPos - vPos;
 
 	if (20.f >= XMVectorGetX(XMVector4Length(vDir)))
 		m_bUprise = true;
 
 	if (m_bUprise)
 		m_pModelCom->Instaincing_MoveControl(Gimmick_TYPE_FLOWER, fTimeDelta);
-
-
 }
 
 CBorn_GroundCover * CBorn_GroundCover::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

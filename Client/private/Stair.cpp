@@ -56,6 +56,8 @@ HRESULT CStair::Late_Initialize(void * pArg)
 
 void CStair::Tick(_float fTimeDelta)
 {
+
+
 	__super::Tick(fTimeDelta);
 
 	/*
@@ -158,6 +160,7 @@ HRESULT CStair::RenderShadow()
 
 	return S_OK;
 }
+
 
 HRESULT CStair::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
@@ -270,9 +273,10 @@ CGameObject * CStair::Clone(void * pArg)
 
 void CStair::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

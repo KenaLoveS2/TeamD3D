@@ -33,6 +33,7 @@ public:
 	virtual void				ImGui_ShaderValueProperty() override;
 	virtual void				ImGui_PhysXValueProperty() override;
 
+
 private:
 	CModel*									m_pModelCom = nullptr; 
 	class CInteraction_Com*			m_pInteractionCom = nullptr;

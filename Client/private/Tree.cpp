@@ -37,6 +37,7 @@ HRESULT CTree::Initialize(void * pArg)
 
 HRESULT CTree::Late_Initialize(void * pArg)
 {
+
 	if (m_pModelCom->Get_IStancingModel() == true && m_pModelCom->Get_UseTriangleMeshActor())
 	{
 		m_pModelCom->Create_Px_InstTriangle(m_pTransformCom);
@@ -53,6 +54,8 @@ HRESULT CTree::Late_Initialize(void * pArg)
 
 void CTree::Tick(_float fTimeDelta)
 {
+
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -277,6 +280,8 @@ HRESULT CTree::RenderCine()
 	return S_OK;
 }
 
+
+
 void CTree::Imgui_RenderProperty()
 {
 	CEnviromentObj::Imgui_RenderProperty();
@@ -406,9 +411,10 @@ CGameObject * CTree::Clone(void * pArg)
 
 void CTree::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

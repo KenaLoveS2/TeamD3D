@@ -296,9 +296,11 @@ CGameObject * CBorder::Clone(void * pArg)
 
 void CBorder::Free()
 {
-	__super::Free();
 
 	Safe_Release(m_pModelCom);
+
+	__super::Free();
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

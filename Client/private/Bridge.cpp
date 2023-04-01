@@ -254,9 +254,9 @@ CGameObject * CBridge::Clone(void * pArg)
 
 void CBridge::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

@@ -54,6 +54,7 @@ HRESULT CStatue::Late_Initialize(void * pArg)
  
 void CStatue::Tick(_float fTimeDelta)
 {
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -162,6 +163,8 @@ HRESULT CStatue::RenderShadow()
 
 	return S_OK;
 }
+
+
 
 void CStatue::ImGui_ShaderValueProperty()
 {
@@ -287,9 +290,10 @@ CGameObject * CStatue::Clone(void * pArg)
 
 void CStatue::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

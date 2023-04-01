@@ -252,9 +252,9 @@ CGameObject * CGate::Clone(void * pArg)
 
 void CGate::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

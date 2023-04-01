@@ -275,6 +275,12 @@ _int CPulse_Plate_Anim::Execute_Collision(CGameObject * pTarget, _float3 vCollis
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
+	if (iColliderIndex != COL_PLAYER)
+		return 0;
+
+	if (pTarget != m_pKena)
+		return 0;
+
 	m_bPlayerColl = true;
 
 	m_pModelCom->Set_AnimIndex(0);	
@@ -284,7 +290,14 @@ _int CPulse_Plate_Anim::Execute_TriggerTouchFound(CGameObject * pTarget, _uint i
 
 _int CPulse_Plate_Anim::Execute_TriggerTouchLost(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	m_bPlayerColl = false;
+	if (iColliderIndex != COL_PLAYER)
+		return 0;
+
+	if (pTarget != m_pKena)
+		return 0;
+
+
+ 	m_bPlayerColl = false;
 	m_pModelCom->Set_AnimIndex(4);
 	m_pControlRoom->PulsePlate_Down_Active(m_EnviromentDesc.iRoomIndex, false);
 	

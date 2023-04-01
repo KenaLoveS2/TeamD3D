@@ -28,6 +28,7 @@ public:
 
 	virtual HRESULT		RenderCine() override;
 
+
 public:
 	virtual void				Imgui_RenderProperty() override;
 	virtual void				ImGui_ShaderValueProperty() override;

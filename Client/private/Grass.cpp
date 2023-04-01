@@ -256,9 +256,10 @@ CGameObject * CGrass::Clone(void * pArg)
 
 void CGrass::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

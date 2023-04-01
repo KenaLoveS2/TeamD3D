@@ -237,9 +237,10 @@ CGameObject * CPath_Mesh::Clone(void * pArg)
 
 void CPath_Mesh::Free()
 {
+	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

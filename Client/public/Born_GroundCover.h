@@ -27,6 +27,9 @@ public:
 	virtual HRESULT		Render() override;
 
 private:
+	void	Dynamic_Moving_ClosePlayer(_float fTimeDelta, _fvector vPos);
+
+private:
 	CModel*									m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;
 	class CControlMove*				m_pControlMoveCom = nullptr;

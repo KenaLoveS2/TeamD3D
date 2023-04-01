@@ -209,6 +209,7 @@
     <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\DynamicLightCamera.h" />
+    <ClInclude Include="..\public\Dynamic_Stone.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
@@ -286,6 +287,7 @@
     <ClInclude Include="..\Public\FloorMesh.h" />
     <ClInclude Include="..\public\FloorTile.h" />
     <ClInclude Include="..\Public\Flower.h" />
+    <ClInclude Include="..\public\Frog.h" />
     <ClInclude Include="..\public\Gate.h" />
     <ClInclude Include="..\Public\Gimmick_EnviObj.h" />
     <ClInclude Include="..\Public\Grass.h" />
@@ -322,8 +324,9 @@
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
-    <ClInclude Include="..\public\Portal.h" />
+    <ClInclude Include="..\public\Pet.h" />
     <ClInclude Include="..\public\RotBomb.h" />
+    <ClInclude Include="..\public\RotEater_Small.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotWisp.h" />
     <ClInclude Include="..\public\Saiya.h" />
@@ -467,6 +470,7 @@
     <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\DynamicLightCamera.cpp" />
+    <ClCompile Include="..\private\Dynamic_Stone.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />
@@ -544,6 +548,7 @@
     <ClCompile Include="..\Private\FloorMesh.cpp" />
     <ClCompile Include="..\private\FloorTile.cpp" />
     <ClCompile Include="..\Private\Flower.cpp" />
+    <ClCompile Include="..\private\Frog.cpp" />
     <ClCompile Include="..\private\Gate.cpp" />
     <ClCompile Include="..\Private\Gimmick_EnviObj.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
@@ -580,8 +585,9 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
-    <ClCompile Include="..\private\Portal.cpp" />
+    <ClCompile Include="..\private\Pet.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />
+    <ClCompile Include="..\private\RotEater_Small.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
     <ClCompile Include="..\private\Saiya.cpp" />

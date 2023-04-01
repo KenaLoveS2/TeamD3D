@@ -291,9 +291,9 @@ CGameObject * CBowTarget::Clone(void * pArg)
 
 void CBowTarget::Free()
 {
-	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	__super::Free();
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

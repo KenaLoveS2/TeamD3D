@@ -53,6 +53,7 @@ HRESULT CStone::Late_Initialize(void * pArg)
 
 void CStone::Tick(_float fTimeDelta)
 {
+
 	__super::Tick(fTimeDelta);
 	if (m_bPulseTest)
 		m_fEmissivePulse += 0.05f;
@@ -287,6 +288,8 @@ void CStone::ImGui_PhysXValueProperty()
 	ImGui::Text("CStone::ImGui_PhysXValueProperty");
 }
 
+
+
 HRESULT CStone::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
 	__super::Add_AdditionalComponent(iLevelIndex, pComTag, eComponentOption);
@@ -421,9 +424,10 @@ CGameObject * CStone::Clone(void * pArg)
 
 void CStone::Free()
 {
-	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	__super::Free();
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
