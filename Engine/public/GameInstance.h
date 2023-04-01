@@ -161,7 +161,6 @@ public: /* For.PipeLine */
 		_float isInFrustum_WorldSpace(_int iPlaneIndex, _fvector vWorldPos);
 	public: /* For.Target_Manager */
 		ID3D11ShaderResourceView* Get_DepthTargetSRV();
-		ID3D11ShaderResourceView* Get_ReflectSRV();
 
 	public: /* For.Sound_Manager */
 		_int Play_Sound(const _tchar* pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
@@ -221,6 +220,8 @@ public: /* For.PipeLine */
 		void	Set_PlayerPtr(class CGameObject* pPlayer);
 		_bool	Is_RenderIndex(_uint iObjRoomIndex);
 		_bool	Is_Render_TerrainIndex(_uint iTerrainRoomIndex);
+		_uint Get_CurrentPlayerRoomIndex();
+
 	private:
 		static _uint m_iStaticLevelIndex;
 		HWND m_hClientWnd = NULL;

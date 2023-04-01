@@ -203,6 +203,7 @@ public:
 	}
 
 	_bool IsFalling();
+	_bool IsLook(_fvector vTargetPos, _float fCheckDegree);
 };
 
 END

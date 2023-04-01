@@ -11,7 +11,6 @@ float			g_fTime;
 
 Texture2D<float4>		g_DiffuseTexture;
 Texture2D<float4>		g_NormalTexture;
-Texture2D<float4>		g_ReflectTexture;
 
 struct VS_IN
 {
@@ -105,6 +104,28 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_PORTALMAIN(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+	float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+	vNormal = normalize(mul(vNormal, WorldMatrix));
+
+	float3	FinalColor = lerp(vDiffuse.rgb, float3(0.8f, 0.f, 0.8f), 0.2f);
+
+	Out.vDiffuse = float4(FinalColor, 0.6f);
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.f);
+	Out.vAmbient = (float4)1.f;
+	return Out;
+}
+
+
 technique11 DefaultTechnique
 {
 	pass Default		//0
@@ -118,5 +139,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Portal //1
+	{
+		SetRasterizerState(RS_CULLNONE);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_PORTALMAIN();
 	}
 }

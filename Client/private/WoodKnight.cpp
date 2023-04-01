@@ -39,12 +39,13 @@ HRESULT CWoodKnight::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
-		m_Desc.WorldMatrix._41 = 20.f;
-		m_Desc.WorldMatrix._43 = 5.f;
+		m_Desc.WorldMatrix._41 = -17.f;
+		m_Desc.WorldMatrix._43 = -17.f;
 	}
 
 	m_pModelCom->Set_AllAnimCommonType();
 	m_bRotable = true;
+	m_iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	return S_OK;
 }
@@ -214,7 +215,7 @@ void CWoodKnight::Late_Tick(_float fTimeDelta)
 
 	CMonster::Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bSpawn)
+	if (m_pRendererCom && m_bReadySpawn)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -227,9 +228,9 @@ HRESULT CWoodKnight::Render()
 
 	FAILED_CHECK_RETURN(SetUp_ShaderResources(), E_FAIL);
 
-	_uint	iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (_uint i = 0; i < iNumMeshes; ++i)
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
@@ -258,9 +259,7 @@ HRESULT CWoodKnight::RenderShadow()
 	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", SHADOW);
 
 	return S_OK;
@@ -423,16 +422,22 @@ HRESULT CWoodKnight::SetUp_State()
 	})
 		
 		.AddState("READY_SPAWN")
+		.OnStart([this]()
+	{
+		Start_Spawn();
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		Tick_Spawn(fTimeDelta);
+	})
 		.OnExit([this]()
 	{
-		m_pTransformCom->LookAt_NoUpDown(m_vKenaPos);
-		m_bSpawn = true;
-		m_pUIHPBar->Set_Active(true);
+		End_Spawn();
 	})
 		.AddTransition("READY_SPAWN to ALERT", "ALERT")
-		.Predicator([this]()
+		.Predicator([this]()	
 	{
-		return m_pEnemyWisp->IsActiveState();
+		return m_bWispEnd && m_fDissolveTime <= 0.f;
 	})
 		
 		.AddState("ALERT")
@@ -973,10 +978,15 @@ HRESULT CWoodKnight::SetUp_State()
 	{
 		Set_Dying(DEATH);
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fDissolveTime += fTimeDelta * 0.2f;
+		m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
+	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return m_pModelCom->Get_AnimationFinish();
+		return AnimFinishChecker(DEATH) && m_fDissolveTime >= 1.f;
 	})
 
 		.AddState("DEATH")
@@ -1023,8 +1033,8 @@ HRESULT CWoodKnight::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &CGameInstance::GetInstance()->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &CGameInstance::GetInstance()->Get_CamPosition(), sizeof(_float4)), E_FAIL)
 
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	m_bDissolve && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

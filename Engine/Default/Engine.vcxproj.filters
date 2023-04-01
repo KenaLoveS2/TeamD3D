@@ -538,6 +538,12 @@
     <ClInclude Include="..\public\ImGui_PhysX.h">
       <Filter>01.Utility\11.ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CSSAO.h">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CSSLR.h">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\GameInstance.cpp">
@@ -801,6 +807,12 @@
     </ClCompile>
     <ClCompile Include="..\private\ImGui_PhysX.cpp">
       <Filter>01.Utility\11.ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CSSLR.cpp">
+      <Filter>01.Utility\13. HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CSSAO.cpp">
+      <Filter>01.Utility\13. HDR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,22 +2,24 @@
 #include "..\public\VIBuffer_Point_Instancing_S2.h"
 #include "Utile.h"
 
-CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer_Instancing(pDevice, pContext)
 	, m_pXSpeeds(nullptr)
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
 	, m_pPositions(nullptr)
+	, m_bFinished(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(m_tInfo));
 }
 
-CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(const CVIBuffer_Point_Instancing_S2 & rhs)
+CVIBuffer_Point_Instancing_S2::CVIBuffer_Point_Instancing_S2(const CVIBuffer_Point_Instancing_S2& rhs)
 	: CVIBuffer_Instancing(rhs)
 	, m_pXSpeeds(nullptr)
 	, m_pYSpeeds(nullptr)
 	, m_pZSpeeds(nullptr)
 	, m_pPositions(nullptr)
+	, m_bFinished(false)
 {
 }
 
@@ -29,7 +31,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void * pArg, CGameObject * pOwner)
+HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void* pArg, CGameObject* pOwner)
 {
 	if (pArg == nullptr)
 		return E_FAIL;
@@ -68,7 +70,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void * pArg, CGameObject * pOw
 		m_pPositions[i] = {
 			CUtile::Get_RandomFloat(m_tInfo.vMinPos.x, m_tInfo.vMaxPos.x),
 			CUtile::Get_RandomFloat(m_tInfo.vMinPos.y, m_tInfo.vMaxPos.y),
-			CUtile::Get_RandomFloat(m_tInfo.vMinPos.z, m_tInfo.vMaxPos.z)};
+			CUtile::Get_RandomFloat(m_tInfo.vMinPos.z, m_tInfo.vMaxPos.z) };
 	}
 
 
@@ -84,7 +86,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void * pArg, CGameObject * pOw
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
 
-	VTXPOINT*			pVertices = new VTXPOINT;
+	VTXPOINT* pVertices = new VTXPOINT;
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = { 0.f, 0.f, 0.f };
@@ -111,7 +113,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void * pArg, CGameObject * pOw
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
 
-	_ushort*		pIndices = new _ushort[m_iNumPrimitive];
+	_ushort* pIndices = new _ushort[m_iNumPrimitive];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumPrimitive);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -136,7 +138,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Initialize(void * pArg, CGameObject * pOw
 	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_BufferDesc.MiscFlags = 0;
 
-	VTXMATRIX*			pInstanceVertices = new VTXMATRIX[m_tInfo.iNumInstance];
+	VTXMATRIX* pInstanceVertices = new VTXMATRIX[m_tInfo.iNumInstance];
 	ZeroMemory(pInstanceVertices, sizeof(VTXMATRIX));
 
 	for (_int i = 0; i < m_tInfo.iNumInstance; ++i)
@@ -168,6 +170,8 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick(_float TimeDelta)
 		return Tick_Gather(TimeDelta);
 	case POINTINFO::TYPE_PARABOLA:
 		return Tick_Parabola(TimeDelta);
+	case POINTINFO::TYPE_SPREAD:
+		return Tick_Spread(TimeDelta);
 	default:
 		MSG_BOX("Invalid Type : Instancing S2");
 		break;
@@ -181,7 +185,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Render()
 	if (nullptr == m_pContext)
 		return E_FAIL;
 
-	ID3D11Buffer*			pVertexBuffers[] = {
+	ID3D11Buffer* pVertexBuffers[] = {
 		m_pVB,
 		m_pInstanceBuffer
 	};
@@ -245,7 +249,7 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Haze(_float TimeDelta)
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pYSpeeds[i] * TimeDelta);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x + m_pXSpeeds[i] * sinf(m_tInfo.fTermAcc);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z + m_pZSpeeds[i] * sinf(m_tInfo.fTermAcc);
-			
+
 			/* Life */
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = (1 - ((VTXMATRIX*)SubResource.pData)[i].vPosition.y / fMaxY);
 		}
@@ -280,12 +284,12 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Gather(_float TimeDelta)
 			_float4 vPos = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
 			_float4 vDir = XMVector3Normalize(-vPos);
 
-			((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos + m_pXSpeeds[i]*vDir;
+			((VTXMATRIX*)SubResource.pData)[i].vPosition = vPos + m_pXSpeeds[i] * vDir;
 
-			/* Life */ 
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 
+			/* Life */
+			((VTXMATRIX*)SubResource.pData)[i].vPosition.w =
 				(XMVectorGetX(XMVector3Length(vPos + m_pXSpeeds[i] * vDir))
-				/XMVectorGetX(XMVector3Length(m_pPositions[i])));
+					/ XMVectorGetX(XMVector3Length(m_pPositions[i])));
 		}
 
 	}
@@ -297,6 +301,12 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Gather(_float TimeDelta)
 
 HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 {
+	if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+	{
+		m_bFinished = true;
+		return S_OK;
+	}
+
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
@@ -308,19 +318,19 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 	{
 		_float fDownSpeedY = m_tInfo.fPlaySpeed * m_tInfo.fTermAcc * m_tInfo.fTermAcc;
 
-		/* Reset Condition */
-		if (m_tInfo.fTermAcc > m_tInfo.fTerm)
-		{
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
+		///* Reset Condition */
+		//if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+		//{
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.x = m_pPositions[i].x;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.y = m_pPositions[i].y;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.z = m_pPositions[i].z;
+		//	((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1.f;
 
-			if(i == m_iNumInstance -1)
-				m_tInfo.fTermAcc = 0.0f;
-		}
-		/* Normal Tick Action */
-		else
+		//	if(i == m_iNumInstance -1)
+		//		m_tInfo.fTermAcc = 0.0f;
+		//}
+		///* Normal Tick Action */
+		//else
 		{
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += _float(m_pYSpeeds[i] * TimeDelta) - fDownSpeedY;
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.x += _float(m_pXSpeeds[i] * TimeDelta);
@@ -329,6 +339,42 @@ HRESULT CVIBuffer_Point_Instancing_S2::Tick_Parabola(_float TimeDelta)
 			/* Life */
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.w = 1 - m_tInfo.fTermAcc / m_tInfo.fTerm;
 		}
+
+	}
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing_S2::Tick_Spread(_float TimeDelta)
+{
+	if (m_tInfo.fTermAcc > m_tInfo.fTerm)
+	{
+		m_bFinished = true;
+		return S_OK;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_tInfo.fTermAcc += TimeDelta;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float fDownSpeedY = m_tInfo.fPlaySpeed * m_tInfo.fTermAcc * m_tInfo.fTermAcc;
+
+		_float4 vDir = ((VTXMATRIX*)SubResource.pData)[i].vPosition;
+		vDir.Normalize();
+		_float4 vMove = m_pXSpeeds[i] * TimeDelta * vDir;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y += vMove.y - fDownSpeedY;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.x += vMove.x;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.z += vMove.z;
+
+		/* Life */
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.w = m_tInfo.fTermAcc / m_tInfo.fTerm;
 
 	}
 
@@ -353,11 +399,13 @@ void CVIBuffer_Point_Instancing_S2::Reset()
 	Safe_Release(m_pInstanceBuffer);
 
 	Safe_Delete_Arrays();
+
+	m_bFinished = false;
 }
 
-CVIBuffer_Point_Instancing_S2 * CVIBuffer_Point_Instancing_S2::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CVIBuffer_Point_Instancing_S2* CVIBuffer_Point_Instancing_S2::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Point_Instancing_S2*		pInstance = new CVIBuffer_Point_Instancing_S2(pDevice, pContext);
+	CVIBuffer_Point_Instancing_S2* pInstance = new CVIBuffer_Point_Instancing_S2(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -367,9 +415,9 @@ CVIBuffer_Point_Instancing_S2 * CVIBuffer_Point_Instancing_S2::Create(ID3D11Devi
 	return pInstance;
 }
 
-CComponent * CVIBuffer_Point_Instancing_S2::Clone(void * pArg, CGameObject * pOwner)
+CComponent* CVIBuffer_Point_Instancing_S2::Clone(void* pArg, CGameObject* pOwner)
 {
-	CVIBuffer_Point_Instancing_S2*		pInstance = new CVIBuffer_Point_Instancing_S2(*this);
+	CVIBuffer_Point_Instancing_S2* pInstance = new CVIBuffer_Point_Instancing_S2(*this);
 
 	if (FAILED(pInstance->Initialize(pArg, pOwner)))
 	{

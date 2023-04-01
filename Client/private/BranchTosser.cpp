@@ -132,7 +132,7 @@ void CBranchTosser::Late_Tick(_float fTimeDelta)
 
 	m_pTree->Late_Tick(fTimeDelta);
 
-	if (m_pRendererCom && m_bSpawn)
+	if (m_pRendererCom && m_bReadySpawn)
 	{	
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -292,15 +292,22 @@ HRESULT CBranchTosser::SetUp_State()
 	})
 
 		.AddState("READY_SPAWN")
+		.OnStart([this]()
+	{
+		Start_Spawn();		
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+		Tick_Spawn(fTimeDelta);
+	})
 		.OnExit([this]()
 	{	
-		m_bSpawn = true;
-		m_pUIHPBar->Set_Active(true);
+		End_Spawn();
 	})
 		.AddTransition("READY_SPAWN to IDLE", "IDLE")
 		.Predicator([this]()
 	{
-		return m_pEnemyWisp->IsActiveState();
+		return m_bWispEnd && m_fDissolveTime <= 0.f;
 	})
 
 		.AddState("IDLE")
@@ -434,7 +441,6 @@ HRESULT CBranchTosser::SetUp_State()
 	{
 		return AnimFinishChecker(BIND);
 	})
-
 		
 		.AddState("DYING")
 		.OnStart([this]()
@@ -450,11 +456,18 @@ HRESULT CBranchTosser::SetUp_State()
 			m_pWeapon[i]->Clear();
 		}			
 	})
+		.Tick([this](_float fTimeDelta)
+	{
+		m_fDissolveTime += fTimeDelta * 0.2f;
+		m_fDissolveTime = m_fDissolveTime >= 1.f ? 1.f : m_fDissolveTime;
+	})
 		.AddTransition("DYING to DEATH", "DEATH")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(DEATH);
+		return AnimFinishChecker(DEATH) && m_fDissolveTime >= 1.f;
 	})
+
+
 		.AddState("DEATH")
 		.OnStart([this]()
 	{		
@@ -517,8 +530,8 @@ HRESULT CBranchTosser::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	
-	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDying, sizeof(_bool)), E_FAIL);
-	m_bDying && Bind_Dissolove(m_pShaderCom);
+	FAILED_CHECK_RETURN(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDissolve, sizeof(_bool)), E_FAIL);
+	m_bDissolve && Bind_Dissolove(m_pShaderCom);
 
 	return S_OK;
 }

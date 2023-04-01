@@ -211,7 +211,6 @@ PS_OUT PS_FLARE(PS_IN In)
 	float3 lightDir = normalize(g_vLightCamLook.xyz);
 	float3 camDir = normalize(g_vCamLook.xyz);
 	float3 up = float3(0.0f, 1.0f, 0.0f);
-
 	float dotProduct = dot(lightDir, camDir);
 	float verticalDotProduct = dot(camDir, up);
 	float verticalAngle = acos(verticalDotProduct);
@@ -228,34 +227,27 @@ PS_OUT PS_FLARE(PS_IN In)
 	vNewUV.x = (lightpos.x / lightpos.w) * 0.5f + 0.5f;
 	vNewUV.y = (lightpos.y / lightpos.w) * -0.5f + 0.5f;
 
-	// Ghost
-	float GhostCount = 3.0f;
-	float GhostSpacing = 0.5f;
-	float3 GhostColor = float3(0.5f, 0.5f, 0.25f) * falloffIntensity;
-	float2 GhostDir = normalize(float2(vNewUV) - In.vTexUV);
-	for (float i = 1.0f; i <= GhostCount; i += 1.0f)
+	float lightDepth = lightpos.z / lightpos.w;
+	float depth = g_DepthTexture.Sample(LinearSampler, In.vTexUV).r;
+
+	if(depth > lightDepth)
 	{
-		float GhostOffset = i * GhostSpacing;
-		float2 GhostUV = In.vTexUV + GhostDir * GhostOffset;
-		float3 Ghost = g_LDRTexture.Sample(LinearSampler, GhostUV).rgb * GhostColor;
-		GhostColor.rgb += Ghost;
+		Out.vColor = CurColor;
 	}
-
-	// Ghost
-	//Out.vColor = CurColor /*+ float4(GhostColor, 1.f) * maskColor.r * 2.f*/ + FlareColor * 0.3f;
-
-	float4 FlareColor = g_FlareTexture.Sample(LinearSampler, vNewUV);
-	FlareColor *= falloffIntensity;
-	Out.vColor = CurColor + FlareColor * 0.3f;
-
-	// Streak
-	float3 StreakColor = float3(0.1f, 0.1f, 0.05f) * falloffIntensity;
-	float StreakLength = pow(falloff, 0.25f) * 1.0f;
-	float2 StreakDir = normalize(float2(vNewUV) - In.vTexUV);
-	float2 StreakUV = (StreakDir + 1.0f) / 2.0f;
-	float StreakMask = 1.0f - saturate((length(float2(vNewUV) - In.vTexUV) - StreakLength) / StreakLength);
-	float3 Streak = g_LDRTexture.Sample(LinearSampler, StreakUV).rgb * StreakColor * StreakMask;
-	Out.vColor.rgb += Streak;
+	else
+	{
+		float4 FlareColor = g_FlareTexture.Sample(LinearSampler, vNewUV);
+		FlareColor *= falloffIntensity;
+		Out.vColor = CurColor + FlareColor * 0.3f;
+		// Streak
+		float3 StreakColor = float3(0.1f, 0.1f, 0.05f) * falloffIntensity;
+		float StreakLength = pow(falloff, 0.25f) * 1.0f;
+		float2 StreakDir = normalize(float2(vNewUV)-In.vTexUV);
+		float2 StreakUV = (StreakDir + 1.0f) / 2.0f;
+		float StreakMask = 1.0f - saturate((length(float2(vNewUV)-In.vTexUV) - StreakLength) / StreakLength);
+		float3 Streak = g_LDRTexture.Sample(LinearSampler, StreakUV).rgb * StreakColor * StreakMask;
+		Out.vColor.rgb += Streak;
+	}
 	// Streak
 
 	return Out;

@@ -62,6 +62,8 @@ HRESULT CRot::Initialize(void* pArg)
 	{
 		m_Desc.iRoomIndex = 0;
 		m_Desc.WorldMatrix = _smatrix();
+		m_Desc.WorldMatrix._41 = 2.f;
+		m_Desc.WorldMatrix._43 = 2.f;
 	}
 
 	return S_OK;
@@ -101,13 +103,12 @@ HRESULT CRot::Late_Initialize(void * pArg)
 	m_pTransformCom->Set_WorldMatrix_float4x4(m_Desc.WorldMatrix);
 
 	m_vWakeUpPosition = _float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42, m_Desc.WorldMatrix._43, 1.f);
-	m_pTriggerData = Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f);
-
+	
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	m_pMyCam = static_cast<CCameraForRot*>(pGameInstance->Find_Camera(L"ROT_CAM"));
 	RELEASE_INSTANCE(CGameInstance)
 
-	CPhysX_Manager::GetInstance()->Create_Trigger(m_pTriggerData);
+	CPhysX_Manager::GetInstance()->Create_Trigger(Create_PxTriggerData(m_szCloneObjectTag, this, TRIGGER_ROT, CUtile::Float_4to3(m_vWakeUpPosition), 1.f));
 
 	if (m_iThisRotIndex == FIRST_ROT)
 		m_vecKenaConnectRot.reserve(m_iEveryRotCount);
@@ -119,6 +120,10 @@ HRESULT CRot::Late_Initialize(void * pArg)
 
 void CRot::Tick(_float fTimeDelta)
 {
+	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
+	m_pModelCom->Play_Animation(fTimeDelta);
+	return;
+
 	m_fTeleportDistance = 5.f;
 
 	__super::Tick(fTimeDelta);
@@ -127,6 +132,7 @@ void CRot::Tick(_float fTimeDelta)
 	{
 		if (m_pFSM)
 			m_pFSM->Tick(fTimeDelta);
+
 		m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 		m_pModelCom->Play_Animation(fTimeDelta);
 	}
@@ -144,6 +150,12 @@ void CRot::Tick(_float fTimeDelta)
 
 void CRot::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	return;
+
 	if(m_pRotWisp->Get_Collect())
 	{
 		__super::Late_Tick(fTimeDelta);

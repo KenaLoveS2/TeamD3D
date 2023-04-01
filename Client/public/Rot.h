@@ -53,8 +53,7 @@ private:
 	DESC m_Desc;
 
 	class CCameraForRot*		m_pMyCam = nullptr;
-	PX_TRIGGER_DATA* m_pTriggerData = nullptr;
-
+	
 private:
 	CRot(ID3D11Device* pDevice, ID3D11DeviceContext* p_context);
 	CRot(const CRot& rhs);
@@ -91,6 +90,7 @@ public:
 	virtual _int Execute_TriggerTouchFound(CGameObject* pTarget, _uint iTriggerIndex, _int iColliderIndex) override;
 
 	static void Set_RotUseKenaPos(_float4 vKenaPos) { memcpy(&m_vKenaPos, &vKenaPos, sizeof(_float4)); }
+	static _float4 Get_RotUseKenaPos() { return m_vKenaPos; }
 
 public:
 	enum ANIMATION {

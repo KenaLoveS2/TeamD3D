@@ -39,7 +39,7 @@ public:
 	void			EraseStaticShadowObject(class CGameObject* pObject);
 
 public:
-	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
+	HRESULT			Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 	void			Set_Flare(_bool bFlare) { m_bFlare = bFlare; }
 	void			Set_MotionBlur(_bool bBlur) { m_bMotionBlur = bBlur; }
 	void			Set_Fog(bool bFog) { m_bFog = bFog; }
@@ -79,11 +79,12 @@ private:
 	_bool							m_bStaticShadow = false;
 	_bool							m_bDynamicShadow = false;
 	_bool							m_bSSAO = true;
+
 	_float							m_fDistortTime = 0.f;
 	_float							m_fPrevCaptureTime = 0.f;
 	_bool							m_bCine = false;
 
-	ID3D11Texture2D* m_pVideoRenderTargetTexture = nullptr;
+	ID3D11Texture2D*				m_pVideoRenderTargetTexture = nullptr;
 
 private:
 	void Increase_Time();
@@ -105,6 +106,7 @@ private:
 	HRESULT Render_UILast();
 	HRESULT Render_Viewer();		// Model Viewer
 	HRESULT Render_PrevFrame();
+	
 
 	HRESULT PostProcess_Distort();
 	_bool		m_bDistort = true;
@@ -119,8 +121,6 @@ private:
 	_float4		m_vFogColor;
 	_float		m_fFogStart = 0.f;
 	_float		m_fFogRange = 50.f;
-
-public:
 
 private:
 	HRESULT Render_DebugObject();

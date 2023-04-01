@@ -7,7 +7,11 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern bool g_bFrameLimit;
 
-#define FOR_MAP_GIMMICK
+#define KENA_PLUS_PIP_GUAGE_VALUE		0.2f
+
+#define TERRAIN_COUNT		5
+
+//#define FOR_MAP_GIMMICK
 
 //#define FOR_MAPTOOL
 //#undef FOR_MAPTOOL

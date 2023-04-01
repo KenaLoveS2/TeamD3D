@@ -60,11 +60,13 @@ HRESULT CBranchTosser_Tree::Late_Initialize(void* pArg)
 
 void CBranchTosser_Tree::Tick(_float fTimeDelta)
 {
+	if (m_bClear) return;
 	__super::Tick(fTimeDelta);
 }
 
 void CBranchTosser_Tree::Late_Tick(_float fTimeDelta)
 {
+	if (m_bClear) return;
 	__super::Late_Tick(fTimeDelta);
 
 	m_pRendererCom && m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -204,4 +206,6 @@ void CBranchTosser_Tree::Clear()
 	
 	PxRigidActor* pActor = pPhysX->Find_StaticActor(m_szCloneObjectTag);
 	pPhysX->Delete_Actor(pActor);
+
+	m_bClear = true;
 }

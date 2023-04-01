@@ -732,14 +732,6 @@ ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
 	return m_pTarget_Manager->Get_SRV(TEXT("Target_Depth"));	
 }
 
-ID3D11ShaderResourceView * CGameInstance::Get_ReflectSRV()
-{
-	if (nullptr == m_pTarget_Manager)
-		return nullptr;
-
-	return m_pTarget_Manager->Get_SRV(TEXT("Target_Reflect"));
-}
-
 _int CGameInstance::Play_Sound(const _tchar * pSoundKey, _float fVolume, _bool bIsBGM, _int iManualChannelIndex)
 {
 	if (m_pSound_Manager == nullptr) return -1;
@@ -969,8 +961,14 @@ _bool CGameInstance::Is_RenderIndex(_uint iObjRoomIndex)
 
 _bool CGameInstance::Is_Render_TerrainIndex(_uint iTerrainRoomIndex)
 {
-	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Is_Render_TerrainIndex()");
 	return m_pEnviroment_Manager->Is_Render_TerrainIndex(iTerrainRoomIndex);
+}
+
+_uint CGameInstance::Get_CurrentPlayerRoomIndex()
+{
+	assert(nullptr != m_pEnviroment_Manager && "CGameInstance::Set_PlayerPtr");
+	return m_pEnviroment_Manager->Get_CurrentPlayerRoomIndex();
 }
 
 void CGameInstance::Release_Engine()
@@ -1019,4 +1017,3 @@ void CGameInstance::Free()
 	Safe_Release(m_pPhysX_Manager); // kbj physx
 	Safe_Release(m_pGraphic_Device);
 }
-

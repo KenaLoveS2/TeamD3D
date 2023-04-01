@@ -145,6 +145,7 @@ protected:
 	_bool	m_bWeaklyHit = false;
 	_bool	m_bStronglyHit = false;
 	_bool	m_bBind = false;
+	_bool	m_bReadySpawn = false;
 	_bool	m_bSpawn = false;
 	_bool	m_bDying = false;
 	_bool	m_bDeath = false;
@@ -152,6 +153,8 @@ protected:
 	_bool   m_bRealAttack = false;
 
 	_bool   m_bIsFightReady = false;
+	_bool	m_bDissolve = false;
+	_bool	m_bWispEnd = false;
 
 	_float	m_fHitStopTime = 0.f;
 	_float  m_fDissolveTime = 0.0f;
@@ -195,6 +198,10 @@ public:
 
 	inline _bool IsFightReady() { return m_bIsFightReady; }
 	void Execute_Dying();
+
+	void Start_Spawn();
+	void Tick_Spawn(_float fTimeDelta);
+	void End_Spawn();
 };
 
 END

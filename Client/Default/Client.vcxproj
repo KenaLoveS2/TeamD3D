@@ -201,6 +201,7 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Chest_Anim.h" />
     <ClInclude Include="..\public\ControlRoom.h" />
+    <ClInclude Include="..\public\CPortalPlane.h" />
     <ClInclude Include="..\Public\Crystal.h" />
     <ClInclude Include="..\Public\Cliff_Rock.h" />
     <ClInclude Include="..\public\Client_Defines.h" />
@@ -297,6 +298,7 @@
     <ClInclude Include="..\Public\Grass.h" />
     <ClInclude Include="..\public\GroundMark.h" />
     <ClInclude Include="..\public\HatCart.h" />
+    <ClInclude Include="..\public\HealthFlower_Anim.h" />
     <ClInclude Include="..\public\HunterArrow.h" />
     <ClInclude Include="..\public\ImGui_Monster.h" />
     <ClInclude Include="..\public\ImGui_Rot.h" />
@@ -327,6 +329,7 @@
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterWeapon.h" />
     <ClInclude Include="..\public\Npc.h" />
+    <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\RotBomb.h" />
     <ClInclude Include="..\public\RotForMonster.h" />
     <ClInclude Include="..\public\RotWisp.h" />
@@ -464,6 +467,7 @@
     <ClCompile Include="..\Private\Chest_Anim.cpp" />
     <ClCompile Include="..\private\CinematicCamera.cpp" />
     <ClCompile Include="..\private\ControlRoom.cpp" />
+    <ClCompile Include="..\private\CPortalPlane.cpp" />
     <ClCompile Include="..\Private\Crystal.cpp" />
     <ClCompile Include="..\Private\Cliff_Rock.cpp" />
     <ClCompile Include="..\Private\ControlMove.cpp" />
@@ -559,6 +563,7 @@
     <ClCompile Include="..\Private\Grass.cpp" />
     <ClCompile Include="..\private\GroundMark.cpp" />
     <ClCompile Include="..\private\HatCart.cpp" />
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
     <ClCompile Include="..\private\HunterArrow.cpp" />
     <ClCompile Include="..\private\ImGui_Monster.cpp" />
     <ClCompile Include="..\private\ImGui_Rot.cpp" />
@@ -589,6 +594,7 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterWeapon.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
+    <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\private\RotBomb.cpp" />
     <ClCompile Include="..\private\RotForMonster.cpp" />
     <ClCompile Include="..\private\RotWisp.cpp" />
@@ -716,6 +722,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Bokeh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\BokehCS.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostDownScaleFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\PostFX.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect_Mesh_S2.hlsl" />
@@ -741,6 +749,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Water.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\SSAO.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\SSLR.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
