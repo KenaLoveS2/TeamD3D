@@ -100,7 +100,7 @@ HRESULT CUI_NodeChat::Render()
 
 	if (nullptr != m_szChat)
 	{
-		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Comic"), m_szChat,
+		CGameInstance::GetInstance()->Render_Font(TEXT("Font_Jangmi0"), m_szChat,
 			vNewPos /* position */,
 			0.f, _float2(0.8f, 0.8f)/* size */,
 			{ 1.f, 1.f, 1.f, 1.f }/* color */);

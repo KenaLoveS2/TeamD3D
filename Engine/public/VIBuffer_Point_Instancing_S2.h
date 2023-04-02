@@ -40,7 +40,7 @@ public:
 	virtual HRESULT Render()						override;
 
 public:
-	HRESULT		Update_Buffer(POINTINFO * pInfo);
+	HRESULT		Update_Buffer(POINTINFO * pInfo = nullptr);
 
 private: /* Tick Function By Type */
 	HRESULT		Tick_Haze(_float TimeDelta);

@@ -29,6 +29,7 @@ public:
 	enum DAMAGED_FROM { DAMAGED_FRONT, DAMAGED_BACK, DAMAGED_LEFT, DAMAGED_RIGHT, DAMAGED_FROM_END };
 	enum COLLIDERTYPE { COLL_BODY, COLL_STAFF, COLLIDERTYPE_END };
 	enum STATERETURN {
+		STATE_LEVELUP,
 		STATE_ATTACK, STATE_HEAVYATTACK, STATE_PERFECTATTACK,
 		STATE_COMMONHIT, STATE_HEAVYHIT,
 		STATE_SPRINT, STATE_MASK,
@@ -44,16 +45,17 @@ private:
 	virtual ~CKena() = default;
 
 public:
-	class CKena_State*		Get_State() { return m_pKenaState; }
-	class CKena_Parts*		Get_KenaPart(const _tchar* pCloneObjectTag);
-	class CKena_Status*		Get_Status() { return m_pKenaStatus; }
-	CAnimationState*		Get_AnimationStateMachine() { return m_pAnimation; }
-	_double					Get_AnimationPlayTime();
+	class CKena_State*			Get_State() { return m_pKenaState; }
+	class CKena_Parts*			Get_KenaPart(const _tchar* pCloneObjectTag);
+	class CKena_Status*			Get_Status() { return m_pKenaStatus; }
+	CAnimationState*			Get_AnimationStateMachine() { return m_pAnimation; }
+	_double						Get_AnimationPlayTime();
 	const string&				Get_AnimationState() const;
-	const _uint				Get_AnimationStateIndex() const;
+	const _uint					Get_AnimationStateIndex() const;
 	vector<_float4>*			Get_WeaponPositions() { return &m_vecWeaposPos; }
+	class CEffect_Base*			Get_Effect(const string& strKey);
 
-	const _bool				Get_State(STATERETURN eState) const;
+	const _bool					Get_State(STATERETURN eState) const;
 	const _bool&				Is_Attack() const { return m_bAttack; }
 	const _bool&				Is_Bow() const { return m_bBow; }
 	const _bool&				Is_TrailON() const { return m_bTrailON; }
@@ -128,6 +130,7 @@ private:
 
 private:
 	/* State variables*/
+	_bool						m_bLevelUp = false;
 	_bool						m_bAttack = false;
 	_bool						m_bHeavyAttack = false;
 	_bool						m_bPerfectAttack = false;
@@ -202,6 +205,7 @@ public:
 	const  _bool&					Get_ParryRim() const { return m_bParryRim; }
 	const  _float&					Get_ParryRimIntensity() const { return m_fParryRimIntensity; }
 
+
 private:
 	/* UI */
 	CUI_RotIcon*				m_pUI_FocusRot;
@@ -242,7 +246,8 @@ private:	/* Animation Event Func */
 	void	TurnOnPulseParryRange(_bool bIsInit, _float fTimeDelta);
 
 public:
-	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
+	//Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
+	Delegator<CUI_ClientManager::UI_PRESENT, _float>										m_Delegator;
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, CKena*>		m_PlayerPtrDelegator;
 	//Delegator<CUI_ClientManager::UI_PRESENT, _float, _float, _float, _float>				m_PlayerAmmoDelegator;
 
