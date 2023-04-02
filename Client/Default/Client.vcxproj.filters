@@ -1289,9 +1289,6 @@
     <ClInclude Include="..\public\ShamanTrapPlane.h">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rot.h">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RotForMonster.h">
       <Filter>02.GameObjects\Rot</Filter>
     </ClInclude>
@@ -1397,30 +1394,13 @@
     <ClInclude Include="..\public\ControlRoom.h">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <ClInclude Include="..\public\Frog.h">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Pet.h">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RotEater_Small.h">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RotHat.h" />
-    <ClInclude Include="..\public\HealthFlower_Anim.h">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Dynamic_Stone.h">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClInclude>
-=======
     <ClInclude Include="..\public\HealthFlower_Anim.h" />
->>>>>>> parent of 285d1e32 (.)
-=======
-    <ClInclude Include="..\public\HealthFlower_Anim.h" />
->>>>>>> parent of 285d1e32 (.)
+    <ClInclude Include="..\public\Rot.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RotHat.h">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2134,9 +2114,6 @@
     <ClCompile Include="..\private\ShamanTrapPlane.cpp">
       <Filter>02.GameObjects\Monster\Shaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rot.cpp">
-      <Filter>02.GameObjects\Rot</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RotForMonster.cpp">
       <Filter>02.GameObjects\Rot</Filter>
     </ClCompile>
@@ -2251,30 +2228,13 @@
     <ClCompile Include="..\private\ControlRoom.cpp">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <ClCompile Include="..\private\Frog.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Pet.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RotEater_Small.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RotHat.cpp" />
-    <ClCompile Include="..\private\HealthFlower_Anim.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Dynamic_Stone.cpp">
-      <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
-    </ClCompile>
-=======
     <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
->>>>>>> parent of 285d1e32 (.)
-=======
-    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
->>>>>>> parent of 285d1e32 (.)
+    <ClCompile Include="..\private\Rot.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RotHat.cpp">
+      <Filter>02.GameObjects\Rot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
