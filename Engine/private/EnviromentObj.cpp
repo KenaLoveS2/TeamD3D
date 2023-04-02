@@ -188,7 +188,6 @@ HRESULT CEnviromentObj::SetUp_CineShaderResources()
 void CEnviromentObj::Free()
 {
 	__super::Free();
-
 }
 
 

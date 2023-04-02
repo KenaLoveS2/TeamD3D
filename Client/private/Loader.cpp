@@ -1747,7 +1747,8 @@ HRESULT CLoader::Loading_ForSY(_uint iLevelIndex)
 	lstrcpy(m_szLoadingText, TEXT("Loading SY..."));
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	
+	//Safe_AddRef(pGameInstance);
+
 	/********************************************/
 	/*				For. VIBuffer				*/
 	/********************************************/

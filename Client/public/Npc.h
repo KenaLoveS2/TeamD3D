@@ -50,15 +50,18 @@ public:
 	_bool							AnimFinishChecker(_uint eAnim, _double FinishRate = 0.95);
 	_bool							AnimIntervalChecker(_uint eAnim, _double StartRate, _double FinishRate);
 	_bool							DistanceTrigger(_float distance);
+	_bool							DistanceTrigger(_float4 v1, _float4 v2, _float distance);
 	virtual void					AdditiveAnim(_float fTimeDelta);
 	CFSMComponent*		Get_FSM() { return m_pFSM; }
+
 protected:
 	CRenderer*						m_pRendererCom = nullptr;
 	CShader*							m_pShaderCom = nullptr;
 	CModel*							m_pModelCom = nullptr;
 	CFSMComponent*			m_pFSM = nullptr;
 	class CKena*					m_pKena = nullptr;
-	class CCameraForNpc*		m_pMyCam = nullptr;
+	class CCameraForNpc*	m_pMyCam = nullptr;
+	_bool								m_bStraight = false;
 
 protected:
 	virtual void					Update_Collider(_float fTimeDelta) PURE;

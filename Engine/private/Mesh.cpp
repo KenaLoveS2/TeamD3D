@@ -192,7 +192,6 @@ HRESULT CMesh::Initialize_Prototype(HANDLE hFile, CModel* pModel, _bool bIsLod, 
 #pragma endregion
 
 #pragma region INDEX_BUFFER
-
 	if (m_bLodMesh == true)
 	{
 		ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
