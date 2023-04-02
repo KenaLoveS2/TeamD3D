@@ -573,6 +573,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 		
 		PxFilterData FilterData;
 		FilterData.word0 = Desc.eFilterType;		
@@ -603,6 +605,8 @@ void CPhysX_Manager::Create_Capsule(PX_CAPSULE_DESC& Desc, PX_USER_DATA* pUserDa
 		PxShape* pShape = m_pPhysics->createShape(PxCapsuleGeometry(Desc.fRadius, Desc.fHalfHeight), *pMaterial, true);
 		PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 		pShape->setLocalPose(relativePose);
+		pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !Desc.isTrigger);
+		pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, Desc.isTrigger);
 
 		PxFilterData FilterData;
 		FilterData.word0 = Desc.eFilterType;		
@@ -769,7 +773,12 @@ _bool CPhysX_Manager::Raycast_Collision(_float3 vRayPos, _float3 vRayDir, _float
 		PxShapeFlags Flags = pShape->getFlags();
 
 		if (Flags.isSet(PxShapeFlag::eTRIGGER_SHAPE))
+		{
+// 			PxVec3	vDir = hit.block.position - origin;
+// 			_float	fDistance = distance - );
+// 			m_pScene->raycast(hit.block.position, direction, distance - )
 			return false;
+		}
 
 		if(pPositionOut)
 			*pPositionOut = CUtile::ConvertPosition_PxToD3D(hit.block.position);
@@ -817,7 +826,10 @@ _bool CPhysX_Manager::Raycast_CollisionTarget(_float3 vRayPos, _float3 vRayDir, 
 			if (pUserData && pUserData->pOwner && pUserData->pOwner == pTarget)
 			{
 				PxVec3 PxColPos = pRaycastHit[i].position;
-				*pPositionOut = CUtile::ConvertPosition_PxToD3D(PxColPos);
+
+				if (pPositionOut != nullptr)
+					*pPositionOut = CUtile::ConvertPosition_PxToD3D(PxColPos);
+
 				return true;
 			}
 		}

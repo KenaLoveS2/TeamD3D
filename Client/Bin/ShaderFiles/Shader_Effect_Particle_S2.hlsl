@@ -246,6 +246,8 @@ PS_OUT PS_MAIN_BLACK(PS_IN In)
 
 PS_OUT PS_MAIN_SPREAD(PS_IN In)
 {
+	/* Ref : Shader_VtxEffectPointInstance : PS_FRONTVIEWBLINK */
+
 	PS_OUT		Out = (PS_OUT)0;
 
 	if (g_IsSpriteAnim)
@@ -257,15 +259,20 @@ PS_OUT PS_MAIN_SPREAD(PS_IN In)
 		In.vTexUV.y = In.vTexUV.y / g_YFrames;
 	}
 
-	Out.vColor = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
+	vector vDiffuse = g_DiffuseTexture.Sample(PointSampler, In.vTexUV);
 
-	Out.vColor *= g_vColor;
-	if (Out.vColor.a < 0.01f)
-		discard;
+	Out.vColor = vDiffuse;
+	Out.vColor.rgb *= g_vColor.rgb;
+	Out.vColor.a *= (1 - In.fLife);
+	//vDiffuse.a = vDiffuse.r;
 
-	Out.vColor.rgb *= g_fHDRItensity;
+	//vDiffuse.rgb = g_vColor.rgb;
+	//vDiffuse.a *= g_vColor.rgb;
 
+	//if (Out.vColor.a == 0.0f)
+	//	discard;
 
+	//Out.vColor.rgb *= g_fHDRItensity;
 
 	return Out;
 }
@@ -314,11 +321,11 @@ technique11 DefaultTechnique
 	pass DefaultSpread // 3
 	{
 		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
+		SetDepthStencilState(DS_ZEnable_ZWriteEnable_FALSE, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.0f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = compile gs_5_0 GS_MAIN_GATHER();
+		GeometryShader = compile gs_5_0 GS_MAIN_HAZE();
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SPREAD();

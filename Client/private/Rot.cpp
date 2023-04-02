@@ -131,9 +131,7 @@ void CRot::Tick(_float fTimeDelta)
 	//m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	//m_pModelCom->Play_Animation(fTimeDelta);
 	//m_pRotHat->Tick(fTimeDelta);
-
 	//m_pTransformCom->Set_Position(_float4(m_Desc.WorldMatrix._41, m_Desc.WorldMatrix._42 + 0.3f, m_Desc.WorldMatrix._43, 1.f));
-
 	//return;
 
 	m_fTeleportDistance = 5.f;

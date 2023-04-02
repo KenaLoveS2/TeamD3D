@@ -2,6 +2,7 @@
 #include "..\public\Beni.h"
 #include "GameInstance.h"
 #include "CameraForNpc.h"
+#include "Saiya.h"
 
 CBeni::CBeni(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CNpc(pDevice, pContext)
@@ -23,14 +24,13 @@ HRESULT CBeni::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(CGameObject::GAMEOBJECTDESC));
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 4.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.5f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.f);
 
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_UI(), E_FAIL);
 
 	m_pModelCom->Set_AllAnimCommonType();
-
 	return S_OK;
 }
 
@@ -71,8 +71,17 @@ HRESULT CBeni::Late_Initialize(void* pArg)
 		m_pTransformCom->Set_PxPivot(vPivotPos);
 	}
 
-	m_pTransformCom->Set_Position(_float4(78.f,0.f,137.f,1.f));
-	m_pTransformCom->Rotation({ 0.f, 1.f, 0.f, 0.f }, XMConvertToRadians(180.f));
+	m_pSaiya = dynamic_cast<CSaiya*>( CGameInstance::GetInstance()->Get_GameObjectPtr(LEVEL_TESTPLAY, TEXT("Layer_NPC"), TEXT("Saiya")));
+
+	if(m_pSaiya == nullptr)
+	{
+		MSG_BOX("!!!!!There is No Saiya!!!!!");
+	}
+
+	_float4 vPos =	m_pSaiya->Get_TransformCom()->Get_Position();
+	_float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	m_pTransformCom->Set_Position(_float3(vPos.x - 0.5f, vPos.y, vPos.z));
+	m_pTransformCom->Set_Look(vLook);
 
 	return S_OK;
 }
@@ -81,6 +90,7 @@ void CBeni::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	Update_Collider(fTimeDelta);
+	SaiyaFunc(fTimeDelta);
 	if (m_pFSM) m_pFSM->Tick(fTimeDelta);
 	m_iAnimationIndex = m_pModelCom->Get_AnimIndex();
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -191,43 +201,82 @@ HRESULT CBeni::SetUp_State()
 {
 	m_pFSM = CFSMComponentBuilder()
 		.InitState("IDLE")
+
+		/* Idle */
 		.AddState("IDLE")
+		.Tick([this](_float fTimeDelta)
+	{
+			m_pModelCom->Set_AnimIndex(BENI_IDLE);
+	})
+		.AddTransition("IDLE to CHEER", "CHEER")
+		.Predicator([this]()
+	{
+			return m_strState == "CHEER";
+	})
+
+			/* Cheer */
+		.AddState("CHEER")
+		.OnStart([this]()
+	{
+		SaiyaPos();
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_CHEER);
+		m_pModelCom->Set_AnimIndex(BENI_CHEER);
+		CUI_ClientManager::GetInstance()->Switch_FrontUI(false);
+	})
+
+		.AddTransition("CHEER to CHAT", "CHAT")
+		.Predicator([this]()
+	{
+		return  m_strState == "CHAT";
+	})
+
+		/* Chat */
+		.AddState("CHAT")
 		.Tick([this](_float fTimeDelta)
 	{
 		m_pModelCom->Set_AnimIndex(BENI_IDLE);
 	})
-		.AddTransition("IDLE to CHEER" , "CHEER")
+		.AddTransition("CHAT to RUN", "RUN")
 		.Predicator([this]()
 	{
-		return DistanceTrigger(5.f) && !m_bMeetPlayer;
+		return m_strState == "RUN";
 	})
 
-		.AddState("CHEER")
+		.AddState("RUN")
 		.OnStart([this]()
 	{
-		//CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		//m_pMyCam->Set_Target(this);
-		//p_game_instance->Work_Camera(L"NPC_CAM");
-		//RELEASE_INSTANCE(CGameInstance)
-		m_bMeetPlayer = true;
-		m_pModelCom->ResetAnimIdx_PlayTime(BENI_CHEER);
-		m_pModelCom->Set_AnimIndex(BENI_CHEER);
+		SaiyaPos();
 	})
-
-		.OnExit([this]()
+		.Tick([this](_float fTimeDelta)
 	{
-		//	// ´©³ª°¡ ²ô°í½ÍÀ»¶§ ²ô¸é´ï~
-		//CGameInstance* p_game_instance = GET_INSTANCE(CGameInstance)
-		//m_pMyCam->Set_Target(nullptr);
-		//p_game_instance->Work_Camera(L"PLAYER_CAM");
-		//RELEASE_INSTANCE(CGameInstance)
+		m_pModelCom->Set_AnimIndex(BENI_RUN_180);
+		m_pTransformCom->Go_Straight(fTimeDelta);
 	})
-		.AddTransition("CHEER to IDLE", "IDLE")
+		.AddTransition("RUN to DISAPPEAR", "DISAPPEAR")
 		.Predicator([this]()
 	{
-		return  AnimFinishChecker(BENI_CHEER);
+		return m_strState == "DISAPPEAR";
 	})
 
+		.AddState("DISAPPEAR")
+		.OnStart([this]()
+	{
+		m_pModelCom->ResetAnimIdx_PlayTime(BENI_DISAPPEAR);
+		m_pModelCom->Set_AnimIndex(BENI_DISAPPEAR);
+	})
+		.Tick([this](_float fTimeDelta)
+	{
+			//µðÁ¹ºê
+	})
+		.OnExit([this]()
+	{
+		SaiyaPos();
+	})
+		.AddTransition("DISAPPEAR to IDLE", "IDLE")
+		.Predicator([this]()
+	{
+		return m_strState == "IDLE";
+	})
 		.Build();
 
 	return S_OK;
@@ -281,6 +330,20 @@ void CBeni::AdditiveAnim(_float fTimeDelta)
 {
 	m_pModelCom->Set_AdditiveAnimIndexForMonster(BENI_MOUTHFLAP);
 	m_pModelCom->Play_AdditiveAnimForMonster(fTimeDelta, 1.f, "SK_Beni.ao");
+}
+
+void CBeni::SaiyaFunc(_float fTimeDelta)
+{
+	if (m_pSaiya)
+		m_strState = m_pSaiya->Get_FSM()->GetCurStateName();
+}
+
+void CBeni::SaiyaPos()
+{
+	_float4 vPos = m_pSaiya->Get_TransformCom()->Get_Position();
+	_float4 vLook = m_pSaiya->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+	m_pTransformCom->Set_Position(_float3(vPos.x - 0.5f, vPos.y, vPos.z));
+	m_pTransformCom->Set_Look(vLook);
 }
 
 CBeni* CBeni::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

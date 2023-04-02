@@ -436,6 +436,7 @@ private:
 	HRESULT					SetUp_State_Crouch();
 	HRESULT					SetUp_State_Damaged_Common();
 	HRESULT					SetUp_State_Damaged_Heavy();
+	HRESULT					SetUp_State_Dash();
 	HRESULT					SetUp_State_Dodge();
 	HRESULT					SetUp_State_Fall();
 	HRESULT					SetUp_State_Heavy_Attack1();
@@ -449,6 +450,7 @@ private:
 	HRESULT					SetUp_State_Mask();
 	HRESULT					SetUp_State_Meditate();
 	HRESULT					SetUp_State_Pulse();
+	HRESULT					SetUp_State_RotAction();
 	HRESULT					SetUp_State_Shield();
 	HRESULT					SetUp_State_Spin_Attack();
 	HRESULT					SetUp_State_Sprint();
@@ -663,6 +665,12 @@ private:
 	void						Start_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						Start_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						Start_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						Start_Dash(_float fTimeDelta);
+	void						Start_Dash_Settle(_float fTimeDelta);
+	void						Start_Dash_Portal(_float fTimeDelta);
+	void						Start_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						Start_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						Start_Backflip(_float fTimeDelta);
 	void						Start_Roll(_float fTimeDelta);
@@ -743,6 +751,11 @@ private:
 	void						Start_Pulse_Walk_Left(_float fTimeDelta);
 	void						Start_Pulse_Walk_Right(_float fTimeDelta);
 	void						Start_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						Start_Rot_Action(_float fTimeDelta);
+	void						Start_Rot_Action_Run(_float fTimeDelta);
+	void						Start_Rot_Action_Aim(_float fTimeDelta);
+	void						Start_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						Start_Shield_Impact(_float fTimeDelta);
 	void						Start_Shield_Impact_Medium(_float fTimeDelta);
@@ -866,6 +879,12 @@ private:
 	void						Tick_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						Tick_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						Tick_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						Tick_Dash(_float fTimeDelta);
+	void						Tick_Dash_Settle(_float fTimeDelta);
+	void						Tick_Dash_Portal(_float fTimeDelta);
+	void						Tick_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						Tick_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						Tick_Backflip(_float fTimeDelta);
 	void						Tick_Roll(_float fTimeDelta);
@@ -938,6 +957,11 @@ private:
 	void						Tick_Pulse_Parry(_float fTimeDelta);
 	void						Tick_Pulse_Walk(_float fTimeDelta);
 	void						Tick_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						Tick_Rot_Action(_float fTimeDelta);
+	void						Tick_Rot_Action_Run(_float fTimeDelta);
+	void						Tick_Rot_Action_Aim(_float fTimeDelta);
+	void						Tick_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						Tick_Shield_Impact(_float fTimeDelta);
 	void						Tick_Shield_Impact_Medium(_float fTimeDelta);
@@ -1061,6 +1085,12 @@ private:
 	void						End_Take_Damage_Heavy_Front(_float fTimeDelta);
 	void						End_Take_Damage_Heavy_Back(_float fTimeDelta);
 	void						End_Take_Damage_Heavy_Air(_float fTimeDelta);
+	/* DASH */
+	void						End_Dash(_float fTimeDelta);
+	void						End_Dash_Settle(_float fTimeDelta);
+	void						End_Dash_Portal(_float fTimeDelta);
+	void						End_Dash_Combat_Attack_1(_float fTimeDelta);
+	void						End_Dash_Combat_Attack_2(_float fTimeDelta);
 	/* DODGE */
 	void						End_Backflip(_float fTimeDelta);
 	void						End_Roll(_float fTimeDelta);
@@ -1133,6 +1163,11 @@ private:
 	void						End_Pulse_Parry(_float fTimeDelta);
 	void						End_Pulse_Walk(_float fTimeDelta);
 	void						End_Pulse_Squat_Sprint(_float fTimeDelta);
+	/* ROT ACTION */
+	void						End_Rot_Action(_float fTimeDelta);
+	void						End_Rot_Action_Run(_float fTimeDelta);
+	void						End_Rot_Action_Aim(_float fTimeDelta);
+	void						End_Rot_Action_Aim_Run(_float fTimeDelta);
 	/* SHIELD */
 	void						End_Shield_Impact(_float fTimeDelta);
 	void						End_Shield_Impact_Medium(_float fTimeDelta);
@@ -1156,6 +1191,7 @@ private:
 private:	/* Changer */
 	_bool	TruePass();
 	_bool	OnGround();
+	_bool	LevelUp();
 	_bool	CommonHit();
 	_bool	HeavyHit();
 	_bool	Shield_Small();
@@ -1163,6 +1199,8 @@ private:	/* Changer */
 	_bool	Shield_Big();
 	_bool	Shield_Break_Front();
 	_bool	Shield_Break_Back();
+	_bool	Dash_Attack();
+	_bool	Dash_Portal();
 	_bool	Falling();
 	_bool	Pulse_Jump();
 	_bool	Parry();
@@ -1229,10 +1267,9 @@ private:
 public:
 	Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_PlayerDelegator;
 
-
 public:
 	static	CKena_State*	Create(class CKena* pKena, class CKena_Status* pStatus, CStateMachine* pStateMachine, CModel* pModel, CAnimationState* pAnimation, CTransform* pTransform, class CCamera_Player* pCamera);
-	virtual void				Free() override;
+	virtual void			Free() override;
 };
 
 END

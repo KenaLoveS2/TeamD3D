@@ -41,6 +41,45 @@ HRESULT CE_P_ShockFrontEntended::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CE_P_ShockFrontEntended::Late_Initialize(void* pArg)
+{
+	_float3	vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3	vPivotScale = _float3(2.57f, 2.37f, 0.45f);
+	_float3	vPivotPos = _float3(0.f, 0.f, 0.f);
+
+	_smatrix	matPivot = XMMatrixRotationX(XM_PIDIV2);
+
+	CPhysX_Manager::PX_BOX_DESC PxBoxDesc;
+	ZeroMemory(&PxBoxDesc, sizeof(CPhysX_Manager::PX_BOX_DESC));
+	PxBoxDesc.pActortag = m_szCloneObjectTag;
+	PxBoxDesc.eType = BOX_DYNAMIC;
+	PxBoxDesc.vPos = vPos;
+	PxBoxDesc.vSize = vPivotScale;
+	PxBoxDesc.vRotationAxis = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDegree = 0.f;
+	PxBoxDesc.isGravity = false;
+	PxBoxDesc.eFilterType = PX_FILTER_TYPE::MONSTER_WEAPON;
+	PxBoxDesc.vVelocity = _float3(0.f, 0.f, 0.f);
+	PxBoxDesc.fDensity = 0.2f;
+	PxBoxDesc.fMass = 150.f;
+	PxBoxDesc.fLinearDamping = 10.f;
+	PxBoxDesc.fAngularDamping = 5.f;
+	PxBoxDesc.bCCD = false;
+	PxBoxDesc.fDynamicFriction = 0.5f;
+	PxBoxDesc.fStaticFriction = 0.5f;
+	PxBoxDesc.fRestitution = 0.1f;
+
+	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(m_pParent, false, COL_MONSTER_WEAPON));
+	m_pTransformCom->Add_Collider(m_szCloneObjectTag, matPivot);
+
+// 	_tchar* pDummyTag = CUtile::Create_StringAuto(L"Warrior_FireSwipe_Dummy");
+// 	PxBoxDesc.pActortag = pDummyTag;
+// 	CPhysX_Manager::GetInstance()->Create_Box(PxBoxDesc, Create_PxUserData(this, false, COLLISON_DUMMY));
+// 	m_pTransformCom->Add_Collider(pDummyTag, matPivot);
+
+	return S_OK;
+}
+
 void CE_P_ShockFrontEntended::Tick(_float fTimeDelta)
 {
 	if (m_eEFfectDesc.bActive == false)
@@ -74,6 +113,8 @@ HRESULT CE_P_ShockFrontEntended::Render()
 
 void CE_P_ShockFrontEntended::Imgui_RenderProperty()
 {
+	__super::ImGui_PhysXValueProperty();
+
 	if (ImGui::Button("Active"))
 	{
 		m_eEFfectDesc.bActive = !m_eEFfectDesc.bActive;

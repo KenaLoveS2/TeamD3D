@@ -8,12 +8,7 @@
     ],
     "02. HDR Intensity": 20.299999237060547,
     "03. LocalMatrix": [
-        2.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        2.0,
+        1.0,
         0.0,
         0.0,
         0.0,
@@ -22,7 +17,12 @@
         0.0,
         0.0,
         0.0,
-        -0.10,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         1.0
     ],
     "04. MaskColor": [
@@ -32,5 +32,19 @@
         1.0
     ],
     "10. DiffuseTextureIndex": 53,
-    "11. MaskTextureIndex": 53
+    "11. MaskTextureIndex": 53,
+    "20. Options": [
+        false,
+        false,
+        false
+    ],
+    "21. UVSpeed": [
+        0.0,
+        0.0
+    ],
+    "22. SpriteFrames": [
+        1,
+        1
+    ],
+    "23. SpriteSpeed": 0.0
 }

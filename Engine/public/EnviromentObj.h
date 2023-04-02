@@ -13,6 +13,7 @@ public:
 
 	enum  CHAPTER {
 		Gimmick_TYPE_NONE, Gimmick_TYPE_GO_UP, Gimmick_TYPE_DISSOLVE, Gimmick_TYPE_DISSOLVE_AND_MODEL_CHANGE,
+		Gimmick_TYPE_FLOWER,
 		Gimmick_TYPE_END};
 
 	typedef struct tagEnviromnetObjectDesc
@@ -65,7 +66,7 @@ public:
 protected:
 	HRESULT					Set_UpTexture_FilePathToMaterial(class CModel* pMode, const _tchar * TexturePath, aiTextureType Type);
 
-	HRESULT					SetUp_CineShaderResources();
+	virtual HRESULT					SetUp_CineShaderResources();
 
 protected:
 	class CEnviroment_Manager* m_pEnviroment_Manager = nullptr;
