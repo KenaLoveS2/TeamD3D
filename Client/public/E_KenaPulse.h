@@ -80,26 +80,6 @@ private:
 public:
     Delegator<CUI_ClientManager::UI_PRESENT, CUI_ClientManager::UI_FUNCTION, _float>		m_ShieldDelegator;
 
-private:
-    class CTexture*         m_pDissolveTexture  = nullptr;
-    class CKena*            m_pKena             = nullptr;
-    class CKena_Status*     m_pStatus           = nullptr;
-
-    PX_TRIGGER_DATA*        m_pTriggerDAta      = nullptr;
-    PULSETYPE               m_ePulseType        = PULSE_DEFAULT;
-    STATUS                  m_eStatus;
-
-private:
-    _bool       m_bDesolve          = true;
-    _bool       m_bNoActive         = false;
-
-    _float      m_fActivePlusScale  = 1.3f;
-    _float      m_fDissolveTime     = 0.0f;
-
-    _float4x4   m_SaveInitWorldMatrix;
-
-    _float      m_fHpRatio          = 0.0f;
-
 public:
     static  CE_KenaPulse*   Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFilePath = nullptr);
     virtual CGameObject*    Clone(void* pArg = nullptr) override;

@@ -51,9 +51,9 @@ HRESULT CE_P_ExplosionGravity::Late_Initialize(void* pArg)
 void CE_P_ExplosionGravity::Tick(_float fTimeDelta)
 {
 	//if (!lstrcmp(Get_ObjectCloneName(), L"Test"))
-	if (m_eType == TYPE_HEALTHFLOWER)
-		Set_OptionTool();
-	else
+	//if (m_eType == TYPE_HEALTHFLOWER)
+	//	Set_OptionTool();
+	//else
 		m_fLife += fTimeDelta;
 
 	__super::Tick(fTimeDelta);

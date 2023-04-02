@@ -395,8 +395,8 @@ HRESULT CMonster::SetUp_UI(_float fOffsetY)
 		MSG_BOX("Failed To make UI");
 		return E_FAIL;
 	}
-	RELEASE_INSTANCE(CGameInstance);
 
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

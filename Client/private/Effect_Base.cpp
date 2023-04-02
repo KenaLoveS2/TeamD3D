@@ -893,7 +893,7 @@ void CEffect_Base::ToolOption(const char* pToolTag)
 	static _float fHDRValue = this->m_fHDRValue;
 	static _float2 fUV = this->m_fUV;
 	static _float2 fFrame = _float2(m_eEFfectDesc.fWidthFrame, m_eEFfectDesc.fHeightFrame);
-	static _float2 iSeparate = _float2(m_eEFfectDesc.iWidthCnt, m_eEFfectDesc.iHeightCnt);
+	static _float2 iSeparate = _float2(m_eEFfectDesc.iWidthCnt * 1.f, m_eEFfectDesc.iHeightCnt * 1.f);
 	static _int iType = 0;
 	static _float fTimeDelta = 0.0f;
 
