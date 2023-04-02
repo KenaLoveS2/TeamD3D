@@ -57,7 +57,8 @@ private:
 	_int				m_iMaxBombCount = 0;
 	_int				m_iCurBombCount = 0;
 	_float				m_fInitBombCoolTime = 0.f;
-	_float				m_fCurBombCoolTime = 0.f;
+	_float				m_fCurBombCoolTime[2] = { 0.0f, 0.0f };
+	_bool				m_bUsed[2] = { false, false };
 
 	/* UNLOCK SKILL */
 	_bool				m_bSkills[SKILLTAB_END][5];
@@ -107,7 +108,14 @@ public:
 	inline _int Get_MaxBombCount() { return m_iMaxBombCount; }
 	inline _int Get_CurBombCount() { return m_iCurBombCount; }
 	inline _float Get_InitBombCoolTime() { return m_fInitBombCoolTime; }
-	inline _float Get_CurBombCoolTime() { return m_fCurBombCoolTime; }
+	//inline _float Get_CurBombCoolTime() { return m_fCurBombCoolTime; }
+	inline _float Get_CurBombCoolTime(_int iIndex) { 
+		if (iIndex < m_iMaxBombCount)
+			return m_fCurBombCoolTime[iIndex];
+		else
+			return 0.0f;
+	}
+
 
 	const _bool Get_SkillState(SKILLTAB eCategory, _uint iSlot) const;
 
@@ -136,9 +144,9 @@ public:
 	inline void Set_CurArrowCoolTime(_float fValue) { m_fCurArrowCoolTime = fValue; }
 
 	inline void Set_MaxBombCount(_int iValue) { m_iMaxBombCount = iValue; }
-	inline void Set_CurBombCount(_int iValue) { m_iCurBombCount = iValue; }
+	void		Set_CurBombCount(_int iValue);
 	inline void Set_InitBombCoolTime(_float fValue) { m_fInitBombCoolTime = fValue; }
-	inline void Set_CurBombCoolTime(_float fValue) { m_fCurBombCoolTime = fValue; }
+	//inline void Set_CurBombCoolTime(_float fValue) { m_fCurBombCoolTime = fValue; }
 
 	void		Add_RotCount();
 	void		Unlock_Skill(SKILLTAB eCategory, _uint iSlot);

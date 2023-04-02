@@ -330,19 +330,13 @@ void CUI_CanvasAmmo::Function(CUI_ClientManager::UI_PRESENT eType, _float fValue
 		break;
 	}
 	case CUI_ClientManager::AMMO_BOMBCOOL: 
-		if (1 == m_qUsed.size())
+		if (fValue >= 10.0f)
 		{
-			_int iBomb = m_qUsed.front();
-			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBomb]])->Plus_Guage(fValue);
+			_float fGuage = fValue - 10.f;
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[1]])->Set_Guage(fGuage);
 		}
-		else if(2 == m_qUsed.size())
-		{
-			_int iFront = m_qUsed.front();
-			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iFront]])->Plus_Guage(fValue);
-
-			_int iBack = m_qUsed.back();
-			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[iBack]])->Plus_Guage(fValue);
-		}
+		else
+			static_cast<CUI_NodeAmmoBombGuage*>(m_vecNode[m_Bombs[0]])->Set_Guage(fValue);
 		break;
 	case CUI_ClientManager::AMMO_BOMBEFFECT: /* Bomb Guage Fullfilled */
 	{
