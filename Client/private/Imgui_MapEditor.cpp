@@ -609,15 +609,6 @@ void CImgui_MapEditor::Imgui_Save_Func()
 				}
 			}
 
-			if(dynamic_cast<CDeadZoneObj*>(pObject.second) != nullptr)
-			{
-				jChild["8_DeadZoneModel_ID"].push_back(_int(dynamic_cast<CDeadZoneObj*>(pObject.second)->Get_DZModel_ID()));
-
-			}
-
-			
-
-
 		}
 	
 
@@ -774,7 +765,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain2"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;

@@ -238,11 +238,10 @@ CGameObject * CPulse_PlateForm::Clone(void * pArg)
 
 void CPulse_PlateForm::Free()
 {
-	Safe_Release(m_pModelCom);
-
 	__super::Free();
 
-		Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
 	Safe_Release(m_pControlMoveCom);

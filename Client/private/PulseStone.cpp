@@ -255,10 +255,9 @@ CGameObject * CPulseStone::Clone(void * pArg)
 
 void CPulseStone::Free()
 {
-	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

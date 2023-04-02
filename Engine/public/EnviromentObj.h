@@ -75,8 +75,8 @@ protected:
 	ENVIROMENT_DESC							m_EnviromentDesc;	
 	vector<const _tchar*>					m_CurComponenteTag;
 
-	_bool									m_bRenderActive = false;
-	_uint									m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 
+	_bool										m_bRenderActive = false;
+	_uint											m_iShaderOption = 0;			// Defualt =0 , Wire_Frame= 3 
 	class CShader*							m_pShaderCom = nullptr;
 	class CRenderer*						m_pRendererCom = nullptr;
 

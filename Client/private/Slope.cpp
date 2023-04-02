@@ -256,10 +256,9 @@ CGameObject * CSlope::Clone(void * pArg)
 
 void CSlope::Free()
 {
-	Safe_Release(m_pModelCom);
 	__super::Free();
 
-	
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

@@ -78,7 +78,7 @@ void CDZ_FallenTree_Anim::Tick(_float fTimeDelta)
 		m_bColiderOn = true;
 	}
 
-	if(ImGui::Button("3_Map_Fallen_Tree_Down"))
+	if(ImGui::Button("TEmp"))
 	{
 		m_bBossClear = true;
 		m_bColiderOn = false;

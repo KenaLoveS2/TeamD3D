@@ -788,7 +788,7 @@ _bool CInstancing_Mesh::Instaincing_MoveControl(CEnviromentObj::CHAPTER eChapter
 		}
 		else if(eChapterGimmcik == CEnviromentObj::Gimmick_TYPE_FLOWER)
 		{
-			_float fRandomSpeed = CUtile::Get_RandomFloat(1.0f, 2.6f);
+			_float fRandomSpeed = CUtile::Get_RandomFloat(0.7f, 1.6f);
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y += (fRandomSpeed)*fTimeDelta;
 		}
 	

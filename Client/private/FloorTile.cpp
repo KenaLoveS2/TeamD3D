@@ -53,7 +53,6 @@ HRESULT CFloorTile::Late_Initialize(void * pArg)
 
 void CFloorTile::Tick(_float fTimeDelta)
 {
-
 	__super::Tick(fTimeDelta);
 }
 
@@ -147,7 +146,6 @@ HRESULT CFloorTile::RenderShadow()
 
 	return S_OK;
 }
-
 
 HRESULT CFloorTile::Add_AdditionalComponent(_uint iLevelIndex, const _tchar * pComTag, COMPONENTS_OPTION eComponentOption)
 {
@@ -258,10 +256,9 @@ CGameObject * CFloorTile::Clone(void * pArg)
 
 void CFloorTile::Free()
 {
-	Safe_Release(m_pModelCom);
 	__super::Free();
 
-
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

@@ -347,7 +347,7 @@ _int CCrystal::Execute_Collision(CGameObject * pTarget, _float3 vCollisionPos, _
 
 _int CCrystal::Execute_TriggerTouchFound(CGameObject * pTarget, _uint iTriggerIndex, _int iColliderIndex)
 {
-	if (pTarget == m_VecCrystal_Effect[1] || iColliderIndex != (_int)TRIGGER_PULSE )
+	if (pTarget == m_VecCrystal_Effect[1] || iColliderIndex != (_int)TRIGGER_PULSE)
 		return 0;
 
 	if (!lstrcmp(m_szCloneObjectTag, L"2_Water_GimmickCrystal01"))
@@ -455,9 +455,9 @@ void CCrystal::Free()
 {
 	m_pTransformCom->Clear_Actor();
 
-	Safe_Release(m_pModelCom);
 	__super::Free();
-	
+
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

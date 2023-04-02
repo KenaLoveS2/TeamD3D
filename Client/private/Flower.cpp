@@ -246,9 +246,9 @@ CGameObject * CFlower::Clone(void * pArg)
 
 void CFlower::Free()
 {
-	Safe_Release(m_pModelCom);
 	__super::Free();
 
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

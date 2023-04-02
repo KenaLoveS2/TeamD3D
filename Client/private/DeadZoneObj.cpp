@@ -291,10 +291,9 @@ CGameObject * CDeadZoneObj::Clone(void * pArg)
 
 void CDeadZoneObj::Free()
 {
-	Safe_Release(m_pModelCom);
-
 	__super::Free();
 
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 

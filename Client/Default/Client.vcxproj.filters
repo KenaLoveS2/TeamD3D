@@ -550,9 +550,6 @@
     <Filter Include="02.GameObjects\Envrioment\ControlRoom">
       <UniqueIdentifier>{cdc58b59-40df-4e45-9aba-7290005222c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Envrioment\Anim_Obj">
-      <UniqueIdentifier>{aff05e42-8eb3-47c1-8872-5795c375299d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Bin\Resources\Anim\Kena\Animation Index.txt">
@@ -1379,6 +1376,9 @@
     <ClInclude Include="..\public\CPortalPlane.h">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Portal.h">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Chest_Anim.h">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClInclude>
@@ -1397,6 +1397,7 @@
     <ClInclude Include="..\public\ControlRoom.h">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\public\Frog.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
@@ -1413,6 +1414,9 @@
     <ClInclude Include="..\public\Dynamic_Stone.h">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="..\public\HealthFlower_Anim.h" />
+>>>>>>> parent of 285d1e32 (.)
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2219,6 +2223,9 @@
     <ClCompile Include="..\private\CPortalPlane.cpp">
       <Filter>02.GameObjects\Envrioment\Portal</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Portal.cpp">
+      <Filter>02.GameObjects\Envrioment\Portal</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Chest_Anim.cpp">
       <Filter>02.GameObjects\Envrioment\Anim</Filter>
     </ClCompile>
@@ -2240,6 +2247,7 @@
     <ClCompile Include="..\private\ControlRoom.cpp">
       <Filter>02.GameObjects\Envrioment\ControlRoom</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\private\Frog.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
@@ -2256,6 +2264,9 @@
     <ClCompile Include="..\private\Dynamic_Stone.cpp">
       <Filter>02.GameObjects\Envrioment\Anim_Obj</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="..\private\HealthFlower_Anim.cpp" />
+>>>>>>> parent of 285d1e32 (.)
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

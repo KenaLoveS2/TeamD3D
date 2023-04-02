@@ -26,7 +26,6 @@ public:
 	virtual HRESULT		Render() override;
 	virtual HRESULT		RenderShadow() override;
 
-
 private:
 	CModel*				m_pModelCom = nullptr;
 	class CInteraction_Com*			m_pInteractionCom = nullptr;

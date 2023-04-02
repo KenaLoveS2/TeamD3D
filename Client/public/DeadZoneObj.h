@@ -21,9 +21,7 @@ private:
 
 public:
 	void	Set_DeadZoneModel_ChangeID(_int iChangeModel_ID){ m_iDeadZoneModelID  = iChangeModel_ID;}
-	const _int Get_DZModel_ID() const {
-		return m_iDeadZoneModelID;
-	}
+
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
