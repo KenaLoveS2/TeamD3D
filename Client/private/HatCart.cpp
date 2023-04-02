@@ -112,10 +112,26 @@ HRESULT CHatCart::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture"), E_FAIL);
 		FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture"), E_FAIL);
-		FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 4), E_FAIL);
+
+		if(i==0 || i==1)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_AMBIENT_OCCLUSION, "g_MRAOTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 6), E_FAIL);
+		}
+		else if(i==2)
+		{
+			
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_ROUGHNESS, "g_RoughnessTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 14), E_FAIL);
+		}
+		else if(i==3 || i==4)
+		{
+			FAILED_CHECK_RETURN(m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_COMP_H_R_AO, "g_HRAOTexture"), E_FAIL);
+			FAILED_CHECK_RETURN(m_pModelCom->Render(m_pShaderCom, i, nullptr, 2), E_FAIL);
+		}
+
 	}
 
 	return S_OK;

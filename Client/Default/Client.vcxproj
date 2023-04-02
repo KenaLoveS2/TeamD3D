@@ -209,6 +209,8 @@
     <ClInclude Include="..\Public\DeadZoneObj.h" />
     <ClInclude Include="..\public\Door_Anim.h" />
     <ClInclude Include="..\public\DynamicLightCamera.h" />
+    <ClInclude Include="..\public\Dynamic_Stone.h" />
+    <ClInclude Include="..\public\Dynamic_StoneCube.h" />
     <ClInclude Include="..\Public\DZ_FallenTree_Anim.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\public\Effect_Base.h" />
@@ -470,6 +472,8 @@
     <ClCompile Include="..\Private\DeadZoneObj.cpp" />
     <ClCompile Include="..\private\Door_Anim.cpp" />
     <ClCompile Include="..\private\DynamicLightCamera.cpp" />
+    <ClCompile Include="..\private\Dynamic_Stone.cpp" />
+    <ClCompile Include="..\private\Dynamic_StoneCube.cpp" />
     <ClCompile Include="..\Private\DZ_FallenTree_Anim.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\private\Effect_Base.cpp" />

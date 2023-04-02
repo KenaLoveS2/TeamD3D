@@ -16,7 +16,7 @@
 #include "Pulse_Plate_Anim.h"
 #include "ControlRoom.h"
 #include "DeadZoneObj.h"
-
+#include "Dynamic_Stone.h"
 
 #define IMGUI_TEXT_COLOR_CHANGE				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 #define IMGUI_TEXT_COLOR_CHANGE_END		ImGui::PopStyleColor();
@@ -765,7 +765,7 @@ void CImgui_MapEditor::Imgui_Maptool_Terrain_Selecte()
 	//if (pTerrainEditor == nullptr)
 	//	return;
 
-	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain2"));
+	m_pSelectedTerrain = dynamic_cast<CTerrain*>(CGameInstance::GetInstance()->Get_GameObjectPtr(g_LEVEL, L"Layer_BackGround", L"Terrain0"));
 
 	if (nullptr == m_pSelectedTerrain)
 		return;
@@ -875,7 +875,9 @@ void CImgui_MapEditor::Imgui_Instance_Edit_Collider()
 		m_pOldSelectedObj = m_pSelectedObj;
 		pModel->InitPhysxData();
 	}
-	
+
+	if (pModel == nullptr)
+		return;
 
 	ImGui::Begin("Instance Obj Colider_Control");
 
@@ -926,6 +928,7 @@ void CImgui_MapEditor::Imgui_Instacing_PosLoad(CGameObject * pSelectEnvioObj, ve
 		pModel->Instaincing_GimmkicInit(eChapterGimmcik);
 	}
 }
+
 
 void CImgui_MapEditor::Load_ComTagToCreate(CGameInstance * pGameInstace, CGameObject * pGameObject, vector<string> vecStr)
 {
@@ -1051,6 +1054,8 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		EnviromentDesc.eChapterType = CEnviromentObj::CHAPTER(iLoadChapterType);
 		EnviromentDesc.iCurLevel = iLevel;
 		EnviromentDesc.iShaderPass = iShaderPass;
+
+
 		if (FAILED(pGameInstance->Clone_GameObject(iLevel,
 			wszLayerTag,
 			EnviromentDesc.szProtoObjTag.c_str(),
@@ -1065,16 +1070,15 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 		}
 
 		static_cast<CTransform*>(pLoadObject->Find_Component(L"Com_Transform"))->Set_WorldMatrix_float4x4(fWroldMatrix);
-		Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
+		//Load_ComTagToCreate(pGameInstance, pLoadObject, StrComTagVec);
 		Imgui_Instacing_PosLoad(pLoadObject, vecInstnaceMatrixVec, SaveInstColiderSize, EnviromentDesc.eChapterType);
 
 		for (_int iModelId : jLoadChild["8_DeadZoneModel_ID"])
 		{
-			memcpy((&iDeadZone_ID) , &iModelId, sizeof(_int));
+			memcpy((&iDeadZone_ID), &iModelId, sizeof(_int));
 			static_cast<CDeadZoneObj*>(pLoadObject)->Set_DeadZoneModel_ChangeID(iDeadZone_ID);
 
 		}
-
 
 		szProtoObjTag = "";			szModelTag = "";			szTextureTag = "";
 		szCloneTag = "";				wszCloneTag = L""; 		iLoadRoomIndex = 0;
@@ -1088,3 +1092,5 @@ void CImgui_MapEditor::Load_MapObjects(_uint iLevel, string JsonFileName)
 
 
 }
+
+
