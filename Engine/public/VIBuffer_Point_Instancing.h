@@ -9,8 +9,20 @@ class ENGINE_DLL CVIBuffer_Point_Instancing final : public CVIBuffer_Instancing
 public:
 	typedef struct tagPointDesc
 	{
-		enum  SHAPETYPE { VIBUFFER_BOX, VIBUFFER_STRIGHT, VIBUFFER_PLANECIRCLE, 
-			VIBUFFER_CONE, VIBUFFER_EXPLOSION, VIBUFFER_EXPLOSION_GRAVITY, VIBUFFER_END };
+		enum  SHAPETYPE {
+			VIBUFFER_BOX, 
+			VIBUFFER_STRIGHT, 
+			VIBUFFER_PLANECIRCLE, 
+			VIBUFFER_CONE,
+			VIBUFFER_EXPLOSION,
+			VIBUFFER_EXPLOSION_GRAVITY,
+
+			VIBUFFER_PLANECIRCLE_HAZE,
+			VIBUFFER_HAZE,
+			VIBUFFER_GATHER,
+			VIBUFFER_PARABOLA,
+			VIBUFFER_END };
+
 		enum  DIRXYZ { DIR_X, DIR_Y, DIR_Z, DIR_END };
 
 		SHAPETYPE	eShapeType = VIBUFFER_BOX;
@@ -23,13 +35,14 @@ public:
 
 		_bool	    bSpread = true; 
 		_bool		bIsAlive;		
-		_float		fTimeDelta = 0.0f;
 		_bool 		bMoveY = false;
 		_bool 		bRotation = false;
+		_bool		bUseGravity = false;
+		_float		fTimeDelta = 0.0f;
 		_float      fMoveY = 0.0f;
 
-		_bool		bGravity = false;
-		_bool		bUseGravity = false;
+		_bool		bSetDir = false;
+		_vector		SetDir;
 
 		// Shape_Box  //
 		_float3     fMin = { 1.f,1.f,1.f };
@@ -53,6 +66,9 @@ public:
 		_float		fRangeOffset, fRangeY;
 		// ~Shape_Explosion //
 
+		_float	fTerm = 0.0f;
+		_float	fTermAcc = 0.0f;
+
 	}POINTDESC;
 
 	typedef struct tagInstnaceData
@@ -61,6 +77,9 @@ public:
 		_vector		fPos;
 		_float2		SpeedMinMax;
 		_float2		fPSize;
+
+		_float3		Position;
+
 	}INSTANCEDATA;
 
 public:
@@ -69,27 +88,10 @@ public:
 	virtual ~CVIBuffer_Point_Instancing() = default;
 
 public:
-	POINTDESC*     Get_PointDesc() { return m_ePointDesc; }
-	void	       Set_PointDesc(POINTDESC* ePointDesc) {
-		memcpy(m_ePointDesc, ePointDesc, sizeof(POINTDESC) * m_iNumInstance);
-	}
-
-	INSTANCEDATA*   Get_InstanceData() { return m_InstanceData; }
-	INSTANCEDATA    Get_InstanceData_Idx(_int iIndex) { return m_InstanceData[iIndex]; }
-	void			Set_InstanceData(INSTANCEDATA* eInstanceData) {
-		memcpy(m_InstanceData, eInstanceData, sizeof(INSTANCEDATA) * m_iNumInstance);
-	}
-
-	HRESULT			Set_ShapePosition();
-public:
-	HRESULT			Set_Pos(_float3 fMin, _float3 fMax);
-	HRESULT			Set_PSize(_float2 PSize);
-	HRESULT			Set_RandomPSize(_float2 PSizeMinMax);
-	void			Set_Speeds(_double pSpeed);
-	void			Set_RandomSpeeds(_float fmin, _float fmax);
-	void			Set_Gravity(_bool bUseGravity) { m_ePointDesc->bUseGravity = bUseGravity; }
-	void			Set_GravityTimeZero() { m_fGravity = 0.0f; }
-	void			Set_ResetOriginPos();
+	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
+	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
+	virtual HRESULT Tick(_float fTimeDelta) override;
+	virtual HRESULT Render();
 
 public:
 	HRESULT			Tick_Box(_float fTimeDelta);
@@ -99,18 +101,55 @@ public:
 	HRESULT			Tick_Explosion(_float fTimeDelta);
 	HRESULT			Tick_ExplosionGravity(_float fTimeDelta);
 
+	HRESULT			Tick_PlaneCircle_Haze(_float fTimeDelta);
+	HRESULT			Tick_Haze(_float fTimeDelta);
+	HRESULT			Tick_Gather(_float fTimeDelta);
+	HRESULT			Tick_Parabola(_float fTimeDelta); // Gravity
+
 public:
-	virtual HRESULT Initialize_Prototype(_uint iNumInstance);
-	virtual HRESULT Initialize(void* pArg, class CGameObject* pOwner) override;
-	virtual HRESULT Tick(_float fTimeDelta) override;
-	virtual HRESULT Render();
+	HRESULT			Reset_Haze();
+	HRESULT			Reset_Gather();
+	HRESULT			Reset_Parabola();
+
+public:
+	POINTDESC*      Get_PointDesc() { return m_ePointDesc; }
+	void	        Set_PointDesc(POINTDESC* ePointDesc) {
+		memcpy(m_ePointDesc, ePointDesc, sizeof(POINTDESC) * m_iNumInstance);
+	}
+	void			SetRandomDir();
+
+public:
+	INSTANCEDATA*   Get_InstanceData() { return m_InstanceData; }
+	INSTANCEDATA    Get_InstanceData_Idx(_int iIndex) { return m_InstanceData[iIndex]; }
+	void			Set_InstanceData(INSTANCEDATA* eInstanceData) {
+		memcpy(m_InstanceData, eInstanceData, sizeof(INSTANCEDATA) * m_iNumInstance);
+	}
+
+public:
+	HRESULT			Set_Pos(_float3 fMin, _float3 fMax);
+	HRESULT			Set_PSize(_float2 PSize);
+	HRESULT			Set_RandomPSize(_float2 PSizeMinMax);
+	HRESULT			Set_ShapePosition();
+	HRESULT			Set_Position(_float3 fMin, _float3 fMax);
+	void			Set_Speeds(_double pSpeed);
+	void			Set_RandomSpeeds(_float fmin, _float fmax);
+	void			Set_Gravity(_bool bUseGravity) { m_ePointDesc->bUseGravity = bUseGravity; }
+	void			Set_GravityTimeZero() { m_fGravity = 0.0f; }
+	void			Set_ResetOriginPos();
+	void			Set_Dir(_fvector vDir) { m_ePointDesc->SetDir = vDir; }
+
+public:
+	HRESULT			Reset_Type();
+	_bool			Get_Finish() { return m_bFinish; }
 
 private:
 	POINTDESC*		m_ePointDesc;
 	INSTANCEDATA*   m_InstanceData;
 
-	_float			m_fGravity = 9.8f;
+	_float			m_fGravity = 0.0f;
 	_float			m_fAngle = 0.0f;
+
+	_bool			m_bFinish = false;
 
 public:
 	static CVIBuffer_Point_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iNumInstance = 1);

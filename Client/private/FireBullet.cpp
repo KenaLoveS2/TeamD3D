@@ -4,6 +4,8 @@
 #include "Bone.h"
 #include "Effect_Base.h"
 #include "Monster.h"
+#include "E_RectTrail.h"
+#include "E_P_ExplosionGravity.h"
 
 CFireBullet::CFireBullet(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect_Mesh(pDevice, pContext)
@@ -35,10 +37,7 @@ HRESULT CFireBullet::Initialize(void * pArg)
 	else
 		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
 
-	/* 모델을 별도로 설정해 주기 때문에 Desc 일부 변경 해줌 */
-	m_eEFfectDesc.eMeshType = CEffect_Base::tagEffectDesc::MESH_END; // Mesh 생성 안함
 	m_iTotalDTextureComCnt = 0;	m_iTotalMTextureComCnt = 0;
-
 	FAILED_CHECK_RETURN(__super::Initialize(&GameObjectDesc), E_FAIL);
 	FAILED_CHECK_RETURN(SetUp_Components(), E_FAIL);		
 	FAILED_CHECK_RETURN(Set_ChildEffects(), E_FAIL);
@@ -52,11 +51,10 @@ HRESULT CFireBullet::Initialize(void * pArg)
 	m_pKena = (CKena*)pGameInstance->Get_GameObjectPtr(g_LEVEL, TEXT("Layer_Player"), TEXT("Kena"));
 	assert(m_pKena != nullptr && "CFireBullet::Initialize()");
 
-	m_pTransformCom->Set_Scaled(_float3(0.2f, 0.2f, 0.2f));
-	m_eEFfectDesc.bActive = false;
-
+	m_pTransformCom->Set_Scaled(_float3(0.15f, 0.15f, 0.15f));
 	m_pTransformCom->Set_Position(m_vInvisiblePos);
-	
+
+	m_eEFfectDesc.bActive = false;
 	return S_OK;
 }
 
@@ -118,7 +116,7 @@ HRESULT CFireBullet::Late_Initialize(void * pArg)
 }
 
 void CFireBullet::Tick(_float fTimeDelta)
-{
+{	
 	__super::Tick(fTimeDelta);
 
 	if (m_eEFfectDesc.bActive == false)
@@ -150,7 +148,7 @@ HRESULT CFireBullet::Render()
 		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_SPECULAR, "g_ReamTexture");
 		 m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_MASK, "g_MaskTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices", 8);
+		m_pModelCom->Render(m_pShaderCom, i, nullptr, 8);
 	}
 
 	return S_OK;
@@ -195,8 +193,8 @@ HRESULT CFireBullet::Set_ChildEffects()
 {	
 	m_vecChild.reserve(CHILD_END);
 	
-	CEffect_Base* pEffectBase = nullptr;
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CEffect_Base* pEffectBase = nullptr;
 
 	/* cover */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_FireBulletCover", L"BulletCover"));
@@ -211,6 +209,18 @@ HRESULT CFireBullet::Set_ChildEffects()
 	/* Explosion */
 	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_FireBulletExplosion", L"BulletExplosion"));
 	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	/* RectTrail */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_RectTrail", L"BulletRectTrail"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	dynamic_cast<CE_RectTrail*>(pEffectBase)->SetUp_Option(CE_RectTrail::OBJ_TRAIL);
+	m_vecChild.push_back(pEffectBase);
+
+	/* DeadParticle */
+	pEffectBase = dynamic_cast<CEffect_Base*>(pGameInstance->Clone_GameObject(L"Prototype_GameObject_ExplosionGravity", L"BulletDeadParticle"));
+	NULL_CHECK_RETURN(pEffectBase, E_FAIL);
+	dynamic_cast<CE_P_ExplosionGravity*>(pEffectBase)->Set_Option(CE_P_ExplosionGravity::TYPE_DEAD_MONSTER);
 	m_vecChild.push_back(pEffectBase);
 
 	for (auto& pChild : m_vecChild)
@@ -270,6 +280,9 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	{
 		// 생성 시뮬레이션
 		// m_vecChild[CHILD_EXPLOSION]->Set_Active(false);
+		// 
+		//_vector vPos = m_pTransformCom->Get_Position();
+		//dynamic_cast<CE_RectTrail*>(m_vecChild[CHILD_P_TRAIL])->Trail_InputPos(vPos);
 
 		m_eState = STATE_CHASE;
 
@@ -278,7 +291,11 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	case STATE_CHASE:
 	{	
 		m_pTransformCom->Chase(m_vTargetPos, fTimeDelta, 0.2f, true);
-		
+		m_vecChild[CHILD_P_TRAIL]->Set_Active(true);
+
+		_vector vPos = m_pTransformCom->Get_Position();
+		dynamic_cast<CE_RectTrail*>(m_vecChild[CHILD_P_TRAIL])->Trail_InputPos(vPos);
+
 		// if (m_pTransformCom->IsClosed_XZ(m_vTargetPos, 0.5f)) m_bCollision = true;
 
 		m_eState = m_bCollision ? STATE_EXPLOSION_START : m_eState;
@@ -287,12 +304,16 @@ void CFireBullet::FireBullet_Proc(_float fTimeDelta)
 	}
 	case STATE_EXPLOSION_START:
 	{	
+		// Turn Off => Object + RectTrail
 		m_vecChild[CHILD_COVER]->Set_Active(false);
 		m_vecChild[CHILD_BACK]->Set_Active(false);
-		
+		m_vecChild[CHILD_P_TRAIL]->Set_Active(false);
+
+		// Turn On => Particle + Explosion Effect
 		m_vecChild[CHILD_EXPLOSION]->Set_InitMatrix(XMMatrixIdentity());
 		m_vecChild[CHILD_EXPLOSION]->Set_Active(true);
 		m_vecChild[CHILD_EXPLOSION]->Set_Position(m_vTargetPos);
+		dynamic_cast<CE_P_ExplosionGravity*>(m_vecChild[CHILD_P_DEAD])->UpdateParticle(m_vTargetPos);
 
 		m_eState = STATE_EXPLOSION;
 		break;

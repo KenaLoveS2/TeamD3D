@@ -34,15 +34,17 @@ HRESULT CE_P_KenaHit::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
-	
 	m_eEFfectDesc.bActive = false;
+	m_pTransformCom->Set_WorldMatrix_float4x4(m_InitWorldMatrix);
 	m_pVIInstancingBufferCom->Set_PSize(_float2(0.05f, 0.05f));
 	return S_OK;
 }
 
 void CE_P_KenaHit::Tick(_float fTimeDelta)
 {
+	if (m_eEFfectDesc.bActive == false)
+		return;
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -51,17 +53,14 @@ void CE_P_KenaHit::Late_Tick(_float fTimeDelta)
 	if (m_eEFfectDesc.bActive == false)
 		return;
 
-	__super::Late_Tick(fTimeDelta);
-
 	if (m_pParent != nullptr)
 		Set_Matrix();
+
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CE_P_KenaHit::Render()
 {
-	if (m_eEFfectDesc.bActive == false)
-		return E_FAIL;
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 

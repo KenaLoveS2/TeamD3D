@@ -243,6 +243,7 @@
     <ClInclude Include="..\public\E_KenaParry.h" />
     <ClInclude Include="..\public\E_KenaParryHand.h" />
     <ClInclude Include="..\public\E_P_Explosion.h" />
+    <ClInclude Include="..\public\E_P_ExplosionGravity.h" />
     <ClInclude Include="..\public\E_P_Flower.h" />
     <ClInclude Include="..\public\E_KenaChargeImpact.h" />
     <ClInclude Include="..\public\E_KenaDamage.h" />
@@ -267,6 +268,12 @@
     <ClInclude Include="..\public\E_RotBombExplosion.h" />
     <ClInclude Include="..\public\E_RotTrail.h" />
     <ClInclude Include="..\public\E_Sapling.h" />
+    <ClInclude Include="..\public\E_ShamanBossHandPlane.h" />
+    <ClInclude Include="..\public\E_ShamanBossPlate.h" />
+    <ClInclude Include="..\public\E_ShamanSmoke.h" />
+    <ClInclude Include="..\public\E_ShamanSummons.h" />
+    <ClInclude Include="..\public\E_ShamanThunderCylinder.h" />
+    <ClInclude Include="..\public\E_ShamanTrail.h" />
     <ClInclude Include="..\public\E_SpiritArrowHit.h" />
     <ClInclude Include="..\public\E_SpiritArrowPosition.h" />
     <ClInclude Include="..\public\E_SpiritArrowTrail.h" />
@@ -504,6 +511,7 @@
     <ClCompile Include="..\private\E_KenaParry.cpp" />
     <ClCompile Include="..\private\E_KenaParryHand.cpp" />
     <ClCompile Include="..\private\E_P_Explosion.cpp" />
+    <ClCompile Include="..\private\E_P_ExplosionGravity.cpp" />
     <ClCompile Include="..\private\E_P_Flower.cpp" />
     <ClCompile Include="..\private\E_KenaChargeImpact.cpp" />
     <ClCompile Include="..\private\E_KenaDamage.cpp" />
@@ -529,6 +537,12 @@
     <ClCompile Include="..\private\E_RotBombExplosion.cpp" />
     <ClCompile Include="..\private\E_RotTrail.cpp" />
     <ClCompile Include="..\private\E_Sapling.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossHandPlane.cpp" />
+    <ClCompile Include="..\private\E_ShamanBossPlate.cpp" />
+    <ClCompile Include="..\private\E_ShamanSmoke.cpp" />
+    <ClCompile Include="..\private\E_ShamanSummons.cpp" />
+    <ClCompile Include="..\private\E_ShamanThunderCylinder.cpp" />
+    <ClCompile Include="..\private\E_ShamanTrail.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowPosition.cpp" />
     <ClCompile Include="..\private\E_SpiritArrowTrail.cpp" />
     <ClCompile Include="..\private\E_SpritArrowHit.cpp" />
