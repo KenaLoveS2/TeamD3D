@@ -90,7 +90,7 @@ void CHealthFlower_Anim::Tick(_float fTimeDelta)
 
 	m_eCurState = Check_State();
 	Update_State(fTimeDelta); 
-	m_eCurState = CHealthFlower_Anim::OPEN_LOOP;
+	
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	m_pTransformCom->Tick(fTimeDelta);
@@ -119,6 +119,9 @@ HRESULT CHealthFlower_Anim::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
+		if (m_bUsed == true && i == 4)
+			continue;
+
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_DIFFUSE, "g_DiffuseTexture");
 		m_pModelCom->Bind_Material(m_pShaderCom, i, WJTextureType_NORMALS, "g_NormalTexture");
 		m_pModelCom->Render(m_pShaderCom, i, "g_BoneMatrices");
@@ -278,13 +281,9 @@ _bool CHealthFlower_Anim::Check_CameraRay()
 {
 	_float3		vCamPos = CGameInstance::GetInstance()->Get_CamPosition_Float3();
 	_float3		vCamLook = XMVector3Normalize(CGameInstance::GetInstance()->Get_CamLook_Float3());
-	CGameObject* pCollisionOut = nullptr;
 
-	if (CPhysX_Manager::GetInstance()->Raycast_Collision(vCamPos, vCamLook, 5.f, nullptr, &pCollisionOut))
-	{
-		if (pCollisionOut == this)
-			return true;
-	}
+	if (CPhysX_Manager::GetInstance()->Raycast_CollisionTarget(vCamPos, vCamLook, 15.f, nullptr, this))
+		return true;
 
 	return false;
 }
